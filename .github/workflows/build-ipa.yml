@@ -74,8 +74,31 @@ jobs:
             -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="" \
             -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=""
 
+      - name: Verify iOS target configuration
+        run: |
+          echo "=== Checking Xcode project target SDK ==="
+          # The generated project should target iphoneos, not macosx
+          if grep -r 'SDKROOT.*iphoneos' build_ios/*.xcodeproj/project.pbxproj; then
+            echo "✅ SDKROOT is set to iphoneos"
+          else
+            echo "⚠️  SDKROOT not found as iphoneos — checking what it is set to:"
+            grep -o 'SDKROOT = [^;]*' build_ios/*.xcodeproj/project.pbxproj | head -5
+          fi
+          echo "=== CMAKE_SYSTEM_NAME from CMakeCache ==="
+          grep 'CMAKE_SYSTEM_NAME' build_ios/CMakeCache.txt || true
+          echo "=== CMAKE_OSX_SYSROOT from CMakeCache ==="
+          grep 'CMAKE_OSX_SYSROOT' build_ios/CMakeCache.txt || true
+          echo "=== APPLE_TARGET_DEVICE from CMakeCache ==="
+          grep 'APPLE_TARGET_DEVICE' build_ios/CMakeCache.txt || true
+
       - name: Build (Release, install target)
-        run: cmake --build build_ios --config Release --target install -- -quiet -jobs 3
+        run: |
+          # Pass -sdk and -destination to xcodebuild (via cmake --build's -- passthrough)
+          # to ensure the build targets iOS arm64, not the host macOS platform.
+          cmake --build build_ios --config Release --target install -- \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -jobs 3 -quiet
 
       - name: Package .ipa
         run: |
