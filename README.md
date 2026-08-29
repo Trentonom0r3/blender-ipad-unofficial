@@ -2,7 +2,7 @@
 
 An **unofficial**, community-modified build of [Blender](https://www.blender.org) that adds
 **external keyboard, mouse/trackpad, and Apple Pencil** support so Blender becomes genuinely
-usable on iPad.
+usable on iPad
 
 > ⚠️ **This is not an official Blender release.** It is **not affiliated with, endorsed by, or
 > supported by the Blender Foundation.** "Blender" is a registered trademark of the Blender
@@ -14,7 +14,7 @@ This build is based on Blender's experimental `ios` branch and adds the input ha
 missing on iPad (external keyboard, mouse/trackpad, Apple Pencil), plus branding changes,
 distributed as a patch on top of upstream.
 
-- Upstream source: Blender `ios` branch — https://projects.blender.org/blender/blender
+- Upstream source: Blender `ios` branch — <https://projects.blender.org/blender/blender>
 - Build it yourself: [BUILD.md](BUILD.md)
 
 ---
@@ -71,7 +71,7 @@ methods) is needed for signing.
 Download the latest `.ipa` from the [Releases](../../releases) page.
 
 | Method | Needs a Mac? | Re-sign interval | iPadOS 26.5 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Sideloadly** (Win/Mac) | No (Windows works) | 7 days (free ID) / 1 year (paid) | ✅ |
 | **AltStore / SideStore** | No (Windows works) | 7 days, auto-refresh | ✅ * |
 | Apple Developer account ($99/yr) | No | 1 year | ✅ |
