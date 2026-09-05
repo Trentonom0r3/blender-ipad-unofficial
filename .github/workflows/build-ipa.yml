@@ -61,6 +61,7 @@ jobs:
           cd blender
           git apply ../overlay/patches/blender-ipad.patch
           cp ../overlay/ios/icon/blender_icon.icns release/ios/Blender.app/Assets/blender_icon.icns
+          cp ../overlay/ios/Info.plist release/ios/Blender.app/Info.plist
 
       - name: Configure (iOS, Xcode generator)
         run: |

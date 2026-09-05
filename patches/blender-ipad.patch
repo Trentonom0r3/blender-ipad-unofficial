@@ -11,6 +11,76 @@ index ece1c7c..7e5b505 100644
    endif()
  endif()
  if(FIRST_RUN)
+diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_SystemIOS.mm
+index 904050f..51ad54c 100644
+--- a/intern/ghost/intern/GHOST_SystemIOS.mm
++++ b/intern/ghost/intern/GHOST_SystemIOS.mm
+@@ -54,6 +54,28 @@ int main_ios_callback(int argc, const char **argv);
+ - (BOOL)application:(UIApplication *)application
+     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
++  @autoreleasepool {
++    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
++    if (paths.count > 0) {
++      NSString *docPath = [paths objectAtIndex:0];
++      NSString *autosavePath = [docPath stringByAppendingPathComponent:@"autosave"];
++      [[NSFileManager defaultManager] createDirectoryAtPath:autosavePath
++                                withIntermediateDirectories:YES
++                                                 attributes:nil
++                                                      error:nil];
++
++      NSString *readmePath = [docPath stringByAppendingPathComponent:@"README.txt"];
++      if (![[NSFileManager defaultManager] fileExistsAtPath:readmePath]) {
++        NSString *welcome =
++            @"Welcome to Blender on iPad!\n\n"
++            @"Place your .blend files, 3D assets (OBJ, FBX, GLTF, USDZ), and textures here.\n"
++            @"They will appear directly when using File -> Open or File -> Import in Blender.\n\n"
++            @"Autosaved files are automatically kept in the 'autosave' folder.\n";
++        [welcome writeToFile:readmePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
++      }
++    }
++  }
++
+   main_ios_callback(argc, argv);
+ 
+   return YES;
+diff --git a/intern/ghost/intern/GHOST_SystemPathsCocoa.mm b/intern/ghost/intern/GHOST_SystemPathsCocoa.mm
+index db8ec09..c5a93aa 100644
+--- a/intern/ghost/intern/GHOST_SystemPathsCocoa.mm
++++ b/intern/ghost/intern/GHOST_SystemPathsCocoa.mm
+@@ -33,7 +33,7 @@ static const char *GetApplicationSupportDir(const char *versionstr,
+     snprintf(tempPath,
+              len_tempPath,
+              "%s/Blender/%s",
+-             [basePath cStringUsingEncoding:NSASCIIStringEncoding],
++             [basePath UTF8String],
+              versionstr);
+   }
+   return tempPath;
+@@ -93,7 +93,10 @@ std::optional<std::string> GHOST_SystemPathsCocoa::getUserSpecialDir(
+     }
+     NSString *basePath = [paths objectAtIndex:0];
+ 
+-    const char *basePath_cstr = [basePath cStringUsingEncoding:NSASCIIStringEncoding];
++    const char *basePath_cstr = [basePath UTF8String];
++    if (!basePath_cstr) {
++      return std::nullopt;
++    }
+     int basePath_len = strlen(basePath_cstr);
+ 
+     basePath_len = MIN(basePath_len, sizeof(tempPath) - 1);
+@@ -117,7 +120,10 @@ const char *GHOST_SystemPathsCocoa::getBinaryDir() const
+       return nullptr;
+     }
+ 
+-    const char *basePath_cstr = [basePath cStringUsingEncoding:NSASCIIStringEncoding];
++    const char *basePath_cstr = [basePath UTF8String];
++    if (!basePath_cstr) {
++      return nullptr;
++    }
+     int basePath_len = strlen(basePath_cstr);
+ 
+     basePath_len = MIN(basePath_len, sizeof(tempPath) - 1);
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 index 272c21b..8974c7a 100644
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
@@ -1511,7 +1581,7 @@ index b6e2a3d..0daebef 100644
    .tarm = {
      {
 diff --git a/release/ios/Blender.app/Info.plist b/release/ios/Blender.app/Info.plist
-index e478b5b..e46dc2d 100644
+index e478b5b..7be080b 100644
 --- a/release/ios/Blender.app/Info.plist
 +++ b/release/ios/Blender.app/Info.plist
 @@ -21,7 +21,7 @@
@@ -1541,7 +1611,16 @@ index e478b5b..e46dc2d 100644
  	<key>CFBundleName</key>
  	<string>Blender</string>
  	<key>CFBundlePackageType</key>
-@@ -78,7 +80,7 @@
+@@ -59,8 +61,6 @@
+ 	<true/>
+     <key>UIFileSharingEnabled</key>
+     <true/>
+-    <key>UISupportsDocumentBrowser</key>
+-    <true/>
+     <key>LSSupportsOpeningDocumentsInPlace</key>
+     <true/>
+ 	<key>UISupportedInterfaceOrientations</key>
+@@ -78,7 +78,7 @@
  				<string>public.data</string>
  			</array>
  			<key>UTTypeIdentifier</key>
@@ -1586,6 +1665,98 @@ index 8840d0f..239ebf4 100644
      VIEW3D_MT_pivot_pie,
      VIEW3D_MT_snap_pie,
      VIEW3D_MT_orientations_pie,
+diff --git a/source/blender/blenkernel/intern/appdir.cc b/source/blender/blenkernel/intern/appdir.cc
+index ddfaae1..23acb9d 100644
+--- a/source/blender/blenkernel/intern/appdir.cc
++++ b/source/blender/blenkernel/intern/appdir.cc
+@@ -136,7 +136,15 @@ static char *blender_version_decimal(const int version)
+ 
+ const char *BKE_appdir_folder_default()
+ {
+-#ifndef WIN32
++#ifdef WITH_APPLE_CROSSPLATFORM
++  static char documentfolder[FILE_MAXDIR];
++
++  if (BKE_appdir_folder_documents(documentfolder)) {
++    return documentfolder;
++  }
++
++  return BLI_dir_home();
++#elif !defined(WIN32)
+   return BLI_dir_home();
+ #else  /* Windows */
+   static char documentfolder[FILE_MAXDIR];
+@@ -163,10 +171,9 @@ const char *BKE_appdir_folder_root()
+ const char *BKE_appdir_folder_default_or_root()
+ {
+ #ifdef WITH_APPLE_CROSSPLATFORM
+-  const std::optional<std::string> def_path = BKE_appdir_resource_path_id_with_version(
+-      BLENDER_RESOURCE_PATH_LOCAL, true, BLENDER_VERSION);
+-  if (def_path.has_value()) {
+-    return def_path->c_str();
++  const char *path = BKE_appdir_folder_default();
++  if (path != nullptr) {
++    return path;
+   }
+ #endif
+ 
+@@ -180,7 +187,7 @@ const char *BKE_appdir_folder_default_or_root()
+ const char *BKE_appdir_folder_home()
+ {
+ #ifdef WITH_APPLE_CROSSPLATFORM
+-  return BKE_appdir_folder_default_or_root();
++  return BKE_appdir_folder_default();
+ #else
+   return BLI_dir_home();
+ #endif
+@@ -200,7 +207,7 @@ bool BKE_appdir_folder_documents(char *dir)
+   }
+ 
+   /* Ghost couldn't give us a documents path, let's try if we can find it ourselves. */
+-
++#ifndef WITH_APPLE_CROSSPLATFORM
+   const char *home_path = BKE_appdir_folder_home();
+   if (!home_path || !BLI_is_dir(home_path)) {
+     return false;
+@@ -215,6 +222,18 @@ bool BKE_appdir_folder_documents(char *dir)
+ 
+   BLI_strncpy(dir, try_documents_path, FILE_MAXDIR);
+   return true;
++#else
++  const char *home = BLI_dir_home();
++  if (home && BLI_is_dir(home)) {
++    char try_documents_path[FILE_MAXDIR];
++    BLI_path_join(try_documents_path, sizeof(try_documents_path), home, "Documents");
++    if (BLI_is_dir(try_documents_path)) {
++      BLI_strncpy(dir, try_documents_path, FILE_MAXDIR);
++      return true;
++    }
++  }
++  return false;
++#endif
+ }
+ 
+ bool BKE_appdir_folder_caches(char *path, const size_t path_maxncpy)
+@@ -1189,6 +1208,19 @@ static bool where_is_temp(char *tempdir, const size_t tempdir_maxncpy, const cha
+   if (userdir) {
+     return BLI_temp_directory_path_copy_if_valid(tempdir, tempdir_maxncpy, userdir);
+   }
++#ifdef WITH_APPLE_CROSSPLATFORM
++  char doc_dir[FILE_MAXDIR];
++  if (BKE_appdir_folder_documents(doc_dir)) {
++    char autosave_dir[FILE_MAXDIR];
++    BLI_path_join(autosave_dir, sizeof(autosave_dir), doc_dir, "autosave");
++    BLI_dir_create_recursive(autosave_dir);
++    if (BLI_is_dir(autosave_dir)) {
++      BLI_path_slash_ensure(autosave_dir, sizeof(autosave_dir));
++      BLI_strncpy(tempdir, autosave_dir, tempdir_maxncpy);
++      return true;
++    }
++  }
++#endif
+   BLI_temp_directory_path_get(tempdir, tempdir_maxncpy);
+   return true;
+ }
 diff --git a/source/blender/editors/interface/view2d/view2d_ops.cc b/source/blender/editors/interface/view2d/view2d_ops.cc
 index 685b123..dbbae97 100644
 --- a/source/blender/editors/interface/view2d/view2d_ops.cc
@@ -1607,6 +1778,40 @@ index 685b123..dbbae97 100644
      return OPERATOR_FINISHED;
    }
  #endif
+diff --git a/source/blender/editors/space_file/fsmenu_system.mm b/source/blender/editors/space_file/fsmenu_system.mm
+index df0c9fd..0d04861 100644
+--- a/source/blender/editors/space_file/fsmenu_system.mm
++++ b/source/blender/editors/space_file/fsmenu_system.mm
+@@ -213,9 +213,20 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
+                         N_("Documents"),
+                         ICON_DOCUMENTS,
+                         FS_INSERT_LAST);
+-    UNUSED_VARS(read_bookmarks);
++
++    char autosave_path[FILE_MAXDIR];
++    BLI_path_join(autosave_path, sizeof(autosave_path), line, "autosave");
++    fsmenu_insert_entry(fsmenu,
++                        FS_CATEGORY_SYSTEM_BOOKMARKS,
++                        autosave_path,
++                        N_("Autosave"),
++                        ICON_RECOVER_AUTO,
++                        FS_INSERT_LAST);
++
++    UNUSED_VARS(read_bookmarks, fileManager);
+ #  endif
+ 
++#  ifndef WITH_APPLE_CROSSPLATFORM
+     /* Get mounted volumes better method OSX 10.6 and higher, see:
+      * https://developer.apple.com/library/mac/#documentation/CoreFoundation/Reference/CFURLRef/Reference/reference.html
+      */
+@@ -273,6 +284,7 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
+     }
+ 
+     CFRelease(volEnum);
++#  endif
+   }
+ #endif
+ 
 diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
 index bbb12e2..73d0af3 100644
 --- a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc

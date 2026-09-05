@@ -46,6 +46,13 @@ $PB -c "Set :CFBundleGetInfoString Unofficial iPad build (not affiliated with th
 $PB -c "Set :CFBundleDocumentTypes:0:LSItemContentTypes:0 com.unofficial.blenderipad.file" "$PL" 2>/dev/null || true
 $PB -c "Set :UTExportedTypeDeclarations:0:UTTypeIdentifier com.unofficial.blenderipad.file" "$PL" 2>/dev/null || true
 
+# File sharing & Documents access for iOS Files app ("On My iPad").
+$PB -c "Delete :UISupportsDocumentBrowser" "$PL" 2>/dev/null || true
+$PB -c "Set :UIFileSharingEnabled true" "$PL" 2>/dev/null \
+  || $PB -c "Add :UIFileSharingEnabled bool true" "$PL"
+$PB -c "Set :LSSupportsOpeningDocumentsInPlace true" "$PL" 2>/dev/null \
+  || $PB -c "Add :LSSupportsOpeningDocumentsInPlace bool true" "$PL"
+
 # Real iOS apps ship a BINARY Info.plist. This Blender build emits XML, which some
 # installers (e.g. iLoader / isideload) fail to parse — convert to binary for compatibility.
 plutil -convert binary1 "$PL"
