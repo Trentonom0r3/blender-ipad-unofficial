@@ -103,20 +103,50 @@ jobs:
 
       - name: Package .ipa
         run: |
-          APP="$(find build_ios -name Blender.app -type d | head -1)"
-          echo "app bundle: $APP"
+          echo "=== Locating Blender.app ==="
+          find build_ios -name Blender.app -type d || true
+
+          # Find the real iOS app bundle (exclude host tools in build_darwin_tools)
+          APP="$(find build_ios/bin -name Blender.app -type d 2>/dev/null | grep -v 'build_darwin_tools' | head -1)"
+          if [ -z "$APP" ]; then
+            APP="$(find build_ios -name Blender.app -type d | grep -v 'build_darwin_tools' | head -1)"
+          fi
+          echo "Selected app bundle: $APP"
           test -n "$APP" || { echo "::error::Blender.app not found"; exit 1; }
+
+          # If the bundle follows macOS structure, adapt to iOS shallow bundle structure
+          if [ ! -f "$APP/Blender" ] && [ -f "$APP/Contents/MacOS/Blender" ]; then
+            echo "Adapting macOS bundle layout to iOS bundle layout..."
+            cp -a "$APP/Contents/MacOS/Blender" "$APP/Blender"
+            [ -f "$APP/Contents/Info.plist" ] && cp -a "$APP/Contents/Info.plist" "$APP/Info.plist"
+            [ -d "$APP/Contents/Resources" ] && cp -a "$APP/Contents/Resources/"* "$APP/" 2>/dev/null || true
+          fi
+
+          test -f "$APP/Blender" || { echo "::error::Blender executable missing in $APP"; exit 1; }
+          test -f "$APP/Info.plist" || { echo "::error::Info.plist missing in $APP"; exit 1; }
+
           # Bundle precompiled iOS dylibs into the app (mirrors the reference recipe).
           LIBDST="$APP/Assets/lib"; mkdir -p "$LIBDST"
           find blender/lib/ios_arm64 -name '*.dylib' \( -type f -o -type l \) -exec cp -fL {} "$LIBDST/" \; || true
           find "$APP" -name 'libpython*.dylib' -exec cp -fn {} "$LIBDST/" \; || true
+
           # iPad-Unofficial branding + iOS app icon (iOS ignores the .icns, so inject PNGs).
           bash overlay/build/apply_branding.sh "$APP" overlay/ios/icon/icon_1024.png
+
+          # Ad-hoc codesign
           codesign --force --deep --sign - "$APP" || true
+
+          # Package into Payload/
           rm -rf Payload && mkdir -p Payload
           cp -R "$APP" Payload/
           find Payload -type l ! -exec test -e {} \; -delete || true
-          zip -qr Blender-iPad-Unofficial.ipa Payload
+
+          echo "=== Verifying Payload ==="
+          ls -la Payload/Blender.app
+          echo "Blender binary size: $(wc -c < Payload/Blender.app/Blender) bytes"
+
+          zip -qry Blender-iPad-Unofficial.ipa Payload
+          echo "IPA size: $(wc -c < Blender-iPad-Unofficial.ipa) bytes"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
