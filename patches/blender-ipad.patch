@@ -1664,7 +1664,7 @@ index 8840d0f..239ebf4 100644
      VIEW3D_MT_snap_pie,
      VIEW3D_MT_orientations_pie,
 diff --git a/source/blender/blenkernel/intern/appdir.cc b/source/blender/blenkernel/intern/appdir.cc
-index ddfaae1..23acb9d 100644
+index ddfaae1..03bfa28 100644
 --- a/source/blender/blenkernel/intern/appdir.cc
 +++ b/source/blender/blenkernel/intern/appdir.cc
 @@ -136,7 +136,15 @@ static char *blender_version_decimal(const int version)
@@ -1684,21 +1684,22 @@ index ddfaae1..23acb9d 100644
    return BLI_dir_home();
  #else  /* Windows */
    static char documentfolder[FILE_MAXDIR];
-@@ -163,10 +171,9 @@ const char *BKE_appdir_folder_root()
+@@ -162,14 +170,6 @@ const char *BKE_appdir_folder_root()
+ 
  const char *BKE_appdir_folder_default_or_root()
  {
- #ifdef WITH_APPLE_CROSSPLATFORM
+-#ifdef WITH_APPLE_CROSSPLATFORM
 -  const std::optional<std::string> def_path = BKE_appdir_resource_path_id_with_version(
 -      BLENDER_RESOURCE_PATH_LOCAL, true, BLENDER_VERSION);
 -  if (def_path.has_value()) {
 -    return def_path->c_str();
-+  const char *path = BKE_appdir_folder_default();
-+  if (path != nullptr) {
-+    return path;
-   }
- #endif
- 
-@@ -180,7 +187,7 @@ const char *BKE_appdir_folder_default_or_root()
+-  }
+-#endif
+-
+   const char *path = BKE_appdir_folder_default();
+   if (path == nullptr) {
+     path = BKE_appdir_folder_root();
+@@ -180,7 +180,7 @@ const char *BKE_appdir_folder_default_or_root()
  const char *BKE_appdir_folder_home()
  {
  #ifdef WITH_APPLE_CROSSPLATFORM
@@ -1707,7 +1708,7 @@ index ddfaae1..23acb9d 100644
  #else
    return BLI_dir_home();
  #endif
-@@ -200,7 +207,7 @@ bool BKE_appdir_folder_documents(char *dir)
+@@ -200,7 +200,7 @@ bool BKE_appdir_folder_documents(char *dir)
    }
  
    /* Ghost couldn't give us a documents path, let's try if we can find it ourselves. */
@@ -1716,7 +1717,7 @@ index ddfaae1..23acb9d 100644
    const char *home_path = BKE_appdir_folder_home();
    if (!home_path || !BLI_is_dir(home_path)) {
      return false;
-@@ -215,6 +222,18 @@ bool BKE_appdir_folder_documents(char *dir)
+@@ -215,6 +215,18 @@ bool BKE_appdir_folder_documents(char *dir)
  
    BLI_strncpy(dir, try_documents_path, FILE_MAXDIR);
    return true;
@@ -1735,7 +1736,7 @@ index ddfaae1..23acb9d 100644
  }
  
  bool BKE_appdir_folder_caches(char *path, const size_t path_maxncpy)
-@@ -1189,6 +1208,19 @@ static bool where_is_temp(char *tempdir, const size_t tempdir_maxncpy, const cha
+@@ -1189,6 +1201,19 @@ static bool where_is_temp(char *tempdir, const size_t tempdir_maxncpy, const cha
    if (userdir) {
      return BLI_temp_directory_path_copy_if_valid(tempdir, tempdir_maxncpy, userdir);
    }
