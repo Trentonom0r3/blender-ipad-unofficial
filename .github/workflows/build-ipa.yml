@@ -133,19 +133,37 @@ jobs:
           # iPad-Unofficial branding + iOS app icon (iOS ignores the .icns, so inject PNGs).
           bash overlay/build/apply_branding.sh "$APP" overlay/ios/icon/icon_1024.png
 
-          # Ad-hoc codesign
-          codesign --force --deep --sign - "$APP" || true
+          # Prepare clean unsigned bundle for sideloading tools (Sideloadly, AltStore, SideStore).
+          # Sideloadly signs with the user's Apple ID certificate; an existing or half-baked
+          # _CodeSignature causes iOS error 0xe8008017 (A signed resource has been added, modified, or deleted).
+          echo "=== Cleaning bundle for sideloading ==="
+          export COPYFILE_DISABLE=1
+          find "$APP" -type l ! -exec test -e {} \; -delete || true
+          find "$APP" -name "_CodeSignature" -type d -prune -exec rm -rf {} + || true
+          find "$APP" -name "._*" -delete || true
+          find "$APP" -name ".DS_Store" -delete || true
+
+          # Standardize permissions for binaries and libraries
+          chmod -R u+rwX,go+rX "$APP"
+          chmod 755 "$APP/Blender"
+          find "$APP" -name "*.dylib" -exec chmod 755 {} \; || true
+          find "$APP" -name "*.so" -exec chmod 755 {} \; || true
 
           # Package into Payload/
           rm -rf Payload && mkdir -p Payload
           cp -R "$APP" Payload/
-          find Payload -type l ! -exec test -e {} \; -delete || true
+          find Payload -name "_CodeSignature" -type d -prune -exec rm -rf {} + || true
+          find Payload -name "._*" -delete || true
+          find Payload -name ".DS_Store" -delete || true
 
           echo "=== Verifying Payload ==="
           ls -la Payload/Blender.app
           echo "Blender binary size: $(wc -c < Payload/Blender.app/Blender) bytes"
+          echo "Confirming no stale _CodeSignature present in unsigned IPA:"
+          find Payload -name "_CodeSignature" || echo "Clean: No _CodeSignature found"
 
-          zip -qry Blender-iPad-Unofficial.ipa Payload
+          # Use -X to exclude extended file attributes (AppleDouble metadata)
+          zip -qry -X Blender-iPad-Unofficial.ipa Payload
           echo "IPA size: $(wc -c < Blender-iPad-Unofficial.ipa) bytes"
 
       - name: Upload artifact
