@@ -1777,7 +1777,7 @@ index 685b123..dbbae97 100644
    }
  #endif
 diff --git a/source/blender/editors/space_file/fsmenu_system.mm b/source/blender/editors/space_file/fsmenu_system.mm
-index df0c9fd..0d04861 100644
+index df0c9fd..6b650a1 100644
 --- a/source/blender/editors/space_file/fsmenu_system.mm
 +++ b/source/blender/editors/space_file/fsmenu_system.mm
 @@ -213,9 +213,20 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
@@ -1792,7 +1792,7 @@ index df0c9fd..0d04861 100644
 +                        FS_CATEGORY_SYSTEM_BOOKMARKS,
 +                        autosave_path,
 +                        N_("Autosave"),
-+                        ICON_RECOVER_AUTO,
++                        ICON_FILE_BACKUP,
 +                        FS_INSERT_LAST);
 +
 +    UNUSED_VARS(read_bookmarks, fileManager);
