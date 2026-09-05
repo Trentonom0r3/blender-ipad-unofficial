@@ -1,5 +1,5 @@
 diff --git a/build_files/cmake/platform/platform_apple.cmake b/build_files/cmake/platform/platform_apple.cmake
-index ece1c7cf426..ec666786c4b 100644
+index ece1c7c..7e5b505 100644
 --- a/build_files/cmake/platform/platform_apple.cmake
 +++ b/build_files/cmake/platform/platform_apple.cmake
 @@ -178,7 +178,7 @@ if(WITH_APPLE_CROSSPLATFORM)
@@ -12,7 +12,7 @@ index ece1c7cf426..ec666786c4b 100644
  endif()
  if(FIRST_RUN)
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
-index 272c21b1cd1..8fda77f6e06 100644
+index 272c21b..8974c7a 100644
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
 @@ -10,9 +10,11 @@
@@ -50,7 +50,22 @@ index 272c21b1cd1..8fda77f6e06 100644
  // #define IOS_WINDOW_LOGGING
  #if defined(IOS_WINDOW_LOGGING)
  #  define IOS_WINDOW_LOG(...) NSLog(__VA_ARGS__)
-@@ -122,16 +133,51 @@ typedef struct UserInputEvent {
+@@ -112,7 +123,13 @@ typedef struct UserInputEvent {
+ 
+ - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
+ {
+-  CGPoint touch_point = [self locationInView:window->getView()];
++  CGPoint touch_point;
++  if (pencil_touch != nil) {
++    touch_point = [pencil_touch preciseLocationInView:window->getView()];
++  }
++  else {
++    touch_point = [self locationInView:window->getView()];
++  }
+   return window->scalePointToWindow(touch_point);
+ }
+ 
+@@ -122,16 +139,51 @@ typedef struct UserInputEvent {
  @interface GHOSTUIPanGestureRecognizer : UIPanGestureRecognizer
  {
    CGPoint cached_translation;
@@ -102,7 +117,7 @@ index 272c21b1cd1..8fda77f6e06 100644
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
    CGPoint touch_point = [self locationInView:window->getView()];
-@@ -240,7 +286,12 @@ typedef struct UserInputEvent {
+@@ -240,7 +292,12 @@ typedef struct UserInputEvent {
    GHOSTUITapGestureRecognizer *tap4f_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan2f_gesture_recognizer;
@@ -115,7 +130,7 @@ index 272c21b1cd1..8fda77f6e06 100644
    GHOSTUIHoverGestureRecognizer *hover_gesture_recognizer;
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
-@@ -259,6 +310,30 @@ typedef struct UserInputEvent {
+@@ -259,6 +316,30 @@ typedef struct UserInputEvent {
    const char *text_field_string;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
@@ -146,7 +161,7 @@ index 272c21b1cd1..8fda77f6e06 100644
  
    /* Toolbar */
    bool toolbar_enabled;
-@@ -282,7 +357,9 @@ typedef struct UserInputEvent {
+@@ -282,7 +363,9 @@ typedef struct UserInputEvent {
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender;
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender;
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender;
@@ -156,7 +171,7 @@ index 272c21b1cd1..8fda77f6e06 100644
  
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -306,6 +383,12 @@ typedef struct UserInputEvent {
+@@ -306,6 +389,12 @@ typedef struct UserInputEvent {
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
@@ -169,7 +184,7 @@ index 272c21b1cd1..8fda77f6e06 100644
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
  
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +418,22 @@ typedef struct UserInputEvent {
+@@ -335,6 +424,22 @@ typedef struct UserInputEvent {
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -192,7 +207,7 @@ index 272c21b1cd1..8fda77f6e06 100644
  }
  
  - (void)registerGestureRecognizers
-@@ -392,6 +491,32 @@ typedef struct UserInputEvent {
+@@ -392,6 +497,32 @@ typedef struct UserInputEvent {
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
  
@@ -225,7 +240,7 @@ index 272c21b1cd1..8fda77f6e06 100644
    /* Pan gesture recognizer - two fingers 3D UI. */
    pan2f_gesture_recognizer = [[GHOSTUIPanGestureRecognizer alloc]
        initWithTarget:self
-@@ -411,6 +536,19 @@ typedef struct UserInputEvent {
+@@ -411,6 +542,19 @@ typedef struct UserInputEvent {
    zoom_gesture_recognizer.cancelsTouchesInView = false;
    [window->getView() addGestureRecognizer:zoom_gesture_recognizer];
  
@@ -245,7 +260,78 @@ index 272c21b1cd1..8fda77f6e06 100644
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
        initWithTarget:self
-@@ -677,12 +815,73 @@ typedef struct UserInputEvent {
+@@ -519,13 +663,19 @@ typedef struct UserInputEvent {
+                                       2));
+           break;
+         case UserInputEvent::EventTypes::PENCIL_TAP:
+-          /* Simulate clicking with the right mouse button. */
++          /* Apple Pencil barrel double-tap / squeeze: emit Right Click (down + up). */
+           system->pushEvent(
+               new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
+                                     GHOST_kEventButtonDown,
+                                     window,
+                                     GHOST_kButtonMaskRight,
+                                     tablet_data));
++          system->pushEvent(
++              new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++                                    GHOST_kEventButtonUp,
++                                    window,
++                                    GHOST_kButtonMaskRight,
++                                    tablet_data));
+           break;
+         default:
+           GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
+@@ -579,9 +729,12 @@ typedef struct UserInputEvent {
+ 
+         tablet_data.Active = GHOST_kTabletModeStylus;
+ 
+-        /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
+-        tablet_data.Pressure = current_pencil_touch.force /
+-                               current_pencil_touch.maximumPossibleForce;
++        /* Map apple pessure Range to Blender range with responsive gamma 0.70 power curve:
++         * 0.0 (not touching) to 1.0 (full pressure). */
++        float raw_force = (current_pencil_touch.maximumPossibleForce > 0.0f) ?
++                              (current_pencil_touch.force / current_pencil_touch.maximumPossibleForce) :
++                              0.0f;
++        tablet_data.Pressure = powf(raw_force, 0.70f);
+ 
+         CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
+         CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
+@@ -645,6 +798,15 @@ typedef struct UserInputEvent {
+ 
+   system->pushEvent(new GHOST_Event(
+       GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventTwoFingerTap, window));
++
++  /* Standard tablet gesture: 2-finger screen tap -> Undo (Ctrl+Z). */
++  GHOST_IWindow *active_win = system->getWindowManager()->getActiveWindow();
++  if (!active_win) { active_win = window; }
++  uint64_t now = GHOST_GetMilliSeconds((GHOST_SystemHandle)system);
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyDown, active_win, GHOST_kKeyLeftControl, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyDown, active_win, GHOST_kKeyZ, false, "z"));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyUp, active_win, GHOST_kKeyZ, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyUp, active_win, GHOST_kKeyLeftControl, false, nullptr));
+ }
+ 
+ - (void)handleTap3F:(GHOSTUITapGestureRecognizer *)sender
+@@ -660,6 +822,17 @@ typedef struct UserInputEvent {
+ 
+   system->pushEvent(new GHOST_Event(
+       GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventThreeFingerTap, window));
++
++  /* Standard tablet gesture: 3-finger screen tap -> Redo (Ctrl+Shift+Z). */
++  GHOST_IWindow *active_win = system->getWindowManager()->getActiveWindow();
++  if (!active_win) { active_win = window; }
++  uint64_t now = GHOST_GetMilliSeconds((GHOST_SystemHandle)system);
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyDown, active_win, GHOST_kKeyLeftControl, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyDown, active_win, GHOST_kKeyLeftShift, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyDown, active_win, GHOST_kKeyZ, false, "Z"));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyUp, active_win, GHOST_kKeyZ, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyUp, active_win, GHOST_kKeyLeftShift, false, nullptr));
++  system->pushEvent(new GHOST_EventKey(now, GHOST_kEventKeyUp, active_win, GHOST_kKeyLeftControl, false, nullptr));
+ }
+ 
+ - (void)handleTap4F:(GHOSTUITapGestureRecognizer *)sender
+@@ -677,12 +850,144 @@ typedef struct UserInputEvent {
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
  
@@ -279,13 +365,27 @@ index 272c21b1cd1..8fda77f6e06 100644
 +          GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
 +          window, GHOST_kEventWheelAxisVertical, 1));
 +    }
-+    (void)dx;
++
++    scroll_accum_x += dx;
++    while (scroll_accum_x >= step) {
++      scroll_accum_x -= step;
++      system->pushEvent(new GHOST_EventWheel(
++          GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++          window, GHOST_kEventWheelAxisHorizontal, -1));
++    }
++    while (scroll_accum_x <= -step) {
++      scroll_accum_x += step;
++      system->pushEvent(new GHOST_EventWheel(
++          GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++          window, GHOST_kEventWheelAxisHorizontal, 1));
++    }
 +    return;
 +  }
 +  if (sender.state == UIGestureRecognizerStateEnded ||
 +      sender.state == UIGestureRecognizerStateCancelled ||
 +      sender.state == UIGestureRecognizerStateFailed) {
 +    scroll_accum_y = 0.0f;
++    scroll_accum_x = 0.0f;
 +    return;
 +  }
 +}
@@ -295,7 +395,6 @@ index 272c21b1cd1..8fda77f6e06 100644
    CGPoint touch_point = [sender getScaledTouchPoint:window];
    CGPoint translation = [sender getScaledTranslation:window];
 -  bool pencil_pan = current_pencil_touch ? true : false;
--
 +  /* Detect the pencil from the recognizer (captured in its own touchesBegan, which
 +   * runs BEFORE this action) — current_pencil_touch (set in the view's
 +   * touchesBegan) is not yet populated on the gesture's Began, so relying on it
@@ -305,13 +404,70 @@ index 272c21b1cd1..8fda77f6e06 100644
 +  if (pen == nil) { pen = current_pencil_touch; }
 +  bool pencil_pan = (pen != nil);
 +
++  /* Single-finger direct touch pan: route to smooth vertical/horizontal UI scroll events
++   * so dragging with 1 finger scrolls menus, header bars (workspace tabs/mode selectors),
++   * and sidebars (Properties/Outliner), while taps execute clicks via tap_gesture_recognizer. */
++  if (!pencil_pan) {
++    if (sender.state == UIGestureRecognizerStateBegan) {
++      last_scroll_y = 0.0f;
++      last_scroll_x = 0.0f;
++      scroll_accum_y = 0.0f;
++      scroll_accum_x = 0.0f;
++      return;
++    }
++    if (sender.state == UIGestureRecognizerStateChanged) {
++      CGPoint t = [sender translationInView:window->getView()];
++      CGFloat dy = t.y - last_scroll_y;
++      CGFloat dx = t.x - last_scroll_x;
++      last_scroll_y = t.y;
++      last_scroll_x = t.x;
++
++      scroll_accum_y += dy;
++      scroll_accum_x += dx;
++      const CGFloat step = 15.0f;
++      while (scroll_accum_y >= step) {
++        scroll_accum_y -= step;
++        system->pushEvent(new GHOST_EventWheel(
++            GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++            window, GHOST_kEventWheelAxisVertical, -1));
++      }
++      while (scroll_accum_y <= -step) {
++        scroll_accum_y += step;
++        system->pushEvent(new GHOST_EventWheel(
++            GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++            window, GHOST_kEventWheelAxisVertical, 1));
++      }
++      while (scroll_accum_x >= step) {
++        scroll_accum_x -= step;
++        system->pushEvent(new GHOST_EventWheel(
++            GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++            window, GHOST_kEventWheelAxisHorizontal, -1));
++      }
++      while (scroll_accum_x <= -step) {
++        scroll_accum_x += step;
++        system->pushEvent(new GHOST_EventWheel(
++            GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
++            window, GHOST_kEventWheelAxisHorizontal, 1));
++      }
++      return;
++    }
++    if (sender.state == UIGestureRecognizerStateEnded ||
++        sender.state == UIGestureRecognizerStateCancelled ||
++        sender.state == UIGestureRecognizerStateFailed) {
++      scroll_accum_y = 0.0f;
++      scroll_accum_x = 0.0f;
++      return;
++    }
++  }
+ 
 +  /* Refresh tablet data from the pencil so the FIRST stroke sample
-+   * (Began -> LEFT_BUTTON_DOWN) carries real stylus pressure/tilt. */
++   * (Began -> LEFT_BUTTON_DOWN) carries real stylus pressure/tilt with power curve. */
 +  if (pencil_pan) {
 +    tablet_data.Active = GHOST_kTabletModeStylus;
-+    tablet_data.Pressure = (pen.maximumPossibleForce > 0.0) ?
-+                               (pen.force / pen.maximumPossibleForce) :
-+                               0.0f;
++    float raw_p = (pen.maximumPossibleForce > 0.0f) ?
++                      (pen.force / pen.maximumPossibleForce) :
++                      0.0f;
++    tablet_data.Pressure = powf(raw_p, 0.70f);
 +    CGFloat azimuthAngle = [pen azimuthAngleInView:window->getView()];
 +    CGFloat altitudeAngle = [pen altitudeAngle];
 +    CGFloat maxTilt = cos(0);
@@ -321,7 +477,7 @@ index 272c21b1cd1..8fda77f6e06 100644
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
  
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +889,21 @@ typedef struct UserInputEvent {
+@@ -690,6 +995,22 @@ typedef struct UserInputEvent {
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -332,9 +488,10 @@ index 272c21b1cd1..8fda77f6e06 100644
 +       * lands at full pressure (the "dot" at the stroke start). */
 +      if (current_pencil_touch != nil) {
 +        tablet_data.Active = GHOST_kTabletModeStylus;
-+        tablet_data.Pressure = (current_pencil_touch.maximumPossibleForce > 0.0) ?
++        float raw_p = (current_pencil_touch.maximumPossibleForce > 0.0f) ?
 +            (current_pencil_touch.force / current_pencil_touch.maximumPossibleForce) :
 +            0.0f;
++        tablet_data.Pressure = powf(raw_p, 0.70f);
 +        CGFloat az = [current_pencil_touch azimuthAngleInView:window->getView()];
 +        CGFloat alt = [current_pencil_touch altitudeAngle];
 +        tablet_data.Xtilt = sin(az) * cos(alt);
@@ -343,7 +500,7 @@ index 272c21b1cd1..8fda77f6e06 100644
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +936,104 @@ typedef struct UserInputEvent {
+@@ -722,6 +1043,104 @@ typedef struct UserInputEvent {
    [self generateUserInputEvents:event_info];
  }
  
@@ -448,7 +605,29 @@ index 272c21b1cd1..8fda77f6e06 100644
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -783,14 +1095,43 @@ typedef struct UserInputEvent {
+@@ -736,6 +1155,21 @@ typedef struct UserInputEvent {
+     /* Cache new translation. */
+     [sender setCachedTranslation:translation];
+ 
++    /* Pinch-Zoom Micro-Pan Suppression:
++     * When actively performing a pinch-to-zoom gesture (zoom_gesture_recognizer active),
++     * natural finger asymmetry causes centroid translation drift.
++     * Enforce a deadzone threshold during active zoom to eliminate micro-pan / micro-orbit jitter. */
++    if (zoom_gesture_recognizer.state == UIGestureRecognizerStateBegan ||
++        zoom_gesture_recognizer.state == UIGestureRecognizerStateChanged)
++    {
++      const CGFloat pan_noise_threshold = 4.0f;
++      if (fabs(relative_translation.x) < pan_noise_threshold &&
++          fabs(relative_translation.y) < pan_noise_threshold)
++      {
++        return;
++      }
++    }
++
+     /* Generate pan event if translation is non zero. */
+     if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
+       CGPoint touch_point = [sender getScaledTouchPoint:window];
+@@ -783,14 +1217,43 @@ typedef struct UserInputEvent {
  
  - (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
  {
@@ -496,7 +675,39 @@ index 272c21b1cd1..8fda77f6e06 100644
      UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
      event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
      [self generateUserInputEvents:event_info];
-@@ -1198,11 +1539,316 @@ typedef struct UserInputEvent {
+@@ -845,11 +1308,31 @@ typedef struct UserInputEvent {
+ 
+ - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
+ {
++  IOS_INPUT_LOG(@"PENCIL TAP on barrel");
+   UserInputEvent event_info(nullptr, nullptr, nullptr, true);
+   event_info.add_event(UserInputEvent::EventTypes::PENCIL_TAP);
+   [self generateUserInputEvents:event_info];
+ }
+ 
++/* Apple Pencil Pro barrel squeeze gesture (iPadOS 17.5+) */
++- (void)pencilInteraction:(UIPencilInteraction *)interaction didReceiveSqueeze:(UIPencilHoverPose *)hoverPose API_AVAILABLE(ios(17.5))
++{
++  IOS_INPUT_LOG(@"PENCIL PRO SQUEEZE received");
++  /* Immediate haptic click feedback */
++  UIImpactFeedbackGenerator *haptic = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
++  [haptic prepare];
++  [haptic impactOccurred];
++
++  CGPoint touch_point = hoverPose ? [hoverPose location] : CGPointMake(mouse_cursor_x, mouse_cursor_y);
++  touch_point = window->scalePointToWindow(touch_point);
++
++  /* Send cursor move to pencil tip location followed by right-click (Context / Pie menu) */
++  UserInputEvent event_info(&touch_point, nullptr, nullptr, true);
++  event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
++  event_info.add_event(UserInputEvent::EventTypes::PENCIL_TAP);
++  [self generateUserInputEvents:event_info];
++}
++
+ - (void)beginFrame
+ {
+ }
+@@ -1198,11 +1681,316 @@ typedef struct UserInputEvent {
    }
  }
  
@@ -813,7 +1024,7 @@ index 272c21b1cd1..8fda77f6e06 100644
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1480,6 +2126,18 @@ GHOST_WindowIOS::~GHOST_WindowIOS()
+@@ -1480,6 +2268,18 @@ GHOST_WindowIOS::~GHOST_WindowIOS()
      parent_window_->requestToActivateWindow();
      parent_window_ = nil;
    }
@@ -832,7 +1043,7 @@ index 272c21b1cd1..8fda77f6e06 100644
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
      IOS_WINDOW_LOG(@"~GHOST_WindowIOS(): Warning, deactivating the active window %p?", this);
-@@ -1499,6 +2157,9 @@ GHOST_WindowIOS::~GHOST_WindowIOS()
+@@ -1499,6 +2299,9 @@ GHOST_WindowIOS::~GHOST_WindowIOS()
  
    /* Release window. */
    if (rootWindow) {
@@ -842,8 +1053,465 @@ index 272c21b1cd1..8fda77f6e06 100644
      [rootWindow release];
      rootWindow = nil;
    }
+diff --git a/release/datafiles/userdef/userdef_default.c b/release/datafiles/userdef/userdef_default.c
+index 899139e..e118114 100644
+--- a/release/datafiles/userdef/userdef_default.c
++++ b/release/datafiles/userdef/userdef_default.c
+@@ -64,7 +64,11 @@ const UserDef U_default = {
+     .audioformat = 0x24,
+     .audiochannels = 2,
+ 
++#ifdef WITH_APPLE_CROSSPLATFORM
++    .ui_scale = 1.30,
++#else
+     .ui_scale = 1.0,
++#endif
+     .ui_line_width = 0,
+     .border_width = 2,
+ 
+diff --git a/release/datafiles/userdef/userdef_default_theme.c b/release/datafiles/userdef/userdef_default_theme.c
+index b6e2a3d..0daebef 100644
+--- a/release/datafiles/userdef/userdef_default_theme.c
++++ b/release/datafiles/userdef/userdef_default_theme.c
+@@ -22,204 +22,204 @@ const bTheme U_theme_default = {
+   .name = "Default",
+   .tui = {
+     .wcol_regular = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0x1d1d1d80),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_tool = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x1a1a1fff),
++      .inner_sel = RGBA(0x32241aff),
+       .item = RGBA(0xffffffff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_toolbar_item = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x282828ff),
+-      .inner_sel = RGBA(0x4772b3ff),
+-      .item = RGBA(0xffffffb3),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x1a1a1fff),
++      .inner_sel = RGBA(0x32241aff),
++      .item = RGBA(0xffffffcc),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_text = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x1d1d1dff),
+-      .inner_sel = RGBA(0x181818ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x141417ff),
++      .inner_sel = RGBA(0x121214ff),
+       .item = RGBA(0xffffff33),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_radio = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0x252525ff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_option = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0xffffffff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_toggle = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0x252525ff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_num = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x222222ff),
+-      .item = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0x18181cff),
++      .item = RGBA(0xe87d0dff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_numslider = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x545454ff),
+-      .inner_sel = RGBA(0x222222ff),
+-      .item = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0x18181cff),
++      .item = RGBA(0xe87d0dff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_tab = {
+-      .outline = RGBA(0x1d1d1dff),
+-      .outline_sel = RGBA(0x1d1d1dff),
+-      .inner = RGBA(0x1d1d1dff),
+-      .inner_sel = RGBA(0x303030ff),
+-      .item = RGBA(0x1d1d1dff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x1a1a1eff),
++      .inner_sel = RGBA(0xe87d0dff),
++      .item = RGBA(0x1a1a1eff),
+       .text = RGBA(0x989898ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_menu = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x282828ff),
+-      .inner_sel = RGBA(0x4772b3b3),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x1e1e23ff),
++      .inner_sel = RGBA(0xe87d0db3),
+       .item = RGBA(0xd9d9d9ff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_pulldown = {
+-      .outline = RGBA(0x3d3d3d00),
+-      .outline_sel = RGBA(0x3d3d3d00),
+-      .inner = RGBA(0x22222200),
++      .outline = RGBA(0x2c2c3400),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x22222700),
+       .inner_sel = RGBA(0xffffff1a),
+       .item = RGBA(0xffffff8f),
+       .text = RGBA(0xd9d9d9ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_menu_back = {
+-      .outline = RGBA(0x242424ff),
+-      .outline_sel = RGBA(0x242424ff),
+-      .inner = RGBA(0x181818ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0x2c2c34ff),
++      .inner = RGBA(0x141418f2),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0xd9d9d9ff),
+       .text = RGBA(0x999999ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_menu_item = {
+-      .outline = RGBA(0x3d3d3d00),
+-      .outline_sel = RGBA(0x3d3d3d00),
+-      .inner = RGBA(0x18181800),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c3400),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x14141800),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0xffffff8f),
+       .text = RGBA(0xddddddff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_tooltip = {
+-      .outline = RGBA(0x242424ff),
+-      .outline_sel = RGBA(0x242424ff),
+-      .inner = RGBA(0x1d1d1dff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0x2c2c34ff),
++      .inner = RGBA(0x141418f5),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0xd9d9d9ff),
+       .text = RGBA(0xd9d9d9ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_box = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x1d1d1d80),
+-      .inner_sel = RGBA(0x545454ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0x2c2c34ff),
++      .inner = RGBA(0x16161a80),
++      .inner_sel = RGBA(0x222227ff),
+       .item = RGBA(0x191919ff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_scroll = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x22222200),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0x2c2c34ff),
++      .inner = RGBA(0x22222700),
+       .inner_sel = RGBA(0xffffffff),
+-      .item = RGBA(0x545454ff),
++      .item = RGBA(0x44444eff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.5f,
++      .roundness = 0.85f,
+     },
+     .wcol_progress = {
+-      .outline = RGBA(0x3d3d3dff),
+-      .outline_sel = RGBA(0x3d3d3dff),
+-      .inner = RGBA(0x222222ff),
+-      .inner_sel = RGBA(0x4772b3ff),
+-      .item = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0x2c2c34ff),
++      .inner = RGBA(0x222227ff),
++      .inner_sel = RGBA(0xe87d0dff),
++      .item = RGBA(0xe87d0dff),
+       .text = RGBA(0xe6e6e6ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_list_item = {
+       .outline = RGBA(0x2d2d2d00),
+-      .outline_sel = RGBA(0x2d2d2dff),
++      .outline_sel = RGBA(0xe87d0dff),
+       .inner = RGBA(0xffffff00),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0xffffff33),
+       .text = RGBA(0xccccccff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.85f,
+     },
+     .wcol_pie_menu = {
+-      .outline = RGBA(0x242424ff),
+-      .outline_sel = RGBA(0x242424ff),
+-      .inner = RGBA(0x181818ff),
+-      .inner_sel = RGBA(0x4772b3ff),
++      .outline = RGBA(0x2c2c34ff),
++      .outline_sel = RGBA(0xe87d0dff),
++      .inner = RGBA(0x141418f2),
++      .inner_sel = RGBA(0xe87d0dff),
+       .item = RGBA(0x545454ff),
+       .text = RGBA(0xd9d9d9ff),
+       .text_sel = RGBA(0xffffffff),
+-      .roundness = 0.2f,
++      .roundness = 0.90f,
+     },
+     .wcol_state = {
+       .error = RGBA(0x771111ff),
+@@ -268,18 +268,18 @@ const bTheme U_theme_default = {
+     .icon_shading = RGBA(0xcc6670ff),
+     .icon_folder = RGBA(0xccad63ff),
+     .icon_autokey = RGBA(0xab3c48ff),
+-    .panel_roundness = 0.4f,
+-    .panel_header = RGBA(0x3d3d3dff),
+-    .panel_back = RGBA(0x3d3d3dff),
++    .panel_roundness = 0.80f,
++    .panel_header = RGBA(0x1a1a1fff),
++    .panel_back = RGBA(0x16161aff),
+     .panel_sub_back = RGBA(0x0000001f),
+-    .panel_outline = RGBA(0xffffff11),
+-    .panel_title = RGBA(0xe6e6e6ff),
++    .panel_outline = RGBA(0x2c2c34ff),
++    .panel_title = RGBA(0xffffffff),
+     .panel_text = RGBA(0xe6e6e6ff),
+-    .panel_active = RGBA(0x4772b3ff),
++    .panel_active = RGBA(0xe87d0dff),
+   },
+   .common = {
+     .anim = {
+-      .playhead = RGBA(0x4772b3ff),
++      .playhead = RGBA(0xe87d0dff),
+       .preview_range = RGBA(0xa14d0066),
+       .time_marker = RGBA(0xffffff4d),
+       .time_marker_selected = RGBA(0xffffffb3),
+@@ -319,27 +319,27 @@ const bTheme U_theme_default = {
+     },
+   },
+   .space_properties = {
+-    .back = RGBA(0x30303000),
+-    .title = RGBA(0xe6e6e6ff),
++    .back = RGBA(0x16161a00),
++    .title = RGBA(0xffffffff),
+     .text = RGBA(0xe6e6e6ff),
+     .text_hi = RGBA(0xffffffff),
+-    .header = RGBA(0x303030b3),
++    .header = RGBA(0x1a1a1fb3),
+     .header_text = RGBA(0xeeeeeeff),
+     .header_text_hi = RGBA(0xffffffff),
+-    .tab_back = RGBA(0x1d1d1d00),
+-    .button = RGBA(0x303030ff),
++    .tab_back = RGBA(0x14141700),
++    .button = RGBA(0x222227ff),
+     .vertex_size = 3,
+     .outline_width = 1,
+     .facedot_size = 4,
+-    .match = RGBA(0x4772b3ff),
++    .match = RGBA(0xe87d0dff),
+   },
+   .space_view3d = {
+-    .back = RGBA(0x3d3d3dff),
+-    .back_grad = RGBA(0x30303000),
++    .back = RGBA(0x18181cff),
++    .back_grad = RGBA(0x121215ff),
+     .title = RGBA(0xeeeeeeff),
+     .text = RGBA(0xe6e6e6ff),
+     .text_hi = RGBA(0xffffffff),
+-    .header = RGBA(0x303030b3),
++    .header = RGBA(0x141418e6),
+     .header_text = RGBA(0xeeeeeeff),
+     .header_text_hi = RGBA(0xffffffff),
+     .tab_back = RGBA(0x18181800),
+@@ -646,21 +646,21 @@ const bTheme U_theme_default = {
+     .line_numbers = RGBA(0x777777ff),
+   },
+   .space_outliner = {
+-    .back = RGBA(0x28282800),
++    .back = RGBA(0x14141700),
+     .title = RGBA(0xffffffff),
+     .text = RGBA(0xc3c3c3ff),
+     .text_hi = RGBA(0xffffffff),
+-    .header = RGBA(0x282828b3),
++    .header = RGBA(0x18181cb3),
+     .header_text = RGBA(0xeeeeeeff),
+     .header_text_hi = RGBA(0xffffffff),
+-    .active = RGBA(0x334d80ff),
++    .active = RGBA(0xe87d0dff),
+     .vertex_size = 3,
+     .outline_width = 1,
+     .facedot_size = 4,
+     .match = RGBA(0x337f334c),
+-    .selected_highlight = RGBA(0x1d314dff),
+-    .selected_object = RGBA(0xe96a00ff),
+-    .active_object = RGBA(0xffaf29ff),
++    .selected_highlight = RGBA(0x283040ff),
++    .selected_object = RGBA(0xe87d0dff),
++    .active_object = RGBA(0xff9a24ff),
+     .edited_object = RGBA(0x00806266),
+     .row_alternate = RGBA(0xffffff04),
+   },
+@@ -781,11 +781,11 @@ const bTheme U_theme_default = {
+     .track_selected = RGBA(0xe7f7e74d),
+   },
+   .space_topbar = {
+-    .back = RGBA(0x18181800),
++    .back = RGBA(0x12121500),
+     .title = RGBA(0xffffffff),
+     .text = RGBA(0xe6e6e6ff),
+     .text_hi = RGBA(0xffffffff),
+-    .header = RGBA(0x181818b3),
++    .header = RGBA(0x121215b3),
+     .header_text = RGBA(0xeeeeeeff),
+     .header_text_hi = RGBA(0xffffffff),
+     .vertex_size = 3,
+@@ -794,11 +794,11 @@ const bTheme U_theme_default = {
+     .gp_vertex_size = 3,
+   },
+   .space_statusbar = {
+-    .back = RGBA(0x30303000),
++    .back = RGBA(0x12121500),
+     .title = RGBA(0xffffffff),
+     .text = RGBA(0x838383ff),
+     .text_hi = RGBA(0xffffffff),
+-    .header = RGBA(0x181818b3),
++    .header = RGBA(0x121215b3),
+     .header_text = RGBA(0x888888ff),
+     .header_text_hi = RGBA(0xffffffff),
+     .vertex_size = 3,
+@@ -833,8 +833,8 @@ const bTheme U_theme_default = {
+     .row_alternate = RGBA(0xffffff04),
+   },
+   .asset_shelf = {
+-    .header_back = RGBA(0x1d1d1dff),
+-    .back = RGBA(0x303030ff),
++    .header_back = RGBA(0x18181cff),
++    .back = RGBA(0x141417ff),
+   },
+   .tarm = {
+     {
 diff --git a/release/ios/Blender.app/Info.plist b/release/ios/Blender.app/Info.plist
-index e478b5b7a1a..521a2c40587 100644
+index e478b5b..e46dc2d 100644
 --- a/release/ios/Blender.app/Info.plist
 +++ b/release/ios/Blender.app/Info.plist
 @@ -21,7 +21,7 @@
@@ -882,11 +1550,47 @@ index e478b5b7a1a..521a2c40587 100644
  			<key>UTTypeDescription</key>
  			<string>Blender File</string>
  			<key>UTTypeIcons</key>
+diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space_view3d.py
+index 8840d0f..239ebf4 100644
+--- a/scripts/startup/bl_ui/space_view3d.py
++++ b/scripts/startup/bl_ui/space_view3d.py
+@@ -6017,6 +6017,23 @@ class VIEW3D_MT_shading_pie(Menu):
+         pie.prop(view.shading, "type", expand=True)
+ 
+ 
++class VIEW3D_MT_tablet_mesh_edit_pie(Menu):
++    bl_label = "Edit Mesh"
++
++    def draw(self, context):
++        layout = self.layout
++        pie = layout.menu_pie()
++
++        # Contextual modeling tools matching tablet radial UI:
++        # West: Inset | East: Bevel | South: Loop Cut | North: Extrude | NW: Knife | NE: Subdivide
++        pie.operator("mesh.inset", text="Inset", icon='FACESEL')
++        pie.operator("mesh.bevel", text="Bevel", icon='MOD_BEVEL')
++        pie.operator("mesh.loopcut_slide", text="Loop Cut", icon='SNAP_EDGE')
++        pie.operator("mesh.extrude_region_move", text="Extrude", icon='EXPORT')
++        pie.operator("mesh.knife_tool", text="Knife", icon='SCULPTMODE_HLT')
++        pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
++
++
+ class VIEW3D_MT_shading_ex_pie(Menu):
+     bl_label = "Shading"
+ 
+@@ -9279,6 +9296,7 @@ classes = (
+     VIEW3D_MT_transform_gizmo_pie,
+     VIEW3D_MT_shading_pie,
+     VIEW3D_MT_shading_ex_pie,
++    VIEW3D_MT_tablet_mesh_edit_pie,
+     VIEW3D_MT_pivot_pie,
+     VIEW3D_MT_snap_pie,
+     VIEW3D_MT_orientations_pie,
 diff --git a/source/blender/editors/interface/view2d/view2d_ops.cc b/source/blender/editors/interface/view2d/view2d_ops.cc
-index 685b1234918..21934bf1e37 100644
+index 685b123..dbbae97 100644
 --- a/source/blender/editors/interface/view2d/view2d_ops.cc
 +++ b/source/blender/editors/interface/view2d/view2d_ops.cc
-@@ -232,12 +232,13 @@ static wmOperatorStatus view_pan_exec(bContext *C, wmOperator *op)
+@@ -232,12 +232,10 @@ static wmOperatorStatus view_pan_exec(bContext *C, wmOperator *op)
  static wmOperatorStatus view_pan_invoke(bContext *C, wmOperator *op, const wmEvent *event)
  {
  #ifdef WITH_APPLE_CROSSPLATFORM
@@ -896,18 +1600,15 @@ index 685b1234918..21934bf1e37 100644
 -  if ((area->spacetype == SPACE_FILE || region->regiontype == RGN_TYPE_ASSET_SHELF) &&
 -      !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS))
 -  {
-+  /* On iOS only a two-finger trackpad pan (MOUSEPAN, numFingers==2) may pan/scroll
-+   * a 2D view. A plain MIDDLEMOUSE press must NOT start a modal pan: it cannot be
-+   * driven without continuous cursor-move events on iPad, and starting it would
-+   * block the trackpad pan. This lets external-mouse middle-drag (delivered as a
-+   * 2-finger TRACKPADPAN) pan the UV/Image and other 2D editors, matching the 3D
-+   * viewport's behaviour. */
-+  if (!(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
++  /* On iOS, allow trackpad/scroll pans (MOUSEPAN) for single-finger and two-finger
++   * scrolling in 2D views (Outliner, Properties, UV/Image, Graph), while preventing
++   * plain unassisted MIDDLEMOUSE presses from capturing an undrivable modal drag. */
++  if (event->type == MIDDLEMOUSE && !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
      return OPERATOR_FINISHED;
    }
  #endif
 diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
-index bbb12e2e723..1e5cbc1c9c9 100644
+index bbb12e2..73d0af3 100644
 --- a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
 +++ b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
 @@ -106,8 +106,12 @@ static wmOperatorStatus viewmove_invoke_impl(bContext *C,
@@ -925,3 +1626,22 @@ index bbb12e2e723..1e5cbc1c9c9 100644
      return OPERATOR_FINISHED;
    }
  #endif
+diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/windowmanager/intern/wm_window.cc
+index 0de9e58..dd5ce25 100644
+--- a/source/blender/windowmanager/intern/wm_window.cc
++++ b/source/blender/windowmanager/intern/wm_window.cc
+@@ -686,6 +686,14 @@ void WM_window_dpi_set_userdef(const wmWindow *win)
+     CLAMP(U.ui_scale, 0.25f, 4.0f);
+   }
+ 
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* iPad / Tablet touch ergonomics: ensure base UI scale is at least 1.30x
++   * so buttons, headers, and tabs comfortably match Apple HIG touch targets (~38-44pt). */
++  if (U.ui_scale < 1.30f) {
++    U.ui_scale = 1.30f;
++  }
++#endif
++
+   /* Blender's UI drawing assumes DPI 72 as a good default following macOS
+    * while Windows and Linux use DPI 96. GHOST assumes a default 96 so we
+    * remap the DPI to Blender's convention. */
