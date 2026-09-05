@@ -81,6 +81,7 @@ $PB -c "Set :UTExportedTypeDeclarations:0:UTTypeIdentifier com.unofficial.blende
 
 # File sharing & Documents access for iOS Files app ("On My iPad").
 $PB -c "Delete :UISupportsDocumentBrowser" "$PL" 2>/dev/null || true
+$PB -c "Delete :com.apple.developer.kernel.increased-memory-limit" "$PL" 2>/dev/null || true
 $PB -c "Set :UIFileSharingEnabled true" "$PL" 2>/dev/null \
   || $PB -c "Add :UIFileSharingEnabled bool true" "$PL"
 $PB -c "Set :LSSupportsOpeningDocumentsInPlace true" "$PL" 2>/dev/null \

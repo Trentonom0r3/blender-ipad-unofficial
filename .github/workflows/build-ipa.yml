@@ -130,6 +130,19 @@ jobs:
           find blender/lib/ios_arm64 -name '*.dylib' \( -type f -o -type l \) -exec cp -fL {} "$LIBDST/" \; || true
           find "$APP" -name 'libpython*.dylib' -exec cp -fn {} "$LIBDST/" \; || true
 
+          # Dereference all symlinks into real binaries (fixes Windows zip extraction creating text stubs)
+          if [ -f "$APP/Assets/lib/libz.1.3.1.dylib" ]; then
+            cp -f "$APP/Assets/lib/libz.1.3.1.dylib" "$APP/Assets/lib/libz.1.dylib"
+            cp -f "$APP/Assets/lib/libz.1.3.1.dylib" "$APP/Assets/lib/libz.dylib"
+          fi
+
+          # Remove non-standard executable shell scripts from iOS app root
+          rm -f "$APP/blender-system-info.sh"
+
+          # Populate standard iOS Frameworks/ directory with dylibs for signing tools
+          mkdir -p "$APP/Frameworks"
+          cp -f "$APP/Assets/lib/"*.dylib "$APP/Frameworks/" 2>/dev/null || true
+
           # iPad-Unofficial branding + iOS app icon (iOS ignores the .icns, so inject PNGs).
           bash overlay/build/apply_branding.sh "$APP" overlay/ios/icon/icon_1024.png
 
