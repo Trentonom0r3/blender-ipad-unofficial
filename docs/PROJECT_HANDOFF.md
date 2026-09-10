@@ -1,5 +1,27 @@
 # Project handoff — 2026-09-10
 
+## P0 device regression — startup black screen
+
+User installed successful build 34470580555 (code 9e0995c) on iPad and reports
+completely black startup. **That build fails hardware acceptance.** Earlier
+pending-build statements below are historical. Suspend the broad test protocol.
+
+Likely cause found in renderer lifecycle: controller assigns self.view during
+init, but constructor now relied on loadViewIfNeeded to run viewDidLoad. Metal
+delegate initialization can be skipped; drawInMTKView drives WM_main_loop_body,
+so missing delegate prevents Blender's UI/main loop from running at all.
+Repair separates initializeMetalRenderer from viewDidLoad, explicitly invokes it
+from the GHOST constructor, and guards against double setup. A debug assertion
+checks delegate installation. This restores explicit startup initialization while
+retaining native footer/input fixes. Source-validated only until repair CI/device
+results are recorded; root cause is not yet confirmed on hardware.
+
+Repair acceptance: install the repair IPA without deleting the app/data; launch
+and verify the workspace appears, orbit the cube, then open/close Preferences
+once. Force-quit and relaunch three times. Only resume broader tests if this passes.
+If still black, obtain startup device logs and isolate the remaining view ownership
+changes against de0058c; do not continue tablet features on a broken startup.
+
 ## Resume here — final checkpoint
 
 Branch: `codex/ipad-secondary-view-escape`, pushed to origin. Final **code** commit:
