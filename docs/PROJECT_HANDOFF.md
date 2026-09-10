@@ -1,5 +1,20 @@
 # Project handoff — 2026-09-10
 
+## Radial build compiler repair — latest
+
+Run 34537653252 failed with one reported compiler error in the new outside-tap
+handler: `ui_window_to_block_fl(region, block, xy)` supplied three arguments.
+Pinned interface_intern.hh:754 requires separate `float *x, float *y` arguments.
+**5f68206** corrects it to `ui_window_to_block_fl(region, block, &xy[0], &xy[1])`.
+The authoritative patch and scratch implementation/generator are synchronized.
+Full source preflight still passes for 27 files, and diff whitespace checks pass.
+No interaction or layout changes were made in this repair.
+
+Replacement build: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34539552197
+Dispatched at this checkpoint; successful compilation/IPA packaging remain pending.
+Inspect this replacement run next, not the failed run. Device test protocol below
+is unchanged and should only be used after the replacement build succeeds.
+
 ## Radial Pencil tools — latest implementation checkpoint
 
 User requested a radial palette and authorized continuing implementation. **34fd27e**
