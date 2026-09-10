@@ -18,6 +18,52 @@ pinned commit** + this repo's [patch](patches/blender-ipad.patch) + [icon](ios/i
 - ~50 GB free disk, plenty of RAM.
 - `git`, `cmake`.
 
+## Fast checks from Windows
+
+From this overlay repository, run these before pushing or starting an IPA build:
+
+```powershell
+python -m unittest discover -s build -p test_preflight.py -v
+python build/preflight.py
+# After the first run, repeat without network access:
+python build/preflight.py --offline
+```
+
+Preflight downloads only files touched by the patch at the pinned Blender commit.
+It checks patch applicability in a temporary directory, parses plists and Python,
+and checks shell syntax when Bash is available (including Git for Windows' Bash).
+Downloads are cached under `.cache/preflight`. No Blender source checkout, iOS
+libraries, Xcode, or Python packages are needed. It does not compile Objective-C++
+or validate UIKit behavior. Windows object files cannot warm an iOS compiler cache.
+
+The lightweight `preflight` Actions workflow also runs for code changes on branches
+and pull requests. The IPA workflow waits for it before allocating the macOS job.
+
+## Faster repeat Actions builds
+
+The IPA workflow now enables Blender's existing Xcode ccache support. It restores
+compiled objects for the same pinned source, runner architecture, Xcode, and SDK.
+Changes to source, headers, and compiler flags are still checked by ccache. Each
+run saves a new cache snapshot, including successful compilations before a build
+failure. The cache is limited to 2 GB; large builds may evict entries. It does not
+cache the whole Xcode build directory or assume generated files remain valid.
+
+Exact precompiled-library cache hits skip the library updater. The key includes
+the upstream revision and runner architecture. Missing LFS startup data and an
+incorrect target SDK now stop the build before a long compile. Uploading an IPA
+does not redundantly recompress the already zipped archive.
+
+Run the same revision twice on the same branch and compare the compile step and
+the ccache statistics in the job summary. The first run is cold; the second should
+show hits if objects fit in the cache. Disable **use_ccache** on a manual run for
+a cold-build comparison. Compilation, linking, Metal work, and packaging still
+need the macOS runner. No speedup has been measured yet.
+
+GitHub cache visibility is branch-scoped; warming the default branch helps future
+branches and tags reuse that cache. Cache eviction can make a later build cold.
+See [GitHub's caching reference](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching)
+and the pinned [Blender Xcode cache implementation](https://github.com/blender/blender/blob/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/build_files/cmake/platform/platform_apple_xcode.cmake).
+
 ## Steps
 
 ```bash
