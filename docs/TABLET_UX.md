@@ -1,5 +1,29 @@
 # Tablet UX implementation
 
+## Selected direction: Canvas First
+
+Concept B is the selected product direction: floating contextual controls and a
+larger canvas, with the complete Blender interface available on demand. Quick
+controls supplement existing functionality; they must not replace full editors,
+menus, tool shelves, or properties. Pencil Pro, fingers, and keyboard are the
+primary device-validation setup; no mouse is required for acceptance.
+
+The first UI foundation adds an iPad-only **Canvas** header popover using Blender's
+existing UI toolkit and operators. It offers touch-sized navigation, transform
+tools, undo/redo, playback, camera controls, and menu search. Tools, Sidebar, and
+Asset Shelf can be toggled independently. **Expand Canvas / Restore Editors** uses
+Blender's existing reversible area maximization, retaining the surrounding editor
+layout. No global scale or saved startup layout is forced. The full tool shelf
+remains the route to tools beyond the quick selection.
+
+This is an initial floating popover, not yet the persistent floating dock pictured
+in the concept. On-device validation must check popover placement, operator
+context, touch acquisition, portrait layout, and editor restoration before
+extending the interface. Verify with a non-default workspace and an existing
+project, including Sculpt and Grease Pencil modes. The Pencil squeeze compiler
+failure from the first Actions run is addressed by annotating the delegate method
+with `API_AVAILABLE(ios(17.5))` while retaining its SDK and runtime guards.
+
 ## Architecture
 
 This repository distributes an overlay patch, not a complete Blender checkout. Its

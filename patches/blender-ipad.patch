@@ -644,7 +644,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +#if defined(__IPHONE_17_5) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_5
 +- (void)pencilInteraction:(UIPencilInteraction *)interaction
-+       didReceiveSqueeze:(UIPencilInteractionSqueeze *)squeeze
++       didReceiveSqueeze:(UIPencilInteractionSqueeze *)squeeze API_AVAILABLE(ios(17.5))
 +{
 +  if (@available(iOS 17.5, *)) {
 +    if (squeeze.phase != UIPencilInteractionPhaseEnded ||
@@ -1112,3 +1112,115 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
+diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
+--- a/scripts/startup/bl_ui/__init__.py
++++ b/scripts/startup/bl_ui/__init__.py
+@@ -87,6 +87,7 @@
+     "space_topbar",
+     "space_userpref",
+     "space_view3d",
++    "space_view3d_ipad",
+     "space_view3d_toolbar",
+ 
+     # XXX, keep last so panels show after all other tool options.
+diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/space_view3d_ipad.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/startup/bl_ui/space_view3d_ipad.py
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++"""Compact iPad viewport controls built entirely from existing Blender operators."""
++
++import os
++import sys
++
++import bpy
++from bpy.types import Header, Panel
++
++
++def is_ipad_build():
++    # This port places its executable directly in the iOS .app. macOS uses
++    # Contents/MacOS instead. Also support Python builds with native iOS detection.
++    return sys.platform == 'ios' or os.path.dirname(bpy.app.binary_path).endswith('.app')
++
++
++class VIEW3D_PT_ipad_controls(Panel):
++    bl_label = "Canvas Controls"
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++    bl_ui_units_x = 18
++
++    def draw(self, context):
++        layout = self.layout
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        portrait = context.window.height > context.window.width
++        columns = 1 if portrait else 2
++
++        navigation = layout.grid_flow(row_major=True, columns=columns,
++                                      even_columns=True, even_rows=True, align=True)
++        navigation.scale_y = 1.8
++        navigation.operator('view3d.view_selected', text="Frame Selection", icon='ZOOM_SELECTED')
++        navigation.operator('view3d.view_all', text="Frame Scene", icon='HOME')
++        camera = navigation.column(align=True)
++        camera.enabled = context.scene.camera is not None
++        camera.operator('view3d.view_camera', text="Camera View", icon='VIEW_CAMERA')
++        navigation.operator('screen.screen_full_area', text="Restore Editors" if context.screen.show_fullscreen else "Expand Canvas", icon='FULLSCREEN_ENTER')
++
++        layout.separator()
++        if context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_CURVE', 'EDIT_SURFACE', 'EDIT_ARMATURE', 'POSE'}:
++            tools = layout.grid_flow(row_major=True, columns=columns,
++                                    even_columns=True, even_rows=True, align=True)
++            tools.scale_y = 1.8
++            for name, tool, icon in (
++                    ("Select", 'builtin.select_box', 'RESTRICT_SELECT_OFF'),
++                    ("Move", 'builtin.move', 'TRANSFORM_MOVE'),
++                    ("Rotate", 'builtin.rotate', 'TRANSFORM_ROTATE'),
++                    ("Scale", 'builtin.scale', 'TRANSFORM_SCALE')):
++                tools.operator('wm.tool_set_by_id', text=name, icon=icon).name = tool
++
++        edit = layout.row(align=True)
++        edit.scale_y = 1.8
++        edit.operator('ed.undo', text="Undo", icon='LOOP_BACK')
++        edit.operator('ed.redo', text="Redo", icon='LOOP_FORWARDS')
++
++        layout.separator()
++        chrome = layout.row(align=True)
++        chrome.scale_y = 1.6
++        chrome.prop(context.space_data, 'show_region_toolbar', text="Tools", toggle=True)
++        chrome.prop(context.space_data, 'show_region_ui', text="Sidebar", toggle=True)
++        if hasattr(context.space_data, 'show_region_asset_shelf'):
++            shelf = layout.row()
++            shelf.scale_y = 1.6
++            shelf.prop(context.space_data, 'show_region_asset_shelf', text="Asset Shelf", toggle=True)
++
++        # Quick tools supplement the complete tool shelf and operator search.
++        # Never replace menus or change the user's saved workspace layout here.
++        search = layout.row()
++        search.scale_y = 1.6
++        search.operator('wm.search_menu', text="Search All Commands", icon='VIEWZOOM')
++
++        layout.separator()
++        playback = layout.row(align=True)
++        playback.scale_y = 1.6
++        playback.operator('screen.animation_play', text="Play / Pause", icon='PLAY')
++        playback.prop(context.scene, 'frame_current', text="Frame")
++        if context.scene.camera:
++            camera = layout.column(align=True)
++            camera.scale_y = 1.6
++            camera.prop(context.scene.camera.data, 'lens', text="Camera Lens")
++            camera.operator('view3d.camera_to_view', text="Align Camera to View", icon='CON_CAMERASOLVER')
++
++
++class VIEW3D_HT_ipad_controls(Header):
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++
++    def draw(self, _context):
++        # Text makes the entry easier to acquire than another small icon. The
++        # controls themselves live in an overlay, not a permanent viewport panel.
++        row = self.layout.row(align=True)
++        row.scale_x = 1.4
++        row.popover(panel='VIEW3D_PT_ipad_controls', text="Canvas", icon='TOOL_SETTINGS')
++
++
++classes = (VIEW3D_PT_ipad_controls, VIEW3D_HT_ipad_controls) if is_ipad_build() else ()
