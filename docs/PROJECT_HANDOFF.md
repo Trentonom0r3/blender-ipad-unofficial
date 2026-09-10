@@ -183,3 +183,19 @@ is a separate checkpoint and needs a subsequent build containing both changes.
   only copying the URL path, not Blender's later read. Do not call that coordinated
   file access. Review interactive dismissal/delegate completion and security-scope
   limits too before promoting it. No native-document code was added to the patch.
+
+
+### Input ownership correction
+
+Mouse button release now visits live windows and releases whichever view recorded
+that button-down. Opening a secondary view on mouse-down must not leave the original
+view's drag flag stuck or release a button that the new view never received. Closed
+windows are absent from that lookup; their events are removed by GHOST disposal.
+Shift state is sampled from both physical Shift keys on activation and key changes,
+so holding it while switching views preserves pan rather than unexpectedly orbiting.
+Device regression: open Preferences with the mouse, close it, move without pressing
+anything (no drag); hold Shift while closing Preferences, then middle-drag (pan).
+Also press both Shift keys, release one, then middle-drag: pan should remain active.
+
+Build 34469863293 targets 8a2e12e (before this input ownership correction). A final
+build of the newer checkpoint is required even if that earlier build succeeds.

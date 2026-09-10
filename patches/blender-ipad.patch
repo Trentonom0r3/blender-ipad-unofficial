@@ -840,7 +840,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  - (void)beginFrame
  {
-@@ -1198,11 +1653,326 @@
+@@ -1198,11 +1653,374 @@
    }
  }
  
@@ -962,9 +962,23 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    mouse_input.leftButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
++          /* A button-down can open another window before button-up arrives.
++           * Release its live originating view, not the newly active view. */
++          if (!pressed) {
++            for (GHOST_IWindow *candidate : sys->getWindowManager()->getWindows()) {
++              GHOSTUIWindow *owner = (GHOSTUIWindow *)
++                  static_cast<GHOST_WindowIOS *>(candidate)->getView().window;
++              if (owner && owner->mouse_left_pressed) {
++                owner->mouse_left_pressed = false;
++                sys->pushEvent(new GHOST_EventButton(
++                    sys->getMilliSeconds(), GHOST_kEventButtonUp, candidate,
++                    GHOST_kButtonMaskLeft, GHOST_TABLET_DATA_NONE));
++              }
++            }
++            return;
++          }
 +          GHOSTUIWindow *strong_self = ios_active_input_window(sys);
-+          if (!strong_self || (pressed && strong_self->native_chrome_hovered) ||
-+              (!pressed && !strong_self->mouse_left_pressed)) {
++          if (!strong_self || strong_self->native_chrome_hovered) {
 +            return;
 +          }
 +          if (strong_self) {
@@ -980,9 +994,23 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    mouse_input.rightButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
++          /* A button-down can open another window before button-up arrives.
++           * Release its live originating view, not the newly active view. */
++          if (!pressed) {
++            for (GHOST_IWindow *candidate : sys->getWindowManager()->getWindows()) {
++              GHOSTUIWindow *owner = (GHOSTUIWindow *)
++                  static_cast<GHOST_WindowIOS *>(candidate)->getView().window;
++              if (owner && owner->mouse_right_pressed) {
++                owner->mouse_right_pressed = false;
++                sys->pushEvent(new GHOST_EventButton(
++                    sys->getMilliSeconds(), GHOST_kEventButtonUp, candidate,
++                    GHOST_kButtonMaskRight, GHOST_TABLET_DATA_NONE));
++              }
++            }
++            return;
++          }
 +          GHOSTUIWindow *ss = ios_active_input_window(sys);
-+          if (!ss || (pressed && ss->native_chrome_hovered) ||
-+              (!pressed && !ss->mouse_right_pressed)) {
++          if (!ss || ss->native_chrome_hovered) {
 +            return;
 +          }
 +          if (ss) { ss->mouse_right_pressed = pressed ? true : false; }
@@ -996,9 +1024,23 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    mouse_input.middleButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
++          /* A button-down can open another window before button-up arrives.
++           * Release its live originating view, not the newly active view. */
++          if (!pressed) {
++            for (GHOST_IWindow *candidate : sys->getWindowManager()->getWindows()) {
++              GHOSTUIWindow *owner = (GHOSTUIWindow *)
++                  static_cast<GHOST_WindowIOS *>(candidate)->getView().window;
++              if (owner && owner->mouse_middle_pressed) {
++                owner->mouse_middle_pressed = false;
++                sys->pushEvent(new GHOST_EventButton(
++                    sys->getMilliSeconds(), GHOST_kEventButtonUp, candidate,
++                    GHOST_kButtonMaskMiddle, GHOST_TABLET_DATA_NONE));
++              }
++            }
++            return;
++          }
 +          GHOSTUIWindow *ss = ios_active_input_window(sys);
-+          if (!ss || (pressed && ss->native_chrome_hovered) ||
-+              (!pressed && !ss->mouse_middle_pressed)) {
++          if (!ss || ss->native_chrome_hovered) {
 +            return;
 +          }
 +          if (ss) { ss->mouse_middle_pressed = pressed ? true : false; }
@@ -1105,6 +1147,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +  if (external_keyboard_connected) {
 +    GCKeyboard *kb = [GCKeyboard coalescedKeyboard];
++    /* Activation can happen with Shift already held in another view. */
++    shift_pressed = [[kb.keyboardInput buttonForKeyCode:GCKeyCodeLeftShift] isPressed] ||
++                    [[kb.keyboardInput buttonForKeyCode:GCKeyCodeRightShift] isPressed];
 +    IOS_INPUT_LOG(@"KEYBOARD HANDLER REGISTERING kb=%@", kb);
 +    GHOST_SystemIOS *sys = system;
 +
@@ -1115,7 +1160,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          IOS_INPUT_LOG(@"KEY gccode=%ld ghost=%d pressed=%d", (long)keyCode, (int)ghost_key, pressed);
 +          if (ghost_key == GHOST_kKeyLeftShift || ghost_key == GHOST_kKeyRightShift) {
 +            GHOSTUIWindow *sk = ios_active_input_window(sys);
-+            if (sk) { sk->shift_pressed = pressed ? true : false; }
++            if (sk) {
++              sk->shift_pressed = [[keyboard buttonForKeyCode:GCKeyCodeLeftShift] isPressed] ||
++                                  [[keyboard buttonForKeyCode:GCKeyCodeRightShift] isPressed];
++            }
 +          }
 +          /* Consume the complete closing key sequence, including repeat and release.
 +           * Otherwise a held Escape can close several views or leak into the workspace. */
@@ -1167,7 +1215,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2068,11 @@
+@@ -1298,7 +2116,11 @@
  
  @interface GHOST_IOSViewController : UIViewController
  
@@ -1180,7 +1228,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  @end
  
-@@ -1306,22 +2080,139 @@
+@@ -1306,22 +2128,139 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -1326,7 +1374,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2256,12 @@
+@@ -1365,11 +2304,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -1340,7 +1388,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2269,6 @@
+@@ -1377,7 +2317,6 @@
  
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1348,7 +1396,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
  
    /* Create view controller. */
-@@ -1391,7 +2282,6 @@
+@@ -1391,7 +2330,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -1356,7 +1404,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2290,6 @@
+@@ -1400,7 +2338,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1364,7 +1412,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
  
-@@ -1410,8 +2299,10 @@
+@@ -1410,8 +2347,10 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
  
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -1377,7 +1425,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
  
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2315,14 @@
+@@ -1424,10 +2363,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -1393,7 +1441,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
  
    /* Initialize Metal device. */
-@@ -1474,11 +2369,24 @@
+@@ -1474,11 +2417,24 @@
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
  
    releaseNativeHandles();
@@ -1419,7 +1467,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2407,9 @@
+@@ -1499,6 +2455,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -1429,7 +1477,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2529,7 @@
+@@ -1618,7 +2577,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
  
@@ -1438,7 +1486,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +2819,7 @@
+@@ -1908,6 +2867,7 @@
  
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -1446,7 +1494,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
  
-@@ -1918,6 +2830,11 @@
+@@ -1918,6 +2878,11 @@
                   this);
  
    system_ios_->current_active_window_ = this;
