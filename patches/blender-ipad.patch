@@ -2505,7 +2505,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 +    }
 +    if (event->type == LEFTMOUSE && event->val == KM_PRESS) {
 +      float xy[2] = {float(event->xy[0]), float(event->xy[1])};
-+      ui_window_to_block_fl(region, block, xy);
++      ui_window_to_block_fl(region, block, &xy[0], &xy[1]);
 +      if (!BLI_rctf_isect_pt(&block->rect, xy[0], xy[1])) {
 +        menu->menuretval = UI_RETURN_CANCEL;
 +        return WM_UI_HANDLER_BREAK;
