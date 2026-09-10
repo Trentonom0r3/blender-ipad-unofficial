@@ -15,6 +15,14 @@ ICON="${2:?usage: apply_branding.sh <Blender.app> <icon-1024.png>}"
 PL="$APP/Info.plist"
 PB=/usr/libexec/PlistBuddy
 
+# PlistBuddy Add can create a new plist in an incomplete build directory.
+# Refuse that directory instead of manufacturing a branding-only app bundle.
+test -f "$PL" || { echo "Missing app Info.plist: $PL" >&2; exit 1; }
+EXECUTABLE="$($PB -c 'Print :CFBundleExecutable' "$PL")"
+test -n "$EXECUTABLE" && test -f "$APP/$EXECUTABLE" || {
+  echo "Missing app executable in $APP" >&2; exit 1;
+}
+
 # iOS PNG app icons (sizes for iPad: 76@1x, 76@2x=152, 83.5@2x=167; plus 60@2x=120 fallback).
 sips -z 120 120 "$ICON" --out "$APP/AppIcon60x60@2x.png"          >/dev/null
 sips -z 76  76  "$ICON" --out "$APP/AppIcon76x76~ipad.png"        >/dev/null

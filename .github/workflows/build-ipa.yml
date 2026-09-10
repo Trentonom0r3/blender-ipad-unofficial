@@ -190,7 +190,7 @@ jobs:
 
       - name: Package .ipa
         run: |
-          APP="$(find build_ios -name Blender.app -type d | head -1)"
+          APP="$(python3 overlay/build/select_ios_app.py build_ios)"
           echo "app bundle: $APP"
           test -n "$APP" || { echo "::error::Blender.app not found"; exit 1; }
           # Bundle precompiled iOS dylibs into the app (mirrors the reference recipe).
