@@ -11,6 +11,118 @@ index ece1c7cf426..ec666786c4b 100644
    endif()
  endif()
  if(FIRST_RUN)
+diff --git a/release/ios/Blender.app/Info.plist b/release/ios/Blender.app/Info.plist
+index e478b5b7a1a..521a2c40587 100644
+--- a/release/ios/Blender.app/Info.plist
++++ b/release/ios/Blender.app/Info.plist
+@@ -21,7 +21,7 @@
+ 			<true/>
+ 			<key>LSItemContentTypes</key>
+ 			<array>
+-				<string>org.blenderfoundation.blender.file</string>
++				<string>com.unofficial.blenderipad.file</string>
+ 			</array>
+ 		</dict>
+ 	</array>
+@@ -32,13 +32,15 @@
+ 	<key>CFBundleExecutable</key>
+ 	<string>Blender</string>
+ 	<key>CFBundleGetInfoString</key>
+-	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Blender Foundation</string>
++	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Unofficial iPad build — not affiliated with the Blender Foundation</string>
+ 	<key>CFBundleIconFile</key>
+ 	<string>Assets/blender_icon.icns</string>
+ 	<key>CFBundleIdentifier</key>
+-	<string>org.blenderfoundation.blender</string>
++	<string>com.unofficial.blenderipad</string>
+ 	<key>CFBundleInfoDictionaryVersion</key>
+ 	<string>6.0</string>
++	<key>CFBundleDisplayName</key>
++	<string>Blender iPad</string>
+ 	<key>CFBundleName</key>
+ 	<string>Blender</string>
+ 	<key>CFBundlePackageType</key>
+@@ -78,7 +80,7 @@
+ 				<string>public.data</string>
+ 			</array>
+ 			<key>UTTypeIdentifier</key>
+-			<string>org.blenderfoundation.blender.file</string>
++			<string>com.unofficial.blenderipad.file</string>
+ 			<key>UTTypeDescription</key>
+ 			<string>Blender File</string>
+ 			<key>UTTypeIcons</key>
+diff --git a/source/blender/editors/interface/view2d/view2d_ops.cc b/source/blender/editors/interface/view2d/view2d_ops.cc
+--- a/source/blender/editors/interface/view2d/view2d_ops.cc
++++ b/source/blender/editors/interface/view2d/view2d_ops.cc
+@@ -234,8 +234,11 @@
+ #ifdef WITH_APPLE_CROSSPLATFORM
+   ScrArea *area = CTX_wm_area(C);
+   ARegion *region = CTX_wm_region(C);
+-  /* Only scroll the File/Asset Browser and Asset Shelf views with multiple finger on iOS. */
+-  if ((area->spacetype == SPACE_FILE || region->regiontype == RGN_TYPE_ASSET_SHELF) &&
++  /* Finger drags scroll panels. Keep one-finger selection in the file/asset
++   * content views, and allow real MMB drags from a connected mouse everywhere. */
++  if (event->type != MIDDLEMOUSE &&
++      ((area->spacetype == SPACE_FILE && region->regiontype == RGN_TYPE_WINDOW) ||
++       region->regiontype == RGN_TYPE_ASSET_SHELF) &&
+       !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS))
+   {
+     return OPERATOR_FINISHED;
+diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
+index bbb12e2e723..1e5cbc1c9c9 100644
+--- a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
++++ b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
+@@ -106,8 +106,12 @@ static wmOperatorStatus viewmove_invoke_impl(bContext *C,
+ static wmOperatorStatus viewmove_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+ #ifdef WITH_APPLE_CROSSPLATFORM
+-  /* Only handle inverted events for 3D view interaction on iOS */
+-  if (!(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
++  /* iOS: a real MIDDLEMOUSE press (external mouse) starts the modal grab-pan,
++   * driven by CURSOR_MOVE events — this pins the grabbed point exactly (depth and
++   * zoom correct), unlike the zoom-amplified one-shot TRACKPADPAN path. Two-finger
++   * trackpad pans (MOUSEPAN) still use the one-shot path; other non-two-finger
++   * events (e.g. touch) are ignored. */
++  if (event->type != MIDDLEMOUSE && !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
+     return OPERATOR_FINISHED;
+   }
+ #endif
+diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/windowmanager/intern/wm_files.cc
+--- a/source/blender/windowmanager/intern/wm_files.cc
++++ b/source/blender/windowmanager/intern/wm_files.cc
+@@ -2321,6 +2321,21 @@
+     SNPRINTF(filename, "%d_autosave.blend", pid);
+   }
+ 
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* The app's Documents directory is exposed by Files. Keep recoverable projects
++   * there instead of putting them in an opaque, purgeable temporary directory.
++   * The same function supplies the initial Recover Auto Save browser location. */
++  if (const std::optional<std::string> documents = GHOST_getUserSpecialDir(
++          GHOST_kUserSpecialDirDocuments))
++  {
++    char recovery_dir[FILE_MAX];
++    BLI_path_join(recovery_dir, sizeof(recovery_dir), documents->c_str(), "Recovery");
++    if (BLI_dir_create_recursive(recovery_dir)) {
++      BLI_path_join(filepath, FILE_MAX, recovery_dir, filename);
++      return;
++    }
++  }
++#endif
+   const char *tempdir_base = BKE_tempdir_base();
+   BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
+ }
+diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
+--- a/scripts/startup/bl_ui/__init__.py
++++ b/scripts/startup/bl_ui/__init__.py
+@@ -87,6 +87,7 @@
+     "space_topbar",
+     "space_userpref",
+     "space_view3d",
++    "space_view3d_ipad",
+     "space_view3d_toolbar",
+ 
+     # XXX, keep last so panels show after all other tool options.
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
@@ -30,7 +142,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  #include <unordered_map>
  
-+/* Debug input logging — disabled for release. Uncomment to re-enable NSLog spam
++/* Debug input logging â€” disabled for release. Uncomment to re-enable NSLog spam
 + * (HOVER/MOUSEMOVED/IPAN/KEY/TABLET/etc.) for diagnosing input issues. */
  // #define IOS_INPUT_LOGGING
  #if defined(IOS_INPUT_LOGGING)
@@ -365,7 +477,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +845,73 @@
+@@ -677,12 +845,94 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
  
@@ -417,7 +529,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -  bool pencil_pan = current_pencil_touch ? true : false;
 -
 +  /* Detect the pencil from the recognizer (captured in its own touchesBegan, which
-+   * runs BEFORE this action) — current_pencil_touch (set in the view's
++   * runs BEFORE this action) â€” current_pencil_touch (set in the view's
 +   * touchesBegan) is not yet populated on the gesture's Began, so relying on it
 +   * makes the FIRST dab a mouse-type (full-pressure) click = the "dot at the
 +   * stroke start". */
@@ -438,10 +550,31 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    tablet_data.Xtilt = sin(azimuthAngle) * cos(altitudeAngle) / maxTilt;
 +    tablet_data.Ytilt = -cos(azimuthAngle) * cos(altitudeAngle) / maxTilt;
 +  }
++  /* Finger motion is scrolling, never a synthetic left-button drag. Keep the
++   * event position at the gesture origin so scrolling across another control
++   * cannot retarget the gesture. Pencil continues through the precision path. */
++  if (!pencil_pan) {
++    CGPoint origin = CGPointMake(touch_point.x - translation.x,
++                                 touch_point.y - translation.y);
++    UserInputEvent scroll_info(&origin, nullptr, nullptr, false);
++    if (sender.state == UIGestureRecognizerStateBegan) {
++      [sender setCachedTranslation:translation];
++      scroll_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
++    }
++    else if (sender.state == UIGestureRecognizerStateChanged) {
++      scroll_info.translation = [sender getRelativeTranslation:translation];
++      [sender setCachedTranslation:translation];
++      if (!CGPointEqualToPoint(scroll_info.translation, CGPointZero)) {
++        scroll_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE);
++      }
++    }
++    [self generateUserInputEvents:scroll_info];
++    return;
++  }
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
  
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +919,21 @@
+@@ -690,6 +940,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -463,7 +596,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +966,104 @@
+@@ -722,6 +987,104 @@
    [self generateUserInputEvents:event_info];
  }
  
@@ -485,7 +618,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    /* Plain middle = orbit via trackpad (view3d.rotate). Shift+middle = pan:
 +     * take the CURSOR_MOVE (else-branch) path so accurate cursor positions drive
 +     * Blender's NATIVE view3d.move modal grab-pan (we relaxed its iOS guard to
-+     * start on a MIDDLEMOUSE press) — exact, depth/zoom-correct, no scalar. */
++     * start on a MIDDLEMOUSE press) â€” exact, depth/zoom-correct, no scalar. */
 +    indirect_is_orbit = (mouse_middle_pressed && !shift_pressed);
 +    indirect_is_pan = false;
 +    pan_accum_x = 0.0f;
@@ -568,7 +701,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -783,14 +1125,43 @@
+@@ -783,14 +1146,43 @@
  
  - (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
  {
@@ -580,7 +713,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -     * wmTabletData.is_motion_absolute set to true. */
 +    /* While a pencil is actually touching (an active paint/sculpt stroke),
 +     * handlePan drives the cursor. A stray hover CURSOR_MOVE here uses the
-+     * (stale) hover position and jerks the brush — notably back toward the
++     * (stale) hover position and jerks the brush â€” notably back toward the
 +     * stroke start on lift (the "end->start line" / "dot at start"). So skip
 +     * hover entirely while the pencil is down. (Mouse box-select is unaffected:
 +     * current_pencil_touch is nil for a mouse drag.) */
@@ -616,7 +749,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
      event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
      [self generateUserInputEvents:event_info];
-@@ -799,7 +1170,9 @@
+@@ -799,7 +1191,9 @@
             sender.state == UIGestureRecognizerStateCancelled ||
             sender.state == UIGestureRecognizerStateFailed)
    {
@@ -627,7 +760,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
  
-@@ -845,10 +1218,37 @@
+@@ -845,10 +1239,37 @@
  
  - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
  {
@@ -665,7 +798,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  - (void)beginFrame
  {
-@@ -1198,11 +1598,316 @@
+@@ -1198,11 +1619,316 @@
    }
  }
  
@@ -673,7 +806,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 + * Added for external keyboard shortcut support. */
 +/* Map a GHOST key (+ shift) to its typed UTF-8 character for printable keys.
 + * Needed so numeric input in transforms (G/S/R then a number), text fields and
-+ * search boxes receive the character — GHOST carries it in GHOST_EventKey's
++ * search boxes receive the character â€” GHOST carries it in GHOST_EventKey's
 + * utf8_buf, which we previously left null. Fills out[6] (NUL-terminated) and
 + * returns true when the key produces text; returns false for non-text keys. */
 +static bool ghost_key_to_utf8(GHOST_TKey key, bool shift, char out[6])
@@ -982,7 +1115,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1480,6 +2185,18 @@
+@@ -1480,6 +2206,18 @@
      parent_window_->requestToActivateWindow();
      parent_window_ = nil;
    }
@@ -990,7 +1123,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    /* Top-level window with no parent (e.g. the render-result window): hand
 +     * control back to another remaining window (the main window) so input and
 +     * display return to it. Without this, disposing the render window leaves the
-+     * screen showing it — the "render window won't close on ESC" bug. */
++     * screen showing it â€” the "render window won't close on ESC" bug. */
 +    for (GHOST_IWindow *iter_win : system_ios_->getWindowManager()->getWindows()) {
 +      if (iter_win != this) {
 +        static_cast<GHOST_WindowIOS *>(iter_win)->requestToActivateWindow();
@@ -1001,7 +1134,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
      IOS_WINDOW_LOG(@"~GHOST_WindowIOS(): Warning, deactivating the active window %p?", this);
-@@ -1499,6 +2216,9 @@
+@@ -1499,6 +2237,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -1011,137 +1144,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-diff --git a/release/ios/Blender.app/Info.plist b/release/ios/Blender.app/Info.plist
-index e478b5b7a1a..521a2c40587 100644
---- a/release/ios/Blender.app/Info.plist
-+++ b/release/ios/Blender.app/Info.plist
-@@ -21,7 +21,7 @@
- 			<true/>
- 			<key>LSItemContentTypes</key>
- 			<array>
--				<string>org.blenderfoundation.blender.file</string>
-+				<string>com.unofficial.blenderipad.file</string>
- 			</array>
- 		</dict>
- 	</array>
-@@ -32,13 +32,15 @@
- 	<key>CFBundleExecutable</key>
- 	<string>Blender</string>
- 	<key>CFBundleGetInfoString</key>
--	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Blender Foundation</string>
-+	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Unofficial iPad build — not affiliated with the Blender Foundation</string>
- 	<key>CFBundleIconFile</key>
- 	<string>Assets/blender_icon.icns</string>
- 	<key>CFBundleIdentifier</key>
--	<string>org.blenderfoundation.blender</string>
-+	<string>com.unofficial.blenderipad</string>
- 	<key>CFBundleInfoDictionaryVersion</key>
- 	<string>6.0</string>
-+	<key>CFBundleDisplayName</key>
-+	<string>Blender iPad</string>
- 	<key>CFBundleName</key>
- 	<string>Blender</string>
- 	<key>CFBundlePackageType</key>
-@@ -78,7 +80,7 @@
- 				<string>public.data</string>
- 			</array>
- 			<key>UTTypeIdentifier</key>
--			<string>org.blenderfoundation.blender.file</string>
-+			<string>com.unofficial.blenderipad.file</string>
- 			<key>UTTypeDescription</key>
- 			<string>Blender File</string>
- 			<key>UTTypeIcons</key>
-diff --git a/source/blender/editors/interface/view2d/view2d_ops.cc b/source/blender/editors/interface/view2d/view2d_ops.cc
---- a/source/blender/editors/interface/view2d/view2d_ops.cc
-+++ b/source/blender/editors/interface/view2d/view2d_ops.cc
-@@ -234,8 +234,11 @@
- #ifdef WITH_APPLE_CROSSPLATFORM
-   ScrArea *area = CTX_wm_area(C);
-   ARegion *region = CTX_wm_region(C);
--  /* Only scroll the File/Asset Browser and Asset Shelf views with multiple finger on iOS. */
--  if ((area->spacetype == SPACE_FILE || region->regiontype == RGN_TYPE_ASSET_SHELF) &&
-+  /* Finger drags scroll panels. Keep one-finger selection in the file/asset
-+   * content views, and allow real MMB drags from a connected mouse everywhere. */
-+  if (event->type != MIDDLEMOUSE &&
-+      ((area->spacetype == SPACE_FILE && region->regiontype == RGN_TYPE_WINDOW) ||
-+       region->regiontype == RGN_TYPE_ASSET_SHELF) &&
-       !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS))
-   {
-     return OPERATOR_FINISHED;
-diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
-index bbb12e2e723..1e5cbc1c9c9 100644
---- a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
-+++ b/source/blender/editors/space_view3d/view3d_navigate_view_move.cc
-@@ -106,8 +106,12 @@ static wmOperatorStatus viewmove_invoke_impl(bContext *C,
- static wmOperatorStatus viewmove_invoke(bContext *C, wmOperator *op, const wmEvent *event)
- {
- #ifdef WITH_APPLE_CROSSPLATFORM
--  /* Only handle inverted events for 3D view interaction on iOS */
--  if (!(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
-+  /* iOS: a real MIDDLEMOUSE press (external mouse) starts the modal grab-pan,
-+   * driven by CURSOR_MOVE events — this pins the grabbed point exactly (depth and
-+   * zoom correct), unlike the zoom-amplified one-shot TRACKPADPAN path. Two-finger
-+   * trackpad pans (MOUSEPAN) still use the one-shot path; other non-two-finger
-+   * events (e.g. touch) are ignored. */
-+  if (event->type != MIDDLEMOUSE && !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
-     return OPERATOR_FINISHED;
-   }
- #endif
-diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/windowmanager/intern/wm_files.cc
---- a/source/blender/windowmanager/intern/wm_files.cc
-+++ b/source/blender/windowmanager/intern/wm_files.cc
-@@ -2321,6 +2321,21 @@
-     SNPRINTF(filename, "%d_autosave.blend", pid);
-   }
- 
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+  /* The app's Documents directory is exposed by Files. Keep recoverable projects
-+   * there instead of putting them in an opaque, purgeable temporary directory.
-+   * The same function supplies the initial Recover Auto Save browser location. */
-+  if (const std::optional<std::string> documents = GHOST_getUserSpecialDir(
-+          GHOST_kUserSpecialDirDocuments))
-+  {
-+    char recovery_dir[FILE_MAX];
-+    BLI_path_join(recovery_dir, sizeof(recovery_dir), documents->c_str(), "Recovery");
-+    if (BLI_dir_create_recursive(recovery_dir)) {
-+      BLI_path_join(filepath, FILE_MAX, recovery_dir, filename);
-+      return;
-+    }
-+  }
-+#endif
-   const char *tempdir_base = BKE_tempdir_base();
-   BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
- }
-diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
---- a/scripts/startup/bl_ui/__init__.py
-+++ b/scripts/startup/bl_ui/__init__.py
-@@ -87,6 +87,7 @@
-     "space_topbar",
-     "space_userpref",
-     "space_view3d",
-+    "space_view3d_ipad",
-     "space_view3d_toolbar",
- 
-     # XXX, keep last so panels show after all other tool options.
 diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/space_view3d_ipad.py
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,83 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
-+import os
-+import sys
-+
-+import bpy
-+from bpy.types import Header, Panel
-+
-+
-+def is_ipad_build():
-+    # This port places its executable directly in the iOS .app. macOS uses
-+    # Contents/MacOS instead. Also support Python builds with native iOS detection.
-+    return sys.platform == 'ios' or os.path.dirname(bpy.app.binary_path).endswith('.app')
++from bpy.types import Panel
 +
 +
 +class VIEW3D_PT_ipad_controls(Panel):
@@ -1173,9 +1184,9 @@ new file mode 100644
 +            tools.scale_y = 1.8
 +            for name, tool, icon in (
 +                    ("Select", 'builtin.select_box', 'RESTRICT_SELECT_OFF'),
-+                    ("Move", 'builtin.move', 'TRANSFORM_MOVE'),
-+                    ("Rotate", 'builtin.rotate', 'TRANSFORM_ROTATE'),
-+                    ("Scale", 'builtin.scale', 'TRANSFORM_SCALE')):
++                    ("Move", 'builtin.move', 'EMPTY_ARROWS'),
++                    ("Rotate", 'builtin.rotate', 'DRIVER_ROTATIONAL_DIFFERENCE'),
++                    ("Scale", 'builtin.scale', 'ARROW_LEFTRIGHT')):
 +                tools.operator('wm.tool_set_by_id', text=name, icon=icon).name = tool
 +
 +        edit = layout.row(align=True)
@@ -1211,16 +1222,26 @@ new file mode 100644
 +            camera.operator('view3d.camera_to_view', text="Align Camera to View", icon='CON_CAMERASOLVER')
 +
 +
-+class VIEW3D_HT_ipad_controls(Header):
-+    bl_space_type = 'VIEW_3D'
-+    bl_region_type = 'HEADER'
-+
-+    def draw(self, _context):
-+        # Text makes the entry easier to acquire than another small icon. The
-+        # controls themselves live in an overlay, not a permanent viewport panel.
-+        row = self.layout.row(align=True)
-+        row.scale_x = 1.4
-+        row.popover(panel='VIEW3D_PT_ipad_controls', text="Canvas", icon='TOOL_SETTINGS')
++def draw_canvas_header(layout):
++    # Called first by the existing viewport header, before its overflowing menus.
++    row = layout.row(align=True)
++    row.scale_x = 1.4
++    row.popover(panel='VIEW3D_PT_ipad_controls', text="Canvas", icon='TOOL_SETTINGS')
 +
 +
-+classes = (VIEW3D_PT_ipad_controls, VIEW3D_HT_ipad_controls) if is_ipad_build() else ()
++# This module is installed by the iOS-only overlay. Do not gate registration on
++# binary_path: embedded Python's executable path is not a platform capability.
++classes = (VIEW3D_PT_ipad_controls,)
+diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space_view3d.py
+--- a/scripts/startup/bl_ui/space_view3d.py
++++ b/scripts/startup/bl_ui/space_view3d.py
+@@ -794,6 +794,9 @@
+ 
+     def draw(self, context):
+         layout = self.layout
++
++        from .space_view3d_ipad import draw_canvas_header
++        draw_canvas_header(layout)
+ 
+         tool_settings = context.tool_settings
+         view = context.space_data

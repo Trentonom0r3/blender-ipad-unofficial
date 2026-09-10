@@ -2,6 +2,26 @@
 
 ## Selected direction: Canvas First
 
+### Device feedback follow-up
+
+The first Canvas entry was registered as an additional header, placing it after
+the desktop header contents where narrow viewports could hide it. It now draws at
+the start of the existing viewport header. The iOS-only module registers directly
+instead of depending on embedded Python's executable path. Inspection of the
+downloaded IPA confirmed that the original module was installed.
+
+One-finger pans previously generated both a left-button drag and trackpad scroll
+events. They now generate only scrolling, anchored at the gesture origin. Taps
+still activate controls; Pencil dragging remains the precision path for sliders,
+gizmos, selection boxes, and drawing. This intentionally means a finger swipe over
+a slider scrolls the panel instead of changing its value. Mouse/trackpad handling
+is separate and unchanged. Validate that two-finger gestures cannot leave a
+selection or pressed button behind when fingers land at different times.
+
+The reported loading slowdown is not yet reproduced or attributed. Input logging
+is disabled in this source. Source checks cannot establish startup performance or
+prove touch behavior; both still require device measurements.
+
 Concept B is the selected product direction: floating contextual controls and a
 larger canvas, with the complete Blender interface available on demand. Quick
 controls supplement existing functionality; they must not replace full editors,
