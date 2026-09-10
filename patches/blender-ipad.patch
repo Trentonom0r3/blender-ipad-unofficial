@@ -1229,7 +1229,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  @end
  
-@@ -1306,22 +2129,150 @@
+@@ -1306,22 +2129,158 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -1308,8 +1308,16 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    const CGRect bounds = self.view.bounds;
 +    const CGFloat footer = _return_bar.hidden ? 0 :
 +        MIN(bounds.size.height, 56 + self.view.safeAreaInsets.bottom);
-+    _view.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height - footer);
-+    _return_bar.frame = CGRectMake(0, bounds.size.height - footer, bounds.size.width, footer);
++    const CGRect content_frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height - footer);
++    const CGRect footer_frame = CGRectMake(0, bounds.size.height - footer, bounds.size.width, footer);
++    /* Touch/highlight changes can trigger layout without changing the geometry.
++     * Do not ask MTKView to resize its drawable again in that case. */
++    if (!CGRectEqualToRect(_view.frame, content_frame)) {
++      _view.frame = content_frame;
++    }
++    if (!CGRectEqualToRect(_return_bar.frame, footer_frame)) {
++      _return_bar.frame = footer_frame;
++    }
 +  }
 +}
 +
@@ -1386,7 +1394,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2316,12 @@
+@@ -1365,11 +2324,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -1400,7 +1408,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2329,6 @@
+@@ -1377,7 +2337,6 @@
  
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1408,7 +1416,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
  
    /* Create view controller. */
-@@ -1391,7 +2342,6 @@
+@@ -1391,7 +2350,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -1416,7 +1424,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2350,6 @@
+@@ -1400,7 +2358,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1424,7 +1432,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
  
-@@ -1410,8 +2359,12 @@
+@@ -1410,8 +2367,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
  
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -1439,7 +1447,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
  
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2377,14 @@
+@@ -1424,10 +2385,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -1455,7 +1463,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
  
    /* Initialize Metal device. */
-@@ -1474,11 +2431,24 @@
+@@ -1474,11 +2439,24 @@
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
  
    releaseNativeHandles();
@@ -1481,7 +1489,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2469,9 @@
+@@ -1499,6 +2477,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -1491,7 +1499,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2591,7 @@
+@@ -1618,7 +2599,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
  
@@ -1500,7 +1508,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +2881,7 @@
+@@ -1908,6 +2889,7 @@
  
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -1508,7 +1516,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
  
-@@ -1918,6 +2892,11 @@
+@@ -1918,6 +2900,11 @@
                   this);
  
    system_ios_->current_active_window_ = this;
@@ -1624,7 +1632,23 @@ diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space
 diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_SystemIOS.mm
 --- a/intern/ghost/intern/GHOST_SystemIOS.mm
 +++ b/intern/ghost/intern/GHOST_SystemIOS.mm
-@@ -135,12 +135,15 @@
+@@ -94,6 +94,15 @@
+ - (void)drawInMTKView:(nonnull MTKView *)MTKView
+ {
+   GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++
++  /* A newly created view or a queued callback from a paused view can arrive
++   * during activation. Never present the active window from another MTKView's
++   * draw callback: its currentDrawable belongs to a different display tick. */
++  if (system->current_active_window_ &&
++      system->current_active_window_->getView() != MTKView)
++  {
++    return;
++  }
+ 
+   /* We should always have a window... */
+   if (system->current_active_window_) {
+@@ -135,12 +144,15 @@
  - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -1776,3 +1800,36 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
      if (BLI_rcti_isect_pt_v(&az_rect, xy)) {
  
        if (az->type == AZONE_AREA) {
+diff --git a/intern/ghost/intern/GHOST_ContextIOS.mm b/intern/ghost/intern/GHOST_ContextIOS.mm
+--- a/intern/ghost/intern/GHOST_ContextIOS.mm
++++ b/intern/ghost/intern/GHOST_ContextIOS.mm
+@@ -320,19 +320,16 @@
+ 
+ void GHOST_ContextIOS::metalUpdateFramebuffer()
+ {
+-  CGRect screenRect = [[UIScreen mainScreen] bounds];
+-  CGFloat scaling_fac = [UIScreen mainScreen].scale;
+-  CGFloat screenWidth = screenRect.size.width;
+-  CGFloat screenHeight = screenRect.size.height;
+-  size_t width = screenWidth * scaling_fac;
+-  size_t height = screenHeight * scaling_fac;
+-
+-  if (width <= 0 && height <= 0) {
+-    GHOST_ASSERT(false, "Negative or null display dimmensions");
+-    /* TOOD: Better default size. This should not happen but is here to avoid erroneous
+-     * initialization. */
+-    width = 1440;
+-    height = 960;
++  /* Native chrome reduces the Blender content area. The overlay must match
++   * the MTKView drawable, not UIScreen, including after orientation changes.
++   * A screen-sized overlay is sampled into a smaller presentation target and
++   * disagrees with Blender's client bounds and GPU framebuffer dimensions. */
++  const CGSize drawable_size = metal_view_.drawableSize;
++  const size_t width = size_t(drawable_size.width);
++  const size_t height = size_t(drawable_size.height);
++  if (width == 0 || height == 0) {
++    /* Preserve the previous texture during a transient zero-sized layout. */
++    return;
+   }
+ 
+   /* METAL-only path -- Test metal overlay. */
