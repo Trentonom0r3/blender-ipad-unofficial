@@ -77,16 +77,17 @@ keep native chrome clear of system insets. Code uses MRC, not ARC; avoid `__weak
 | File Browser in new window | Close routes through window/editor cleanup; must validate selector cancellation and reopening |
 | File Browser in maximized existing area | Existing Cancel control / selector lifecycle; native footer does not cover this state |
 | Canvas Expand / normal maximization | Existing reversible operator and Canvas Restore Editors; host restoration evidence only |
-| Fullscreen area with hidden headers | Existing tiny hover-revealed corner exit; **remaining P0 touch discoverability gap** |
+| Fullscreen area with hidden headers | Existing tiny hover-revealed corner exit; persistent enlarged Back target now implemented; needs iOS validation |
 | Blender popover, confirmation, operator dialog | Same-window modal handler; own Cancel/outside/Escape semantics, not a GHOST secondary window |
 | Native onscreen keyboard | Existing accessory Done/Cancel; verify while closing a secondary view |
 
 Highest next steps:
 1. Compile and package this revision; fix any UIKit/compiler failure before device handoff.
-2. Make hidden-header fullscreen escape permanently discoverable and touch-sized.
-   Pinned `editors/screen/area.cc`: `fullscreen_azone_init` starts alpha at zero;
-   `area_draw_azone_fullscreen` draws the small icon. Audit action-zone hit testing
-   and hover fade together; don't enlarge only the artwork.
+2. Validate new fullscreen Back control. `editors/screen/area.cc` now draws a
+   persistent labelled Back button (4.8 by 2.4 widget units, inset from the corner),
+   and `screen_ops.cc` tests the same full rectangle on the first tap. No hover
+   fade or ongoing animation invalidation on iOS. Existing fullscreen action-zone
+   operator still owns restoration. Desktop behavior is unchanged.
 3. Implement native document service after auditing scratch prototype ownership,
    cancellation, security scopes, deferred asset reads, file-provider coordination,
    bookmarks, and distinction between local working copy vs external saved file.
@@ -142,7 +143,22 @@ layout. Record the IPA's commit/run, orientation, and attached input devices.
    certify this by a Windows screenshot.
 
 Known unresolved risks: native mouse footer clicks also pass through GameController
-and need device checking; fullscreen hidden-header exit still needs adaptation;
+and need device checking; fullscreen Back artwork/hit targets need device validation;
 Escape currently closes a secondary window even if an inner Blender popup is open
 (inherited semantics); native Files and provider-safe saving remain unimplemented.
 No staged native-document prototype was merged in this pass.
+
+
+### Fullscreen follow-up acceptance
+
+In a disposable split layout, use the editor View > Area > Toggle Fullscreen Area
+command (the variant that hides headers). With Pencil out of hover range, verify
+**Back** is visible at the upper right immediately. Tap once with a finger; verify
+exact original splits return. Repeat in Properties, Image Editor, Shader Editor,
+Sculpt and Grease Pencil, portrait and landscape, at default and smaller UI scales.
+Repeat ten times. Tap near all four edges of Back: entire background should work.
+Move Pencil elsewhere: Back must remain visible. Check ordinary Canvas Expand /
+Restore still works and no new control appears on a normal desktop build.
+
+Initial native-footer build: `b76365e`, Actions run 34468971151. Fullscreen change
+is a separate checkpoint and needs a subsequent build containing both changes.

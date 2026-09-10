@@ -1516,3 +1516,133 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  @end
+diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/screen/area.cc
+--- a/source/blender/editors/screen/area.cc
++++ b/source/blender/editors/screen/area.cc
+@@ -49,6 +49,9 @@
+ #include "GPU_state.hh"
+ 
+ #include "BLF_api.hh"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "BLT_translation.hh"
++#endif
+ 
+ #include "IMB_metadata.hh"
+ 
+@@ -141,8 +144,26 @@
+ /**
+  * \brief Corner widget use for quitting full-screen.
+  */
+-static void area_draw_azone_fullscreen(short /*x1*/, short /*y1*/, short x2, short y2, float alpha)
+-{
++static void area_draw_azone_fullscreen(short x1, short y1, short x2, short y2, float alpha)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  UNUSED_VARS(alpha);
++  /* Fullscreen hides headers: this escape must not require desktop hover.
++   * Draw the actual hit rectangle, so its entire visible surface is tappable. */
++  float color[4];
++  UI_GetThemeColor4fv(TH_HEADER, color);
++  color[3] = 1.0f;
++  const rctf rect = {float(x1), float(x2), float(y1), float(y2)};
++  UI_draw_roundbox_corner_set(UI_CNR_ALL);
++  UI_draw_roundbox_4fv(&rect, true, 6.0f * UI_SCALE_FAC, color);
++  const int fontid = BLF_set_default();
++  const char *label = IFACE_("Back");
++  const float width = BLF_width(fontid, label, BLF_DRAW_STR_DUMMY_MAX);
++  UI_FontThemeColor(fontid, TH_TEXT);
++  BLF_position(fontid, (x1 + x2 - width) * 0.5f, y1 + (y2 - y1) * 0.4f, 0.0f);
++  BLF_draw(fontid, label, BLF_DRAW_STR_DUMMY_MAX);
++#else
++  UNUSED_VARS(x1, y1);
+   UI_icon_draw_ex(x2 - U.widget_unit,
+                   y2 - U.widget_unit,
+                   ICON_FULLSCREEN_EXIT,
+@@ -152,6 +173,7 @@
+                   nullptr,
+                   false,
+                   UI_NO_ICON_OVERLAY_TEXT);
++#endif
+ }
+ 
+ /**
+@@ -301,12 +323,21 @@
+         }
+       }
+       else if (az->type == AZONE_FULLSCREEN) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++        area_draw_azone_fullscreen(az->x1, az->y1, az->x2, az->y2, 1.0f);
++#else
+         if (az->alpha > 0.0f) {
+           area_draw_azone_fullscreen(az->x1, az->y1, az->x2, az->y2, az->alpha);
+         }
+-      }
+-    }
++#endif
++      }
++    }
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* The persistent Back button has no hover animation to update. */
++    if (!IS_EQF(az->alpha, 0.0f) && az->type == AZONE_REGION_SCROLL) {
++#else
+     if (!IS_EQF(az->alpha, 0.0f) && ELEM(az->type, AZONE_FULLSCREEN, AZONE_REGION_SCROLL)) {
++#endif
+       area_azone_tag_update(area);
+     }
+   }
+@@ -1125,8 +1156,16 @@
+     az->x2 = region->winrct.xmax;
+     az->y2 = region->winrct.ymax;
+   }
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int margin = int(0.3f * U.widget_unit);
++  az->x2 -= margin;
++  az->y2 -= margin;
++  az->x1 = max_ii(region->winrct.xmin, az->x2 - int(4.8f * U.widget_unit));
++  az->y1 = max_ii(region->winrct.ymin, az->y2 - int(2.4f * U.widget_unit));
++#else
+   az->x1 = az->x2 - AZONEFADEOUT;
+   az->y1 = az->y2 - AZONEFADEOUT;
++#endif
+ 
+   BLI_rcti_init(&az->rect, az->x1, az->x2, az->y1, az->y2);
+ }
+diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editors/screen/screen_ops.cc
+--- a/source/blender/editors/screen/screen_ops.cc
++++ b/source/blender/editors/screen/screen_ops.cc
+@@ -824,9 +824,14 @@
+ 
+ /* the debug drawing of the click_rect is in area_draw_azone_fullscreen, keep both in sync */
+ static void fullscreen_click_rcti_init(
+-    rcti *rect, const short /*x1*/, const short /*y1*/, const short x2, const short y2)
+-{
++    rcti *rect, const short x1, const short y1, const short x2, const short y2)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  BLI_rcti_init(rect, x1, x2, y1, y2);
++#else
++  UNUSED_VARS(x1, y1);
+   BLI_rcti_init(rect, x2 - U.widget_unit, x2, y2 - U.widget_unit, y2);
++#endif
+ }
+ 
+ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
+@@ -907,6 +912,18 @@
+   for (az = static_cast<AZone *>(area->actionzones.first); az; az = az->next) {
+     rcti az_rect;
+     area_actionzone_get_rect(az, &az_rect);
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (az->type == AZONE_FULLSCREEN) {
++      /* Same rectangle for draw, hover and first tap. Do not fade or trigger
++       * redraws as a Pencil/finger moves elsewhere in the fullscreen editor. */
++      rcti click_rect;
++      fullscreen_click_rcti_init(&click_rect, az->x1, az->y1, az->x2, az->y2);
++      if (BLI_rcti_isect_pt_v(&click_rect, xy)) {
++        break;
++      }
++      continue;
++    }
++#endif
+     if (BLI_rcti_isect_pt_v(&az_rect, xy)) {
+ 
+       if (az->type == AZONE_AREA) {
