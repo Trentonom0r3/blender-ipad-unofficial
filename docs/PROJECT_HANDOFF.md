@@ -1,5 +1,15 @@
 # Project handoff — 2026-09-10
 
+## Device success and requested concept — latest
+
+User says repaired radial build "works perfectly." Record this as positive iPad
+feedback, not separate acceptance of every unreported edge case or native Files.
+They now request header Tools as shelf toggle, nine direct radial tools and Settings,
+visually closer to the Z shading pie. See newest IPAD_WORKSPACE.md section and
+`output/ui-preview/pencil-tools-nine-concept.png`. Concept generated and presented;
+no application code changed. User explicitly wants to review before implementation.
+Do not autonomously implement this revision or skip to drawers before that response.
+
 ## Radial build compiler repair — latest
 
 Run 34537653252 failed with one reported compiler error in the new outside-tap

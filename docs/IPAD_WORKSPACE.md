@@ -1,5 +1,23 @@
 # iPad workspace design and delivery
 
+## Nine-tool concept awaiting review
+
+User reports the repaired radial build works perfectly on iPad. Next requested
+changes: header Tools toggles the left shelf only; Pencil palette directly exposes
+Select, Cursor, Move, Rotate, Scale, Transform, Annotate, Measure, Add Cube.
+Settings should offer shelf visibility. Squeeze remains context/right-click.
+Visual reference is Blender's Z shading pie: compact controls with less visual bulk.
+
+`output/ui-preview/pencil-tools-nine-concept.png` is an AI-generated concept, not a
+running implementation or exact icon specification. Proposed arrangement: nine
+tools on the ring, Settings in the center. User requested concept review BEFORE
+implementation; await their response before changing the palette or header behavior.
+The earlier six-item implementation remains current code. Blender's stock pie has
+eight direction slots; nine direct tools plus central Settings require a scoped
+layout/hit-testing extension, not simply adding a ninth menu item. Preserve native
+desktop pie behavior when implementing. Confirm tool activation semantics: Add Cube
+should select the existing interactive Add Cube tool, not immediately insert a cube.
+
 ## User decisions — 2026-09-10
 
 The current Canvas controls location is rejected as the primary interface.
