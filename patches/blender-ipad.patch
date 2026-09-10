@@ -275,7 +275,38 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -306,6 +393,12 @@
+@@ -291,6 +378,30 @@
+ - (GHOST_TSuccess)hideOnscreenKeyboard;
+ - (const char *)getLastKeyboardString;
+ @end
++
++/* The first live GHOST window is the workspace. Parentless render/duplicate
++ * windows also need an escape path; window count alone must not close the workspace. */
++static bool ios_can_close_window(GHOST_SystemIOS *system, GHOST_IWindow *window)
++{
++  const auto &windows = system->getWindowManager()->getWindows();
++  return windows.size() > 1 && windows.front() != window &&
++         system->getWindowManager()->getWindowFound(window);
++}
++
++/* GameController handlers belong to the input device, not a particular UIWindow.
++ * Resolve both event destination and button state on each callback, including
++ * after an auxiliary view closes or a device reconnects. */
++static GHOSTUIWindow *ios_active_input_window(GHOST_SystemIOS *system)
++{
++  GHOST_IWindow *active = system->getWindowManager()->getActiveWindow();
++  if (!system->getWindowManager()->getWindowFound(active)) {
++    return nil;
++  }
++  return (GHOSTUIWindow *)static_cast<GHOST_WindowIOS *>(active)->getView().window;
++}
++
++/* Shared across callback reinstallation when the active view changes. */
++static bool ios_escape_closes_window = false;
+ 
+ @implementation GHOSTUIWindow
+ - (void)setSystemAndWindowIOS:(GHOST_SystemIOS *)sys windowIOS:(GHOST_WindowIOS *)win
+@@ -306,6 +417,12 @@
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
@@ -288,7 +319,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
  
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +428,22 @@
+@@ -335,6 +452,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -311,7 +342,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)registerGestureRecognizers
-@@ -354,6 +463,8 @@
+@@ -354,6 +487,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -320,7 +351,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +475,8 @@
+@@ -364,6 +499,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -329,7 +360,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +487,8 @@
+@@ -374,6 +511,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -338,7 +369,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -392,11 +507,39 @@
+@@ -392,11 +531,39 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
  
@@ -378,7 +409,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    pan2f_gesture_recognizer.cancelsTouchesInView = false;
    /* Two finger gestures only.  */
    pan2f_gesture_recognizer.minimumNumberOfTouches = 2;
-@@ -408,8 +551,23 @@
+@@ -408,8 +575,23 @@
        initWithTarget:self
                action:@selector(handleZoom:)];
    zoom_gesture_recognizer.delegate = self;
@@ -402,7 +433,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -525,7 +683,13 @@
+@@ -525,7 +707,13 @@
                                      GHOST_kEventButtonDown,
                                      window,
                                      GHOST_kButtonMaskRight,
@@ -417,7 +448,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,16 +703,14 @@
+@@ -539,16 +727,14 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -439,7 +470,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    return NO;
  }
  
-@@ -580,8 +742,10 @@
+@@ -580,8 +766,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
  
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -452,7 +483,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,16 +768,20 @@
+@@ -604,16 +792,20 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -477,7 +508,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +845,94 @@
+@@ -677,12 +869,94 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
  
@@ -574,7 +605,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
  
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +940,21 @@
+@@ -690,6 +964,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -596,7 +627,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +987,104 @@
+@@ -722,6 +1011,104 @@
    [self generateUserInputEvents:event_info];
  }
  
@@ -701,7 +732,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -783,14 +1146,43 @@
+@@ -783,14 +1170,43 @@
  
  - (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
  {
@@ -749,7 +780,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
      event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
      [self generateUserInputEvents:event_info];
-@@ -799,7 +1191,9 @@
+@@ -799,7 +1215,9 @@
             sender.state == UIGestureRecognizerStateCancelled ||
             sender.state == UIGestureRecognizerStateFailed)
    {
@@ -760,7 +791,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
  
-@@ -845,10 +1239,37 @@
+@@ -845,10 +1263,37 @@
  
  - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
  {
@@ -798,7 +829,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  - (void)beginFrame
  {
-@@ -1198,11 +1619,316 @@
+@@ -1198,11 +1643,314 @@
    }
  }
  
@@ -913,21 +944,19 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  IOS_INPUT_LOG(@"External Mouse %s", external_mouse_connected ? "Connected" : "Disconnected");
 +
 +  if (mouse && mouse.mouseInput) {
-+    GHOST_WindowIOS *win = window;
 +    GHOST_SystemIOS *sys = system;
 +    GCMouseInput *mouse_input = mouse.mouseInput;
 +    IOS_INPUT_LOG(@"Mouse handlers registering. scroll=%@ yAxis=%@",
 +                  mouse_input.scroll, mouse_input.scroll.yAxis);
 +
-+    __unsafe_unretained GHOSTUIWindow *weak_self_btn = self;
 +    mouse_input.leftButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
-+          GHOSTUIWindow *strong_self = weak_self_btn;
++          GHOSTUIWindow *strong_self = ios_active_input_window(sys);
 +          if (strong_self) {
 +            strong_self->mouse_left_pressed = pressed ? true : false;
 +          }
 +          GHOST_IWindow *active_win_l = sys->getWindowManager()->getActiveWindow();
-+          if (!active_win_l) { active_win_l = win; }
++          if (!active_win_l) { return; }
 +          sys->pushEvent(new GHOST_EventButton(
 +              GHOST_GetMilliSeconds((GHOST_SystemHandle)sys),
 +              pressed ? GHOST_kEventButtonDown : GHOST_kEventButtonUp,
@@ -936,10 +965,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    mouse_input.rightButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
-+          GHOSTUIWindow *ss = weak_self_btn;
++          GHOSTUIWindow *ss = ios_active_input_window(sys);
 +          if (ss) { ss->mouse_right_pressed = pressed ? true : false; }
 +          GHOST_IWindow *active_win_r = sys->getWindowManager()->getActiveWindow();
-+          if (!active_win_r) { active_win_r = win; }
++          if (!active_win_r) { return; }
 +          sys->pushEvent(new GHOST_EventButton(
 +              GHOST_GetMilliSeconds((GHOST_SystemHandle)sys),
 +              pressed ? GHOST_kEventButtonDown : GHOST_kEventButtonUp,
@@ -948,11 +977,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    mouse_input.middleButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
-+          GHOSTUIWindow *ss = weak_self_btn;
++          GHOSTUIWindow *ss = ios_active_input_window(sys);
 +          if (ss) { ss->mouse_middle_pressed = pressed ? true : false; }
 +          IOS_INPUT_LOG(@"MIDDLE button pressed=%d", pressed);
 +          GHOST_IWindow *active_win_m = sys->getWindowManager()->getActiveWindow();
-+          if (!active_win_m) { active_win_m = win; }
++          if (!active_win_m) { return; }
 +          sys->pushEvent(new GHOST_EventButton(
 +              GHOST_GetMilliSeconds((GHOST_SystemHandle)sys),
 +              pressed ? GHOST_kEventButtonDown : GHOST_kEventButtonUp,
@@ -961,13 +990,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +    /* Mouse movement via GCMouse: deltas accumulated into a tracked cursor
 +     * position so movement shares the mouse path with clicks (enables drag). */
-+    __unsafe_unretained GHOSTUIWindow *weak_self_mv = self;
 +    mouse_input.mouseMovedHandler =
 +        ^(GCMouseInput *m, float dx, float dy) {
-+          GHOSTUIWindow *s = weak_self_mv;
++          GHOSTUIWindow *s = ios_active_input_window(sys);
 +          if (!s) {
 +            return;
 +          }
++          GHOST_WindowIOS *win = s->window;
 +          /* DRAG_HYBRID: only drive the cursor from deltas while dragging
 +           * (button held), starting from the hover-synced position. */
 +          bool mouse_any_pressed = s->mouse_left_pressed ||
@@ -1029,6 +1058,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          if (value == 0.0f) {
 +            return;
 +          }
++          GHOSTUIWindow *active = ios_active_input_window(sys);
++          if (!active) { return; }
++          GHOST_WindowIOS *win = active->window;
 +          int delta = (value > 0.0f) ? 1 : -1;
 +          IOS_INPUT_LOG(@"Scroll Y pushing wheel event, delta=%d", delta);
 +          sys->pushEvent(new GHOST_EventWheel(
@@ -1041,15 +1073,17 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)externalKeyboardChange:(NSNotification *)notification
  {
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
++  if (!external_keyboard_connected) {
++    ios_escape_closes_window = false;
++    shift_pressed = false;
++  }
    IOS_INPUT_LOG(@"External Keyboard %s",
                  external_keyboard_connected ? "Connected" : "Disconnected");
 +
 +  if (external_keyboard_connected) {
 +    GCKeyboard *kb = [GCKeyboard coalescedKeyboard];
 +    IOS_INPUT_LOG(@"KEYBOARD HANDLER REGISTERING kb=%@", kb);
-+    GHOST_WindowIOS *win = window;
 +    GHOST_SystemIOS *sys = system;
-+    __unsafe_unretained GHOSTUIWindow *weak_self_kb = self;
 +
 +    kb.keyboardInput.keyChangedHandler =
 +        ^(GCKeyboardInput *keyboard, GCControllerButtonInput *key,
@@ -1057,26 +1091,21 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          GHOST_TKey ghost_key = ghost_key_from_gckeycode(keyCode);
 +          IOS_INPUT_LOG(@"KEY gccode=%ld ghost=%d pressed=%d", (long)keyCode, (int)ghost_key, pressed);
 +          if (ghost_key == GHOST_kKeyLeftShift || ghost_key == GHOST_kKeyRightShift) {
-+            GHOSTUIWindow *sk = weak_self_kb;
++            GHOSTUIWindow *sk = ios_active_input_window(sys);
 +            if (sk) { sk->shift_pressed = pressed ? true : false; }
 +          }
-+          if (ghost_key == GHOST_kKeyEsc && pressed) {
-+            IOS_INPUT_LOG(@"ESC STATE: numWindows=%lu hasDialog=%d activeWin=%p",
-+                (unsigned long)sys->getWindowManager()->getWindows().size(),
-+                (int)sys->hasDialogWindow(),
-+                sys->getWindowManager()->getActiveWindow());
-+            /* ESC_CLOSE_WINDOW: if a secondary window is open (more than one
-+             * GHOST window), close the active one like macOS does, and consume
-+             * the ESC so it doesn't also act as a key in the main window. */
-+            if (sys->getWindowManager()->getWindows().size() > 1) {
-+              GHOST_IWindow *close_win = sys->getWindowManager()->getActiveWindow();
-+              if (close_win) {
-+                IOS_INPUT_LOG(@"ESC closing secondary window %p", close_win);
-+                sys->pushEvent(new GHOST_Event(
-+                    GHOST_GetMilliSeconds((GHOST_SystemHandle)sys),
-+                    GHOST_kEventWindowClose, close_win));
-+                return;
-+              }
++          /* Consume the complete closing key sequence, including repeat and release.
++           * Otherwise a held Escape can close several views or leak into the workspace. */
++          if (ghost_key == GHOST_kKeyEsc) {
++            if (ios_escape_closes_window) {
++              ios_escape_closes_window = pressed;
++              return;
++            }
++            GHOST_IWindow *active = sys->getWindowManager()->getActiveWindow();
++            if (pressed && ios_can_close_window(sys, active)) {
++              ios_escape_closes_window = true;
++              sys->pushEvent(new GHOST_Event(sys->getMilliSeconds(), GHOST_kEventWindowClose, active));
++              return;
 +            }
 +          }
 +          if (ghost_key == GHOST_kKeyUnknown) {
@@ -1088,7 +1117,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          char key_utf8[6] = {0};
 +          const char *key_utf8_ptr = nullptr;
 +          if (pressed) {
-+            GHOSTUIWindow *su = weak_self_kb;
++            GHOSTUIWindow *su = ios_active_input_window(sys);
 +            bool shift_held = su ? su->shift_pressed : false;
 +            if (ghost_key_to_utf8(ghost_key, shift_held, key_utf8)) {
 +              key_utf8_ptr = key_utf8;
@@ -1096,7 +1125,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          }
 +          /* ACTIVE_WINDOW_INPUT: target the active window so popups get keys. */
 +          GHOST_IWindow *active_win = sys->getWindowManager()->getActiveWindow();
-+          if (!active_win) { active_win = win; }
++          if (!active_win) { return; }
 +          sys->pushEvent(new GHOST_EventKey(
 +              GHOST_GetMilliSeconds((GHOST_SystemHandle)sys),
 +              pressed ? GHOST_kEventKeyDown : GHOST_kEventKeyUp,
@@ -1115,10 +1144,208 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1480,6 +2206,18 @@
+@@ -1298,7 +2046,9 @@
+ 
+ @interface GHOST_IOSViewController : UIViewController
+ 
+-- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView;
++- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
++                                  secondary:(BOOL)secondary;
++- (void)closeSecondaryView:(id)sender;
+ 
+ @end
+ 
+@@ -1306,22 +2056,105 @@
+ {
+   MTKView *_view;
+   GHOST_IOSMetalRenderer *_renderer;
++  UIView *_return_bar;
++  UILabel *_window_label;
+ }
+ 
+ - (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
+-{
+-  _view = mtkView;
+-  _view.multipleTouchEnabled = YES;
++                                  secondary:(BOOL)secondary
++{
+   self = [super init];
+-  self.view = (UIView *)mtkView;
+-
++  if (self) {
++    _view = mtkView;
++    _view.multipleTouchEnabled = YES;
++    if (secondary) {
++      /* Keep content at (0, 0): all existing GHOST input remains content-local.
++       * Reserve a native footer instead of covering Blender's editor controls. */
++      UIView *container = [[UIView alloc] initWithFrame:mtkView.frame];
++      [container addSubview:mtkView];
++      _return_bar = [[UIView alloc] init];
++      _return_bar.backgroundColor = [UIColor secondarySystemBackgroundColor];
++      [container addSubview:_return_bar];
++      [_return_bar release]; /* Owned by container. */
++
++      UIButton *close = [UIButton buttonWithType:UIButtonTypeSystem];
++      [close setTitle:NSLocalizedString(@"Close View", nil) forState:UIControlStateNormal];
++      close.titleLabel.font = [UIFont boldSystemFontOfSize:17];
++      close.accessibilityHint = NSLocalizedString(@"Close this view and return to Blender", nil);
++      close.accessibilityIdentifier = @"blender.close-secondary-view";
++      [close addTarget:self action:@selector(closeSecondaryView:)
++           forControlEvents:UIControlEventTouchUpInside];
++      close.translatesAutoresizingMaskIntoConstraints = NO;
++      [_return_bar addSubview:close];
++
++      _window_label = [[UILabel alloc] init];
++      _window_label.font = [UIFont systemFontOfSize:15];
++      _window_label.textColor = [UIColor secondaryLabelColor];
++      _window_label.translatesAutoresizingMaskIntoConstraints = NO;
++      [_window_label setContentCompressionResistancePriority:UILayoutPriorityDefaultLow
++                                                    forAxis:UILayoutConstraintAxisHorizontal];
++      [_return_bar addSubview:_window_label];
++      [_window_label release];
++      [NSLayoutConstraint activateConstraints:@[
++        [close.trailingAnchor constraintEqualToAnchor:_return_bar.safeAreaLayoutGuide.trailingAnchor constant:-12],
++        [close.topAnchor constraintEqualToAnchor:_return_bar.topAnchor constant:4],
++        [close.heightAnchor constraintEqualToConstant:48],
++        [close.widthAnchor constraintGreaterThanOrEqualToConstant:120],
++        [_window_label.leadingAnchor constraintEqualToAnchor:_return_bar.safeAreaLayoutGuide.leadingAnchor constant:16],
++        [_window_label.trailingAnchor constraintLessThanOrEqualToAnchor:close.leadingAnchor constant:-12],
++        [_window_label.centerYAnchor constraintEqualToAnchor:close.centerYAnchor],
++      ]];
++      self.view = container;
++      [container release];
++    }
++    else {
++      self.view = mtkView;
++    }
++  }
+   return self;
+ }
+ 
++- (void)viewDidLayoutSubviews
++{
++  [super viewDidLayoutSubviews];
++  if (_return_bar) {
++    const CGRect bounds = self.view.bounds;
++    const CGFloat footer = MIN(bounds.size.height, 56 + self.view.safeAreaInsets.bottom);
++    _view.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height - footer);
++    _return_bar.frame = CGRectMake(0, bounds.size.height - footer, bounds.size.width, footer);
++  }
++}
++
++- (void)setTitle:(NSString *)title
++{
++  [super setTitle:title];
++  _window_label.text = title;
++}
++
++- (void)closeSecondaryView:(id)sender
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  /* Resolve from the live window list; never retain a raw C++ window in a UIKit
++   * action that can outlive its owner. Route through Blender for job/selector cleanup. */
++  for (GHOST_IWindow *candidate : system->getWindowManager()->getWindows()) {
++    GHOST_WindowIOS *window = static_cast<GHOST_WindowIOS *>(candidate);
++    if (window->getView() == _view && ios_can_close_window(system, window)) {
++      system->pushEvent(new GHOST_Event(system->getMilliSeconds(), GHOST_kEventWindowClose, window));
++      return;
++    }
++  }
++}
++
++- (void)dealloc
++{
++  _view.delegate = nil;
++  [_renderer release];
++  [super dealloc];
++}
++
+ - (void)viewDidLoad
+ {
+   [super viewDidLoad];
+-  _view = (MTKView *)self.view;
+   _view.enableSetNeedsDisplay = NO;
+   _view.device = MTLCreateSystemDefaultDevice();
+   _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
+@@ -1365,11 +2198,12 @@
+                                  GHOST_TWindowState state,
+                                  GHOST_TDrawingContextType type,
+                                  const GHOST_ContextParams &context_params,
+-                                 bool /*is_dialog*/,
++                                 bool is_dialog,
+                                  GHOST_WindowIOS *parent_window)
+     : GHOST_Window(width, height, state, context_params, false), metal_view_(nil)
+ {
+   full_screen_ = false;
++  is_dialog_ = is_dialog;
+   system_ios_ = system_ios;
+   /* Parent window will be the window that focus is returned to upon close. */
+   parent_window_ = parent_window;
+@@ -1377,7 +2211,6 @@
+ 
+   /* Create MTKView. */
+   metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
+-  [metal_view_ retain];
+   GHOST_ASSERT(metal_view_, "metalview not valid");
+ 
+   /* Create view controller. */
+@@ -1391,7 +2224,6 @@
+   if (full_screen_) {
+     /* Init window at native res. */
+     ghost_rootWindow = [[GHOSTUIWindow alloc] init];
+-    [ghost_rootWindow retain];
+     /* Ensure fullscreen. */
+     CGRect rect = [UIScreen mainScreen].bounds;
+     rootWindow.frame = rect;
+@@ -1400,7 +2232,6 @@
+     /* Init window at specified size. */
+     ghost_rootWindow = [[GHOSTUIWindow alloc]
+         initWithFrame:CGRectMake(left, bottom, width, height)];
+-    [ghost_rootWindow retain];
+     [ghost_rootWindow setClipsToBounds:YES];
+   }
+ 
+@@ -1410,8 +2241,10 @@
+   rootWindow.windowLevel = UIWindowLevelAlert;
+ 
+   GHOST_ASSERT(rootWindow, "UIWindow not valid");
+-  uiview_controller_ = [[[GHOST_IOSViewController alloc] initWithMetalKitView:metal_view_] retain];
+-  [uiview_controller_ viewDidLoad];
++  const bool secondary = !system_ios_->getWindowManager()->getWindows().empty();
++  uiview_controller_ = [[GHOST_IOSViewController alloc] initWithMetalKitView:metal_view_
++                                                                secondary:secondary];
++  [uiview_controller_ loadViewIfNeeded];
+   GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
+ 
+   /* Set presentation style depending on whether main window, dialog or temporary window. */
+@@ -1424,10 +2257,14 @@
+     uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
+   }
+   rootWindow.rootViewController = uiview_controller_;
++  [uiview_controller_.view setNeedsLayout];
++  [uiview_controller_.view layoutIfNeeded];
+ 
+   /* Create UIView */
+   GHOST_ASSERT(width > 0 && height > 0, "invalid wh");
+-  uiview_ = uiview_controller_.view;
++  /* GHOST/Metal and all gesture recognizers use only the content, not native chrome. */
++  uiview_ = metal_view_;
++  [uiview_ retain];
+   GHOST_ASSERT(uiview_, "uiview not valid");
+ 
+   /* Initialize Metal device. */
+@@ -1474,11 +2311,24 @@
+   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+ 
+   releaseNativeHandles();
++  [[NSNotificationCenter defaultCenter] removeObserver:rootWindow];
+ 
+   /* Restore application control and display to parent window. */
+-  if (parent_window_) {
++  if (parent_window_ && system_ios_->getWindowManager()->getWindowFound(parent_window_)) {
      parent_window_->requestToActivateWindow();
      parent_window_ = nil;
-   }
++  }
 +  else {
 +    /* Top-level window with no parent (e.g. the render-result window): hand
 +     * control back to another remaining window (the main window) so input and
@@ -1130,11 +1357,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +        break;
 +      }
 +    }
-+  }
+   }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-     IOS_WINDOW_LOG(@"~GHOST_WindowIOS(): Warning, deactivating the active window %p?", this);
-@@ -1499,6 +2237,9 @@
+@@ -1499,6 +2349,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -1144,6 +1370,26 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
+@@ -1618,7 +2471,7 @@
+ {
+   GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
+ 
+-  CGRect screenRect = rootWindow.frame;
++  CGRect screenRect = metal_view_.bounds;
+   CGFloat scale = [UIScreen mainScreen].scale;
+   CGFloat screenWidth = screenRect.size.width * scale;
+   CGFloat screenHeight = screenRect.size.height * scale;
+@@ -1918,6 +2771,10 @@
+                  this);
+ 
+   system_ios_->current_active_window_ = this;
++  /* Install handlers for devices that were connected before the app/view opened. */
++  GHOSTUIWindow *input_window = (GHOSTUIWindow *)rootWindow;
++  [input_window externalMouseChange:nil];
++  [input_window externalKeyboardChange:nil];
+   is_active_window_ = true;
+   request_to_make_active_ = false;
+   return true;
 diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/space_view3d_ipad.py
 new file mode 100644
 --- /dev/null
@@ -1245,3 +1491,28 @@ diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space
  
          tool_settings = context.tool_settings
          view = context.space_data
+diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_SystemIOS.mm
+--- a/intern/ghost/intern/GHOST_SystemIOS.mm
++++ b/intern/ghost/intern/GHOST_SystemIOS.mm
+@@ -135,12 +135,15 @@
+ - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
+ {
+   GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
+-  if (!system->current_active_window_) {
+-    return;
+-  }
+-
+-  system->pushEvent(new GHOST_Event(
+-      system->getMilliSeconds(), GHOST_kEventWindowSize, system->current_active_window_));
++  /* Layout can resize an inactive view while its controller is being created.
++   * Notify the view's owner, not whichever window happens to be drawing. */
++  for (GHOST_IWindow *candidate : system->getWindowManager()->getWindows()) {
++    if (static_cast<GHOST_WindowIOS *>(candidate)->getView() == view) {
++      system->pushEvent(new GHOST_Event(
++          system->getMilliSeconds(), GHOST_kEventWindowSize, candidate));
++      break;
++    }
++  }
+ }
+ 
+ @end

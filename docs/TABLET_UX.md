@@ -1,5 +1,12 @@
 # Tablet UX implementation
 
+## Current engineering state
+
+See [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) for the latest implementation,
+validation evidence, remaining window audit, and exact iPad test protocol. The
+secondary-window repair adds a native Close View footer outside Blender content;
+its device behavior is not yet validated. Native Files pickers are still pending.
+
 ## Selected direction: Canvas First
 
 ### Device feedback follow-up
@@ -135,7 +142,8 @@ The existing macOS build workflow must compile this patch before sideload testin
 Device acceptance checks:
 
 1. In Properties and a viewport sidebar, drag empty panel space with one finger;
-   verify scrolling. Drag a numeric field; verify it changes its value. In File
+   verify scrolling. Drag a numeric field with Pencil to change its value; a finger
+   swipe should scroll. In File
    Browser content, verify one-finger selection and two-finger scrolling separately.
 2. With a mouse, test middle-drag in UV/Image editors, orbit, Shift-middle pan,
    marquee selection, and a secondary window. Test Magic Keyboard trackpad pinch.
