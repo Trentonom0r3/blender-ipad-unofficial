@@ -1,8 +1,7 @@
 diff --git a/build_files/cmake/platform/platform_apple.cmake b/build_files/cmake/platform/platform_apple.cmake
-index ece1c7cf426..ec666786c4b 100644
 --- a/build_files/cmake/platform/platform_apple.cmake
 +++ b/build_files/cmake/platform/platform_apple.cmake
-@@ -178,7 +178,7 @@ if(WITH_APPLE_CROSSPLATFORM)
+@@ -178,7 +178,7 @@
    endif()
  else()
    if(NOT EXISTS "${LIBDIR}/python/")
@@ -11,6 +10,15 @@ index ece1c7cf426..ec666786c4b 100644
    endif()
  endif()
  if(FIRST_RUN)
+@@ -369,7 +369,7 @@
+ if(WITH_APPLE_CROSSPLATFORM)
+   # Link different frameworks for iOS
+   set(PLATFORM_LINKFLAGS
+-    "-fexceptions -framework CoreServices -framework Foundation -framework IOKit -framework UIKit -framework AudioToolbox -framework CoreAudio -framework Metal -framework MetalKit -framework QuartzCore -framework ImageIO -framework GameController -framework CoreGraphics"
++    "-fexceptions -framework CoreServices -framework Foundation -framework IOKit -framework UIKit -framework UniformTypeIdentifiers -framework AudioToolbox -framework CoreAudio -framework Metal -framework MetalKit -framework QuartzCore -framework ImageIO -framework GameController -framework CoreGraphics"
+   )
+   list(APPEND PLATFORM_LINKLIBS "${LIBDIR}/libb2/lib/libb2.a")
+ else()
 diff --git a/release/ios/Blender.app/Info.plist b/release/ios/Blender.app/Info.plist
 index e478b5b7a1a..521a2c40587 100644
 --- a/release/ios/Blender.app/Info.plist
@@ -90,7 +98,17 @@ index bbb12e2e723..1e5cbc1c9c9 100644
 diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/windowmanager/intern/wm_files.cc
 --- a/source/blender/windowmanager/intern/wm_files.cc
 +++ b/source/blender/windowmanager/intern/wm_files.cc
-@@ -2321,6 +2321,21 @@
+@@ -116,6 +116,9 @@
+ 
+ #include "GHOST_C-api.h"
+ #include "GHOST_Path-api.hh"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "GHOST_ProjectImport-api.hh"
++#endif
+ 
+ #include "GPU_context.hh"
+ 
+@@ -2321,6 +2324,21 @@
      SNPRINTF(filename, "%d_autosave.blend", pid);
    }
  
@@ -112,6 +130,37 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
+@@ -3377,6 +3395,30 @@
+                   "Allow .blend file to execute scripts automatically, default available from "
+                   "system preferences");
+ }
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static wmOperatorStatus wm_import_project_from_files_exec(bContext * /*C*/, wmOperator *op)
++{
++  if (!GHOST_IOS_import_project()) {
++    BKE_report(op->reports, RPT_WARNING, "Close the current dialog before importing a project");
++    return OPERATOR_CANCELLED;
++  }
++  /* UIKit owns selection; the normal open-file event will start a new operator
++   * only after the copy succeeds. Do not retain this operator across callbacks. */
++  return OPERATOR_FINISHED;
++}
++
++void WM_OT_import_project_from_files(wmOperatorType *ot)
++{
++  ot->name = "Import Project from Files";
++  ot->idname = "WM_OT_import_project_from_files";
++  ot->description = "Import and open a local copy of a .blend project using Apple Files. "
++                    "Saves update the copy in Blender's Projects folder. "
++                    "Pack external resources into the source project before importing";
++  ot->exec = wm_import_project_from_files_exec;
++  ot->poll = WM_operator_winactive;
++}
++#endif
+ 
+ void WM_OT_open_mainfile(wmOperatorType *ot)
+ {
 diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
 --- a/scripts/startup/bl_ui/__init__.py
 +++ b/scripts/startup/bl_ui/__init__.py
@@ -1532,7 +1581,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,93 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -1548,6 +1597,16 @@ new file mode 100644
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.operator_context = 'INVOKE_REGION_WIN'
++        # Capability check also keeps host previews usable without the iOS backend.
++        import bpy
++        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++            project = layout.column(align=True)
++            project.scale_y = 1.6
++            project.operator('wm.import_project_from_files', text="Import Project from Files", icon='FILE_FOLDER')
++            project.operator('wm.save_mainfile', text="Save Project", icon='FILE_TICK')
++            layout.label(text="Imports a copy; pack external assets first")
++            layout.separator()
++
 +        portrait = context.window.height > context.window.width
 +        columns = 1 if portrait else 2
 +
@@ -1632,7 +1691,24 @@ diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space
 diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_SystemIOS.mm
 --- a/intern/ghost/intern/GHOST_SystemIOS.mm
 +++ b/intern/ghost/intern/GHOST_SystemIOS.mm
-@@ -94,6 +94,15 @@
+@@ -6,6 +6,7 @@
+ 
+ #include "GHOST_ContextIOS.hh"
+ #include "GHOST_WindowIOS.hh"
++#include "GHOST_ProjectImport-api.hh"
+ 
+ #include "GHOST_Debug.hh"
+ #include "GHOST_EventButton.hh"
+@@ -43,6 +44,8 @@
+ void WM_main_loop_body(bContext *C);
+ int main_ios_callback(int argc, const char **argv);
+ 
++#include "GHOST_ProjectImportIOS.hh"
++
+ @interface IOSAppDelegate : UIResponder <UIApplicationDelegate>
+ 
+ @property(strong, nonatomic) UIWindow *window;
+@@ -94,6 +97,15 @@
  - (void)drawInMTKView:(nonnull MTKView *)MTKView
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -1648,7 +1724,7 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
  
    /* We should always have a window... */
    if (system->current_active_window_) {
-@@ -135,12 +144,15 @@
+@@ -135,12 +147,15 @@
  - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -1833,3 +1909,323 @@ diff --git a/intern/ghost/intern/GHOST_ContextIOS.mm b/intern/ghost/intern/GHOST
    }
  
    /* METAL-only path -- Test metal overlay. */
+diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_ProjectImport-api.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/GHOST_ProjectImport-api.hh
+@@ -0,0 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#pragma once
++
++/* Present a native picker for an independent local .blend copy. Main thread only.
++ * Returns whether presentation began, not whether a project has been opened. */
++bool GHOST_IOS_import_project();
+diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
+@@ -0,0 +1,241 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++/* Included only by GHOST_SystemIOS.mm. This service imports an independent
++ * project copy. It does not claim to own or save the provider's original file. */
++#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
++
++@interface GHOST_IOSProjectImporter : NSObject <UIDocumentPickerDelegate,
++                                               UIAdaptivePresentationControllerDelegate>
++{
++  UIViewController *_presenter;
++  UIDocumentPickerViewController *_picker;
++  UIAlertController *_progress;
++  NSUInteger _generation;
++  BOOL _busy;
++}
++- (BOOL)present;
++@end
++
++@implementation GHOST_IOSProjectImporter
++
++- (BOOL)hasLivePresenter
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!system || !system->current_active_window_) {
++    return NO;
++  }
++  return system->current_active_window_->rootWindow.rootViewController == _presenter &&
++         _presenter.view.window != nil;
++}
++
++- (void)finish
++{
++  _busy = NO;
++  [_presenter release];
++  _presenter = nil;
++}
++
++- (void)showError:(NSString *)message
++{
++  if ([self hasLivePresenter]) {
++    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Project Import"
++                                                                  message:message
++                                                           preferredStyle:UIAlertControllerStyleAlert];
++    [alert addAction:[UIAlertAction actionWithTitle:@"OK"
++                                             style:UIAlertActionStyleCancel
++                                           handler:nil]];
++    [_presenter presentViewController:alert animated:YES completion:nil];
++  }
++  else {
++    NSLog(@"Project import: %@", message);
++  }
++  [self finish];
++}
++
++- (void)dismissPicker:(void (^)(void))completion
++{
++  UIDocumentPickerViewController *picker = _picker;
++  _picker = nil;
++  picker.delegate = nil;
++  picker.presentationController.delegate = nil;
++  [picker dismissViewControllerAnimated:YES completion:completion];
++  [picker release];
++}
++
++- (BOOL)present
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy || !system || !system->current_active_window_) {
++    return NO;
++  }
++  UIViewController *presenter = system->current_active_window_->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++  _presenter = [presenter retain];
++  _busy = YES;
++  ++_generation;
++  UTType *blend = [UTType typeWithFilenameExtension:@"blend" conformingToType:UTTypeData];
++  _picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:@[blend ?: UTTypeData]
++                                                                     asCopy:YES];
++  _picker.allowsMultipleSelection = NO;
++  _picker.delegate = self;
++  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++  _picker.title = @"Import a Project Copy";
++  [_presenter presentViewController:_picker animated:YES completion:nil];
++  _picker.presentationController.delegate = self;
++  return YES;
++}
++
++- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
++{
++  if (controller != _picker) {
++    return;
++  }
++  ++_generation;
++  [self dismissPicker:^{ [self finish]; }];
++}
++
++- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
++{
++  if (controller.presentedViewController != _picker) {
++    return;
++  }
++  ++_generation;
++  _picker.delegate = nil;
++  _picker.presentationController.delegate = nil;
++  [_picker release];
++  _picker = nil;
++  [self finish];
++}
++
++- (void)importURL:(NSURL *)source
++{
++  if (![self hasLivePresenter]) {
++    [self finish];
++    return;
++  }
++  if (!source.isFileURL || [source.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++    [self showError:@"Choose a Blender (.blend) project."];
++    return;
++  }
++  const NSUInteger generation = _generation;
++  _progress = [[UIAlertController alertControllerWithTitle:@"Importing Project"
++                                                  message:@"Creating a copy in Blender's Projects folder."
++                                           preferredStyle:UIAlertControllerStyleAlert] retain];
++  [_progress addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                               style:UIAlertActionStyleCancel
++                                             handler:^(UIAlertAction *action) {
++    /* File-provider work may finish later. Its generation cannot open a project
++     * or dismiss UI belonging to a newer request. */
++    ++_generation;
++    [_progress release];
++    _progress = nil;
++    [self finish];
++  }]];
++  [_presenter presentViewController:_progress animated:YES completion:^{
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++      @autoreleasepool {
++        NSFileManager *manager = [NSFileManager defaultManager];
++        NSURL *documents = [[manager URLsForDirectory:NSDocumentDirectory
++                                            inDomains:NSUserDomainMask] firstObject];
++        /* Never overwrite an existing import, even for equal filenames. Keep the
++         * original filename inside its own visible project directory. */
++        NSString *folder = [NSString stringWithFormat:@"%@ - %@",
++                            source.lastPathComponent.stringByDeletingPathExtension,
++                            [NSUUID UUID].UUIDString];
++        NSURL *project = [[documents URLByAppendingPathComponent:@"Projects" isDirectory:YES]
++                          URLByAppendingPathComponent:folder isDirectory:YES];
++        NSURL *destination = [project URLByAppendingPathComponent:source.lastPathComponent];
++        __block NSError *copy_error = nil;
++        NSError *coordination_error = nil;
++        __block BOOL copied = NO;
++        const BOOL scoped = [source startAccessingSecurityScopedResource];
++        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
++        [coordinator coordinateReadingItemAtURL:source options:0 error:&coordination_error
++                                     byAccessor:^(NSURL *read_url) {
++          NSNumber *regular = nil;
++          if (![read_url getResourceValue:&regular forKey:NSURLIsRegularFileKey error:&copy_error] ||
++              !regular.boolValue) {
++            return;
++          }
++          if ([manager createDirectoryAtURL:project withIntermediateDirectories:YES
++                                 attributes:nil error:&copy_error]) {
++            /* The actual copy is inside the coordinator's accessor. Blender
++             * subsequently reads our local copy, outside the provider lease. */
++            copied = [manager copyItemAtURL:read_url toURL:destination error:&copy_error];
++          }
++        }];
++        [coordinator release];
++        if (scoped) {
++          [source stopAccessingSecurityScopedResource];
++        }
++        NSString *failure = (coordination_error ?: copy_error).localizedDescription;
++        if (!copied) {
++          [manager removeItemAtURL:project error:nullptr];
++        }
++        dispatch_async(dispatch_get_main_queue(), ^{
++          if (generation != _generation) {
++            if (copied) {
++              dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++                [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++              });
++            }
++            return;
++          }
++          UIAlertController *progress = _progress;
++          _progress = nil;
++          [progress dismissViewControllerAnimated:YES completion:^{
++            if (generation != _generation) {
++              return;
++            }
++            if (!copied) {
++              [self showError:failure ?: @"The project could not be copied. Check available storage and try again."];
++              return;
++            }
++            GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++            if (![self hasLivePresenter] || !system->handleOpenDocumentRequest(destination.path)) {
++              [self showError:@"The copy is in Blender's Projects folder. Return to the workspace and open it from the file browser."];
++              return;
++            }
++            /* Normal GHOST open event retains Blender's unsaved-changes dialog
++             * and script policy. No operator/context pointer survives UIKit. */
++            [self finish];
++          }];
++          [progress release];
++        });
++      }
++    });
++  }];
++}
++
++- (void)documentPicker:(UIDocumentPickerViewController *)controller
++    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
++{
++  if (controller != _picker) {
++    return;
++  }
++  NSURL *source = urls.firstObject;
++  [self dismissPicker:^{
++    if (source) {
++      [self importURL:source];
++    }
++    else {
++      [self finish];
++    }
++  }];
++}
++@end
++
++bool GHOST_IOS_import_project()
++{
++  /* Application-lifetime delegate; UIKit delegates are non-owning. */
++  static GHOST_IOSProjectImporter *importer = nil;
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  if (!importer) {
++    importer = [[GHOST_IOSProjectImporter alloc] init];
++  }
++  return [importer present];
++}
+diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
+--- a/source/blender/windowmanager/wm_files.hh
++++ b/source/blender/windowmanager/wm_files.hh
+@@ -113,6 +113,9 @@
+ void WM_OT_read_factory_settings(wmOperatorType *ot);
+ 
+ void WM_OT_open_mainfile(wmOperatorType *ot);
++#ifdef WITH_APPLE_CROSSPLATFORM
++void WM_OT_import_project_from_files(wmOperatorType *ot);
++#endif
+ 
+ void WM_OT_revert_mainfile(wmOperatorType *ot);
+ void WM_OT_recover_last_session(wmOperatorType *ot);
+diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blender/windowmanager/intern/wm_operators.cc
+--- a/source/blender/windowmanager/intern/wm_operators.cc
++++ b/source/blender/windowmanager/intern/wm_operators.cc
+@@ -4210,6 +4210,9 @@
+   WM_operatortype_append(WM_OT_window_fullscreen_toggle);
+   WM_operatortype_append(WM_OT_quit_blender);
+   WM_operatortype_append(WM_OT_open_mainfile);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  WM_operatortype_append(WM_OT_import_project_from_files);
++#endif
+   WM_operatortype_append(WM_OT_revert_mainfile);
+   WM_operatortype_append(WM_OT_link);
+   WM_operatortype_append(WM_OT_append);
+diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/windowmanager/intern/wm_window.cc
+--- a/source/blender/windowmanager/intern/wm_window.cc
++++ b/source/blender/windowmanager/intern/wm_window.cc
+@@ -1867,6 +1867,12 @@
+         WM_operator_properties_create_ptr(&props_ptr, ot);
+         RNA_string_set(&props_ptr, "filepath", path);
+         RNA_boolean_set(&props_ptr, "display_file_selector", false);
++#ifdef WITH_APPLE_CROSSPLATFORM
++        /* Imported/provider documents must not acquire script trust merely by
++         * being copied into our container. Preserve the current tablet layout. */
++        RNA_boolean_set(&props_ptr, "use_scripts", false);
++        RNA_boolean_set(&props_ptr, "load_ui", false);
++#endif
+         WM_operator_name_call_ptr(
+             C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
+         WM_operator_properties_free(&props_ptr);
+diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
+--- a/scripts/startup/bl_ui/space_topbar.py
++++ b/scripts/startup/bl_ui/space_topbar.py
+@@ -162,6 +162,8 @@
+ 
+         layout.operator_context = 'INVOKE_AREA'
+         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
++        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
+         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
+         layout.menu("TOPBAR_MT_file_open_recent")
+         layout.operator("wm.revert_mainfile")
+@@ -613,6 +615,8 @@
+ 
+         layout.operator_context = 'INVOKE_AREA'
+         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
++        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
+         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
+         layout.menu("TOPBAR_MT_file_open_recent")
+ 
