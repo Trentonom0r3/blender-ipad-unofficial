@@ -43,6 +43,13 @@ prioritization and reversible product decisions.
 
 ## Native Files implementation contract
 
+Current incremental delivery (4eeb43d): **Import Project from Files** explicitly imports
+an independent `.blend` copy into visible Projects storage using UIKit. Ordinary Save
+updates that copy. The source project must have its external resources packed; sibling
+assets are not imported. This does not fulfill external-document Open/Save/Save As.
+The copy itself is performed inside NSFileCoordinator's accessor on a worker queue.
+Source validation passes; native compilation/device acceptance are tracked in the handoff.
+
 Implement a platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document
 pickers; Blender Browser & Options is the explicit advanced route/fallback.

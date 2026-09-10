@@ -1,5 +1,64 @@
 # Project handoff — 2026-09-10
 
+## Native project import checkpoint — latest
+
+User explicitly clarified the black screen was already fixed. Do not ask them to
+retest that old regression. The earlier ambiguous-build note below is superseded.
+
+Implemented and pushed **4eeb43d**, `feat(ipad): import project copies through native Files picker`.
+Build: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34514560095
+At checkpoint: CI preflight passed; iOS build running. No device acceptance yet.
+
+Delivered source behavior:
+
+* File menu, File context menu and Canvas expose **Import Project from Files**.
+  It is deliberately an independent copy, not external-document Open/Save support.
+* UIKit `initForOpeningContentTypes:asCopy:YES` selects one `.blend`. A worker
+  coordinates the actual copy into visible `Documents/Projects/<name - UUID>/<name>.blend`.
+  Balanced security scope; no long-lived bookmark is needed for this import mode.
+* Normal GHOST open-file event invokes Blender's existing unsaved-changes handling.
+  Ordinary Save subsequently updates this local copy. External original is untouched.
+* Imported/native-open events disable scripts and retain the current UI layout.
+  Advanced Open still has the existing options. Pack assets into the source project:
+  importing one file does NOT bring sibling textures, libraries or other dependencies.
+* Picker Cancel/swipe dismissal and copy Cancel are handled. Generation checks reject
+  late completions; canceled completed copies are removed. No Blender operator or
+  bContext pointer is retained across UIKit. Presenter must still be the live active
+  workspace before posting the open event. Failure to open leaves the local copy.
+* Native importer delegate is application-lifetime by design (UIKit delegate is non-owning).
+  Objective-C manual memory management is preserved. Copy I/O is off the main thread.
+
+Modified upstream systems via `patches/blender-ipad.patch`: new GHOST_ProjectImport-api.hh
+and GHOST_ProjectImportIOS.hh (included by GHOST_SystemIOS.mm), UniformTypeIdentifiers
+framework link, wm_files.cc/.hh operator, wm_operators.cc registration, wm_window.cc
+native-open defaults, space_topbar.py and space_view3d_ipad.py entry points.
+
+Validation: all six existing preflight tests pass; complete overlay applies to 19
+pinned source files; plist and Python/shell syntax checks pass. These are source
+checks, not UIKit behavior or successful compilation. Full iOS build above is the
+next gate. No native Files device tests, simulator tests or preview acceptance claimed.
+
+Next session: inspect that exact build, fix compilation errors if any, and do not
+rebuild unchanged source. On success ask for this short device protocol:
+
+1. Canvas > Import Project from Files, Cancel; repeat twice. Workspace remains usable.
+2. Import a small packed `.blend` from On My iPad, then one from iCloud Drive.
+   Verify current scene's unsaved-changes prompt works (test Cancel and Discard).
+3. Move an object, Save Project. Find the copy in Files > On My iPad > Blender iPad
+   > Projects, reopen it and confirm the edit. Verify the original did not change.
+4. Import the same filename twice: both copies survive. Cancel a larger import and
+   immediately start another; the canceled project must never open later.
+5. Repeat picker Cancel in portrait and landscape, and test swipe dismissal if offered.
+
+Known limits: only `.blend` copy import, not generic asset import/export, project-folder
+grants, coordinated external Save/Save As, incoming app URL repair or share sheet.
+Native provider download UI, cancellation timing, memory/lifetime, low-storage failure
+and big-file performance remain device-unverified. The next Files increment should
+handle project-folder dependencies and real external document ownership, not disguise
+copy import as native Save As. Secondary-window flicker fix still needs device evidence.
+No intentionally partial tracked implementation. At checkpoint usage was 94% consumed;
+preserve this state before further architecture work. Actual checkout is under blendpad.
+
 ## Latest scheduled follow-up — supersedes status entries below
 
 Read [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md) for the durable product goal and
@@ -13,8 +72,12 @@ Do not infer full input/restoration/performance acceptance from this feedback.
 
 **Current repair code: 1d8e6a7**, branch codex/ipad-secondary-view-escape, pushed.
 Build: [34507393057](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34507393057).
-At initial writing the build is running; compilation and device results for this
-repair are pending. The real checkout remains under Repos/blendpad, as below.
+Run 34507393057 is confirmed successful: preflight and iOS build jobs passed,
+and the Blender-iPad-Unofficial-ipa artifact is available (248336007 bytes).
+Device acceptance of this repair remains pending. The latest conversation reports
+a black launch without identifying the installed run; confirm build identity before
+treating this as either the known earlier regression or a new regression in 1d8e6a7.
+The real checkout remains under Repos/blendpad, as below.
 
 Changed iOS source through the overlay:
 
