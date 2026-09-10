@@ -26,6 +26,9 @@ prioritization and reversible product decisions.
   surfaces in IPAD_WORKSPACE.md; do not keep expanding the popover.
 * Finger navigation/general UI and Pencil precision/creative input are the guiding
   distinction. Preserve pressure/tilt/hover work. Every new mapping needs a purpose.
+* User-approved mapping: Pencil double tap opens a **radial** tool palette; squeeze
+  retains the context/right-click menu. First source implementation is 34fd27e;
+  see the workspace milestone and handoff for validation status.
 * Every secondary/fullscreen view needs a discoverable escape without hover or a
   keyboard. Restoration must preserve workspace state.
 * Normal file workflows must use iPad Files concepts, not require Unix paths.

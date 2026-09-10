@@ -13,7 +13,7 @@ Deliver that usable workflow before adding unrelated features. Fix confirmed P0
 regressions as necessary, then return to the milestone. Do not keep expanding the
 Canvas popover: the user rejected its location and role as the primary tool surface.
 
-User-approved Pencil mapping: double tap opens tool selection; squeeze retains the
+User-approved Pencil mapping: double tap opens radial tool selection; squeeze retains the
 context/right-click menu. Do not merge these actions. Preserve desktop input.
 
 Checkpoint coherent code and update the handoff with exact build/commit, evidence,

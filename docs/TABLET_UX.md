@@ -100,12 +100,12 @@ roll into brush rotation would require a deliberate upstream-facing event change
   Finger lift/cancellation no longer unconditionally clears Pencil pressure.
 * Prevent hover completion from resetting an active stroke's tablet data, and guard
   the remaining pressure sampling path against division by zero.
-* Balance double-tap's synthesized context click with a right-button release.
-  Double-tap and Pencil Pro squeeze open the existing Blender context menu at the
-  current precision cursor. Neither fires during a Pencil stroke or mouse drag.
+* Pencil double tap now emits a dedicated GHOST/WM event for a radial tool palette
+  (34fd27e). Pencil Pro squeeze retains its balanced right-button press/release
+  opening the existing context menu. Neither fires during a Pencil stroke or mouse drag.
   Both respect their respective system Ignore preferences. Squeeze fires only on
   the ended phase and is guarded for both SDK and runtime availability (iOS 17.5).
-  Other system action preferences are currently mapped to this context action;
+  Other system action preferences are mapped to their respective palette/context actions;
   configurable brush/eraser mappings are not implemented.
 * Put new autosaves in `Documents/Recovery`, which the existing file-sharing plist
   exposes in Files. Recover Auto Save starts there through the same path helper.

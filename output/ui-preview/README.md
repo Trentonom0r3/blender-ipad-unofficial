@@ -47,3 +47,11 @@ sheet, not a persistent control surface. Default restored Properties widths are
 too narrow at this window size; match the iPad's starting panel proportions for
 further comparison. Native menu integration and true overlay editor drawers are
 not implemented in this preview.
+# Radial tool palette — 34fd27e
+
+`pencil-tools-object.png` and `pencil-tools-edit-mesh.png` show the actual overlay
+Python UI running in host Blender 5.1.2. `pencil-tools-host-checks.json` records
+successful core tool activation in those modes. Reproduce with
+`D:/Program Files/blender.exe --factory-startup --disable-autoexec --python build/preview_pencil_tools.py`.
+These previews do not include the new iOS GHOST events or C++ pie interaction changes.
+They are not evidence of Pencil input, iOS sizing, edge clamping or device usability.

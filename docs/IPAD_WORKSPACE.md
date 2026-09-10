@@ -5,8 +5,9 @@
 The current Canvas controls location is rejected as the primary interface.
 The user explicitly assigns Pencil double tap to the left-toolbar tools (selection,
 move, rotate, scale and other mode tools). Pencil Pro squeeze stays the existing
-right-click/context menu. These are distinct surfaces and actions. Current code
-maps both gestures to context click; changing double tap is the next code task.
+right-click/context menu. These are distinct surfaces and actions. The user further
+specified a **radial** Pencil palette. Code 34fd27e implements the new mapping and
+first radial surface; host tests pass, iOS compilation/device acceptance are pending.
 
 The goal is a substantial iPad interaction/presentation redesign retaining Blender's
 editors, operators and familiar scene/gizmo behavior. Adding commands to the existing
@@ -18,7 +19,7 @@ Canvas popover is not the redesign. The agent owns design, prioritization and de
   the permanent left tool shelf in tablet mode only after its replacement works.
 * **Pencil tool palette:** double tap opens a compact transient palette near the
   last valid viewport Pencil position, clamped inside the viewport and safe area.
-  Use a stable two-column layout of touch-sized tools rather than a deep menu.
+  Use a stable radial layout of touch-sized tools, per the user's explicit preference.
   Object mode starts with Select, Move, Rotate and Scale; source remaining tools
   from Blender's current mode/tool system, with a More Tools route. Selecting a
   tool dismisses the palette. Outside tap, double tap again and Escape dismiss it.
@@ -46,6 +47,15 @@ enlarge Blender. Preserve keyboard shortcuts, mouse buttons, trackpad navigation
 and hot-plugging. Do not force a new workspace when an input device connects.
 
 ## Next session: milestone 1 — tools at the Pencil
+
+Source checkpoint: 34fd27e implements dedicated GHOST/WM Pencil event, radial menu,
+touch Tools header entry and separate squeeze context click. The existing Canvas
+popover loses its duplicate tool grid and becomes temporary Workspace controls.
+More Tools opens Blender's toolbar popup; Hide/Show Shelf preserves full tool access.
+Current physical positions: Select west, Move east, Rotate south, Scale north.
+Toolbar visibility is not automatically changed in saved layouts. Touch edge-button
+placement, active-tool header indication and more mode-specific choices remain refinement.
+Build and precise pending device protocol are in PROJECT_HANDOFF.md.
 
 Ship one complete vertical slice, not another visual-only prototype:
 

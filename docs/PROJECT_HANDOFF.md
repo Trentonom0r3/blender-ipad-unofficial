@@ -1,5 +1,66 @@
 # Project handoff — 2026-09-10
 
+## Radial Pencil tools — latest implementation checkpoint
+
+User requested a radial palette and authorized continuing implementation. **34fd27e**
+is pushed on codex/ipad-secondary-view-escape. Build:
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34537653252
+At writing: CI preflight passed, iOS build running. Inspect this exact run next;
+fix actual compiler errors if any, and do not rebuild unchanged code.
+
+Prior native Files build **34514560095 / 4eeb43d succeeded**. Device import behavior
+is still unverified. The old black-screen report is resolved; do not reopen it.
+
+Radial source changes through overlay:
+
+* GHOST_WindowIOS tracks recent Pencil cursor moves; double tap sends dedicated
+  GHOST_kEventPencilDoubleTap without synthesizing mouse/keyboard buttons. Squeeze
+  retains its prior context-click path. Existing stroke/drag/Ignore guards retained.
+* GHOST_Types, wm_event_types, wm_event_system and rna_wm expose PENCIL_DOUBLE_TAP
+  as touch event 0x0205. Default Screen keymap invokes wm.ipad_tool_palette with
+  any modifiers, so connected keyboard modifiers do not block this Pencil action.
+* Python operator selects viewport under cursor, current viewport, or largest view
+  as fallback, then invokes actual Blender pie. Menu queries current tools; core
+  slots stay in stable directions and are disabled when absent in current mode.
+* Pie uses tap-to-select even when invoked by a discrete Pencil event or search;
+  iPad-only menu flag implements repeat-double-tap and outside-bounds dismissal.
+  Center is clamped away from viewport edges; existing window-edge correction
+  remains in use. No desktop shortcut was reused or reassigned.
+* Header Tools is the touch fallback. Old Canvas tool grid removed, remaining
+  controls labeled Workspace. Pie More Tools and Hide/Show Shelf retain full access.
+  No automatic tool-shelf hiding or saved-layout rewriting was added.
+
+Evidence: six preflight checker tests pass; complete overlay applies to 27 pinned
+files. Python/plist/shell checks pass. Actual host Blender **5.1.2** preview displays
+the shipped Python menu and invokes its wrapper operator. Core Select/Move/Rotate/
+Scale activate successfully in both Object and Edit Mesh modes. Preview caught
+truncated labels; fixed with consistent widths and reran successfully. Screenshots
+and JSON evidence in output/ui-preview/pencil-tools-*. Target Blender is pinned 5.0.
+Host binary does not contain new GHOST events or pie C++ handling: no native gesture,
+clamping, repeat-tap, outside-click or iPad acceptance is claimed from this preview.
+Reproduce: `D:/Program Files/blender.exe --factory-startup --disable-autoexec --python build/preview_pencil_tools.py`.
+
+Device protocol after build success (no app/data deletion):
+
+1. Hover Pencil over cube, double tap. Choose Move, move cube, Undo, then double
+   tap > Select. Repeat in Edit Mesh. Expect one palette with readable tool labels.
+2. Close palette, squeeze: expect the existing context menu, not the tool palette.
+3. Double tap with palette open: close only. Tap clearly beyond palette: close
+   without selecting/moving geometry. Escape closes it with keyboard attached.
+4. Repeat at four viewport corners and after rotation. Tools stay on-screen. With
+   no Pencil, header Tools opens the same palette. More Tools and Hide/Show Shelf
+   must retain a way to select every tool and restore the shelf.
+5. During an active Pencil stroke/drag try double tap/squeeze: no tool switch,
+   context menu or stuck stroke. Check iPadOS Ignore and keyboard/mouse still work.
+
+Outstanding: device sizing/edge behavior, alternate keyconfigs (default binding is
+implemented), stale cursor placement after rotation, mode-specific radial tools
+outside Object/Edit Mesh, persistent active-tool indicator and final edge placement.
+Squeeze while a pie is open follows ordinary right-click cancellation; reopening
+context requires another squeeze. No intentionally partial tracked functions.
+After this build/interaction gate, continue Scene/Inspector drawers for camera
+blocking, per IPAD_WORKSPACE.md. Do not restart design or grow Workspace popover.
+
 ## Latest user design direction — next session priority
 
 Read `docs/IPAD_WORKSPACE.md` and root `AGENTS.md` before proceeding. User rejects
