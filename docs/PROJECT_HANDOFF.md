@@ -1,5 +1,29 @@
 # Project handoff — 2026-09-10
 
+## Resume here — final checkpoint
+
+Branch: `codex/ipad-secondary-view-escape`, pushed to origin. Final **code** commit:
+`9e0995c` (subsequent handoff-only commits do not change the IPA source).
+Final iOS build: [34470580555](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34470580555).
+At handoff this run is pending/in progress; **no successful iOS compilation or IPA
+packaging is claimed for the new changes**. Earlier session build attempts were
+superseded during source review, not accepted validation. No new iPad tests ran.
+
+Next session: inspect that exact run first. If failed, retrieve `gh run view
+34470580555 --repo Trentonom0r3/blender-ipad-unofficial --log-failed`, fix the actual
+failure, preflight and rebuild. If successful, give the user that run's IPA artifact
+and the device protocol below, clearly identifying code commit 9e0995c. Prioritize
+Preferences and file-selector close/reopen, render result return, fullscreen Back,
+and mouse press/release across window transitions. Do not claim all P0 window
+behavior solved without these tests. Then continue native Files implementation,
+using the prototype review discoveries below rather than blindly merging staging.
+
+All implementation in this branch is complete at source level; no intentionally
+half-written function or feature flag remains. Six existing preflight tests and
+patch/Python/plist/shell checks pass. Pending iOS compile, UIKit behavior, input
+behavior and resource-lifetime testing are the material uncertainties. Session
+budget was 86% used at the final check, so no larger Files refactor was started.
+
 ## Checkout and starting evidence
 
 The Codex-opened `D:/dev/Projects/Repos/blender-ipad-unofficial` folder is an old
