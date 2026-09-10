@@ -2,10 +2,12 @@
 
 ## Current engineering state
 
+See [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md) for the durable product goals.
 See [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) for the latest implementation,
 validation evidence, remaining window audit, and exact iPad test protocol. The
 secondary-window repair adds a native Close View footer outside Blender content;
-its device behavior is not yet validated. Native Files pickers are still pending.
+startup and closing now work on device, but secondary-view flicker was reported.
+A rendering correction is undergoing validation. Native Files pickers are pending.
 
 ## Selected direction: Canvas First
 

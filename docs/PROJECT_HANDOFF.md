@@ -1,5 +1,56 @@
 # Project handoff — 2026-09-10
 
+## Latest scheduled follow-up — supersedes status entries below
+
+Read [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md) for the durable product goal and
+design decisions. Earlier sections below preserve investigation history.
+
+**Device evidence:** build 7451cf1 / run 34472852514 compiled and packaged. User
+confirms startup now works and Preferences/other secondary views have a working
+Close View footer. Touching these views causes flicker, especially import/export
+selectors. Native Files and stronger tablet adaptation remain explicit priorities.
+Do not infer full input/restoration/performance acceptance from this feedback.
+
+**Current repair code: 1d8e6a7**, branch codex/ipad-secondary-view-escape, pushed.
+Build: [34507393057](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34507393057).
+At initial writing the build is running; compilation and device results for this
+repair are pending. The real checkout remains under Repos/blendpad, as below.
+
+Changed iOS source through the overlay:
+
+* GHOST_ContextIOS::metalUpdateFramebuffer now uses MTKView.drawableSize instead
+  of UIScreen bounds. Native chrome reduced content height but GPU backing textures
+  still used the whole screen. This is a concrete mismatch; whether it explains
+  all flicker remains unproven. Preserve old texture on transient zero-size layout.
+* GHOST_WindowIOS controller changes content/footer frames only when they differ;
+  touch/highlight layout passes must not repeatedly resize the Metal drawable.
+* GHOST_SystemIOS ignores a draw callback from another view while a different
+  window is active. Presentation must use the active view's own drawable callback.
+
+Explicit initializeMetalRenderer from the startup repair is preserved. Six existing
+preflight tests pass; the overlay applies to 13 pinned files and Python/plist/shell
+syntax checks pass. No native SDK/simulator or iPad is available on this Windows host.
+No native document prototype was merged. No intentionally partial tracked code.
+
+**Device protocol after repair build succeeds:** launch/orbit, open Preferences,
+tap and scroll for 20 seconds, then Close View. Repeat with Open, Save As, one import
+and export selector; cancel each and reopen immediately. Rotate an open secondary
+view and tap its top/bottom fields: watch for flicker, stretching, gray strips or
+offset input. Repeat open/close ten times and relaunch once. If flicker persists,
+report whether content, footer or individual controls blink; a short recording/log
+would distinguish layout from partial-redraw/swapchain issues.
+
+**Next autonomous step:** inspect that exact build and fix any compile failure.
+Do not rebuild unchanged code while waiting for device feedback. Then implement
+native Files selection tied to WM_event_add_fileselect/wm_handler_fileselect_do,
+following PRODUCT_DIRECTION.md. Preserve advanced browser/options. The old scratch
+prototype's coordinated-path-copy is not coordinated Blender I/O, and its local
+copy/export workflow does not satisfy ordinary external Save semantics.
+
+If flicker remains, inspect partial-redraw preservation across the Metal swapchain
+and the static prevDrawable/current_drawable_presented shared across contexts.
+Do not assume that the corrected size mismatch was the only cause.
+
 ## P0 device regression — startup black screen
 
 User installed successful build 34470580555 (code 9e0995c) on iPad and reports
