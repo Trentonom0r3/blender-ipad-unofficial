@@ -1,6 +1,7 @@
 # Product direction and decisions
 
-Read this for the durable product direction, TABLET_UX.md for implementation detail,
+Read this for the durable product direction, IPAD_WORKSPACE.md for the active redesign
+and acceptance criteria, TABLET_UX.md for implementation detail,
 and PROJECT_HANDOFF.md for the latest work and validation. Update decisions when
 evidence changes; do not restart the design each session.
 
@@ -20,7 +21,9 @@ prioritization and reversible product decisions.
 * Preserve every Blender editor, importer/exporter option and advanced workflow.
   Keyboard/mouse use remains supported. Tablet controls must not reduce features.
 * Global UI enlargement is not the solution. Adapt targets, scrolling, density,
-  placement and presentation. The Canvas popover is a foundation, not the finish.
+  placement and presentation. The user rejected the Canvas popover as the primary
+  control surface. Replace that role with the Pencil tool palette and workspace
+  surfaces in IPAD_WORKSPACE.md; do not keep expanding the popover.
 * Finger navigation/general UI and Pencil precision/creative input are the guiding
   distinction. Preserve pressure/tilt/hover work. Every new mapping needs a purpose.
 * Every secondary/fullscreen view needs a discoverable escape without hover or a
@@ -83,9 +86,11 @@ IPA packaging, simulator, actual device. Build success is not touch/Files valida
 Startup and closing success does not imply pressure, mouse, restoration or performance
 acceptance. Record device reports narrowly.
 
-Current order: secondary-view flicker (P0), native Files (P0/P1), contextual Canvas
-and property controls, then Pencil and other refinements. User feedback explicitly
-rejects desktop-like feel despite preserving all functionality.
+Current UI milestone: Pencil double-tap tool palette, retaining squeeze for context
+menu, followed by Scene/Inspector drawers. See IPAD_WORKSPACE.md. Address confirmed
+P0 regressions when necessary, but return to this milestone instead of indefinitely
+deferring the redesign for incremental platform additions. Native Files remains
+necessary and unfinished. User feedback explicitly rejects desktop-like feel.
 
 Finish coherent repairs before starting larger rewrites. Avoid cancelling build
 after build for small additions. The overlay is source of truth; scratch source

@@ -1,5 +1,18 @@
 # Project handoff — 2026-09-10
 
+## Latest user design direction — next session priority
+
+Read `docs/IPAD_WORKSPACE.md` and root `AGENTS.md` before proceeding. User rejects
+Canvas popover's placement/role and wants tangible redesign progress next session.
+Approved mapping: **Pencil double tap = tool palette; squeeze = context/right click**.
+Current code still maps both to context click. No gesture code changed in this
+design update. The next UI implementation is milestone 1 in IPAD_WORKSPACE.md;
+its acceptance criteria and broader workspace design are recorded there.
+Do not spend the next entire session extending Files or writing another roadmap.
+First inspect the pending native-import build for failures, then implement the
+Pencil tool palette while preserving existing input. Broader drawer/layout designs
+are proposed defaults, not user-approved placements or delivered features.
+
 ## Native project import checkpoint — latest
 
 User explicitly clarified the black screen was already fixed. Do not ask them to
