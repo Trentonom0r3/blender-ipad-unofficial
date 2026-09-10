@@ -142,8 +142,9 @@ layout. Record the IPA's commit/run, orientation, and attached input devices.
    growing memory (if measurable), loss of Pencil pressure or navigation. Do not
    certify this by a Windows screenshot.
 
-Known unresolved risks: native mouse footer clicks also pass through GameController
-and need device checking; fullscreen Back artwork/hit targets need device validation;
+Native footer pointer hover now suppresses GameController button-down/wheel
+forwarding, with matched releases for Blender drags; verify on device that footer
+clicks cannot edit the last Blender cursor location. Known unresolved risks: fullscreen Back artwork/hit targets need device validation;
 Escape currently closes a secondary window even if an inner Blender popup is open
 (inherited semantics); native Files and provider-safe saving remain unimplemented.
 No staged native-document prototype was merged in this pass.
@@ -162,3 +163,23 @@ Restore still works and no new control appears on a normal desktop build.
 
 Initial native-footer build: `b76365e`, Actions run 34468971151. Fullscreen change
 is a separate checkpoint and needs a subsequent build containing both changes.
+
+
+### Final source-review follow-up
+
+* A pointer-only hover recognizer on the native footer suppresses GameController
+  button-down and wheel delivery to Blender while using that footer. Releases
+  still finish an already-started Blender drag; unmatched releases are ignored.
+* Activating a surviving secondary window after explicitly closing the original
+  workspace hides its footer if it is now the first live window. No inert Close
+  View control should remain on the sole workspace.
+* `filesel.cc: ED_fileselect_exit` sends EVT_FILESELECT_EXTERNAL_CANCEL when the
+  File Browser window is closed, then clears `sfile->op`. This confirms source
+  ownership for the new native close route; repeated cancellation needs device QA.
+* [GameController handlerQueue](https://developer.apple.com/documentation/gamecontroller/gcdevice/handlerqueue)
+  defaults to the main queue. The port does not override it; active-window lookup
+  and UIKit teardown remain on that queue.
+* Scratch native-document prototype review found that NSFileCoordinator protects
+  only copying the URL path, not Blender's later read. Do not call that coordinated
+  file access. Review interactive dismissal/delegate completion and security-scope
+  limits too before promoting it. No native-document code was added to the patch.

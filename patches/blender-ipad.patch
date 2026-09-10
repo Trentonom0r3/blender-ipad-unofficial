@@ -234,10 +234,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOSTUIHoverGestureRecognizer *hover_gesture_recognizer;
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
-@@ -259,6 +320,30 @@
+@@ -259,6 +320,31 @@
    const char *text_field_string;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
++  bool native_chrome_hovered;
 +  bool external_mouse_connected;
 +  bool mouse_left_pressed;
 +  bool mouse_middle_pressed;
@@ -265,21 +266,23 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
    /* Toolbar */
    bool toolbar_enabled;
-@@ -282,7 +367,9 @@
+@@ -282,7 +368,12 @@
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender;
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender;
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender;
 +- (void)handleIndirectPan:(GHOSTUIPanGestureRecognizer *)sender;
  - (void)handleZoom:(GHOSTUIPinchGestureRecognizer *)sender;
 +- (void)handleScroll:(UIPanGestureRecognizer *)sender;
++
++/* Native chrome is outside the Blender input surface. */
++- (void)setNativeChromeHovered:(BOOL)hovered;
  
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -291,6 +378,30 @@
- - (GHOST_TSuccess)hideOnscreenKeyboard;
+@@ -292,7 +383,36 @@
  - (const char *)getLastKeyboardString;
  @end
-+
+ 
 +/* The first live GHOST window is the workspace. Parentless render/duplicate
 + * windows also need an escape path; window count alone must not close the workspace. */
 +static bool ios_can_close_window(GHOST_SystemIOS *system, GHOST_IWindow *window)
@@ -303,14 +306,22 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +/* Shared across callback reinstallation when the active view changes. */
 +static bool ios_escape_closes_window = false;
- 
++
  @implementation GHOSTUIWindow
++- (void)setNativeChromeHovered:(BOOL)hovered
++{
++  native_chrome_hovered = hovered;
++}
++
  - (void)setSystemAndWindowIOS:(GHOST_SystemIOS *)sys windowIOS:(GHOST_WindowIOS *)win
-@@ -306,6 +417,12 @@
+ {
+   system = sys;
+@@ -306,6 +426,13 @@
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
 +  indirect_pointer_dragging = false;
++  native_chrome_hovered = false;
 +  shift_pressed = false;
 +  indirect_is_orbit = false;
 +  indirect_is_pan = false;
@@ -319,7 +330,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
  
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +452,22 @@
+@@ -335,6 +462,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -342,7 +353,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)registerGestureRecognizers
-@@ -354,6 +487,8 @@
+@@ -354,6 +497,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -351,7 +362,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +499,8 @@
+@@ -364,6 +509,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -360,7 +371,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +511,8 @@
+@@ -374,6 +521,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -369,7 +380,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -392,11 +531,39 @@
+@@ -392,11 +541,39 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
  
@@ -409,7 +420,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    pan2f_gesture_recognizer.cancelsTouchesInView = false;
    /* Two finger gestures only.  */
    pan2f_gesture_recognizer.minimumNumberOfTouches = 2;
-@@ -408,8 +575,23 @@
+@@ -408,8 +585,23 @@
        initWithTarget:self
                action:@selector(handleZoom:)];
    zoom_gesture_recognizer.delegate = self;
@@ -433,7 +444,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -525,7 +707,13 @@
+@@ -525,7 +717,13 @@
                                      GHOST_kEventButtonDown,
                                      window,
                                      GHOST_kButtonMaskRight,
@@ -448,7 +459,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,16 +727,14 @@
+@@ -539,16 +737,14 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -470,7 +481,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    return NO;
  }
  
-@@ -580,8 +766,10 @@
+@@ -580,8 +776,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
  
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -483,7 +494,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,16 +792,20 @@
+@@ -604,16 +802,20 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -508,7 +519,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +869,94 @@
+@@ -677,12 +879,94 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
  
@@ -605,7 +616,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
  
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +964,21 @@
+@@ -690,6 +974,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -627,7 +638,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +1011,104 @@
+@@ -722,6 +1021,104 @@
    [self generateUserInputEvents:event_info];
  }
  
@@ -732,7 +743,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -783,14 +1170,43 @@
+@@ -783,14 +1180,43 @@
  
  - (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
  {
@@ -780,7 +791,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
      event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
      [self generateUserInputEvents:event_info];
-@@ -799,7 +1215,9 @@
+@@ -799,7 +1225,9 @@
             sender.state == UIGestureRecognizerStateCancelled ||
             sender.state == UIGestureRecognizerStateFailed)
    {
@@ -791,7 +802,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
  
-@@ -845,10 +1263,37 @@
+@@ -845,10 +1273,37 @@
  
  - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
  {
@@ -829,7 +840,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  - (void)beginFrame
  {
-@@ -1198,11 +1643,314 @@
+@@ -1198,11 +1653,326 @@
    }
  }
  
@@ -952,6 +963,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    mouse_input.leftButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
 +          GHOSTUIWindow *strong_self = ios_active_input_window(sys);
++          if (!strong_self || (pressed && strong_self->native_chrome_hovered) ||
++              (!pressed && !strong_self->mouse_left_pressed)) {
++            return;
++          }
 +          if (strong_self) {
 +            strong_self->mouse_left_pressed = pressed ? true : false;
 +          }
@@ -966,6 +981,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    mouse_input.rightButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
 +          GHOSTUIWindow *ss = ios_active_input_window(sys);
++          if (!ss || (pressed && ss->native_chrome_hovered) ||
++              (!pressed && !ss->mouse_right_pressed)) {
++            return;
++          }
 +          if (ss) { ss->mouse_right_pressed = pressed ? true : false; }
 +          GHOST_IWindow *active_win_r = sys->getWindowManager()->getActiveWindow();
 +          if (!active_win_r) { return; }
@@ -978,6 +997,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    mouse_input.middleButton.pressedChangedHandler =
 +        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
 +          GHOSTUIWindow *ss = ios_active_input_window(sys);
++          if (!ss || (pressed && ss->native_chrome_hovered) ||
++              (!pressed && !ss->mouse_middle_pressed)) {
++            return;
++          }
 +          if (ss) { ss->mouse_middle_pressed = pressed ? true : false; }
 +          IOS_INPUT_LOG(@"MIDDLE button pressed=%d", pressed);
 +          GHOST_IWindow *active_win_m = sys->getWindowManager()->getActiveWindow();
@@ -1059,7 +1082,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +            return;
 +          }
 +          GHOSTUIWindow *active = ios_active_input_window(sys);
-+          if (!active) { return; }
++          if (!active || active->native_chrome_hovered) { return; }
 +          GHOST_WindowIOS *win = active->window;
 +          int delta = (value > 0.0f) ? 1 : -1;
 +          IOS_INPUT_LOG(@"Scroll Y pushing wheel event, delta=%d", delta);
@@ -1144,7 +1167,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2046,9 @@
+@@ -1298,7 +2068,11 @@
  
  @interface GHOST_IOSViewController : UIViewController
  
@@ -1152,10 +1175,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
 +                                  secondary:(BOOL)secondary;
 +- (void)closeSecondaryView:(id)sender;
++- (void)nativeChromeHover:(UIHoverGestureRecognizer *)sender;
++- (void)updateSecondaryViewControls;
  
  @end
  
-@@ -1306,22 +2056,105 @@
+@@ -1306,22 +2080,139 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -1184,6 +1209,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      _return_bar.backgroundColor = [UIColor secondarySystemBackgroundColor];
 +      [container addSubview:_return_bar];
 +      [_return_bar release]; /* Owned by container. */
++      UIHoverGestureRecognizer *chrome_hover = [[UIHoverGestureRecognizer alloc]
++          initWithTarget:self action:@selector(nativeChromeHover:)];
++      chrome_hover.allowedTouchTypes = @[ @(UITouchTypeIndirectPointer) ];
++      [_return_bar addGestureRecognizer:chrome_hover];
++      [chrome_hover release];
 +
 +      UIButton *close = [UIButton buttonWithType:UIButtonTypeSystem];
 +      [close setTitle:NSLocalizedString(@"Close View", nil) forState:UIControlStateNormal];
@@ -1227,7 +1257,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  [super viewDidLayoutSubviews];
 +  if (_return_bar) {
 +    const CGRect bounds = self.view.bounds;
-+    const CGFloat footer = MIN(bounds.size.height, 56 + self.view.safeAreaInsets.bottom);
++    const CGFloat footer = _return_bar.hidden ? 0 :
++        MIN(bounds.size.height, 56 + self.view.safeAreaInsets.bottom);
 +    _view.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height - footer);
 +    _return_bar.frame = CGRectMake(0, bounds.size.height - footer, bounds.size.width, footer);
 +  }
@@ -1237,6 +1268,34 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +{
 +  [super setTitle:title];
 +  _window_label.text = title;
++}
++
++- (void)nativeChromeHover:(UIHoverGestureRecognizer *)sender
++{
++  /* GameController also sees native button clicks. Do not forward their button
++   * downs or wheel events to the last Blender cursor location underneath. */
++  GHOSTUIWindow *native_window = (GHOSTUIWindow *)self.view.window;
++  [native_window setNativeChromeHovered:
++      sender.state == UIGestureRecognizerStateBegan ||
++      sender.state == UIGestureRecognizerStateChanged];
++}
++
++- (void)updateSecondaryViewControls
++{
++  if (!_return_bar) {
++    return;
++  }
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  for (GHOST_IWindow *candidate : system->getWindowManager()->getWindows()) {
++    if (static_cast<GHOST_WindowIOS *>(candidate)->getView() == _view) {
++      /* If the original workspace was deliberately closed, the first surviving
++       * window becomes the workspace: don't leave an inert Close View button. */
++      _return_bar.hidden = !ios_can_close_window(system, candidate);
++      [self.view setNeedsLayout];
++      [self.view layoutIfNeeded];
++      break;
++    }
++  }
 +}
 +
 +- (void)closeSecondaryView:(id)sender
@@ -1267,7 +1326,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2198,12 @@
+@@ -1365,11 +2256,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -1281,7 +1340,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2211,6 @@
+@@ -1377,7 +2269,6 @@
  
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1289,7 +1348,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
  
    /* Create view controller. */
-@@ -1391,7 +2224,6 @@
+@@ -1391,7 +2282,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -1297,7 +1356,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2232,6 @@
+@@ -1400,7 +2290,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1305,7 +1364,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
  
-@@ -1410,8 +2241,10 @@
+@@ -1410,8 +2299,10 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
  
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -1318,7 +1377,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
  
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2257,14 @@
+@@ -1424,10 +2315,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -1334,7 +1393,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
  
    /* Initialize Metal device. */
-@@ -1474,11 +2311,24 @@
+@@ -1474,11 +2369,24 @@
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
  
    releaseNativeHandles();
@@ -1360,7 +1419,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2349,9 @@
+@@ -1499,6 +2407,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -1370,7 +1429,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2471,7 @@
+@@ -1618,7 +2529,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
  
@@ -1379,12 +1438,21 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1918,6 +2771,10 @@
+@@ -1908,6 +2819,7 @@
+ 
+   /* Make window primary visible window. */
+   [rootWindow makeKeyAndVisible];
++  [(GHOST_IOSViewController *)uiview_controller_ updateSecondaryViewControls];
+   /* Enable the drawInMTKView() calls for this window. */
+   metal_view_.paused = NO;
+ 
+@@ -1918,6 +2830,11 @@
                   this);
  
    system_ios_->current_active_window_ = this;
 +  /* Install handlers for devices that were connected before the app/view opened. */
 +  GHOSTUIWindow *input_window = (GHOSTUIWindow *)rootWindow;
++  [input_window setNativeChromeHovered:NO];
 +  [input_window externalMouseChange:nil];
 +  [input_window externalKeyboardChange:nil];
    is_active_window_ = true;
