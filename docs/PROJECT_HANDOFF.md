@@ -1,9 +1,50 @@
 # Project handoff — 2026-09-11
 
-## FBX Export Crash Fix, Procreate-Style Compact Radial Ring & Touch Navigation Swap — 2026-09-11, latest
+## FBX Export Crash Fix, Native Blender Toolbar Vector Icons & Flythrough Touch Navigation — 2026-09-11, latest
 
-Source: **42fb99b**.
-Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34647216974
+Source: **cdc7de8**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34653000916
+
+Context & User Feedback:
+User tested build 34647216974 on hardware:
+1. "export still crashes"
+2. "flythrough doesnt change how it actually works."
+3. "radial ring issmaller but icons should match the tool icons i default blender"
+
+Delivered Implementation:
+1. FBX Export Crash Fix:
+   - In `wm_event_system.cc` (`is_export` branch), guaranteed valid window, active screen (`CTX_wm_screen_set(C, screen)`), and 3D view area/region context prior to operator invocation.
+   - Guaranteed `op->reports` is allocated via `MEM_callocN<ReportList>` and initialized via `BKE_reports_init(op->reports, RPT_STORE | RPT_FREE)`. This prevents `bpy_operator_exec` and `BPy_errors_to_report` from dereferencing a NULL pointer during Python exporter execution.
+   - Corrected memory management on export completion: replaced invalid `MEM_delete(handler)` with Blender's canonical `wm_event_free_handler(&handler->head)` alongside `wm_operator_free_for_fileselect(handler->op)`.
+2. Native Vector Toolbar Icons in Radial Menu:
+   - In `space_view3d_ipad.py` (`VIEW3D_MT_ipad_tools.draw`), updated tool slot generation to dynamically resolve the exact native vector toolbar icon handles via `ToolSelectPanelHelper._icon_value_from_icon_handle(tool.icon)` and pass `icon_value=icon_val` to `slot.operator('wm.tool_set_by_id', ...)`.
+   - Preserved RNA enum string fallbacks in `IPAD_RADIAL_TOOLS` to ensure robust rendering and pass AST syntax checks.
+3. Touch Navigation & Flythrough Swap Fix:
+   - In `view3d_navigate_view_move.cc` line 114: updated guard to accept both `WM_EVENT_MULTITOUCH_TWO_FINGERS` and `WM_EVENT_MULTITOUCH_THREE_FINGERS`, preventing 3-finger pan events and flythrough pan events from being discarded.
+   - In `GHOST_WindowIOS.mm`:
+     - Added sub-pixel accumulator (`g_pan_accum_x`, `g_pan_accum_y`) for `PAN_GESTURE_THREE_FINGERS` (Shift + Trackpad Pan), ensuring small touch moves below integer thresholds are preserved rather than truncated to 0.
+     - In `handlePan:`: When Flythrough mode is active, on `UIGestureRecognizerStateBegan`, update cursor position and send `CURSOR_MOVE` before dragging so Blender routes subsequent 1-finger `PAN_GESTURE_TWO_FINGERS` directly to the active 3D Viewport.
+     - In `handlePan2f:`: When Flythrough mode is active, 2-finger drag sends `PAN_GESTURE_THREE_FINGERS` (view3d.move pan), swapping from orbit.
+     - In `handleZoom:`: In Flythrough mode, amplified pinch distance by 2.5x for responsive dolly navigation.
+     - Added dedicated 3-finger pan gesture recognizer (`pan3f_gesture_recognizer`) on `GHOSTUIWindow` with mutual exclusion against `tap3f_gesture_recognizer`.
+4. Verification:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (8/8 tests).
+
+Device test for this build:
+1. Model Export:
+   - Tap File > Export > FBX (.fbx)...: Verify native Apple Files export sheet opens directly with `<name>.fbx` without crashing. Pick a folder; verify FBX file is saved.
+2. Compact Radial Ring & Tool Icons:
+   - Squeeze Apple Pencil in the 3D viewport: Verify 9 tools appear with the exact native Blender toolbar icons (Select Box, Cursor, Move gizmo, Rotate gizmo, Scale gizmo, Transform gizmo, Annotate pencil, Measure ruler, Add Cube).
+3. Flythrough Mode Navigation:
+   - Tap "Flythrough" header pill:
+     - 1-finger drag = Look around / tilt (orbit).
+     - 2-finger drag = Pan (swapped from orbit).
+     - Pinch = Dolly (fast push into / out of scene).
+     - 3-finger drag = Pan.
+   - Tap "Flythrough [ON]" again to return to standard mode.
+
+## FBX Export Crash Fix, Procreate-Style Compact Radial Ring & Touch Navigation Swap — 2026-09-11
 
 Context & User Feedback:
 User tested previous build on hardware:
