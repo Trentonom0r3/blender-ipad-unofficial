@@ -152,7 +152,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
  
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3403,177 @@
+@@ -3377,6 +3403,122 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -169,58 +169,32 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  return OPERATOR_FINISHED;
 +}
 +
-+static wmOperatorStatus wm_save_copy_to_files_exec(bContext *C, wmOperator *op)
-+{
-+  char filename[FILE_MAXFILE];
-+  RNA_string_get(op->ptr, "filename", filename);
-+  const int flags_orig = G.fileflags;
-+  int flags = flags_orig;
-+  SET_FLAG_FROM_TEST(flags, RNA_boolean_get(op->ptr, "compress"), G_FILE_COMPRESS);
-+  const bool presented = GHOST_IOS_export_project(filename, [&](const char *path) {
-+    if (strlen(path) >= FILE_MAX) {
-+      BKE_report(op->reports, RPT_ERROR, "The copy filename is too long");
-+      return false;
-+    }
-+    /* Destination is chosen later. Do not remap assets relative to a temporary
-+     * staging directory which is deleted once UIKit completes the export.
-+     * Packed assets remain embedded; external assets retain absolute references.
-+     * The writer restores the live Main paths when use_save_as_copy is true. */
-+    return wm_file_write(C, path, flags, BLO_WRITE_PATH_REMAP_ABSOLUTE, true, op->reports);
-+  });
-+  G.fileflags = flags_orig;
-+  if (!presented) {
-+    BKE_report(op->reports, RPT_ERROR,
-+               "Could not prepare the copy or open Files. Close other dialogs and try again");
-+    return OPERATOR_CANCELLED;
-+  }
-+  /* No Saved report here: the user can still cancel the native destination picker.
-+   * The source remains dirty and ordinary Save still targets the original. */
-+  return OPERATOR_FINISHED;
-+}
-+
 +static wmOperatorStatus wm_save_copy_to_files_invoke(bContext *C,
 +                                                     wmOperator *op,
 +                                                     const wmEvent * /*event*/)
 +{
-+  if (!RNA_struct_property_is_set(op->ptr, "filename")) {
-+    const char *path = BKE_main_blendfile_path(CTX_data_main(C));
-+    RNA_string_set(op->ptr, "filename", path[0] ? BLI_path_basename(path) : "Untitled.blend");
++  Main *bmain = CTX_data_main(C);
++  const char *path = BKE_main_blendfile_path(bmain);
++  const char *filename = path[0] ? BLI_path_basename(path) : "Untitled.blend";
++
++  const bool presented = GHOST_IOS_export_project(
++      filename,
++      [C](const char *staging_path, bool compress) {
++        int flags = G.fileflags;
++        SET_FLAG_FROM_TEST(flags, compress, G_FILE_COMPRESS);
++        return wm_file_write(C, staging_path, flags, BLO_WRITE_PATH_REMAP_ABSOLUTE, true, nullptr);
++      });
++
++  if (!presented) {
++    BKE_report(op->reports, RPT_ERROR, "Could not open Files sheet. Close other dialogs and try again");
++    return OPERATOR_CANCELLED;
 +  }
-+  if (!RNA_struct_property_is_set(op->ptr, "compress")) {
-+    RNA_boolean_set(op->ptr, "compress", (G.fileflags & G_FILE_COMPRESS) != 0);
-+  }
-+  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Save a Copy to Files"),
-+                                        IFACE_("Choose Destination"));
++  return OPERATOR_FINISHED;
 +}
 +
-+static void wm_save_copy_to_files_ui(bContext * /*C*/, wmOperator *op)
++static wmOperatorStatus wm_save_copy_to_files_exec(bContext *C, wmOperator *op)
 +{
-+  uiLayout *layout = op->layout;
-+  layout->prop(op->ptr, "filename", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-+  layout->prop(op->ptr, "compress", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-+  layout->label(IFACE_("The open project stays unchanged."), ICON_INFO);
-+  layout->label(IFACE_("External assets are not included in this copy."), ICON_NONE);
-+  layout->label(IFACE_("Pack Resources first to include supported assets."), ICON_NONE);
++  return wm_save_copy_to_files_invoke(C, op, nullptr);
 +}
 +
 +void WM_OT_save_copy_to_files(wmOperatorType *ot)
@@ -232,9 +206,6 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->poll = WM_operator_winactive;
 +  ot->invoke = wm_save_copy_to_files_invoke;
 +  ot->exec = wm_save_copy_to_files_exec;
-+  ot->ui = wm_save_copy_to_files_ui;
-+  RNA_def_string(ot->srna, "filename", "Untitled.blend", FILE_MAXFILE, "Name", "Copy filename");
-+  RNA_def_boolean(ot->srna, "compress", false, "Compress", "Write a compressed Blender file");
 +}
 +
 +void WM_OT_import_project_from_files(wmOperatorType *ot)
@@ -248,89 +219,63 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->poll = WM_operator_winactive;
 +}
 +
-+static wmOperatorStatus wm_save_as_to_files_exec(bContext *C, wmOperator *op)
-+{
-+  char filename[FILE_MAXFILE];
-+  RNA_string_get(op->ptr, "filename", filename);
-+
-+  char filepath[FILE_MAX];
-+  if (!GHOST_IOS_get_project_save_path(filename, filepath, sizeof(filepath))) {
-+    BKE_report(op->reports, RPT_ERROR, "Could not create project destination in Documents/Projects");
-+    return OPERATOR_CANCELLED;
-+  }
-+
-+  const int flags_orig = G.fileflags;
-+  int flags = flags_orig;
-+  SET_FLAG_FROM_TEST(flags, RNA_boolean_get(op->ptr, "compress"), G_FILE_COMPRESS);
-+
-+  const bool success = wm_file_write(
-+      C, filepath, flags, BLO_WRITE_PATH_REMAP_RELATIVE, false, op->reports);
-+
-+  G.fileflags = flags_orig;
-+
-+  if (!success) {
-+    return OPERATOR_CANCELLED;
-+  }
-+
-+  Main *bmain = CTX_data_main(C);
-+  bmain->has_forward_compatibility_issues = false;
-+  bmain->colorspace.is_missing_opencolorio_config = false;
-+
-+  WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
-+  if (wmWindowManager *wm = CTX_wm_manager(C)) {
-+    wm_autosave_timer_end(wm);
-+    wm_autosave_timer_begin(wm);
-+    wm->autosave_scheduled = false;
-+  }
-+
-+  const char *saved_name = BLI_path_basename(filepath);
-+  BKE_reportf(op->reports, RPT_INFO, "Saved as \"%s\"", saved_name);
-+
-+  return OPERATOR_FINISHED;
-+}
-+
 +static wmOperatorStatus wm_save_as_to_files_invoke(bContext *C,
 +                                                   wmOperator *op,
 +                                                   const wmEvent * /*event*/)
 +{
-+  if (!RNA_struct_property_is_set(op->ptr, "filename")) {
-+    const char *path = BKE_main_blendfile_path(CTX_data_main(C));
-+    RNA_string_set(op->ptr, "filename", path[0] ? BLI_path_basename(path) : "Untitled.blend");
++  Main *bmain = CTX_data_main(C);
++  const char *path = BKE_main_blendfile_path(bmain);
++  const char *filename = path[0] ? BLI_path_basename(path) : "Untitled.blend";
++
++  const bool presented = GHOST_IOS_save_as_project(
++      filename,
++      [C](const char *staging_path, bool compress) {
++        int flags = G.fileflags;
++        SET_FLAG_FROM_TEST(flags, compress, G_FILE_COMPRESS);
++        return wm_file_write(C, staging_path, flags, BLO_WRITE_PATH_REMAP_RELATIVE, false, nullptr);
++      },
++      [C](const char *dest_path) {
++        Main *bmain = CTX_data_main(C);
++        STRNCPY(bmain->filepath, dest_path);
++        bmain->has_forward_compatibility_issues = false;
++        bmain->colorspace.is_missing_opencolorio_config = false;
++
++        WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
++        if (wmWindowManager *wm = CTX_wm_manager(C)) {
++          wm_autosave_timer_end(wm);
++          wm_autosave_timer_begin(wm);
++          wm->autosave_scheduled = false;
++          BKE_reportf(&wm->runtime->reports, RPT_INFO, "Saved as \"%s\"", BLI_path_basename(dest_path));
++        }
++      });
++
++  if (!presented) {
++    BKE_report(op->reports, RPT_ERROR, "Could not open Files sheet. Close other dialogs and try again");
++    return OPERATOR_CANCELLED;
 +  }
-+  if (!RNA_struct_property_is_set(op->ptr, "compress")) {
-+    RNA_boolean_set(op->ptr, "compress", (G.fileflags & G_FILE_COMPRESS) != 0);
-+  }
-+  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Save Project As"),
-+                                        IFACE_("Save"));
++  return OPERATOR_FINISHED;
 +}
 +
-+static void wm_save_as_to_files_ui(bContext * /*C*/, wmOperator *op)
++static wmOperatorStatus wm_save_as_to_files_exec(bContext *C, wmOperator *op)
 +{
-+  uiLayout *layout = op->layout;
-+  layout->prop(op->ptr, "filename", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-+  layout->prop(op->ptr, "compress", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-+  layout->label(IFACE_("Saves into Blender's Projects folder."), ICON_INFO);
-+  layout->label(IFACE_("This file becomes the active project."), ICON_NONE);
++  return wm_save_as_to_files_invoke(C, op, nullptr);
 +}
 +
 +void WM_OT_save_as_to_files(wmOperatorType *ot)
 +{
 +  ot->name = "Save Project As";
 +  ot->idname = "WM_OT_save_as_to_files";
-+  ot->description = "Save the current project to Blender's Projects folder on iPad; "
++  ot->description = "Save the current project to an Apple Files destination; "
 +                    "makes the saved file the active project";
 +  ot->poll = WM_operator_winactive;
 +  ot->invoke = wm_save_as_to_files_invoke;
 +  ot->exec = wm_save_as_to_files_exec;
-+  ot->ui = wm_save_as_to_files_ui;
-+  RNA_def_string(ot->srna, "filename", "Untitled.blend", FILE_MAXFILE, "Name", "Project filename");
-+  RNA_def_boolean(ot->srna, "compress", false, "Compress", "Write a compressed Blender file");
 +}
 +#endif
  
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
-@@ -3696,7 +3893,10 @@
+@@ -3696,7 +3838,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -342,7 +287,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
  
-@@ -3708,6 +3908,7 @@
+@@ -3708,6 +3853,7 @@
    WM_event_add_fileselect(C, op);
  
    return OPERATOR_RUNNING_MODAL;
@@ -350,7 +295,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
  
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3939,8 +4140,13 @@
+@@ -3939,8 +4085,13 @@
      }
    }
    else {
@@ -2317,7 +2262,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,39 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -2327,11 +2272,19 @@ new file mode 100644
 + * Returns whether presentation began, not whether a project has been opened. */
 +bool GHOST_IOS_import_project();
 +
-+/* Serialize a copy synchronously via writer, then present the native export
-+ * picker. No callback survives this call. True means picker presented, not saved.
++/* Prompt user with simple alert ("Compress .blend file?"), then serialize copy
++ * synchronously via writer, and present the native export picker.
 + * The writer must leave working-document identity and unsaved state unchanged. */
 +bool GHOST_IOS_export_project(const char *filename,
-+                              const std::function<bool(const char *)> &writer);
++                              const std::function<bool(const char *staging_path, bool compress)> &writer,
++                              const std::function<void(const char *dest_path)> &on_saved = nullptr);
++
++/* Prompt user with simple alert ("Compress .blend file?"), then serialize project
++ * synchronously via writer, and present the native export picker.
++ * When a destination is chosen in Files, on_saved is called with the destination path. */
++bool GHOST_IOS_save_as_project(const char *filename,
++                               const std::function<bool(const char *staging_path, bool compress)> &writer,
++                               const std::function<void(const char *dest_path)> &on_saved);
 +
 +/* Prepare a destination path for saving a project inside Documents/Projects.
 + * Creates the containing directory if needed.
@@ -3464,7 +3417,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,296 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
@@ -3476,7 +3429,15 @@ new file mode 100644
 +  UIDocumentPickerViewController *_picker;
 +  NSURL *_staging;
 +  BOOL _busy;
++  NSString *_exportFilename;
++  NSString *_exportTitle;
++  std::function<bool(const char *, bool)> _compressWriter;
++  std::function<void(const char *)> _on_saved;
 +}
++- (BOOL)presentWithCompressPrompt:(NSString *)filename
++                            title:(NSString *)title
++                           writer:(const std::function<bool(const char *, bool)> &)writer
++                          onSaved:(const std::function<void(const char *)> &)onSaved;
 +- (BOOL)present:(NSString *)filename
 +          title:(NSString *)title
 +         writer:(const std::function<bool(const char *)> &)writer;
@@ -3493,7 +3454,112 @@ new file mode 100644
 +  }
 +  [_presenter release];
 +  _presenter = nil;
++  [_exportFilename release];
++  _exportFilename = nil;
++  [_exportTitle release];
++  _exportTitle = nil;
++  _compressWriter = nullptr;
++  _on_saved = nullptr;
 +  _busy = NO;
++}
++
++- (void)startExportWithCompress:(BOOL)compress
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!system || !system->current_active_window_ ||
++      system->current_active_window_->rootWindow.rootViewController != _presenter ||
++      !_presenter.view.window || _presenter.presentedViewController)
++  {
++    [self finish];
++    return;
++  }
++  NSFileManager *manager = [NSFileManager defaultManager];
++  NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++  _staging = [[root URLByAppendingPathComponent:
++      [@"BlenderExport-" stringByAppendingString:[NSUUID UUID].UUIDString]
++                                   isDirectory:YES] retain];
++  NSError *error = nil;
++  if (![manager createDirectoryAtURL:_staging withIntermediateDirectories:YES
++                          attributes:nil error:&error]) {
++    NSLog(@"Cannot prepare Blender export: %@", error);
++    [self finish];
++    return;
++  }
++  NSString *name = _exportFilename.lastPathComponent;
++  if (!name.length || [name isEqualToString:@"."] || [name isEqualToString:@".."]) {
++    name = @"Untitled.blend";
++  }
++  if ([name.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++    name = [name stringByAppendingPathExtension:@"blend"];
++  }
++  NSURL *source = [_staging URLByAppendingPathComponent:name];
++  if (!_compressWriter || !_compressWriter(source.path.UTF8String, compress)) {
++    [self finish];
++    return;
++  }
++  if (!system->current_active_window_ ||
++      system->current_active_window_->rootWindow.rootViewController != _presenter ||
++      !_presenter.view.window || _presenter.presentedViewController)
++  {
++    [self finish];
++    return;
++  }
++  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
++  _picker.delegate = self;
++  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++  _picker.title = _exportTitle ?: @"Save to Files";
++  [_presenter presentViewController:_picker animated:YES completion:nil];
++  _picker.presentationController.delegate = self;
++}
++
++- (BOOL)presentWithCompressPrompt:(NSString *)filename
++                            title:(NSString *)title
++                           writer:(const std::function<bool(const char *, bool)> &)writer
++                          onSaved:(const std::function<void(const char *)> &)onSaved
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy || !system || !system->current_active_window_) {
++    return NO;
++  }
++  UIViewController *presenter = system->current_active_window_->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++  _busy = YES;
++  _presenter = [presenter retain];
++  _exportFilename = [filename copy];
++  _exportTitle = [title copy];
++  _compressWriter = writer;
++  _on_saved = onSaved;
++
++  UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
++                                                                 message:@"Compress .blend file?"
++                                                          preferredStyle:UIAlertControllerStyleAlert];
++
++  [alert addAction:[UIAlertAction actionWithTitle:@"Compress (Yes)"
++                                           style:UIAlertActionStyleDefault
++                                         handler:^(UIAlertAction *action) {
++    dispatch_async(dispatch_get_main_queue(), ^{
++      [self startExportWithCompress:YES];
++    });
++  }]];
++
++  [alert addAction:[UIAlertAction actionWithTitle:@"Don't Compress (No)"
++                                           style:UIAlertActionStyleDefault
++                                         handler:^(UIAlertAction *action) {
++    dispatch_async(dispatch_get_main_queue(), ^{
++      [self startExportWithCompress:NO];
++    });
++  }]];
++
++  [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                           style:UIAlertActionStyleCancel
++                                         handler:^(UIAlertAction *action) {
++    [self finish];
++  }]];
++
++  [_presenter presentViewController:alert animated:YES completion:nil];
++  return YES;
 +}
 +
 +- (BOOL)present:(NSString *)filename
@@ -3580,8 +3646,10 @@ new file mode 100644
 +- (void)documentPicker:(UIDocumentPickerViewController *)controller
 +    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 +{
-+  /* UIKit has completed the copy. Never make a destination the working document
-+   * or persist a grant for it: Save Copy deliberately leaves that identity alone. */
++  NSURL *destination = urls.firstObject;
++  if (destination && _on_saved) {
++    _on_saved(destination.path.UTF8String);
++  }
 +  [self dismissPicker:controller];
 +}
 +
@@ -3599,7 +3667,8 @@ new file mode 100644
 +@end
 +
 +bool GHOST_IOS_export_project(const char *filename,
-+                              const std::function<bool(const char *)> &writer)
++                              const std::function<bool(const char *, bool)> &writer,
++                              const std::function<void(const char *)> &on_saved)
 +{
 +  if (![NSThread isMainThread] || !filename || !writer) {
 +    return false;
@@ -3608,9 +3677,27 @@ new file mode 100644
 +  if (!exporter) {
 +    exporter = [[GHOST_IOSProjectExporter alloc] init];
 +  }
-+  return [exporter present:[NSString stringWithUTF8String:filename]
-+                     title:@"Save a Blender Copy"
-+                    writer:writer];
++  return [exporter presentWithCompressPrompt:[NSString stringWithUTF8String:filename]
++                                       title:@"Save a Copy to Files"
++                                      writer:writer
++                                     onSaved:on_saved];
++}
++
++bool GHOST_IOS_save_as_project(const char *filename,
++                               const std::function<bool(const char *, bool)> &writer,
++                               const std::function<void(const char *)> &on_saved)
++{
++  if (![NSThread isMainThread] || !filename || !writer) {
++    return false;
++  }
++  static GHOST_IOSProjectExporter *exporter = nil;
++  if (!exporter) {
++    exporter = [[GHOST_IOSProjectExporter alloc] init];
++  }
++  return [exporter presentWithCompressPrompt:[NSString stringWithUTF8String:filename]
++                                       title:@"Save Project As"
++                                      writer:writer
++                                     onSaved:on_saved];
 +}
 +
 +bool GHOST_IOS_export_file(const char *filename,

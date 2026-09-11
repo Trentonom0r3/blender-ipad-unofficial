@@ -1,6 +1,51 @@
 # Project handoff — 2026-09-11
 
-## Native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) — 2026-09-11, latest
+## Native Save As and Save Copy compress alert & direct Files picker — 2026-09-11, latest
+
+Source: **pending commit**.
+Build run: pending dispatch.
+
+Context & User Feedback:
+User reported on real hardware that tapping the title / header area in the dialog popup that opened on Save As and Save Copy crashed the app.
+User requested: "I think for those, it should have a simple popup with y or n, 'Compress .blend file?' Or something like that, and THEN go directly into the apple files folder. The user can rename it there if they want."
+
+Delivered Fix:
+1. Eliminated Crashing Blender Dialog Popup:
+   - Removed `WM_operator_props_dialog_popup`, `ot->ui`, and the Blender `filename` text-input property buttons from `WM_OT_save_as_to_files` and `WM_OT_save_copy_to_files` in `wm_files.cc`.
+2. Native iOS Alert ("Compress .blend file?"):
+   - In `GHOST_ProjectExportIOS.hh`, implemented `presentWithCompressPrompt:title:writer:onSaved:`.
+   - Presents a native UIKit `UIAlertController` (Alert style) asking: "Compress .blend file?".
+   - Three touch-safe buttons: **Compress (Yes)**, **Don't Compress (No)**, and **Cancel**.
+   - Tapping Cancel dismisses cleanly without touching any files.
+3. Direct Apple Files Picker & Rename in Files:
+   - Tapping Yes or No dismisses the alert and directly presents `UIDocumentPickerViewController(initForExportingURLs:asCopy:YES)`.
+   - The user browses Apple Files directly (*On My iPad*, *iCloud Drive*, *Blender > Projects*, external drives) and can rename the file directly in Apple Files before saving.
+4. Active Document Identity for Save As:
+   - When the user selects the destination and taps Save in Apple Files, UIKit returns the chosen destination URL in `didPickDocumentsAtURLs:`.
+   - For `WM_OT_save_as_to_files`, `on_saved` updates `bmain->filepath` to that destination, sends `NC_WM | ND_FILESAVE`, restarts the autosave timer, and shows the info report banner (`Saved as "<name>"`).
+   - For `WM_OT_save_copy_to_files`, `bmain->filepath` remains untouched (independent copy).
+5. Unsaved File > Save:
+   - `wm_save_mainfile_invoke` continues routing unsaved files to `WM_OT_save_as_to_files`, so an unsaved Save also prompts for compression and opens Apple Files directly.
+6. Validation:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `validate_native_operator_discovery.py`: PASS.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (8/8 tests).
+   - `validate_pencil_tools.py`: PASS.
+   - `validate_save_copy_contract.py`: PASS.
+
+Device test for this build:
+1. Tap File > Save As...:
+   - Verify native iOS alert appears: "Compress .blend file?" with [Compress (Yes)], [Don't Compress (No)], and [Cancel].
+   - Tap title area of the alert: verify NO crash occurs (managed 100% by UIKit).
+   - Tap "Compress (Yes)" or "Don't Compress (No)": verify it transitions directly into Apple Files picker sheet.
+   - In Apple Files sheet: verify you can rename the file (e.g. `MyModel.blend`) and choose any destination folder.
+   - Tap Save: verify the file is saved, becomes the active project, and subsequent File > Save saves silently and in-place.
+2. Tap File > Save Copy...:
+   - Verify native "Compress .blend file?" alert appears. Tap Cancel: verify workspace returns with no changes.
+   - Tap Save Copy again, tap "Compress (Yes)", pick a destination in Files: verify independent copy is written and active project path is untouched.
+3. Squeeze Apple Pencil: verify 9-tool radial palette opens and operates normally. Double-tap Pencil: verify context menu opens.
+
+## Native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) — 2026-09-11
 
 Source: **e439943**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34568136604
