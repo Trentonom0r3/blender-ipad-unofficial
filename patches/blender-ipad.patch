@@ -130,7 +130,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3377,6 +3395,30 @@
+@@ -3377,6 +3395,98 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -145,6 +145,74 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  /* UIKit owns selection; the normal open-file event will start a new operator
 +   * only after the copy succeeds. Do not retain this operator across callbacks. */
 +  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus wm_save_copy_to_files_exec(bContext *C, wmOperator *op)
++{
++  char filename[FILE_MAXFILE];
++  RNA_string_get(op->ptr, "filename", filename);
++  const int flags_orig = G.fileflags;
++  int flags = flags_orig;
++  SET_FLAG_FROM_TEST(flags, RNA_boolean_get(op->ptr, "compress"), G_FILE_COMPRESS);
++  const bool presented = GHOST_IOS_export_project(filename, [&](const char *path) {
++    if (strlen(path) >= FILE_MAX) {
++      BKE_report(op->reports, RPT_ERROR, "The copy filename is too long");
++      return false;
++    }
++    /* Destination is chosen later. Do not remap assets relative to a temporary
++     * staging directory which is deleted once UIKit completes the export.
++     * Packed assets remain embedded; external assets retain absolute references.
++     * The writer restores the live Main paths when use_save_as_copy is true. */
++    return wm_file_write(C, path, flags, BLO_WRITE_PATH_REMAP_ABSOLUTE, true, op->reports);
++  });
++  G.fileflags = flags_orig;
++  if (!presented) {
++    BKE_report(op->reports, RPT_ERROR,
++               "Could not prepare the copy or open Files. Close other dialogs and try again");
++    return OPERATOR_CANCELLED;
++  }
++  /* No Saved report here: the user can still cancel the native destination picker.
++   * The source remains dirty and ordinary Save still targets the original. */
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus wm_save_copy_to_files_invoke(bContext *C,
++                                                     wmOperator *op,
++                                                     const wmEvent * /*event*/)
++{
++  if (!RNA_struct_property_is_set(op->ptr, "filename")) {
++    const char *path = BKE_main_blendfile_path(CTX_data_main(C));
++    RNA_string_set(op->ptr, "filename", path[0] ? BLI_path_basename(path) : "Untitled.blend");
++  }
++  if (!RNA_struct_property_is_set(op->ptr, "compress")) {
++    RNA_boolean_set(op->ptr, "compress", (G.fileflags & G_FILE_COMPRESS) != 0);
++  }
++  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Save a Copy to Files"),
++                                        IFACE_("Choose Destination"));
++}
++
++static void wm_save_copy_to_files_ui(bContext * /*C*/, wmOperator *op)
++{
++  uiLayout *layout = op->layout;
++  layout->prop(op->ptr, "filename", UI_ITEM_NONE, std::nullopt, ICON_NONE);
++  layout->prop(op->ptr, "compress", UI_ITEM_NONE, std::nullopt, ICON_NONE);
++  layout->label(IFACE_("The open project stays unchanged."), ICON_INFO);
++  layout->label(IFACE_("External assets are not included in this copy."), ICON_NONE);
++  layout->label(IFACE_("Pack Resources first to include supported assets."), ICON_NONE);
++}
++
++void WM_OT_save_copy_to_files(wmOperatorType *ot)
++{
++  ot->name = "Save a Copy to Files";
++  ot->idname = "WM_OT_save_copy_to_files";
++  ot->description = "Choose an iPad Files destination for an independent .blend copy; "
++                    "ordinary Save continues updating the original project";
++  ot->poll = WM_operator_winactive;
++  ot->invoke = wm_save_copy_to_files_invoke;
++  ot->exec = wm_save_copy_to_files_exec;
++  ot->ui = wm_save_copy_to_files_ui;
++  RNA_def_string(ot->srna, "filename", "Untitled.blend", FILE_MAXFILE, "Name", "Copy filename");
++  RNA_def_boolean(ot->srna, "compress", false, "Compress", "Write a compressed Blender file");
 +}
 +
 +void WM_OT_import_project_from_files(wmOperatorType *ot)
@@ -1827,16 +1895,17 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
  
  #include "GHOST_Debug.hh"
  #include "GHOST_EventButton.hh"
-@@ -43,6 +44,8 @@
+@@ -43,6 +44,9 @@
  void WM_main_loop_body(bContext *C);
  int main_ios_callback(int argc, const char **argv);
  
 +#include "GHOST_ProjectImportIOS.hh"
++#include "GHOST_ProjectExportIOS.hh"
 +
  @interface IOSAppDelegate : UIResponder <UIApplicationDelegate>
  
  @property(strong, nonatomic) UIWindow *window;
-@@ -94,6 +97,15 @@
+@@ -94,6 +98,15 @@
  - (void)drawInMTKView:(nonnull MTKView *)MTKView
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -1852,7 +1921,7 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
  
    /* We should always have a window... */
    if (system->current_active_window_) {
-@@ -135,12 +147,15 @@
+@@ -135,12 +148,15 @@
  - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -2041,13 +2110,20 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,13 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
++#include <functional>
 +
 +/* Present a native picker for an independent local .blend copy. Main thread only.
 + * Returns whether presentation began, not whether a project has been opened. */
 +bool GHOST_IOS_import_project();
++
++/* Serialize a copy synchronously via writer, then present the native export
++ * picker. No callback survives this call. True means picker presented, not saved.
++ * The writer must leave working-document identity and unsaved state unchanged. */
++bool GHOST_IOS_export_project(const char *filename,
++                              const std::function<bool(const char *)> &writer);
 diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
 new file mode 100644
 --- /dev/null
@@ -2297,12 +2373,13 @@ new file mode 100644
 diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
 --- a/source/blender/windowmanager/wm_files.hh
 +++ b/source/blender/windowmanager/wm_files.hh
-@@ -113,6 +113,9 @@
+@@ -113,6 +113,10 @@
  void WM_OT_read_factory_settings(wmOperatorType *ot);
  
  void WM_OT_open_mainfile(wmOperatorType *ot);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +void WM_OT_import_project_from_files(wmOperatorType *ot);
++void WM_OT_save_copy_to_files(wmOperatorType *ot);
 +#endif
  
  void WM_OT_revert_mainfile(wmOperatorType *ot);
@@ -2310,12 +2387,13 @@ diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowman
 diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blender/windowmanager/intern/wm_operators.cc
 --- a/source/blender/windowmanager/intern/wm_operators.cc
 +++ b/source/blender/windowmanager/intern/wm_operators.cc
-@@ -4210,6 +4210,9 @@
+@@ -4210,6 +4210,10 @@
    WM_operatortype_append(WM_OT_window_fullscreen_toggle);
    WM_operatortype_append(WM_OT_quit_blender);
    WM_operatortype_append(WM_OT_open_mainfile);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(WM_OT_import_project_from_files);
++  WM_operatortype_append(WM_OT_save_copy_to_files);
 +#endif
    WM_operatortype_append(WM_OT_revert_mainfile);
    WM_operatortype_append(WM_OT_link);
@@ -2348,7 +2426,19 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
          layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
          layout.menu("TOPBAR_MT_file_open_recent")
          layout.operator("wm.revert_mainfile")
-@@ -613,6 +615,8 @@
+@@ -181,7 +183,10 @@
+         layout.operator_context = 'INVOKE_AREA'
+         layout.operator("wm.save_as_mainfile", text="Save As...")
+         layout.operator_context = 'INVOKE_AREA'
+-        layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
++        if hasattr(bpy.types, "WM_OT_save_copy_to_files"):
++            layout.operator("wm.save_copy_to_files", text="Save Copy...")
++        else:
++            layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
+ 
+         sub = layout.row()
+         sub.enabled = context.blend_data.is_saved and file_is_writable
+@@ -613,6 +618,8 @@
  
          layout.operator_context = 'INVOKE_AREA'
          layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
@@ -2663,3 +2753,141 @@ new file mode 100644
 +  return result;
 +}
 +}  // namespace blender::ui::ipad
+diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
+@@ -0,0 +1,133 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
++ * context, operator or callback is retained while UIKit owns the picker. */
++@interface GHOST_IOSProjectExporter : NSObject <UIDocumentPickerDelegate,
++                                               UIAdaptivePresentationControllerDelegate>
++{
++  UIViewController *_presenter;
++  UIDocumentPickerViewController *_picker;
++  NSURL *_staging;
++  BOOL _busy;
++}
++- (BOOL)present:(NSString *)filename writer:(const std::function<bool(const char *)> &)writer;
++@end
++
++@implementation GHOST_IOSProjectExporter
++- (void)finish
++{
++  if (_staging) {
++    /* This URL is always our unique temporary directory, never a provider URL. */
++    [[NSFileManager defaultManager] removeItemAtURL:_staging error:nullptr];
++    [_staging release];
++    _staging = nil;
++  }
++  [_presenter release];
++  _presenter = nil;
++  _busy = NO;
++}
++
++- (BOOL)present:(NSString *)filename writer:(const std::function<bool(const char *)> &)writer
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy || !system || !system->current_active_window_) {
++    return NO;
++  }
++  UIViewController *presenter = system->current_active_window_->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++  _busy = YES;
++  _presenter = [presenter retain];
++  NSFileManager *manager = [NSFileManager defaultManager];
++  NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++  _staging = [[root URLByAppendingPathComponent:
++      [@"BlenderExport-" stringByAppendingString:[NSUUID UUID].UUIDString]
++                                   isDirectory:YES] retain];
++  NSError *error = nil;
++  if (![manager createDirectoryAtURL:_staging withIntermediateDirectories:YES
++                          attributes:nil error:&error]) {
++    NSLog(@"Cannot prepare Blender export: %@", error);
++    [self finish];
++    return NO;
++  }
++  /* Enforce a basename even if a scripted caller supplied a path. */
++  NSString *name = filename.lastPathComponent;
++  if (!name.length || [name isEqualToString:@"."] || [name isEqualToString:@".."]) {
++    name = @"Untitled.blend";
++  }
++  if ([name.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++    name = [name stringByAppendingString:@".blend"];
++  }
++  NSURL *source = [_staging URLByAppendingPathComponent:name];
++  /* Blender must serialize on its main thread. Provider upload/copy happens
++   * later, under the system export picker, not while serializing the scene. */
++  if (!writer(source.path.UTF8String)) {
++    [self finish];
++    return NO;
++  }
++  if (!system->current_active_window_ ||
++      system->current_active_window_->rootWindow.rootViewController != _presenter ||
++      !_presenter.view.window || _presenter.presentedViewController)
++  {
++    [self finish];
++    return NO;
++  }
++  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
++  _picker.delegate = self;
++  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++  _picker.title = @"Save a Blender Copy";
++  [_presenter presentViewController:_picker animated:YES completion:nil];
++  _picker.presentationController.delegate = self;
++  return YES;
++}
++
++- (void)dismissPicker:(UIDocumentPickerViewController *)controller
++{
++  if (controller != _picker) {
++    return;
++  }
++  UIDocumentPickerViewController *picker = _picker;
++  _picker = nil;
++  picker.delegate = nil;
++  picker.presentationController.delegate = nil;
++  /* Keep the source alive until the picker has completed or cancelled export. */
++  [picker dismissViewControllerAnimated:YES completion:^{ [self finish]; }];
++  [picker release];
++}
++
++- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
++{
++  [self dismissPicker:controller];
++}
++
++- (void)documentPicker:(UIDocumentPickerViewController *)controller
++    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
++{
++  /* UIKit has completed the copy. Never make a destination the working document
++   * or persist a grant for it: Save Copy deliberately leaves that identity alone. */
++  [self dismissPicker:controller];
++}
++
++- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
++{
++  if (controller.presentedViewController != _picker) {
++    return;
++  }
++  _picker.delegate = nil;
++  _picker.presentationController.delegate = nil;
++  [_picker release];
++  _picker = nil;
++  [self finish];
++}
++@end
++
++bool GHOST_IOS_export_project(const char *filename,
++                              const std::function<bool(const char *)> &writer)
++{
++  if (![NSThread isMainThread] || !filename || !writer) {
++    return false;
++  }
++  static GHOST_IOSProjectExporter *exporter = [[GHOST_IOSProjectExporter alloc] init];
++  return [exporter present:[NSString stringWithUTF8String:filename] writer:writer];
++}

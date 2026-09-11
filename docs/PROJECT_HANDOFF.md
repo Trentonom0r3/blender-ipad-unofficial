@@ -1,5 +1,104 @@
 # Project handoff — 2026-09-10
 
+## Native Save Copy and compact-ring concept — latest
+
+Latest user report: nine-tool ring works great on iPad. Requested compact ring,
+no center Settings, shelf hidden initially; **concept before implementing**.
+`output/ui-preview/pencil-tools-compact-concept.png` was presented; awaiting review.
+It is an illustrative mockup, not a host render. Production ring/shelf unchanged.
+Current gesture mapping remains squeeze = tools, double tap = context menu.
+
+User explicitly reprioritized **complete native Files replacement**, including Open,
+Open Recent, Save/Save As, Link/Append, Import/Export. The previous requirement for
+a desktop-browser advanced fallback is superseded. AGENTS, PRODUCT_DIRECTION and
+IPAD_WORKSPACE now agree; older handoff sections are historical, not current orders.
+
+### Implemented in this checkpoint
+
+File > Save Copy now uses `wm.save_copy_to_files` on iOS. A small options dialog
+collects name/compression, then UIKit's export picker selects the destination.
+`GHOST_ProjectExportIOS.hh` (included only by GHOST_SystemIOS.mm) serializes a
+temporary .blend via a synchronous C++ callback, then presents
+`initForExportingURLs:asCopy:YES`. No Blender context/operator/callback is retained
+across native interaction. UIKit owns provider copying/overwrite UI. Picker cancel,
+completion and swipe dismissal release the source and presenter; repeated requests
+are guarded. Only the UUID staging directory is deleted, never a destination URL.
+
+Blender calls the existing wm_file_write with `use_save_as_copy=true` and absolute
+asset remapping. Temporary staging must never become the working Save target or the
+base for relative assets. Global compression flags are restored. No premature Saved
+report is emitted before native completion. Plain Save/Save As remain unchanged.
+Scripted `wm.save_as_mainfile(copy=True)` also remains the original synchronous API.
+
+**Limit:** this is an independent copy, not external-document Save As. Unpacked
+assets remain absolute references; they are not bundled or portable automatically.
+Options explain Pack Resources; even packing does not support every external type.
+Local scene serialization remains synchronous, like ordinary Blender save. Only
+provider transfer is handed off to UIKit. Orphan staging after app termination can
+remain in the OS temporary directory until purged; no project is stored only there.
+
+Touched overlay sections: GHOST_ProjectImport-api.hh (export declaration), new
+GHOST_ProjectExportIOS.hh, GHOST_SystemIOS.mm include, wm_files.cc/.hh,
+wm_operators.cc registration, space_topbar.py conditional Save Copy route.
+
+### Validation and build
+
+* Offline preflight: applies to 30 pinned files; Python/plist checks pass.
+* Preflight checker: six tests pass. Tool geometry: 75 placements + fallback pass.
+* Host Blender 5.1.2: existing nine-tool validation passes.
+* `build/validate_save_copy_contract.py`: host upstream Save Copy contains edits,
+  preserves original bytes, working filepath and dirty state. Background undo must
+  be pushed explicitly to model an interactive dirty file. This validates reused
+  upstream semantics, **not patched native C++, UIKit, or provider behavior**.
+* iOS compilation/IPA/device validation of this new export path pending.
+
+### Device test once this build succeeds
+
+1. Open a disposable locally saved scene, move its cube without saving. File >
+   Save Copy > name `copy-test` > Choose Destination > On My iPad. Verify the copy
+   exists in Files; reimport a copy and confirm the changed cube position.
+2. Before reopening, ordinary Save must still update the original project (not the
+   exported copy). After Save Copy, unsaved-change protection must remain active.
+3. Repeat Save Copy but cancel the destination picker; expect return to workspace,
+   no changed Save target, no false Saved report. Repeat and swipe-dismiss if enabled.
+4. Repeat to iCloud and an attached external drive; inspect the destination in Files.
+   Test an existing filename to exercise system overwrite behavior.
+5. Repeat open/cancel five times. Rotate the iPad with the picker open; ensure Cancel
+   stays reachable. Test a packed texture; do not expect unpacked assets to transfer.
+
+### Frame Scene report — unresolved
+
+User reports different orbit/movement and limited zoom after Frame Scene. Button
+calls stock `view3d.view_all`; no custom navigation mode was found. Pinned
+view3d_navigate_view_all.cc frames bounds (including cameras/lights) and changes
+view distance/orbit center. view3d_navigate_view_zoom.cc clamps distance to
+ED_view3d_dist_soft_range_get. handleZoom emits ordinary trackpad magnification.
+Do not claim a cause or fix yet. Asked user whether Frame Selection on the cube
+restores zoom and whether viewport label is User Perspective or User Orthographic;
+answer pending. No gesture/projection preferences changed speculatively.
+
+### Next implementation, not yet started
+
+1. Replace file-selection lifecycle for native Open/import while retaining options,
+   unsaved-change handling, and a live originating operator/context. Audit
+   WM_event_add_fileselect (~4424) and wm_handler_fileselect_do (~2810) in
+   wm_event_system.cc. Native completion must skip desktop temporary-area restore;
+   ordinary exec/report/undo/free behavior should be reused. Cancel on operator free.
+2. Own security-scoped original URLs/bookmarks; coordinate actual reads/writes.
+   Old scratch `document_impl.hh` incorrectly coordinated path extraction only.
+   Do not merge it. Worker coordination with main-thread execution needs explicit
+   cancellation/lifetime design; never block the main loop waiting for cloud access.
+3. Native Save As must preserve destination identity for later Save; do not relabel
+   this copy-export service as Save As. Open Recent and ordinary Save bypass the
+   generic file selector, so they need access restoration/coordinated I/O too.
+4. Link/Append need native .blend selection followed by an internal data-block
+   selector; Files cannot browse inside a .blend. Preserve importer/exporter options,
+   sidecar outputs and project-folder grants. Desktop dialogs are still present on
+   these unconverted routes; full removal remains unfinished.
+
+Apple export API reference:
+https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/init(forexporting:ascopy:)
+
 ## Nine-tool ring compiler repair — latest
 
 Run 34545890260 failed with one compiler error in `interface_region_menu_pie.cc:103`:

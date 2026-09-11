@@ -26,8 +26,8 @@ prioritization and reversible product decisions.
   surfaces in IPAD_WORKSPACE.md; do not keep expanding the popover.
 * Finger navigation/general UI and Pencil precision/creative input are the guiding
   distinction. Preserve pressure/tilt/hover work. Every new mapping needs a purpose.
-* User-approved mapping: Pencil double tap opens a **radial** tool palette; squeeze
-  retains the context/right-click menu. First source implementation is 34fd27e;
+* User-approved mapping: Pencil squeeze opens the **radial** tool palette; double tap
+  opens the context/right-click menu. Nine-tool implementation is 73ac8c3 + 79eaf4b;
   see the workspace milestone and handoff for validation status.
 * Every secondary/fullscreen view needs a discoverable escape without hover or a
   keyboard. Restoration must preserve workspace state.
@@ -45,7 +45,7 @@ prioritization and reversible product decisions.
 | GPU backing textures match content drawable | Native footer reduces content height; UIScreen is no longer its framebuffer size. Correction 1d8e6a7 awaits validation. |
 | One active Metal view for now | Existing main loop/presentation assumes it. Simultaneous floating editors need a separate rendering change. |
 | Persistent fullscreen Back | Touch must not depend on a hover-revealed icon. Implemented, device acceptance pending. |
-| Advanced Blender browser remains available | Native selection must preserve format options, Append/Link, directory selectors and custom exporters. Required. |
+| Desktop filesystem picker must be replaced | Latest user decision supersedes the previous advanced-browser fallback. Preserve options and internal library data-block selection in dedicated surfaces. |
 
 ## Native Files implementation contract
 
@@ -58,7 +58,9 @@ Source validation passes; native compilation/device acceptance are tracked in th
 
 Implement a platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document
-pickers; Blender Browser & Options is the explicit advanced route/fallback.
+pickers. No desktop filesystem-browser fallback in the final product. During incremental
+implementation, clearly identify routes still awaiting replacement; do not remove working
+functionality before its replacement exists.
 
 1. Preserve originating context, options, cancellation, undo, reports and script
    execution checks for open/import/export.
@@ -89,11 +91,12 @@ IPA packaging, simulator, actual device. Build success is not touch/Files valida
 Startup and closing success does not imply pressure, mouse, restoration or performance
 acceptance. Record device reports narrowly.
 
-Current UI milestone: Pencil double-tap tool palette, retaining squeeze for context
-menu, followed by Scene/Inspector drawers. See IPAD_WORKSPACE.md. Address confirmed
-P0 regressions when necessary, but return to this milestone instead of indefinitely
-deferring the redesign for incremental platform additions. Native Files remains
-necessary and unfinished. User feedback explicitly rejects desktop-like feel.
+Current priority: native Files across Open, Open Recent, Save/Save As, Link/Append,
+Import/Export and recovery. The working nine-tool ring has positive device feedback.
+A compact revision is concept-only pending review (see IPAD_WORKSPACE.md).
+Frame Scene has a new device report of unusual orbit/limited zoom; investigate before
+changing navigation preferences or projection. This explicitly supersedes the earlier
+directive to prioritize Scene/Inspector drawers over Files.
 
 Finish coherent repairs before starting larger rewrites. Avoid cancelling build
 after build for small additions. The overlay is source of truth; scratch source

@@ -15,34 +15,35 @@ Implementation took over from an interrupted/partial agent session and completed
 * Add Cube selects the interactive tool (`builtin.primitive_cube_add`), confirmed not to create objects on activation.
 * Verification: host C++ geometry tests pass, headless Blender tool activation tests pass in Object and Edit Mesh modes, and patch preflight passes across all 29 pinned source files.
 
-## User decisions — 2026-09-10
+## Latest requested refinement — concept only, awaiting review
 
-The current Canvas controls location is rejected as the primary interface.
-The user explicitly assigns Pencil double tap to the left-toolbar tools (selection,
-move, rotate, scale and other mode tools). Pencil Pro squeeze stays the existing
-right-click/context menu. These are distinct surfaces and actions. The user further
-specified a **radial** Pencil palette. Code 34fd27e implements the new mapping and
-first radial surface; host tests pass, iOS compilation/device acceptance are pending.
+User says the current radial selector works great on iPad. Requested changes:
+* Hide the left shelf initially; header Tools remains the explicit visibility toggle.
+* Remove center Settings; leave the center empty.
+* Keep all nine tools, use shorter/slimmer Z-menu-like buttons, and reduce radial spacing.
+* Preserve squeeze = tools and double tap = context menu.
 
-The goal is a substantial iPad interaction/presentation redesign retaining Blender's
-editors, operators and familiar scene/gizmo behavior. Adding commands to the existing
-Canvas popover is not the redesign. The agent owns design, prioritization and delivery.
+Concept: `output/ui-preview/pencil-tools-compact-concept.png`. This is an illustrative
+mockup, not a render or validation of implemented geometry. No production radial or
+shelf-default changes in this revision until the user reviews the concept.
+
+Native Files replacement now takes engineering priority over further drawers/UI work.
+The user also reports Frame Scene changes navigation feel and limits zoom. Preserve
+that report as unresolved; the button currently invokes stock `view3d.view_all`.
 
 ## Intended workspace — design defaults, not yet implemented
 
 * **Center:** viewport dominates, with Blender selection outlines and gizmos. Hide
   the permanent left tool shelf in tablet mode only after its replacement works.
-* **Pencil tool palette:** double tap opens a compact transient palette near the
+* **Pencil tool palette:** squeeze opens a compact transient palette near the
   last valid viewport Pencil position, clamped inside the viewport and safe area.
   Use a stable radial layout of touch-sized tools, per the user's explicit preference.
-  Object mode starts with Select, Move, Rotate and Scale; source remaining tools
-  from Blender's current mode/tool system, with a More Tools route. Selecting a
-  tool dismisses the palette. Outside tap, double tap again and Escape dismiss it.
+  Object mode has nine direct tools from Blender's mode/tool system. Selecting a
+  tool dismisses the palette. Outside tap, squeeze again and Escape dismiss it.
   Missing/stale cursor placement falls back to an accessible viewport edge.
-* **Context menu:** squeeze continues to invoke Blender's context menu at the
+* **Context menu:** double tap continues to invoke Blender's context menu at the
   precision cursor. It is not repurposed for tool selection.
-* **Touch fallback:** a small Tools edge button opens the identical palette, with
-  active-tool indication. Finger-only and non-double-tap Pencil users retain access.
+* **Touch fallback:** header Tools toggles the full left shelf. Finger-only users retain tool access.
 * **Right edge:** Scene and Inspector tabs open one drawer at a time. Scene finds,
   selects and hides objects/cameras. Inspector starts with selection transforms
   and camera lens; More opens the appropriate full Blender editor. Do not duplicate
@@ -61,48 +62,16 @@ Aim for roughly 44-point interactive targets in tablet surfaces. Do not globally
 enlarge Blender. Preserve keyboard shortcuts, mouse buttons, trackpad navigation
 and hot-plugging. Do not force a new workspace when an input device connects.
 
-## Next session: milestone 1 — tools at the Pencil
+## Delivery state and next priority
 
-Source checkpoint: 34fd27e implements dedicated GHOST/WM Pencil event, radial menu,
-touch Tools header entry and separate squeeze context click. The existing Canvas
-popover loses its duplicate tool grid and becomes temporary Workspace controls.
-More Tools opens Blender's toolbar popup; Hide/Show Shelf preserves full tool access.
-Current physical positions: Select west, Move east, Rotate south, Scale north.
-Toolbar visibility is not automatically changed in saved layouts. Touch edge-button
-placement, active-tool header indication and more mode-specific choices remain refinement.
-Build and precise pending device protocol are in PROJECT_HANDOFF.md.
+The nine-tool Pencil milestone is implemented and received positive hardware feedback.
+The current ring retains its center Settings until the compact concept is approved.
+Do not rebuild the old six-tool/More Tools design or restore the superseded gesture mapping.
 
-Ship one complete vertical slice, not another visual-only prototype:
-
-1. Inspect the existing Pencil delegate, cursor ownership, mode tool registry,
-   Canvas popover and preview tools. Preserve working pressure/tilt/stroke handling.
-2. Route double tap to a dedicated Blender tablet-tool action; keep squeeze's
-   existing context-click path. Do not hijack a conventional desktop shortcut.
-3. Implement the palette using existing Blender tools/operators and a touch entry
-   point. Prototype its actual shipped layout in the host preview.
-4. Stop presenting the old Canvas popover as the primary tool selector. Retain
-   still-needed commands through accessible fallback paths. Make toolbar hiding
-   reversible and tablet-specific; don't hide tools until the replacement exists.
-5. Validate, commit, build once for coherent code, and give the tester the exact
-   artifact and protocol. Report compile/device failures honestly, not as delivery.
-
-Acceptance:
-
-* Object mode: double tap > Move > translate > Undo, then double tap > Select works.
-* Squeeze still opens exactly one context menu, without switching tools.
-* During an active Pencil stroke/drag, neither action causes accidental tool changes
-  or unbalanced button events. Inspect and preserve iPadOS action preferences.
-* Palette stays reachable at all viewport edges and after rotation. Outside tap,
-  Escape and repeat double tap close it without a scene edit or stuck modal state.
-* Touch Tools opens the same palette. Mouse/keyboard controls continue to work.
-* Edit Mesh exposes valid tools; unsupported modes keep their existing tool access.
-* Separate evidence: actual-code host preview, patch checks, iOS build/IPA, then
-  M5 iPad/Pencil acceptance. Do not report preview gestures as hardware tests.
-
-Only after this slice is coherent, proceed to milestone 2: Scene/Inspector drawers
-and the camera-blocking workflow. Then playback/project chrome and broader editor
-adaptation. Files integration continues as a separate necessary product capability;
-unrelated Files work should not consume the entire next UI milestone session.
+Next engineering milestone is the native Files lifecycle, preserving document identity,
+operator settings, sidecar assets, cancellation and unsaved-change handling. An explicit
+Save Copy is useful but does not fulfill in-place Save As. See PRODUCT_DIRECTION.md and
+the newest PROJECT_HANDOFF.md section for implementation status and exact next steps.
 
 ## How sessions stay aligned
 
