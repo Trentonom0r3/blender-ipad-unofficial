@@ -2,8 +2,8 @@
 
 ## Flythrough 3-Finger No-Op, FBX Export Crash Fix, Pencil Annotate Selection Guard, Collapsed Tools Shelf & Stage Manager Gesture Deferral — 2026-09-11, latest
 
-Source: **e765f6e**.
-Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34658574986
+Source: **26bf1cf**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34659253108
 
 Context & User Feedback:
 User tested build 34653000916 on hardware:
