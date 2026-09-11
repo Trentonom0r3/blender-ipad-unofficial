@@ -2,8 +2,8 @@
 
 ## FBX Export Crash Fix, Procreate-Style Compact Radial Ring & Touch Navigation Swap — 2026-09-11, latest
 
-Source: pending commit.
-Build run: pending dispatch
+Source: **42fb99b**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34647216974
 
 Context & User Feedback:
 User tested previous build on hardware:
