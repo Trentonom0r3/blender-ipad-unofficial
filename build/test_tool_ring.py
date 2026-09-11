@@ -22,10 +22,11 @@ TEST = r'''
 using namespace blender::ui::ipad;
 void check(ToolRingLayout layout, Rect view, bool contained = true) {
   constexpr float eps = .01f;
+  assert(layout.buttons.size() == 9);
   for (size_t i = 0; i < layout.buttons.size(); ++i) {
     const Rect &a = layout.buttons[i];
-    assert(a.xmax - a.xmin >= 107.9f);
-    assert(a.ymax - a.ymin >= 47.9f);
+    assert(a.xmax - a.xmin >= 91.9f);
+    assert(a.ymax - a.ymin >= 37.9f);
     if (contained) {
       assert(a.xmin >= view.xmin - eps && a.xmax <= view.xmax + eps);
       assert(a.ymin >= view.ymin - eps && a.ymax <= view.ymax + eps);
@@ -49,25 +50,28 @@ int main() {
   }
   Rect view{0,1024,0,768};
   auto ring = tool_ring_layout(20,view,512,384);
-  assert(std::abs((ring.buttons[9].xmin + ring.buttons[9].xmax)/2 - 512) < .01f);
-  assert(std::abs((ring.buttons[9].ymin + ring.buttons[9].ymax)/2 - 384) < .01f);
-  assert(ring.buttons[0].ymin > ring.buttons[9].ymax); // Select north.
-  assert(ring.buttons[1].xmin > ring.buttons[9].xmax); // Clockwise Cursor NE.
-  assert(ring.buttons[8].xmax < ring.buttons[9].xmin); // Add Cube NW.
+  // Verify empty center: center coordinate (512, 384) is not occupied by any button.
+  for (size_t i = 0; i < 9; ++i) {
+    assert(512 < ring.buttons[i].xmin || 512 > ring.buttons[i].xmax ||
+           384 < ring.buttons[i].ymin || 384 > ring.buttons[i].ymax);
+  }
+  assert(ring.buttons[0].ymin > 384); // Select north.
+  assert(ring.buttons[1].xmin > 512); // Clockwise Cursor NE.
+  assert(ring.buttons[8].xmax < 512); // Add Cube NW.
   for (Rect narrow : {Rect{0,360,0,700}, Rect{0,800,0,300}}) {
     auto grid = tool_ring_layout(20,narrow,0,0);
     assert(grid.grid && !grid.needs_scroll);
     check(grid,narrow);
   }
-  auto short_grid = tool_ring_layout(20,{0,360,0,180},0,0);
+  auto short_grid = tool_ring_layout(20,{0,360,0,120},0,0);
   assert(short_grid.grid && short_grid.needs_scroll);
-  check(short_grid,{0,360,0,180},false);
+  check(short_grid,{0,360,0,120},false);
   auto scaled = tool_ring_layout(40,{0,2048,0,1536},1024,768);
-  for (size_t i=0;i<10;++i) {
+  for (size_t i=0;i<9;++i) {
     assert(std::abs(scaled.buttons[i].xmin - ring.buttons[i].xmin * 2) < .01f);
     assert(std::abs(scaled.buttons[i].ymin - ring.buttons[i].ymin * 2) < .01f);
   }
-  std::cout << "PASS: 75 edge placements, ring order, center, scaling, no overlaps, narrow fallback\n";
+  std::cout << "PASS: 75 edge placements, ring order, empty center, scaling, no overlaps, narrow fallback\n";
 }
 '''
 

@@ -55,12 +55,11 @@ with bpy.context.temp_override(area=area, region=region):
         bpy.ops.object.mode_set(mode=mode)
         records = []
         module.VIEW3D_MT_ipad_tools.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
-        assert len(records) == 10, len(records)
-        assert [r[1].name for r in records[:9]] == [tool[1] for tool in module.IPAD_RADIAL_TOOLS]
-        assert records[-1][1].name == 'VIEW3D_MT_ipad_tool_settings'
+        assert len(records) == 9, len(records)
+        assert [r[1].name for r in records] == [tool[1] for tool in module.IPAD_RADIAL_TOOLS]
         before_count = len(bpy.data.objects)
         enabled = []
-        for op, props, _, available in records[:9]:
+        for op, props, _, available in records:
             if available:
                 assert bpy.ops.wm.tool_set_by_id(name=props.name) == {'FINISHED'}, props.name
                 assert module.ToolSelectPanelHelper.tool_active_from_context(bpy.context).idname == props.name
@@ -82,6 +81,19 @@ area.spaces.active.show_region_toolbar = not original
 assert area.spaces.active.show_region_toolbar != original
 area.spaces.active.show_region_toolbar = original
 assert area.spaces.active.show_region_toolbar == original
+
+# Validate flythrough toggle operator
+for cls in module.classes:
+    try:
+        bpy.utils.register_class(cls)
+    except ValueError:
+        pass
+wm = bpy.context.window_manager
+assert not getattr(wm, "ipad_flythrough_active", False)
+assert bpy.ops.view3d.ipad_flythrough_toggle() == {'FINISHED'}
+assert getattr(wm, "ipad_flythrough_active", False)
+assert bpy.ops.view3d.ipad_flythrough_toggle() == {'FINISHED'}
+assert not getattr(wm, "ipad_flythrough_active", False)
 
 output = repo / 'output/ui-preview/nine-tools-validation.json'
 output.write_text(json.dumps({'blender': bpy.app.version_string, 'checks': results,

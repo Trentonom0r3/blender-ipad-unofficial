@@ -1,6 +1,65 @@
 # Project handoff — 2026-09-11
 
-## Native Save As and Save Copy compress alert & direct Files picker — 2026-09-11, latest
+## FBX/Model I/O Fixes, Compact 9-Tool Radial Ring, 3-Finger Pan & Flythrough Mode — 2026-09-11, latest
+
+Source: pending commit.
+Build run: pending dispatch
+
+Context & User Feedback:
+User tested previous build on hardware:
+1. "Import opens the apple files dialog and lets me choose, but the (.fbx) I tested didn't import into the scene. Export still opens the old desktop style dialog."
+2. "We still have the pencil radial menu update slotted, right?"
+3. "I also think we should have some sort of way to do a regular pan/push/camera flythrough. Right now it locks to scene, I'm thinking maybe 3 finger touch lets you do flythrough?"
+4. User clarification on touch mapping:
+   - "Standard mode: 3 finger drag = pan (1 finger tool/pencil, 2 finger orbit, pinch zoom preserved)."
+   - "Flythrough mode: 1 finger = orbit/tilt, 2 finger = fly through, 3 finger = pan. I like the header indicator."
+
+Delivered Implementation:
+1. Native Model I/O (FBX & case sensitivity, modal handler dispatch):
+   - In `wm_event_system.cc`, replaced case-sensitive `strstr(idname, "export")` and `strstr(idname, "import")` with `BLI_strcasestr`, fixing uppercase operator interception (`EXPORT_SCENE_OT_fbx`, `EXPORT_SCENE_OT_gltf`, etc.) which had fallen through to desktop `SPACE_FILE`.
+   - In `GHOST_IOS_import_file`, searched `win->modalhandlers` (where `WM_event_add_fileselect` actually registers operators) in addition to `win->handlers`, resolving the false-cancellation issue that prevented FBX and imported models from instantiating into the scene.
+2. Compact 9-Tool Radial Ring (Empty Center):
+   - In `interface_ipad_tool_ring.hh`: compact dimensions (button width 4.6 * unit, height 1.9 * unit, ring radius 7.5 * unit), completely empty center (Settings button removed from ring).
+   - In `space_view3d_ipad.py`: removed Settings button from `VIEW3D_MT_ipad_tools`. The 9 primary tools (Select, Cursor, Move, Rotate, Scale, Transform, Annotate, Measure, Add Cube) form a clean, uncluttered ring with empty center.
+   - Squeeze Apple Pencil opens the 9-tool radial palette; double-tap opens context menu.
+3. 3-Finger Pan & Flythrough Navigation:
+   - Standard Mode (Preserved):
+     - 1 finger: active tool / Apple Pencil drawing & selection.
+     - 2 finger drag: orbit/rotate (`view3d.rotate`).
+     - Pinch: zoom (`view3d.zoom`).
+     - **NEW: 3 finger drag = Pan (`view3d.move`)**: Synthesizes Shift modifier + scroll with calibrated `MMB_PAN_SCALE` (0.17f), providing 1:1 view panning.
+   - Flythrough Mode (Active via Header Pill):
+     - Viewport Header displays `Flythrough` / `Flythrough [ON]` toggle button (`VIEW3D_OT_ipad_flythrough_toggle`).
+     - Controls panel in Workspace dropdown also provides full Flythrough toggle button.
+     - 1 finger drag: look around / tilt (mapped to orbit without needing 2 fingers).
+     - 2 finger drag: fly forward / backward (smooth dolly into scene along view axis).
+     - 3 finger drag: pan (`view3d.move`).
+   - `GHOST_IOS_set_flythrough_mode` / `GHOST_IOS_get_flythrough_mode` bridges Python UI state to UIKit gesture recognition pipeline in `GHOST_WindowIOS.mm`.
+4. Validation:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (8/8 tests, including 9-tool empty center geometry).
+   - `validate_native_operator_discovery.py`: PASS.
+   - `validate_pencil_tools.py`: PASS (9 tool activation, no object creation, header toggle, flythrough operator toggle).
+
+Device test for this build:
+1. Model Import/Export:
+   - Tap File > Export > FBX (.fbx)...: Verify native Apple Files export sheet opens directly with `<name>.fbx` (no desktop Unix browser). Choose a folder; verify FBX file is saved.
+   - Tap File > Import > FBX (.fbx)...: Verify native Apple Files import sheet opens. Choose an FBX file; verify the model geometry actually appears in the 3D scene!
+2. Compact 9-Tool Radial Ring:
+   - Squeeze Apple Pencil in the 3D viewport: Verify 9 tools appear in a sleek, compact ring with an empty center (no Settings button).
+   - Tap any tool (e.g. Move, Rotate, Annotate): verify it activates.
+   - Double-tap Pencil: verify context menu opens.
+3. 3-Finger Pan (Standard Mode):
+   - Place 3 fingers on the screen and drag: verify the viewport pans (`view3d.move`) smoothly.
+   - Standard 2-finger orbit and pinch zoom remain unchanged.
+4. Flythrough Mode:
+   - In 3D Viewport header, tap the "Flythrough" pill (it highlights to "Flythrough [ON]").
+   - Drag with 1 finger: verify camera tilts / looks around.
+   - Drag with 2 fingers up/down: verify camera flies forward / backward.
+   - Drag with 3 fingers: verify camera pans.
+   - Tap "Flythrough [ON]" again: returns to standard mode.
+
+## Native Save As and Save Copy compress alert & direct Files picker — 2026-09-11
 
 Source: **c7dc14b**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34569433930
