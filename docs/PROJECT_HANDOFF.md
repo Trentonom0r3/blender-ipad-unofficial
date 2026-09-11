@@ -1,6 +1,56 @@
 # Project handoff — 2026-09-11
 
-## FBX/Model I/O Fixes, Compact 9-Tool Radial Ring, 3-Finger Pan & Flythrough Mode — 2026-09-11, latest
+## FBX Export Crash Fix, Procreate-Style Compact Radial Ring & Touch Navigation Swap — 2026-09-11, latest
+
+Source: pending commit.
+Build run: pending dispatch
+
+Context & User Feedback:
+User tested previous build on hardware:
+1. "pressing export fbx crashes the app. Import works properly now though."
+2. "Pencil radial menu needs to be significantly smaller, maybe half the size? tbh, more procreate/freeform style? Its taking up like 1/4 of the screen as is. (I still want to see all options + have hover though.)"
+3. "After testing - 3 finger pan/flythru mode overlaps with 2 finger mode a bit. maybe it simply needs to be.. flythrough mode on = swap functionality. Instead of pinch zoom and orbit/rotate, it becomes pan, with zoom being the dolly?"
+
+Delivered Implementation:
+1. FBX Export Crash Fix:
+   - In `wm_event_system.cc` (`is_export` branch), set window and area context (`CTX_wm_window_set(C, root_win)`, `wm_handler_op_context(C, handler, eventstate)`).
+   - Populated `directory` and `files` RNA properties on `op->ptr` alongside `filepath`.
+   - Replaced uninitialized `op->reports` with `CTX_wm_reports(C)` in `BKE_report` calls, eliminating NULL pointer dereferences.
+   - Cleaned up with `wm_operator_free_for_fileselect(handler->op)` to prevent memory corruption and double-free.
+2. Procreate-Style Compact Radial Menu (~55% of previous size):
+   - In `interface_ipad_tool_ring.hh`: reduced radius from 7.5 * unit to 4.6 * unit, button width from 4.6 * unit to 2.8 * unit, height from 1.9 * unit to 1.3 * unit, and gap to 0.25 * unit.
+   - Total ring diameter shrunk from ~392px to ~236px across, occupying ~1/8 of the screen instead of 1/4, while keeping all 9 tools clearly visible and touch/hover-friendly with empty center.
+   - Updated `build/test_tool_ring.py` assertions; passes all geometry and non-overlapping tests.
+3. Touch Navigation & Flythrough Swap (Zero 3-Finger Collisions):
+   - Removed `pan3f_gesture_recognizer` and `handlePan3f` from `GHOST_WindowIOS.mm`, completely eliminating 3-finger touch collisions.
+   - Standard Mode:
+     - 1-finger: Tool / Pencil (unaltered).
+     - 2-finger drag: Orbit / Rotate (`view3d.rotate`).
+     - Pinch: Zoom (`view3d.zoom`).
+   - Flythrough Mode (Swapped Functionality via header pill):
+     - 1-finger drag: Look around / Orbit.
+     - 2-finger drag: Pan (`view3d.move`).
+     - Pinch: Dolly (push into scene).
+4. Validation:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (8/8 tests).
+   - `validate_native_operator_discovery.py`: PASS.
+   - `validate_pencil_tools.py`: PASS.
+
+Device test for this build:
+1. Model Export:
+   - Tap File > Export > FBX (.fbx)...: Verify native Apple Files export sheet opens directly with `<name>.fbx` without crashing. Pick a folder; verify FBX file is saved.
+2. Compact Radial Ring:
+   - Squeeze Apple Pencil in the 3D viewport: Verify 9 tools appear in a sleek, compact ring (~half previous size, Procreate-style) with an empty center. Tap tools to activate them. Double-tap Pencil to open the context menu.
+3. Touch Navigation:
+   - In standard mode: 2-finger drag = Orbit; Pinch = Zoom; 1-finger = tool.
+   - Tap "Flythrough" header pill to activate Flythrough mode:
+     - 1-finger drag = Look around / tilt.
+     - 2-finger drag = Pan.
+     - Pinch = Dolly.
+   - Tap "Flythrough [ON]" again to return to standard mode.
+
+## FBX/Model I/O Fixes, Compact 9-Tool Radial Ring, 3-Finger Pan & Flythrough Mode — 2026-09-11
 
 Source: **56a74c3**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34642430221

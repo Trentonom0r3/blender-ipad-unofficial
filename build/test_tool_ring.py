@@ -25,8 +25,8 @@ void check(ToolRingLayout layout, Rect view, bool contained = true) {
   assert(layout.buttons.size() == 9);
   for (size_t i = 0; i < layout.buttons.size(); ++i) {
     const Rect &a = layout.buttons[i];
-    assert(a.xmax - a.xmin >= 91.9f);
-    assert(a.ymax - a.ymin >= 37.9f);
+    assert(a.xmax - a.xmin >= 55.9f);
+    assert(a.ymax - a.ymin >= 25.9f);
     if (contained) {
       assert(a.xmin >= view.xmin - eps && a.xmax <= view.xmax + eps);
       assert(a.ymin >= view.ymin - eps && a.ymax <= view.ymax + eps);
@@ -58,14 +58,14 @@ int main() {
   assert(ring.buttons[0].ymin > 384); // Select north.
   assert(ring.buttons[1].xmin > 512); // Clockwise Cursor NE.
   assert(ring.buttons[8].xmax < 512); // Add Cube NW.
-  for (Rect narrow : {Rect{0,360,0,700}, Rect{0,800,0,300}}) {
+  for (Rect narrow : {Rect{0,200,0,700}, Rect{0,800,0,180}}) {
     auto grid = tool_ring_layout(20,narrow,0,0);
     assert(grid.grid && !grid.needs_scroll);
     check(grid,narrow);
   }
-  auto short_grid = tool_ring_layout(20,{0,360,0,120},0,0);
+  auto short_grid = tool_ring_layout(20,{0,360,0,80},0,0);
   assert(short_grid.grid && short_grid.needs_scroll);
-  check(short_grid,{0,360,0,120},false);
+  check(short_grid,{0,360,0,80},false);
   auto scaled = tool_ring_layout(40,{0,2048,0,1536},1024,768);
   for (size_t i=0;i<9;++i) {
     assert(std::abs(scaled.buttons[i].xmin - ring.buttons[i].xmin * 2) < .01f);
