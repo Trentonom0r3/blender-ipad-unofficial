@@ -1,6 +1,52 @@
 # Project handoff — 2026-09-11
 
-## Native File Open and Save As unification — 2026-09-11, latest
+## Native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) — 2026-09-11, latest
+
+Source: **pending commit**.
+Build run: pending dispatch.
+
+Context & Goal:
+User requested Option 1: complete Native 3D Model Import & Export (USDZ, USD, OBJ, STL, PLY, FBX, Alembic) through `UIDocumentPickerViewController`, replacing the desktop Unix filesystem browser (`SPACE_FILE`) entirely for 3D asset workflows.
+
+Delivered Implementation:
+1. Intercepted File-Selector Lifecycle in `wm_event_system.cc`:
+   - In `wm_handler_fileselect_do` under `case EVT_FILESELECT_FULL_OPEN` with `#ifdef WITH_APPLE_CROSSPLATFORM`, intercepted export and import operators before Blender opens `SPACE_FILE`.
+2. Native Model Export (`GHOST_IOS_export_file`):
+   - Derives clean target filename from operator RNA (`filename`, `filepath`), or current project name (`bmain->filepath`), falling back to `Model`.
+   - Automatically inspects `filter_glob` (e.g. `*.obj;*.mtl`, `*.usd`, `*.stl`, `*.ply`, `*.abc`) to guarantee correct file extension if missing.
+   - Stages file output in `NSTemporaryDirectory()/BlenderExport-<UUID>/`.
+   - Synchronously executes `op->type->exec(C, op)` to generate output into the staging path.
+   - Collects all generated companion files in staging (e.g. Wavefront `.obj` + `.mtl` material libraries).
+   - Presents UIKit `UIDocumentPickerViewController(initForExportingURLs:asCopy:YES)` so the user can export to any folder in Files or cloud storage.
+   - Cleans up staging files automatically upon completion or dismissal.
+3. Native Model Import (`GHOST_IOS_import_file`):
+   - Parses operator `filter_glob` into native `UTType` identifiers (`UTType.typeWithFilenameExtension`).
+   - Presents UIKit `UIDocumentPickerViewController(initForOpeningContentTypes:asCopy:YES)`.
+   - Coordinates file access off the main thread with `NSFileCoordinator` (handling security-scoped URLs safely) and copies the selected asset into a sandboxed import folder in `NSTemporaryDirectory()/BlenderImport-<UUID>/`.
+   - On the main queue, validates operator and handler liveness against active window handler lists (`WM_HANDLER_TYPE_OP`), populates operator RNA properties (`filepath`, `directory`, `files` collection), and posts `EVT_FILESELECT_EXEC`.
+   - Blender's native event dispatcher restores the originating window/area context, executes `op->type->exec`, records undo state (`ED_undo_push_op`), displays reports, and cleanly frees the handler.
+   - Cancel/dismiss correctly posts `EVT_FILESELECT_CANCEL` and cleans up handlers without side effects.
+4. Preserved Core Tablet Capabilities:
+   - Shipped 9-tool radial palette geometry and center Settings button.
+   - Apple Pencil gestures: squeeze opens radial tool ring; double-tap opens context menu.
+   - Direct-pinch depth navigation.
+   - Native Project Open (`wm_open_mainfile`), Save As (`WM_OT_save_as_to_files`), and Save Copy (`wm_save_copy_to_files`).
+5. Verification:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `validate_native_operator_discovery.py`: PASS.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (8/8 tests).
+   - `validate_pencil_tools.py`: PASS.
+   - `validate_save_copy_contract.py`: PASS.
+
+Device test for this build:
+1. Tap File > Export > Wavefront (.obj)...: Verify native Document Picker ("Export 3D Model") appears directly without desktop Unix browser. Choose destination in Files; verify both `.obj` and `.mtl` files are exported cleanly.
+2. Tap File > Export > Universal Scene Description (.usd*)...: Verify native export picker appears with `<project>.usd`. Choose destination; verify file is exported.
+3. Tap File > Import > Wavefront (.obj)...: Verify native Document Picker ("Import 3D Model") appears filtered to `.obj`/`.mtl` files. Select an OBJ file; verify the model imports into the 3D scene and an undo step is created.
+4. Tap File > Import > Universal Scene Description (.usd*)...: Verify picker filters to USD/USDZ files. Select a file; verify it imports into scene.
+5. Tap Cancel on any import or export picker: Verify workspace returns immediately without error reports, stuck operators, or hanging dialogs.
+6. Squeeze Apple Pencil: verify 9-tool radial palette opens and operates normally. Double-tap Pencil: verify context menu opens.
+
+## Native File Open and Save As unification — 2026-09-11
 
 Source: **18d9d2d**. Build dispatched:
 https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34566999560

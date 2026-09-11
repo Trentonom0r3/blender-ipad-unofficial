@@ -28,9 +28,11 @@ mockup, not a render or validation of implemented geometry. No production radial
 shelf-default changes in this revision until the user reviews the concept.
 
 Native Files replacement is the active priority. Native Open (replacing redundant
-import), native Save As (`WM_OT_save_as_to_files`), and native Save for unsaved projects
-are implemented, writing directly into `Documents/Projects/<Name - UUID>/<Name>.blend`
-without exposing the desktop Unix filesystem picker.
+import), native Save As (`WM_OT_save_as_to_files`), native Save for unsaved projects,
+and native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) via
+`UIDocumentPickerViewController` are implemented, writing directly into
+`Documents/Projects/<Name - UUID>/<Name>.blend` and user-chosen folders without
+exposing the desktop Unix filesystem picker.
 The user also reports Frame Scene changes navigation feel and limits zoom. Preserve
 that report as unresolved; the button currently invokes stock `view3d.view_all`.
 

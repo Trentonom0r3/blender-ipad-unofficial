@@ -2317,7 +2317,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,31 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -2337,11 +2337,23 @@ new file mode 100644
 + * Creates the containing directory if needed.
 + * Returns true if the path was written to out_path, false on error. */
 +bool GHOST_IOS_get_project_save_path(const char *filename, char *out_path, size_t max_len);
++
++/* Present native picker to export a generated file from a temporary staging path.
++ * The writer creates the file(s) synchronously in staging_dir before presentation. */
++bool GHOST_IOS_export_file(const char *filename,
++                           const std::function<bool(const char *staging_path)> &writer);
++
++/* Present native picker to choose an external file for import.
++ * When a file is chosen, it is coordinated/copied into a sandbox location
++ * and callback is invoked on the main thread with the local path. */
++bool GHOST_IOS_import_file(const char *filter_glob,
++                           const std::function<void(const char *local_path)> &on_picked,
++                           const std::function<void()> &on_cancelled);
 diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,287 @@
+@@ -0,0 +1,490 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. This service imports an independent
@@ -2629,6 +2641,209 @@ new file mode 100644
 +    return true;
 +  }
 +}
++
++@interface GHOST_IOSFileImporter : NSObject <UIDocumentPickerDelegate,
++                                            UIAdaptivePresentationControllerDelegate>
++{
++  UIViewController *_presenter;
++  UIDocumentPickerViewController *_picker;
++  NSUInteger _generation;
++  BOOL _busy;
++  std::function<void(const char *)> _on_picked;
++  std::function<void()> _on_cancelled;
++}
++- (BOOL)presentWithFilter:(NSString *)filterGlob
++                 onPicked:(const std::function<void(const char *)> &)onPicked
++              onCancelled:(const std::function<void()> &)onCancelled;
++@end
++
++@implementation GHOST_IOSFileImporter
++- (BOOL)hasLivePresenter
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!system || !system->current_active_window_) {
++    return NO;
++  }
++  return system->current_active_window_->rootWindow.rootViewController == _presenter &&
++         _presenter.view.window != nil;
++}
++
++- (void)finish
++{
++  _busy = NO;
++  [_presenter release];
++  _presenter = nil;
++  _on_picked = nullptr;
++  _on_cancelled = nullptr;
++}
++
++- (void)dismissPicker:(void (^)(void))completion
++{
++  UIDocumentPickerViewController *picker = _picker;
++  _picker = nil;
++  picker.delegate = nil;
++  picker.presentationController.delegate = nil;
++  [picker dismissViewControllerAnimated:YES completion:completion];
++  [picker release];
++}
++
++- (BOOL)presentWithFilter:(NSString *)filterGlob
++                 onPicked:(const std::function<void(const char *)> &)onPicked
++              onCancelled:(const std::function<void()> &)onCancelled
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy || !system || !system->current_active_window_) {
++    return NO;
++  }
++  UIViewController *presenter = system->current_active_window_->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++  _presenter = [presenter retain];
++  _busy = YES;
++  ++_generation;
++  _on_picked = onPicked;
++  _on_cancelled = onCancelled;
++
++  NSMutableArray<UTType *> *types = [NSMutableArray array];
++  if (filterGlob.length) {
++    NSArray<NSString *> *patterns = [filterGlob componentsSeparatedByCharactersInSet:
++        [NSCharacterSet characterSetWithCharactersInString:@";:, "]];
++    for (NSString *pat in patterns) {
++      NSString *clean = [pat stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
++      if ([clean hasPrefix:@"*."]) {
++        clean = [clean substringFromIndex:2];
++      }
++      else if ([clean hasPrefix:@"."]) {
++        clean = [clean substringFromIndex:1];
++      }
++      if (clean.length) {
++        UTType *t = [UTType typeWithFilenameExtension:clean conformingToType:UTTypeData];
++        if (t && ![types containsObject:t]) {
++          [types addObject:t];
++        }
++      }
++    }
++  }
++  if (!types.count) {
++    [types addObject:UTTypeData];
++  }
++
++  _picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:types asCopy:YES];
++  _picker.allowsMultipleSelection = NO;
++  _picker.delegate = self;
++  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++  _picker.title = @"Import 3D Model";
++  [_presenter presentViewController:_picker animated:YES completion:nil];
++  _picker.presentationController.delegate = self;
++  return YES;
++}
++
++- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
++{
++  if (controller != _picker) {
++    return;
++  }
++  ++_generation;
++  auto onCancelled = _on_cancelled;
++  [self dismissPicker:^{
++    if (onCancelled) {
++      onCancelled();
++    }
++    [self finish];
++  }];
++}
++
++- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
++{
++  if (controller.presentedViewController != _picker) {
++    return;
++  }
++  ++_generation;
++  _picker.delegate = nil;
++  _picker.presentationController.delegate = nil;
++  [_picker release];
++  _picker = nil;
++  if (_on_cancelled) {
++    _on_cancelled();
++  }
++  [self finish];
++}
++
++- (void)documentPicker:(UIDocumentPickerViewController *)controller
++    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
++{
++  if (controller != _picker) {
++    return;
++  }
++  NSURL *source = urls.firstObject;
++  const NSUInteger generation = _generation;
++  auto onPicked = _on_picked;
++  auto onCancelled = _on_cancelled;
++
++  [self dismissPicker:^{
++    if (!source) {
++      if (onCancelled) {
++        onCancelled();
++      }
++      [self finish];
++      return;
++    }
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++      @autoreleasepool {
++        NSFileManager *manager = [NSFileManager defaultManager];
++        NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++        NSString *folder = [NSString stringWithFormat:@"BlenderImport-%@", [NSUUID UUID].UUIDString];
++        NSURL *importDir = [root URLByAppendingPathComponent:folder isDirectory:YES];
++        NSURL *destination = [importDir URLByAppendingPathComponent:source.lastPathComponent];
++        NSError *coordError = nil;
++        __block NSError *copyError = nil;
++        __block BOOL copied = NO;
++        const BOOL scoped = [source startAccessingSecurityScopedResource];
++        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
++        [coordinator coordinateReadingItemAtURL:source options:0 error:&coordError
++                                     byAccessor:^(NSURL *read_url) {
++          if ([manager createDirectoryAtURL:importDir withIntermediateDirectories:YES
++                                 attributes:nil error:&copyError]) {
++            copied = [manager copyItemAtURL:read_url toURL:destination error:&copyError];
++          }
++        }];
++        [coordinator release];
++        if (scoped) {
++          [source stopAccessingSecurityScopedResource];
++        }
++        dispatch_async(dispatch_get_main_queue(), ^{
++          if (generation != _generation) {
++            return;
++          }
++          if (copied && onPicked) {
++            onPicked(destination.path.UTF8String);
++          }
++          else if (onCancelled) {
++            onCancelled();
++          }
++          [self finish];
++        });
++      }
++    });
++  }];
++}
++@end
++
++bool GHOST_IOS_import_file(const char *filter_glob,
++                           const std::function<void(const char *)> &on_picked,
++                           const std::function<void()> &on_cancelled)
++{
++  if (![NSThread isMainThread] || !on_picked) {
++    return false;
++  }
++  static GHOST_IOSFileImporter *importer = nil;
++  if (!importer) {
++    importer = [[GHOST_IOSFileImporter alloc] init];
++  }
++  NSString *glob = filter_glob ? [NSString stringWithUTF8String:filter_glob] : @"";
++  return [importer presentWithFilter:glob onPicked:on_picked onCancelled:on_cancelled];
++}
 diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
 --- a/source/blender/windowmanager/wm_files.hh
 +++ b/source/blender/windowmanager/wm_files.hh
@@ -2757,7 +2972,199 @@ diff --git a/source/blender/windowmanager/wm_event_types.hh b/source/blender/win
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -5784,7 +5784,9 @@
+@@ -28,6 +28,7 @@
+ 
+ #include "GHOST_C-api.h"
+ 
++#include "BLI_fileops.h"
+ #include "BLI_ghash.h"
+ #include "BLI_listbase.h"
+ #include "BLI_math_vector.h"
+@@ -35,6 +36,10 @@
+ #include "BLI_string_utf8.h"
+ #include "BLI_timer.h"
+ #include "BLI_utildefines.h"
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "GHOST_ProjectImport-api.hh"
++#endif
+ 
+ #include "BKE_context.hh"
+ #include "BKE_customdata.hh"
+@@ -2817,6 +2822,172 @@
+ 
+   switch (val) {
+     case EVT_FILESELECT_FULL_OPEN: {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      wmOperator *op = handler->op;
++      const char *idname = op ? op->type->idname : "";
++      const bool is_export = (strstr(idname, "export") != nullptr) ||
++                             (strstr(idname, "save") != nullptr);
++      const bool is_import = (strstr(idname, "import") != nullptr) ||
++                             (strstr(idname, "open") != nullptr);
++
++      if (is_export) {
++        char filename[FILE_MAXFILE];
++        filename[0] = '\0';
++        if (RNA_struct_find_property(op->ptr, "filename") &&
++            RNA_struct_property_is_set(op->ptr, "filename"))
++        {
++          RNA_string_get(op->ptr, "filename", filename);
++        }
++        else if (RNA_struct_find_property(op->ptr, "filepath") &&
++                 RNA_struct_property_is_set(op->ptr, "filepath"))
++        {
++          char filepath[FILE_MAX];
++          RNA_string_get(op->ptr, "filepath", filepath);
++          STRNCPY(filename, BLI_path_basename(filepath));
++        }
++
++        if (filename[0] == '\0') {
++          Main *bmain = CTX_data_main(C);
++          if (bmain && bmain->filepath[0] != '\0') {
++            char base[FILE_MAXFILE];
++            STRNCPY(base, BLI_path_basename(bmain->filepath));
++            char *dot = strrchr(base, '.');
++            if (dot) {
++              *dot = '\0';
++            }
++            if (base[0] != '\0') {
++              STRNCPY(filename, base);
++            }
++          }
++          if (filename[0] == '\0') {
++            STRNCPY(filename, "Model");
++          }
++        }
++
++        /* If filename has no extension, extract default extension from filter_glob. */
++        const char *ext = strrchr(filename, '.');
++        if (!ext) {
++          if (PropertyRNA *glob_prop = RNA_struct_find_property(op->ptr, "filter_glob")) {
++            char filter_glob[FILE_MAX];
++            RNA_property_string_get(op->ptr, glob_prop, filter_glob);
++            const char *star = strstr(filter_glob, "*.");
++            if (star) {
++              char ext_buf[32];
++              ext_buf[0] = '.';
++              size_t i = 0;
++              star += 2;
++              while (star[i] && star[i] != ';' && star[i] != ':' && star[i] != ',' &&
++                     star[i] != ' ' && i < 30)
++              {
++                ext_buf[1 + i] = star[i];
++                i++;
++              }
++              ext_buf[1 + i] = '\0';
++              if (i > 0) {
++                BLI_strncat(filename, ext_buf, sizeof(filename));
++              }
++            }
++          }
++        }
++
++        const bool presented = GHOST_IOS_export_file(filename, [&](const char *staging_path) {
++          if (strlen(staging_path) >= FILE_MAX) {
++            BKE_report(op->reports, RPT_ERROR, "The export filepath is too long");
++            return false;
++          }
++          RNA_string_set(op->ptr, "filepath", staging_path);
++          const wmOperatorStatus status = op->type->exec(C, op);
++          return (status & OPERATOR_FINISHED) != 0;
++        });
++
++        if (!presented) {
++          BKE_report(op->reports,
++                     RPT_ERROR,
++                     "Could not open export sheet. Close other dialogs and try again");
++        }
++
++        BLI_remlink(handlers, handler);
++        WM_operator_free(handler->op);
++        MEM_delete(handler);
++
++        action = WM_HANDLER_BREAK;
++        break;
++      }
++      else if (is_import) {
++        char filter_glob[FILE_MAX];
++        filter_glob[0] = '\0';
++        if (RNA_struct_find_property(op->ptr, "filter_glob")) {
++          RNA_string_get(op->ptr, "filter_glob", filter_glob);
++        }
++
++        const bool presented = GHOST_IOS_import_file(
++            filter_glob,
++            [wm, op](const char *local_path) {
++              bool op_valid = false;
++              LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++                LISTBASE_FOREACH (wmEventHandler *, base_h, &win->handlers) {
++                  if (base_h->type == WM_HANDLER_TYPE_OP) {
++                    wmEventHandler_Op *oph = (wmEventHandler_Op *)base_h;
++                    if (oph->op == op) {
++                      op_valid = true;
++                      break;
++                    }
++                  }
++                }
++                if (op_valid) {
++                  break;
++                }
++              }
++              if (!op_valid) {
++                return;
++              }
++
++              if (RNA_struct_find_property(op->ptr, "filepath")) {
++                RNA_string_set(op->ptr, "filepath", local_path);
++              }
++              if (RNA_struct_find_property(op->ptr, "directory")) {
++                char dir[FILE_MAX];
++                STRNCPY(dir, local_path);
++                BLI_path_parent_dir(dir);
++                RNA_string_set(op->ptr, "directory", dir);
++              }
++              if (PropertyRNA *files_prop = RNA_struct_find_property(op->ptr, "files")) {
++                RNA_property_collection_clear(op->ptr, files_prop);
++                PointerRNA file_elem;
++                RNA_property_collection_add(op->ptr, files_prop, &file_elem);
++                RNA_string_set(&file_elem, "name", BLI_path_basename(local_path));
++              }
++              WM_event_fileselect_event(wm, op, EVT_FILESELECT_EXEC);
++            },
++            [wm, op]() {
++              bool op_valid = false;
++              LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++                LISTBASE_FOREACH (wmEventHandler *, base_h, &win->handlers) {
++                  if (base_h->type == WM_HANDLER_TYPE_OP) {
++                    wmEventHandler_Op *oph = (wmEventHandler_Op *)base_h;
++                    if (oph->op == op) {
++                      op_valid = true;
++                      break;
++                    }
++                  }
++                }
++                if (op_valid) {
++                  break;
++                }
++              }
++              if (op_valid) {
++                WM_event_fileselect_event(wm, op, EVT_FILESELECT_CANCEL);
++              }
++            });
++
++        if (!presented) {
++          WM_event_fileselect_event(wm, op, EVT_FILESELECT_CANCEL);
++        }
++        action = WM_HANDLER_BREAK;
++        break;
++      }
++#endif
++
+       ScrArea *area = ED_screen_temp_space_open(
+           C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
+       if (!area) {
+@@ -5784,7 +5955,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -2768,7 +3175,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
  
-@@ -6032,6 +6034,9 @@
+@@ -6032,6 +6205,9 @@
  
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -2778,7 +3185,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6110,11 @@
+@@ -6105,6 +6281,11 @@
        }
        break;
      }
@@ -3057,7 +3464,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,162 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
@@ -3070,7 +3477,9 @@ new file mode 100644
 +  NSURL *_staging;
 +  BOOL _busy;
 +}
-+- (BOOL)present:(NSString *)filename writer:(const std::function<bool(const char *)> &)writer;
++- (BOOL)present:(NSString *)filename
++          title:(NSString *)title
++         writer:(const std::function<bool(const char *)> &)writer;
 +@end
 +
 +@implementation GHOST_IOSProjectExporter
@@ -3087,7 +3496,9 @@ new file mode 100644
 +  _busy = NO;
 +}
 +
-+- (BOOL)present:(NSString *)filename writer:(const std::function<bool(const char *)> &)writer
++- (BOOL)present:(NSString *)filename
++          title:(NSString *)title
++         writer:(const std::function<bool(const char *)> &)writer
 +{
 +  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
 +  if (_busy || !system || !system->current_active_window_) {
@@ -3111,13 +3522,10 @@ new file mode 100644
 +    [self finish];
 +    return NO;
 +  }
-+  /* Enforce a basename even if a scripted caller supplied a path. */
++  /* Enforce a clean basename even if caller supplied an absolute path. */
 +  NSString *name = filename.lastPathComponent;
 +  if (!name.length || [name isEqualToString:@"."] || [name isEqualToString:@".."]) {
-+    name = @"Untitled.blend";
-+  }
-+  if ([name.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
-+    name = [name stringByAppendingString:@".blend"];
++    name = @"ExportedModel";
 +  }
 +  NSURL *source = [_staging URLByAppendingPathComponent:name];
 +  /* Blender must serialize on its main thread. Provider upload/copy happens
@@ -3133,10 +3541,18 @@ new file mode 100644
 +    [self finish];
 +    return NO;
 +  }
-+  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
++  /* Include all generated files in staging directory (e.g. .obj + .mtl). */
++  NSArray<NSURL *> *files = [manager contentsOfDirectoryAtURL:_staging
++                                   includingPropertiesForKeys:nil
++                                                      options:NSDirectoryEnumerationSkipsHiddenFiles
++                                                        error:nil];
++  if (!files.count) {
++    files = @[source];
++  }
++  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:files asCopy:YES];
 +  _picker.delegate = self;
 +  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = @"Save a Blender Copy";
++  _picker.title = title ?: @"Export Model";
 +  [_presenter presentViewController:_picker animated:YES completion:nil];
 +  _picker.presentationController.delegate = self;
 +  return YES;
@@ -3188,8 +3604,28 @@ new file mode 100644
 +  if (![NSThread isMainThread] || !filename || !writer) {
 +    return false;
 +  }
-+  static GHOST_IOSProjectExporter *exporter = [[GHOST_IOSProjectExporter alloc] init];
-+  return [exporter present:[NSString stringWithUTF8String:filename] writer:writer];
++  static GHOST_IOSProjectExporter *exporter = nil;
++  if (!exporter) {
++    exporter = [[GHOST_IOSProjectExporter alloc] init];
++  }
++  return [exporter present:[NSString stringWithUTF8String:filename]
++                     title:@"Save a Blender Copy"
++                    writer:writer];
++}
++
++bool GHOST_IOS_export_file(const char *filename,
++                           const std::function<bool(const char *)> &writer)
++{
++  if (![NSThread isMainThread] || !filename || !writer) {
++    return false;
++  }
++  static GHOST_IOSProjectExporter *exporter = nil;
++  if (!exporter) {
++    exporter = [[GHOST_IOSProjectExporter alloc] init];
++  }
++  return [exporter present:[NSString stringWithUTF8String:filename]
++                     title:@"Export 3D Model"
++                    writer:writer];
 +}
 diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowmanager/WM_types.hh
 --- a/source/blender/windowmanager/WM_types.hh
