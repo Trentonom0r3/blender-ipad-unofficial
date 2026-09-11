@@ -1,22 +1,19 @@
 # iPad workspace design and delivery
 
-## Nine-tool concept awaiting review
+## Nine-tool ring with swapped gesture mapping — implemented
 
-User reports the repaired radial build works perfectly on iPad. Next requested
-changes: header Tools toggles the left shelf only; Pencil palette directly exposes
-Select, Cursor, Move, Rotate, Scale, Transform, Annotate, Measure, Add Cube.
-Settings should offer shelf visibility. Squeeze remains context/right-click.
-Visual reference is Blender's Z shading pie: compact controls with less visual bulk.
+User approved the nine-tool radial arrangement with updated mapping:
+* **Pencil Squeeze**: opens the nine-tool radial palette.
+* **Pencil Double Tap**: opens the context menu (right-click).
+* **Header Tools button**: toggles the left toolbar shelf directly (`space_data.show_region_toolbar`).
+* **Settings in center**: menu with "Show/Hide Tool Shelf" toggle.
 
-`output/ui-preview/pencil-tools-nine-concept.png` is an AI-generated concept, not a
-running implementation or exact icon specification. Proposed arrangement: nine
-tools on the ring, Settings in the center. User requested concept review BEFORE
-implementation; await their response before changing the palette or header behavior.
-The earlier six-item implementation remains current code. Blender's stock pie has
-eight direction slots; nine direct tools plus central Settings require a scoped
-layout/hit-testing extension, not simply adding a ninth menu item. Preserve native
-desktop pie behavior when implementing. Confirm tool activation semantics: Add Cube
-should select the existing interactive Add Cube tool, not immediately insert a cube.
+Implementation took over from an interrupted/partial agent session and completed:
+* Geometry: custom 10-button placement in `interface_ipad_tool_ring.hh` (9 clockwise tools: Select, Cursor, Move, Rotate, Scale, Transform, Annotate, Measure, Add Cube; plus central Settings button). Adaptive grid fallback handles narrow viewports.
+* Dismissal: second squeeze or tapping outside/between buttons dismisses without executing tools or moving scene objects.
+* Shipped icons: Annotate uses Blender's built-in `GREASEPENCIL` icon identifier.
+* Add Cube selects the interactive tool (`builtin.primitive_cube_add`), confirmed not to create objects on activation.
+* Verification: host C++ geometry tests pass, headless Blender tool activation tests pass in Object and Edit Mesh modes, and patch preflight passes across all 29 pinned source files.
 
 ## User decisions — 2026-09-10
 

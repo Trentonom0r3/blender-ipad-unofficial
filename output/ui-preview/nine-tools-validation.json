@@ -1,0 +1,35 @@
+{
+  "blender": "5.1.2",
+  "checks": [
+    {
+      "mode": "OBJECT",
+      "activated": [
+        "builtin.select_box",
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.transform",
+        "builtin.annotate",
+        "builtin.measure",
+        "builtin.primitive_cube_add"
+      ]
+    },
+    {
+      "mode": "EDIT_MESH",
+      "activated": [
+        "builtin.select_box",
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.transform",
+        "builtin.annotate",
+        "builtin.measure",
+        "builtin.primitive_cube_add"
+      ]
+    }
+  ],
+  "header_and_settings_shelf_toggle": "passed",
+  "scope": "Host Python tool/UI wiring only. Native popup, gestures and UIKit require iOS testing."
+}

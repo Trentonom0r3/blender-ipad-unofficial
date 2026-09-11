@@ -1,6 +1,44 @@
 # Project handoff — 2026-09-10
 
-## Device success and requested concept — latest
+## Nine-tool ring with swapped gesture mapping — latest implementation checkpoint
+
+Took over from an interrupted agent session / partial run where the nine-tool radial
+concept was authorized and gestures were swapped per user request:
+* **Pencil Squeeze** opens the nine-tool radial palette (`PENCIL_TOOL_PALETTE` = 0x0205).
+* **Pencil Double Tap** opens the context menu (`PENCIL_CONTEXT_MENU` / right-click).
+* **Header Tools** directly toggles the left tool shelf (`space_data.show_region_toolbar`).
+* **Center Settings** provides a popup menu with "Show/Hide Tool Shelf" toggle.
+
+Delivered implementation & handover fixes:
+* Corrected `IPAD_RADIAL_TOOLS` in `space_view3d_ipad.py` and generator: replaced invalid
+  `'ANNOTATE'` icon identifier with Blender's built-in `'GREASEPENCIL'`, resolving the
+  `AssertionError: ANNOTATE` test crash from the prior partial run.
+* Updated `build/validate_pencil_tools.py` to test toolbar visibility toggling outside
+  `temp_override` for headless compatibility.
+* C++ 10-button geometry in `interface_ipad_tool_ring.hh` handles ring layout and narrow-screen
+  grid fallback. `interface_region_menu_pie.cc`, `interface_handlers.cc`, and `interface.cc`
+  handle placement, dismissal on gap/outside tap or second squeeze, and clean background rendering.
+
+Evidence:
+* `python -m unittest discover -s build -p test_tool_ring.py -v`: PASS (75 edge placements,
+  ring order, center, scaling, no overlaps, narrow fallback).
+* `& 'D:\Program Files\blender.exe' --background --factory-startup --disable-autoexec --python-exit-code 1 --python build/validate_pencil_tools.py`:
+  PASS (9 tool slots in Object & Edit mesh modes, tool activation, no accidental cube insertion,
+  header and settings shelf toggles). Evidence saved to `output/ui-preview/nine-tools-validation.json`.
+* `python build/preflight.py`: PASS (clean patch application to 29 pinned source files, valid
+  plist and script syntax).
+* `.github/workflows/preflight.yml` updated to include `test_tool_ring.py`.
+
+Device test protocol after next CI build:
+1. Hover Pencil over cube, squeeze Pencil Pro: expect nine-tool radial ring centered near cursor.
+2. Double tap Pencil: expect standard right-click context menu, not the tool ring.
+3. Squeeze again with ring open, or tap gap/outside: expect ring dismissal without moving objects.
+4. Squeeze > Move, translate cube, Undo; squeeze > Select. Repeat in Edit Mesh mode.
+5. Tap header Tools button: expect left tool shelf to toggle visibility.
+6. Open ring, tap center Settings > Hide/Show Tool Shelf: expect shelf toggle.
+7. Verify Add Cube selects the interactive tool and does not insert an unrequested object.
+
+## Device success and requested concept — prior checkpoint
 
 User says repaired radial build "works perfectly." Record this as positive iPad
 feedback, not separate acceptance of every unreported edge case or native Files.
