@@ -2,8 +2,8 @@
 
 ## FBX/Model I/O Fixes, Compact 9-Tool Radial Ring, 3-Finger Pan & Flythrough Mode — 2026-09-11, latest
 
-Source: pending commit.
-Build run: pending dispatch
+Source: **b291567**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34635407359
 
 Context & User Feedback:
 User tested previous build on hardware:
