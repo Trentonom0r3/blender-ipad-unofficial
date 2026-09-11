@@ -43,6 +43,10 @@ wm_operators.cc registration, space_topbar.py conditional Save Copy route.
 
 ### Validation and build
 
+Source commit: **9b1adf5**, pushed on `codex/ipad-secondary-view-escape`.
+Build dispatched: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34561079484
+Inspect this run next; do not dispatch another for documentation-only changes.
+
 * Offline preflight: applies to 30 pinned files; Python/plist checks pass.
 * Preflight checker: six tests pass. Tool geometry: 75 placements + fallback pass.
 * Host Blender 5.1.2: existing nine-tool validation passes.
