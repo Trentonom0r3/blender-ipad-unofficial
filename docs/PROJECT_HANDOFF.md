@@ -2,8 +2,8 @@
 
 ## Native Save As and Save Copy compress alert & direct Files picker — 2026-09-11, latest
 
-Source: **pending commit**.
-Build run: pending dispatch.
+Source: **c7dc14b**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34569433930
 
 Context & User Feedback:
 User reported on real hardware that tapping the title / header area in the dialog popup that opened on Save As and Save Copy crashed the app.
