@@ -2,8 +2,8 @@
 
 ## Native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) — 2026-09-11, latest
 
-Source: **pending commit**.
-Build run: pending dispatch.
+Source: **e439943**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34568136604
 
 Context & Goal:
 User requested Option 1: complete Native 3D Model Import & Export (USDZ, USD, OBJ, STL, PLY, FBX, Alembic) through `UIDocumentPickerViewController`, replacing the desktop Unix filesystem browser (`SPACE_FILE`) entirely for 3D asset workflows.
