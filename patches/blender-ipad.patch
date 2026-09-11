@@ -2514,7 +2514,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +      but->pie_dir = UI_RADIAL_NONE;
 +      but->emboss = blender::ui::EmbossType::Emboss;
 +      but->alignnr = 0;
-+      but->drawflag &= ~(UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_BOTTOM | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT);
++      but->drawflag &= ~(UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_DOWN | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT);
 +    }
 +    /* Already in window coordinates; ordinary popup code clips/translates the
 +     * region and owns focus, dismissal, tool execution and lifetime. */

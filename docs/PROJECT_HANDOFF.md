@@ -1,6 +1,15 @@
 # Project handoff — 2026-09-10
 
-## Nine-tool ring with swapped gesture mapping — latest implementation checkpoint
+## Nine-tool ring compiler repair — latest
+
+Run 34545890260 failed with one compiler error in `interface_region_menu_pie.cc:103`:
+`UI_BUT_ALIGN_BOTTOM` was undeclared. The Blender RNA button alignment constant is
+`UI_BUT_ALIGN_DOWN`. Corrected to `UI_BUT_ALIGN_DOWN`.
+The authoritative patch and scratch implementation/generator are synchronized.
+Full source preflight passes for 29 files, C++ geometry test passes, and headless
+Blender validation passes.
+
+## Nine-tool ring with swapped gesture mapping — prior checkpoint
 
 Took over from an interrupted agent session / partial run where the nine-tool radial
 concept was authorized and gestures were swapped per user request:
