@@ -2,6 +2,9 @@
 
 ## Native File Open and Save As unification — 2026-09-11, latest
 
+Source: **18d9d2d**. Build dispatched:
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34566999560
+
 Context & Goal:
 User validated that Save Copy and pinch navigation worked cleanly on device (run 34564379590).
 However, "Import Project from Files..." was redundant alongside "Open...", and desktop Unix file
