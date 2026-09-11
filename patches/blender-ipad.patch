@@ -1782,7 +1782,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,161 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -1877,7 +1877,8 @@ new file mode 100644
 +        layout.operator_context = 'INVOKE_REGION_WIN'
 +        # Capability check also keeps host previews usable without the iOS backend.
 +        import bpy
-+        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++        # Query the operator registry: bpy.types does not expose native C++ operators.
++        if "import_project_from_files" in dir(bpy.ops.wm):
 +            project = layout.column(align=True)
 +            project.scale_y = 1.6
 +            project.operator('wm.import_project_from_files', text="Import Project from Files", icon='FILE_FOLDER')
@@ -2489,32 +2490,33 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
 --- a/scripts/startup/bl_ui/space_topbar.py
 +++ b/scripts/startup/bl_ui/space_topbar.py
-@@ -162,6 +162,8 @@
+@@ -162,6 +162,9 @@
  
          layout.operator_context = 'INVOKE_AREA'
          layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
-+        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++        # Query the operator registry: bpy.types does not expose native C++ operators.
++        if "import_project_from_files" in dir(bpy.ops.wm):
 +            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
          layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
          layout.menu("TOPBAR_MT_file_open_recent")
          layout.operator("wm.revert_mainfile")
-@@ -181,7 +183,10 @@
+@@ -181,7 +184,10 @@
          layout.operator_context = 'INVOKE_AREA'
          layout.operator("wm.save_as_mainfile", text="Save As...")
          layout.operator_context = 'INVOKE_AREA'
 -        layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
-+        if hasattr(bpy.types, "WM_OT_save_copy_to_files"):
++        if "save_copy_to_files" in dir(bpy.ops.wm):
 +            layout.operator("wm.save_copy_to_files", text="Save Copy...")
 +        else:
 +            layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
  
          sub = layout.row()
          sub.enabled = context.blend_data.is_saved and file_is_writable
-@@ -613,6 +618,8 @@
+@@ -613,6 +619,8 @@
  
          layout.operator_context = 'INVOKE_AREA'
          layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
-+        if hasattr(bpy.types, "WM_OT_import_project_from_files"):
++        if "import_project_from_files" in dir(bpy.ops.wm):
 +            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
          layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
          layout.menu("TOPBAR_MT_file_open_recent")

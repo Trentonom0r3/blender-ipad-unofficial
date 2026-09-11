@@ -1,5 +1,43 @@
 # Project handoff — 2026-09-10
 
+## Native Files menu discovery repair — 2026-09-11, latest
+
+Device report: pinch feels much better (user specifically mentions Frame Selection;
+do not infer acceptance of every Frame Scene/camera/orthographic case). Save Copy
+still opened the desktop file browser and failed writing Untitled.blend at the app
+container root. Attached screenshots establish that the native route was not used.
+Combined build 34561710319 completed successfully; this was a runtime UI-routing bug.
+
+Root cause reproduced in host Blender 5.1.2: registered C++ operators are absent
+from bpy.types. `hasattr(bpy.types, "WM_OT_save_as_mainfile")` is false even though
+`bpy.ops.wm.save_as_mainfile.get_rna_type()` succeeds. Our Save Copy feature check
+therefore selected the desktop fallback. The same check hid Import Project from
+Files in the File menu, file context menu and Workspace panel. Checking hasattr
+on bpy.ops is also wrong: its dynamic wrapper exists even for nonexistent names.
+
+Changed all four checks to registry membership via `dir(bpy.ops.wm)`. The existing
+native export/import implementations are preserved. `validate_native_operator_discovery.py`
+extracts the shipped guard expressions and evaluates them against an actual native
+C++ operator (name substituted for host testing) and a missing operator. All four
+pass. This avoids Python-registered mock classes, which would conceal this defect.
+Source preflight passes across 32 pinned files. UIKit/provider validation still pending.
+Earlier host Save Copy tests only checked writer semantics and missed menu discovery.
+
+Device test for the repair build:
+1. File > Save Copy must show Name + Compress + Choose Destination, then the native
+   Files picker. The desktop directory listing in the screenshot must not appear.
+2. Save `copy-test.blend` to On My iPad; verify it exists in Files. Repeat to iCloud.
+3. Cancel a second copy at the native picker; expect the workspace and unchanged
+   original Save target/unsaved state. No false success report.
+4. File > Import Project from Files should now be visible; choose the test copy and
+   confirm it opens after the usual unsaved-changes protection.
+If the desktop picker still appears, obtain exact entry point/build; do not ask the
+user to navigate Unix directories as the intended solution.
+
+Ordinary Open/Save/Save As, library selection and general import/export remain
+unconverted. This repair makes the two existing native operations reachable; it
+is not completion of the full native Files replacement. Radial layout unchanged.
+
 ## Direct-pinch depth navigation — latest follow-up
 
 Source commit: **ed0b94e**. Build requested (queues behind Save Copy):
