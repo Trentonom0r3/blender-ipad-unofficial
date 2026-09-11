@@ -130,7 +130,29 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3377,6 +3395,98 @@
+@@ -3202,6 +3220,13 @@
+     return OPERATOR_CANCELLED;
+   }
+ 
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!GHOST_IOS_import_project()) {
++    BKE_report(op->reports, RPT_WARNING, "Close the current dialog before opening a project");
++    return OPERATOR_CANCELLED;
++  }
++  return OPERATOR_FINISHED;
++#else
+   /* If possible, get the name of the most recently used `.blend` file. */
+   if (G.recent_files.first) {
+     RecentFile *recent = static_cast<RecentFile *>(G.recent_files.first);
+@@ -3217,6 +3242,7 @@
+   WM_event_add_fileselect(C, op);
+ 
+   return OPERATOR_RUNNING_MODAL;
++#endif
+ }
+ 
+ static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
+@@ -3377,6 +3403,177 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -225,10 +247,123 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->exec = wm_import_project_from_files_exec;
 +  ot->poll = WM_operator_winactive;
 +}
++
++static wmOperatorStatus wm_save_as_to_files_exec(bContext *C, wmOperator *op)
++{
++  char filename[FILE_MAXFILE];
++  RNA_string_get(op->ptr, "filename", filename);
++
++  char filepath[FILE_MAX];
++  if (!GHOST_IOS_get_project_save_path(filename, filepath, sizeof(filepath))) {
++    BKE_report(op->reports, RPT_ERROR, "Could not create project destination in Documents/Projects");
++    return OPERATOR_CANCELLED;
++  }
++
++  const int flags_orig = G.fileflags;
++  int flags = flags_orig;
++  SET_FLAG_FROM_TEST(flags, RNA_boolean_get(op->ptr, "compress"), G_FILE_COMPRESS);
++
++  const bool success = wm_file_write(
++      C, filepath, flags, BLO_WRITE_PATH_REMAP_RELATIVE, false, op->reports);
++
++  G.fileflags = flags_orig;
++
++  if (!success) {
++    return OPERATOR_CANCELLED;
++  }
++
++  Main *bmain = CTX_data_main(C);
++  bmain->has_forward_compatibility_issues = false;
++  bmain->colorspace.is_missing_opencolorio_config = false;
++
++  WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
++  if (wmWindowManager *wm = CTX_wm_manager(C)) {
++    wm_autosave_timer_end(wm);
++    wm_autosave_timer_begin(wm);
++    wm->autosave_scheduled = false;
++  }
++
++  const char *saved_name = BLI_path_basename(filepath);
++  BKE_reportf(op->reports, RPT_INFO, "Saved as \"%s\"", saved_name);
++
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus wm_save_as_to_files_invoke(bContext *C,
++                                                   wmOperator *op,
++                                                   const wmEvent * /*event*/)
++{
++  if (!RNA_struct_property_is_set(op->ptr, "filename")) {
++    const char *path = BKE_main_blendfile_path(CTX_data_main(C));
++    RNA_string_set(op->ptr, "filename", path[0] ? BLI_path_basename(path) : "Untitled.blend");
++  }
++  if (!RNA_struct_property_is_set(op->ptr, "compress")) {
++    RNA_boolean_set(op->ptr, "compress", (G.fileflags & G_FILE_COMPRESS) != 0);
++  }
++  return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Save Project As"),
++                                        IFACE_("Save"));
++}
++
++static void wm_save_as_to_files_ui(bContext * /*C*/, wmOperator *op)
++{
++  uiLayout *layout = op->layout;
++  layout->prop(op->ptr, "filename", UI_ITEM_NONE, std::nullopt, ICON_NONE);
++  layout->prop(op->ptr, "compress", UI_ITEM_NONE, std::nullopt, ICON_NONE);
++  layout->label(IFACE_("Saves into Blender's Projects folder."), ICON_INFO);
++  layout->label(IFACE_("This file becomes the active project."), ICON_NONE);
++}
++
++void WM_OT_save_as_to_files(wmOperatorType *ot)
++{
++  ot->name = "Save Project As";
++  ot->idname = "WM_OT_save_as_to_files";
++  ot->description = "Save the current project to Blender's Projects folder on iPad; "
++                    "makes the saved file the active project";
++  ot->poll = WM_operator_winactive;
++  ot->invoke = wm_save_as_to_files_invoke;
++  ot->exec = wm_save_as_to_files_exec;
++  ot->ui = wm_save_as_to_files_ui;
++  RNA_def_string(ot->srna, "filename", "Untitled.blend", FILE_MAXFILE, "Name", "Project filename");
++  RNA_def_boolean(ot->srna, "compress", false, "Compress", "Write a compressed Blender file");
++}
 +#endif
  
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
+@@ -3696,7 +3893,10 @@
+                                                    wmOperator *op,
+                                                    const wmEvent * /*event*/)
+ {
+-
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return WM_operator_name_call(
++      C, "WM_OT_save_as_to_files", blender::wm::OpCallContext::InvokeDefault, nullptr, nullptr);
++#else
+   save_set_compress(op);
+   save_set_filepath(C, op);
+ 
+@@ -3708,6 +3908,7 @@
+   WM_event_add_fileselect(C, op);
+ 
+   return OPERATOR_RUNNING_MODAL;
++#endif
+ }
+ 
+ /* Function used for #WM_OT_save_mainfile too. */
+@@ -3939,8 +4140,13 @@
+     }
+   }
+   else {
++#ifdef WITH_APPLE_CROSSPLATFORM
++    ret = WM_operator_name_call(
++        C, "WM_OT_save_as_to_files", blender::wm::OpCallContext::InvokeDefault, nullptr, nullptr);
++#else
+     WM_event_add_fileselect(C, op);
+     ret = OPERATOR_RUNNING_MODAL;
++#endif
+   }
+ 
+   return ret;
 diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
 --- a/scripts/startup/bl_ui/__init__.py
 +++ b/scripts/startup/bl_ui/__init__.py
@@ -1782,7 +1917,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,161 @@
+@@ -0,0 +1,160 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -1881,9 +2016,8 @@ new file mode 100644
 +        if "import_project_from_files" in dir(bpy.ops.wm):
 +            project = layout.column(align=True)
 +            project.scale_y = 1.6
-+            project.operator('wm.import_project_from_files', text="Import Project from Files", icon='FILE_FOLDER')
++            project.operator('wm.open_mainfile', text="Open Project", icon='FILE_FOLDER')
 +            project.operator('wm.save_mainfile', text="Save Project", icon='FILE_TICK')
-+            layout.label(text="Imports a copy; pack external assets first")
 +            layout.separator()
 +
 +        portrait = context.window.height > context.window.width
@@ -2183,9 +2317,10 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,19 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
++#include <cstddef>
 +#include <functional>
 +
 +/* Present a native picker for an independent local .blend copy. Main thread only.
@@ -2197,11 +2332,16 @@ new file mode 100644
 + * The writer must leave working-document identity and unsaved state unchanged. */
 +bool GHOST_IOS_export_project(const char *filename,
 +                              const std::function<bool(const char *)> &writer);
++
++/* Prepare a destination path for saving a project inside Documents/Projects.
++ * Creates the containing directory if needed.
++ * Returns true if the path was written to out_path, false on error. */
++bool GHOST_IOS_get_project_save_path(const char *filename, char *out_path, size_t max_len);
 diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,287 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. This service imports an independent
@@ -2285,7 +2425,7 @@ new file mode 100644
 +  _picker.allowsMultipleSelection = NO;
 +  _picker.delegate = self;
 +  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = @"Import a Project Copy";
++  _picker.title = @"Open a Blender Project";
 +  [_presenter presentViewController:_picker animated:YES completion:nil];
 +  _picker.presentationController.delegate = self;
 +  return YES;
@@ -2324,8 +2464,8 @@ new file mode 100644
 +    return;
 +  }
 +  const NSUInteger generation = _generation;
-+  _progress = [[UIAlertController alertControllerWithTitle:@"Importing Project"
-+                                                  message:@"Creating a copy in Blender's Projects folder."
++  _progress = [[UIAlertController alertControllerWithTitle:@"Opening Project"
++                                                  message:@"Preparing project in Blender's Projects folder."
 +                                           preferredStyle:UIAlertControllerStyleAlert] retain];
 +  [_progress addAction:[UIAlertAction actionWithTitle:@"Cancel"
 +                                               style:UIAlertActionStyleCancel
@@ -2399,7 +2539,7 @@ new file mode 100644
 +            }
 +            GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
 +            if (![self hasLivePresenter] || !system->handleOpenDocumentRequest(destination.path)) {
-+              [self showError:@"The copy is in Blender's Projects folder. Return to the workspace and open it from the file browser."];
++              [self showError:@"The project could not be opened. Check that the file is a valid Blender project."];
 +              return;
 +            }
 +            /* Normal GHOST open event retains Blender's unsaved-changes dialog
@@ -2443,15 +2583,62 @@ new file mode 100644
 +  }
 +  return [importer present];
 +}
++
++bool GHOST_IOS_get_project_save_path(const char *filename, char *out_path, size_t max_len)
++{
++  if (!out_path || max_len == 0) {
++    return false;
++  }
++  @autoreleasepool {
++    NSFileManager *manager = [NSFileManager defaultManager];
++    NSURL *documents = [[manager URLsForDirectory:NSDocumentDirectory
++                                        inDomains:NSUserDomainMask] firstObject];
++    if (!documents) {
++      return false;
++    }
++    NSString *rawName = (filename && filename[0]) ? [NSString stringWithUTF8String:filename] :
++                                                    @"Untitled.blend";
++    NSString *cleanName = rawName.lastPathComponent;
++    if (cleanName.length == 0 || [cleanName isEqualToString:@"."] || [cleanName isEqualToString:@".."]) {
++      cleanName = @"Untitled.blend";
++    }
++    if ([cleanName.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++      cleanName = [cleanName stringByAppendingPathExtension:@"blend"];
++    }
++    NSString *baseName = cleanName.stringByDeletingPathExtension;
++    if (baseName.length == 0) {
++      baseName = @"Untitled";
++      cleanName = @"Untitled.blend";
++    }
++    NSString *folder = [NSString stringWithFormat:@"%@ - %@", baseName, [NSUUID UUID].UUIDString];
++    NSURL *projectsDir = [documents URLByAppendingPathComponent:@"Projects" isDirectory:YES];
++    NSURL *projectFolder = [projectsDir URLByAppendingPathComponent:folder isDirectory:YES];
++    NSError *error = nil;
++    if (![manager createDirectoryAtURL:projectFolder withIntermediateDirectories:YES
++                            attributes:nil error:&error]) {
++      NSLog(@"Failed to create project directory at %@: %@", projectFolder.path, error);
++      return false;
++    }
++    NSURL *destURL = [projectFolder URLByAppendingPathComponent:cleanName];
++    const char *cpath = destURL.path.UTF8String;
++    if (!cpath || strlen(cpath) >= max_len) {
++      return false;
++    }
++    strncpy(out_path, cpath, max_len - 1);
++    out_path[max_len - 1] = '\0';
++    return true;
++  }
++}
 diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
 --- a/source/blender/windowmanager/wm_files.hh
 +++ b/source/blender/windowmanager/wm_files.hh
-@@ -113,6 +113,10 @@
+@@ -113,6 +113,11 @@
  void WM_OT_read_factory_settings(wmOperatorType *ot);
  
  void WM_OT_open_mainfile(wmOperatorType *ot);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +void WM_OT_import_project_from_files(wmOperatorType *ot);
++void WM_OT_save_as_to_files(wmOperatorType *ot);
 +void WM_OT_save_copy_to_files(wmOperatorType *ot);
 +#endif
  
@@ -2460,12 +2647,13 @@ diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowman
 diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blender/windowmanager/intern/wm_operators.cc
 --- a/source/blender/windowmanager/intern/wm_operators.cc
 +++ b/source/blender/windowmanager/intern/wm_operators.cc
-@@ -4210,6 +4210,10 @@
+@@ -4210,6 +4210,11 @@
    WM_operatortype_append(WM_OT_window_fullscreen_toggle);
    WM_operatortype_append(WM_OT_quit_blender);
    WM_operatortype_append(WM_OT_open_mainfile);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(WM_OT_import_project_from_files);
++  WM_operatortype_append(WM_OT_save_as_to_files);
 +  WM_operatortype_append(WM_OT_save_copy_to_files);
 +#endif
    WM_operatortype_append(WM_OT_revert_mainfile);
@@ -2490,19 +2678,30 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
 --- a/scripts/startup/bl_ui/space_topbar.py
 +++ b/scripts/startup/bl_ui/space_topbar.py
-@@ -162,6 +162,9 @@
+@@ -169,22 +169,30 @@
+ 
+         layout.separator()
+ 
+-        # iOS Workaround: Provide a clean alternative to write errors caused by sandbox restrictions
++        # On iPad, unsaved files route to native Save As; saved files in Documents/Projects are writable.
+         import os
+-        file_is_writable = os.access(bpy.data.filepath, os.W_OK)
++        is_saved = context.blend_data.is_saved
++        file_is_writable = not is_saved or (bool(bpy.data.filepath) and os.access(bpy.data.filepath, os.W_OK))
+ 
+         sub = layout.row()
+         sub.enabled = file_is_writable
+-        sub.operator_context = 'EXEC_AREA' if context.blend_data.is_saved else 'INVOKE_AREA'
++        sub.operator_context = 'EXEC_AREA' if is_saved else 'INVOKE_AREA'
+         sub.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
  
          layout.operator_context = 'INVOKE_AREA'
-         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
+-        layout.operator("wm.save_as_mainfile", text="Save As...")
 +        # Query the operator registry: bpy.types does not expose native C++ operators.
-+        if "import_project_from_files" in dir(bpy.ops.wm):
-+            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
-         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
-         layout.menu("TOPBAR_MT_file_open_recent")
-         layout.operator("wm.revert_mainfile")
-@@ -181,7 +184,10 @@
-         layout.operator_context = 'INVOKE_AREA'
-         layout.operator("wm.save_as_mainfile", text="Save As...")
++        if "save_as_to_files" in dir(bpy.ops.wm):
++            layout.operator("wm.save_as_to_files", text="Save As...")
++        else:
++            layout.operator("wm.save_as_mainfile", text="Save As...")
          layout.operator_context = 'INVOKE_AREA'
 -        layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
 +        if "save_copy_to_files" in dir(bpy.ops.wm):
@@ -2511,15 +2710,10 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
 +            layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
  
          sub = layout.row()
-         sub.enabled = context.blend_data.is_saved and file_is_writable
-@@ -613,6 +619,8 @@
- 
-         layout.operator_context = 'INVOKE_AREA'
-         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
-+        if "import_project_from_files" in dir(bpy.ops.wm):
-+            layout.operator("wm.import_project_from_files", text="Import Project from Files...", icon='FILE_FOLDER')
-         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
-         layout.menu("TOPBAR_MT_file_open_recent")
+-        sub.enabled = context.blend_data.is_saved and file_is_writable
++        sub.enabled = is_saved and file_is_writable
+         sub.operator_context = 'EXEC_AREA'
+         sub.operator("wm.save_mainfile", text="Save Incremental").incremental = True
  
 diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 --- a/intern/ghost/GHOST_Types.h

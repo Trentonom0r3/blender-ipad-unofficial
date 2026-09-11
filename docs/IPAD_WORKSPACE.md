@@ -27,7 +27,10 @@ Concept: `output/ui-preview/pencil-tools-compact-concept.png`. This is an illust
 mockup, not a render or validation of implemented geometry. No production radial or
 shelf-default changes in this revision until the user reviews the concept.
 
-Native Files replacement now takes engineering priority over further drawers/UI work.
+Native Files replacement is the active priority. Native Open (replacing redundant
+import), native Save As (`WM_OT_save_as_to_files`), and native Save for unsaved projects
+are implemented, writing directly into `Documents/Projects/<Name - UUID>/<Name>.blend`
+without exposing the desktop Unix filesystem picker.
 The user also reports Frame Scene changes navigation feel and limits zoom. Preserve
 that report as unresolved; the button currently invokes stock `view3d.view_all`.
 

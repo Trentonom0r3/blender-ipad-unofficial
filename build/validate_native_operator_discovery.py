@@ -15,7 +15,7 @@ count = 0
 for line in patch.splitlines():
     if not line.startswith('+') or not line[1:].lstrip().startswith('if '):
         continue
-    if not any(name in line for name in ('save_copy_to_files', 'import_project_from_files')):
+    if not any(name in line for name in ('save_copy_to_files', 'save_as_to_files', 'import_project_from_files')):
         continue
 
     class SubstituteOperator(ast.NodeTransformer):
@@ -25,9 +25,9 @@ for line in patch.splitlines():
 
         def visit_Constant(self, node):
             if isinstance(node.value, str):
-                if node.value in ('save_copy_to_files', 'import_project_from_files'):
+                if node.value in ('save_copy_to_files', 'save_as_to_files', 'import_project_from_files'):
                     node.value = self.native_name
-                elif node.value in ('WM_OT_save_copy_to_files', 'WM_OT_import_project_from_files'):
+                elif node.value in ('WM_OT_save_copy_to_files', 'WM_OT_save_as_to_files', 'WM_OT_import_project_from_files'):
                     node.value = self.rna_name
             return node
 
@@ -42,5 +42,5 @@ for line in patch.splitlines():
         assert actual == expected, (line, name, actual, expected)
     count += 1
 
-assert count == 4, f'Expected File/Workspace import guards and Save Copy guard; found {count}'
-print('PASS: all four native Files guards discover C++ operators and reject missing operators')
+assert count == 3, f'Expected Save As, Save Copy and View3D iPad guards; found {count}'
+print('PASS: all three native Files guards discover C++ operators and reject missing operators')

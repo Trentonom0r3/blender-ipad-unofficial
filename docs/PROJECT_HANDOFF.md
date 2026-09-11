@@ -1,6 +1,44 @@
-# Project handoff — 2026-09-10
+# Project handoff — 2026-09-11
 
-## Native Files menu discovery repair — 2026-09-11, latest
+## Native File Open and Save As unification — 2026-09-11, latest
+
+Context & Goal:
+User validated that Save Copy and pinch navigation worked cleanly on device (run 34564379590).
+However, "Import Project from Files..." was redundant alongside "Open...", and desktop Unix file
+browser remained for ordinary Open, Save As, and unsaved Save operations.
+User approved replacing the desktop file picker entirely with native iPadOS Document Picker workflows.
+
+Implemented Changes:
+1. Unified File > Open:
+   - Replaced redundant "Import Project from Files..." in `TOPBAR_MT_file` and `TOPBAR_MT_file_context_menu`.
+   - On iOS, `wm_open_mainfile__select_file_path_exec` routes directly to `GHOST_IOS_import_project()`, presenting the native `UIDocumentPickerViewController` with title "Open a Blender Project".
+   - `wm_open_mainfile` preserves Blender's unsaved-changes protection (`OPEN_MAINFILE_STATE_DISCARD_CHANGES`) prior to presenting native Files.
+   - When a project is chosen, it is copied into `Documents/Projects/<Name - UUID>/<Name>.blend` and opened via `GHOST_SystemIOS::handleOpenDocumentRequest`.
+2. Native File > Save As (`WM_OT_save_as_to_files`):
+   - Added `WM_OT_save_as_to_files` (registered in `wm_operators.cc` and declared in `wm_files.hh`).
+   - Presents a native dialog asking for project Name and Compression toggle.
+   - Saves into `Documents/Projects/<Name - UUID>/<Name>.blend` via `GHOST_IOS_get_project_save_path`.
+   - Calls `wm_file_write` with `use_save_as_copy = false` and relative remapping, updating `bmain->filepath` and notifying the window manager (`NC_WM | ND_FILESAVE`).
+   - `File > Save As...` in `space_topbar.py` routes to `wm.save_as_to_files` when available. `wm_save_as_mainfile_invoke` also forwards to `WM_OT_save_as_to_files` on iOS.
+3. Native File > Save for Unsaved Projects:
+   - `wm_save_mainfile_invoke` routes to `WM_OT_save_as_to_files` when `blendfile_path[0] == '\0'`, completely avoiding the Unix directory browser and the container root `Permission denied` error.
+   - Fixed `Save` button enabled condition in `space_topbar.py` so unsaved files can trigger Save As.
+4. Viewport iPad Quick Actions:
+   - Updated `space_view3d_ipad.py` quick actions: "Open Project" replaces "Import Project from Files" and calls `wm.open_mainfile`.
+5. Verification & Tests:
+   - `build/validate_native_operator_discovery.py` updated and passing on Blender 5.1.2.
+   - `python -m unittest discover -s build -p test_tool_ring.py -v`: PASS.
+   - `validate_pencil_tools.py`: PASS.
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - Preserved working radial palette geometry, pencil gesture bindings (squeeze = tools, double tap = context menu), and Save Copy (`wm_save_copy_to_files`).
+
+Device test for this build:
+1. Tap File > Open...: Verify native Document Picker ("Open a Blender Project") appears directly without any desktop Unix browser. Select a .blend file; verify it opens cleanly.
+2. In a new or existing scene, tap File > Save As...: Verify popup for Name and Compress appears with Save button. Tap Save; verify project saves to Files under On My iPad > Blender > Projects.
+3. In a new unsaved scene (`Untitled`), tap File > Save: Verify it presents the Save Project As dialog and saves cleanly into Projects rather than failing with permission denied. Subsequent Save taps on that project save silently and quickly.
+4. Squeeze Apple Pencil: verify 9-tool radial palette opens and works as before. Double-tap Apple Pencil: verify context menu opens.
+
+## Native Files menu discovery repair — 2026-09-11
 
 Source: **053d387**. Repair build dispatched:
 https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34564379590
