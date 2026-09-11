@@ -2,6 +2,10 @@
 
 ## Native Files menu discovery repair — 2026-09-11, latest
 
+Source: **053d387**. Repair build dispatched:
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34564379590
+Compilation/IPA completion not yet checked; inspect this run next.
+
 Device report: pinch feels much better (user specifically mentions Frame Selection;
 do not infer acceptance of every Frame Scene/camera/orthographic case). Save Copy
 still opened the desktop file browser and failed writing Untitled.blend at the app
