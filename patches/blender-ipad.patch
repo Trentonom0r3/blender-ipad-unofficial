@@ -3403,7 +3403,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +        }
 +        wmEvent *eventstate = ctx_win ? ctx_win->eventstate : (root_win ? root_win->eventstate : nullptr);
 +
-+        const bool presented = GHOST_IOS_export_file(filename, [&](const char *staging_path) {
++        const bool presented = GHOST_IOS_export_file(filename, [&](const char *staging_path) -> bool {
 +          if (strlen(staging_path) >= FILE_MAX) {
 +            BKE_report(&wm->runtime->reports, RPT_ERROR, "The export filepath is too long");
 +            return false;
@@ -3488,7 +3488,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +          if (status & OPERATOR_FINISHED) {
 +            wm_operator_reports(C, op, status, true);
 +            WM_operator_last_properties_store(op);
-+            return BLI_exists(staging_path);
++            return BLI_exists(staging_path) != 0;
 +          }
 +          wm_operator_reports(C, op, status, true);
 +          return false;
