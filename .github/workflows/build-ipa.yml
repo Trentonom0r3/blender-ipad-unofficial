@@ -32,7 +32,8 @@ env:
 
 concurrency:
   group: build-ipa-${{ github.ref }}
-  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+  # A new device-test build should queue, not discard an almost-finished IPA.
+  cancel-in-progress: false
 
 jobs:
   preflight:

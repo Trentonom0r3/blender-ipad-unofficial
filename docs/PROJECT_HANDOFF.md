@@ -1,5 +1,48 @@
 # Project handoff — 2026-09-10
 
+## Direct-pinch depth navigation — latest follow-up
+
+User confirmed that **Frame Selection after Frame Scene restores the expected
+navigation**. This supports a view-pivot/depth issue; it is not evidence of a stuck
+modal tool. No projection label was reported. The precise hardware cause remains
+unconfirmed until the following change is tested.
+
+Implemented a targeted adaptation: direct screen pinches enable Blender's existing
+depth navigation and cursor-position zoom. Frame Scene remains stock Frame All;
+its scene framing, object selection and global navigation preferences are unchanged.
+Camera view is excluded, including locked-camera workflows. Indirect trackpad/mouse
+input retains existing preference behavior. Auto depth samples geometry under the
+pinch midpoint, falling back to Blender's current depth when no surface is available.
+
+Input path: GHOSTUIPinchGestureRecognizer tracks UITouchTypeDirect and resets that
+state per gesture (exclusive touch types); UserInputEvent carries the source;
+GHOST_kTrackpadEventMagnifyTouch maps to ordinary MOUSEZOOM plus
+WM_EVENT_IS_TOUCH_PINCH. Queue coalescing keeps direct and indirect deltas separate.
+ViewOpsData::init_navigation enables only supported depth/zoom flags for this
+source outside camera view. Existing use_cursor_init=false handling remains intact.
+The event flag enum's maximum was updated to include the new bit.
+
+Validation: source preflight applies to 32 pinned files. New host-compiled test
+extracts the shipped policy and checks 64 preference/support combinations, each
+against null, indirect, non-zoom, camera, perspective and orthographic input, in
+both iOS-enabled and desktop compilations. This does not test UIKit touch routing,
+GPU depth reads, pinch feel or performance. iOS compilation/device testing pending.
+The existing native Save Copy build 34561079484 is still in progress at checkpoint.
+Build concurrency now queues new requests rather than cancelling active work.
+
+Device protocol for the new build:
+1. Default cube scene: Frame Scene, then pinch with the midpoint over the cube.
+   Expect to approach the cube naturally without needing Frame Selection first.
+2. Repeat after Frame Selection; check for sudden depth jumps or sideways drift.
+3. Pinch over empty background; confirm navigation remains controllable.
+4. Repeat in orthographic view and with a complex scene; report stutter if present.
+5. Camera View: pinch must retain its previous camera-frame behavior. With a mouse
+   or trackpad connected, verify zoom/orbit remains as before.
+
+Native Files remains the main unfinished milestone. No additional Files routes
+were converted in this follow-up. Compact ring remains concept-only; this user's
+message confirmed navigation recovery, not an explicit review of its geometry.
+
 ## Native Save Copy and compact-ring concept — latest
 
 Latest user report: nine-tool ring works great on iPad. Requested compact ring,
