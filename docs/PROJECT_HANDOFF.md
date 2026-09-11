@@ -9,6 +9,9 @@ concept was authorized and gestures were swapped per user request:
 * **Header Tools** directly toggles the left tool shelf (`space_data.show_region_toolbar`).
 * **Center Settings** provides a popup menu with "Show/Hide Tool Shelf" toggle.
 
+Commit: **73ac8c3** on `codex/ipad-secondary-view-escape`.
+Build: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34545890260
+
 Delivered implementation & handover fixes:
 * Corrected `IPAD_RADIAL_TOOLS` in `space_view3d_ipad.py` and generator: replaced invalid
   `'ANNOTATE'` icon identifier with Blender's built-in `'GREASEPENCIL'`, resolving the
