@@ -877,7 +877,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,16 +835,14 @@
+@@ -539,17 +835,23 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -897,9 +897,18 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -  }
 +
    return NO;
++}
++
++- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
++{
++  if (gestureRecognizer == pan3f_gesture_recognizer && GHOST_IOS_get_flythrough_mode()) {
++    return NO;
++  }
++  return YES;
  }
  
-@@ -580,8 +874,10 @@
+ /* Override touch methods to capture the UITouch object. */
+@@ -580,8 +882,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
  
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -912,7 +921,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,16 +900,20 @@
+@@ -604,16 +908,20 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -937,7 +946,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +977,121 @@
+@@ -677,12 +985,121 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
  
@@ -1061,7 +1070,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
  
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1099,21 @@
+@@ -690,6 +1107,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -1083,7 +1092,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +1146,104 @@
+@@ -722,6 +1154,104 @@
    [self generateUserInputEvents:event_info];
  }
  
@@ -1188,12 +1197,19 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -739,6 +1261,13 @@
+@@ -739,6 +1269,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
 +      if (GHOST_IOS_get_flythrough_mode()) {
 +        /* Flythrough mode: 2-finger drag = Pan (view3d.move). */
++        if (sender.state == UIGestureRecognizerStateBegan) {
++          mouse_cursor_x = touch_point.x;
++          mouse_cursor_y = touch_point.y;
++          UserInputEvent cursor_info(&touch_point, nullptr, nullptr, false);
++          cursor_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
++          [self generateUserInputEvents:cursor_info];
++        }
 +        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, false);
 +        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_THREE_FINGERS);
 +        [self generateUserInputEvents:event_info];
@@ -1202,15 +1218,24 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,52 +1283,106 @@
+@@ -754,52 +1298,115 @@
    }
  }
  
 -- (void)handleEdgeSwipe:(UIScreenEdgePanGestureRecognizer *)gesture
 -{
 -  if (gesture.state != UIGestureRecognizerStateEnded) {
--    return;
--  }
++- (void)handlePan3f:(GHOSTUIPanGestureRecognizer *)sender
++{
++  if (GHOST_IOS_get_flythrough_mode()) {
++    if (sender.state == UIGestureRecognizerStateEnded ||
++        sender.state == UIGestureRecognizerStateCancelled ||
++        sender.state == UIGestureRecognizerStateFailed)
++    {
++      [sender setCachedTranslation:CGPointZero];
++    }
+     return;
+   }
 -
 -  UIView *view = window->getView();
 -  CGPoint location = [gesture locationInView:view];
@@ -1234,8 +1259,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -}
 -
 -- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
-+- (void)handlePan3f:(GHOSTUIPanGestureRecognizer *)sender
- {
+-{
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
    {
@@ -1346,7 +1370,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
  
-@@ -830,7 +1413,12 @@
+@@ -830,7 +1437,12 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
  
@@ -1360,7 +1384,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        event_info.add_event(UserInputEvent::EventTypes::PINCH_GESTURE);
        [self generateUserInputEvents:event_info];
      }
-@@ -845,10 +1433,43 @@
+@@ -845,10 +1457,43 @@
  
  - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
  {
@@ -1405,7 +1429,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  - (void)beginFrame
  {
-@@ -1198,11 +1819,374 @@
+@@ -1198,11 +1843,374 @@
    }
  }
  
@@ -1780,7 +1804,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
  
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2282,12 @@
+@@ -1298,7 +2306,12 @@
  
  @interface GHOST_IOSViewController : UIViewController
  
@@ -1794,7 +1818,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  
  @end
  
-@@ -1306,22 +2295,158 @@
+@@ -1306,22 +2319,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -1948,6 +1972,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  [self initializeMetalRenderer];
 +}
 +
++- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
++{
++  return UIRectEdgeAll;
++}
++
 +- (void)initializeMetalRenderer
 +{
 +  /* The view is assigned in init, so loadViewIfNeeded is not an initialization
@@ -1959,7 +1988,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2490,12 @@
+@@ -1365,11 +2519,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -1973,7 +2002,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2503,6 @@
+@@ -1377,7 +2532,6 @@
  
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1981,7 +2010,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
  
    /* Create view controller. */
-@@ -1391,7 +2516,6 @@
+@@ -1391,7 +2545,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -1989,7 +2018,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2524,6 @@
+@@ -1400,7 +2553,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -1997,7 +2026,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
  
-@@ -1410,8 +2533,12 @@
+@@ -1410,8 +2562,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
  
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -2012,7 +2041,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
  
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2551,14 @@
+@@ -1424,10 +2580,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -2028,7 +2057,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
  
    /* Initialize Metal device. */
-@@ -1474,11 +2605,24 @@
+@@ -1474,11 +2634,24 @@
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
  
    releaseNativeHandles();
@@ -2054,7 +2083,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2643,9 @@
+@@ -1499,6 +2672,9 @@
  
    /* Release window. */
    if (rootWindow) {
@@ -2064,7 +2093,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2765,7 @@
+@@ -1618,7 +2794,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
  
@@ -2073,7 +2102,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3055,7 @@
+@@ -1908,6 +3084,7 @@
  
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -2081,7 +2110,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
  
-@@ -1918,6 +3066,11 @@
+@@ -1918,6 +3095,11 @@
                   this);
  
    system_ios_->current_active_window_ = this;
@@ -2097,7 +2126,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,213 @@
+@@ -0,0 +1,237 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -2311,6 +2340,30 @@ new file mode 100644
 +        description="Enable flythrough navigation mode",
 +        default=False,
 +    )
++
++
++@bpy.app.handlers.persistent
++def _collapse_tools_shelf_default(dummy=None):
++    try:
++        for screen in bpy.data.screens:
++            for area in screen.areas:
++                if area.type == 'VIEW_3D':
++                    for space in area.spaces:
++                        if space.type == 'VIEW_3D':
++                            space.show_region_toolbar = False
++    except Exception:
++        pass
++
++
++if _collapse_tools_shelf_default not in bpy.app.handlers.load_post:
++    bpy.app.handlers.load_post.append(_collapse_tools_shelf_default)
++
++
++def _collapse_tools_shelf_startup():
++    _collapse_tools_shelf_default()
++
++
++bpy.app.timers.register(_collapse_tools_shelf_startup, first_interval=0.05)
 diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space_view3d.py
 --- a/scripts/startup/bl_ui/space_view3d.py
 +++ b/scripts/startup/bl_ui/space_view3d.py
@@ -3250,7 +3303,28 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  
  #include "BKE_context.hh"
  #include "BKE_customdata.hh"
-@@ -2817,6 +2822,248 @@
+@@ -2711,6 +2716,20 @@
+     wmOperatorType *ot = WM_operatortype_find(kmi_idname, false);
+ 
+     if (ot && wm_operator_check_locked_interface(C, ot)) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      /* If Apple Pencil is touching while Annotate or Grease Pencil tool is active,
++       * disable 3D selection (left click) so Apple Pencil draws strokes cleanly. */
++      if (event->tablet.active == EVT_TABLET_STYLUS &&
++          (BLI_strcasestr(ot->idname, "select") != nullptr))
++      {
++        bToolRef *tref = WM_toolsystem_ref_from_context(C);
++        if (tref && (BLI_strcasestr(tref->idname, "annotate") != nullptr ||
++                     BLI_strcasestr(tref->idname, "gpencil") != nullptr))
++        {
++          return WM_HANDLER_CONTINUE;
++        }
++      }
++#endif
+       bool use_last_properties = true;
+       PointerRNA tool_properties = {};
+ 
+@@ -2817,6 +2836,264 @@
  
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -3331,7 +3405,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +
 +        const bool presented = GHOST_IOS_export_file(filename, [&](const char *staging_path) {
 +          if (strlen(staging_path) >= FILE_MAX) {
-+            BKE_report(CTX_wm_reports(C), RPT_ERROR, "The export filepath is too long");
++            BKE_report(&wm->runtime->reports, RPT_ERROR, "The export filepath is too long");
 +            return false;
 +          }
 +          if (root_win) {
@@ -3344,7 +3418,8 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +          if (eventstate) {
 +            wm_handler_op_context(C, handler, eventstate);
 +          }
-+          if (!CTX_wm_area(C) && root_win) {
++          /* Always force 3D viewport context for model export operators. */
++          if (root_win) {
 +            bScreen *screen = WM_window_get_active_screen(root_win);
 +            if (screen) {
 +              ScrArea *v3d_area = nullptr;
@@ -3362,8 +3437,10 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +                  v3d_region = BKE_area_find_region_type(v3d_area, RGN_TYPE_WINDOW);
 +                }
 +              }
-+              CTX_wm_area_set(C, v3d_area);
-+              CTX_wm_region_set(C, v3d_region);
++              if (v3d_area) {
++                CTX_wm_area_set(C, v3d_area);
++                CTX_wm_region_set(C, v3d_region);
++              }
 +            }
 +          }
 +          ScrArea *handler_area = CTX_wm_area(C);
@@ -3393,27 +3470,40 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +          if (op->type->flag & OPTYPE_UNDO) {
 +            wm->op_undo_depth++;
 +          }
-+          const wmOperatorStatus status = op->type->exec(C, op);
++          wmOperatorStatus status = OPERATOR_CANCELLED;
++          try {
++            status = op->type->exec(C, op);
++          }
++          catch (const std::exception &e) {
++            CLOG_ERROR(WM_LOG_OPERATORS, "Exception in export operator %s: %s", op->type->idname, e.what());
++            status = OPERATOR_CANCELLED;
++          }
++          catch (...) {
++            CLOG_ERROR(WM_LOG_OPERATORS, "Unknown exception in export operator %s", op->type->idname);
++            status = OPERATOR_CANCELLED;
++          }
 +          if (op->type->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {
 +            wm->op_undo_depth--;
 +          }
 +          if (status & OPERATOR_FINISHED) {
 +            wm_operator_reports(C, op, status, true);
 +            WM_operator_last_properties_store(op);
-+            return true;
++            return BLI_exists(staging_path);
 +          }
 +          wm_operator_reports(C, op, status, true);
 +          return false;
 +        });
 +
 +        if (!presented) {
-+          BKE_report(CTX_wm_reports(C),
++          BKE_report(&wm->runtime->reports,
 +                     RPT_ERROR,
 +                     "Could not open export sheet. Close other dialogs and try again");
 +        }
 +
 +        BLI_remlink(handlers, handler);
 +        wm_operator_free_for_fileselect(handler->op);
++        CTX_wm_area_set(C, nullptr);
++        CTX_wm_region_set(C, nullptr);
 +        wm_event_free_handler(&handler->head);
 +
 +        action = WM_HANDLER_BREAK;
@@ -3499,7 +3589,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -5784,7 +6031,9 @@
+@@ -5784,7 +6061,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -3510,7 +3600,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
  
-@@ -6032,6 +6281,9 @@
+@@ -6032,6 +6311,9 @@
  
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -3520,7 +3610,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6357,11 @@
+@@ -6105,6 +6387,11 @@
        }
        break;
      }
@@ -3797,7 +3887,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
-@@ -0,0 +1,296 @@
+@@ -0,0 +1,333 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
@@ -3884,12 +3974,27 @@ new file mode 100644
 +    [self finish];
 +    return;
 +  }
-+  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
-+  _picker.delegate = self;
-+  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = _exportTitle ?: @"Save to Files";
-+  [_presenter presentViewController:_picker animated:YES completion:nil];
-+  _picker.presentationController.delegate = self;
++  if (![manager fileExistsAtPath:source.path]) {
++    NSLog(@"Blender export error: file %@ does not exist on disk", source.path);
++    [self finish];
++    return;
++  }
++  @try {
++    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
++    _picker.delegate = self;
++    _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++    _picker.title = _exportTitle ?: @"Save to Files";
++    UIViewController *top = _presenter;
++    while (top.presentedViewController && !top.presentedViewController.isBeingDismissed) {
++      top = top.presentedViewController;
++    }
++    [top presentViewController:_picker animated:YES completion:nil];
++    _picker.presentationController.delegate = self;
++  }
++  @catch (NSException *ex) {
++    NSLog(@"Failed to present project export picker: %@", ex);
++    [self finish];
++  }
 +}
 +
 +- (BOOL)presentWithCompressPrompt:(NSString *)filename
@@ -3992,16 +4097,38 @@ new file mode 100644
 +                                   includingPropertiesForKeys:nil
 +                                                      options:NSDirectoryEnumerationSkipsHiddenFiles
 +                                                        error:nil];
-+  if (!files.count) {
-+    files = @[source];
++  NSMutableArray<NSURL *> *valid_files = [NSMutableArray array];
++  for (NSURL *file in files) {
++    if ([manager fileExistsAtPath:file.path]) {
++      [valid_files addObject:file];
++    }
 +  }
-+  _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:files asCopy:YES];
-+  _picker.delegate = self;
-+  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = title ?: @"Export Model";
-+  [_presenter presentViewController:_picker animated:YES completion:nil];
-+  _picker.presentationController.delegate = self;
-+  return YES;
++  if (valid_files.count == 0 && [manager fileExistsAtPath:source.path]) {
++    [valid_files addObject:source];
++  }
++  if (valid_files.count == 0) {
++    NSLog(@"Blender export error: no output files were generated at %@", _staging.path);
++    [self finish];
++    return NO;
++  }
++  @try {
++    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:valid_files asCopy:YES];
++    _picker.delegate = self;
++    _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++    _picker.title = title ?: @"Export Model";
++    UIViewController *top = _presenter;
++    while (top.presentedViewController && !top.presentedViewController.isBeingDismissed) {
++      top = top.presentedViewController;
++    }
++    [top presentViewController:_picker animated:YES completion:nil];
++    _picker.presentationController.delegate = self;
++    return YES;
++  }
++  @catch (NSException *ex) {
++    NSLog(@"Failed to present export picker: %@", ex);
++    [self finish];
++    return NO;
++  }
 +}
 +
 +- (void)dismissPicker:(UIDocumentPickerViewController *)controller

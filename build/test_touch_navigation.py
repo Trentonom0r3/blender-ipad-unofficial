@@ -69,6 +69,27 @@ int main() {
                 subprocess.run(args, check=True)
                 subprocess.run([str(exe)], check=True)
 
+    def test_flythrough_and_pencil_interaction_policy(self):
+        patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+
+        # 1. Verify 3-finger recognizer is swallowed/disabled in Flythrough mode
+        self.assertIn('gestureRecognizer == pan3f_gesture_recognizer && GHOST_IOS_get_flythrough_mode()', patch)
+        self.assertIn('handlePan3f:(GHOSTUIPanGestureRecognizer *)sender', patch)
+
+        # 2. Verify preferredScreenEdgesDeferringSystemGestures is implemented
+        self.assertIn('preferredScreenEdgesDeferringSystemGestures', patch)
+        self.assertIn('return UIRectEdgeAll;', patch)
+
+        # 3. Verify pencil annotate selection guard in wm_event_system.cc
+        self.assertIn('event->tablet.active == EVT_TABLET_STYLUS', patch)
+        self.assertIn('BLI_strcasestr(ot->idname, "select") != nullptr', patch)
+        self.assertIn('BLI_strcasestr(tref->idname, "annotate") != nullptr', patch)
+
+        # 4. Verify tools shelf is collapsed by default in space_view3d_ipad.py
+        self.assertIn('_collapse_tools_shelf_default', patch)
+        self.assertIn('space.show_region_toolbar = False', patch)
+        self.assertIn('bpy.app.handlers.load_post.append(_collapse_tools_shelf_default)', patch)
+
 
 if __name__ == '__main__':
     unittest.main()
