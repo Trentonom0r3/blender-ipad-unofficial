@@ -2,6 +2,10 @@
 
 ## Direct-pinch depth navigation — latest follow-up
 
+Source commit: **ed0b94e**. Build requested (queues behind Save Copy):
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34561710319
+This build includes both native Save Copy and the pinch adaptation.
+
 User confirmed that **Frame Selection after Frame Scene restores the expected
 navigation**. This supports a view-pivot/depth issue; it is not evidence of a stuck
 modal tool. No projection label was reported. The precise hardware cause remains
