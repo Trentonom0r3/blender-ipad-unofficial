@@ -1,6 +1,72 @@
 # Project handoff — 2026-09-11
 
-## FBX Export Crash Fix, Native Blender Toolbar Vector Icons & Flythrough Touch Navigation — 2026-09-11, latest
+## Flythrough 3-Finger No-Op, FBX Export Crash Fix, Pencil Annotate Selection Guard, Collapsed Tools Shelf & Stage Manager Gesture Deferral — 2026-09-11, latest
+
+Source: **e765f6e**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34658574986
+
+Context & User Feedback:
+User tested build 34653000916 on hardware:
+1. "Flythrough mode - 1 finger drag = look around/orbit. 2 finger drag = pan, pinch = dolly. 3 finger drag = nothing. Currently its acting a bit weird - 3 finger drag still wants to do both and flythrough acts like its interfering. standard mode 3 finger works fine for pan. but can be slow, sometimes misfire as 2 finger. This is why I want the flythru mode to not have 3 finger, and give us a dedicated way to deal with things."
+2. "export fbx still crashes the app."
+3. "Native toolbar icons and radial menu are GREAT now! Only thing - when annotate/grease pencil is selected, it should disable select (left click) for apple pencil only. once that is NOT selected, left click behavior returns. Tools shelf is still open by default when it should be collapsed by default (not visible)."
+4. "How can we help the top menu be able to be scrolled through (the one with texture pain/shading/animation/rendering shortcuts, and not have it drag the app window or resize? Sometimes when trying to scroll those, It catches and resizes the app... No need for < > buttons, I think we're gonna eventually change the UI design entirely on that, especially after we start getting the other things into floating drawers/shelves too."
+
+Delivered Implementation:
+1. Flythrough 3-Finger No-Op & Swapped Navigation:
+   - In `intern/ghost/intern/GHOST_WindowIOS.mm`:
+     - Added `- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer`: Returns `NO` when `gestureRecognizer == pan3f_gesture_recognizer && GHOST_IOS_get_flythrough_mode()`. This completely ignores 3-finger drag events when Flythrough mode is active so they never interfere with 1-finger orbit or 2-finger pan.
+     - In `handlePan3f:`: Added guard checking `GHOST_IOS_get_flythrough_mode()`; if active, resets cached translation if ended and returns immediately (no-op).
+     - In `handlePan2f:`: When Flythrough mode is active, on `UIGestureRecognizerStateBegan`, updates cursor coordinates via `GHOST_kEventCursorMove` so 2-finger pan immediately targets the viewport.
+     - Retained 3-finger drag for pan in standard mode.
+2. Complete FBX Export Crash Fix:
+   - In `intern/ghost/intern/GHOST_ProjectExportIOS.hh`:
+     - Identified root cause of `SIGABRT` crash: `UIDocumentPickerViewController` threw an uncaught `NSInvalidArgumentException` if files in `files` array did not exist on disk or the staging folder was empty.
+     - Filtered the file URL list with `[NSFileManager.defaultManager fileExistsAtPath:url.path]`. If no files exist, logs warning and cleanly returns `NO` without crashing.
+     - Resolved top-most modal presentation: dynamically walks `top.presentedViewController` to avoid UIKit presentation hierarchy errors.
+     - Wrapped picker initialization and presentation in `@try ... @catch (NSException *ex)` in both `startExportWithCompress:` and `present:title:writer:`.
+   - In `source/blender/windowmanager/intern/wm_event_system.cc`:
+     - In `is_export` branch: guaranteed `SPACE_VIEW3D` area and `RGN_TYPE_WINDOW` context, initialized `op->reports`, wrapped `op->type->exec(C, op)` in C++ `try { ... } catch (...) { ... }`, and verified `BLI_exists(staging_path)` before presenting.
+3. Apple Pencil Selection Guard with Annotate / Grease Pencil:
+   - In `source/blender/windowmanager/intern/wm_event_system.cc` (`wm_handler_operator_call`):
+     - When `event->tablet.active == EVT_TABLET_STYLUS` and operator id matches `"select"` (e.g. `view3d.select`), checks whether active tool (`WM_toolsystem_ref_from_context(C)`) has `"annotate"` or `"gpencil"` in its `idname`.
+     - If Annotate or Grease Pencil is active, returns `WM_HANDLER_CONTINUE` to suppress object selection for Apple Pencil only, allowing seamless drawing strokes without accidentally selecting/unselecting scene geometry.
+     - Normal Apple Pencil selection behavior returns immediately once any other tool (Box Select, Tweak, Move, Cursor, etc.) is active.
+     - Touch and mouse selection remain completely unaffected.
+4. Tools Shelf Collapsed by Default:
+   - In `scripts/startup/bl_ui/space_view3d_ipad.py`:
+     - Registered persistent `bpy.app.handlers.load_post` and startup timer (`_collapse_tools_shelf_default`) setting `space.show_region_toolbar = False` on all 3D viewports across all workspaces on launch and file load.
+     - Left tool shelf is now hidden by default; user can toggle it open via the "Tools" button in the canvas header whenever desired.
+5. Top Bar Stage Manager Window Drag / Resize Deferral:
+   - In `intern/ghost/intern/GHOST_WindowIOS.mm`:
+     - Implemented `- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures` returning `UIRectEdgeAll` on `GHOST_IOSViewController`.
+     - In iPadOS / Stage Manager, this informs the window server that app touch gestures at the top and side edges take priority over system window grabbers, allowing the top workspace tab bar to be scrolled horizontally with a single touch without accidentally dragging or resizing the app window.
+     - Preserved existing topbar layout without adding `< >` buttons (rejected by user in favor of future floating drawers/shelves).
+6. Local Verification:
+   - `python build/preflight.py`: PASS across 32 pinned source files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (9/9 unit tests).
+   - `python build/validate_native_operator_discovery.py`: PASS.
+   - `python build/validate_pencil_tools.py`: PASS.
+
+Device test for this build:
+1. Flythrough Mode Navigation:
+   - Tap "Flythrough" header pill:
+     - 1-finger drag = Look around / orbit.
+     - 2-finger drag = Pan.
+     - Pinch = Dolly (fast push in / out).
+     - 3-finger drag = NOTHING (swallowed / no interference).
+   - Tap "Flythrough [ON]" again to return to standard mode (3-finger pan functional, 2-finger orbit, pinch zoom).
+2. FBX Export:
+   - Tap File > Export > FBX (.fbx)...: Verify native Apple Files export sheet opens directly with `<name>.fbx` without crashing. Choose a folder and save; verify file is exported.
+3. Apple Pencil Annotate vs Selection:
+   - Select Annotate tool from radial ring or tool menu: Draw in 3D viewport with Apple Pencil; verify it draws annotation strokes without selecting or unselecting objects.
+   - Switch back to Select Box: Tap an object with Apple Pencil; verify it selects normally.
+4. Tools Shelf Default State:
+   - Launch app or open a file: Verify the left 3D viewport tools shelf is hidden/collapsed by default. Tap "Tools" in header to toggle visible.
+5. Top Menu Scrolling:
+   - Scroll horizontally across the top menu tabs (Layout, Modeling, Sculpting, UV Editing, Texture Paint, Shading, Animation, Rendering, Compositing, Scripting): Verify it scrolls smoothly without Stage Manager grabbing the window or resizing.
+
+## FBX Export Crash Fix, Native Blender Toolbar Vector Icons & Flythrough Touch Navigation — 2026-09-11
 
 Source: **cdc7de8**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34653000916
