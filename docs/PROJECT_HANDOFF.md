@@ -9,6 +9,8 @@ The authoritative patch and scratch implementation/generator are synchronized.
 Full source preflight passes for 29 files, C++ geometry test passes, and headless
 Blender validation passes.
 
+Replacement build: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34557117227
+
 ## Nine-tool ring with swapped gesture mapping — prior checkpoint
 
 Took over from an interrupted agent session / partial run where the nine-tool radial
