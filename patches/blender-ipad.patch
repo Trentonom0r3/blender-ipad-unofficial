@@ -4794,7 +4794,7 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +437,15 @@
+@@ -428,6 +437,17 @@
    struct bToolRef *tool;
    char is_tool_set;
    char _pad0[7];
@@ -4804,6 +4804,8 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  int ipad_bottom_region;
 +  /** Finger-pan capture; cleared by the next native cursor-begin/click/deactivation. */
 +  int ipad_pan_axis;
++  int ipad_tab_action;
++  int ipad_tab_id;
 +  rcti ipad_rect;
 +  rcti ipad_side_rect;
 +  rcti ipad_bottom_rect;
@@ -5757,7 +5759,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,870 @@
+@@ -0,0 +1,947 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -6068,9 +6070,17 @@ new file mode 100644
 +      tabs.push_back(&tab);
 +    }
 +  }
++  const uiFontStyle *font = &UI_style_get_dpi()->widget;
++  UI_fontstyle_set(font);
++  int label_extent = int(44 * UI_SCALE_FAC);
++  for (const Tab *tab : tabs) {
++    label_extent = std::max(label_extent,
++                            int(std::ceil(BLF_width(font->uifont_id, tab->label.c_str(),
++                                                    tab->label.size()) + 20 * UI_SCALE_FAC)));
++  }
 +  const policy::RailPage page = policy::rail_page(
 +      tabs.size(), rail.height(), std::max(0, screen->ipad_panel_page[0]),
-+      int(90 * UI_SCALE_FAC), int(3 * UI_SCALE_FAC));
++      label_extent, int(4 * UI_SCALE_FAC));
 +  int offset = 0;
 +  auto add = [&](const std::string &label, Action action, int id, bool selected) {
 +    Rect rect = rail;
@@ -6080,7 +6090,7 @@ new file mode 100644
 +    offset += page.button_extent + page.gap;
 +  };
 +  if (page.paged) {
-+    add("Previous", Action::Previous, int(page.page > 0 ? page.page - 1 : 0), false);
++    add("Prev", Action::Previous, int(page.page > 0 ? page.page - 1 : 0), false);
 +  }
 +  for (size_t i = page.first; i < page.first + page.count; i++) {
 +    add(tabs[i]->label, Action::Tab, tabs[i]->id,
@@ -6118,35 +6128,77 @@ new file mode 100644
 +  ED_screen_ensure_updated(C, CTX_wm_manager(C), win);
 +}
 +
-+static void draw_box(const Rect &rect, const char *label, bool selected)
++static void activate_button(bContext *C, wmWindow *win, Model &model, const Button &button)
++{
++  bScreen *screen = WM_window_get_active_screen(win);
++  const int axis = button.edge == Edge::Side ? 0 : 1;
++  if (button.action == Action::Tab) {
++    model.state.tap(button.edge, button.id);
++    save_slot(screen, model, button.edge);
++  }
++  else if (ELEM(button.action, Action::Previous, Action::Next)) {
++    screen->ipad_panel_page[axis] = button.id;
++  }
++  tag_layout(C, win);
++}
++
++static void draw_box(const Rect &rect, const char *label, bool selected, bool hovered = false)
 +{
 +  if (rect.empty()) {
 +    return;
 +  }
 +  float color[4];
-+  UI_GetThemeColor4fv(selected ? TH_SELECT : TH_HEADER, color);
++  UI_GetThemeColor4fv(selected || hovered ? TH_TAB_ACTIVE : TH_TAB_INACTIVE, color);
 +  color[3] = 1.0f;
 +  rctf box = {float(rect.xmin), float(rect.xmax), float(rect.ymin), float(rect.ymax)};
 +  UI_draw_roundbox_corner_set(UI_CNR_ALL);
 +  UI_draw_roundbox_4fv(&box, true, 6 * UI_SCALE_FAC, color);
++  if (selected && label && label[0]) {
++    float accent[4];
++    UI_GetThemeColor4fv(TH_TAB_OUTLINE_ACTIVE, accent);
++    accent[3] = 1.0f;
++    rctf mark = {box.xmin, box.xmin + 3 * UI_SCALE_FAC,
++                 box.ymin + 7 * UI_SCALE_FAC, box.ymax - 7 * UI_SCALE_FAC};
++    UI_draw_roundbox_4fv(&mark, true, UI_SCALE_FAC, accent);
++  }
 +  if (label && label[0]) {
 +    const uiStyle *style = UI_style_get_dpi();
 +    uchar text_color[4];
-+    UI_GetThemeColor4ubv(TH_TEXT, text_color);
++    UI_GetThemeColor4ubv(selected ? TH_TAB_TEXT_HI : TH_TAB_TEXT, text_color);
 +    /* Match the direction and font of Blender's native right sidebar tabs. */
 +    const uiFontStyle *font = &style->widget;
 +    UI_fontstyle_set(font);
 +    const int fontid = font->uifont_id;
-+    BLF_enable(fontid, BLF_ROTATION | BLF_CLIPPING);
++    /* BLF clipping is evaluated before rotation: a narrow screen-space clip
++     * rectangle cuts almost every glyph. Fit text first, like native tabs. */
++    BLF_disable(fontid, BLF_CLIPPING);
++    std::string fitted = label;
++    const float available = std::max(0.0f, rect.height() - 16 * UI_SCALE_FAC);
++    if (BLF_width(fontid, fitted.c_str(), fitted.size()) > available) {
++      const std::string suffix = "...";
++      while (!fitted.empty() &&
++             BLF_width(fontid, (fitted + suffix).c_str(), fitted.size() + suffix.size()) > available)
++      {
++        size_t last = fitted.size() - 1;
++        while (last && (static_cast<unsigned char>(fitted[last]) & 0xc0) == 0x80) {
++          last--;
++        }
++        fitted.resize(last);
++      }
++      fitted += suffix;
++      if (BLF_width(fontid, fitted.c_str(), fitted.size()) > available) {
++        fitted.clear();
++      }
++    }
++    BLF_enable(fontid, BLF_ROTATION);
 +    BLF_rotation(fontid, -float(M_PI_2));
-+    BLF_clipping(fontid, rect.xmin, rect.ymin + 2, rect.xmax, rect.ymax - 2);
-+    const float length = BLF_width(fontid, label, strlen(label));
++    const float length = BLF_width(fontid, fitted.c_str(), fitted.size());
 +    const float padding = std::max(6 * UI_SCALE_FAC, (rect.height() - length) * 0.5f);
 +    BLF_position(fontid, (rect.xmin + rect.xmax) * 0.5f - font->points * UI_SCALE_FAC * 0.35f,
 +                 rect.ymax - padding, 0.0f);
 +    BLF_color4ubv(fontid, text_color);
-+    BLF_draw(fontid, label, strlen(label));
-+    BLF_disable(fontid, BLF_ROTATION | BLF_CLIPPING);
++    BLF_draw(fontid, fitted.c_str(), fitted.size());
++    BLF_disable(fontid, BLF_ROTATION);
 +  }
 +}
 +
@@ -6432,7 +6484,8 @@ new file mode 100644
 +  }
 +  for (const Button &button : buttons(model, screen)) {
 +    if (button.action != Action::Resize) {
-+      draw_box(button.rect, button.label.c_str(), button.selected);
++      draw_box(button.rect, button.label.c_str(), button.selected,
++               win->eventstate && contains(button.rect, win->eventstate->xy));
 +    }
 +  }
 +  GPU_blend(GPU_BLEND_NONE);
@@ -6527,7 +6580,9 @@ new file mode 100644
 +bool ED_ipad_panels_handle_event(bContext *C, wmWindow *win, const wmEvent *event)
 +{
 +  bScreen *screen = WM_window_get_active_screen(win);
-+  if (!ED_ipad_panels_enabled(screen) || !BLI_listbase_is_empty(&screen->regionbase)) {
++  /* Popup modal handlers already run first in wm_event_system. A tooltip in
++   * screen->regionbase must not disable every panel tab. */
++  if (!ED_ipad_panels_enabled(screen)) {
 +    return false;
 +  }
 +  Model model = make_model(C, win);
@@ -6535,6 +6590,10 @@ new file mode 100644
 +    return false;
 +  }
 +  int &pan_axis = model.main->runtime.ipad_pan_axis;
++  if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
++    /* Rail hover is compositor chrome, not a native region UI block. */
++    screen->do_draw = true;
++  }
 +  /* GHOST anchors ordinary finger pans at their origin, and emits a cursor event
 +   * at every new gesture. Flythrough pans move the origin but have the same begin.
 +   * Capture from that first resize hit so moving the handle cannot drop the drag. */
@@ -6544,6 +6603,34 @@ new file mode 100644
 +    pan_axis = 0;
 +  }
 +  const auto controls = buttons(model, screen);
++  auto &runtime = model.main->runtime;
++  if (runtime.ipad_tab_action) {
++    if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
++      runtime.ipad_tab_action = 0;
++      screen->do_draw = true;
++      return event->type != WINDEACTIVATE;
++    }
++    if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
++      const int action = runtime.ipad_tab_action;
++      const int id = runtime.ipad_tab_id;
++      runtime.ipad_tab_action = 0;
++      screen->do_draw = true;
++      for (const Button &button : controls) {
++        if (int(button.action) + 1 == action && button.id == id &&
++            contains(button.rect, event->xy))
++        {
++          activate_button(C, win, model, button);
++          break;
++        }
++      }
++      /* Own the full sequence, including release outside the rail. */
++      return true;
++    }
++    if (ISMOUSE(event->type) || ISMOUSE_GESTURE(event->type)) {
++      screen->do_draw = true;
++      return true;
++    }
++  }
 +  if (event->type == MOUSEPAN) {
 +    if (!pan_axis) {
 +      for (const Button &button : controls) {
@@ -6583,17 +6670,9 @@ new file mode 100644
 +        WM_operator_properties_free(&props);
 +      }
 +      else {
-+        if (button.action == Action::Tab) {
-+          model.state.tap(button.edge, button.id);
-+          save_slot(screen, model, button.edge);
-+        }
-+        else if (button.action == Action::Previous) {
-+          screen->ipad_panel_page[axis] = button.id;
-+        }
-+        else if (button.action == Action::Next) {
-+          screen->ipad_panel_page[axis] = button.id;
-+        }
-+        tag_layout(C, win);
++        runtime.ipad_tab_action = int(button.action) + 1;
++        runtime.ipad_tab_id = button.id;
++        screen->do_draw = true;
 +      }
 +    }
 +    /* Only pointer events belong to chrome; timers and keyboard shortcuts retain their routing. */

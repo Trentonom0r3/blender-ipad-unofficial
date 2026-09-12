@@ -1,5 +1,29 @@
 # Project handoff — 2026-09-12
 
+## Sidebar label and selection repair — 2026-09-12, latest source checkpoint
+
+User reports clipped sidebar labels, unreliable selection and unfinished visual quality.
+Reviewed the actual adapter and native Blender tab implementation independently.
+
+- Removed BLF screen-coordinate clipping during rotated text rendering; it was clipping
+  unrotated glyphs. Tab extents now follow measured font width. Extremely constrained
+  labels receive UTF-8-safe ellipsis instead of half-drawn glyphs.
+- Use Blender tab theme surfaces/text, a selected-edge accent, and hover feedback.
+- Removed the blanket screen-region-list gate: a tooltip could disable every tab.
+  Existing modal popup handlers retain priority in the window event dispatcher.
+- Capture the full tab press/release sequence, activate only on release inside the
+  original control, and cancel on outside release, Escape, right-click or deactivation.
+  A release outside the rail cannot leak into an editor after a captured tab press.
+- Preserve native editors, footer controls, independent persistent pins and resizing.
+
+Local patch preflight passes all 45 pinned source files. All 10 tests pass, including
+585,440 panel policy checks and 75 tool-ring cases. These do not simulate iPad touch
+or the Blender font renderer. This repair still needs its new iOS build and device
+acceptance. The e986044 build below succeeded but does not include this repair.
+Next: compile/package this checkpoint, record its exact commit/run, then verify long
+labels and tab activation with finger, Pencil, pointer, tooltips and open menus.
+
+
 ## Native workspace tab, footer and sizing refinement — 2026-09-12, source checkpoint
 
 **Refinement source is implemented and passes local checks. iOS compilation and
@@ -7,6 +31,9 @@ device acceptance for this refinement are pending.**
 
 Active checkout: `D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial`.
 Branch: `codex/ipad-secondary-view-escape`.
+Refinement source: **e9860444d7ae7a2c4ecbd39bc7b2ccd2eb03d025**.
+Refinement build: [34711564344](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34711564344).
+Build SUCCESS; artifact Blender-iPad-Unofficial-ipa verified, 248,385,108 bytes, not expired.
 Completed first panel implementation: **ab53a673b88b85e51955684dd332952d8b35ea53**,
 `feat(ipad): float workspace editors with pinned resizable panels`.
 Its iOS build [34683437681](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34683437681)
