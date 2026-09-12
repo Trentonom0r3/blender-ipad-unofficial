@@ -1,6 +1,56 @@
 # Project handoff — 2026-09-11
 
-## Mode-Adaptive Floating Drawers, Enhanced Scene Outliner & Animation Controls — 2026-09-11, latest
+## FBX Export Crash Elimination & Edge Floating Category Pills (Item/Tool/View Style) — 2026-09-11, latest
+
+Source: Working tree (awaiting commit).
+Build run: Pending CI dispatch.
+Previous verified build: **e3ab016** (run 34668142307: SUCCESS, `.ipa` artifact verified, 248.4MB).
+
+Context & User Feedback on Build 34668142307:
+1. "1) this seems better now. 2) also better. 3) Still crashes. 4) They're Collapsed" but as default desktop style. THey're not "collapsed" into floating pills/buttons like we discussed. I see the scene, inspector, all that stuff as buttosn on the header that we have our flythrough button on, but they arent floating buttons over the main canvas/screen area like I'm really wanting."
+2. "it looks like the buttons on that header/topbar are just rereations? That shouldn't even be there. We were trying to do floating pills that expanded into Ipad native style UI for the panels, instead of expanding into desktop look...?"
+3. "if it helps, the item/tol/view floating buttons that are there in the default desktop are really good examples of what I'm wanting."
+
+Delivered Implementation:
+1. FBX Export Crash Elimination & Context Preservation:
+   - In `source/blender/windowmanager/intern/wm_event_system.cc` (`is_export`):
+     - Captured `orig_area = CTX_wm_area(C)` and `orig_region = CTX_wm_region(C)` at entry to guarantee context is never corrupted.
+     - Added early intercept for `BLI_strcasestr(idname, "fbx")`: FBX export requires NumPy which is unavailable in the iOS precompiled runtime; cleanly reports an informative error banner (`"FBX export is unsupported on iOS (requires NumPy). Please use Universal Scene Description (.usd*), Wavefront (.obj), or STL (.stl)"`), restores context, and exits without crashing or closing Blender.
+     - Replaced fatal `CTX_wm_area_set(C, nullptr); CTX_wm_region_set(C, nullptr);` with context restoration `CTX_wm_area_set(C, orig_area); CTX_wm_region_set(C, orig_region);` (or fallback to active screen's first window region), completely preventing `SIGSEGV` in the event loop.
+2. Edge Floating Category Pills & iPad-Native Drawers:
+   - In `scripts/startup/bl_ui/space_view3d_ipad.py`:
+     - Transitioned `VIEW3D_PT_ipad_scene` to `bl_region_type = 'UI'`, `bl_category = "Scene"`, `bl_label = "Scene Objects"`.
+     - Transitioned `VIEW3D_PT_ipad_inspector` to `bl_region_type = 'UI'`, `bl_category = "Inspector"`, `bl_label = "Active Object & Mode"`.
+     - Placed `Scene` and `Inspector` as first-class vertical category pills along the right edge of the canvas, matching the desktop `Item`/`Tool`/`View` floating button pattern.
+     - Added touch-friendly `[X]` (`PANEL_CLOSE`) drawer dismiss buttons at the top of each panel for one-tap collapse.
+     - Integrated mode-adaptive controls (sculpt radius/strength/pressure/symmetry, edit selection mode, object transforms/modifiers, previs animation controls, and bottom brush shelf toggle) directly into the Inspector drawer.
+3. Clean Top Header:
+   - In `draw_canvas_header`:
+     - Removed duplicate `Scene`, `Inspector`, `Sidebar`, and `Workspace` popover buttons from `VIEW3D_HT_header`.
+     - Kept clean `Flythrough` mode toggle button and `Tools` shelf toggle.
+4. Default Workspace State:
+   - In `_collapse_tools_shelf_default`:
+     - Left toolbar (`show_region_toolbar = False`) collapsed.
+     - Bottom asset shelf (`show_region_asset_shelf = False`) collapsed.
+     - Right sidebar (`show_region_ui = True`) open so the floating category pill tabs (`Scene`, `Inspector`, `Item`, `Tool`, `View`) are immediately visible and interactive along the right canvas edge!
+5. Verification:
+   - `python build/preflight.py`: PASS across all 32 files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (9/9 tests).
+
+Device test for this build:
+1. Top Viewport Header:
+   - Verify header is clean and spacious, containing only the Flythrough button (and Tools toggle); no duplicate Scene or Inspector popovers.
+2. Floating Edge Pills:
+   - Verify vertical tab buttons (`[Scene]`, `[Inspector]`, alongside desktop `[Item]`, `[Tool]`, `[View]`) float along the right edge of the viewport canvas.
+3. iPad Drawer Panels:
+   - Tap `[Scene]`: verify iPad Scene Outliner expands with objects list, Add menu, Select All/None, Duplicate, Delete, and eye toggles.
+   - Tap `[Inspector]`: verify mode-adaptive Inspector expands (in Sculpt: brush sliders, pressure, symmetry; in Object: transforms, modifiers, animation controls).
+   - Tap the `[X]` button at the top of either drawer to collapse the drawer.
+4. Model Export:
+   - Tap File > Export > FBX (.fbx)...: Verify it does NOT crash! It displays a clean warning informing the user that FBX requires NumPy and suggesting USD, OBJ, or STL.
+   - Tap File > Export > Wavefront (.obj)...: Verify native iOS files picker opens for export.
+
+## Mode-Adaptive Floating Drawers, Enhanced Scene Outliner & Animation Controls — 2026-09-11
 
 Source: **e3ab016**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34668142307 (SUCCESS — .ipa packaged and verified: 248.4MB)

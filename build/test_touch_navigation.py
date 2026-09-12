@@ -96,13 +96,17 @@ int main() {
         # 6. Verify export safety guards and error handling
         self.assertIn('if (op->type->exec != nullptr)', patch)
         self.assertIn('(status & OPERATOR_FINISHED) || BLI_exists(staging_path)', patch)
+        self.assertIn('BLI_strcasestr(idname, "fbx") != nullptr', patch)
+        self.assertIn('FBX export is unsupported on iOS (requires NumPy)', patch)
 
-        # 7. Verify tools shelf, sidebar and asset shelf are collapsed by default in space_view3d_ipad.py
+        # 7. Verify tools shelf collapsed, right-edge UI tabs visible, and native iPad drawers registered
         self.assertIn('_collapse_tools_shelf_default', patch)
         self.assertIn('space.show_region_toolbar = False', patch)
-        self.assertIn('space.show_region_ui = False', patch)
+        self.assertIn('space.show_region_ui = True', patch)
         self.assertIn('VIEW3D_PT_ipad_scene', patch)
         self.assertIn('VIEW3D_PT_ipad_inspector', patch)
+        self.assertIn('bl_category = "Scene"', patch)
+        self.assertIn('bl_category = "Inspector"', patch)
         self.assertIn('bpy.app.handlers.load_post.append(_collapse_tools_shelf_default)', patch)
 
 

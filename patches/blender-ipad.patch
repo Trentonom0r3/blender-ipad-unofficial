@@ -2227,7 +2227,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,399 @@
+@@ -0,0 +1,417 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -2420,9 +2420,11 @@ new file mode 100644
 +
 +class VIEW3D_PT_ipad_scene(Panel):
 +    bl_space_type = 'VIEW_3D'
-+    bl_region_type = 'WINDOW'
-+    bl_label = "Scene"
++    bl_region_type = 'UI'
++    bl_category = "Scene"
++    bl_label = "Scene Objects"
 +    bl_description = "Scene objects & hierarchy"
++    bl_order = 0
 +
 +    def draw(self, context):
 +        layout = self.layout
@@ -2431,8 +2433,13 @@ new file mode 100644
 +        if not scene:
 +            return
 +
++        # Top bar with close drawer button
++        top = layout.row(align=True)
++        top.scale_y = 1.3
++        top.label(text="Scene Outliner", icon='OUTLINER')
++        top.prop(context.space_data, 'show_region_ui', text="", icon='PANEL_CLOSE')
++
 +        box = layout.box()
-+        box.label(text="Scene Objects", icon='OUTLINER')
 +        top_row = box.row(align=True)
 +        top_row.menu("VIEW3D_MT_add", text="Add", icon='ADD')
 +        top_row.separator()
@@ -2446,7 +2453,7 @@ new file mode 100644
 +            act_row.operator("object.delete", text="Delete", icon='X').use_global = False
 +
 +        col = box.column(align=True)
-+        for obj in scene.objects[:24]:
++        for obj in scene.objects[:32]:
 +            r = col.row(align=True)
 +            is_act = (obj == act_obj)
 +            r.operator("object.select_pattern", text=obj.name, icon='OBJECT_DATA', depress=is_act).pattern = obj.name
@@ -2456,9 +2463,11 @@ new file mode 100644
 +
 +class VIEW3D_PT_ipad_inspector(Panel):
 +    bl_space_type = 'VIEW_3D'
-+    bl_region_type = 'WINDOW'
-+    bl_label = "Inspector"
++    bl_region_type = 'UI'
++    bl_category = "Inspector"
++    bl_label = "Active Object & Mode"
 +    bl_description = "Active object transforms, brush & modifiers"
++    bl_order = 1
 +
 +    def draw(self, context):
 +        layout = self.layout
@@ -2466,7 +2475,13 @@ new file mode 100644
 +        mode = getattr(context, "mode", 'OBJECT')
 +        obj = context.active_object
 +
-+        # Sculpt Mode: Brush Radius, Strength, Symmetry
++        # Top bar with close drawer button
++        top = layout.row(align=True)
++        top.scale_y = 1.3
++        top.label(text="Mode Inspector", icon='PROPERTIES')
++        top.prop(context.space_data, 'show_region_ui', text="", icon='PANEL_CLOSE')
++
++        # Sculpt Mode: Brush Radius, Strength, Symmetry, and Brush Shelf toggle
 +        if mode == 'SCULPT':
 +            paint = getattr(context.tool_settings, "sculpt", None)
 +            brush = paint.brush if paint else None
@@ -2488,6 +2503,9 @@ new file mode 100644
 +                sym_row.prop(obj, "use_mesh_mirror_x", text="X", toggle=True)
 +                sym_row.prop(obj, "use_mesh_mirror_y", text="Y", toggle=True)
 +                sym_row.prop(obj, "use_mesh_mirror_z", text="Z", toggle=True)
++            if hasattr(context.space_data, "show_region_asset_shelf"):
++                shelf_box = layout.box()
++                shelf_box.prop(context.space_data, 'show_region_asset_shelf', text="Bottom Brush Shelf", icon='ASSET_MANAGER', toggle=True)
 +
 +        # Texture / Vertex / Weight Paint Modes
 +        elif mode in {'PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT'}:
@@ -2499,6 +2517,9 @@ new file mode 100644
 +                col = box.column(align=True)
 +                col.prop(brush, "size", text="Radius", slider=True)
 +                col.prop(brush, "strength", text="Strength", slider=True)
++            if hasattr(context.space_data, "show_region_asset_shelf"):
++                shelf_box = layout.box()
++                shelf_box.prop(context.space_data, 'show_region_asset_shelf', text="Bottom Brush Shelf", icon='ASSET_MANAGER', toggle=True)
 +
 +        # Edit Mesh Mode: Selection Modes, Symmetry
 +        elif mode == 'EDIT_MESH':
@@ -2545,23 +2566,26 @@ new file mode 100644
 +        elif mode not in {'SCULPT', 'PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT'}:
 +            layout.label(text="No active object", icon='INFO')
 +
-+        # Full Sidebar Panels toggle button
-+        layout.separator()
-+        layout.prop(context.space_data, 'show_region_ui', text="Full Sidebar Panels", toggle=True, icon='MENU_PANEL')
++        # Previs Animation scrubbing controls
++        anim_box = layout.box()
++        anim_box.label(text="Previs Animation", icon='PLAY')
++        play_row = anim_box.row(align=True)
++        play_row.scale_y = 1.4
++        play_row.operator('screen.frame_jump', text="Start", icon='REW').end = False
++        play_row.operator('screen.frame_offset', text="-1").delta = -1
++        play_row.operator('screen.animation_play', text="Play", icon='PLAY')
++        play_row.operator('screen.frame_offset', text="+1").delta = 1
++        play_row.operator('screen.frame_jump', text="End", icon='FF').end = True
++        anim_box.prop(context.scene, 'frame_current', text="Frame")
 +
 +
 +def draw_canvas_header(layout):
 +    row = layout.row(align=True)
 +    row.scale_x = 1.2
 +    space = bpy.context.space_data
-+    mode = getattr(bpy.context, "mode", 'OBJECT')
 +
 +    # Left Tool Shelf toggle
 +    row.prop(space, 'show_region_toolbar', text="Tools", icon='TOOL_SETTINGS', toggle=True)
-+
-+    # Collapsible Bottom Asset Shelf toggle for Sculpting and Texture Paint
-+    if hasattr(space, 'show_region_asset_shelf') and mode in {'SCULPT', 'PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT'}:
-+        row.prop(space, 'show_region_asset_shelf', text="Brushes", icon='ASSET_MANAGER', toggle=True)
 +
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
@@ -2574,12 +2598,6 @@ new file mode 100644
 +        icon='CAMERA_STEREO',
 +        depress=is_fly,
 +    )
-+
-+    # Floating Drawers / Panels
-+    row.popover(panel='VIEW3D_PT_ipad_scene', text="Scene", icon='OUTLINER')
-+    row.popover(panel='VIEW3D_PT_ipad_inspector', text="Inspector", icon='PROPERTIES')
-+    row.prop(space, 'show_region_ui', text="Sidebar", icon='FRAME_NEXT', toggle=True)
-+    row.popover(panel='VIEW3D_PT_ipad_controls', text="Workspace", icon='WORKSPACE')
 +
 +
 +# This module is installed by the iOS-only overlay. Do not gate registration on
@@ -2611,7 +2629,7 @@ new file mode 100644
 +                    for space in area.spaces:
 +                        if space.type == 'VIEW_3D':
 +                            space.show_region_toolbar = False
-+                            space.show_region_ui = False
++                            space.show_region_ui = True
 +                            if hasattr(space, "show_region_asset_shelf"):
 +                                space.show_region_asset_shelf = False
 +    except Exception:
@@ -3592,7 +3610,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        bool use_last_properties = true;
        PointerRNA tool_properties = {};
  
-@@ -2817,6 +2841,272 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
+@@ -2817,6 +2841,302 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
  
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -3605,6 +3623,33 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +                             (BLI_strcasestr(idname, "open") != nullptr);
 +
 +      if (is_export) {
++        ScrArea *orig_area = CTX_wm_area(C);
++        ARegion *orig_region = CTX_wm_region(C);
++        wmWindow *ctx_win = CTX_wm_window(C);
++        wmWindow *root_win = handler->context.win;
++        if (!root_win) {
++          root_win = ctx_win;
++        }
++        wmEvent *eventstate = ctx_win ? ctx_win->eventstate : (root_win ? root_win->eventstate : nullptr);
++
++        /* FBX export requires NumPy which is unavailable in the iOS Python runtime.
++         * Intercept early to prevent fatal crash and display clean notification. */
++        if (BLI_strcasestr(idname, "fbx") != nullptr) {
++          BKE_report(&wm->runtime->reports,
++                     RPT_ERROR,
++                     "FBX export is unsupported on iOS (requires NumPy). "
++                     "Please use Universal Scene Description (.usd*), Wavefront (.obj), or STL (.stl)");
++          BLI_remlink(handlers, handler);
++          wm_operator_free_for_fileselect(handler->op);
++          if (orig_area) {
++            CTX_wm_area_set(C, orig_area);
++            CTX_wm_region_set(C, orig_region);
++          }
++          wm_event_free_handler(&handler->head);
++          action = WM_HANDLER_BREAK;
++          break;
++        }
++
 +        char filename[FILE_MAXFILE];
 +        filename[0] = '\0';
 +        if (RNA_struct_find_property(op->ptr, "filename") &&
@@ -3663,13 +3708,6 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +            }
 +          }
 +        }
-+
-+        wmWindow *ctx_win = CTX_wm_window(C);
-+        wmWindow *root_win = handler->context.win;
-+        if (!root_win) {
-+          root_win = ctx_win;
-+        }
-+        wmEvent *eventstate = ctx_win ? ctx_win->eventstate : (root_win ? root_win->eventstate : nullptr);
 +
 +        const bool presented = GHOST_IOS_export_file(filename, [&](const char *staging_path) -> bool {
 +          if (strlen(staging_path) >= FILE_MAX) {
@@ -3778,8 +3816,18 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +
 +        BLI_remlink(handlers, handler);
 +        wm_operator_free_for_fileselect(handler->op);
-+        CTX_wm_area_set(C, nullptr);
-+        CTX_wm_region_set(C, nullptr);
++        if (orig_area != nullptr) {
++          CTX_wm_area_set(C, orig_area);
++          CTX_wm_region_set(C, orig_region);
++        }
++        else if (root_win) {
++          bScreen *screen = WM_window_get_active_screen(root_win);
++          if (screen && screen->areabase.first) {
++            ScrArea *fa = static_cast<ScrArea *>(screen->areabase.first);
++            CTX_wm_area_set(C, fa);
++            CTX_wm_region_set(C, BKE_area_find_region_type(fa, RGN_TYPE_WINDOW));
++          }
++        }
 +        wm_event_free_handler(&handler->head);
 +
 +        action = WM_HANDLER_BREAK;
