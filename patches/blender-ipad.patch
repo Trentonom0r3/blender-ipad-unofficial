@@ -2227,7 +2227,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,322 @@
+@@ -0,0 +1,399 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -2403,8 +2403,14 @@ new file mode 100644
 +        layout.separator()
 +        playback = layout.row(align=True)
 +        playback.scale_y = 1.6
++        playback.operator('screen.frame_jump', text="Start").end = False
++        playback.operator('screen.frame_offset', text="-1").delta = -1
 +        playback.operator('screen.animation_play', text="Play / Pause", icon='PLAY')
-+        playback.prop(context.scene, 'frame_current', text="Frame")
++        playback.operator('screen.frame_offset', text="+1").delta = 1
++        playback.operator('screen.frame_jump', text="End").end = True
++        playback_box = layout.row(align=True)
++        playback_box.scale_y = 1.6
++        playback_box.prop(context.scene, 'frame_current', text="Frame")
 +        if context.scene.camera:
 +            camera = layout.column(align=True)
 +            camera.scale_y = 1.6
@@ -2424,53 +2430,124 @@ new file mode 100644
 +        scene = context.scene
 +        if not scene:
 +            return
++
 +        box = layout.box()
 +        box.label(text="Scene Objects", icon='OUTLINER')
-+        row = box.row(align=True)
-+        row.operator("object.select_all", text="Select All").action = 'SELECT'
-+        row.operator("object.select_all", text="Deselect").action = 'DESELECT'
++        top_row = box.row(align=True)
++        top_row.menu("VIEW3D_MT_add", text="Add", icon='ADD')
++        top_row.separator()
++        top_row.operator("object.select_all", text="All").action = 'SELECT'
++        top_row.operator("object.select_all", text="None").action = 'DESELECT'
++
++        act_obj = context.active_object
++        if act_obj:
++            act_row = box.row(align=True)
++            act_row.operator("object.duplicate_move", text="Duplicate", icon='DUPLICATE')
++            act_row.operator("object.delete", text="Delete", icon='X').use_global = False
++
 +        col = box.column(align=True)
-+        for obj in scene.objects[:16]:
++        for obj in scene.objects[:24]:
 +            r = col.row(align=True)
-+            is_act = (obj == context.active_object)
++            is_act = (obj == act_obj)
 +            r.operator("object.select_pattern", text=obj.name, icon='OBJECT_DATA', depress=is_act).pattern = obj.name
 +            r.prop(obj, "hide_viewport", text="", icon='HIDE_ON' if obj.hide_viewport else 'HIDE_OFF', emboss=False)
++            r.prop(obj, "hide_render", text="", icon='RESTRICT_RENDER_ON' if obj.hide_render else 'RESTRICT_RENDER_OFF', emboss=False)
 +
 +
 +class VIEW3D_PT_ipad_inspector(Panel):
 +    bl_space_type = 'VIEW_3D'
 +    bl_region_type = 'WINDOW'
 +    bl_label = "Inspector"
-+    bl_description = "Active object transforms & modifiers"
++    bl_description = "Active object transforms, brush & modifiers"
 +
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.scale_y = 1.3
++        mode = getattr(context, "mode", 'OBJECT')
 +        obj = context.active_object
-+        if not obj:
++
++        # Sculpt Mode: Brush Radius, Strength, Symmetry
++        if mode == 'SCULPT':
++            paint = getattr(context.tool_settings, "sculpt", None)
++            brush = paint.brush if paint else None
++            box = layout.box()
++            box.label(text="Sculpt Brush Settings", icon='SCULPTMODE_HLT')
++            if brush:
++                box.label(text=brush.name)
++                col = box.column(align=True)
++                col.prop(brush, "size", text="Radius", slider=True)
++                col.prop(brush, "strength", text="Strength", slider=True)
++                p_row = col.row(align=True)
++                p_row.prop(brush, "use_pressure_size", text="Pressure Size", toggle=True)
++                p_row.prop(brush, "use_pressure_strength", text="Pressure Strength", toggle=True)
++            if obj:
++                sym_box = layout.box()
++                sym_box.label(text="Mesh Symmetry", icon='MOD_MIRROR')
++                sym_row = sym_box.row(align=True)
++                sym_row.scale_y = 1.3
++                sym_row.prop(obj, "use_mesh_mirror_x", text="X", toggle=True)
++                sym_row.prop(obj, "use_mesh_mirror_y", text="Y", toggle=True)
++                sym_row.prop(obj, "use_mesh_mirror_z", text="Z", toggle=True)
++
++        # Texture / Vertex / Weight Paint Modes
++        elif mode in {'PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT'}:
++            box = layout.box()
++            box.label(text="Paint Brush Settings", icon='TPAINT_HLT')
++            ipaint = getattr(context.tool_settings, "image_paint", None)
++            brush = ipaint.brush if ipaint else None
++            if brush:
++                col = box.column(align=True)
++                col.prop(brush, "size", text="Radius", slider=True)
++                col.prop(brush, "strength", text="Strength", slider=True)
++
++        # Edit Mesh Mode: Selection Modes, Symmetry
++        elif mode == 'EDIT_MESH':
++            ts = context.tool_settings
++            sel_box = layout.box()
++            sel_box.label(text="Selection Mode", icon='EDITMODE_HLT')
++            sel_row = sel_box.row(align=True)
++            sel_row.scale_y = 1.3
++            sel_row.prop(ts, "mesh_select_mode", index=0, text="Vertex", icon='VERTEXSEL')
++            sel_row.prop(ts, "mesh_select_mode", index=1, text="Edge", icon='EDGESEL')
++            sel_row.prop(ts, "mesh_select_mode", index=2, text="Face", icon='FACESEL')
++            if obj:
++                sym_box = layout.box()
++                sym_box.label(text="Mesh Symmetry", icon='MOD_MIRROR')
++                sym_row = sym_box.row(align=True)
++                sym_row.scale_y = 1.3
++                sym_row.prop(obj, "use_mesh_mirror_x", text="X", toggle=True)
++                sym_row.prop(obj, "use_mesh_mirror_y", text="Y", toggle=True)
++                sym_row.prop(obj, "use_mesh_mirror_z", text="Z", toggle=True)
++
++        # Object Mode: Transforms, Modifiers, Materials
++        if obj:
++            box = layout.box()
++            box.prop(obj, "name", text="", icon='OBJECT_DATA')
++            col = box.column(align=True)
++            col.prop(obj, "location", text="Position")
++            col.prop(obj, "rotation_euler", text="Rotation")
++            col.prop(obj, "scale", text="Scale")
++
++            if obj.modifiers:
++                mbox = layout.box()
++                mbox.label(text="Modifiers", icon='MODIFIER')
++                for mod in obj.modifiers:
++                    mr = mbox.row(align=True)
++                    mr.label(text=mod.name, icon='MODIFIER')
++                    mr.prop(mod, "show_viewport", text="", icon='HIDE_ON' if not mod.show_viewport else 'HIDE_OFF', emboss=False)
++
++            if obj.data and hasattr(obj.data, "materials") and obj.data.materials:
++                matbox = layout.box()
++                matbox.label(text="Materials", icon='MATERIAL')
++                for mat in obj.data.materials:
++                    if mat:
++                        matbox.label(text=mat.name, icon='MATERIAL')
++        elif mode not in {'SCULPT', 'PAINT_TEXTURE', 'PAINT_VERTEX', 'PAINT_WEIGHT'}:
 +            layout.label(text="No active object", icon='INFO')
-+            return
-+        box = layout.box()
-+        box.prop(obj, "name", text="", icon='OBJECT_DATA')
-+        col = box.column(align=True)
-+        col.prop(obj, "location", text="Position")
-+        col.prop(obj, "rotation_euler", text="Rotation")
-+        col.prop(obj, "scale", text="Scale")
 +
-+        if obj.modifiers:
-+            mbox = layout.box()
-+            mbox.label(text="Modifiers", icon='MODIFIER')
-+            for mod in obj.modifiers:
-+                mr = mbox.row(align=True)
-+                mr.label(text=mod.name, icon='MODIFIER')
-+                mr.prop(mod, "show_viewport", text="", icon='HIDE_ON' if not mod.show_viewport else 'HIDE_OFF', emboss=False)
-+
-+        if obj.data and hasattr(obj.data, "materials") and obj.data.materials:
-+            matbox = layout.box()
-+            matbox.label(text="Materials", icon='MATERIAL')
-+            for mat in obj.data.materials:
-+                if mat:
-+                    matbox.label(text=mat.name, icon='MATERIAL')
++        # Full Sidebar Panels toggle button
++        layout.separator()
++        layout.prop(context.space_data, 'show_region_ui', text="Full Sidebar Panels", toggle=True, icon='MENU_PANEL')
 +
 +
 +def draw_canvas_header(layout):
