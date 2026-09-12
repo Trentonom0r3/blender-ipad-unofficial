@@ -1,9 +1,33 @@
 # Project handoff — 2026-09-11
 
-## Flythrough Zoom Smoothing & Deconfliction, Pencil Dot Placement, Model Export Guard, and Floating Drawers/Shelves — 2026-09-11, latest
+## Mode-Adaptive Floating Drawers, Enhanced Scene Outliner & Animation Controls — 2026-09-11, latest
+
+Source: **e3ab016**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34668142307
+Previous verified build: **b787a38** (run 34667367104: SUCCESS, `.ipa` artifact verified, 248MB).
+
+Delivered Implementation:
+1. Mode-Adaptive Inspector Drawer (`VIEW3D_PT_ipad_inspector`):
+   - **Sculpt Mode:** Directly exposes active brush name, large touch sliders for Radius and Strength, pressure sensitivity toggles (`use_pressure_size`, `use_pressure_strength`), and quick Mesh Symmetry buttons (`X`, `Y`, `Z`).
+   - **Texture / Vertex / Weight Paint:** Directly exposes active paint brush name, radius, and strength sliders.
+   - **Edit Mesh Mode:** Exposes Selection Mode buttons (`Vertex`, `Edge`, `Face`), mesh symmetry (`X`, `Y`, `Z`), and common modeling shortcuts.
+   - **Object Mode:** Active object transforms (Location, Rotation, Scale), Modifiers list with visibility toggles, and Materials list.
+   - **Full Sidebar Access:** "Full Sidebar Panels" button to expand native multi-tab sidebar when advanced tools are needed.
+2. Enhanced Scene Outliner Drawer (`VIEW3D_PT_ipad_scene`):
+   - Direct Add Object menu (`VIEW3D_MT_add`), Select All / None.
+   - Active object quick actions: Duplicate (`object.duplicate_move`) and Delete (`object.delete`).
+   - Viewport visibility (`hide_viewport`) and Render visibility (`hide_render`) toggles per object.
+3. Previs & Timeline Animation Controls (`VIEW3D_PT_ipad_controls`):
+   - Step forward/backward by 1 frame (`screen.frame_offset`), jump to start/end (`screen.frame_jump`), Play/Pause (`screen.animation_play`), and Current Frame integer field.
+   - Instant filmmaker playback scrubbing without needing the bottom Timeline open.
+4. Verification:
+   - `python build/preflight.py`: PASS across all 32 files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (9/9 tests).
+
+## Flythrough Zoom Smoothing & Deconfliction, Pencil Dot Placement, Model Export Guard, and Floating Drawers/Shelves — 2026-09-11
 
 Source: **b787a38**.
-Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34667367104
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34667367104 (SUCCESS — .ipa packaged and verified)
 Previous failed run: 34662152507 (fixed undeclared identifier WM_OP_INVOKE_DEFAULT in wm_event_system.cc using blender::wm::OpCallContext::InvokeDefault).
 
 Context & User Feedback:
