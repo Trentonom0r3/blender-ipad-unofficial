@@ -30,6 +30,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_preflight.py -v
       - name: Test native tool-ring geometry with host compiler
         run: python3 -m unittest discover -s build -p test_tool_ring.py -v
+      - name: Test floating workspace panels with host compiler
+        run: python3 -m unittest discover -s build -p test_ipad_panels.py -v
       - name: Test direct-pinch navigation policy
         run: python3 -m unittest discover -s build -p test_touch_navigation.py -v
       - name: Validate patch against pinned upstream and check scripts

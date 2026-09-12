@@ -10,13 +10,19 @@ decisions only when needed. Do not restart design discovery each session.
 
 The latest user-approved UI priority is floating workspace panels across **all**
 workspace layouts. Keep each layout's editor identity and state, with permanent
-noncollapsible edge buttons opening the actual Blender editors beside them.
+noncollapsible edge buttons opening the actual Blender editors beside them. Use
+narrow vertical right tabs like Blender's sidebar, clear of navigation gizmos, and
+put bottom launchers in the existing status/footer bar.
 Scene is the Outliner and Inspector is Properties; do not recreate partial versions
 or require a More button to reach the real editor. Bottom editors and brush shelves
-open at the bottom according to their existing layout placement. Support one locked
-panel per side/bottom area independently, and touch-friendly panel resizing with
-sizes remembered per workspace. Locking keeps a panel open; it does not disable
-resizing. See `docs/IPAD_WORKSPACE.md` for interaction and acceptance details.
+open at the bottom according to their existing layout placement. Show native editor
+content without custom Item/Scene title, Pin or X wrappers. Small footer Pin Panels
+controls pin one side and one bottom area independently; switching editors preserves
+that area's pin and replaces its current panel without stacking. Start panels at
+their maximum useful size, allow horizontal side and vertical bottom resizing when
+pinned or unpinned, and remember sizes per workspace. Place panels within the real
+editor WINDOW region so variable headers, including Sculpt, stay clear. See
+`docs/IPAD_WORKSPACE.md` for interaction and acceptance details.
 
 This contract supersedes the earlier custom Scene/Inspector drawer design and the
 instruction to prioritize Files over workspace UI. Preserve the existing Files work

@@ -23,13 +23,19 @@ prioritization and reversible product decisions.
 * Adapt **all workspace layouts** to floating panels while preserving the purpose,
   editor contents and state of each default or saved layout. The central working
   editor need not be a 3D Viewport. Do not flatten every workspace into one layout.
-* Keep edge panel buttons permanently available. A tap opens the real Blender
-  editor or sidebar category adjacent to its button. Scene uses Outliner; Inspector
-  uses Properties. Timeline, nodes and brush shelves retain their bottom placement
-  where the original layout places them there. No custom subset or More detour.
-* Support one panel locked open in each of the side and bottom areas independently.
-  Provide broad side-inner-edge and bottom-top-edge resize handles, remember sizes
-  per workspace, and allow resizing while locked. Details are in IPAD_WORKSPACE.md.
+* Keep narrow vertical right tabs permanently available, matching Blender's sidebar
+  and avoiding navigation gizmos. A tap opens the real Blender editor or sidebar
+  category beside its button. Scene uses Outliner; Inspector uses Properties. Show
+  native editor contents without custom Item/Scene title, Pin or X wrapper bars.
+* Put bottom launchers in the existing status/footer bar. Timeline, nodes and brush
+  shelves retain their bottom placement where the original layout places them
+  there. Bound floating panels to the actual editor WINDOW region, accounting for
+  variable headers such as Sculpt. No custom subset or More detour.
+* Small footer Pin Panels controls independently keep one side and one bottom area
+  open. Switching panels preserves that area's pin and replaces the displayed editor;
+  it never stacks panels. Start at the maximum useful size, provide horizontal side
+  and vertical bottom resizing while pinned or unpinned, and remember sizes per
+  workspace. Details are in IPAD_WORKSPACE.md.
 * Global UI enlargement is not the solution. Adapt targets, scrolling, density,
   placement and presentation. The user rejected the Canvas popover as the primary
   control surface. Replace that role with the Pencil tool palette and workspace
@@ -50,7 +56,8 @@ prioritization and reversible product decisions.
 | --- | --- |
 | Reuse Blender operators and editor state | Preserve functionality and avoid parallel implementations. Established. |
 | Floating panels across every workspace | User-approved contract; implementation in progress. Each layout supplies its editors and placement. The previous custom Scene/Inspector drawers do not fulfill it. |
-| Permanent panel buttons, independent side/bottom locks and resize | User-approved interaction direction. Source implementation, preview, iOS compilation and device acceptance must be recorded separately. |
+| Narrow native-style right tabs and bottom footer launchers | Latest user-approved refinement. Keep navigation gizmos and variable editor headers clear; show the actual editor without custom wrapper chrome. Implementation and validation are tracked in the handoff. |
+| Independent side/bottom area pins and resize | Footer controls pin each area; switching replaces its editor while preserving its pin. Start at maximum useful size and remember user resizing. Source implementation, preview, iOS compilation and device acceptance are separate gates. |
 | Reversible Canvas maximization | Increase working space without replacing saved layouts. Existing implementation has host restoration evidence; full device matrix pending. It is not the final workspace panel architecture. |
 | Native Close View footer | Immediate escape without covering content. Device confirms closing works; touch flicker reported. Transitional chrome, not final floating-editor design. |
 | Explicit, idempotent Metal setup | Lifecycle-only setup caused black startup. Repair 7451cf1 restores startup on device. Preserve explicit initialization. |
@@ -112,7 +119,9 @@ acceptance. Record device reports narrowly.
 
 Current priority: implement the user-approved floating-panel workspace contract,
 including startup, every workspace, actual editor reuse, permanent buttons,
-independent side/bottom locks and resizing. This supersedes the earlier instruction
+independent side/bottom area pins and resizing. The latest refinement uses native-style
+right tabs, footer launchers and pin controls, real WINDOW bounds and native editor
+content without extra wrapper bars. This supersedes the earlier instruction
 to prioritize Files over workspace panels. Preserve Files implementation and its
 unfinished lifecycle work, the working radial palette and the unresolved Frame Scene
 navigation report. Address confirmed P0 regressions before extending the milestone.

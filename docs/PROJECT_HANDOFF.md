@@ -1,4 +1,80 @@
-# Project handoff — 2026-09-11
+# Project handoff — 2026-09-12
+
+## Native workspace tab, footer and sizing refinement — 2026-09-12, source checkpoint
+
+**Refinement source is implemented and passes local checks. iOS compilation and
+device acceptance for this refinement are pending.**
+
+Active checkout: `D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial`.
+Branch: `codex/ipad-secondary-view-escape`.
+Completed first panel implementation: **ab53a673b88b85e51955684dd332952d8b35ea53**,
+`feat(ipad): float workspace editors with pinned resizable panels`.
+Its iOS build [34683437681](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34683437681)
+is **SUCCESS**: compilation, packaging and artifact upload completed. The artifact
+API listing verifies Blender-iPad-Unofficial-ipa, 248,380,429 bytes, not expired.
+No hardware acceptance is inferred from that successful build.
+
+This source checkpoint refines ab53a673 and is **not included in run 34683437681**.
+Local validation passes: patch application to all 45 pinned source files, script/plist
+syntax, and all 10 repository unit tests. The compiled panel policy passes 585,440
+checks; the preserved tool ring passes 75 placement cases. The full Blender adapter
+still needs the new iOS build; these host checks are not device validation.
+
+### Latest user-approved contract
+
+The all-workspace floating-editor direction is unchanged: preserve each layout's
+actual editor instances and state, use the real Outliner for Scene and Properties
+for Inspector, and retain bottom placement for editors/shelves laid out there.
+Refine its presentation and interaction as follows:
+
+* Use narrow vertical right tabs like Blender's native sidebar. Keep them permanently
+  available and clear of the navigation gizmo and its controls.
+* Bound panels to the main editor's actual WINDOW region, accounting for variable
+  header/tool-header arrangements, including Sculpt. Rendered content and input hit
+  testing must use the same bounds.
+* Show the native editor content without extra Item/Scene title, Pin or X wrapper
+  bars. Remove those presentation wrappers; do not remove the actual Blender editors
+  or their own controls.
+* Put bottom editor/brush-shelf launchers in the existing status/footer bar, with
+  small Pin Panels controls for the Side and Bottom areas.
+* Keep at most one panel in each side/bottom area. Selecting another panel replaces
+  its area's current editor while preserving that area's pin; panels never stack.
+  The other area's panel and pin are independent. This supersedes the earlier
+  contract that switching panels cleared the lock.
+* Start panels at their maximum useful size. Let users resize side panels
+  horizontally and bottom panels vertically, whether pinned or unpinned, through
+  broad edge handles. Remember user sizes per workspace and keep controls reachable
+  after rotation or narrow-window resizing.
+
+Implementation uses Blender native statusbar operator buttons and vertical sidebar-font
+tabs. Primary native regions initialize first, then a bounded second layout pass places
+the real editor instances. Actual overlapping header rectangles are excluded; Blender
+navigation gizmos use the resulting unobstructed canvas. Finger pan capture and Pencil/
+pointer modal resizing share the same clamped geometry. Sizes start at 45% side / 55%
+bottom and preserve usable bottom width when both areas are open. Preserve existing Pencil squeeze tools,
+double-tap context menu, radial geometry, navigation and desktop input.
+
+### Required validation and next step
+
+1. Compile/package this refinement; record its exact commit/run.
+   Verify its IPA artifact independently through the artifact listing and record
+   name, size and availability. Retain the ab53a673 build as the prior checkpoint.
+2. Device acceptance: fresh launch and all workspace switches; native Scene/Inspector
+   controls; bottom launchers; navigation gizmo access; Sculpt header clearance;
+   independent side/bottom pinning; switching panels while pinned; horizontal/vertical
+   resize while pinned and unpinned; remembered sizes after workspace switches;
+   portrait, landscape and narrow-window bounds; touch/Pencil/pointer hit accuracy.
+   Record exact installed build and observations. A concept preview is not this test.
+
+Native Files work remains intact and unfinished lifecycle audits remain required:
+external document identity and later Save, security scopes/bookmarks, actual provider
+I/O coordination, sibling assets and sidecars, operator options, cancellation,
+Open Recent, Link/Append and recovery. Keep the unresolved Frame Scene navigation
+report. Address confirmed P0 regressions and then return to the workspace milestone.
+
+The sections below are historical checkpoints; their old custom Scene/Inspector
+contracts and earlier priority instructions are superseded by this section and the
+current product/workspace contract.
 
 ## FBX Export Crash Elimination & Edge Floating Category Pills (Item/Tool/View Style) — 2026-09-11, latest
 

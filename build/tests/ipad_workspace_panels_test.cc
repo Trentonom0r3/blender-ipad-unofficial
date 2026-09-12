@@ -109,17 +109,20 @@ static void interaction()
   check(state.tap(p::Edge::Side, 3) == p::TapResult::Locked, "Active pinned tab stays open on tap");
   check(!state.dismiss(p::Edge::Side), "Outside/close action does not dismiss pinned side");
   check(state.tap(p::Edge::Side, 1) == p::TapResult::Switched, "Explicitly selecting different tab replaces pinned panel");
-  check(!state.side.locked && state.side.active_id == 1, "Explicit switch clears lock in selected edge");
-  check(state.toggle_lock(p::Edge::Side), "Replacement panel can be pinned");
+  check(state.side.locked && state.side.active_id == 1, "Replacement inherits the side area's pin");
   check(state.toggle_lock(p::Edge::Bottom), "Independent bottom lock");
   check(state.side.locked && state.bottom.locked, "Both edges can be pinned together");
   check(state.tap(p::Edge::Side, 6) == p::TapResult::Switched, "Side switch works while both edges pinned");
-  check(!state.side.locked && state.bottom.locked && state.bottom.active_id == 2,
-        "Explicit side switch clears only side lock and leaves bottom editor untouched");
-  check(state.toggle_lock(p::Edge::Side), "Relock side after switch");
+  check(state.side.locked && state.bottom.locked && state.bottom.active_id == 2,
+        "Side replacement preserves both area pins and leaves bottom editor untouched");
+  check(state.tap(p::Edge::Bottom, 7) == p::TapResult::Switched,
+        "Bottom replacement remains available while pinned");
+  check(state.bottom.locked && state.bottom.active_id == 7 && state.side.active_id == 6,
+        "Bottom replacement inherits only its area state and does not stack panels");
+  check(!state.dismiss(p::Edge::Bottom), "Replacement bottom remains pinned during canvas work");
   check(state.toggle_lock(p::Edge::Side), "Unpin side");
   check(state.tap(p::Edge::Side, 6) == p::TapResult::Closed, "Active unpinned tab closes");
-  check(state.bottom.locked && state.bottom.active_id == 2, "Side close preserves pinned bottom");
+  check(state.bottom.locked && state.bottom.active_id == 7, "Side close preserves pinned bottom");
   check(state.tap(p::Edge::Side, -1) == p::TapResult::Invalid, "Invalid tab has no effect");
   state.reconcile({{9, p::Edge::Side, {}}});
   check(!state.bottom.open() && !state.bottom.locked, "Removed editor releases stale active/pin state");
@@ -140,13 +143,13 @@ static void geometry()
    * origins: all visible surfaces stay inside safe bounds without collisions. */
   for (int width = 96; width <= 2048; width += 37) {
     for (int height = 96; height <= 1536; height += 43) {
-      for (const int requested : {-100, 320, 100000}) {
+      for (const int requested : {-100, 0, 320, 100000}) {
         state.side_width = requested;
         state.bottom_height = requested;
         const p::Rect bounds{17, 29, 17 + width, 29 + height};
         const auto l = p::layout(bounds, state);
-        const std::vector<p::Rect> visible{l.canvas, l.side_rail, l.bottom_rail,
-                                           l.side_panel, l.bottom_panel};
+        const std::vector<p::Rect> visible{l.canvas, l.side_rail, l.side_panel, l.bottom_panel};
+        check(l.bottom_rail.empty(), "Native status bar launchers reserve no viewport rail");
         for (std::size_t i = 0; i < visible.size(); ++i) {
           check(contains(bounds, visible[i]), "Surface inside safe bounds");
           check(!visible[i].empty(), "Canvas, permanent rails and open panels stay nonempty");
@@ -163,7 +166,9 @@ static void geometry()
   }
   p::State closed;
   const auto l = p::layout({0, 0, 1024, 768}, closed);
-  check(!l.side_rail.empty() && !l.bottom_rail.empty(), "Closed panels retain visible rails");
+  check(!l.side_rail.empty() && l.side_rail.width() == 28, "Closed panels retain narrow vertical side rail");
+  check(l.bottom_rail.empty() && l.canvas.ymin == 8,
+        "Closed panels leave bottom canvas clear above external status bar");
   check(l.side_panel.empty() && l.bottom_panel.empty(), "Closed panels reserve no panel space");
   check(p::layout({}, state).canvas.empty(), "Zero-sized window handled");
   check(p::layout({50, 50, 10, 10}, state).canvas.empty(), "Inverted window bounds handled");
@@ -202,7 +207,64 @@ static void resizing()
   state.tap(p::Edge::Side, 5);
   check(state.side_width == before.side_width, "Size belongs to workspace edge across tabs");
   p::State another;
-  check(another.side_width == 320 && another.bottom_height == 240, "Dimensions independent per workspace");
+  check(another.side_width == 0 && another.bottom_height == 0,
+        "Fresh workspace keeps automatic sizes independent of resized workspace");
+}
+
+static void automatic_sizes()
+{
+  p::State state;
+  state.tap(p::Edge::Side, 1);
+  state.tap(p::Edge::Bottom, 2);
+  for (const p::Rect bounds : {p::Rect{0, 0, 1366, 1024}, p::Rect{0, 0, 1024, 1366},
+                               p::Rect{20, 70, 788, 970}}) {
+    const auto l = p::layout(bounds, state);
+    check(l.side_panel.width() > 300 && l.bottom_panel.height() > 400,
+          "Automatic defaults use useful available space in landscape and portrait");
+    check(l.bottom_panel.width() >= bounds.width() / 2,
+          "Simultaneous automatic side panel leaves at least half width for bottom editor");
+    check(l.canvas.height() > bounds.height() / 3 && l.canvas.width() > bounds.width() / 2,
+          "Automatic defaults retain a meaningful canvas beside both open panels");
+    check(l.side_panel.ymax < bounds.ymax && l.side_panel.ymin > bounds.ymin,
+          "Actual WINDOW bounds anchor panels clear of native headers/status bar");
+    check(!overlaps(l.side_panel, l.bottom_panel), "Automatic panels never overlap");
+  }
+  check(state.side_width == 0 && state.bottom_height == 0,
+        "Automatic sizing remains automatic through passive rotation");
+  const p::Rect bounds{0, 0, 1366, 1024};
+  const auto automatic = p::layout(bounds, state);
+  state.toggle_lock(p::Edge::Side);
+  state.toggle_lock(p::Edge::Bottom);
+  p::resize(state, p::Edge::Side, 100000, bounds);
+  auto l = p::layout(bounds, state);
+  check(l.bottom_panel.width() >= 320, "Dragging side to maximum preserves usable bottom editor width");
+  p::resize(state, p::Edge::Side, 250, bounds);
+  p::resize(state, p::Edge::Bottom, 180, bounds);
+  l = p::layout(bounds, state);
+  check(l.side_panel.width() == 250 && l.bottom_panel.height() == 180,
+        "Explicit user resize overrides automatic maximum defaults");
+  check(state.side.locked && state.bottom.locked, "Changing automatic sizes does not unpin areas");
+  state.tap(p::Edge::Side, 3);
+  state.tap(p::Edge::Bottom, 4);
+  l = p::layout(bounds, state);
+  check(state.side.locked && state.bottom.locked && l.side_panel.width() == 250 &&
+            l.bottom_panel.height() == 180,
+        "Replacement panels retain area pins and explicitly resized dimensions");
+  check(l.canvas.width() > automatic.canvas.width() && l.canvas.height() > automatic.canvas.height(),
+        "Shrinking panels returns space to working canvas");
+  p::resize(state, p::Edge::Side, 0, bounds);
+  check(state.side_width == 160, "Dragging to zero clamps to minimum instead of restoring automatic size");
+
+  /* Non-status-bar hosts can opt into a separate bottom rail explicitly. */
+  p::Metrics legacy_metrics;
+  legacy_metrics.bottom_rail = true;
+  legacy_metrics.bottom_rail_extent = 44;
+  const auto alternate = p::layout(bounds, state, legacy_metrics);
+  check(!alternate.bottom_rail.empty() && alternate.bottom_rail.height() == 44,
+        "Explicit bottom-rail host still has usable launcher geometry");
+  check(!overlaps(alternate.bottom_rail, alternate.bottom_panel) &&
+            !overlaps(alternate.bottom_rail, alternate.side_panel),
+        "Optional external-host rail never collides with panels");
 }
 
 static void overflow()
@@ -239,6 +301,7 @@ int main()
     interaction();
     geometry();
     resizing();
+    automatic_sizes();
     overflow();
     std::cout << "PASS: " << checks << " checks across classification, interaction, geometry, resizing, overflow\n";
     return 0;
