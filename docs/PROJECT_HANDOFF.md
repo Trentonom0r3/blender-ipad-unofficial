@@ -1,6 +1,64 @@
 # Project handoff — 2026-09-11
 
-## Flythrough 3-Finger No-Op, FBX Export Crash Fix, Pencil Annotate Selection Guard, Collapsed Tools Shelf & Stage Manager Gesture Deferral — 2026-09-11, latest
+## Flythrough Zoom Smoothing & Deconfliction, Pencil Dot Placement, Model Export Guard, and Floating Drawers/Shelves — 2026-09-11, latest
+
+Source: **fed1389**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34662152507
+
+Context & User Feedback:
+User tested build 34653000916 on hardware:
+1. "Works for the most part, but on flythroughmode 2 finger is a bit choppy with the zoom."
+2. "It seems the other export options are fine, but fbx specifically crashes the app still."
+3. "With current behavior, i can't simply add a "dot" for I or ! for example. I have to hold the pen down and move it for drawing to register."
+4. User requested floating drawers/shelves architecture across workspaces (Scene Outliner, Properties/Inspector, and bottom brush Asset Shelf) to maximize canvas without recreating panels.
+
+Delivered Implementation:
+1. Flythrough 2-Finger Zoom Deconfliction & Smoothing:
+   - In `intern/ghost/intern/GHOST_WindowIOS.mm`:
+     - In `shouldRecognizeSimultaneouslyWithGestureRecognizer:`, added guard checking `GHOST_IOS_get_flythrough_mode()`. If active, returns `NO` so `pan2f_gesture_recognizer` and `zoom_gesture_recognizer` do not run simultaneously, eliminating camera transform fighting and stutter.
+     - In `handleZoom:`, added exponential moving average low-pass filter (`g_flythrough_zoom_accum`) with 2.0x gain to smooth out raw pinch deltas, delivering silky-smooth continuous dolly travel without discrete jumps.
+2. Apple Pencil Single-Tap Dot Placement (Annotate / Grease Pencil):
+   - In `intern/ghost/intern/GHOST_WindowIOS.mm`:
+     - Updated `GHOSTUITapGestureRecognizer` to capture `pencil_touch`, force, and tilt in `touchesBegan:`.
+     - In `handleTap:`, populated `tablet_data.Active = GHOST_kTabletModeStylus` with real pressure/tilt when tapping with Apple Pencil so Blender receives a true stylus click.
+   - In `source/blender/windowmanager/intern/wm_event_system.cc`:
+     - When `event->tablet.active == EVT_TABLET_STYLUS` and Annotate is active, routed single-tap clicks directly to `GPENCIL_OT_annotate` via `WM_operator_name_call` and returned `WM_HANDLER_BREAK`.
+     - Single taps immediately place ink points/dots (e.g. for the dot on 'i' or '!'), while object selection remains completely suppressed.
+3. Model Export Execution Safeguards:
+   - In `source/blender/windowmanager/intern/wm_event_system.cc` (`is_export`):
+     - Added null check for `op->type->exec`: falls back to `op->type->invoke` if `exec` is null, preventing fatal null pointer dereference crashes.
+     - Overrode `check_existing` to `false` on export operators so desktop modal file overwrite prompts are bypassed.
+     - Verified `BLI_exists(staging_path)` on completion and reported clean, informative error messages if an export fails.
+4. Floating Drawers & Collapsible Shelves Architecture:
+   - In `scripts/startup/bl_ui/space_view3d_ipad.py`:
+     - Created `VIEW3D_PT_ipad_scene`: Floating Scene Outliner drawer for rapid object search, selection, and viewport visibility toggles.
+     - Created `VIEW3D_PT_ipad_inspector`: Floating Inspector drawer displaying active object location, rotation, scale, modifiers, and materials.
+     - Added `[Brushes]` toggle button to the viewport header in sculpt/paint mode to slide open/closed the native bottom Asset Shelf.
+     - Updated `_collapse_tools_shelf_default`: Left tool shelf (`show_region_toolbar`), right sidebar (`show_region_ui`), and bottom asset shelf (`show_region_asset_shelf`) are all collapsed by default on startup and file load, providing 95%+ edge-to-edge canvas.
+5. Verification:
+   - `python build/preflight.py`: PASS across all 32 pinned source files.
+   - `python -m unittest discover -s build -p "test_*.py" -v`: PASS (9/9 tests including all new policy assertions).
+
+Device test for this build:
+1. Flythrough Mode Navigation:
+   - Tap "Flythrough" header pill:
+     - 2-finger pinch = Smooth, fluid dolly travel into/out of scene without jitter or stutter.
+     - 2-finger drag = Pan without triggering zoom.
+     - 1-finger drag = Look around / orbit.
+     - 3-finger drag = Swallowed (does nothing).
+2. Apple Pencil Annotate Dot Placement:
+   - Select Annotate tool:
+     - Lightly tap the tip of the Apple Pencil on the screen without moving it: Verify a single dot/point appears instantly.
+     - Verify strokes can be drawn freely without selecting/unselecting 3D objects.
+3. Model Export:
+   - Tap File > Export > FBX (.fbx)...: Verify native Apple Files export sheet opens directly with `<name>.fbx` without crash.
+4. Floating Drawers & Shelves:
+   - Launch app: Verify 3D Viewport is edge-to-edge (left toolbar, right sidebar, and bottom asset shelf are hidden).
+   - Tap "Scene": Verify floating Scene drawer opens with object list and visibility eyes.
+   - Tap "Inspector": Verify floating Inspector drawer displays active object Position, Rotation, and Scale.
+   - Switch to Sculpt mode: Verify "Brushes" button appears in header; tap it to slide up the native bottom brush asset shelf.
+
+## Flythrough 3-Finger No-Op, FBX Export Crash Fix, Pencil Annotate Selection Guard, Collapsed Tools Shelf & Stage Manager Gesture Deferral — 2026-09-11
 
 Source: **26bf1cf**.
 Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34659253108
