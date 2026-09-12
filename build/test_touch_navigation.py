@@ -80,14 +80,29 @@ int main() {
         self.assertIn('preferredScreenEdgesDeferringSystemGestures', patch)
         self.assertIn('return UIRectEdgeAll;', patch)
 
-        # 3. Verify pencil annotate selection guard in wm_event_system.cc
+        # 3. Verify simultaneous pan2f and zoom are deconflicted in flythrough mode
+        self.assertIn('In Flythrough mode, 2-finger pan and pinch dolly must be mutually exclusive', patch)
+        self.assertIn('g_flythrough_zoom_accum', patch)
+
+        # 4. Verify pencil tap captures stylus tablet data in GHOSTUITapGestureRecognizer
+        self.assertIn('- (UITouch *)pencilTouch;', patch)
+        self.assertIn('tablet_data.Active = GHOST_kTabletModeStylus;', patch)
+
+        # 5. Verify pencil annotate tap routes to GPENCIL_OT_annotate instead of selecting objects
         self.assertIn('event->tablet.active == EVT_TABLET_STYLUS', patch)
         self.assertIn('BLI_strcasestr(ot->idname, "select") != nullptr', patch)
-        self.assertIn('BLI_strcasestr(tref->idname, "annotate") != nullptr', patch)
+        self.assertIn('WM_operator_name_call(C, "GPENCIL_OT_annotate", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);', patch)
 
-        # 4. Verify tools shelf is collapsed by default in space_view3d_ipad.py
+        # 6. Verify export safety guards and error handling
+        self.assertIn('if (op->type->exec != nullptr)', patch)
+        self.assertIn('(status & OPERATOR_FINISHED) || BLI_exists(staging_path)', patch)
+
+        # 7. Verify tools shelf, sidebar and asset shelf are collapsed by default in space_view3d_ipad.py
         self.assertIn('_collapse_tools_shelf_default', patch)
         self.assertIn('space.show_region_toolbar = False', patch)
+        self.assertIn('space.show_region_ui = False', patch)
+        self.assertIn('VIEW3D_PT_ipad_scene', patch)
+        self.assertIn('VIEW3D_PT_ipad_inspector', patch)
         self.assertIn('bpy.app.handlers.load_post.append(_collapse_tools_shelf_default)', patch)
 
 
