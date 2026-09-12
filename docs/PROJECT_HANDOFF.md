@@ -3,8 +3,8 @@
 ## Mode-Adaptive Floating Drawers, Enhanced Scene Outliner & Animation Controls — 2026-09-11, latest
 
 Source: **e3ab016**.
-Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34668142307
-Previous verified build: **b787a38** (run 34667367104: SUCCESS, `.ipa` artifact verified, 248MB).
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34668142307 (SUCCESS — .ipa packaged and verified: 248.4MB)
+Previous verified build: **b787a38** (run 34667367104: SUCCESS, `.ipa` artifact verified, 248.4MB).
 
 Delivered Implementation:
 1. Mode-Adaptive Inspector Drawer (`VIEW3D_PT_ipad_inspector`):
