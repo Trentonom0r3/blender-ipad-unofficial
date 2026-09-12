@@ -91,7 +91,7 @@ int main() {
         # 5. Verify pencil annotate tap routes to GPENCIL_OT_annotate instead of selecting objects
         self.assertIn('event->tablet.active == EVT_TABLET_STYLUS', patch)
         self.assertIn('BLI_strcasestr(ot->idname, "select") != nullptr', patch)
-        self.assertIn('WM_operator_name_call(C, "GPENCIL_OT_annotate", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);', patch)
+        self.assertIn('WM_operator_name_call(C, "GPENCIL_OT_annotate", blender::wm::OpCallContext::InvokeDefault, nullptr, event);', patch)
 
         # 6. Verify export safety guards and error handling
         self.assertIn('if (op->type->exec != nullptr)', patch)

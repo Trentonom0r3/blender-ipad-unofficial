@@ -3506,7 +3506,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +          /* In Annotate mode, route Pencil taps to annotation stroke instead of selecting objects */
 +          wmOperatorType *annot_ot = WM_operatortype_find("GPENCIL_OT_annotate", false);
 +          if (annot_ot) {
-+            WM_operator_name_call(C, "GPENCIL_OT_annotate", WM_OP_INVOKE_DEFAULT, nullptr, nullptr);
++            WM_operator_name_call(C, "GPENCIL_OT_annotate", blender::wm::OpCallContext::InvokeDefault, nullptr, event);
 +          }
 +          return WM_HANDLER_BREAK;
 +        }
