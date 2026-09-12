@@ -2,6 +2,9 @@
 
 ## Sidebar label and selection repair — 2026-09-12, latest source checkpoint
 
+Source: **2d8b666e99298c1cdbcda49b091eed33b4e90d40**.
+Build: [34725861417](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34725861417), dispatched; compilation/packaging pending.
+
 User reports clipped sidebar labels, unreliable selection and unfinished visual quality.
 Reviewed the actual adapter and native Blender tab implementation independently.
 
