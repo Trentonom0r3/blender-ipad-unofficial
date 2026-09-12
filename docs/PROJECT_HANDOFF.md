@@ -2,8 +2,9 @@
 
 ## Flythrough Zoom Smoothing & Deconfliction, Pencil Dot Placement, Model Export Guard, and Floating Drawers/Shelves — 2026-09-11, latest
 
-Source: **fed1389**.
-Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34662152507
+Source: **b787a38**.
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34667367104
+Previous failed run: 34662152507 (fixed undeclared identifier WM_OP_INVOKE_DEFAULT in wm_event_system.cc using blender::wm::OpCallContext::InvokeDefault).
 
 Context & User Feedback:
 User tested build 34653000916 on hardware:
