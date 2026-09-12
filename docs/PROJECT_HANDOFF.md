@@ -2,8 +2,8 @@
 
 ## FBX Export Crash Elimination & Edge Floating Category Pills (Item/Tool/View Style) — 2026-09-11, latest
 
-Source: Working tree (awaiting commit).
-Build run: Pending CI dispatch.
+Source: **9b1906f** (branch `codex/ipad-secondary-view-escape`).
+Build run: https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34669976887 (In progress)
 Previous verified build: **e3ab016** (run 34668142307: SUCCESS, `.ipa` artifact verified, 248.4MB).
 
 Context & User Feedback on Build 34668142307:
