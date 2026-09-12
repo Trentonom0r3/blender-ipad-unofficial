@@ -99,15 +99,8 @@ int main() {
         self.assertIn('BLI_strcasestr(idname, "fbx") != nullptr', patch)
         self.assertIn('FBX export is unsupported on iOS (requires NumPy)', patch)
 
-        # 7. Verify tools shelf collapsed, right-edge UI tabs visible, and native iPad drawers registered
-        self.assertIn('_collapse_tools_shelf_default', patch)
-        self.assertIn('space.show_region_toolbar = False', patch)
-        self.assertIn('space.show_region_ui = True', patch)
-        self.assertIn('VIEW3D_PT_ipad_scene', patch)
-        self.assertIn('VIEW3D_PT_ipad_inspector', patch)
-        self.assertIn('bl_category = "Scene"', patch)
-        self.assertIn('bl_category = "Inspector"', patch)
-        self.assertIn('bpy.app.handlers.load_post.append(_collapse_tools_shelf_default)', patch)
+        # Workspace presentation behavior is covered by the compiled
+        # tests in test_ipad_panels.py; retain input/export checks here.
 
 
 if __name__ == '__main__':

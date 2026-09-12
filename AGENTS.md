@@ -8,13 +8,26 @@ The user is the hardware tester, not the project manager. Own implementation and
 reversible design choices. Ask for hardware evidence or consequential subjective
 decisions only when needed. Do not restart design discovery each session.
 
-Current design milestone and acceptance criteria live in `docs/IPAD_WORKSPACE.md`.
-The latest user priority is native Files replacement; preserve the working radial UI. Fix confirmed P0
-regressions as necessary, then return to the milestone. Do not keep expanding the
-Canvas popover: the user rejected its location and role as the primary tool surface.
+The latest user-approved UI priority is floating workspace panels across **all**
+workspace layouts. Keep each layout's editor identity and state, with permanent
+noncollapsible edge buttons opening the actual Blender editors beside them.
+Scene is the Outliner and Inspector is Properties; do not recreate partial versions
+or require a More button to reach the real editor. Bottom editors and brush shelves
+open at the bottom according to their existing layout placement. Support one locked
+panel per side/bottom area independently, and touch-friendly panel resizing with
+sizes remembered per workspace. Locking keeps a panel open; it does not disable
+resizing. See `docs/IPAD_WORKSPACE.md` for interaction and acceptance details.
 
-User-approved Pencil mapping: squeeze opens radial tool selection; double tap opens the
-context/right-click menu. Do not merge these actions. Preserve desktop input.
+This contract supersedes the earlier custom Scene/Inspector drawer design and the
+instruction to prioritize Files over workspace UI. Preserve the existing Files work
+and its unfinished lifecycle requirements. Fix confirmed P0 regressions as necessary,
+then return to the active milestone. Do not keep expanding the Canvas popover: the
+user rejected its location and role as the primary tool surface.
+
+User-approved Pencil mapping: squeeze opens radial tool selection; double tap opens
+the context/right-click menu. Do not merge these actions. Preserve the existing
+nine-tool ring, its current geometry, touch fallback and desktop input. The workspace
+panel milestone does not authorize an unrelated radial redesign.
 
 Checkpoint coherent code and update the handoff with exact build/commit, evidence,
 unfinished work and the next implementation step. Source checks, previews, iOS
@@ -22,8 +35,8 @@ compilation, packaging and real-device acceptance are separate gates. Do not cla
 a task is device-validated because its build succeeds. Avoid repeated unchanged
 builds and long build-polling loops with no useful independent work.
 
-Native Files is the active engineering priority. The user explicitly wants the desktop
-filesystem picker removed, including its proposed advanced fallback. Preserve importer
-options and library data-block selection through dedicated surfaces, not a Unix browser.
-The compact nine-tool ring (empty center, tighter small buttons, shelf initially hidden)
-is a concept awaiting user review; do not change its production geometry yet.
+Native Files remains required. The user explicitly wants the desktop filesystem
+picker removed, including its proposed advanced fallback. Preserve importer options
+and library data-block selection through dedicated surfaces, not a Unix browser.
+Workspace UI work must not discard unfinished document identity, security scope,
+provider coordination, sidecar, cancellation or recovery requirements.

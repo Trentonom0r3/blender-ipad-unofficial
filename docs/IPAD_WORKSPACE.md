@@ -1,82 +1,125 @@
 # iPad workspace design and delivery
 
-## Nine-tool ring with swapped gesture mapping — implemented
+## Active milestone: floating panels for every workspace
 
-User approved the nine-tool radial arrangement with updated mapping:
-* **Pencil Squeeze**: opens the nine-tool radial palette.
-* **Pencil Double Tap**: opens the context menu (right-click).
-* **Header Tools button**: toggles the left toolbar shelf directly (`space_data.show_region_toolbar`).
-* **Settings in center**: menu with "Show/Hide Tool Shelf" toggle.
+**User-approved contract; implementation in progress.** This replaces the earlier
+custom Scene/Inspector drawer design. The user reported that startup still showed
+the desktop default arrangement and clarified that all workspace layouts should
+retain their existing editors while presenting supporting areas as floating panels.
+The contract below is not a claim of source completion, compilation or device
+acceptance; PROJECT_HANDOFF.md records those gates against exact code/builds.
 
-Implementation took over from an interrupted/partial agent session and completed:
-* Geometry: custom 10-button placement in `interface_ipad_tool_ring.hh` (9 clockwise tools: Select, Cursor, Move, Rotate, Scale, Transform, Annotate, Measure, Add Cube; plus central Settings button). Adaptive grid fallback handles narrow viewports.
-* Dismissal: second squeeze or tapping outside/between buttons dismisses without executing tools or moving scene objects.
-* Shipped icons: Annotate uses Blender's built-in `GREASEPENCIL` icon identifier.
-* Add Cube selects the interactive tool (`builtin.primitive_cube_add`), confirmed not to create objects on activation.
-* Verification: host C++ geometry tests pass, headless Blender tool activation tests pass in Object and Edit Mesh modes, and patch preflight passes across all 29 pinned source files.
+### Preserve each workspace's identity
 
-## Latest requested refinement — concept only, awaiting review
+* Adapt every default and saved workspace, including workspaces whose main editor
+  is an image, node graph, animation editor or other Blender editor. Keep the main
+  working area and the tools appropriate to that layout.
+* Use existing layout placement to decide where supporting editors open. Side
+  editors open at the side; bottom editors open at the bottom. A node editor that
+  is the main workspace editor remains the main editor; one in the bottom area
+  becomes a bottom panel. Do not classify every editor of one type identically.
+* Preserve saved editor instances, contents, editor-specific settings, selection,
+  scroll/zoom state and Blender operator context through opening, closing and
+  workspace switching. Presentation changes must not destroy the saved layout.
+* Apply the iPad presentation at startup, file load and workspace switching. Users
+  should not have to manually maximize a desktop layout each time.
 
-User says the current radial selector works great on iPad. Requested changes:
-* Hide the left shelf initially; header Tools remains the explicit visibility toggle.
-* Remove center Settings; leave the center empty.
-* Keep all nine tools, use shorter/slimmer Z-menu-like buttons, and reduce radial spacing.
-* Preserve squeeze = tools and double tap = context menu.
+### Permanent buttons and real Blender panels
 
-Concept: `output/ui-preview/pencil-tools-compact-concept.png`. This is an illustrative
-mockup, not a render or validation of implemented geometry. No production radial or
-shelf-default changes in this revision until the user reviews the concept.
+* Keep the button rails permanently visible and noncollapsible. Closing content
+  leaves its button available. No chevron, hidden sidebar state or precise border
+  drag should make the rail disappear.
+* Use the Item / Tool / View category interaction as the model: tapping a button
+  opens its panel directly adjacent to that button, floating over the working area.
+  Selecting another button switches the visible panel for that area; tapping the
+  active unlocked button closes its content. Side and bottom areas are independent.
+* Reuse the actual Blender editors and sidebar categories. **Scene = Outliner;
+  Inspector = Properties.** Their full functions remain available in the floating
+  presentation. Do not maintain custom object lists, transform/brush-only Inspector
+  copies, duplicated selection state or a More button to reach the real editor.
+* Expose the supporting panels present in that workspace, with clear editor names.
+  Timeline, node editors and brush/asset shelves open as bottom floating panels
+  when the underlying layout places them at the bottom. Reuse the real Timeline
+  and shelf rather than substituting a limited playback strip or brush controls.
+* Keep workspace switching, project/save status, Camera View and Frame Selection
+  discoverable. Preserve the clean header and working tool controls; do not restore
+  the rejected Canvas popover as the primary surface.
 
-Native Files replacement is the active priority. Native Open (replacing redundant
-import), native Save As (`WM_OT_save_as_to_files`), native Save for unsaved projects,
-and native 3D Model Import & Export (USD, OBJ, STL, PLY, FBX, Alembic) via
-`UIDocumentPickerViewController` are implemented, writing directly into
-`Documents/Projects/<Name - UUID>/<Name>.blend` and user-chosen folders without
-exposing the desktop Unix filesystem picker.
-The user also reports Frame Scene changes navigation feel and limits zoom. Preserve
-that report as unresolved; the button currently invokes stock `view3d.view_all`.
+### Locking and resizing
 
-## Intended workspace — design defaults, not yet implemented
+* Offer a visible lock control in each open panel. At most one side panel and one
+  bottom panel can be locked open independently; both may be open together.
+* Locking keeps that panel open during ordinary canvas work and outside taps.
+  Unlocking restores ordinary panel behavior. An explicit choice of another panel
+  in that same area replaces the current panel and clears its lock; it must not
+  silently accumulate overlapping locked panels. The other area's lock is unchanged.
+* A locked panel's active rail button does not dismiss it. Keep its unlock control
+  reachable so the user can unlock and close it without a keyboard or border drag.
+* Resize side panels using a broad handle on their inner edge; resize bottom panels
+  using a broad handle along their top edge. Support finger, Pencil and pointer.
+  Use touch-friendly hit areas instead of requiring Blender's thin split borders.
+* Remember the user's panel sizes per workspace. Locking does not disable resizing.
+  Opening/switching panels and revisiting a workspace must not reset chosen sizes.
+* Clamp sizes to available content bounds and usable minimums. Rotation, narrow
+  Stage Manager windows, safe areas and an onscreen keyboard must leave rail,
+  resize, unlock and dismissal controls reachable. Avoid side/bottom overlap that
+  blocks essential controls when both are open.
 
-* **Center:** viewport dominates, with Blender selection outlines and gizmos. Hide
-  the permanent left tool shelf in tablet mode only after its replacement works.
-* **Pencil tool palette:** squeeze opens a compact transient palette near the
-  last valid viewport Pencil position, clamped inside the viewport and safe area.
-  Use a stable radial layout of touch-sized tools, per the user's explicit preference.
-  Object mode has nine direct tools from Blender's mode/tool system. Selecting a
-  tool dismisses the palette. Outside tap, squeeze again and Escape dismiss it.
-  Missing/stale cursor placement falls back to an accessible viewport edge.
-* **Context menu:** double tap continues to invoke Blender's context menu at the
-  precision cursor. It is not repurposed for tool selection.
-* **Touch fallback:** header Tools toggles the full left shelf. Finger-only users retain tool access.
-* **Right edge:** Scene and Inspector tabs open one drawer at a time. Scene finds,
-  selects and hides objects/cameras. Inspector starts with selection transforms
-  and camera lens; More opens the appropriate full Blender editor. Do not duplicate
-  Blender data or maintain a second selection state. Drawers close explicitly and
-  by their tab; they never require accurate border dragging to escape.
-* **Bottom:** a compact playback/scrub strip expands into the full Timeline on
-  demand. Camera View and Frame Selection are immediately accessible scene actions.
-* **Top:** compact project/save/status and workspace switching. Full Blender is a
-  reversible state, with an obvious return to the tablet workspace. Preserve saved
-  editor layouts rather than rewriting every project on load.
-* **Portrait/narrow windows:** narrower single-column drawers or bottom sheets,
-  bounded to available space; opening a surface must leave its dismissal reachable.
-  Exact placement/size is adjusted from preview and device evidence, not frozen here.
+### Acceptance criteria
+
+1. Fresh launch, project open and switching through all bundled workspaces show
+   each layout's main editor with permanent floating panel buttons immediately.
+2. Item / Tool / View and editor buttons open adjacent real content. Closing a
+   panel never hides its rail. Scene exposes the full Outliner and Inspector the
+   full Properties editor, including functions absent from earlier custom drawers.
+3. Timeline, bottom node editors and native brush shelves open from bottom buttons
+   in applicable layouts. Workspaces with a node editor as their main area retain it.
+4. A side panel and bottom panel can coexist. Lock either or both, interact with the
+   main editor, resize while locked, unlock and close. Switching within one area
+   affects only that area's panel and lock.
+5. Resize with finger, Pencil and pointer; switch away and return to the workspace.
+   Verify remembered sizes and reachable controls in portrait, landscape and narrow
+   windows. Verify drawing and hit testing follow the resized bounds exactly.
+6. Open/close panels repeatedly and switch workspaces without losing editor state,
+   object selection, node context, active tools, undo history or saved layout data.
+7. Preserve squeeze tools, double-tap context menu, pressure/tilt/hover, navigation,
+   keyboard shortcuts, mouse buttons, trackpad input and device hot-plugging.
+8. Verify normal desktop builds retain their existing layouts and input behavior.
 
 Aim for roughly 44-point interactive targets in tablet surfaces. Do not globally
-enlarge Blender. Preserve keyboard shortcuts, mouse buttons, trackpad navigation
-and hot-plugging. Do not force a new workspace when an input device connects.
+enlarge Blender or force a new workspace when an input device connects. A host
+concept can demonstrate interaction; only the real iPad build can validate touch,
+rendering, panel input ownership and usability.
 
-## Delivery state and next priority
+## Existing Pencil tools to preserve
 
-The nine-tool Pencil milestone is implemented and received positive hardware feedback.
-The current ring retains its center Settings until the compact concept is approved.
-Do not rebuild the old six-tool/More Tools design or restore the superseded gesture mapping.
+* **Pencil Squeeze:** opens the nine-tool radial palette.
+* **Pencil Double Tap:** opens the context menu (right-click).
+* **Header Tools button:** toggles the full left toolbar shelf for touch access.
+* Preserve the existing ring geometry, all nine tools and hover behavior. This panel
+  milestone does not change the radial design; use the current source and
+  PROJECT_HANDOFF.md for its implementation and validation state.
+* Selecting a tool dismisses the palette. Outside tap, squeeze again and Escape
+  dismiss without executing a tool or moving scene objects. Preserve desktop input.
 
-Next engineering milestone is the native Files lifecycle, preserving document identity,
-operator settings, sidecar assets, cancellation and unsaved-change handling. An explicit
-Save Copy is useful but does not fulfill in-place Save As. See PRODUCT_DIRECTION.md and
-the newest PROJECT_HANDOFF.md section for implementation status and exact next steps.
+Panel work must reuse these controls without repurposing the approved gestures.
+
+## Native Files and other unfinished work
+
+Native Open, Save As, Save Copy, unsaved Save and model import/export have incremental
+implementations. Their exact source/build history is in PROJECT_HANDOFF.md. Preserve
+that work while implementing the active workspace milestone. FBX export currently
+reports unsupported because NumPy is unavailable; do not describe every model format
+as working or infer complete Files acceptance from a native picker appearing.
+
+The durable Files contract still requires correct document identity for later Save,
+security scopes/bookmarks, actual provider I/O coordination, project-folder/sibling
+asset access, exporter sidecars/options, cancellation, Open Recent, Link/Append and
+recovery. See PRODUCT_DIRECTION.md. UI changes must not erase these unfinished items.
+
+The user also reported that Frame Scene changes navigation feel and limits zoom.
+Preserve that report as unresolved; do not change navigation preferences or projection
+speculatively while working on panel presentation.
 
 ## How sessions stay aligned
 

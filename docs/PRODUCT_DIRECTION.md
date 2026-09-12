@@ -20,6 +20,16 @@ prioritization and reversible product decisions.
   commands on contextual surfaces; reveal dense editors when needed.
 * Preserve every Blender editor, importer/exporter option and advanced workflow.
   Keyboard/mouse use remains supported. Tablet controls must not reduce features.
+* Adapt **all workspace layouts** to floating panels while preserving the purpose,
+  editor contents and state of each default or saved layout. The central working
+  editor need not be a 3D Viewport. Do not flatten every workspace into one layout.
+* Keep edge panel buttons permanently available. A tap opens the real Blender
+  editor or sidebar category adjacent to its button. Scene uses Outliner; Inspector
+  uses Properties. Timeline, nodes and brush shelves retain their bottom placement
+  where the original layout places them there. No custom subset or More detour.
+* Support one panel locked open in each of the side and bottom areas independently.
+  Provide broad side-inner-edge and bottom-top-edge resize handles, remember sizes
+  per workspace, and allow resizing while locked. Details are in IPAD_WORKSPACE.md.
 * Global UI enlargement is not the solution. Adapt targets, scrolling, density,
   placement and presentation. The user rejected the Canvas popover as the primary
   control surface. Replace that role with the Pencil tool palette and workspace
@@ -27,8 +37,8 @@ prioritization and reversible product decisions.
 * Finger navigation/general UI and Pencil precision/creative input are the guiding
   distinction. Preserve pressure/tilt/hover work. Every new mapping needs a purpose.
 * User-approved mapping: Pencil squeeze opens the **radial** tool palette; double tap
-  opens the context/right-click menu. Nine-tool implementation is 73ac8c3 + 79eaf4b;
-  see the workspace milestone and handoff for validation status.
+  opens the context/right-click menu. Preserve the existing nine-tool ring and geometry;
+  see the handoff for implementation and validation status.
 * Every secondary/fullscreen view needs a discoverable escape without hover or a
   keyboard. Restoration must preserve workspace state.
 * Normal file workflows must use iPad Files concepts, not require Unix paths.
@@ -39,34 +49,38 @@ prioritization and reversible product decisions.
 | Decision | Reason / status |
 | --- | --- |
 | Reuse Blender operators and editor state | Preserve functionality and avoid parallel implementations. Established. |
-| Reversible Canvas maximization | Increase working space without replacing saved layouts. Implemented; host restoration evidence, full device matrix pending. |
+| Floating panels across every workspace | User-approved contract; implementation in progress. Each layout supplies its editors and placement. The previous custom Scene/Inspector drawers do not fulfill it. |
+| Permanent panel buttons, independent side/bottom locks and resize | User-approved interaction direction. Source implementation, preview, iOS compilation and device acceptance must be recorded separately. |
+| Reversible Canvas maximization | Increase working space without replacing saved layouts. Existing implementation has host restoration evidence; full device matrix pending. It is not the final workspace panel architecture. |
 | Native Close View footer | Immediate escape without covering content. Device confirms closing works; touch flicker reported. Transitional chrome, not final floating-editor design. |
 | Explicit, idempotent Metal setup | Lifecycle-only setup caused black startup. Repair 7451cf1 restores startup on device. Preserve explicit initialization. |
-| GPU backing textures match content drawable | Native footer reduces content height; UIScreen is no longer its framebuffer size. Correction 1d8e6a7 awaits validation. |
-| One active Metal view for now | Existing main loop/presentation assumes it. Simultaneous floating editors need a separate rendering change. |
-| Persistent fullscreen Back | Touch must not depend on a hover-revealed icon. Implemented, device acceptance pending. |
-| Desktop filesystem picker must be replaced | Latest user decision supersedes the previous advanced-browser fallback. Preserve options and internal library data-block selection in dedicated surfaces. |
+| GPU backing textures match content drawable | Native footer reduces content height; UIScreen is no longer its framebuffer size. Correction 1d8e6a7 has separate validation history in the handoff. |
+| One active Metal view in the existing window architecture | Existing main loop/presentation assumes it. Floating Blender editors need explicit drawing, input, context and lifecycle ownership; opening separate UIKit windows alone does not satisfy the workspace contract. |
+| Persistent fullscreen Back | Touch must not depend on a hover-revealed icon. Implemented; exact validation status is in the handoff. |
+| Desktop filesystem picker must be replaced | User decision supersedes the previous advanced-browser fallback. Preserve options and internal library data-block selection in dedicated surfaces. |
 
 ## Native Files implementation contract
 
-Current incremental delivery (4eeb43d): **Import Project from Files** explicitly imports
-an independent `.blend` copy into visible Projects storage using UIKit. Ordinary Save
-updates that copy. The source project must have its external resources packed; sibling
-assets are not imported. This does not fulfill external-document Open/Save/Save As.
-The copy itself is performed inside NSFileCoordinator's accessor on a worker queue.
-Source validation passes; native compilation/device acceptance are tracked in the handoff.
+Native Open, Save As, Save Copy, unsaved Save and model import/export have incremental
+implementations recorded in PROJECT_HANDOFF.md. The original 4eeb43d project-copy
+import is historical, not the full current route inventory. Native Open copies the
+chosen project into visible Projects storage. Save As and Save Copy now use native
+compression prompts and Files destination selection. FBX export is currently guarded
+as unsupported due to the unavailable NumPy dependency; do not claim full format
+coverage or full Files lifecycle acceptance from these routes.
 
-Implement a platform document service connected to the existing file-selector
+Preserve the platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document
-pickers. No desktop filesystem-browser fallback in the final product. During incremental
-implementation, clearly identify routes still awaiting replacement; do not remove working
-functionality before its replacement exists.
+pickers. No desktop filesystem-browser fallback in the final product. During
+incremental implementation, clearly identify routes still awaiting replacement;
+do not remove working functionality before its replacement exists.
 
 1. Preserve originating context, options, cancellation, undo, reports and script
    execution checks for open/import/export.
 2. Preserve document identity: ordinary Save updates the working document. Do not
    silently turn Save As into a local copy plus an unrelated exported copy. Explicit
-   Export/Save Copy can create independent copies.
+   Export/Save Copy can create independent copies. Updating Blender's stored path
+   alone does not establish permission or provider-safe subsequent Save.
 3. Own security-scoped URLs with balanced access, bookmarks, revocation/error
    handling and defined lifetime. File permission does not grant sibling texture
    or library access; support project-folder access.
@@ -78,6 +92,11 @@ functionality before its replacement exists.
    Preserve overwrite confirmation, exporter sidecars and format-specific options.
 7. Projects and recovery must be findable in Files. Documents/Recovery is implemented
    for autosaves; Recover Last Session and broader ownership remain unresolved.
+
+Retain the unfinished audits for external document identity and later Save, provider
+coordination, permissions/bookmarks, sibling assets and sidecars, operator options,
+Open Recent, Link/Append, recovery and cancellation. Existing source/build checks are
+not evidence that these complete workflows have passed on hardware.
 
 The old scratch document service is a prototype, not an accepted architecture.
 Its coordinator protected path copying, not subsequent reads, and its Save Copy
@@ -91,12 +110,12 @@ IPA packaging, simulator, actual device. Build success is not touch/Files valida
 Startup and closing success does not imply pressure, mouse, restoration or performance
 acceptance. Record device reports narrowly.
 
-Current priority: native Files across Open, Open Recent, Save/Save As, Link/Append,
-Import/Export and recovery. The working nine-tool ring has positive device feedback.
-A compact revision is concept-only pending review (see IPAD_WORKSPACE.md).
-Frame Scene has a new device report of unusual orbit/limited zoom; investigate before
-changing navigation preferences or projection. This explicitly supersedes the earlier
-directive to prioritize Scene/Inspector drawers over Files.
+Current priority: implement the user-approved floating-panel workspace contract,
+including startup, every workspace, actual editor reuse, permanent buttons,
+independent side/bottom locks and resizing. This supersedes the earlier instruction
+to prioritize Files over workspace panels. Preserve Files implementation and its
+unfinished lifecycle work, the working radial palette and the unresolved Frame Scene
+navigation report. Address confirmed P0 regressions before extending the milestone.
 
 Finish coherent repairs before starting larger rewrites. Avoid cancelling build
 after build for small additions. The overlay is source of truth; scratch source
