@@ -387,9 +387,34 @@ static void overflow()
   check(p::rail_page(10, 0).pages == 0, "Zero-length rail handled");
 }
 
+static void native_shelf_geometry()
+{
+  for (int height = 0; height <= 180; ++height) {
+    for (int handle : {0, 12, 24, 48, 240}) {
+      p::Layout layout;
+      layout.bottom_panel = {17, 29, 417, 29 + height};
+      layout.bottom_resize = {17, 29 + height - std::min(height, handle), 417, 29 + height};
+      const p::Rect content = p::panel_content(layout, p::Edge::Bottom);
+      check(content.height() >= 0, "Bottom content never inverts in a short window");
+      for (int header : {20, 26, 32, 52}) {
+        const auto shelf = p::shelf_regions(content, header);
+        check(contains(content, shelf.header), "Shelf header stays within native content");
+        check(contains(content, shelf.body), "Shelf body stays within native content");
+        check(!overlaps(shelf.header, layout.bottom_resize), "Category taps cannot hit resize");
+        check(!overlaps(shelf.body, shelf.header), "Shelf body and header are disjoint");
+        if (!content.empty()) {
+          check(shelf.header.ymax == content.ymax, "Native shelf header is above assets");
+          check(shelf.body.ymax == shelf.header.ymin, "Shelf subdivisions are contiguous");
+        }
+      }
+    }
+  }
+}
+
 int main()
 {
   try {
+    native_shelf_geometry();
     classification();
     split_geometry();
     interaction();

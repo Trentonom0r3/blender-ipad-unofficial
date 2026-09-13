@@ -1,5 +1,35 @@
 # Project handoff — 2026-09-13
 
+## Layout rail removal and native shelf bounds — current source work
+
+Remove the permanent Layout rail item and restore that space to content launchers.
+Working split/swap commands use the native editor header/footer context menu;
+Window > Edit Active Working Editor provides an ordinary-tap route. Commands carry
+an explicit source editor so choosing a header in another split does not operate
+on the remembered panel owner. Existing Maximize, Focus, Duplicate and Close menu
+commands remain; this relocation does not claim touch join/reversal completion.
+
+Independent review found a conditional shelf-input collision: a short bottom panel
+could place its unbounded header inside the resize strip. Use actual clamped handle
+bounds for content, partition shelf/header together within content, and use native
+asset shelf header size with categories above assets. This repairs that proven
+small-height collision; ordinary-size General/Paint/Simulation behavior still needs
+device evidence. Removing Layout alone is not claimed as its complete cause/fix.
+
+All 14 unit tests pass, including 699,649 panel checks and 132 shipped-layout cases.
+New cases vary panel heights 0–180, handle extents 0–240 and header heights 20–52,
+checking content containment, separation from resize input and native header order.
+48-file pinned preflight passes. Host Blender 5.1.2 confirms Window-menu operator
+availability behavior with a temporary Python operator; its missing pinned-version
+context utility was stubbed. This does not compile or execute the native iPad menu.
+Independent source review caught and corrected a menu-capability removal during
+implementation. Full new iOS compilation and actual device validation are pending.
+
+Prior popup-repair build 34787269066 (7c8fd0e) is now verified successful. Artifact
+Blender-iPad-Unofficial-ipa, ID10326648428, 248,391,319 bytes, is not expired.
+It predates this Layout/shelf repair. Preserve full split-resize, two-axis sizing,
+launcher-reordering and native Files requirements; none are marked complete here.
+
 ## Current user feedback and review — 2026-09-13
 
 User reports the permanent Layout option interferes with bottom-panel controls,

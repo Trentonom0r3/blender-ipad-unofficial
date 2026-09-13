@@ -2936,12 +2936,65 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
    if (region && (region->alignment != RGN_ALIGN_NONE)) {
      ED_region_toggle_hidden(C, region);
    }
-@@ -6858,6 +6881,13 @@
+@@ -5330,7 +5353,7 @@
+ /** \name Region Context Menu Operator (Header/Footer/Navigation-Bar)
+  * \{ */
+
+-static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
++static void screen_area_menu_items(bContext *C, ScrArea *area, uiLayout *layout)
+ {
+   if (ED_area_is_global(area)) {
+     return;
+@@ -5338,11 +5361,19 @@
+
+   PointerRNA ptr;
+
+-  ptr = layout->op("SCREEN_OT_area_join",
+-                   IFACE_("Move/Split Area"),
+-                   ICON_AREA_DOCK,
+-                   blender::wm::OpCallContext::InvokeDefault,
+-                   UI_ITEM_NONE);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (ED_ipad_panels_enabled(CTX_wm_screen(C)) && area->runtime.ipad_layer == 1) {
++    ED_ipad_panels_working_menu(C, layout);
++  }
++  else
++#endif
++  {
++    ptr = layout->op("SCREEN_OT_area_join",
++                     IFACE_("Move/Split Area"),
++                     ICON_AREA_DOCK,
++                     blender::wm::OpCallContext::InvokeDefault,
++                     UI_ITEM_NONE);
++  }
+
+   layout->separator();
+
+@@ -5392,7 +5423,7 @@
+     layout->separator();
+     ED_screens_region_flip_menu_create(C, layout, nullptr);
+     layout->separator();
+-    screen_area_menu_items(area, layout);
++    screen_area_menu_items(C, area, layout);
+   }
+ }
+
+@@ -5408,7 +5439,7 @@
+
+   ED_screens_region_flip_menu_create(C, layout, nullptr);
+   layout->separator();
+-  screen_area_menu_items(area, layout);
++  screen_area_menu_items(C, area, layout);
+ }
+
+ void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+@@ -6858,6 +6889,14 @@
    WM_operatortype_append(SCREEN_OT_region_quadview);
    WM_operatortype_append(SCREEN_OT_region_scale);
    WM_operatortype_append(SCREEN_OT_region_toggle);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_resize);
++  WM_operatortype_append(SCREEN_OT_ipad_working_menu);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_split);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_swap);
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_activate);
@@ -3626,6 +3679,21 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
          sub.operator_context = 'EXEC_AREA'
          sub.operator("wm.save_mainfile", text="Save Incremental").incremental = True
 
+@@ -536,6 +544,14 @@
+         from bl_ui_utils.layout import operator_context
+
+         layout = self.layout
++
++        try:
++            bpy.ops.screen.ipad_working_menu.get_rna_type()
++        except KeyError:
++            pass  # The native operator is registered only in the iPad build.
++        else:
++            layout.operator("screen.ipad_working_menu", text="Edit Active Working Editor")
++            layout.separator()
+
+         layout.operator("wm.window_new")
+         layout.operator("wm.window_new_main")
 diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 --- a/intern/ghost/GHOST_Types.h
 +++ b/intern/ghost/GHOST_Types.h
@@ -5192,7 +5260,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,34 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -5222,6 +5290,8 @@ new file mode 100644
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_pin(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot);
++void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout);
++void SCREEN_OT_ipad_working_menu(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_split(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_swap(wmOperatorType *ot);
 +#endif
@@ -5292,7 +5362,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,516 @@
+@@ -0,0 +1,551 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5738,6 +5808,41 @@ new file mode 100644
 +  return result;
 +}
 +
++/* Use the actual clamped handle, including windows smaller than its preferred
++ * extent. Content must never invert or intrude into the chrome hit rectangle. */
++inline Rect panel_content(const Layout &layout, const Edge edge)
++{
++  if (edge == Edge::Tools) {
++    return layout.tools_panel;
++  }
++  Rect result = edge == Edge::Side ? layout.side_panel : layout.bottom_panel;
++  if (edge == Edge::Side) {
++    result.xmin = std::clamp(layout.side_resize.xmax, result.xmin, result.xmax);
++  }
++  else {
++    result.ymax = std::clamp(layout.bottom_resize.ymin, result.ymin, result.ymax);
++  }
++  return result;
++}
++
++struct ShelfRegions {
++  Rect header;
++  Rect body;
++};
++
++inline ShelfRegions shelf_regions(const Rect content, const int preferred_header_height)
++{
++  if (content.empty()) {
++    return {};
++  }
++  const int height = std::clamp(preferred_header_height, 0, content.height());
++  ShelfRegions result{content, content};
++  /* The native bottom shelf has its category header above its assets. */
++  result.header.ymin = content.ymax - height;
++  result.body.ymax = result.header.ymin;
++  return result;
++}
++
 +/* Record the actual clamped result of a user drag. Passive layout/rotation never
 + * mutates preferred dimensions, so returning to a large window restores them.
 + * This operation is independent of which tab is active or locked. */
@@ -5933,7 +6038,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1281 @@
+@@ -0,0 +1,1322 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -5961,6 +6066,7 @@ new file mode 100644
 +#include "BKE_global.hh"
 +#include "BKE_screen.hh"
 +#include "BKE_report.hh"
++#include "ED_asset_shelf.hh"
 +#include "ED_ipad_panels.hh"
 +#include "ED_screen.hh"
 +#include "ED_screen_types.hh"
@@ -6321,20 +6427,10 @@ new file mode 100644
 +
 +static Rect panel_content(const Model &model, Edge edge)
 +{
-+  if (edge == Edge::Tools) {
-+    return model.layout.tools_panel;
-+  }
-+  Rect rect = edge == Edge::Side ? model.layout.side_panel : model.layout.bottom_panel;
-+  if (edge == Edge::Side) {
-+    rect.xmin += model.metrics.resize_extent;
-+  }
-+  else {
-+    rect.ymax -= model.metrics.resize_extent;
-+  }
-+  return rect;
++  return policy::panel_content(model.layout, edge);
 +}
 +
-+enum class Action { Tab, Previous, Next, Resize, Lock, Layout };
++enum class Action { Tab, Previous, Next, Resize, Lock };
 +struct Button {
 +  Rect rect;
 +  std::string label;
@@ -6350,12 +6446,6 @@ new file mode 100644
 +  std::vector<Button> result;
 +  for (const bool left : {false, true}) {
 +    Rect rail = left ? model.layout.left_rail : model.layout.side_rail;
-+    if (left) {
-+      const int extent = std::min(int(60 * UI_SCALE_FAC), rail.height() / 4);
-+      result.push_back({{rail.xmin, rail.ymin, rail.xmax, rail.ymin + extent},
-+                         "Layout", Action::Layout, Edge::Tools});
-+      rail.ymin += extent + std::min(int(6 * UI_SCALE_FAC), rail.height() / 16);
-+    }
 +    std::vector<const Tab *> tabs;
 +    for (const Tab &tab : model.tabs) {
 +      if ((tab.edge != Edge::Side) == left) {
@@ -6449,33 +6539,6 @@ new file mode 100644
 +{
 +  bScreen *screen = WM_window_get_active_screen(win);
 +  const int axis = button.edge == Edge::Side ? 0 : 1;
-+  if (button.action == Action::Layout) {
-+    uiPopupMenu *popup = UI_popup_menu_begin(C, "Working Layout", ICON_NONE);
-+    uiLayout *layout = UI_popup_menu_layout(popup);
-+    for (const bool vertical : {true, false}) {
-+      PointerRNA props = layout->op("SCREEN_OT_ipad_working_split",
-+                                     vertical ? "Split Vertically" : "Split Horizontally",
-+                                     vertical ? ICON_SPLIT_VERTICAL : ICON_SPLIT_HORIZONTAL,
-+                                     blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
-+      RNA_boolean_set(&props, "vertical", vertical);
-+    }
-+    if (model.working.size() > 1) {
-+      layout->separator();
-+      for (const policy::Area &working : model.working) {
-+        const ScrArea *area = model.areas[working.id];
-+        if (area == model.main) {
-+          continue;
-+        }
-+        const std::string label = "Swap with " + area_label(area) + " (" +
-+                                  std::to_string(working.id + 1) + ")";
-+        PointerRNA props = layout->op("SCREEN_OT_ipad_working_swap", label.c_str(), ICON_AREA_SWAP,
-+                                       blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
-+        RNA_int_set(&props, "target", working.id);
-+      }
-+    }
-+    UI_popup_menu_end(C, popup);
-+    return;
-+  }
 +  if (button.action == Action::Lock) {
 +    model.state.toggle_panels_lock();
 +    save_slot(screen, model, Edge::Tools);
@@ -6845,13 +6908,12 @@ new file mode 100644
 +  region->flag &= ~RGN_FLAG_TOO_SMALL;
 +  region->winrct = tools ? area->runtime.ipad_tools_rect : bottom ? area->runtime.ipad_bottom_rect : area->runtime.ipad_side_rect;
 +  if (bottom) {
-+    const int header_height = ED_area_headersize();
-+    if (region->regiontype == RGN_TYPE_ASSET_SHELF_HEADER) {
-+      region->winrct.ymax = region->winrct.ymin + header_height - 1;
-+    }
-+    else {
-+      region->winrct.ymin += header_height;
-+    }
++    const rcti &r = region->winrct;
++    const policy::ShelfRegions shelf = policy::shelf_regions(
++        {r.xmin, r.ymin, r.xmax + 1, r.ymax + 1},
++        blender::ed::asset::shelf::header_region_size());
++    const Rect &rect = region->regiontype == RGN_TYPE_ASSET_SHELF_HEADER ? shelf.header : shelf.body;
++    region->winrct = to_rect(rect);
 +  }
 +  if (!visible || region->winrct.xmax <= region->winrct.xmin ||
 +      region->winrct.ymax <= region->winrct.ymin)
@@ -6979,21 +7041,97 @@ new file mode 100644
 +  return CTX_wm_window(C) && ED_ipad_panels_enabled(CTX_wm_screen(C));
 +}
 +
++/* Bind menu commands to their originating working editor, including when the
++ * menu itself runs in the top bar or a popup region. */
++static ScrArea *working_source(const Model &model, const int source)
++{
++  if (source < 0) {
++    return model.main;
++  }
++  for (const policy::Area &working : model.working) {
++    if (working.id == source) {
++      return model.areas[source];
++    }
++  }
++  return nullptr;
++}
++
++void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout)
++{
++  Model model = make_model(C, CTX_wm_window(C));
++  ScrArea *source = CTX_wm_area(C);
++  if (!source || source->runtime.ipad_layer != 1) {
++    source = model.main;
++  }
++  int source_id = -1;
++  for (const policy::Area &working : model.working) {
++    if (model.areas[working.id] == source) {
++      source_id = working.id;
++      break;
++    }
++  }
++  if (source_id < 0) {
++    return;
++  }
++  for (const bool vertical : {true, false}) {
++    PointerRNA props = layout->op("SCREEN_OT_ipad_working_split",
++                                 vertical ? "Split Vertically" : "Split Horizontally",
++                                 vertical ? ICON_SPLIT_VERTICAL : ICON_SPLIT_HORIZONTAL,
++                                 blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++    RNA_boolean_set(&props, "vertical", vertical);
++    RNA_int_set(&props, "source", source_id);
++  }
++  if (model.working.size() > 1) {
++    layout->separator();
++    for (const policy::Area &working : model.working) {
++      const ScrArea *area = model.areas[working.id];
++      if (area == source) {
++        continue;
++      }
++      const std::string label = "Swap with " + area_label(area) + " (" +
++                                std::to_string(working.id + 1) + ")";
++      PointerRNA props = layout->op("SCREEN_OT_ipad_working_swap", label.c_str(), ICON_AREA_SWAP,
++                                   blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++      RNA_int_set(&props, "source", source_id);
++      RNA_int_set(&props, "target", working.id);
++    }
++  }
++}
++
++static wmOperatorStatus working_menu_exec(bContext *C, wmOperator * /*op*/)
++{
++  uiPopupMenu *popup = UI_popup_menu_begin(C, "Active Working Editor", ICON_NONE);
++  ED_ipad_panels_working_menu(C, UI_popup_menu_layout(popup));
++  UI_popup_menu_end(C, popup);
++  return OPERATOR_FINISHED;
++}
++
++void SCREEN_OT_ipad_working_menu(wmOperatorType *ot)
++{
++  ot->name = "Edit Active Working Editor";
++  ot->idname = "SCREEN_OT_ipad_working_menu";
++  ot->description = "Split or exchange the active working editor";
++  ot->exec = working_menu_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++}
++
 +static wmOperatorStatus working_split_exec(bContext *C, wmOperator *op)
 +{
 +  wmWindow *win = CTX_wm_window(C);
 +  Model model = make_model(C, win);
-+  if (!model.main) {
++  ScrArea *source = working_source(model, RNA_int_get(op->ptr, "source"));
++  if (!source) {
 +    return OPERATOR_CANCELLED;
 +  }
-+  ScrArea *created = area_split(win, CTX_wm_screen(C), model.main,
++  ScrArea *created = area_split(win, CTX_wm_screen(C), source,
 +                                 RNA_boolean_get(op->ptr, "vertical") ? SCREEN_AXIS_V : SCREEN_AXIS_H,
 +                                 0.5f, true);
 +  if (!created) {
 +    BKE_report(op->reports, RPT_WARNING, "This editor is too small for another split");
 +    return OPERATOR_CANCELLED;
 +  }
-+  model.main->ipad_keep_working = created->ipad_keep_working = 1;
++  source->ipad_keep_working = created->ipad_keep_working = 1;
 +  tag_layout(C, win);
 +  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
 +  return OPERATOR_FINISHED;
@@ -7003,10 +7141,14 @@ new file mode 100644
 +{
 +  wmWindow *win = CTX_wm_window(C);
 +  Model model = make_model(C, win);
++  ScrArea *source = working_source(model, RNA_int_get(op->ptr, "source"));
++  if (!source) {
++    return OPERATOR_CANCELLED;
++  }
 +  const int target = RNA_int_get(op->ptr, "target");
 +  for (const policy::Area &working : model.working) {
-+    if (working.id == target && model.areas[target] != model.main) {
-+      ED_area_swapspace(C, model.main, model.areas[target]);
++    if (working.id == target && model.areas[target] != source) {
++      ED_area_swapspace(C, source, model.areas[target]);
 +      tag_layout(C, win);
 +      WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
 +      return OPERATOR_FINISHED;
@@ -7023,6 +7165,8 @@ new file mode 100644
 +  ot->exec = working_split_exec;
 +  ot->poll = panel_poll;
 +  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_int(ot->srna, "source", -1, -1, INT_MAX, "Source",
++              "Originating working editor; active editor when unset", -1, INT_MAX);
 +  RNA_def_boolean(ot->srna, "vertical", true, "Vertical", "Place the new editor beside this one");
 +}
 +
@@ -7034,6 +7178,8 @@ new file mode 100644
 +  ot->exec = working_swap_exec;
 +  ot->poll = panel_poll;
 +  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_int(ot->srna, "source", -1, -1, INT_MAX, "Source",
++              "Originating working editor; active editor when unset", -1, INT_MAX);
 +  RNA_def_int(ot->srna, "target", 0, 0, INT_MAX, "Editor", "Working editor to exchange", 0, INT_MAX);
 +}
 +
