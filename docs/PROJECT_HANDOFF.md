@@ -2,6 +2,11 @@
 
 ## Layout rail removal and native shelf bounds — current source work
 
+Source **a47b895** is pushed. New iOS build
+[34788075029](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34788075029)
+was dispatched; completion and artifact remain unverified. Final independent source
+review found no blockers; this does not imply compilation or device acceptance.
+
 Remove the permanent Layout rail item and restore that space to content launchers.
 Working split/swap commands use the native editor header/footer context menu;
 Window > Edit Active Working Editor provides an ordinary-tap route. Commands carry
