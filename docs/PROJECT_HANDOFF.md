@@ -2,6 +2,12 @@
 
 ## Failed-build repair — 2026-09-13
 
+Repair source: **c5f2cef370b2ad4678fde270cd7ade374489eb8a**. Replacement run
+[34772665821](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34772665821)
+is verified **in progress**, with that exact SHA. Cloud unit checks passed; pinned
+source validation was running at the last observation. Inspect this existing run
+before dispatching another build. No replacement IPA is verified yet.
+
 Both runs 34758590540 (4af0e11) and 34758375022 (498063a) failed in
 `wm_draw.cc`: `WM_window_pixels_y` is undeclared. Replace it with the pinned
 Blender API `WM_window_native_pixel_y`, which includes the native pixel scale
