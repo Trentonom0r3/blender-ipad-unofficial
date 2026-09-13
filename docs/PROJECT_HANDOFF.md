@@ -2,6 +2,19 @@
 
 ## Left rail, global panel lock and Pencil pan — current source checkpoint
 
+Source: **63895faee8cc854e3c141e04dca7b833f3af6c53**, pushed on
+`codex/ipad-secondary-view-escape`.
+Build: [34738815340](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34738815340).
+Cloud preflight passed; iOS build is in progress. No IPA or device acceptance is
+claimed for this revision. The Pencil press regression was also run against
+38523d7: it fails on the reported native-button press and passes on the repair.
+
+Build submission initially failed automatic review because destination ownership
+was unestablished. Read-only verification confirmed authenticated user Trentonom0r3,
+ADMIN access, public repository and the matching origin URL; the reviewed retry was
+approved. A subsequent TLS timeout occurred before dispatch; the successful retry
+created the exact run above. No approval or authorization issue remains pending.
+
 The complete usable iPad app goal remains active. Source implementation now moves
 Tools and bottom launchers to matching permanent left tabs. Tools uses its actual
 48-unit native region independently of bottom content. Bottom panels retain bottom
