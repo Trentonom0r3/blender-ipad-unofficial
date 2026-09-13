@@ -2,6 +2,12 @@
 
 ## Latest user refinement — left rail, global lock and working splits
 
+Latest feedback: the permanent Layout button is rejected and reportedly
+interferes with native bottom-panel tabs (Sculpt General/Paint/Simulation).
+Remove it from the permanent rail, preserve discoverable workspace editing,
+and verify native tab input ownership. Independent subagent UX reviews are
+authorized; use them to challenge design and input assumptions.
+
 Device refinement, 2026-09-13: Sculpt opens its real brush shelf by default on first
 eligible use, then remembers closure. The shipped desktop startup saves that shelf
 hidden, so iPad needs an explicit default. Center the native toolbar using its own

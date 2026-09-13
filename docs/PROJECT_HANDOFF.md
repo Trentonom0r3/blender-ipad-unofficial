@@ -1,5 +1,47 @@
 # Project handoff — 2026-09-13
 
+## Current user feedback and review — 2026-09-13
+
+User reports the permanent Layout option interferes with bottom-panel controls,
+including Sculpt General/Paint/Simulation tabs, and dislikes the Layout button.
+Installed build identity is unspecified. Treat the interference as a reported
+regression: trace drawing and input ownership before claiming its cause is fixed.
+Remove Layout from the permanent rail while preserving discoverable split/swap
+access through a reviewed alternative. Do not replace it with another obstructing
+control or remove workspace-editing capability.
+
+User authorized independent subagent UX review; use bounded reviews alongside
+implementation, with explicit findings and acceptance cases. Read-only review of 7c8fd0e completed:
+Layout reserves up to 60 scaled pixels of left-rail height and mixes workspace
+commands with content launchers. Its removal is warranted, but the policy places
+native shelf content to the right of the rail, so literal overlap is not proven.
+Panel chrome handles events before ordinary area UI; compare final native shelf
+header bounds with chrome hit rectangles after each layout pass. The popup repair
+is separate and does not prove shelf-tab interaction is fixed.
+
+Reviewer recommends existing native editor-header menu access scoped to the chosen
+editor, including an ordinary-tap route rather than only a hidden long press, plus
+visible draggable seams. This is a proposal awaiting implementation review, not a
+new device-accepted design. Acceptance must include first-tap Sculpt category
+selection, Tools visible/hidden, lock states, portrait/narrow/resized shelves,
+rail-to-shelf and shelf-to-rail drag ownership, split cancellation and reversal.
+Review is not device validation.
+
+Latest source **7c8fd0e41a016d8fa9b448653d4948649657f542** is pushed.
+[Build 34787269066](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34787269066)
+is verified **in progress** after retrying a transient GitHub TLS timeout.
+No artifact is currently returned. Inspect this existing run before rebuilding.
+The last verified successful IPA remains build 34772665821 (c5f2cef), below.
+
+Limits have reset. User's reserve is still **1% of five-hour allowance remaining**;
+weekly allowance may be used. Prior documentation write was rejected by automatic
+approval review because the weekly quota was exhausted; this update resumes it.
+
+Priority: repair native bottom-tab interaction and replace the permanent Layout
+entry, then finish touch split-seam resizing, two-axis floating sizing and launcher
+reordering. Existing split/swap and one-axis panel resizing are partial support.
+Native Files lifecycle and broader input/device acceptance remain unfinished.
+
 ## Popup navigation ownership — source follow-up
 
 While any native floating popup region is visible, publish an empty navigation

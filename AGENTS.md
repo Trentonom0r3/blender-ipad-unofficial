@@ -2,6 +2,12 @@
 
 ## Latest user refinement — left rail, global lock and working splits
 
+Latest feedback: the permanent Layout button is rejected and reportedly
+interferes with native bottom-panel tabs (Sculpt General/Paint/Simulation).
+Remove it from the permanent rail, preserve discoverable workspace editing,
+and verify native tab input ownership. Independent subagent UX reviews are
+authorized; use them to challenge design and input assumptions.
+
 This section supersedes older right-side Tools/footer launcher/per-edge pin wording.
 Keep permanent matching vertical rails on both edges. Tools and bottom-editor/brush
 launchers belong on the **left**. Tools opens the actual native narrow vertical
