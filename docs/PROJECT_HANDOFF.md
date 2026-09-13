@@ -1,5 +1,25 @@
 # Project handoff — 2026-09-13
 
+## Popup navigation ownership — source follow-up
+
+While any native floating popup region is visible, publish an empty navigation
+hit map to GHOST. Menus own pointer interaction and outside dismissal; a drag
+must not start viewport navigation through their content or dismiss area. Normal
+navigation bounds return on redraw after the popup closes. This changes only the
+new iPad touch bridge, preserving native menu/editor routing.
+
+Source preflight passes all 48 files; the compiled navigation-map lifecycle test
+passes, including replacement with an empty map. These checks do not exercise
+UIKit or actual popup dismissal; iOS compilation and device acceptance are pending.
+The successful c5f2cef build below predates this follow-up.
+
+Split-resize audit: working_layout recursively remaps saved vertices to displayed
+working bounds. The native area_move operator locates and changes saved ScrEdges,
+so feeding it displayed seam coordinates is incorrect. Implement explicit seam
+identity and displayed-to-saved delta mapping, preserve connected vertices and
+native size constraints, and restore the original geometry on cancellation.
+This investigation does not complete split-seam resizing.
+
 ## Failed-build repair — 2026-09-13
 
 Repair source: **c5f2cef370b2ad4678fde270cd7ade374489eb8a**. Replacement run

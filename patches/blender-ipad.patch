@@ -5064,7 +5064,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    }
 
    /* After area regions so we can do area 'overlay' drawing. */
-@@ -1175,6 +1248,37 @@
+@@ -1175,6 +1248,45 @@
 
    wm_draw_callbacks(win);
    wmWindowViewport(win);
@@ -5097,12 +5097,20 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +      }
 +    }
 +  }
++  /* Floating menus own pointer interaction while visible. Do not let UIKit's
++   * navigation bridge start a viewport drag through the popup or its dismiss area. */
++  LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
++    if (region->runtime->visible) {
++      navigation.clear();
++      break;
++    }
++  }
 +  ghost::ios::set_navigation_regions(win->ghostwin, std::move(navigation));
 +#endif
 
    /* Blend in floating regions (menus). */
    LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-@@ -1528,6 +1632,13 @@
+@@ -1528,6 +1640,13 @@
    }
 
    ED_screen_areas_iter (win, screen, area) {
