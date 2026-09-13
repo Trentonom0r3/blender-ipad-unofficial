@@ -1,5 +1,42 @@
 # Project handoff — 2026-09-12
 
+## Left rail, global panel lock and Pencil pan — current source checkpoint
+
+The complete usable iPad app goal remains active. Source implementation now moves
+Tools and bottom launchers to matching permanent left tabs. Tools uses its actual
+48-unit native region independently of bottom content. Bottom panels retain bottom
+placement; right categories/Scene/Inspector retain their real native contents.
+
+One native circular navigation-gizmo pin controls all panels, with a matching
+always-available fallback in editors without navigation gizmos. It can be locked
+before opening content and applies to subsequent openings and replacements. Old
+per-edge pins migrate to the global state. Native navigation hit bounds prevent
+outside-dismissal from swallowing pan/zoom/pin presses. Footer launch/pin additions
+and their forced status-bar height are removed. Tab release capture now includes
+the rail/edge identity, preventing page controls on opposite rails from conflicting.
+
+Confirmed the Pencil Move defect in source: viewmove_invoke rejected every input
+except MIDDLEMOUSE or flagged multitouch. Restrict that filter to MOUSEPAN gestures;
+native LEFTMOUSE/Pencil and keyboard invocations reach Blender's modal navigation.
+The compiled invocation regression covers iOS and desktop and retains finger-pan
+filtering. This is source evidence, not actual-device drag acceptance.
+
+Checks: overlay applies to 46 pinned files; 12 tests pass, including 679,163 panel
+policy checks, 132 shipped-layout placement cases and 75 unchanged tool-ring cases.
+Compilation/packaging of this checkpoint is pending. Working-editor split retention,
+new split controls, two-axis panel resizing and reordering remain the next source
+work; the current single-canvas compositor still flattens those working splits.
+
+Earlier build **34725861417 attempt 2 succeeded** for source **2d8b666**, including
+compilation/packaging. API verified Blender-iPad-Unofficial-ipa, **248,381,608 bytes**,
+not expired. It does not contain 38523d7's layout audit repairs or these new changes.
+Attempt 1's runner communication failure was infrastructure, not a compiler failure.
+
+Next: compile/package this coherent checkpoint; restore working splits in the actual
+compositor/context routing and add usable split/resize/reorder controls. Keep the
+full app goal active and preserve unfinished native Files lifecycle work.
+
+
 ## Shipped workspace audit and placement repair — 2026-09-12, latest source checkpoint
 
 The full iPad app goal remains active. This checkpoint fixes independently found

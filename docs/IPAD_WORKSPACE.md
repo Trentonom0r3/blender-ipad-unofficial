@@ -1,5 +1,29 @@
 # iPad workspace design and delivery
 
+## Latest user refinement — left rail, global lock and working splits
+
+This section supersedes older right-side Tools/footer launcher/per-edge pin wording.
+Keep permanent matching vertical rails on both edges. Tools and bottom-editor/brush
+launchers belong on the **left**. Tools opens the actual native narrow vertical
+toolbar independently; bottom editors and shelves still open at the **bottom** and
+must not overlap Tools. Native Item/Tool/View categories, Scene (Outliner), Inspector
+(Properties) and supporting side editors stay on the **right**.
+
+Use one always-reachable circular global panel lock beneath the native navigation
+buttons, with an equivalent control in editors lacking that stack. It locks Tools,
+side and bottom content together, including panels opened after locking. Switching
+content preserves the global lock; unlocking restores ordinary dismissal. Remove
+the footer launcher and pin controls. Keep native editor contents and useful saved
+sizes; the status bar resumes its original purpose.
+
+Preserve working-editor splits instead of reducing every workspace to one canvas.
+Provide horizontal/vertical split, two-axis resizing and panel reordering through
+touch-usable controls. These are part of the requested outcome; do not report the
+milestone complete after relocating buttons alone. The native Pan/Move navigation
+button must accept Pencil press-and-drag just as Zoom does, while preserving direct
+finger navigation, external pointer input and the approved radial/Pencil mappings.
+
+
 ## Active milestone: floating panels for every workspace
 
 **User-approved contract; implementation in progress.** This replaces the earlier

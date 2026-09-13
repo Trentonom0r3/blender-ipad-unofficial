@@ -55,7 +55,10 @@ repair. Tests also distinguish a smaller bottom footage view from a dominant can
 | Native editor reuse/context | Source review and iOS compilation checkpoints in PROJECT_HANDOFF | Selection, undo, editor state, context menus and repeated switching on device |
 | Side tab typography and selection | BLF/native API review; captured press/release implementation | Device rendering, hover, tooltips, long labels and drag-away cancellation |
 | Finger/Pencil/pointer resize | Source integration with GHOST and shared clamped policy | All three input paths on hardware, pinned and unpinned |
-| Footer launcher reachability | Native statusbar controls and horizontal header scrolling | Small Stage Manager widths and onscreen keyboard |
+| Left/right launcher reachability | Permanent rail geometry and captured tab release | Small Stage Manager widths, overflow and onscreen keyboard |
+| Global panel lock | Native navigation gizmo plus fallback; compiled shared lock behavior | Hardware accessibility with navigation hidden, camera/quad views and all editor types |
+| Pencil Pan button | Compiled actual invocation guard for desktop/iOS | Pencil press/drag/release on native Move with panels open and closed |
+| Working editor splits | Current classifier retains editor identity only | Restore simultaneous working splits and touch split/resize/reorder controls |
 | Full iPad workflow | Existing Files/Pencil work retained | Native document identity/provider lifecycle, recovery, exports and end-to-end creative tasks |
 
 The old Python dock preview does not execute the C++ floating editor compositor and

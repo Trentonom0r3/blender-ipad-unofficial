@@ -143,11 +143,42 @@ static void interaction()
   check(!other_workspace.side.open() && !other_workspace.bottom.open(), "Fresh workspace state independent");
 }
 
+static void global_lock_and_tools()
+{
+  p::State state;
+  state.toggle_panels_lock();
+  check(state.panels_locked, "Global lock can be enabled before opening panels");
+  for (const auto edge : {p::Edge::Tools, p::Edge::Side, p::Edge::Bottom}) {
+    check(state.tap(edge, int(edge) + 5) == p::TapResult::Opened,
+          "Each panel opens independently while globally locked");
+    check(!state.dismiss(edge), "Global lock prevents outside dismissal on every edge");
+    check(state.tap(edge, int(edge) + 5) == p::TapResult::Locked,
+          "Selected panel remains open while globally locked");
+  }
+  state.tap(p::Edge::Bottom, 30);
+  check(state.tools.open() && state.side.open() && state.bottom.active_id == 30,
+        "Bottom replacement preserves native Tools and side content");
+  const auto before = p::layout({0, 0, 1366, 1024}, state);
+  state.tap(p::Edge::Side, 31);
+  check(same(before.tools_panel, p::layout({0, 0, 1366, 1024}, state).tools_panel),
+        "Switching Inspector does not move or expand the Tools strip");
+  check(before.tools_panel.width() == 48 && before.bottom_panel.xmin > before.tools_panel.xmax,
+        "Native Tools is a narrow vertical strip independent of bottom content");
+  state.toggle_panels_lock();
+  for (const auto edge : {p::Edge::Tools, p::Edge::Side, p::Edge::Bottom}) {
+    check(state.dismiss(edge), "One unlock restores ordinary dismissal for all panels");
+  }
+  const auto closed = p::layout({0, 0, 1366, 1024}, state);
+  check(!closed.left_rail.empty() && !closed.side_rail.empty(),
+        "Both launch rails stay visible with all panels closed");
+}
+
 static void geometry()
 {
   p::State state;
   state.tap(p::Edge::Side, 1);
   state.tap(p::Edge::Bottom, 2);
+  state.tap(p::Edge::Tools, 3);
   /* Exhaustive realistic portrait, landscape, split-screen bounds and offset
    * origins: all visible surfaces stay inside safe bounds without collisions. */
   for (int width = 96; width <= 2048; width += 37) {
@@ -157,8 +188,8 @@ static void geometry()
         state.bottom_height = requested;
         const p::Rect bounds{17, 29, 17 + width, 29 + height};
         const auto l = p::layout(bounds, state);
-        const std::vector<p::Rect> visible{l.canvas, l.side_rail, l.side_panel, l.bottom_panel};
-        check(l.bottom_rail.empty(), "Native status bar launchers reserve no viewport rail");
+        const std::vector<p::Rect> visible{l.canvas, l.side_rail, l.left_rail, l.side_panel, l.bottom_panel, l.tools_panel};
+        check(l.bottom_rail.empty(), "Left launchers reserve no bottom rail");
         for (std::size_t i = 0; i < visible.size(); ++i) {
           check(contains(bounds, visible[i]), "Surface inside safe bounds");
           check(!visible[i].empty(), "Canvas, permanent rails and open panels stay nonempty");
@@ -177,7 +208,7 @@ static void geometry()
   const auto l = p::layout({0, 0, 1024, 768}, closed);
   check(!l.side_rail.empty() && l.side_rail.width() == 28, "Closed panels retain narrow vertical side rail");
   check(l.bottom_rail.empty() && l.canvas.ymin == 8,
-        "Closed panels leave bottom canvas clear above external status bar");
+        "Closed panels leave bottom canvas clear");
   check(l.side_panel.empty() && l.bottom_panel.empty(), "Closed panels reserve no panel space");
   check(p::layout({}, state).canvas.empty(), "Zero-sized window handled");
   check(p::layout({50, 50, 10, 10}, state).canvas.empty(), "Inverted window bounds handled");
@@ -230,9 +261,10 @@ static void automatic_sizes()
     const auto l = p::layout(bounds, state);
     check(l.side_panel.width() > 300 && l.bottom_panel.height() > 400,
           "Automatic defaults use useful available space in landscape and portrait");
-    check(l.bottom_panel.width() >= bounds.width() / 2,
+    const int usable_width = l.side_panel.xmax - l.bottom_panel.xmin;
+    check(l.bottom_panel.width() >= usable_width / 2,
           "Simultaneous automatic side panel leaves at least half width for bottom editor");
-    check(l.canvas.height() > bounds.height() / 3 && l.canvas.width() > bounds.width() / 2,
+    check(l.canvas.height() > bounds.height() / 3 && l.canvas.width() > usable_width / 2,
           "Automatic defaults retain a meaningful canvas beside both open panels");
     check(l.side_panel.ymax < bounds.ymax && l.side_panel.ymin > bounds.ymin,
           "Actual WINDOW bounds anchor panels clear of native headers/status bar");
@@ -308,6 +340,7 @@ int main()
   try {
     classification();
     interaction();
+    global_lock_and_tools();
     geometry();
     resizing();
     automatic_sizes();
