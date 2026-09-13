@@ -4791,7 +4791,7 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -113,6 +113,20 @@
+@@ -113,6 +113,21 @@
    struct wmTooltipState *tool_tip;
 
    PreviewImage *preview;
@@ -4805,14 +4805,15 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  char ipad_panels_locked;
 +  char ipad_tools_open;
 +  char ipad_panel_initialized;
-+  char _pad_ipad[3];
++  char ipad_sculpt_shelf_initialized;
++  char _pad_ipad[2];
 +  char ipad_panel_category[64];
 +  int ipad_panel_owner;
 +  int _pad_ipad_owner;
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +442,24 @@
+@@ -428,6 +443,24 @@
    struct bToolRef *tool;
    char is_tool_set;
    char _pad0[7];
@@ -4837,7 +4838,7 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } ScrArea_Runtime;
 
  typedef struct ScrArea {
-@@ -468,7 +500,9 @@
+@@ -468,7 +501,9 @@
     * runtime variable, updated by executing operators.
     */
    short region_active_win;
@@ -5283,7 +5284,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,504 @@
+@@ -0,0 +1,516 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5593,6 +5594,18 @@ new file mode 100644
 +    }
 +  }
 +};
++
++/* Sculpt's shipped startup shelf is hidden. iPad's first-use default opens it,
++ * but only after its native poll succeeds and never over a chosen bottom editor. */
++inline bool open_default_sculpt_shelf(State &state, const bool sculpt,
++                                       const bool initialized, const bool eligible, const int id)
++{
++  if (!sculpt || initialized || !eligible || state.bottom.open() || id < 0) {
++    return false;
++  }
++  state.bottom.active_id = id;
++  return true;
++}
 +
 +struct Metrics {
 +  int inset = 8;
@@ -5912,7 +5925,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1263 @@
+@@ -0,0 +1,1281 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -5984,6 +5997,8 @@ new file mode 100644
 +  policy::Metrics metrics;
 +  policy::Layout layout;
 +  Rect bounds;
++  bool sculpt = false;
++  bool default_sculpt_shelf = false;
 +};
 +
 +static rcti to_rect(const Rect &rect)
@@ -6213,6 +6228,7 @@ new file mode 100644
 +  if (tools && !(tools->flag & RGN_FLAG_POLL_FAILED)) {
 +    model.tabs.push_back({tools_id, Edge::Tools, "Tools", model.main, RGN_TYPE_TOOLS, ""});
 +  }
++  model.sculpt = model.main->spacetype == SPACE_VIEW3D && STREQ(CTX_data_mode_string(C), "SCULPT");
 +  ARegion *shelf = BKE_area_find_region_type(model.main, RGN_TYPE_ASSET_SHELF);
 +  if (shelf && !(shelf->flag & RGN_FLAG_POLL_FAILED)) {
 +    model.tabs.push_back({shelf_id, Edge::Bottom, "Brushes", model.main, RGN_TYPE_ASSET_SHELF, ""});
@@ -6255,6 +6271,9 @@ new file mode 100644
 +      model.state.bottom.active_id = shelf_id;
 +    }
 +  }
++  model.default_sculpt_shelf = policy::open_default_sculpt_shelf(
++      model.state, model.sculpt, screen->ipad_sculpt_shelf_initialized,
++      find_tab(model, shelf_id) != nullptr, shelf_id);
 +  preferred_sizes(screen, model.state);
 +  model.metrics = panel_metrics(model.main);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
@@ -6264,6 +6283,9 @@ new file mode 100644
 +static void save_slot(bScreen *screen, const Model &model, Edge edge)
 +{
 +  screen->ipad_panel_initialized = 1;
++  if (model.sculpt && find_tab(model, shelf_id)) {
++    screen->ipad_sculpt_shelf_initialized = 1;
++  }
 +  screen->ipad_panels_locked = model.state.panels_locked;
 +  screen->ipad_panel_locked[0] = screen->ipad_panel_locked[1] = 0;
 +  screen->ipad_tools_open = model.state.tools.open();
@@ -6682,6 +6704,9 @@ new file mode 100644
 +    save_slot(screen, model, Edge::Bottom);
 +    save_slot(screen, model, Edge::Tools);
 +  }
++  if (model.sculpt && !screen->ipad_sculpt_shelf_initialized && find_tab(model, shelf_id)) {
++    save_slot(screen, model, Edge::Bottom);
++  }
 +  model.main->runtime.ipad_side_rect = to_rect(panel_content(model, Edge::Side));
 +  model.main->runtime.ipad_bottom_rect = to_rect(panel_content(model, Edge::Bottom));
 +  model.main->runtime.ipad_tools_rect = to_rect(model.layout.tools_panel);
@@ -6868,6 +6893,12 @@ new file mode 100644
 +    return;
 +  }
 +  const Model model = make_model(C, win);
++  if (model.default_sculpt_shelf) {
++    /* A workspace's mode/poll may settle after initial area preparation. Request
++     * the next layout pass; do not mutate GPU region buffers during compositing. */
++    screen->do_refresh = true;
++    WM_event_add_mousemove(win);
++  }
 +  GPU_blend(GPU_BLEND_ALPHA);
 +  for (const Edge edge : {Edge::Side, Edge::Bottom}) {
 +    if (find_tab(model, model.state.slot(edge).active_id)) {

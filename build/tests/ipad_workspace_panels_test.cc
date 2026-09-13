@@ -178,6 +178,23 @@ static void interaction()
   check(!other_workspace.side.open() && !other_workspace.bottom.open(), "Fresh workspace state independent");
 }
 
+static void sculpt_default()
+{
+  p::State state;
+  check(!p::open_default_sculpt_shelf(state, false, false, true, 77),
+        "Object mode does not open Sculpt brushes");
+  check(!p::open_default_sculpt_shelf(state, true, false, false, 77),
+        "Wait for the actual native brush shelf poll");
+  check(p::open_default_sculpt_shelf(state, true, false, true, 77) && state.bottom.active_id == 77,
+        "First eligible Sculpt use opens Brushes despite hidden desktop default");
+  state.dismiss(p::Edge::Bottom);
+  check(!p::open_default_sculpt_shelf(state, true, true, true, 77) && !state.bottom.open(),
+        "Explicit closure after initialization stays closed");
+  state.tap(p::Edge::Bottom, 88);
+  check(!p::open_default_sculpt_shelf(state, true, false, true, 77) && state.bottom.active_id == 88,
+        "First-use brushes never replace a chosen bottom editor");
+}
+
 static void global_lock_and_tools()
 {
   p::State state;
@@ -377,6 +394,7 @@ int main()
     split_geometry();
     interaction();
     global_lock_and_tools();
+    sculpt_default();
     geometry();
     resizing();
     automatic_sizes();

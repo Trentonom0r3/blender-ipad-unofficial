@@ -2,6 +2,13 @@
 
 ## Latest user refinement — left rail, global lock and working splits
 
+Device refinement, 2026-09-13: Sculpt opens its real brush shelf by default on first
+eligible use, then remembers closure. The shipped desktop startup saves that shelf
+hidden, so iPad needs an explicit default. Center the native toolbar using its own
+preferred width. Pin must respond to finger/Pencil taps; navigation controls must
+accept finger/Pencil press-drag-release with mouse-equivalent behavior. Preserve
+finger scrolling outside navigation and the established Pencil radial mappings.
+
 This section supersedes older right-side Tools/footer launcher/per-edge pin wording.
 Keep permanent matching vertical rails on both edges. Tools and bottom-editor/brush
 launchers belong on the **left**. Tools opens the actual native narrow vertical

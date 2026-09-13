@@ -1,11 +1,40 @@
 # Project handoff — 2026-09-12
 
+## Explicit Sculpt shelf default — latest source follow-up
+
+Host-read the actual verified IPA's factory and Sculpting-template `.blend` files
+with Blender 5.1.2, scripts disabled and no save: both Sculpting layouts have
+`show_region_toolbar = true` and **`show_region_asset_shelf = false`**. Restoring
+native saved visibility alone therefore cannot meet the user's requested default.
+
+Add an explicit first-use Sculpt shelf default, independent of other panel
+initialization. Wait until the native shelf poll succeeds, do not replace an already
+chosen bottom editor, and remember explicit closure. A mode/poll that settles after
+screen preparation requests the next layout pass without mutating buffers during
+compositing. Five additional compiled cases cover these transitions. All 14 tests
+pass, now including **679,176 panel checks**; preflight applies all 48 pinned files.
+This follow-up still needs compilation and device acceptance.
+
+Prior source **498063a1da2a3e9679852e52567f6020c993539e** is pushed. Its build
+[34758375022](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34758375022)
+passed cloud preflight and is fetching pinned source. It includes the working split,
+pin capture, native toolbar sizing and touch navigation changes below, but **does
+not include this explicit Sculpt default**. Leave that live run alone; a follow-up
+build must use the new source. No new device validation is inferred.
+
+User's 5% reserve remains in force. Last check: 9% weekly and 22% five-hour allowance
+remaining. Finish the checkpoint/handoff before the limiting allowance reaches 5%;
+do not begin another large feature under this reserve. Remaining split-seam resize,
+two-axis panel sizing, launcher reordering, broader navigation coverage and Files
+lifecycle work remain part of the active objective.
+
 ## Working splits and device input repairs — 2026-09-13, newest checkpoint
 
 The complete iPad app goal is still active. User requests stopping with **5% usage
 remaining** and a current handoff; check account limits while working and preserve
 that reserve. Do not mark the product complete to stop. At last usage check the
-weekly window had 14% remaining; no purchased or reset credits were available.
+  weekly window had 14% remaining; later readings are recorded above. No purchased
+  or reset credits were available.
 
 ### Latest device report
 
