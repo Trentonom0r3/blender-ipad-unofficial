@@ -5220,7 +5220,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,368 @@
+@@ -0,0 +1,395 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5240,7 +5240,7 @@ new file mode 100644
 +  bool empty() const { return width() == 0 || height() == 0; }
 +};
 +
-+enum class Role { Content, Service };
++enum class Role { Content, Service, Canvas };
 +enum class Edge { Side, Bottom };
 +
 +struct Area {
@@ -5269,11 +5269,26 @@ new file mode 100644
 +  const Area *primary = nullptr;
 +  int top = 0;
 +  bool have_content = false;
++  const Area *canvas = nullptr;
++  auto size = [](const Area &area) {
++    return static_cast<long long>(area.original.width()) * area.original.height();
++  };
++  long long largest_content = 0;
 +  for (const Area &area : areas) {
-+    if (area.id >= 0 && !area.original.empty() && area.role == Role::Content) {
++    if (area.id >= 0 && !area.original.empty() && area.role != Role::Service) {
 +      top = have_content ? std::max(top, area.original.ymax) : area.original.ymax;
 +      have_content = true;
++      largest_content = std::max(largest_content, size(area));
++      if (area.role == Role::Canvas && (!canvas || size(area) > size(*canvas))) {
++        canvas = &area;
++      }
 +    }
++  }
++  /* Tracking/Masking put small graphs above the large footage canvas. A small
++   * clip editor in a custom layout must not displace a larger working editor. */
++  const bool dominant_canvas = canvas && size(*canvas) >= largest_content;
++  if (dominant_canvas) {
++    primary = canvas;
 +  }
 +  /* A workspace containing only service editors still needs a usable primary. */
 +  if (!have_content) {
@@ -5286,8 +5301,8 @@ new file mode 100644
 +    }
 +  }
 +  for (const Area &area : areas) {
-+    if (area.id < 0 || area.original.empty() ||
-+        (have_content && area.role != Role::Content) ||
++    if (dominant_canvas || area.id < 0 || area.original.empty() ||
++        (have_content && area.role == Role::Service) ||
 +        area.original.ymax < top - std::max(0, tolerance)) {
 +      continue;
 +    }
@@ -5306,15 +5321,27 @@ new file mode 100644
 +    return result;
 +  }
 +  result.primary_id = primary->id;
++  int row_bottom = primary->original.ymin;
++  if (!dominant_canvas) {
++    /* A full-height Text Editor can share its top row with a shorter viewport.
++     * Lower Console/Info editors belong below that row, not beside the text. */
++    for (const Area &area : areas) {
++      if (area.id >= 0 && !area.original.empty() && area.role != Role::Service &&
++          area.original.ymax >= top - std::max(0, tolerance))
++      {
++        row_bottom = std::max(row_bottom, area.original.ymin);
++      }
++    }
++  }
 +  for (const Area &area : areas) {
 +    if (area.id < 0 || area.id == primary->id || area.original.empty()) {
 +      continue;
 +    }
 +    const bool overlaps_x = area.original.xmax > primary->original.xmin &&
 +                            area.original.xmin < primary->original.xmax;
-+    const bool below = area.original.ymax <= primary->original.ymin + std::max(0, tolerance);
++    const bool below = area.original.ymax <= row_bottom + std::max(0, tolerance);
 +    result.panels.push_back(
-+        {area.id, below && (area.role == Role::Content || overlaps_x) ? Edge::Bottom : Edge::Side,
++        {area.id, below && (area.role != Role::Service || overlaps_x) ? Edge::Bottom : Edge::Side,
 +         area.original});
 +  }
 +  /* Match spatial reading order rather than storage order: upper side editors
@@ -5759,7 +5786,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,947 @@
+@@ -0,0 +1,976 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -5851,7 +5878,8 @@ new file mode 100644
 +static std::string area_label(const ScrArea *area)
 +{
 +  if (area->spacetype == SPACE_OUTLINER) {
-+    return "Scene";
++    const auto *outliner = static_cast<const SpaceOutliner *>(area->spacedata.first);
++    return outliner && outliner->outlinevis == SO_DATA_API ? "Data" : "Scene";
 +  }
 +  if (area->spacetype == SPACE_PROPERTIES) {
 +    return "Inspector";
@@ -5859,6 +5887,31 @@ new file mode 100644
 +  if (area->spacetype == SPACE_ACTION) {
 +    const SpaceAction *saction = static_cast<const SpaceAction *>(area->spacedata.first);
 +    return saction && saction->mode == SACTCONT_TIMELINE ? "Timeline" : "Dope Sheet";
++  }
++  if (area->spacetype == SPACE_NODE) {
++    const auto *node = static_cast<const SpaceNode *>(area->spacedata.first);
++    if (node) {
++      if (STREQ(node->tree_idname, "GeometryNodeTree")) {
++        return "Geometry Nodes";
++      }
++      if (STREQ(node->tree_idname, "ShaderNodeTree")) {
++        return "Shader Editor";
++      }
++      if (STREQ(node->tree_idname, "CompositorNodeTree")) {
++        return "Compositor";
++      }
++    }
++  }
++  if (area->spacetype == SPACE_CLIP) {
++    const auto *clip = static_cast<const SpaceClip *>(area->spacedata.first);
++    if (clip) {
++      return clip->view == SC_VIEW_GRAPH ? "Tracking Graph" :
++             clip->view == SC_VIEW_DOPESHEET ? "Tracking Dopesheet" : "Footage";
++    }
++  }
++  if (area->spacetype == SPACE_SEQ) {
++    const auto *sequence = static_cast<const SpaceSeq *>(area->spacedata.first);
++    return sequence && sequence->view == SEQ_VIEW_PREVIEW ? "Preview" : "Sequencer";
 +  }
 +  return area->type ? area->type->name : "Editor";
 +}
@@ -5943,9 +5996,12 @@ new file mode 100644
 +    const int id = int(model.areas.size());
 +    model.areas.push_back(area);
 +    const bool service = ELEM(area->spacetype, SPACE_OUTLINER, SPACE_PROPERTIES, SPACE_FILE);
++    const auto *clip = area->spacetype == SPACE_CLIP ?
++                          static_cast<const SpaceClip *>(area->spacedata.first) : nullptr;
 +    inputs.push_back({id,
 +                      {area->v1->vec.x, area->v1->vec.y,
 +                       area->v4->vec.x + 1, area->v2->vec.y + 1},
++                      clip && clip->view == SC_VIEW_CLIP ? policy::Role::Canvas :
 +                      service ? policy::Role::Service : policy::Role::Content});
 +  }
 +  const policy::Mapping mapping = policy::classify(inputs, int(2 * UI_SCALE_FAC));

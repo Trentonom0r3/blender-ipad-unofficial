@@ -94,6 +94,15 @@ static void classification()
   check(p::classify({}).primary_id == -1, "Empty workspace handled");
   check(p::classify({{-1, {0, 0, 100, 100}}, {1, {0, 0, 0, 100}}}).primary_id == -1,
         "Invalid and empty descriptors ignored");
+  mapping = p::classify({{1, {0, 400, 1000, 900}},
+                         {2, {0, 0, 1000, 400}, p::Role::Canvas}});
+  check(mapping.primary_id == 1 && edge(mapping, 2) == p::Edge::Bottom,
+        "A smaller custom footage panel stays bottom instead of taking over the workspace");
+  mapping = p::classify({{1, {0, 0, 1000, 650}, p::Role::Canvas},
+                         {2, {0, 650, 500, 900}}, {3, {500, 650, 1000, 900}}});
+  check(mapping.primary_id == 1 && edge(mapping, 2) == p::Edge::Side &&
+            edge(mapping, 3) == p::Edge::Side,
+        "Dominant footage stays primary beneath auxiliary top graphs");
 }
 
 static void interaction()

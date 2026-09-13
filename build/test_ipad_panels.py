@@ -1,6 +1,8 @@
 """Compile behavior tests against the exact workspace policy shipped in the overlay."""
 from pathlib import Path
 import os
+import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -8,7 +10,7 @@ import unittest
 
 
 class IPadWorkspacePanelsTests(unittest.TestCase):
-    def test_workspace_placement_locking_resize_and_overflow(self):
+    def _run_source(self, test_source):
         candidates = [shutil.which('clang++'), shutil.which('g++')]
         if os.name == 'nt':
             candidates += [r'C:\Program Files\LLVM\bin\clang++.exe',
@@ -30,11 +32,74 @@ class IPadWorkspacePanelsTests(unittest.TestCase):
             work = Path(directory)
             (work / 'ipad_workspace_panels.hh').write_text(header, encoding='utf-8')
             test = work / 'test.cc'
-            shutil.copyfile(repo / 'build/tests/ipad_workspace_panels_test.cc', test)
+            test.write_text(test_source, encoding='utf-8')
             binary = work / ('tests.exe' if os.name == 'nt' else 'tests')
             subprocess.run([compiler, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-pedantic',
                             str(test), '-o', str(binary)], cwd=work, check=True)
             subprocess.run([str(binary)], cwd=work, check=True)
+
+    def test_workspace_placement_locking_resize_and_overflow(self):
+        repo = Path(__file__).resolve().parents[1]
+        self._run_source((repo / 'build/tests/ipad_workspace_panels_test.cc').read_text())
+
+    def test_shipped_workspace_layouts(self):
+        repo = Path(__file__).resolve().parents[1]
+        fixture = json.loads((repo / 'build/tests/ipad_workspace_layouts.json').read_text())
+        workflow = (repo / '.github/workflows/build-ipa.yml').read_text()
+        pinned = re.search(r'BLENDER_COMMIT: ([0-9a-f]{40})', workflow).group(1)
+        self.assertEqual(fixture['source_commit'], pinned, 'Re-audit layouts when upstream changes')
+        self.assertEqual(len(fixture['cases']), 33)
+        calls = []
+        for case in fixture['cases']:
+            areas = ','.join('{%d,{%s},p::Role::%s}' % (
+                a['id'], ','.join(map(str, a['rect'])), a['role']) for a in case['areas'])
+            calls.append('verify({%s},%d,{%s},%s);' % (
+                areas, case['primary'], ','.join(map(str, case['bottom'])), json.dumps(case['name'])))
+        self._run_source(r'''
+#include "ipad_workspace_panels.hh"
+#include <iostream>
+#include <set>
+#include <stdexcept>
+#include <string>
+namespace p = blender::ed::ipad::panels;
+static int cases = 0;
+static void verify(std::vector<p::Area> original, int primary,
+                   std::set<int> bottom, const char *name)
+{
+  for (int sx : {1, 2}) {
+    for (int sy : {1, 3}) {
+      auto areas = original;
+      for (auto &a : areas) {
+        a.original = {a.original.xmin * sx - 137, a.original.ymin * sy + 63,
+                      a.original.xmax * sx - 137, a.original.ymax * sy + 63};
+      }
+      const auto mapping = p::classify(areas, 3);
+      std::set<int> ids{mapping.primary_id}, actual_bottom;
+      for (const auto &panel : mapping.panels) {
+        if (!ids.insert(panel.id).second) {
+          throw std::runtime_error(std::string(name) + ": duplicate editor");
+        }
+        if (panel.edge == p::Edge::Bottom) {
+          actual_bottom.insert(panel.id);
+        }
+      }
+      if (mapping.primary_id != primary || actual_bottom != bottom || ids.size() != areas.size()) {
+        throw std::runtime_error(std::string(name) + ": incorrect main editor or edge placement");
+      }
+      ++cases;
+    }
+  }
+}
+int main() { try {
+''' + '\n'.join(calls) + r'''
+  std::cout << "PASS: " << cases << " shipped-layout placement/scaling cases\n";
+  return 0;
+} catch (const std::exception &error) {
+  std::cerr << error.what() << "\n";
+  return 1;
+}
+}
+''')
 
 
 if __name__ == '__main__':

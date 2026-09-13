@@ -1,5 +1,36 @@
 # Project handoff — 2026-09-12
 
+## Shipped workspace audit and placement repair — 2026-09-12, latest source checkpoint
+
+The full iPad app goal remains active. This checkpoint fixes independently found
+workspace defects; it is not product completion or device acceptance.
+
+- Extracted factory startup from the verified e986044 IPA's Mach-O datatoc symbols.
+  Its 885,428 bytes exactly match the pinned LFS SHA-256. Read it and four packaged
+  app templates with host Blender 5.1.2: 33 saved layouts, including legacy layouts.
+- Added independently reviewed fixtures and 132 compiled placement/scale cases.
+  The Scripting case fails against 2d8b666's old placement behavior.
+- Scripting's Console and Info now open at the bottom, respecting the lower row
+  beneath a shorter neighboring viewport alongside the full-height Text Editor.
+- Masking/Tracking preserve a dominant footage canvas beneath auxiliary top graphs.
+  A smaller custom clip view does not displace a larger working editor.
+- Real editor launchers distinguish Geometry Nodes, Shader Editor, Compositor,
+  Tracking Graph, Tracking Dopesheet, Footage, Preview, Sequencer and Outliner Data.
+- Added `build/inspect_ipad_workspaces.py` to reproduce the IPA data verification
+  and inventory with scripts disabled and no UI/preferences changes.
+
+Validation: all 45 pinned patch files pass preflight; all 11 unit tests pass,
+including 585,442 policy checks, 132 shipped-layout cases and 75 tool-ring cases.
+The host reader does not execute the iOS compositor/input adapter. See
+`WORKSPACE_VALIDATION.md` for provenance, commands and remaining acceptance gates.
+
+Build 34725861417 attempt 1 stopped before compilation: GitHub reports the hosted
+runner lost communication. No failed compiler log exists. Attempt 2 was explicitly
+rerun and is compiling source 2d8b666; it does not include this newer layout repair.
+Next: verify that retry, compile/package this checkpoint, and continue native
+interaction/runtime validation. Native Files lifecycle and full creative-workflow
+acceptance remain unfinished; keep the overall goal active.
+
 ## Sidebar label and selection repair — 2026-09-12, latest source checkpoint
 
 Source: **2d8b666e99298c1cdbcda49b091eed33b4e90d40**.
