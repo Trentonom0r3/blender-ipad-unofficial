@@ -4,8 +4,22 @@
 
 Source **a47b895** is pushed. New iOS build
 [34788075029](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34788075029)
-was dispatched; completion and artifact remain unverified. Final independent source
-review found no blockers; this does not imply compilation or device acceptance.
+is verified in progress: cloud preflight passed, and the build job is fetching
+pinned Blender source with LFS. Completion and artifact remain unverified. Final
+independent source review found no blockers; device acceptance remains separate.
+
+Split-resize implementation audit: `area_move_set_limits` in screen_ops.cc uses
+`area->winx/winy` (adapted displayed dimensions) to limit changes to saved ScrVert
+coordinates. A display-to-saved delta conversion alone is insufficient. The new
+resize path must calculate constraints in saved geometry and also enforce visible
+working-editor minimums, including connected auxiliary areas. `area_split` edits
+saved vertices through `screen_geom_find_area_split_point`; audit its minimum-size
+checks under adapted runtime bounds too. Preserve a snapshot for cancellation,
+validate topology at each modal step, and release capture on workspace/window
+changes. This is investigated, not implemented; no seam-resize capability is claimed.
+
+At the last reserve check 7% of the five-hour allowance remained. Finish checkpoints
+before the user's 1% floor; do not infer full completion from this successful preflight.
 
 Remove the permanent Layout rail item and restore that space to content launchers.
 Working split/swap commands use the native editor header/footer context menu;
