@@ -40,12 +40,12 @@ class IPadWorkspacePanelsTests(unittest.TestCase):
 
     def test_workspace_placement_locking_resize_and_overflow(self):
         repo = Path(__file__).resolve().parents[1]
-        self._run_source((repo / 'build/tests/ipad_workspace_panels_test.cc').read_text())
+        self._run_source((repo / 'build/tests/ipad_workspace_panels_test.cc').read_text(encoding='utf-8'))
 
     def test_shipped_workspace_layouts(self):
         repo = Path(__file__).resolve().parents[1]
-        fixture = json.loads((repo / 'build/tests/ipad_workspace_layouts.json').read_text())
-        workflow = (repo / '.github/workflows/build-ipa.yml').read_text()
+        fixture = json.loads((repo / 'build/tests/ipad_workspace_layouts.json').read_text(encoding='utf-8'))
+        workflow = (repo / '.github/workflows/build-ipa.yml').read_text(encoding='utf-8')
         pinned = re.search(r'BLENDER_COMMIT: ([0-9a-f]{40})', workflow).group(1)
         self.assertEqual(fixture['source_commit'], pinned, 'Re-audit layouts when upstream changes')
         self.assertEqual(len(fixture['cases']), 33)
@@ -53,8 +53,8 @@ class IPadWorkspacePanelsTests(unittest.TestCase):
         for case in fixture['cases']:
             areas = ','.join('{%d,{%s},p::Role::%s}' % (
                 a['id'], ','.join(map(str, a['rect'])), a['role']) for a in case['areas'])
-            calls.append('verify({%s},%d,{%s},%s);' % (
-                areas, case['primary'], ','.join(map(str, case['bottom'])), json.dumps(case['name'])))
+            calls.append('verify({%s},%d,{%s},{%s},%s);' % (
+                areas, case['primary'], ','.join(map(str, case['bottom'])), ','.join(map(str, case['working'])), json.dumps(case['name'])))
         self._run_source(r'''
 #include "ipad_workspace_panels.hh"
 #include <iostream>
@@ -64,7 +64,7 @@ class IPadWorkspacePanelsTests(unittest.TestCase):
 namespace p = blender::ed::ipad::panels;
 static int cases = 0;
 static void verify(std::vector<p::Area> original, int primary,
-                   std::set<int> bottom, const char *name)
+                   std::set<int> bottom, std::set<int> working, const char *name)
 {
   for (int sx : {1, 2}) {
     for (int sy : {1, 3}) {
@@ -74,7 +74,35 @@ static void verify(std::vector<p::Area> original, int primary,
                       a.original.xmax * sx - 137, a.original.ymax * sy + 63};
       }
       const auto mapping = p::classify(areas, 3);
-      std::set<int> ids{mapping.primary_id}, actual_bottom;
+      std::set<int> ids, actual_bottom, actual_working;
+      for (const auto &area : mapping.working) {
+        if (!ids.insert(area.id).second) {
+          throw std::runtime_error(std::string(name) + ": duplicate working editor");
+        }
+        actual_working.insert(area.id);
+      }
+      if (actual_working != working) {
+        throw std::runtime_error(std::string(name) + ": working split lost or misclassified");
+      }
+      for (const p::Rect bounds : {p::Rect{17,29,1041,797}, p::Rect{0,0,768,1024}, p::Rect{0,0,320,480}}) {
+        const auto placed = p::working_layout(mapping.working, bounds);
+        if (placed.size() != working.size()) {
+          throw std::runtime_error(std::string(name) + ": working editor dropped during layout");
+        }
+        for (size_t i = 0; i < placed.size(); ++i) {
+          const auto a = placed[i].original;
+          if (a.empty() || a.xmin < bounds.xmin || a.ymin < bounds.ymin ||
+              a.xmax > bounds.xmax || a.ymax > bounds.ymax) {
+            throw std::runtime_error(std::string(name) + ": working editor outside bounds");
+          }
+          for (size_t j = i + 1; j < placed.size(); ++j) {
+            const auto b = placed[j].original;
+            if (a.xmin < b.xmax && b.xmin < a.xmax && a.ymin < b.ymax && b.ymin < a.ymax) {
+              throw std::runtime_error(std::string(name) + ": overlapping working editors");
+            }
+          }
+        }
+      }
       for (const auto &panel : mapping.panels) {
         if (!ids.insert(panel.id).second) {
           throw std::runtime_error(std::string(name) + ": duplicate editor");

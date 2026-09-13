@@ -118,6 +118,55 @@ int main() {
                 subprocess.run(args, check=True)
                 subprocess.run([str(exe)], check=True)
 
+    def test_native_rotate_button_accepts_pointer_press(self):
+        patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        section = patch.split('diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc ', 1)[1].split('diff --git ', 1)[0]
+        code = '\n'.join(line[1:] for line in section.splitlines()
+                         if line.startswith((' ', '+')) and not line.startswith('+++'))
+        # Compile the actual invocation guard with a stub for Blender's modal entry.
+        start = code.index('#ifdef WITH_APPLE_CROSSPLATFORM')
+        end = code.index('#endif', start) + len('#endif')
+        guard = code[start:end]
+        compiler = shutil.which('clang++') or shutil.which('g++')
+        if not compiler and Path('C:/Program Files/LLVM/bin/clang++.exe').exists():
+            compiler = 'C:/Program Files/LLVM/bin/clang++.exe'
+        self.assertIsNotNone(compiler, 'A C++ compiler is required')
+        harness = r'''
+#include <cassert>
+constexpr int MOUSEPAN = 1, LEFTMOUSE = 2, MIDDLEMOUSE = 3, EVT_PADPLUSKEY = 4;
+constexpr int WM_EVENT_MULTITOUCH_TWO_FINGERS = 1, WM_EVENT_MULTITOUCH_THREE_FINGERS = 2;
+constexpr int OPERATOR_FINISHED = 1, OPERATOR_RUNNING_MODAL = 2;
+struct Event { int type; int flag; };
+int invoke(const Event *event) {
+GUARD
+  return OPERATOR_RUNNING_MODAL;
+}
+int main() {
+  for (int type : {LEFTMOUSE, MIDDLEMOUSE, EVT_PADPLUSKEY}) {
+    Event press{type, 0};
+    assert(invoke(&press) == OPERATOR_RUNNING_MODAL);
+  }
+  for (int fingers : {0, WM_EVENT_MULTITOUCH_TWO_FINGERS, WM_EVENT_MULTITOUCH_THREE_FINGERS}) {
+    Event pan{MOUSEPAN, fingers};
+#ifdef WITH_APPLE_CROSSPLATFORM
+    assert(invoke(&pan) == ((fingers & WM_EVENT_MULTITOUCH_TWO_FINGERS) ? OPERATOR_RUNNING_MODAL : OPERATOR_FINISHED));
+#else
+    assert(invoke(&pan) == OPERATOR_RUNNING_MODAL);
+#endif
+  }
+}
+'''.replace('GUARD', guard).replace('#include <cassert>', '#include <cassert>\n#include <initializer_list>')
+        with tempfile.TemporaryDirectory(prefix='pencil-pan-') as directory:
+            source = Path(directory) / 'pan.cc'
+            source.write_text(harness, encoding='utf-8')
+            for ios in (False, True):
+                exe = Path(directory) / ('ios.exe' if ios else 'desktop.exe')
+                args = [compiler, '-std=c++17', str(source), '-o', str(exe)]
+                if ios:
+                    args.append('-DWITH_APPLE_CROSSPLATFORM')
+                subprocess.run(args, check=True)
+                subprocess.run([str(exe)], check=True)
+
     def test_flythrough_and_pencil_interaction_policy(self):
         patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
 

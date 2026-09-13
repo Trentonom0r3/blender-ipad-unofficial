@@ -43,6 +43,14 @@ static p::Edge edge(const p::Mapping &mapping, const int id)
   throw std::runtime_error("Missing panel ID " + std::to_string(id));
 }
 
+static bool working(const p::Mapping &mapping, int id)
+{
+  for (const p::Area &area : mapping.working) {
+    if (area.id == id) { return true; }
+  }
+  return false;
+}
+
 static void classification()
 {
   /* Default Layout: main viewport, lower Timeline, right Outliner/Properties. */
@@ -76,7 +84,7 @@ static void classification()
                             {primary_id + 2, {0, 0, 1000, 240}},
                             {primary_id + 3, {1000, 0, 1300, 900}, p::Role::Service}});
     check(mapping.primary_id == primary_id, "Workspace's largest top content stays primary");
-    check(edge(mapping, primary_id + 1) == p::Edge::Side, "Second top content is a side tab");
+    check(working(mapping, primary_id + 1), "Second working editor stays visible in its split");
     check(edge(mapping, primary_id + 2) == p::Edge::Bottom, "Lower editor remains a bottom tab");
   }
 
@@ -100,9 +108,36 @@ static void classification()
         "A smaller custom footage panel stays bottom instead of taking over the workspace");
   mapping = p::classify({{1, {0, 0, 1000, 650}, p::Role::Canvas},
                          {2, {0, 650, 500, 900}}, {3, {500, 650, 1000, 900}}});
-  check(mapping.primary_id == 1 && edge(mapping, 2) == p::Edge::Side &&
-            edge(mapping, 3) == p::Edge::Side,
+  check(mapping.primary_id == 1 && working(mapping, 2) && working(mapping, 3),
         "Dominant footage stays primary beneath auxiliary top graphs");
+}
+
+static void split_geometry()
+{
+  const auto created = p::classify({{1, {0,500,1000,1000}, p::Role::Working},
+                                    {2, {0,100,1000,500}, p::Role::Working},
+                                    {3, {0,0,1000,100}}});
+  check(working(created, 1) && working(created, 2) && edge(created, 3) == p::Edge::Bottom,
+        "Explicit horizontal split keeps both editors working above the original Timeline");
+  const std::vector<p::Area> scripting{{1, {0,600,400,1000}}, {2, {400,0,1000,1000}}};
+  const auto before = scripting;
+  const p::Rect bounds{10,20,1010,820};
+  auto split = p::working_layout(scripting, bounds, 4);
+  check(split.size() == 2, "Both Scripting working editors stay visible");
+  check(split[0].original.ymin == 20 && split[0].original.ymax == 820,
+        "Viewport fills the space vacated by lower floating Console/Info");
+  check(split[0].original.xmax == 410 && split[1].original.xmin == 414,
+        "Saved left/right split proportion is preserved with a usable seam");
+  for (size_t i = 0; i < scripting.size(); ++i) {
+    check(same(scripting[i].original, before[i].original), "Layout never mutates saved vertices");
+  }
+  const std::vector<p::Area> nested{{1, {0,0,1000,600}},
+                                    {2, {0,600,600,1000}}, {3, {600,600,1000,1000}}};
+  split = p::working_layout(nested, bounds, 4);
+  check(split.size() == 3, "Footage and two upper VFX editors all remain visible");
+  check(split[0].original.ymax < split[1].original.ymin &&
+            split[1].original.xmax < split[2].original.xmin,
+        "Horizontal and nested vertical splits are preserved together");
 }
 
 static void interaction()
@@ -339,6 +374,7 @@ int main()
 {
   try {
     classification();
+    split_geometry();
     interaction();
     global_lock_and_tools();
     geometry();

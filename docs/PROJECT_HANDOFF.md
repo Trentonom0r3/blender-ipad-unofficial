@@ -1,5 +1,76 @@
 # Project handoff — 2026-09-12
 
+## Working splits and device input repairs — 2026-09-13, newest checkpoint
+
+The complete iPad app goal is still active. User requests stopping with **5% usage
+remaining** and a current handoff; check account limits while working and preserve
+that reserve. Do not mark the product complete to stop. At last usage check the
+weekly window had 14% remaining; no purchased or reset credits were available.
+
+### Latest device report
+
+User reports that the left panel works and the Move/Pan orb now drags. Tools look
+slightly right-shifted; Sculpt brushes are not open by default; the pin orb appears
+inactive. Touch and Pencil navigation should behave like mouse navigation. The user
+did not identify the installed run, so do not assign this evidence to an exact IPA.
+These observations are narrower than full workspace or input acceptance.
+
+Build **34738815340** for **63895fa** succeeded. Artifact
+**Blender-iPad-Unofficial-ipa**, **248,389,189 bytes**, was verified not expired;
+it predates all changes below. Never present it as the new fix.
+
+### Source changes in this checkpoint
+
+- Retain simultaneous working editors, including UV/image and 3D pairs, Animation,
+  Spreadsheet/Geometry Nodes, Scripting and nested upper VFX editors. Lower auxiliary
+  editors still use bottom panels. Reconstruct saved split proportions without
+  overwriting saved vertices merely to present a floating layout.
+- Initialize/draw every working editor. The active working editor owns native
+  Tools/sidebar regions; clicking another working editor changes that ownership.
+  Native region hit routing extends beyond its owner area so floating content over
+  a neighboring editor remains usable. Navigation controls in every working viewport
+  are exempt from outside-dismissal. Keep one lock at the outer top-right editor.
+- Permanent left **Layout** button opens a native menu for horizontal/vertical
+  splits and swapping native working-editor contents. Explicit new lower splits
+  are marked as working so the adapter does not immediately turn them into panels.
+- Pin taps use the same captured press/release path as rails, at the exact native
+  gizmo rectangle. Native gizmo draws the icon; no duplicate overlay is drawn.
+  This addresses the reported inactive control without claiming a device-proven cause.
+- First adaptation reads the native Tools/asset-shelf visibility instead of forcing
+  all slots closed; later user dismissal remains saved. Tools width uses the native
+  editor's preferred toolbar width instead of the arbitrary 48-unit strip. Verify
+  Sculpt startup visibility and centering on device after compilation.
+- GHOST receives per-window snapshots of rendered navigation bounds. Finger/Pencil
+  drags beginning there generate native pointer down/move/up from the actual touch
+  origin, including cancellation release. Finger scrolling elsewhere is preserved.
+  Snapshots update on redraw and are erased on window destruction.
+- Rotate had the same broad iOS invocation filter as the earlier Move bug. Restrict
+  it to finger scroll events, preserving pointer/native gizmo modal invocation.
+  The touch bridge currently covers normal adapted workspaces; fullscreen/temporary
+  screens and quad-view navigation remain an explicit follow-up.
+
+Validation: all **48 pinned patch files** pass source preflight; all **14 unit tests**
+pass. Includes 679,171 panel checks, 132 shipped-layout/scaling cases with explicit
+working-editor sets and three window shapes each, native navigation snapshot
+ownership/lifecycle, Rotate/Move invocation and 75 preserved tool-ring cases.
+These tests do not execute UIKit, GPU drawing or real Blender operator/context
+lifetimes. Full iOS compilation and device acceptance of this checkpoint are pending.
+
+### Remaining work and next actions
+
+1. Compile/package this coherent checkpoint and repair actual build errors. Record
+   its source/run and verified artifact; avoid rebuilding unchanged code.
+2. Validate native pin, initial Sculpt brushes, toolbar alignment, finger/Pencil
+   nav press/drag/release, workspace editor focus and split/swap on hardware.
+3. Add touch resizing of working split seams, two-axis floating panel sizing and
+   launcher reordering. Current side-width/bottom-height resize remains functional;
+   swapping working editors is not the completed launcher-reordering requirement.
+4. Extend navigation capture to fullscreen/temporary/quad views and verify popup
+   occlusion, narrow windows, multi-touch interruption and pointer/Pencil handoff.
+5. Preserve the full native Files lifecycle backlog (document identity, provider
+   coordination, scopes, cancellation, sidecars, recovery) and the radial mappings.
+
+
 ## Left rail, global panel lock and Pencil pan — current source checkpoint
 
 Source: **63895faee8cc854e3c141e04dca7b833f3af6c53**, pushed on

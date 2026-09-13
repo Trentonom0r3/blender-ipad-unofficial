@@ -46,6 +46,15 @@ The audit found and now covers:
 The Scripting fixture fails against 2d8b666's placement behavior and passes with the
 repair. Tests also distinguish a smaller bottom footage view from a dominant canvas.
 
+## Device follow-up source repairs
+
+The newest source adds exact native pin press/release capture, native startup shelf
+visibility and toolbar sizing, plus GHOST navigation-only pointer streams for direct
+touch/Pencil. A per-window snapshot lifecycle test covers replacement, hiding and
+window destruction. Both Move and Rotate invocation guards are compiled for iOS
+and desktop. These are source checks; the device report confirms earlier left-rail
+and Move behavior only, without naming an exact installed run.
+
 ## Remaining acceptance gates
 
 | Layer | Evidence | Still required |
@@ -58,7 +67,7 @@ repair. Tests also distinguish a smaller bottom footage view from a dominant can
 | Left/right launcher reachability | Permanent rail geometry and captured tab release | Small Stage Manager widths, overflow and onscreen keyboard |
 | Global panel lock | Native navigation gizmo plus fallback; compiled shared lock behavior | Hardware accessibility with navigation hidden, camera/quad views and all editor types |
 | Pencil Pan button | Compiled actual invocation guard for desktop/iOS | Pencil press/drag/release on native Move with panels open and closed |
-| Working editor splits | Current classifier retains editor identity only | Restore simultaneous working splits and touch split/resize/reorder controls |
+| Working editor splits | Reviewed working sets for 33 layouts; split reconstruction at three window shapes, native split/swap source and multi-editor draw/hit routing | iOS compile; device context/undo/editor preservation; seam resize and launcher reordering |
 | Full iPad workflow | Existing Files/Pencil work retained | Native document identity/provider lifecycle, recovery, exports and end-to-end creative tasks |
 
 The old Python dock preview does not execute the C++ floating editor compositor and

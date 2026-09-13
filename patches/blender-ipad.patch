@@ -340,11 +340,12 @@ diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
-@@ -6,13 +6,16 @@
+@@ -6,13 +6,17 @@
 
  #include "GHOST_ContextIOS.hh"
  #include "GHOST_SystemIOS.hh"
 +#include "GHOST_ProjectImport-api.hh"
++#include "GHOST_NavigationIOS.hh"
 
  #include "GHOST_C-api.h"
  #include "GHOST_Debug.hh"
@@ -357,7 +358,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  #include "GHOST_EventTouch.hh"
  #include "GHOST_EventTrackpad.hh"
 
-@@ -20,10 +23,13 @@
+@@ -20,10 +24,13 @@
  #import <Metal/Metal.h>
  #import <QuartzCore/QuartzCore.h>
  #import <UIKit/UIKit.h>
@@ -371,7 +372,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  // #define IOS_INPUT_LOGGING
  #if defined(IOS_INPUT_LOGGING)
  #  define IOS_INPUT_LOG(...) NSLog(__VA_ARGS__)
-@@ -31,6 +37,13 @@
+@@ -31,6 +38,13 @@
  #  define IOS_INPUT_LOG(...)
  #endif
 
@@ -385,7 +386,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  // #define IOS_WINDOW_LOGGING
  #if defined(IOS_WINDOW_LOGGING)
  #  define IOS_WINDOW_LOG(...) NSLog(__VA_ARGS__)
-@@ -48,10 +61,12 @@
+@@ -48,10 +62,12 @@
      CURSOR_MOVE,
      PAN_GESTURE,
      PAN_GESTURE_TWO_FINGERS,
@@ -399,7 +400,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    };
    EventTypes event_list[10];
    int num_events;
-@@ -59,6 +74,7 @@
+@@ -59,6 +75,7 @@
    CGPoint translation;
    CGFloat distance;
    bool pencil_used;
@@ -407,7 +408,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    UserInputEvent(CGPoint *loc, CGPoint *tran, CGFloat *dist, bool pencil)
    {
-@@ -86,14 +102,18 @@
+@@ -86,14 +103,18 @@
          return @"PAN";
        case PAN_GESTURE_TWO_FINGERS:
          return @"PAN2F";
@@ -427,7 +428,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      }
      BLI_assert_unreachable();
      return @"Event undefined";
-@@ -103,8 +123,20 @@
+@@ -103,8 +124,20 @@
 
  /* GHOSTUITapGesture interface for capturing taps. */
  @interface GHOSTUITapGestureRecognizer : UITapGestureRecognizer
@@ -448,7 +449,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -116,21 +148,117 @@
+@@ -116,21 +149,117 @@
    return window->scalePointToWindow(touch_point);
  }
 
@@ -566,7 +567,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
-@@ -179,15 +307,39 @@
+@@ -179,15 +308,39 @@
  @interface GHOSTUIPinchGestureRecognizer : UIPinchGestureRecognizer
  {
    CGFloat cached_distance;
@@ -606,7 +607,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window touch_id:(int)touch_id
  {
    CGPoint touch_point = [self locationOfTouch:touch_id inView:window->getView()];
-@@ -240,7 +392,13 @@
+@@ -240,7 +393,13 @@
    GHOSTUITapGestureRecognizer *tap4f_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan2f_gesture_recognizer;
@@ -620,7 +621,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOSTUIHoverGestureRecognizer *hover_gesture_recognizer;
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
-@@ -251,6 +409,8 @@
+@@ -251,6 +410,8 @@
    UITouch *current_pencil_touch;
    GHOST_TabletData tablet_data;
    bool last_tap_with_pencil;
@@ -629,11 +630,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Keyboard handling. */
    UITextField *text_field;
-@@ -259,6 +419,31 @@
+@@ -259,6 +420,32 @@
    const char *text_field_string;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
 +  bool native_chrome_hovered;
++  bool navigation_drag;
 +  bool external_mouse_connected;
 +  bool mouse_left_pressed;
 +  bool mouse_middle_pressed;
@@ -661,7 +663,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Toolbar */
    bool toolbar_enabled;
-@@ -282,7 +467,13 @@
+@@ -282,7 +469,13 @@
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender;
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender;
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender;
@@ -675,7 +677,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -292,7 +483,36 @@
+@@ -292,7 +485,36 @@
  - (const char *)getLastKeyboardString;
  @end
 
@@ -712,12 +714,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)setSystemAndWindowIOS:(GHOST_SystemIOS *)sys windowIOS:(GHOST_WindowIOS *)win
  {
    system = sys;
-@@ -306,6 +526,13 @@
+@@ -306,6 +528,14 @@
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
 +  indirect_pointer_dragging = false;
 +  native_chrome_hovered = false;
++  navigation_drag = false;
 +  shift_pressed = false;
 +  indirect_is_orbit = false;
 +  indirect_is_pan = false;
@@ -726,7 +729,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
 
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +562,22 @@
+@@ -335,6 +565,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -749,7 +752,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)registerGestureRecognizers
-@@ -354,6 +597,8 @@
+@@ -354,6 +600,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -758,7 +761,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +609,8 @@
+@@ -364,6 +612,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -767,7 +770,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +621,8 @@
+@@ -374,6 +624,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -776,7 +779,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -392,24 +641,82 @@
+@@ -392,24 +644,82 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
 
@@ -859,7 +862,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -458,6 +765,10 @@
+@@ -458,6 +768,10 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -870,7 +873,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            system->pushEvent(
                new GHOST_EventCursor(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                      GHOST_kEventCursorMove,
-@@ -490,6 +801,43 @@
+@@ -490,6 +804,43 @@
                                        true,
                                        2));
            break;
@@ -914,7 +917,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
          case UserInputEvent::EventTypes::LEFT_BUTTON_DOWN:
            system->pushEvent(
                new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
-@@ -510,7 +858,8 @@
+@@ -510,7 +861,8 @@
            system->pushEvent(
                new GHOST_EventTrackpad(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                        window,
@@ -924,7 +927,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                        event_info.location.x,
                                        event_info.location.y,
                                        event_info.distance,
-@@ -518,14 +867,24 @@
+@@ -518,14 +870,24 @@
                                        false,
                                        2));
            break;
@@ -951,7 +954,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,17 +898,29 @@
+@@ -539,17 +901,29 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -988,7 +991,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* Override touch methods to capture the UITouch object. */
-@@ -580,8 +951,10 @@
+@@ -580,8 +954,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
 
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -1001,7 +1004,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,22 +977,49 @@
+@@ -604,22 +980,49 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -1056,7 +1059,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, last_tap_with_pencil);
 
    /* Send events to indicate a 'click' on event end. */
-@@ -630,6 +1030,10 @@
+@@ -630,6 +1033,10 @@
    }
 
    [self generateUserInputEvents:event_info];
@@ -1067,7 +1070,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1081,133 @@
+@@ -677,12 +1084,159 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -1140,7 +1143,33 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    tablet_data.Xtilt = sin(azimuthAngle) * cos(altitudeAngle) / maxTilt;
 +    tablet_data.Ytilt = -cos(azimuthAngle) * cos(altitudeAngle) / maxTilt;
 +  }
-+  /* Finger motion is scrolling, never a synthetic left-button drag. Keep the
++  /* Use the rendered navigation hit rectangles, not a fixed screen corner.
++   * Start at the actual touch origin: UIKit recognizes a pan only after movement,
++   * which can already put a Pencil/finger outside a small round button. */
++  if (sender.state == UIGestureRecognizerStateBegan) {
++    CGPoint origin = CGPointMake(touch_point.x - translation.x,
++                                        touch_point.y - translation.y);
++    navigation_drag = ghost::ios::navigation_hit(window, int(origin.x), int(origin.y));
++    if (navigation_drag) {
++      UserInputEvent begin(&origin, nullptr, nullptr, pencil_pan);
++      begin.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
++      begin.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_DOWN);
++      [self generateUserInputEvents:begin];
++    }
++  }
++  if (navigation_drag) {
++    UserInputEvent pointer(&touch_point, nullptr, nullptr, pencil_pan);
++    pointer.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
++    if (sender.state == UIGestureRecognizerStateEnded ||
++        sender.state == UIGestureRecognizerStateCancelled ||
++        sender.state == UIGestureRecognizerStateFailed) {
++      pointer.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
++      navigation_drag = false;
++    }
++    [self generateUserInputEvents:pointer];
++    return;
++  }
++  /* Finger motion outside navigation is scrolling. Keep the
 +   * event position at the gesture origin so scrolling across another control
 +   * cannot retarget the gesture. Pencil continues through the precision path. */
 +  if (!pencil_pan) {
@@ -1203,7 +1232,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1215,21 @@
+@@ -690,6 +1244,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -1225,7 +1254,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +1262,104 @@
+@@ -722,6 +1291,104 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -1330,7 +1359,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
    /* Translation can be non-zero on begin event */
-@@ -739,6 +1377,20 @@
+@@ -739,6 +1406,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -1351,7 +1380,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,52 +1406,115 @@
+@@ -754,52 +1435,115 @@
    }
  }
 
@@ -1503,7 +1532,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
 
-@@ -809,12 +1524,15 @@
+@@ -809,12 +1553,15 @@
    if ([sender numberOfTouches] < 2) {
      return;
    }
@@ -1519,7 +1548,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1548,66 @@
+@@ -830,25 +1577,66 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -1589,7 +1618,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +1957,374 @@
+@@ -1198,11 +1986,374 @@
    }
  }
 
@@ -1964,7 +1993,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2420,12 @@
+@@ -1298,7 +2449,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -1978,7 +2007,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2433,163 @@
+@@ -1306,22 +2462,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -2148,7 +2177,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2633,12 @@
+@@ -1365,11 +2662,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -2162,7 +2191,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2646,6 @@
+@@ -1377,7 +2675,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -2170,7 +2199,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2659,6 @@
+@@ -1391,7 +2688,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -2178,7 +2207,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2667,6 @@
+@@ -1400,7 +2696,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -2186,7 +2215,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2676,12 @@
+@@ -1410,8 +2705,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -2201,7 +2230,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2694,14 @@
+@@ -1424,10 +2723,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -2217,7 +2246,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1474,11 +2748,24 @@
+@@ -1471,14 +2774,28 @@
+
+ GHOST_WindowIOS::~GHOST_WindowIOS()
+ {
++  ghost::ios::forget_navigation_window(this);
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
    releaseNativeHandles();
@@ -2243,7 +2276,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2786,9 @@
+@@ -1499,6 +2816,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -2253,7 +2286,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2908,7 @@
+@@ -1618,7 +2938,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -2262,7 +2295,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3198,7 @@
+@@ -1908,6 +3228,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -2270,7 +2303,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3209,11 @@
+@@ -1918,6 +3239,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -2903,12 +2936,14 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
    if (region && (region->alignment != RGN_ALIGN_NONE)) {
      ED_region_toggle_hidden(C, region);
    }
-@@ -6858,6 +6881,11 @@
+@@ -6858,6 +6881,13 @@
    WM_operatortype_append(SCREEN_OT_region_quadview);
    WM_operatortype_append(SCREEN_OT_region_scale);
    WM_operatortype_append(SCREEN_OT_region_toggle);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_resize);
++  WM_operatortype_append(SCREEN_OT_ipad_working_split);
++  WM_operatortype_append(SCREEN_OT_ipad_working_swap);
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_activate);
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_pin);
 +#endif
@@ -4004,8 +4039,8 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +      if (!ED_ipad_panels_area_visible(area)) {
 +        continue;
 +      }
-+      const int layer = ED_ipad_panels_area_layer(area);
-+      if (layer > topmost_layer && BLI_rcti_isect_pt_v(&area->totrct, xy)) {
++      const int layer = ED_ipad_panels_area_hit_layer(area, xy);
++      if (layer > topmost_layer) {
 +        topmost = area;
 +        topmost_layer = layer;
 +      }
@@ -4756,7 +4791,7 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -113,6 +113,17 @@
+@@ -113,6 +113,20 @@
    struct wmTooltipState *tool_tip;
 
    PreviewImage *preview;
@@ -4769,17 +4804,21 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  char ipad_panel_locked[2];
 +  char ipad_panels_locked;
 +  char ipad_tools_open;
-+  char _pad_ipad[4];
++  char ipad_panel_initialized;
++  char _pad_ipad[3];
 +  char ipad_panel_category[64];
++  int ipad_panel_owner;
++  int _pad_ipad_owner;
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +439,21 @@
+@@ -428,6 +442,24 @@
    struct bToolRef *tool;
    char is_tool_set;
    char _pad0[7];
 +  /* Runtime-only visual bounds. 0 native, 1 canvas, 2 bottom, 3 side, 4 hidden. */
 +  int ipad_layer;
++  int ipad_panel_host;
 +  int ipad_side_region;
 +  int ipad_bottom_region;
 +  int ipad_tools_region;
@@ -4788,29 +4827,43 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  int ipad_tab_action;
 +  int ipad_tab_id;
 +  int ipad_tab_edge;
++  int _pad_ipad_runtime;
 +  rcti ipad_rect;
 +  rcti ipad_side_rect;
 +  rcti ipad_bottom_rect;
 +  rcti ipad_tools_rect;
 +  rcti ipad_navigation_rect;
++  rcti ipad_pin_rect;
  } ScrArea_Runtime;
 
  typedef struct ScrArea {
+@@ -468,7 +500,9 @@
+    * runtime variable, updated by executing operators.
+    */
+   short region_active_win;
+-  char _pad[2];
++  /** Explicit iPad working split, including lower editor instances. */
++  char ipad_keep_working;
++  char _pad[1];
+
+   /** Callbacks for this space type. */
+   struct SpaceType *type;
 diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/windowmanager/intern/wm_draw.cc
 --- a/source/blender/windowmanager/intern/wm_draw.cc
 +++ b/source/blender/windowmanager/intern/wm_draw.cc
-@@ -40,6 +40,10 @@
+@@ -40,6 +40,11 @@
 
  #include "ED_node.hh"
  #include "ED_screen.hh"
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include "ED_ipad_panels.hh"
++#  include "GHOST_NavigationIOS.hh"
 +#endif
  #include "ED_view3d.hh"
 
  #include "GPU_batch_presets.hh"
-@@ -1052,15 +1056,39 @@
+@@ -1052,15 +1057,38 @@
  {
    bScreen *screen = WM_window_get_active_screen(win);
 
@@ -4820,7 +4873,6 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +      if (area->runtime.ipad_layer == 1) {
 +        wm_draw_area_offscreen(C, win, area, stereo);
-+        break;
 +      }
 +    }
 +  }
@@ -5011,7 +5063,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    }
 
    /* After area regions so we can do area 'overlay' drawing. */
-@@ -1175,6 +1248,14 @@
+@@ -1175,6 +1248,37 @@
 
    wm_draw_callbacks(win);
    wmWindowViewport(win);
@@ -5023,10 +5075,33 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +    wmWindowViewport(win);
 +  }
 +#endif
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  std::vector<ghost::ios::NavigationRect> navigation;
++  if (ED_ipad_panels_enabled(screen)) {
++    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++      if (area->runtime.ipad_layer != 1 || area->spacetype != SPACE_VIEW3D) {
++        continue;
++      }
++      const auto *v3d = static_cast<const View3D *>(area->spacedata.first);
++      if (!v3d || (v3d->gizmo_flag & (V3D_GIZMO_HIDE | V3D_GIZMO_HIDE_NAVIGATE)) ||
++          (!(U.uiflag & USER_SHOW_GIZMO_NAVIGATE) &&
++           U.mini_axis_type != USER_MINI_AXIS_TYPE_GIZMO)) {
++        continue;
++      }
++      const rcti &r = area->runtime.ipad_navigation_rect;
++      if (r.xmax > r.xmin && r.ymax > r.ymin) {
++        const int height = WM_window_pixels_y(win);
++        navigation.push_back({r.xmin, height - 1 - r.ymax, r.xmax, height - 1 - r.ymin});
++      }
++    }
++  }
++  ghost::ios::set_navigation_regions(win->ghostwin, std::move(navigation));
++#endif
 
    /* Blend in floating regions (menus). */
    LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-@@ -1528,6 +1609,13 @@
+@@ -1528,6 +1632,13 @@
    }
 
    ED_screen_areas_iter (win, screen, area) {
@@ -5108,7 +5183,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,32 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -5127,6 +5202,7 @@ new file mode 100644
 +bool ED_ipad_panels_main_region_layout(const wmWindow *win, ScrArea *area);
 +bool ED_ipad_panels_area_visible(const ScrArea *area);
 +int ED_ipad_panels_area_layer(const ScrArea *area);
++int ED_ipad_panels_area_hit_layer(const ScrArea *area, const int xy[2]);
 +bool ED_ipad_panels_region_rect(ScrArea *area, ARegion *region);
 +bool ED_ipad_panels_region_managed(const ScrArea *area, const ARegion *region);
 +bool ED_ipad_panels_toggle_region(bContext *C, ARegion *region);
@@ -5137,6 +5213,8 @@ new file mode 100644
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_pin(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot);
++void SCREEN_OT_ipad_working_split(wmOperatorType *ot);
++void SCREEN_OT_ipad_working_swap(wmOperatorType *ot);
 +#endif
 diff --git a/source/blender/editors/interface/interface_panel.cc b/source/blender/editors/interface/interface_panel.cc
 --- a/source/blender/editors/interface/interface_panel.cc
@@ -5205,7 +5283,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,415 @@
+@@ -0,0 +1,504 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5225,7 +5303,7 @@ new file mode 100644
 +  bool empty() const { return width() == 0 || height() == 0; }
 +};
 +
-+enum class Role { Content, Service, Canvas };
++enum class Role { Content, Service, Canvas, Working };
 +enum class Edge { Side, Bottom, Tools };
 +
 +struct Area {
@@ -5243,6 +5321,7 @@ new file mode 100644
 +struct Mapping {
 +  int primary_id = -1;
 +  std::vector<Panel> panels;
++  std::vector<Area> working;
 +};
 +
 +/* Find the largest editor in the original top content row. Outliner/Properties
@@ -5306,6 +5385,7 @@ new file mode 100644
 +    return result;
 +  }
 +  result.primary_id = primary->id;
++  result.working.push_back(*primary);
 +  int row_bottom = primary->original.ymin;
 +  if (!dominant_canvas) {
 +    /* A full-height Text Editor can share its top row with a shorter viewport.
@@ -5325,6 +5405,10 @@ new file mode 100644
 +    const bool overlaps_x = area.original.xmax > primary->original.xmin &&
 +                            area.original.xmin < primary->original.xmax;
 +    const bool below = area.original.ymax <= row_bottom + std::max(0, tolerance);
++    if (area.role == Role::Working || (!below && area.role != Role::Service)) {
++      result.working.push_back(area);
++      continue;
++    }
 +    result.panels.push_back(
 +        {area.id, below && (area.role != Role::Service || overlaps_x) ? Edge::Bottom : Edge::Side,
 +         area.original});
@@ -5343,6 +5427,89 @@ new file mode 100644
 +    }
 +    return a.id < b.id;
 +  });
++  return result;
++}
++
++/* Reconstruct working splits from saved geometry after auxiliary editors move
++ * into panels. Recursively preserve full-span cuts and their relative proportions.
++ * A shorter editor next to a full-height editor grows into the space vacated below
++ * it; editor identity and saved vertices remain untouched. */
++inline std::vector<Area> working_layout(const std::vector<Area> &areas, const Rect bounds,
++                                       const int gap = 4)
++{
++  if (areas.empty() || bounds.empty()) {
++    return {};
++  }
++  if (areas.size() == 1) {
++    return {{areas.front().id, bounds, areas.front().role}};
++  }
++  Rect original = areas.front().original;
++  for (const Area &area : areas) {
++    original.xmin = std::min(original.xmin, area.original.xmin);
++    original.xmax = std::max(original.xmax, area.original.xmax);
++    original.ymin = std::min(original.ymin, area.original.ymin);
++    original.ymax = std::max(original.ymax, area.original.ymax);
++  }
++  for (const bool vertical : {true, false}) {
++    std::vector<int> candidates;
++    for (const Area &area : areas) {
++      candidates.push_back(vertical ? area.original.xmax : area.original.ymax);
++    }
++    std::sort(candidates.begin(), candidates.end());
++    for (const int cut : candidates) {
++      std::vector<Area> before, after;
++      bool crosses = false;
++      for (const Area &area : areas) {
++        const int lo = vertical ? area.original.xmin : area.original.ymin;
++        const int hi = vertical ? area.original.xmax : area.original.ymax;
++        if (hi <= cut) {
++          before.push_back(area);
++        }
++        else if (lo >= cut - 1) { /* Blender areas share inclusive border vertices. */
++          after.push_back(area);
++        }
++        else {
++          crosses = true;
++          break;
++        }
++      }
++      if (crosses || before.empty() || after.empty()) {
++        continue;
++      }
++      const int low = vertical ? original.xmin : original.ymin;
++      const int extent = vertical ? original.width() : original.height();
++      const int available = vertical ? bounds.width() : bounds.height();
++      const int seam = std::min(std::max(0, gap), available / 8);
++      const int split = std::clamp(int(static_cast<long long>(cut - low) * available /
++                                       std::max(1, extent)),
++                                    std::min(1, available / 2),
++                                    std::max(0, available - seam - 1));
++      Rect first = bounds, second = bounds;
++      if (vertical) {
++        first.xmax = bounds.xmin + split;
++        second.xmin = first.xmax + seam;
++      }
++      else {
++        first.ymax = bounds.ymin + split;
++        second.ymin = first.ymax + seam;
++      }
++      auto result = working_layout(before, first, gap);
++      const auto next = working_layout(after, second, gap);
++      result.insert(result.end(), next.begin(), next.end());
++      return result;
++    }
++  }
++  /* Non-slicing custom layouts (e.g. a pinwheel) retain normalized positions.
++   * Do not silently discard an editor or force such layouts into one canvas. */
++  std::vector<Area> result;
++  for (const Area &area : areas) {
++    auto x = [&](int v) { return bounds.xmin + int(static_cast<long long>(v - original.xmin) *
++                                                 bounds.width() / std::max(1, original.width())); };
++    auto y = [&](int v) { return bounds.ymin + int(static_cast<long long>(v - original.ymin) *
++                                                 bounds.height() / std::max(1, original.height())); };
++    result.push_back({area.id, {x(area.original.xmin), y(area.original.ymin),
++                               x(area.original.xmax), y(area.original.ymax)}, area.role});
++  }
 +  return result;
 +}
 +
@@ -5658,7 +5825,19 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
  #include "ED_screen_types.hh"
  #include "ED_sequencer.hh"
 
-@@ -840,7 +844,28 @@
+@@ -184,6 +188,11 @@
+     ED_area_data_copy(newa, area, true);
+   }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (ED_ipad_panels_enabled(screen) && area->runtime.ipad_layer == 1) {
++    area->ipad_keep_working = newa->ipad_keep_working = 1;
++  }
++#endif
+   /* remove double vertices en edges */
+   if (merge) {
+     BKE_screen_remove_double_scrverts(screen);
+@@ -840,7 +849,25 @@
 
      screen_geom_vertices_scale(win, screen);
 
@@ -5668,26 +5847,23 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 +    /* Native headers establish the primary WINDOW bounds before floating editors
 +     * initialize their regions. This also handles layouts whose main area is not
 +     * the first area in the saved topology. */
-+    ScrArea *ipad_main = nullptr;
 +    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +      if (area->runtime.ipad_layer == 1) {
-+        ipad_main = area;
 +        ED_area_init(C, win, area);
-+        break;
 +      }
 +    }
 +#endif
 +
      ED_screen_areas_iter (win, screen, area) {
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+      if (area == ipad_main) {
++      if (area->runtime.ipad_layer == 1) {
 +        continue;
 +      }
 +#endif
        /* Set space-type and region callbacks, calls init() */
        /* Sets sub-windows for regions, adds handlers. */
        ED_area_init(C, win, area);
-@@ -1108,16 +1133,35 @@
+@@ -1108,16 +1135,35 @@
    ScrArea *area = nullptr;
    ARegion *region_prev = screen->active_region;
 
@@ -5705,8 +5881,8 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 +      if (!ED_ipad_panels_area_visible(area_iter)) {
 +        continue;
 +      }
-+      const int layer = ED_ipad_panels_area_layer(area_iter);
-+      if (layer > topmost_layer && BLI_rcti_isect_pt_v(&area_iter->totrct, xy)) {
++      const int layer = ED_ipad_panels_area_hit_layer(area_iter, xy);
++      if (layer > topmost_layer) {
 +        area = area_iter;
 +        topmost_layer = layer;
 +      }
@@ -5736,7 +5912,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1017 @@
+@@ -0,0 +1,1263 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -5763,8 +5939,10 @@ new file mode 100644
 +#include "BKE_context.hh"
 +#include "BKE_global.hh"
 +#include "BKE_screen.hh"
++#include "BKE_report.hh"
 +#include "ED_ipad_panels.hh"
 +#include "ED_screen.hh"
++#include "ED_screen_types.hh"
 +#include "RNA_access.hh"
 +#include "RNA_define.hh"
 +#include "UI_interface.hh"
@@ -5777,6 +5955,7 @@ new file mode 100644
 +#include "wm_event_types.hh"
 +
 +#include "ipad_workspace_panels.hh"
++#include "screen_intern.hh"
 +
 +namespace {
 +namespace policy = blender::ed::ipad::panels;
@@ -5800,6 +5979,7 @@ new file mode 100644
 +  std::vector<ScrArea *> areas;
 +  ScrArea *main = nullptr;
 +  std::vector<Tab> tabs;
++  std::vector<policy::Area> working;
 +  policy::State state;
 +  policy::Metrics metrics;
 +  policy::Layout layout;
@@ -5868,7 +6048,7 @@ new file mode 100644
 +  return area->type ? area->type->name : "Editor";
 +}
 +
-+static policy::Metrics panel_metrics()
++static policy::Metrics panel_metrics(const ScrArea *owner)
 +{
 +  policy::Metrics metrics;
 +  const float scale = UI_SCALE_FAC;
@@ -5876,7 +6056,9 @@ new file mode 100644
 +  metrics.gap = int(6 * scale);
 +  metrics.side_rail_extent = int(28 * scale);
 +  metrics.bottom_rail = false;
-+  metrics.tools_width = int(48 * scale);
++  const ARegion *tools = owner ? BKE_area_find_region_type(owner, RGN_TYPE_TOOLS) : nullptr;
++  metrics.tools_width = int((tools && tools->runtime->type ?
++                                tools->runtime->type->prefsizex : 40) * scale);
 +  metrics.resize_extent = int(24 * scale);
 +  metrics.minimum_canvas_width = int(160 * scale);
 +  metrics.minimum_canvas_height = int(120 * scale);
@@ -5940,6 +6122,29 @@ new file mode 100644
 +  return {rect.xmin, rect.ymin, rect.xmax, rect.ymax};
 +}
 +
++static Rect workspace_content_bounds(const wmWindow *win, const std::vector<ScrArea *> &areas)
++{
++  Rect result;
++  bool initialized = false;
++  for (const ScrArea *area : areas) {
++    const Rect rect = content_bounds(win, area);
++    if (rect.empty()) {
++      continue;
++    }
++    if (!initialized) {
++      result = rect;
++      initialized = true;
++    }
++    else {
++      result.xmin = std::min(result.xmin, rect.xmin);
++      result.ymin = std::min(result.ymin, rect.ymin);
++      result.xmax = std::max(result.xmax, rect.xmax);
++      result.ymax = std::max(result.ymax, rect.ymax);
++    }
++  }
++  return result;
++}
++
 +static Model make_model(bContext *C, wmWindow *win)
 +{
 +  Model model;
@@ -5954,6 +6159,7 @@ new file mode 100644
 +    inputs.push_back({id,
 +                      {area->v1->vec.x, area->v1->vec.y,
 +                       area->v4->vec.x + 1, area->v2->vec.y + 1},
++                      area->ipad_keep_working ? policy::Role::Working :
 +                      clip && clip->view == SC_VIEW_CLIP ? policy::Role::Canvas :
 +                      service ? policy::Role::Service : policy::Role::Content});
 +  }
@@ -5962,7 +6168,16 @@ new file mode 100644
 +    return model;
 +  }
 +  model.main = model.areas[mapping.primary_id];
-+  model.bounds = content_bounds(win, model.main);
++  model.working = mapping.working;
++  std::vector<ScrArea *> working_areas;
++  for (const policy::Area &working : model.working) {
++    ScrArea *area = model.areas[working.id];
++    working_areas.push_back(area);
++    if (screen->ipad_panel_owner == working.id + 1) {
++      model.main = area;
++    }
++  }
++  model.bounds = workspace_content_bounds(win, working_areas);
 +
 +  ScrArea *previous_area = CTX_wm_area(C);
 +  ARegion *previous_region = CTX_wm_region(C);
@@ -6028,14 +6243,27 @@ new file mode 100644
 +  if ((screen->ipad_tools_open || screen->ipad_panel_active[0] == -2) && find_tab(model, tools_id)) {
 +    model.state.tools.active_id = tools_id;
 +  }
++  if (!screen->ipad_panel_initialized) {
++    /* Honor native startup visibility on first adaptation. In particular Sculpt
++     * must not lose its open brush shelf merely because tablet slots start at 0. */
++    if (!model.state.tools.open() && tools && !(tools->flag & RGN_FLAG_HIDDEN) &&
++        find_tab(model, tools_id)) {
++      model.state.tools.active_id = tools_id;
++    }
++    if (!model.state.bottom.open() && shelf && !(shelf->flag & RGN_FLAG_HIDDEN) &&
++        find_tab(model, shelf_id)) {
++      model.state.bottom.active_id = shelf_id;
++    }
++  }
 +  preferred_sizes(screen, model.state);
-+  model.metrics = panel_metrics();
++  model.metrics = panel_metrics(model.main);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
 +  return model;
 +}
 +
 +static void save_slot(bScreen *screen, const Model &model, Edge edge)
 +{
++  screen->ipad_panel_initialized = 1;
 +  screen->ipad_panels_locked = model.state.panels_locked;
 +  screen->ipad_panel_locked[0] = screen->ipad_panel_locked[1] = 0;
 +  screen->ipad_tools_open = model.state.tools.open();
@@ -6076,7 +6304,7 @@ new file mode 100644
 +  return rect;
 +}
 +
-+enum class Action { Tab, Previous, Next, Resize, Lock };
++enum class Action { Tab, Previous, Next, Resize, Lock, Layout };
 +struct Button {
 +  Rect rect;
 +  std::string label;
@@ -6084,13 +6312,20 @@ new file mode 100644
 +  Edge edge;
 +  int id = -1;
 +  bool selected = false;
++  bool native = false;
 +};
 +
 +static std::vector<Button> buttons(const Model &model, const bScreen *screen)
 +{
 +  std::vector<Button> result;
 +  for (const bool left : {false, true}) {
-+    const Rect rail = left ? model.layout.left_rail : model.layout.side_rail;
++    Rect rail = left ? model.layout.left_rail : model.layout.side_rail;
++    if (left) {
++      const int extent = std::min(int(60 * UI_SCALE_FAC), rail.height() / 4);
++      result.push_back({{rail.xmin, rail.ymin, rail.xmax, rail.ymin + extent},
++                         "Layout", Action::Layout, Edge::Tools});
++      rail.ymin += extent + std::min(int(6 * UI_SCALE_FAC), rail.height() / 16);
++    }
 +    std::vector<const Tab *> tabs;
 +    for (const Tab &tab : model.tabs) {
 +      if ((tab.edge != Edge::Side) == left) {
@@ -6129,7 +6364,22 @@ new file mode 100644
 +    }
 +  }
 +  /* Editors without a navigation gizmo keep the same global lock reachable. */
-+  if (model.main && !ED_ipad_panels_native_pin(screen, model.main)) {
++  const bool native_pin = std::any_of(model.areas.begin(), model.areas.end(),
++                                      [&](const ScrArea *area) {
++                                        return ED_ipad_panels_native_pin(screen, area);
++                                      });
++  if (native_pin) {
++    for (const ScrArea *area : model.areas) {
++      if (ED_ipad_panels_native_pin(screen, area)) {
++        const rcti &r = area->runtime.ipad_pin_rect;
++        if (r.xmax > r.xmin && r.ymax > r.ymin) {
++          result.push_back({{r.xmin, r.ymin, r.xmax + 1, r.ymax + 1}, "", Action::Lock,
++                             Edge::Side, -1, model.state.panels_locked, true});
++        }
++      }
++    }
++  }
++  if (model.main && !native_pin) {
 +    const int size = std::min(int(32 * UI_SCALE_FAC), model.layout.canvas.width());
 +    const Rect &canvas = model.layout.canvas;
 +    result.push_back({{canvas.xmax - size, std::max(canvas.ymin, canvas.ymax - size),
@@ -6169,6 +6419,33 @@ new file mode 100644
 +{
 +  bScreen *screen = WM_window_get_active_screen(win);
 +  const int axis = button.edge == Edge::Side ? 0 : 1;
++  if (button.action == Action::Layout) {
++    uiPopupMenu *popup = UI_popup_menu_begin(C, "Working Layout", ICON_NONE);
++    uiLayout *layout = UI_popup_menu_layout(popup);
++    for (const bool vertical : {true, false}) {
++      PointerRNA props = layout->op("SCREEN_OT_ipad_working_split",
++                                     vertical ? "Split Vertically" : "Split Horizontally",
++                                     vertical ? ICON_SPLIT_VERTICAL : ICON_SPLIT_HORIZONTAL,
++                                     blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++      RNA_boolean_set(&props, "vertical", vertical);
++    }
++    if (model.working.size() > 1) {
++      layout->separator();
++      for (const policy::Area &working : model.working) {
++        const ScrArea *area = model.areas[working.id];
++        if (area == model.main) {
++          continue;
++        }
++        const std::string label = "Swap with " + area_label(area) + " (" +
++                                  std::to_string(working.id + 1) + ")";
++        PointerRNA props = layout->op("SCREEN_OT_ipad_working_swap", label.c_str(), ICON_AREA_SWAP,
++                                       blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++        RNA_int_set(&props, "target", working.id);
++      }
++    }
++    UI_popup_menu_end(C, popup);
++    return;
++  }
 +  if (button.action == Action::Lock) {
 +    model.state.toggle_panels_lock();
 +    save_slot(screen, model, Edge::Tools);
@@ -6325,6 +6602,16 @@ new file mode 100644
 +  {
 +    return false;
 +  }
++  /* Keep the single lock at the outer top-right editor, independent of which
++   * working editor currently owns the native sidebar and Tools regions. */
++  LISTBASE_FOREACH (const ScrArea *, other, &screen->areabase) {
++    if (other->runtime.ipad_layer == 1 &&
++        (other->runtime.ipad_rect.xmax > area->runtime.ipad_rect.xmax ||
++         (other->runtime.ipad_rect.xmax == area->runtime.ipad_rect.xmax &&
++          other->runtime.ipad_rect.ymax > area->runtime.ipad_rect.ymax))) {
++      return false;
++    }
++  }
 +  const auto *v3d = static_cast<const View3D *>(area->spacedata.first);
 +  return v3d && !(v3d->gizmo_flag & (V3D_GIZMO_HIDE | V3D_GIZMO_HIDE_NAVIGATE)) &&
 +         ((U.uiflag & USER_SHOW_GIZMO_NAVIGATE) || U.mini_axis_type == USER_MINI_AXIS_TYPE_GIZMO);
@@ -6340,11 +6627,28 @@ new file mode 100644
 +  return area->runtime.ipad_layer == 2 ? 1 : area->runtime.ipad_layer == 3 ? 2 : 0;
 +}
 +
++int ED_ipad_panels_area_hit_layer(const ScrArea *area, const int xy[2])
++{
++  if (!ED_ipad_panels_area_visible(area)) {
++    return -1;
++  }
++  if (area->runtime.ipad_layer == 1) {
++    LISTBASE_FOREACH (const ARegion *, region, &area->regionbase) {
++      if (region->runtime->ipad_floating && region->runtime->visible &&
++          BLI_rcti_isect_pt_v(&region->winrct, xy)) {
++        return 2;
++      }
++    }
++  }
++  return BLI_rcti_isect_pt_v(&area->totrct, xy) ? ED_ipad_panels_area_layer(area) : -1;
++}
++
 +void ED_ipad_panels_prepare(bContext *C, wmWindow *win)
 +{
 +  bScreen *screen = WM_window_get_active_screen(win);
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +    area->runtime.ipad_layer = 0;
++    area->runtime.ipad_panel_host = 0;
 +    area->runtime.ipad_side_region = 0;
 +    area->runtime.ipad_bottom_region = 0;
 +    area->runtime.ipad_tools_region = 0;
@@ -6365,10 +6669,19 @@ new file mode 100644
 +  for (ScrArea *area : model.areas) {
 +    area->runtime.ipad_layer = 4;
 +  }
-+  model.main->runtime.ipad_layer = 1;
-+  model.main->runtime.ipad_rect = screen_rect;
-+  model.main->runtime.ipad_rect.xmax--;
-+  model.main->runtime.ipad_rect.ymax--;
++  const Rect workspace{screen_rect.xmin, screen_rect.ymin, screen_rect.xmax, screen_rect.ymax};
++  for (const policy::Area &working : policy::working_layout(model.working, workspace,
++                                                          int(4 * UI_SCALE_FAC))) {
++    ScrArea *area = model.areas[working.id];
++    area->runtime.ipad_layer = 1;
++    area->runtime.ipad_rect = to_rect(working.original);
++  }
++  model.main->runtime.ipad_panel_host = 1;
++  const ARegion *main_window = BKE_area_find_region_type(model.main, RGN_TYPE_WINDOW);
++  if (!screen->ipad_panel_initialized && main_window && main_window->runtime->type) {
++    save_slot(screen, model, Edge::Bottom);
++    save_slot(screen, model, Edge::Tools);
++  }
 +  model.main->runtime.ipad_side_rect = to_rect(panel_content(model, Edge::Side));
 +  model.main->runtime.ipad_bottom_rect = to_rect(panel_content(model, Edge::Bottom));
 +  model.main->runtime.ipad_tools_rect = to_rect(model.layout.tools_panel);
@@ -6398,15 +6711,28 @@ new file mode 100644
 +  }
 +  bScreen *screen = WM_window_get_active_screen(win);
 +  Model model;
-+  model.main = main;
-+  model.bounds = content_bounds(win, main);
-+  model.metrics = panel_metrics();
++  std::vector<ScrArea *> working_areas;
++  ScrArea *host = nullptr;
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    if (area->runtime.ipad_layer == 1) {
++      working_areas.push_back(area);
++      if (area->runtime.ipad_panel_host) {
++        host = area;
++      }
++    }
++  }
++  if (!host) {
++    return false;
++  }
++  model.main = host;
++  model.bounds = workspace_content_bounds(win, working_areas);
++  model.metrics = panel_metrics(model.main);
 +  preferred_sizes(screen, model.state);
 +  /* prepare() has already selected the real editor/region instances. Recompute
 +   * only their geometry here, after native headers establish the WINDOW rect. */
-+  model.state.tools.active_id = main->runtime.ipad_tools_region ? tools_id : -1;
-+  model.state.side.active_id = main->runtime.ipad_side_region ? 0 : -1;
-+  model.state.bottom.active_id = main->runtime.ipad_bottom_region ? 0 : -1;
++  model.state.tools.active_id = host->runtime.ipad_tools_region ? tools_id : -1;
++  model.state.side.active_id = host->runtime.ipad_side_region ? 0 : -1;
++  model.state.bottom.active_id = host->runtime.ipad_bottom_region ? 0 : -1;
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +    if (area->runtime.ipad_layer == 3) {
 +      model.state.side.active_id = 0;
@@ -6427,9 +6753,9 @@ new file mode 100644
 +    target = value;
 +    return true;
 +  };
-+  bool changed = assign(main->runtime.ipad_side_rect, side);
-+  changed |= assign(main->runtime.ipad_bottom_rect, bottom);
-+  changed |= assign(main->runtime.ipad_tools_rect, to_rect(model.layout.tools_panel));
++  bool changed = assign(host->runtime.ipad_side_rect, side);
++  changed |= assign(host->runtime.ipad_bottom_rect, bottom);
++  changed |= assign(host->runtime.ipad_tools_rect, to_rect(model.layout.tools_panel));
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +    if (ELEM(area->runtime.ipad_layer, 2, 3)) {
 +      const rcti &rect = area->runtime.ipad_layer == 3 ? side : bottom;
@@ -6439,14 +6765,28 @@ new file mode 100644
 +      }
 +    }
 +  }
-+  if (ARegion *region = BKE_area_find_region_type(main, RGN_TYPE_WINDOW)) {
-+    region->runtime->ipad_canvas = true;
-+    region->runtime->ipad_canvas_rect = to_rect(model.layout.canvas);
-+    BLI_rcti_translate(&region->runtime->ipad_canvas_rect,
-+                       -region->winrct.xmin, -region->winrct.ymin);
-+    region->runtime->visible_rect = {};
++  if (changed && host != main) {
++    host->flag |= AREA_FLAG_REGION_SIZE_UPDATE;
++    ED_area_tag_redraw(host);
 +  }
-+  return changed;
++  for (ScrArea *area : working_areas) {
++    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++      if (region->regiontype != RGN_TYPE_WINDOW) {
++        continue;
++      }
++      const Rect &canvas = model.layout.canvas;
++      const rcti &window = region->winrct;
++      const Rect clipped{std::clamp(canvas.xmin, window.xmin, window.xmax),
++                           std::clamp(canvas.ymin, window.ymin, window.ymax),
++                           std::clamp(canvas.xmax, window.xmin + 1, window.xmax + 1),
++                           std::clamp(canvas.ymax, window.ymin + 1, window.ymax + 1)};
++      region->runtime->ipad_canvas = true;
++      region->runtime->ipad_canvas_rect = to_rect(clipped);
++      BLI_rcti_translate(&region->runtime->ipad_canvas_rect, -window.xmin, -window.ymin);
++      region->runtime->visible_rect = {};
++    }
++  }
++  return changed && host == main;
 +}
 +
 +bool ED_ipad_panels_region_managed(const ScrArea *area, const ARegion *region)
@@ -6548,6 +6888,9 @@ new file mode 100644
 +    }
 +  }
 +  for (const Button &button : buttons(model, screen)) {
++    if (button.native) {
++      continue; /* Native gizmo draws it; shared press/release capture owns taps. */
++    }
 +    if (button.action == Action::Lock) {
 +      float color[4];
 +      UI_GetThemeColor4fv(button.selected ? TH_TAB_ACTIVE : TH_TAB_INACTIVE, color);
@@ -6595,6 +6938,64 @@ new file mode 100644
 +static bool panel_poll(bContext *C)
 +{
 +  return CTX_wm_window(C) && ED_ipad_panels_enabled(CTX_wm_screen(C));
++}
++
++static wmOperatorStatus working_split_exec(bContext *C, wmOperator *op)
++{
++  wmWindow *win = CTX_wm_window(C);
++  Model model = make_model(C, win);
++  if (!model.main) {
++    return OPERATOR_CANCELLED;
++  }
++  ScrArea *created = area_split(win, CTX_wm_screen(C), model.main,
++                                 RNA_boolean_get(op->ptr, "vertical") ? SCREEN_AXIS_V : SCREEN_AXIS_H,
++                                 0.5f, true);
++  if (!created) {
++    BKE_report(op->reports, RPT_WARNING, "This editor is too small for another split");
++    return OPERATOR_CANCELLED;
++  }
++  model.main->ipad_keep_working = created->ipad_keep_working = 1;
++  tag_layout(C, win);
++  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus working_swap_exec(bContext *C, wmOperator *op)
++{
++  wmWindow *win = CTX_wm_window(C);
++  Model model = make_model(C, win);
++  const int target = RNA_int_get(op->ptr, "target");
++  for (const policy::Area &working : model.working) {
++    if (working.id == target && model.areas[target] != model.main) {
++      ED_area_swapspace(C, model.main, model.areas[target]);
++      tag_layout(C, win);
++      WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++      return OPERATOR_FINISHED;
++    }
++  }
++  return OPERATOR_CANCELLED;
++}
++
++void SCREEN_OT_ipad_working_split(wmOperatorType *ot)
++{
++  ot->name = "Split Working Editor";
++  ot->idname = "SCREEN_OT_ipad_working_split";
++  ot->description = "Split the active working editor while preserving both native editor instances";
++  ot->exec = working_split_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_boolean(ot->srna, "vertical", true, "Vertical", "Place the new editor beside this one");
++}
++
++void SCREEN_OT_ipad_working_swap(wmOperatorType *ot)
++{
++  ot->name = "Swap Working Editors";
++  ot->idname = "SCREEN_OT_ipad_working_swap";
++  ot->description = "Exchange the native contents of two working editors";
++  ot->exec = working_swap_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_int(ot->srna, "target", 0, 0, INT_MAX, "Editor", "Working editor to exchange", 0, INT_MAX);
 +}
 +
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot)
@@ -6721,10 +7122,20 @@ new file mode 100644
 +    /* Only pointer events belong to chrome; timers and keyboard shortcuts retain their routing. */
 +    return ISMOUSE(event->type) || ISMOUSE_GESTURE(event->type);
 +  }
++  bool navigation_hit = false;
++  for (const policy::Area &working : model.working) {
++    const ScrArea *area = model.areas[working.id];
++    if (area->spacetype != SPACE_VIEW3D) {
++      continue;
++    }
++    const auto *v3d = static_cast<const View3D *>(area->spacedata.first);
++    const bool visible = v3d && !(v3d->gizmo_flag & (V3D_GIZMO_HIDE | V3D_GIZMO_HIDE_NAVIGATE)) &&
++                         ((U.uiflag & USER_SHOW_GIZMO_NAVIGATE) ||
++                          U.mini_axis_type == USER_MINI_AXIS_TYPE_GIZMO);
++    navigation_hit |= visible && BLI_rcti_isect_pt_v(&area->runtime.ipad_navigation_rect, event->xy);
++  }
 +  if (event->type == LEFTMOUSE && event->val == KM_PRESS &&
-+      contains(model.layout.canvas, event->xy) &&
-+      !(ED_ipad_panels_native_pin(screen, model.main) &&
-+        BLI_rcti_isect_pt_v(&model.main->runtime.ipad_navigation_rect, event->xy)))
++      contains(model.layout.canvas, event->xy) && !navigation_hit)
 +  {
 +    bool changed = model.state.dismiss(Edge::Side);
 +    changed |= model.state.dismiss(Edge::Bottom);
@@ -6736,6 +7147,17 @@ new file mode 100644
 +      tag_layout(C, win);
 +      /* Dismissal consumes the tap; it must not also transform/select beneath a panel. */
 +      return true;
++    }
++  }
++  if (event->type == LEFTMOUSE && event->val == KM_PRESS &&
++      contains(model.layout.canvas, event->xy) && !navigation_hit) {
++    for (const policy::Area &working : model.working) {
++      ScrArea *area = model.areas[working.id];
++      if (area != model.main && BLI_rcti_isect_pt_v(&area->runtime.ipad_rect, event->xy)) {
++        screen->ipad_panel_owner = working.id + 1;
++        tag_layout(C, win);
++        break;
++      }
 +    }
 +  }
 +  return false;
@@ -6757,7 +7179,7 @@ new file mode 100644
 diff --git a/source/blender/blenkernel/intern/screen.cc b/source/blender/blenkernel/intern/screen.cc
 --- a/source/blender/blenkernel/intern/screen.cc
 +++ b/source/blender/blenkernel/intern/screen.cc
-@@ -965,6 +965,29 @@
+@@ -965,6 +965,39 @@
                                            const int spacetype,
                                            const int xy[2])
  {
@@ -6768,12 +7190,22 @@ diff --git a/source/blender/blenkernel/intern/screen.cc b/source/blender/blenker
 +  int topmost_layer = -1;
 +  bool ipad_layout = false;
 +  LISTBASE_FOREACH (ScrArea *, area, &areamap->areabase) {
-+    const int layer = area->runtime.ipad_layer;
++    int layer = area->runtime.ipad_layer;
 +    ipad_layout |= layer != 0;
 +    if (layer == 4) {
 +      continue;
 +    }
 +    const rcti *rect = layer ? &area->runtime.ipad_rect : &area->totrct;
++    if (layer == 1) {
++      LISTBASE_FOREACH (const ARegion *, region, &area->regionbase) {
++        if (region->runtime->ipad_floating && region->runtime->visible &&
++            BLI_rcti_isect_pt_v(&region->winrct, xy)) {
++          rect = &region->winrct;
++          layer = 3;
++          break;
++        }
++      }
++    }
 +    if (layer > topmost_layer && BLI_rcti_isect_pt_v(rect, xy)) {
 +      topmost = area;
 +      topmost_layer = layer;
@@ -6868,7 +7300,7 @@ diff --git a/source/blender/editors/space_view3d/view3d_gizmo_navigate.cc b/sour
      if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
        gz = navgroup->gz_array[GZ_INDEX_ZOOM];
        gz->matrix_basis[3][0] = roundf(co[0]);
-@@ -394,6 +415,34 @@
+@@ -394,6 +415,40 @@
        WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
      }
    }
@@ -6881,6 +7313,12 @@ diff --git a/source/blender/editors/space_view3d/view3d_gizmo_navigate.cc b/sour
 +    RNA_enum_set(gz->ptr, "icon", ED_ipad_panels_locked(CTX_wm_screen(C)) ?
 +                                      ICON_PINNED : ICON_UNPINNED);
 +    WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
++    const int radius = int(gz->scale_basis * UI_SCALE_FAC);
++    const int x = region->winrct.xmin + int(gz->matrix_basis[3][0]);
++    const int y = region->winrct.ymin + int(gz->matrix_basis[3][1]);
++    area->runtime.ipad_pin_rect = {x - radius, x + radius, y - radius, y + radius};
++  }
++  if (ED_ipad_panels_enabled(CTX_wm_screen(C)) && area->runtime.ipad_layer == 1) {
 +    /* Panel dismissal must not swallow native navigation/pin presses. Share the
 +     * actual gizmo bounds, including axes and camera/quad-view variations. */
 +    rcti &hit = area->runtime.ipad_navigation_rect;
@@ -6903,3 +7341,72 @@ diff --git a/source/blender/editors/space_view3d/view3d_gizmo_navigate.cc b/sour
  }
 
  void VIEW3D_GGT_navigate(wmGizmoGroupType *gzgt)
+diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc b/source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc
+--- a/source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc
++++ b/source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc
+@@ -368,8 +368,9 @@
+ static wmOperatorStatus viewrotate_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+ #ifdef WITH_APPLE_CROSSPLATFORM
+-  /* Only scroll view with multiple fingers on iOS. */
+-  if (!(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
++  /* Filter finger scrolling only; native gizmo and external pointer presses
++   * must reach Blender's modal rotation path. */
++  if (event->type == MOUSEPAN && !(event->flag & WM_EVENT_MULTITOUCH_TWO_FINGERS)) {
+     return OPERATOR_FINISHED;
+   }
+ #endif
+diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_NavigationIOS.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/GHOST_NavigationIOS.hh
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#pragma once
++
++#include <unordered_map>
++#include <utility>
++#include <vector>
++
++namespace ghost::ios {
++
++/* Window-owned snapshots in native content pixels, top-left origin. Both UIKit
++ * gesture callbacks and Blender drawing run on the main thread. No editor or
++ * operator pointers cross the GHOST boundary. */
++struct NavigationRect {
++  int xmin, ymin, xmax, ymax;
++  bool contains(const int x, const int y) const
++  {
++    return x >= xmin && x <= xmax && y >= ymin && y <= ymax;
++  }
++};
++
++inline std::unordered_map<const void *, std::vector<NavigationRect>> navigation_regions;
++
++inline void set_navigation_regions(const void *window, std::vector<NavigationRect> regions)
++{
++  if (window) {
++    navigation_regions[window] = std::move(regions);
++  }
++}
++
++inline bool navigation_hit(const void *window, const int x, const int y)
++{
++  const auto found = navigation_regions.find(window);
++  if (found == navigation_regions.end()) {
++    return false;
++  }
++  for (const NavigationRect &rect : found->second) {
++    if (rect.contains(x, y)) {
++      return true;
++    }
++  }
++  return false;
++}
++
++inline void forget_navigation_window(const void *window)
++{
++  navigation_regions.erase(window);
++}
++
++}  // namespace ghost::ios
