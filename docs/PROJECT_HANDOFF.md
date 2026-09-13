@@ -4,9 +4,23 @@
 
 Repair source: **c5f2cef370b2ad4678fde270cd7ade374489eb8a**. Replacement run
 [34772665821](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34772665821)
-is verified **in progress**, with that exact SHA. Cloud unit checks passed; pinned
-source validation was running at the last observation. Inspect this existing run
-before dispatching another build. No replacement IPA is verified yet.
+is verified **successful**, including cloud preflight and the iOS build.
+Artifact **Blender-iPad-Unofficial-ipa**, ID **10322642908**, **248,392,632 bytes**,
+is verified not expired. This is compilation/packaging evidence, not device
+acceptance. The build includes the prior working-split, native navigation, lock
+capture, preferred toolbar width and explicit Sculpt shelf default changes.
+
+Reconciled AGENTS.md, PRODUCT_DIRECTION.md and IPAD_WORKSPACE.md so the active
+contract and acceptance criteria consistently specify matching rails, left Tools
+and bottom launchers, one global lock, working splits, two-axis panel sizing and
+launcher reordering. Removed obsolete footer-launcher and independent-pin mandates
+from the current contract; historical handoff entries remain historical.
+
+Next implementation: touch split-seam resizing, then two-axis floating sizing and
+launcher reordering. Current split/swap commands and side-width/bottom-height
+resizing do not complete these requirements. Device tests should cover lock taps,
+Sculpt default/closure, Tools centering, finger/Pencil navigation and working-editor
+focus. Broader navigation and native Files lifecycle gates remain open.
 
 Both runs 34758590540 (4af0e11) and 34758375022 (498063a) failed in
 `wm_draw.cc`: `WM_window_pixels_y` is undeclared. Replace it with the pinned
@@ -20,7 +34,7 @@ weekly allowance may be used. This supersedes all older 5% reserve instructions
 below. Full workspace, touch and native Files requirements remain unfinished.
 
 Validation: all 14 local tests pass; source preflight applies all 48 pinned
-files. The replacement iOS build is the next gate; no device acceptance is claimed.
+files. The replacement iOS build and packaging pass; no device acceptance is claimed.
 
 ## Explicit Sculpt shelf default — latest source follow-up
 

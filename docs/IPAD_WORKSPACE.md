@@ -33,126 +33,100 @@ finger navigation, external pointer input and the approved radial/Pencil mapping
 
 ## Active milestone: floating panels for every workspace
 
-**User-approved contract; implementation in progress.** This replaces the earlier
-custom Scene/Inspector drawer design. The user reported that startup still showed
-the desktop default arrangement and clarified that all workspace layouts should
-retain their existing editors while presenting supporting areas as floating panels.
-The first panel implementation at ab53a673 has a successful iOS build. The latest
-tab, footer, sizing and editor-bounds refinement below is still in progress and is
-not validated by that earlier build. PROJECT_HANDOFF.md records source checks,
-compilation, packaging, artifact verification and device acceptance separately.
+Implementation is in progress. PROJECT_HANDOFF.md records exact source, build,
+artifact and device evidence. Earlier successful builds do not validate newer changes.
 
-### Preserve each workspace's identity
+### Layout and native content
 
-* Adapt every default and saved workspace, including workspaces whose main editor
-  is an image, node graph, animation editor or other Blender editor. Keep the main
-  working area and the tools appropriate to that layout.
-* Use existing layout placement to decide where supporting editors open. Side
-  editors open at the side; bottom editors open at the bottom. A node editor that
-  is the main workspace editor remains the main editor; one in the bottom area
-  becomes a bottom panel. Do not classify every editor of one type identically.
-* Preserve saved editor instances, contents, editor-specific settings, selection,
-  scroll/zoom state and Blender operator context through opening, closing and
-  workspace switching. Presentation changes must not destroy the saved layout.
-* Apply the iPad presentation at startup, file load and workspace switching. Users
-  should not have to manually maximize a desktop layout each time.
+Apply the presentation at fresh launch, project load and workspace switching.
+Preserve each default and saved workspace's native editors, working splits and
+editor state. A workspace can have several working editors, including non-3D
+editors. Supporting editors retain side or bottom placement based on the saved
+layout, rather than a rule that all editors of one type belong on one edge.
 
-### Permanent buttons and real Blender panels
+Keep matching, permanent, noncollapsible vertical rails on both edges:
 
-* Keep the button rails permanently visible and noncollapsible. Use narrow vertical
-  right tabs like Blender's native sidebar, positioned clear of the navigation gizmo
-  and its controls. Closing content leaves its button available. No chevron, hidden
-  sidebar state or precise border drag should make the rail disappear.
-* Use the Item / Tool / View category interaction as the model: tapping a button
-  opens its panel directly adjacent to that button, floating over the working area.
-  Selecting another button switches the visible panel for that area; tapping the
-  active unlocked button closes its content. Side and bottom areas are independent.
-* Reuse the actual Blender editors and sidebar categories. **Scene = Outliner;
-  Inspector = Properties.** Their full functions remain available in the floating
-  presentation. Do not maintain custom object lists, transform/brush-only Inspector
-  copies, duplicated selection state or a More button to reach the real editor.
-  Show the native editor alone, without added Item/Scene title rows or Pin/X wrapper
-  bars; use the permanent tabs and footer controls for panel presentation actions.
-* Expose the supporting panels present in that workspace, with clear editor names.
-  Timeline, node editors and brush/asset shelves open as bottom floating panels
-  when the underlying layout places them at the bottom. Reuse the real Timeline
-  and shelf rather than substituting a limited playback strip or brush controls.
-  Put their launchers in the existing status/footer bar, keeping the working canvas
-  free of a second bottom launcher strip.
-* Place floating panels within the main editor's actual WINDOW region. Respect its
-  current header/tool-header bounds, including variable Sculpt headers, rather than
-  assuming a fixed header height. Align rendering and input to the same bounds.
-* Keep workspace switching, project/save status, Camera View and Frame Selection
-  discoverable. Preserve the clean header and working tool controls; do not restore
-  the rejected Canvas popover as the primary surface.
+- Left: Tools and launchers for supporting bottom editors and brush shelves.
+  Tools opens the actual narrow vertical native toolbar independently of bottom
+  content. Bottom launchers open actual editors or shelves at the bottom.
+- Right: native Item/Tool/View sidebar categories, Scene (full Outliner), Inspector
+  (full Properties), and other supporting side editors supplied by that workspace.
 
-### Pinning and resizing
+A tap opens native content beside its rail, or at the bottom for bottom launchers.
+Switching replaces the content of that area. At most one side and one bottom panel
+are open, plus the independent Tools toolbar. No custom subset editors, More detour,
+wrapper title rows, X buttons, footer launchers or footer pin controls. The native
+status bar retains its original purpose. Closing content leaves its rail visible.
 
-* Put small **Pin Panels** controls for Side and Bottom in the existing status/footer
-  bar. Pinning belongs to the area, not to a custom header added to each editor.
-  At most one side panel and one bottom panel are visible in their respective areas;
-  both areas may be pinned open independently.
-* Pinning keeps the area's panel open during ordinary canvas work and outside taps.
-  Unpinning restores ordinary panel behavior. Selecting a different panel in that
-  same area replaces its current editor and **preserves that area's pin**. Panels
-  never stack, and the other area's panel and pin remain unchanged. This supersedes
-  the earlier rule that switching panels cleared the lock.
-* A pinned panel's active rail button does not dismiss it. Keep the footer pin
-  controls reachable so the user can unpin and close without a keyboard or border
-  drag. Do not add duplicate Pin or X controls over native editor content.
-* Start panels at their maximum useful size within the available editor bounds.
-  Users can reduce them to suit the task; do not impose a cramped initial width or
-  height. Use remembered workspace sizes on subsequent openings.
-* Resize side panels using a broad handle on their inner edge; resize bottom panels
-  using a broad handle along their top edge. Support finger, Pencil and pointer.
-  Side resizing is horizontal; bottom resizing is vertical. Both work while pinned
-  or unpinned. Use touch-friendly hit areas instead of requiring Blender's thin
-  split borders.
-* Remember the user's panel sizes per workspace. Opening/switching panels and
-  revisiting a workspace must not reset chosen sizes. Pinning does not disable resize.
-* Clamp sizes to available content bounds and usable minimums. Rotation, narrow
-  Stage Manager windows, safe areas and an onscreen keyboard must leave rail,
-  resize, pin and dismissal controls reachable. Avoid side/bottom overlap that
-  blocks essential controls when both are open.
+Keep panels within actual editor WINDOW content bounds, including variable Sculpt
+headers. Avoid overlap between Tools and bottom content and between side and bottom
+panels. Drawing, hit testing and native operator context must agree even when a
+floating region extends over another working editor. Preserve selection, tools,
+scroll/zoom, editor settings, undo and saved layout data through all transitions.
+
+### Global lock and defaults
+
+One always-reachable circular lock sits beneath navigation near the outer right
+rail. Editors without that navigation stack use an equivalent control. It locks
+Tools, side and bottom content together, including panels opened after locking.
+Switching content preserves the lock. Tapping an active locked launcher does not
+close its content. Unlocking restores ordinary outside-tap and active-tab dismissal.
+
+Use native Tools visibility on first adaptation. Sculpt opens its real brush shelf
+on first eligible use, even though shipped desktop layouts save it hidden. Wait
+until the shelf is available, preserve an already selected bottom editor and remember
+explicit closure. Center Tools using the native preferred toolbar width.
+
+### Resizing and workspace editing
+
+Start floating panels at their maximum useful size, remember workspace sizes and
+clamp them to usable bounds. Broad handles must work with finger, Pencil and pointer
+while locked or unlocked. Two-axis panel sizing, horizontal/vertical working-editor
+splits, touch resizing of split seams and panel launcher reordering are required.
+Keep these controls reachable in portrait, landscape, narrow Stage Manager windows,
+with safe areas and an onscreen keyboard.
+
+Current source offers side-width and bottom-height resizing, native split commands
+and working-editor content swapping. Those are partial implementation: split-seam
+resize, two-axis floating sizing and launcher reordering remain unfinished. Swapping
+working-editor contents does not complete launcher reordering. Restoration and
+reversal must preserve native editor state rather than discard a workspace.
 
 ### Acceptance criteria
 
-1. Fresh launch, project open and switching through all bundled workspaces show
-   each layout's main editor with permanent floating panel buttons immediately.
-2. Item / Tool / View and editor buttons open adjacent real content. Closing a
-   panel never hides its rail. Scene exposes the full Outliner and Inspector the
-   full Properties editor, including functions absent from earlier custom drawers.
-   Right tabs are narrow and vertical, navigation gizmos remain usable, and no custom
-   Item/Scene title, Pin or X wrapper bars obscure the native editors.
-3. Timeline, bottom node editors and native brush shelves open from bottom buttons
-   in the existing status/footer bar in applicable layouts. Workspaces with a node
-   editor as their main area retain it. Footer Pin Panels controls remain accessible.
-4. A side panel and bottom panel can coexist. Pin either or both, interact with the
-   main editor, resize, unpin and close. Switching panels within an area replaces its
-   current editor while retaining that area's pin, without stacking or changing the
-   other area.
-5. Resize with finger, Pencil and pointer; switch away and return to the workspace.
-   Verify maximum useful initial sizes, horizontal side and vertical bottom resizing
-   while pinned and unpinned, remembered sizes, and reachable controls in portrait,
-   landscape and narrow windows. Verify drawing and hit testing follow the actual
-   WINDOW region and resized bounds, including Sculpt's variable headers.
-6. Open/close panels repeatedly and switch workspaces without losing editor state,
-   object selection, node context, active tools, undo history or saved layout data.
-7. Preserve squeeze tools, double-tap context menu, pressure/tilt/hover, navigation,
-   keyboard shortcuts, mouse buttons, trackpad input and device hot-plugging.
-8. Verify normal desktop builds retain their existing layouts and input behavior.
+1. Fresh launch, project open and every bundled workspace immediately show their
+   working editors and permanent rails. Saved and custom layouts retain their
+   identities, working splits and native editor state.
+2. Each right launcher opens its real sidebar category or full editor. Tools opens
+   the narrow native toolbar from the left. There are no custom wrapper rows or
+   subset editors. Navigation remains reachable.
+3. Left bottom launchers open native Timeline, node editors or brush shelves at
+   the bottom where applicable. Main node editors remain working editors. Sculpt
+   defaults to visible brushes once eligible and remembers explicit closure.
+4. Tools, one side panel and one bottom panel coexist. Lock, open another panel,
+   switch content, use the canvas, unlock and dismiss with finger/Pencil/pointer.
+   One global lock governs the complete sequence and stays reachable.
+5. Resize panels in both axes and resize working seams using touch controls. Split
+   horizontally/vertically, reorder launchers and reverse layout edits. Switch
+   workspaces and return; verify remembered geometry and native editor state.
+6. Repeat opening, closing, resizing and workspace switching in portrait, landscape,
+   narrow windows and with the keyboard. Verify actual header clearance, no blocked
+   essential controls, aligned drawing/input and correct context across split areas.
+7. Native navigation controls accept finger and Pencil press-drag-release like a
+   mouse. Verify cancellation, multi-touch interruption, popup occlusion, fullscreen,
+   temporary views and quad views. Preserve direct finger navigation elsewhere.
+8. Preserve squeeze tools, double-tap context menu, pressure/tilt/hover, keyboard,
+   mouse, trackpad and hot-plug input. Desktop builds retain desktop behavior.
 
-Aim for roughly 44-point interactive targets where practical without turning the
-narrow native-style tabs into wide buttons. Do not globally enlarge Blender or
-force a new workspace when an input device connects. A host
-concept can demonstrate interaction; only the real iPad build can validate touch,
-rendering, panel input ownership and usability.
+Aim for roughly 44-point targets where practical while keeping the rails narrow.
+Do not globally enlarge Blender. Host geometry checks and previews cannot establish
+UIKit input, GPU compositing, native operator lifetime or real-device usability.
 
 ## Existing Pencil tools to preserve
 
 * **Pencil Squeeze:** opens the nine-tool radial palette.
 * **Pencil Double Tap:** opens the context menu (right-click).
-* **Floating Tools button:** opens the existing toolbar shelf for touch access.
+* **Left Tools button:** opens the native vertical toolbar for touch access.
   Native visibility controls and keyboard toggles use the same panel state.
 * Preserve the existing ring geometry, all nine tools and hover behavior. This panel
   milestone does not change the radial design; use the current source and
