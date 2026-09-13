@@ -5092,7 +5092,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +      }
 +      const rcti &r = area->runtime.ipad_navigation_rect;
 +      if (r.xmax > r.xmin && r.ymax > r.ymin) {
-+        const int height = WM_window_pixels_y(win);
++        const int height = WM_window_native_pixel_y(win);
 +        navigation.push_back({r.xmin, height - 1 - r.ymax, r.xmax, height - 1 - r.ymin});
 +      }
 +    }

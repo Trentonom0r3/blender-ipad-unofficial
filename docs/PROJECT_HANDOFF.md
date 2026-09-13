@@ -1,5 +1,21 @@
 # Project handoff — 2026-09-13
 
+## Failed-build repair — 2026-09-13
+
+Both runs 34758590540 (4af0e11) and 34758375022 (498063a) failed in
+`wm_draw.cc`: `WM_window_pixels_y` is undeclared. Replace it with the pinned
+Blender API `WM_window_native_pixel_y`, which includes the native pixel scale
+required to convert the rendered navigation bounds to GHOST's top-left coordinates.
+The existing `wm_window.hh` include supplies this API. This corrects the actual
+compiler failure; compilation and hardware acceptance remain separate gates.
+
+User revised the reserve: stop at **1% of the five-hour allowance remaining**;
+weekly allowance may be used. This supersedes all older 5% reserve instructions
+below. Full workspace, touch and native Files requirements remain unfinished.
+
+Validation: all 14 local tests pass; source preflight applies all 48 pinned
+files. The replacement iOS build is the next gate; no device acceptance is claimed.
+
 ## Explicit Sculpt shelf default — latest source follow-up
 
 Latest source: **4af0e11e98808127f7f23ea37ea52d7a91b2959b**, pushed on
