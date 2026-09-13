@@ -1,6 +1,17 @@
-# Project handoff — 2026-09-12
+# Project handoff — 2026-09-13
 
 ## Explicit Sculpt shelf default — latest source follow-up
+
+Latest source: **4af0e11e98808127f7f23ea37ea52d7a91b2959b**, pushed on
+`codex/ipad-secondary-view-escape`.
+Latest build: [34758590540](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34758590540),
+verified **pending**, with that exact source SHA. It queues behind 34758375022;
+neither live run was cancelled. Check these exact runs on resumption, fix actual
+compile failures, and verify the latest artifact before offering it for device tests.
+
+Stopping this development pass with **8% weekly / 15% five-hour allowance remaining**
+at the last check, preserving the user's minimum 5% reserve. Do not mark the full
+app goal achieved; the code/build/device and remaining feature gates below are open.
 
 Host-read the actual verified IPA's factory and Sculpting-template `.blend` files
 with Blender 5.1.2, scripts disabled and no save: both Sculpting layouts have
