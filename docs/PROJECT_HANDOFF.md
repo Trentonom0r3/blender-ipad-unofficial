@@ -2,6 +2,12 @@
 
 ## Two-axis floating panel sizing — 2026-09-14
 
+Checkpoint source **6c3679a** is pushed and the checkout is clean. Latest live
+check: adjacency build **34889078809** has passed cloud preflight and is in
+iOS configuration for **97e9ebb**. No duplicate build was dispatched. Five-hour
+usage reached 98% consumed; preserve the user's 1% reserve and resume implementation
+after a fresh usage check. Launcher reordering has not been started.
+
 Source now gives side panels a lower-left diagonal corner and bottom panels an
 upper-right diagonal corner. Existing strips retain primary-only resizing. Side
 width/height move with negative X/Y; bottom width/height with positive X/Y. Side
