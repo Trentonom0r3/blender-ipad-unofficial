@@ -2,6 +2,11 @@
 
 ## Seam geometry helpers — 2026-09-14
 
+Geometry source **8538747bf2e3f289a4d11afad52df1c772e8a987** is pushed.
+[Cloud preflight 34835623550](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34835623550)
+is verified **successful** at that exact SHA. No native build of this helper-only
+checkpoint is claimed.
+
 Source now includes tested seam provenance and saved-geometry constraints in
 ipad_workspace_panels.hh. working_layout can append WorkingSeam records containing
 the recursive saved/display node bounds, saved cut coordinate and sorted before/
