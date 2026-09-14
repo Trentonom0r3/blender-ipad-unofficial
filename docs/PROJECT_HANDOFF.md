@@ -1,5 +1,39 @@
 # Project handoff — 2026-09-13
 
+## Native seam adapter draft checkpoint — 2026-09-14
+
+Authoritative code remains 8538747 (16 local tests and cloud preflight passed).
+A native seam adapter is drafted ONLY in the old scratch workspace:
+D:/dev/Projects/Repos/blender-ipad-unofficial/touch-resize-work/source/blender/editors/screen/screen_ipad_panels.cc,
+with declarations in its ED_ipad_panels.hh and registration in screen_ops.cc.
+The standalone seam_native.cc in the scratch root records the initial callback
+implementation. Do not treat these as current shipped code or regenerate the whole
+patch from stale scratch sources. Compare each target against current overlay first.
+
+Draft includes SeamDragData, UID owner lookup, vertex/face snapshot validation,
+connected native-edge selection, saved/displayed candidate limits, modal movement
+and cancellation, local visible Action::Seam grips, and WorkspaceResize hit-map
+publication. It has NOT been compiled, regression-tested or independently reviewed.
+The review agent hit the usage limit before returning findings. No capability or
+validation claim is made for the draft. No untested native adapter was promoted.
+
+Known work before promotion: snapshot edge topology as well as vertices/faces;
+validate actual classification/working editor preservation after each candidate;
+check binary-search validity assumptions; search handle positions on both sides of
+the center (draft only searches toward the positive end); exclude native headers
+and verify handle visibility/hit ownership; draw orientation-correct grips rather
+than rotated rail text. Guard native-edge resolution before offering a handle.
+Cancellation currently avoids overwriting externally changed/rescaled coordinates
+rather than rebasing the original layout; rotation restoration remains unresolved.
+Non-slicing layouts still lack seam adjacency mapping. Add compiled snapshot/modal
+regressions and full native build before device handoff. Existing panel callback
+extraction test must stop before the new SeamDragData section once it is integrated.
+
+Last five-hour reserve check was 4% remaining, preserving the user's 1% floor;
+the review agent subsequently reported usage exhausted. Resume after fresh usage
+verification. Full project goal remains active and incomplete. The last verified
+IPA remains 34825902884 / 01c0781, as below.
+
 ## Seam geometry helpers — 2026-09-14
 
 Geometry source **8538747bf2e3f289a4d11afad52df1c772e8a987** is pushed.
