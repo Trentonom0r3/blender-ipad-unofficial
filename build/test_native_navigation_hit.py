@@ -42,6 +42,33 @@ int main() {
   nav::forget_navigation_window(&auxiliary_window);
   assert(!nav::navigation_hit(&auxiliary_window, 20, 20));
   assert(nav::navigation_regions.count(&auxiliary_window) == 0);
+  using Kind = nav::PointerCaptureKind;
+  nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::WorkspaceResize},
+                                            {80,20,120,60,Kind::Navigation}});
+  assert(nav::pointer_capture_hit(&main_window, 10, 20) == Kind::WorkspaceResize);
+  assert(nav::pointer_capture_hit(&main_window, 50, 60) == Kind::WorkspaceResize);
+  assert(nav::pointer_capture_hit(&main_window, 51, 60) == Kind::None);
+  assert(nav::pointer_capture_hit(&main_window, 90, 30) == Kind::Navigation);
+  nav::PointerCapture capture;
+  for (bool interrupted : {false, true}) {
+    capture.begin(nav::pointer_capture_hit(&main_window, 30, 40));
+    assert(capture.active() && !capture.ended);
+    // Relayout during the drag cannot change its captured semantics.
+    nav::set_navigation_regions(&main_window, {});
+    auto end = capture.finish(interrupted);
+    assert(end.release && end.cancelled == interrupted);
+    assert(!capture.active() && capture.ended);
+    end = capture.finish(true);
+    assert(!end.release && !end.cancelled);
+    nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::WorkspaceResize}});
+  }
+  capture.begin(Kind::Navigation);
+  auto end = capture.finish(true);
+  assert(end.release && !end.cancelled); // Preserve existing navigation behavior.
+  capture.begin(Kind::None);
+  assert(!capture.active() && !capture.ended);
+  end = capture.finish(true);
+  assert(!end.release && !end.cancelled);
 }
 ''', encoding='utf-8')
             binary = root / 'test.exe'

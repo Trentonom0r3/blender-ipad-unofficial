@@ -1,5 +1,52 @@
 # Project handoff — 2026-09-13
 
+## Finger resize capture and interruption — 2026-09-14
+
+New source routes finger drags starting on actual panel resize handles through the
+same press/move/release modal operator as Pencil/pointer drags. The published hit
+map uses the exact compositor handle rectangles; native popups still clear the
+map, and ordinary finger scrolling outside handles retains its existing route.
+A typed capture snapshot distinguishes workspace sizing from navigation and
+preserves its identity through redraw. Multi-touch takeover, window resignation,
+and recognizer cancellation produce one interrupted release; later terminal
+callbacks cannot produce a duplicate release or fall through into another gesture.
+
+GHOST button data now carries default-false is_cancelled, propagated to the WM
+pointer-cancel flag on release. Cancelled releases remain with their originating
+window. The panel modal restores its saved size before ordinary confirmation;
+normal navigation and desktop button constructors retain their prior behavior.
+The older anchored MOUSEPAN resizing remains for existing scroll input, but direct
+finger handle capture now has a real lifecycle suitable for future seam resizing.
+No split-seam resize or two-axis panel capability is claimed by this prerequisite.
+
+All 15 local tests pass, including typed capture, repeated terminal calls, map
+replacement, normal completion and interrupted modal restoration for both axes.
+49-file pinned preflight passes. The exact materialized WM button branch was also
+compiled with a host C++ harness checking normal cross-window routing, cancelled
+owner routing, press/release and tablet data (scratch check_button_event.py).
+Independent review caught a misplaced routing edit before checkpoint; it was
+corrected and the reviewer found no further blocker. Host harnesses mock native
+plumbing; they do not establish UIKit or actual-device behavior. New iOS build
+and device acceptance remain required.
+
+Previous source e2224ae3b50ca7efdcbb3a0e72e20eaaebe0fec2 is now verified successful:
+[build 34804106133](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34804106133).
+IPA Blender-iPad-Unofficial-ipa, ID10332242297, 248,393,516 bytes, is not expired.
+That artifact predates this finger capture change. Older queued status below is
+historical.
+
+Device checks: drag side/bottom handles with finger and Pencil, including first
+movement past the handle, reversal and release outside. Interrupt with a second
+finger, another window and app deactivation; cancellation must restore the initial
+size and leave no stuck drag. Repeat locked/unlocked, with native menus and Sculpt
+shelf categories visible. Trackpad scrolling and external mouse dragging retain
+their existing behavior. Touch interpretation still needs real iPad evidence.
+
+Next: implement seam provenance and constrained saved-vertex movement, with
+snapshot cancellation through this input path. Preserve the seam/topology audit
+below, two-axis panel sizing, launcher reordering, reversal and all native Files
+requirements. Do not reinterpret this input prerequisite as milestone completion.
+
 ## Panel resize ownership — 2026-09-13 follow-up
 
 Source **e2224ae3b50ca7efdcbb3a0e72e20eaaebe0fec2** is pushed on

@@ -36,7 +36,7 @@ struct Main { ListBase screens; };
 struct wmWindow {};
 struct bContext { Main *main; bScreen *screen; wmWindow *window; };
 struct wmOperator { void *customdata = nullptr; int *ptr; };
-struct wmEvent { int type; int val; int xy[2]; };
+struct wmEvent { int type; int val; int xy[2]; int flag = 0; };
 using wmOperatorStatus = int;
 enum { OPERATOR_CANCELLED, OPERATOR_RUNNING_MODAL, OPERATOR_FINISHED,
        EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE, LEFTMOUSE, KM_RELEASE,
@@ -44,6 +44,7 @@ enum { OPERATOR_CANCELLED, OPERATOR_RUNNING_MODAL, OPERATOR_FINISHED,
 template<class T, class... A> bool ELEM(T v, A... a) { return ((v == a) || ...); }
 template<class T> T *MEM_new(const char *, const T &value) { return new T(value); }
 template<class T> void MEM_delete(T *value) { delete value; }
+constexpr int WM_EVENT_IS_POINTER_CANCEL = 1 << 6;
 constexpr float UI_SCALE_FAC = 2;
 Main *CTX_data_main(bContext *C) { return C->main; }
 bScreen *CTX_wm_screen(bContext *C) { return C->screen; }
@@ -144,6 +145,12 @@ int main() {
     resize_cancel(&C, &op);
     assert(a.ipad_panel_size[axis] == original && !op.customdata);
     resize_cancel(&C, &op);
+    original = a.ipad_panel_size[axis];
+    start();
+    wmEvent interrupted = release;
+    interrupted.flag = WM_EVENT_IS_POINTER_CANCEL;
+    assert(resize_modal(&C, &op, &interrupted) == OPERATOR_CANCELLED);
+    assert(a.ipad_panel_size[axis] == original && !op.customdata);
     start(); C.main = nullptr; C.screen = nullptr; C.window = nullptr;
     resize_cancel(&C, &op);
     assert(!op.customdata);

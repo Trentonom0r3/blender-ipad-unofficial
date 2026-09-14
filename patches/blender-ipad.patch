@@ -400,15 +400,16 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    };
    EventTypes event_list[10];
    int num_events;
-@@ -59,6 +75,7 @@
+@@ -59,6 +75,8 @@
    CGPoint translation;
    CGFloat distance;
    bool pencil_used;
 +  bool direct_touch = false;
++  bool cancelled = false;
 
    UserInputEvent(CGPoint *loc, CGPoint *tran, CGFloat *dist, bool pencil)
    {
-@@ -86,14 +103,18 @@
+@@ -86,14 +104,18 @@
          return @"PAN";
        case PAN_GESTURE_TWO_FINGERS:
          return @"PAN2F";
@@ -428,7 +429,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      }
      BLI_assert_unreachable();
      return @"Event undefined";
-@@ -103,8 +124,20 @@
+@@ -103,8 +125,20 @@
 
  /* GHOSTUITapGesture interface for capturing taps. */
  @interface GHOSTUITapGestureRecognizer : UITapGestureRecognizer
@@ -449,7 +450,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -116,21 +149,117 @@
+@@ -116,21 +150,117 @@
    return window->scalePointToWindow(touch_point);
  }
 
@@ -567,7 +568,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
-@@ -179,15 +308,39 @@
+@@ -179,15 +309,39 @@
  @interface GHOSTUIPinchGestureRecognizer : UIPinchGestureRecognizer
  {
    CGFloat cached_distance;
@@ -607,7 +608,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window touch_id:(int)touch_id
  {
    CGPoint touch_point = [self locationOfTouch:touch_id inView:window->getView()];
-@@ -240,7 +393,13 @@
+@@ -240,7 +394,13 @@
    GHOSTUITapGestureRecognizer *tap4f_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan2f_gesture_recognizer;
@@ -621,7 +622,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOSTUIHoverGestureRecognizer *hover_gesture_recognizer;
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
-@@ -251,6 +410,8 @@
+@@ -251,6 +411,8 @@
    UITouch *current_pencil_touch;
    GHOST_TabletData tablet_data;
    bool last_tap_with_pencil;
@@ -630,12 +631,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Keyboard handling. */
    UITextField *text_field;
-@@ -259,6 +420,32 @@
+@@ -259,6 +421,32 @@
    const char *text_field_string;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
 +  bool native_chrome_hovered;
-+  bool navigation_drag;
++  ghost::ios::PointerCapture pointer_capture;
 +  bool external_mouse_connected;
 +  bool mouse_left_pressed;
 +  bool mouse_middle_pressed;
@@ -663,7 +664,14 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Toolbar */
    bool toolbar_enabled;
-@@ -282,7 +469,13 @@
+@@ -276,13 +464,20 @@
+
+ /* Gesture recognizers. */
+ - (void)registerGestureRecognizers;
++- (void)cancelPointerCapture;
+ - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+     shouldRecognizeSimultaneouslyWithGestureRecognizer:
+         (UIGestureRecognizer *)otherGestureRecognizer;
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender;
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender;
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender;
@@ -677,7 +685,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -292,7 +485,36 @@
+@@ -292,7 +487,36 @@
  - (const char *)getLastKeyboardString;
  @end
 
@@ -714,13 +722,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)setSystemAndWindowIOS:(GHOST_SystemIOS *)sys windowIOS:(GHOST_WindowIOS *)win
  {
    system = sys;
-@@ -306,6 +528,14 @@
+@@ -306,6 +530,14 @@
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
 +  indirect_pointer_dragging = false;
 +  native_chrome_hovered = false;
-+  navigation_drag = false;
++  pointer_capture = {};
 +  shift_pressed = false;
 +  indirect_is_orbit = false;
 +  indirect_is_pan = false;
@@ -729,7 +737,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
 
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +565,22 @@
+@@ -335,6 +567,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -752,7 +760,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)registerGestureRecognizers
-@@ -354,6 +600,8 @@
+@@ -354,6 +602,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -761,7 +769,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +612,8 @@
+@@ -364,6 +614,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -770,7 +778,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +624,8 @@
+@@ -374,6 +626,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -779,7 +787,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -392,24 +644,82 @@
+@@ -392,24 +646,82 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
 
@@ -862,7 +870,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -458,6 +768,10 @@
+@@ -458,6 +770,10 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -873,7 +881,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            system->pushEvent(
                new GHOST_EventCursor(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                      GHOST_kEventCursorMove,
-@@ -490,6 +804,43 @@
+@@ -490,6 +806,43 @@
                                        true,
                                        2));
            break;
@@ -917,7 +925,18 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
          case UserInputEvent::EventTypes::LEFT_BUTTON_DOWN:
            system->pushEvent(
                new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
-@@ -510,7 +861,8 @@
+@@ -501,16 +854,15 @@
+         case UserInputEvent::EventTypes::LEFT_BUTTON_UP:
+           system->pushEvent(
+               new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
+-                                    GHOST_kEventButtonUp,
+-                                    window,
+-                                    GHOST_kButtonMaskLeft,
+-                                    tablet_data));
++                                    GHOST_kEventButtonUp, window, GHOST_kButtonMaskLeft, tablet_data,
++                                    event_info.cancelled));
+           break;
+         case UserInputEvent::EventTypes::PINCH_GESTURE:
            system->pushEvent(
                new GHOST_EventTrackpad(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                        window,
@@ -1070,7 +1089,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1084,159 @@
+@@ -677,12 +1084,177 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -1115,6 +1134,18 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  }
 +}
 +
++- (void)cancelPointerCapture
++{
++  const auto end = pointer_capture.finish(true);
++  if (end.release) {
++    CGPoint location = CGPointMake(mouse_cursor_x, mouse_cursor_y);
++    UserInputEvent release(&location, nullptr, nullptr, false);
++    release.cancelled = end.cancelled;
++    release.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
++    [self generateUserInputEvents:release];
++  }
++}
++
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender
  {
    CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -1149,22 +1180,28 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  if (sender.state == UIGestureRecognizerStateBegan) {
 +    CGPoint origin = CGPointMake(touch_point.x - translation.x,
 +                                        touch_point.y - translation.y);
-+    navigation_drag = ghost::ios::navigation_hit(window, int(origin.x), int(origin.y));
-+    if (navigation_drag) {
++    pointer_capture.begin(ghost::ios::pointer_capture_hit(window, int(origin.x), int(origin.y)));
++    if (pointer_capture.active()) {
 +      UserInputEvent begin(&origin, nullptr, nullptr, pencil_pan);
 +      begin.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
 +      begin.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_DOWN);
 +      [self generateUserInputEvents:begin];
 +    }
 +  }
-+  if (navigation_drag) {
++  if (pointer_capture.ended) {
++    return;
++  }
++  if (pointer_capture.active()) {
 +    UserInputEvent pointer(&touch_point, nullptr, nullptr, pencil_pan);
 +    pointer.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
 +    if (sender.state == UIGestureRecognizerStateEnded ||
 +        sender.state == UIGestureRecognizerStateCancelled ||
 +        sender.state == UIGestureRecognizerStateFailed) {
-+      pointer.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
-+      navigation_drag = false;
++      const auto end = pointer_capture.finish(sender.state != UIGestureRecognizerStateEnded);
++      pointer.cancelled = end.cancelled;
++      if (end.release) {
++        pointer.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
++      }
 +    }
 +    [self generateUserInputEvents:pointer];
 +    return;
@@ -1232,7 +1269,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1244,21 @@
+@@ -690,6 +1262,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -1254,7 +1291,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,6 +1291,104 @@
+@@ -722,8 +1309,109 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -1358,8 +1395,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender
  {
++  if (sender.state == UIGestureRecognizerStateBegan) {
++    [self cancelPointerCapture];
++  }
    /* Translation can be non-zero on begin event */
-@@ -739,6 +1406,20 @@
+   if (sender.state == UIGestureRecognizerStateBegan ||
+       sender.state == UIGestureRecognizerStateChanged)
+@@ -739,6 +1427,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -1380,7 +1422,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,52 +1435,115 @@
+@@ -754,67 +1456,139 @@
    }
  }
 
@@ -1389,6 +1431,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -  if (gesture.state != UIGestureRecognizerStateEnded) {
 +- (void)handlePan3f:(GHOSTUIPanGestureRecognizer *)sender
 +{
++  if (sender.state == UIGestureRecognizerStateBegan) {
++    [self cancelPointerCapture];
++  }
 +  if (GHOST_IOS_get_flythrough_mode()) {
 +    if (sender.state == UIGestureRecognizerStateEnded ||
 +        sender.state == UIGestureRecognizerStateCancelled ||
@@ -1532,7 +1577,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
  }
 
-@@ -809,12 +1553,15 @@
+ - (void)handleZoom:(GHOSTUIPinchGestureRecognizer *)sender
+ {
++  if (sender.state == UIGestureRecognizerStateBegan) {
++    [self cancelPointerCapture];
++  }
+   /* Ignore any calls where don't have two touches to work with. */
    if ([sender numberOfTouches] < 2) {
      return;
    }
@@ -1548,7 +1598,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1577,66 @@
+@@ -830,25 +1604,66 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -1618,7 +1668,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +1986,374 @@
+@@ -1198,11 +2013,374 @@
    }
  }
 
@@ -1993,7 +2043,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2449,12 @@
+@@ -1298,7 +2476,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -2007,7 +2057,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2462,163 @@
+@@ -1306,22 +2489,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -2177,7 +2227,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2662,12 @@
+@@ -1365,11 +2689,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -2191,7 +2241,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2675,6 @@
+@@ -1377,7 +2702,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -2199,7 +2249,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2688,6 @@
+@@ -1391,7 +2715,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -2207,7 +2257,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2696,6 @@
+@@ -1400,7 +2723,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -2215,7 +2265,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2705,12 @@
+@@ -1410,8 +2732,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -2230,7 +2280,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2723,14 @@
+@@ -1424,10 +2750,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -2246,7 +2296,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +2774,28 @@
+@@ -1471,14 +2801,28 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
@@ -2276,7 +2326,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2816,9 @@
+@@ -1499,6 +2843,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -2286,7 +2336,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2938,7 @@
+@@ -1618,7 +2965,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -2295,7 +2345,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3228,7 @@
+@@ -1908,6 +3255,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -2303,7 +2353,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3239,11 @@
+@@ -1918,6 +3266,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -2315,6 +2365,14 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
+@@ -1932,6 +3285,7 @@
+   GHOST_ASSERT(!request_to_make_active_,
+                "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
+
++  [(GHOSTUIWindow *)rootWindow cancelPointerCapture];
+   /* Disable the drawInMTKView() calls for this window. */
+   metal_view_.paused = YES;
+   /* Wait until any outstanding presents in flight are done. */
 diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/space_view3d_ipad.py
 new file mode 100644
 --- /dev/null
@@ -3706,7 +3764,16 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 
  #ifdef WITH_INPUT_NDOF
    /**
-@@ -671,7 +673,9 @@
+@@ -651,6 +653,8 @@
+   GHOST_TButton button;
+   /** Associated tablet data. */
+   GHOST_TabletData tablet;
++  /** True for a cancelled pointer gesture, not a successful button release. */
++  bool is_cancelled;
+ } GHOST_TEventButtonData;
+
+ typedef enum {
+@@ -671,7 +675,9 @@
    GHOST_kTrackpadEventRotate,
    GHOST_kTrackpadEventSwipe, /* Reserved, not used for now */
    GHOST_kTrackpadEventMagnify,
@@ -4203,6 +4270,26 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
+@@ -6131,6 +6512,9 @@
+        * GHOST should never generate unknown events and this logic can probably be removed. */
+       event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
+       event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
++      if (type == GHOST_kEventButtonUp && bd->is_cancelled) {
++        event.flag |= WM_EVENT_IS_POINTER_CANCEL;
++      }
+
+       /* Get tablet data. */
+       wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
+@@ -6143,7 +6527,8 @@
+                                           (GHOST_TEventType)type);
+
+       /* Add to other window if event is there (not to both!). */
+-      wmWindow *win_other = wm_event_cursor_other_windows(wm, win, &event);
++      wmWindow *win_other = bd->is_cancelled ? nullptr :
++                                             wm_event_cursor_other_windows(wm, win, &event);
+       if (win_other) {
+         wmEvent event_other = *win_other->eventstate;
+
 diff --git a/source/blender/makesrna/intern/rna_wm.cc b/source/blender/makesrna/intern/rna_wm.cc
 --- a/source/blender/makesrna/intern/rna_wm.cc
 +++ b/source/blender/makesrna/intern/rna_wm.cc
@@ -4805,7 +4892,7 @@ new file mode 100644
 diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowmanager/WM_types.hh
 --- a/source/blender/windowmanager/WM_types.hh
 +++ b/source/blender/windowmanager/WM_types.hh
-@@ -703,8 +703,10 @@
+@@ -703,8 +703,12 @@
     * Mouse-move on trackpad/touch screen where three fingers triggered the event.
     */
    WM_EVENT_MULTITOUCH_THREE_FINGERS = (1 << 4),
@@ -4813,8 +4900,10 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
 -ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_FORCE_DRAG_THRESHOLD);
 +  /** Direct screen pinch, not a mouse or indirect trackpad event. */
 +  WM_EVENT_IS_TOUCH_PINCH = (1 << 5),
++  /** Interrupted native pointer gesture: release ownership without confirmation. */
++  WM_EVENT_IS_POINTER_CANCEL = (1 << 6),
 +};
-+ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_IS_TOUCH_PINCH);
++ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_IS_POINTER_CANCEL);
 
  struct wmTabletData {
    /** 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER. */
@@ -5132,7 +5221,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    }
 
    /* After area regions so we can do area 'overlay' drawing. */
-@@ -1175,6 +1248,45 @@
+@@ -1175,6 +1248,52 @@
 
    wm_draw_callbacks(win);
    wmWindowViewport(win);
@@ -5148,6 +5237,13 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  std::vector<ghost::ios::NavigationRect> navigation;
 +  if (ED_ipad_panels_enabled(screen)) {
++    std::vector<rcti> resize_regions;
++    ED_ipad_panels_resize_regions(C, win, resize_regions);
++    const int height = WM_window_native_pixel_y(win);
++    for (const rcti &r : resize_regions) {
++      navigation.push_back({r.xmin, height - 1 - r.ymax, r.xmax, height - 1 - r.ymin,
++                            ghost::ios::PointerCaptureKind::WorkspaceResize});
++    }
 +    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +      if (area->runtime.ipad_layer != 1 || area->spacetype != SPACE_VIEW3D) {
 +        continue;
@@ -5178,7 +5274,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
    /* Blend in floating regions (menus). */
    LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-@@ -1528,6 +1640,13 @@
+@@ -1528,6 +1647,13 @@
    }
 
    ED_screen_areas_iter (win, screen, area) {
@@ -5260,10 +5356,13 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,38 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
++#include <vector>
++
++struct rcti;
 +struct bContext;
 +struct bScreen;
 +struct ScrArea;
@@ -5285,6 +5384,7 @@ new file mode 100644
 +bool ED_ipad_panels_toggle_region(bContext *C, ARegion *region);
 +bool ED_ipad_panels_handle_event(bContext *C, wmWindow *win, const wmEvent *event);
 +void ED_ipad_panels_draw(bContext *C, wmWindow *win);
++void ED_ipad_panels_resize_regions(bContext *C, wmWindow *win, std::vector<rcti> &regions);
 +bool ED_ipad_panels_locked(const bScreen *screen);
 +bool ED_ipad_panels_native_pin(const bScreen *screen, const ScrArea *area);
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot);
@@ -6038,7 +6138,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1362 @@
+@@ -0,0 +1,1386 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -6690,7 +6790,8 @@ new file mode 100644
 +    resize_cancel(C, op);
 +    return OPERATOR_CANCELLED;
 +  }
-+  if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
++  if ((event->flag & WM_EVENT_IS_POINTER_CANCEL) ||
++      ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
 +    resize_cancel(C, op);
 +    return OPERATOR_CANCELLED;
 +  }
@@ -6716,6 +6817,23 @@ new file mode 100644
 +  return OPERATOR_RUNNING_MODAL;
 +}
 +}  // namespace
++
++void ED_ipad_panels_resize_regions(bContext *C, wmWindow *win, std::vector<rcti> &regions)
++{
++  bScreen *screen = WM_window_get_active_screen(win);
++  if (!ED_ipad_panels_enabled(screen)) {
++    return;
++  }
++  const Model model = make_model(C, win);
++  if (!model.main) {
++    return;
++  }
++  for (const Button &button : buttons(model, screen)) {
++    if (button.action == Action::Resize && !button.rect.empty()) {
++      regions.push_back(to_rect(button.rect));
++    }
++  }
++}
 +
 +bool ED_ipad_panels_enabled(const bScreen *screen)
 +{
@@ -7272,6 +7390,12 @@ new file mode 100644
 +  }
 +  const auto controls = buttons(model, screen);
 +  auto &runtime = model.main->runtime;
++  if (event->flag & WM_EVENT_IS_POINTER_CANCEL) {
++    runtime.ipad_tab_action = 0;
++    pan_axis = 0;
++    screen->do_draw = true;
++    return true;
++  }
 +  if (runtime.ipad_tab_action) {
 +    if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
 +      runtime.ipad_tab_action = 0;
@@ -7585,7 +7709,7 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,74 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -7598,8 +7722,11 @@ new file mode 100644
 +/* Window-owned snapshots in native content pixels, top-left origin. Both UIKit
 + * gesture callbacks and Blender drawing run on the main thread. No editor or
 + * operator pointers cross the GHOST boundary. */
++enum class PointerCaptureKind { None, Navigation, WorkspaceResize };
++
 +struct NavigationRect {
 +  int xmin, ymin, xmax, ymax;
++  PointerCaptureKind kind = PointerCaptureKind::Navigation;
 +  bool contains(const int x, const int y) const
 +  {
 +    return x >= xmin && x <= xmax && y >= ymin && y <= ymax;
@@ -7615,19 +7742,41 @@ new file mode 100644
 +  }
 +}
 +
-+inline bool navigation_hit(const void *window, const int x, const int y)
++inline PointerCaptureKind pointer_capture_hit(const void *window, const int x, const int y)
 +{
 +  const auto found = navigation_regions.find(window);
 +  if (found == navigation_regions.end()) {
-+    return false;
++    return PointerCaptureKind::None;
 +  }
 +  for (const NavigationRect &rect : found->second) {
 +    if (rect.contains(x, y)) {
-+      return true;
++      return rect.kind;
 +    }
 +  }
-+  return false;
++  return PointerCaptureKind::None;
 +}
++
++inline bool navigation_hit(const void *window, const int x, const int y)
++{
++  return pointer_capture_hit(window, x, y) != PointerCaptureKind::None;
++}
++
++/* Hold the kind selected at gesture begin even if drawing replaces the hit map.
++ * One finish produces one release. Repeated terminal callbacks are inert. */
++struct PointerCapture {
++  PointerCaptureKind kind = PointerCaptureKind::None;
++  bool ended = false;
++  bool active() const { return kind != PointerCaptureKind::None; }
++  void begin(const PointerCaptureKind hit) { kind = hit; ended = false; }
++  struct End { bool release; bool cancelled; };
++  End finish(const bool interrupted)
++  {
++    const End result{active(), interrupted && kind == PointerCaptureKind::WorkspaceResize};
++    ended |= result.release;
++    kind = PointerCaptureKind::None;
++    return result;
++  }
++};
 +
 +inline void forget_navigation_window(const void *window)
 +{
@@ -7635,3 +7784,24 @@ new file mode 100644
 +}
 +
 +}  // namespace ghost::ios
+diff --git a/intern/ghost/intern/GHOST_EventButton.hh b/intern/ghost/intern/GHOST_EventButton.hh
+--- a/intern/ghost/intern/GHOST_EventButton.hh
++++ b/intern/ghost/intern/GHOST_EventButton.hh
+@@ -24,13 +24,15 @@
+    * \param window: The window of this event.
+    * \param button: The state of the buttons were at the time of the event.
+    * \param tablet: The tablet data associated with this event.
++   * \param is_cancelled: An interrupted gesture release that must not confirm a drag.
+    */
+   GHOST_EventButton(uint64_t time,
+                     GHOST_TEventType type,
+                     GHOST_IWindow *window,
+                     GHOST_TButton button,
+-                    const GHOST_TabletData &tablet)
+-      : GHOST_Event(time, type, window), button_event_data_({button, tablet})
++                    const GHOST_TabletData &tablet,
++                    bool is_cancelled = false)
++      : GHOST_Event(time, type, window), button_event_data_({button, tablet, is_cancelled})
+   {
+     data_ = &button_event_data_;
+   }
