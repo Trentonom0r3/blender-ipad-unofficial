@@ -92,13 +92,12 @@ splits, touch resizing of split seams and panel launcher reordering are required
 Keep these controls reachable in portrait, landscape, narrow Stage Manager windows,
 with safe areas and an onscreen keyboard.
 
-Current source offers side-width and bottom-height resizing, native split commands,
-working-editor content swapping and draggable seams for recursive and irregular layouts.
-Seam controls are source-implemented and host-tested; current build/device evidence
-is in PROJECT_HANDOFF.md. Irregular adjacency is source-implemented with exact
-native edge capture; device acceptance, two-axis floating sizing and launcher
-reordering remain unfinished. Swapping
-working-editor contents does not complete launcher reordering. Restoration and
+Current source offers side-width and bottom-height strips, two-axis corner sizing,
+native split commands, working-editor content swapping and draggable seams for
+recursive and irregular layouts. These are source-implemented and host-tested;
+exact build/device evidence is in PROJECT_HANDOFF.md. Launcher reordering remains
+unfinished. Swapping working-editor contents does not complete launcher reordering.
+Restoration and
 reversal must preserve native editor state rather than discard a workspace.
 
 ### Acceptance criteria

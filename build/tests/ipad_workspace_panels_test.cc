@@ -411,11 +411,105 @@ static void native_shelf_geometry()
   }
 }
 
+static void two_axis_geometry()
+{
+  for (int width : {1,8,80,400,1200}) {
+    for (int height : {1,8,80,400,900}) {
+      for (int mask=0;mask<8;++mask) {
+        for (int preferred : {0,1,200,4000}) {
+          for (int corner : {0,24,44,200}) {
+            p::State state;
+            if(mask&1)state.side.active_id=1;
+            if(mask&2)state.bottom.active_id=2;
+            if(mask&4)state.tools.active_id=3;
+            state.side_height=preferred;state.bottom_width=preferred;
+            p::Metrics metrics;metrics.corner_extent=corner;
+            const p::Rect bounds{-31,19,-31+width,19+height};
+            const auto l=p::layout(bounds,state,metrics);
+            check(state.side_height==preferred && state.bottom_width==preferred,
+                  "Passive layout preserves secondary preferences including zero");
+            check(contains(l.side_panel,l.side_corner) && contains(l.bottom_panel,l.bottom_corner),
+                  "Diagonal grips remain inside their panels at tiny sizes");
+            check(l.side_corner.width()>=0 && l.side_corner.height()>=0 &&
+                    l.bottom_corner.width()>=0 && l.bottom_corner.height()>=0,
+                  "Clamped diagonal grip geometry never inverts");
+            const auto side=p::panel_content(l,p::Edge::Side);
+            const auto bottom=p::panel_content(l,p::Edge::Bottom);
+            check(contains(l.side_panel,side) && contains(l.bottom_panel,bottom),
+                  "Native content stays inside two-axis panel bounds");
+            check(side.width()>=0 && side.height()>=0 && bottom.width()>=0 && bottom.height()>=0,
+                  "Chrome exclusion never inverts native content");
+            check(!overlaps(side,l.side_corner) && !overlaps(side,l.side_resize) &&
+                    !overlaps(bottom,l.bottom_corner) && !overlaps(bottom,l.bottom_resize),
+                  "Native input is disjoint from primary and diagonal resize targets");
+            const std::vector<p::Rect> blocks{l.side_panel,l.bottom_panel,l.tools_panel,
+                                             l.left_rail,l.side_rail,l.canvas};
+            for(std::size_t i=0;i<blocks.size();++i) {
+              check(contains(bounds,blocks[i]),"Two-axis layout remains within header-excluded bounds");
+              for(std::size_t j=0;j<i;++j)check(!overlaps(blocks[i],blocks[j]),
+                                                "Panels, Tools, canvas and rails remain disjoint");
+            }
+          }
+        }
+      }
+    }
+  }
+  p::State state;state.side.active_id=1;state.bottom.active_id=2;state.tools.active_id=3;
+  state.toggle_panels_lock();
+  const p::Rect bounds{0,0,1400,1000};
+  const auto automatic=p::layout(bounds,state);
+  p::resize_2d(state,p::Edge::Side,300,350,bounds);
+  p::resize_2d(state,p::Edge::Bottom,400,220,bounds);
+  auto l=p::layout(bounds,state);
+  check(l.side_panel.width()==300 && l.side_panel.height()==350 &&
+          l.bottom_panel.width()==400 && l.bottom_panel.height()==220,
+        "Diagonal drag records both actual dimensions independently");
+  check(l.side_panel.xmax==automatic.side_panel.xmax && l.side_panel.ymax==automatic.side_panel.ymax &&
+          l.bottom_panel.xmin==automatic.bottom_panel.xmin && l.bottom_panel.ymin==automatic.bottom_panel.ymin,
+        "Side anchors top-right and bottom anchors bottom-left");
+  check(l.side_corner.width()==44 && l.side_corner.height()==44 &&
+          l.bottom_corner.width()==44 && l.bottom_corner.height()==44,
+        "Roomy panels expose full-size diagonal targets");
+  check(l.side_resize.width()==24 && l.bottom_resize.height()==24,
+        "Diagonal targets do not widen the full primary strips");
+  auto small=p::layout({0,0,250,180},state);
+  check(small.side_panel.height()<350 && small.bottom_panel.width()<400,
+        "Small windows visually constrain remembered secondary dimensions");
+  check(state.side_height==350 && state.bottom_width==400,
+        "Rotation does not destroy secondary size preferences");
+  check(same(p::layout(bounds,state).side_panel,l.side_panel) &&
+          same(p::layout(bounds,state).bottom_panel,l.bottom_panel),
+        "Returning to larger bounds restores both full panel rectangles");
+  p::resize(state,p::Edge::Side,280,bounds);p::resize(state,p::Edge::Bottom,210,bounds);
+  check(state.side_height==350 && state.bottom_width==400,
+        "Legacy single-axis drags leave secondary preferences alone");
+  check(state.side.active_id==1 && state.bottom.active_id==2 && state.tools.active_id==3 && state.panels_locked,
+        "Resizing preserves content identities, Tools and the global lock");
+  p::resize_2d(state,p::Edge::Side,-100,-100,bounds);
+  p::resize_2d(state,p::Edge::Bottom,-100,-100,bounds);
+  check(state.side_width==160 && state.side_height==120 &&
+          state.bottom_width==320 && state.bottom_height==120,
+        "Two-axis drags honor all native panel minimum dimensions when space permits");
+  p::resize_2d(state,p::Edge::Side,10000,10000,bounds);
+  p::resize_2d(state,p::Edge::Bottom,10000,10000,bounds);
+  l=p::layout(bounds,state);
+  check(state.side_width==l.side_panel.width() && state.side_height==l.side_panel.height() &&
+          state.bottom_width==l.bottom_panel.width() && state.bottom_height==l.bottom_panel.height(),
+        "Oversized drag preferences contain actual fitted dimensions");
+  const auto before=state;
+  p::resize_2d(state,p::Edge::Side,200,200,{});
+  p::resize_2d(state,p::Edge::Tools,200,200,bounds);
+  check(state.side_width==before.side_width && state.side_height==before.side_height &&
+          state.bottom_width==before.bottom_width && state.bottom_height==before.bottom_height,
+        "Empty bounds and Tools never change panel preferences");
+}
+
 int main()
 {
   try {
     native_shelf_geometry();
-    classification();
+    two_axis_geometry();
+  classification();
     split_geometry();
     interaction();
     global_lock_and_tools();

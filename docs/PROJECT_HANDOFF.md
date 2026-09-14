@@ -1,5 +1,50 @@
 # Project handoff — 2026-09-13
 
+## Two-axis floating panel sizing — 2026-09-14
+
+Source now gives side panels a lower-left diagonal corner and bottom panels an
+upper-right diagonal corner. Existing strips retain primary-only resizing. Side
+width/height move with negative X/Y; bottom width/height with positive X/Y. Side
+stays top/right anchored and bottom stays bottom/left anchored. Both remain inside
+usable bounds, clear of Tools, rails and each other. Conservative canvas reserves
+are preserved. The 44-UI-unit corner takes input priority over the narrow primary
+strip, and the same rectangles drive drawing, hit testing and WorkspaceResize
+capture. Native content excludes the corner through a bottom row for side content
+and a right column for bottom content; no new title/wrapper labels were added.
+
+State adds side_height and bottom_width, with zero retaining previous full extents.
+New bScreen ipad_panel_extent[2] stores their UI-unit preferences separately from
+existing ipad_panel_size[2]. Passive layout clamps presentation without replacing
+preferences. Corner modal capture snapshots both pointer coordinates, both original
+preferences and displayed sizes. UID/window/context loss, pointer cancellation,
+Escape/right-click/deactivation or changed usable bounds restore both preferences.
+Strips restore only the primary preference. The legacy MOUSEPAN path understands
+both corner modes. Global lock remains independent of resizing.
+
+All 17 local tests and 49-file pinned source preflight pass. Geometry suite now
+covers 786,061 checks plus 132 shipped-layout cases. Added geometry tests cover
+containment, corner/content exclusion, coexistence, tiny bounds, minimum dimensions
+and preferred-size restoration. Exact native callback mocks cover all four modes,
+both-preference rollback/commit, owner replacement, window-bounds cancellation and
+signed diagonal deltas at UI scale 2 without changing the opposite panel. Review
+caught missing native scaling of corner/minimum metrics; both assignments are fixed.
+No other source blocker was found. Native compilation, save/reload/old-file default
+behavior, actual content rendering and touch/Pencil/device acceptance remain pending.
+
+The preceding adjacency [iOS run 34889078809](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34889078809)
+is still in progress for **97e9ebb9a2b2c75ffe78ba6b58510eff58ecb54c**. It does not
+include this two-axis change. Do not cancel/restart it. Inspect that exact build,
+then compile the next coherent source checkpoint once it finishes. Last verified
+successful IPA remains 34855054521 / 1bbe406 / artifact 10353371480 below.
+
+Next implement launcher reordering while preserving native editor/category identity,
+then build and verify the combined panel work. Device protocol: open Tools, side and
+bottom content together; drag both corners in both directions, reverse, reach limits,
+release outside and cancel. Repeat locked/unlocked, with native brush shelf tabs,
+rotation/Stage Manager/keyboard and after workspace switching/save/reload. Verify
+old files retain automatic defaults. Layout reversal and native Files lifecycle
+remain unfinished; neither the workspace milestone nor product goal is complete.
+
 ## Native irregular-layout seam controls — 2026-09-14
 
 Source **97e9ebb9a2b2c75ffe78ba6b58510eff58ecb54c** is pushed. Exact

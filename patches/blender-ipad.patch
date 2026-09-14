@@ -4949,7 +4949,7 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -113,6 +113,21 @@
+@@ -113,6 +113,23 @@
    struct wmTooltipState *tool_tip;
 
    PreviewImage *preview;
@@ -4968,10 +4968,12 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  char ipad_panel_category[64];
 +  int ipad_panel_owner;
 +  int _pad_ipad_owner;
++  /* Secondary preferred dimensions: side height, bottom width (UI units). */
++  float ipad_panel_extent[2];
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +443,24 @@
+@@ -428,6 +445,24 @@
    struct bToolRef *tool;
    char is_tool_set;
    char _pad0[7];
@@ -5464,7 +5466,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,870 @@
+@@ -0,0 +1,928 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -6032,6 +6034,8 @@ new file mode 100644
 +   * explicit user resize. Passive relayout never replaces this preference. */
 +  int side_width = 0;
 +  int bottom_height = 0;
++  int side_height = 0; /* Zero retains the available full-height default. */
++  int bottom_width = 0; /* Zero retains the available full-width default. */
 +
 +  Slot &slot(const Edge edge) { return edge == Edge::Side ? side : edge == Edge::Bottom ? bottom : tools; }
 +  const Slot &slot(const Edge edge) const { return edge == Edge::Side ? side : edge == Edge::Bottom ? bottom : tools; }
@@ -6114,9 +6118,11 @@ new file mode 100644
 +  bool left_rail = true;
 +  int bottom_rail_extent = 0;
 +  int resize_extent = 24;
++  int corner_extent = 44;
 +  int minimum_canvas_width = 160;
 +  int minimum_canvas_height = 120;
 +  int minimum_side_width = 160;
++  int minimum_side_height = 120;
 +  int minimum_bottom_width = 320;
 +  int minimum_bottom_height = 120;
 +  int automatic_side_percent = 45;
@@ -6138,6 +6144,8 @@ new file mode 100644
 +  Rect bottom_panel;
 +  Rect side_resize;
 +  Rect bottom_resize;
++  Rect side_corner;
++  Rect bottom_corner;
 +};
 +
 +inline int fit_dimension(const int requested, const int minimum, const int maximum)
@@ -6215,16 +6223,35 @@ new file mode 100644
 +  const int canvas_bottom = content.ymin + bottom_height + (bottom_height ? gap_y : 0);
 +  result.canvas = {content.xmin, canvas_bottom, canvas_right, content.ymax};
 +  if (side_width) {
-+    result.side_panel = {content.xmax - side_width, content.ymin, content.xmax, content.ymax};
++    const int side_height = fit_dimension(state.side_height > 0 ? state.side_height : content.height(),
++                                           metrics.minimum_side_height, content.height());
++    result.side_panel = {content.xmax - side_width, content.ymax - side_height,
++                          content.xmax, content.ymax};
 +    result.side_resize = {result.side_panel.xmin, result.side_panel.ymin,
 +                          result.side_panel.xmin + std::min(std::max(0, metrics.resize_extent), side_width),
 +                          result.side_panel.ymax};
 +  }
 +  if (bottom_height) {
-+    result.bottom_panel = {content.xmin, content.ymin, canvas_right, content.ymin + bottom_height};
++    const int bottom_width = fit_dimension(state.bottom_width > 0 ? state.bottom_width :
++                                                                    canvas_right - content.xmin,
++                                             metrics.minimum_bottom_width,
++                                             canvas_right - content.xmin);
++    result.bottom_panel = {content.xmin, content.ymin, content.xmin + bottom_width,
++                            content.ymin + bottom_height};
 +    result.bottom_resize = {result.bottom_panel.xmin,
 +                            result.bottom_panel.ymax - std::min(std::max(0, metrics.resize_extent), bottom_height),
 +                            result.bottom_panel.xmax, result.bottom_panel.ymax};
++  }
++  const int corner_extent = std::max(0, metrics.corner_extent);
++  if (!result.side_panel.empty() && corner_extent) {
++    const Rect &r = result.side_panel;
++    result.side_corner = {r.xmin, r.ymin, r.xmin + std::min(corner_extent, r.width()),
++                           r.ymin + std::min(corner_extent, r.height())};
++  }
++  if (!result.bottom_panel.empty() && corner_extent) {
++    const Rect &r = result.bottom_panel;
++    result.bottom_corner = {r.xmax - std::min(corner_extent, r.width()),
++                             r.ymax - std::min(corner_extent, r.height()), r.xmax, r.ymax};
 +  }
 +  return result;
 +}
@@ -6239,9 +6266,17 @@ new file mode 100644
 +  Rect result = edge == Edge::Side ? layout.side_panel : layout.bottom_panel;
 +  if (edge == Edge::Side) {
 +    result.xmin = std::clamp(layout.side_resize.xmax, result.xmin, result.xmax);
++    /* Keep the primary strip narrow; the wider diagonal grip gets a bottom row.
++     * Native content is rectangular and must exclude its complete footprint. */
++    if (!layout.side_corner.empty() && layout.side_corner.xmax > result.xmin) {
++      result.ymin = std::clamp(layout.side_corner.ymax, result.ymin, result.ymax);
++    }
 +  }
 +  else {
 +    result.ymax = std::clamp(layout.bottom_resize.ymin, result.ymin, result.ymax);
++    if (!layout.bottom_corner.empty() && layout.bottom_corner.ymin < result.ymax) {
++      result.xmax = std::clamp(layout.bottom_corner.xmin, result.xmin, result.xmax);
++    }
 +  }
 +  return result;
 +}
@@ -6284,6 +6319,31 @@ new file mode 100644
 +    probe.bottom.active_id = 0;
 +    probe.bottom_height = std::max(1, requested);
 +    state.bottom_height = layout(bounds, probe, metrics).bottom_panel.height();
++  }
++}
++
++/* A user diagonal drag records both fitted dimensions atomically. Passive layout
++ * never changes preferences, including the zero full-extent defaults. */
++inline void resize_2d(State &state, const Edge edge, const int requested_width,
++                       const int requested_height, const Rect bounds, const Metrics &metrics = {})
++{
++  if (bounds.empty() || edge == Edge::Tools) { return; }
++  State probe = state;
++  if (edge == Edge::Side) {
++    probe.side.active_id = 0;
++    probe.side_width = std::max(1, requested_width);
++    probe.side_height = std::max(1, requested_height);
++    const Rect fitted = layout(bounds, probe, metrics).side_panel;
++    state.side_width = fitted.width();
++    state.side_height = fitted.height();
++  }
++  else {
++    probe.bottom.active_id = 0;
++    probe.bottom_width = std::max(1, requested_width);
++    probe.bottom_height = std::max(1, requested_height);
++    const Rect fitted = layout(bounds, probe, metrics).bottom_panel;
++    state.bottom_width = fitted.width();
++    state.bottom_height = fitted.height();
 +  }
 +}
 +
@@ -6459,7 +6519,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1812 @@
+@@ -0,0 +1,1866 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -6666,6 +6726,8 @@ new file mode 100644
 +  metrics.tools_width = int((tools && tools->runtime->type ?
 +                                tools->runtime->type->prefsizex : 40) * scale);
 +  metrics.resize_extent = int(24 * scale);
++  metrics.corner_extent = int(44 * scale);
++  metrics.minimum_side_height = int(120 * scale);
 +  metrics.minimum_canvas_width = int(160 * scale);
 +  metrics.minimum_canvas_height = int(120 * scale);
 +  metrics.minimum_side_width = int(180 * scale);
@@ -6682,6 +6744,8 @@ new file mode 100644
 +  };
 +  state.side_width = size(screen->ipad_panel_size[0]);
 +  state.bottom_height = size(screen->ipad_panel_size[1]);
++  state.side_height = size(screen->ipad_panel_extent[0]);
++  state.bottom_width = size(screen->ipad_panel_extent[1]);
 +}
 +
 +static Rect content_bounds(const wmWindow *win, const ScrArea *main)
@@ -6991,6 +7055,8 @@ new file mode 100644
 +  for (const Edge edge : {Edge::Side, Edge::Bottom}) {
 +    if (model.state.slot(edge).open()) {
 +      const Rect resize = edge == Edge::Side ? model.layout.side_resize : model.layout.bottom_resize;
++      const Rect corner = edge == Edge::Side ? model.layout.side_corner : model.layout.bottom_corner;
++      result.push_back({corner, "", Action::Resize, edge, 1});
 +      result.push_back({resize, "", Action::Resize, edge});
 +    }
 +  }
@@ -7142,9 +7208,12 @@ new file mode 100644
 +  unsigned int screen_uid;
 +  wmWindow *window;
 +  int axis;
-+  int start;
++  int start[2];
 +  float original;
 +  float initial_size;
++  float original_extent;
++  float initial_extent;
++  policy::Rect bounds;
 +};
 +
 +static wmOperatorStatus resize_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -7154,18 +7223,21 @@ new file mode 100644
 +    return OPERATOR_CANCELLED;
 +  }
 +  const int axis = RNA_int_get(op->ptr, "axis");
-+  if (!CTX_wm_window(C) || axis < 0 || axis > 1) {
++  if (!CTX_wm_window(C) || axis < 0 || axis > 3) {
 +    return OPERATOR_CANCELLED;
 +  }
++  const int panel = axis % 2;
 +  const Model model = make_model(C, CTX_wm_window(C));
-+  if (!model.main || !model.state.slot(axis == 0 ? Edge::Side : Edge::Bottom).open()) {
++  if (!model.main || !model.state.slot(panel == 0 ? Edge::Side : Edge::Bottom).open()) {
 +    return OPERATOR_CANCELLED;
 +  }
-+  const float displayed = axis == 0 ? model.layout.side_panel.width() : model.layout.bottom_panel.height();
++  const float displayed = panel == 0 ? model.layout.side_panel.width() : model.layout.bottom_panel.height();
++  const float extent = panel == 0 ? model.layout.side_panel.height() : model.layout.bottom_panel.width();
 +  op->customdata = MEM_new<ResizeData>(__func__, ResizeData{screen->id.session_uid, CTX_wm_window(C),
-+                                                          axis, event->xy[axis],
-+                                                          screen->ipad_panel_size[axis],
-+                                                          displayed / UI_SCALE_FAC});
++                                                          axis, {event->xy[0], event->xy[1]},
++                                                          screen->ipad_panel_size[panel],
++                                                          displayed / UI_SCALE_FAC,
++                                                          screen->ipad_panel_extent[panel], extent / UI_SCALE_FAC, model.bounds});
 +  WM_event_add_modal_handler(C, op);
 +  return OPERATOR_RUNNING_MODAL;
 +}
@@ -7189,7 +7261,8 @@ new file mode 100644
 +  auto *data = static_cast<ResizeData *>(op->customdata);
 +  if (data) {
 +    if (bScreen *screen = resize_owner(C, *data)) {
-+      screen->ipad_panel_size[data->axis] = data->original;
++      screen->ipad_panel_size[data->axis % 2] = data->original;
++      if (data->axis >= 2) { screen->ipad_panel_extent[data->axis % 2] = data->original_extent; }
 +      screen->do_refresh = true;
 +      screen->do_draw = true;
 +      if (CTX_wm_window(C) && CTX_wm_screen(C) == screen) {
@@ -7214,6 +7287,15 @@ new file mode 100644
 +    resize_cancel(C, op);
 +    return OPERATOR_CANCELLED;
 +  }
++  Model model = make_model(C, CTX_wm_window(C));
++  const int panel = data->axis % 2;
++  const auto &old = data->bounds;
++  if (!model.main || !model.state.slot(panel == 0 ? Edge::Side : Edge::Bottom).open() ||
++      model.bounds.xmin != old.xmin || model.bounds.xmax != old.xmax ||
++      model.bounds.ymin != old.ymin || model.bounds.ymax != old.ymax) {
++    resize_cancel(C, op);
++    return OPERATOR_CANCELLED;
++  }
 +  if ((event->flag & WM_EVENT_IS_POINTER_CANCEL) ||
 +      ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
 +    resize_cancel(C, op);
@@ -7225,17 +7307,23 @@ new file mode 100644
 +    return OPERATOR_FINISHED;
 +  }
 +  if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
-+    Model model = make_model(C, CTX_wm_window(C));
-+    if (!model.main || !model.state.slot(data->axis == 0 ? Edge::Side : Edge::Bottom).open()) {
-+      resize_cancel(C, op);
-+      return OPERATOR_CANCELLED;
++    const float delta = (event->xy[panel] - data->start[panel]) / UI_SCALE_FAC;
++    const float requested = data->initial_size + (panel == 0 ? -delta : delta);
++    const Edge edge = panel == 0 ? Edge::Side : Edge::Bottom;
++    if (data->axis >= 2) {
++      const float delta_other = (event->xy[1-panel] - data->start[1-panel]) / UI_SCALE_FAC;
++      const float extent = data->initial_extent + (panel == 0 ? -delta_other : delta_other);
++      policy::resize_2d(model.state, edge,
++                       int((panel == 0 ? requested : extent) * UI_SCALE_FAC),
++                       int((panel == 0 ? extent : requested) * UI_SCALE_FAC), model.bounds, model.metrics);
++      screen->ipad_panel_extent[panel] =
++          (panel == 0 ? model.state.side_height : model.state.bottom_width) / UI_SCALE_FAC;
 +    }
-+    const float delta = (event->xy[data->axis] - data->start) / UI_SCALE_FAC;
-+    const float requested = data->initial_size + (data->axis == 0 ? -delta : delta);
-+    policy::resize(model.state, data->axis == 0 ? Edge::Side : Edge::Bottom,
-+                    int(requested * UI_SCALE_FAC), model.bounds, model.metrics);
-+    CTX_wm_screen(C)->ipad_panel_size[data->axis] =
-+        (data->axis == 0 ? model.state.side_width : model.state.bottom_height) / UI_SCALE_FAC;
++    else {
++      policy::resize(model.state, edge, int(requested * UI_SCALE_FAC), model.bounds, model.metrics);
++    }
++    screen->ipad_panel_size[panel] =
++        (panel == 0 ? model.state.side_width : model.state.bottom_height) / UI_SCALE_FAC;
 +    tag_layout(C, CTX_wm_window(C));
 +  }
 +  return OPERATOR_RUNNING_MODAL;
@@ -7876,6 +7964,21 @@ new file mode 100644
 +      UI_GetThemeColor4fv(TH_TEXT, color);
 +      UI_draw_roundbox_4fv(&grip, true, 2 * UI_SCALE_FAC, color);
 +    }
++    else if (button.action == Action::Resize && button.id == 1) {
++      draw_box(button.rect, "", false, win->eventstate && contains(button.rect, win->eventstate->xy));
++      const Rect &r = button.rect;
++      const float cx = (r.xmin + r.xmax) * 0.5f, cy = (r.ymin + r.ymax) * 0.5f;
++      float color[4]; UI_GetThemeColor4fv(TH_TEXT, color);
++      /* Three offset dots form a diagonal grip without adding wrapper labels. */
++      for (int i = -1; i <= 1; ++i) {
++        const float offset = i * 6 * UI_SCALE_FAC;
++        const float radius = std::min({2 * UI_SCALE_FAC, r.width() / 8.0f, r.height() / 8.0f});
++        const float x = std::clamp(cx + offset, float(r.xmin) + radius, float(r.xmax) - radius);
++        const float y = std::clamp(cy + offset, float(r.ymin) + radius, float(r.ymax) - radius);
++        rctf dot{x-radius, x+radius, y-radius, y+radius};
++        UI_draw_roundbox_4fv(&dot, true, radius, color);
++      }
++    }
 +    else if (button.action == Action::Lock) {
 +      float color[4];
 +      UI_GetThemeColor4fv(button.selected ? TH_TAB_ACTIVE : TH_TAB_INACTIVE, color);
@@ -8153,19 +8256,30 @@ new file mode 100644
 +    if (!pan_axis) {
 +      for (const Button &button : controls) {
 +        if (button.action == Action::Resize && contains(button.rect, event->xy)) {
-+          pan_axis = button.edge == Edge::Side ? 1 : 2;
++          pan_axis = (button.edge == Edge::Side ? 1 : 2) + (button.id == 1 ? 2 : 0);
 +          break;
 +        }
 +      }
 +    }
 +    if (pan_axis) {
-+      const int axis = pan_axis - 1;
++      const int axis = (pan_axis - 1) % 2;
 +      const Edge edge = axis == 0 ? Edge::Side : Edge::Bottom;
 +      const int current_size = axis == 0 ? model.layout.side_panel.width() :
 +                                           model.layout.bottom_panel.height();
 +      const int delta = event->xy[axis] - event->prev_xy[axis];
-+      policy::resize(model.state, edge, current_size + (axis == 0 ? -delta : delta),
-+                      model.bounds, model.metrics);
++      const int requested = current_size + (axis == 0 ? -delta : delta);
++      if (pan_axis > 2) {
++        const int current_extent = axis == 0 ? model.layout.side_panel.height() : model.layout.bottom_panel.width();
++        const int delta_other = event->xy[1-axis] - event->prev_xy[1-axis];
++        const int extent = current_extent + (axis == 0 ? -delta_other : delta_other);
++        policy::resize_2d(model.state, edge, axis == 0 ? requested : extent,
++                           axis == 0 ? extent : requested, model.bounds, model.metrics);
++        screen->ipad_panel_extent[axis] =
++            (axis == 0 ? model.state.side_height : model.state.bottom_width) / UI_SCALE_FAC;
++      }
++      else {
++        policy::resize(model.state, edge, requested, model.bounds, model.metrics);
++      }
 +      screen->ipad_panel_size[axis] =
 +          (axis == 0 ? model.state.side_width : model.state.bottom_height) / UI_SCALE_FAC;
 +      /* Do not manufacture a cursor-begin while the same finger gesture is captured. */
@@ -8190,7 +8304,7 @@ new file mode 100644
 +      else if (button.action == Action::Resize) {
 +        PointerRNA props;
 +        WM_operator_properties_create(&props, "SCREEN_OT_ipad_panel_resize");
-+        RNA_int_set(&props, "axis", axis);
++        RNA_int_set(&props, "axis", axis + (button.id == 1 ? 2 : 0));
 +        WM_operator_name_call(C, "SCREEN_OT_ipad_panel_resize",
 +                              blender::wm::OpCallContext::InvokeDefault, &props, event);
 +        WM_operator_properties_free(&props);
@@ -8268,7 +8382,7 @@ new file mode 100644
 +  ot->modal = resize_modal;
 +  ot->cancel = resize_cancel;
 +  ot->flag = OPTYPE_INTERNAL | OPTYPE_BLOCKING;
-+  RNA_def_int(ot->srna, "axis", 0, 0, 1, "Area", "Side or bottom panel", 0, 1);
++  RNA_def_int(ot->srna, "axis", 0, 0, 3, "Area", "Side or bottom strip, or diagonal corner", 0, 3);
 +}
 +
 +#endif /* WITH_APPLE_CROSSPLATFORM */
