@@ -1,5 +1,35 @@
 # Project handoff — 2026-09-13
 
+## Non-slicing editor overlap repair — 2026-09-14
+
+Non-slicing fallback layout now maps native shared vertex coordinates rather than
+scaling duplicate inclusive border pixels. Neighboring editors use one displayed
+boundary, with complementary interior gap insets that stay inside the mapped cell.
+Outer bounds remain fixed; tiny cells never expand into neighbors. Native saved
+vertices and editor identity are unchanged. This repairs drawing/input rectangle
+overlap for irregular layouts without claiming draggable adjacency is implemented.
+
+All 17 local tests and full 49-file pinned source preflight pass. New pinwheel
+regressions cover transposition, translated/scaled/tiny bounds and gaps 0/1/4/9/100;
+all rectangles remain contained and non-overlapping, and zero-gap cells exactly
+cover the target. This is host geometry evidence, not iPad rendering acceptance.
+
+The existing iOS build is for preceding seam-control source
+**1bbe4063c3d4c6eaa22dc931e7d43a597699b0a4**:
+[run 34855054521](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34855054521).
+Its cloud preflight passed; native build remains in progress at this checkpoint.
+It does not include this fallback repair. Do not cancel/restart it for this fix.
+The last verified successful IPA remains run 34825902884 / source 01c0781 below.
+
+Next inspect that exact run, repair actual compile failures if any, then implement
+non-slicing adjacency separately from recursive seam partitions. Retain explicit
+fallback node bounds; map positive-overlap native edge segments to working editor
+pairs and capture exact native edge/connected-vertex identity. Exclude corner-only
+contact and disconnected collinear segments. Reuse full reclassification, saved
+face constraints, snapshots and displayed minima; validate adjacency after movement.
+Test T junctions, hidden supporting faces, each pinwheel edge and cancellation.
+Continue two-axis panel sizing, launcher reordering, layout reversal and Files.
+
 ## Native working seam controls — 2026-09-14
 
 The seam operator and visible handles are now integrated in source. Finger/Pencil/

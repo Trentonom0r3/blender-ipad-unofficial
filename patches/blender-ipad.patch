@@ -5464,7 +5464,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,772 @@
+@@ -0,0 +1,789 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5705,16 +5705,33 @@ new file mode 100644
 +      return result;
 +    }
 +  }
-+  /* Non-slicing custom layouts (e.g. a pinwheel) retain normalized positions.
-+   * Do not silently discard an editor or force such layouts into one canvas. */
++  /* Non-slicing layouts retain saved vertex proportions. Area maxima include
++   * the shared border pixel; scale the vertex itself so both neighbors use one
++   * display boundary, then leave a gap without moving either outside its cell. */
 +  std::vector<Area> result;
++  const int inset_low = std::max(0, gap) / 2;
++  const int inset_high = std::max(0, gap) - inset_low;
 +  for (const Area &area : areas) {
 +    auto x = [&](int v) { return bounds.xmin + int(static_cast<long long>(v - original.xmin) *
-+                                                 bounds.width() / std::max(1, original.width())); };
++                                                 bounds.width() / std::max(1, original.width() - 1)); };
 +    auto y = [&](int v) { return bounds.ymin + int(static_cast<long long>(v - original.ymin) *
-+                                                 bounds.height() / std::max(1, original.height())); };
-+    result.push_back({area.id, {x(area.original.xmin), y(area.original.ymin),
-+                               x(area.original.xmax), y(area.original.ymax)}, area.role});
++                                                 bounds.height() / std::max(1, original.height() - 1)); };
++    Rect cell{x(area.original.xmin), y(area.original.ymin),
++              x(area.original.xmax - 1), y(area.original.ymax - 1)};
++    auto inset = [&](int &lo, int &hi, const bool internal_low, const bool internal_high) {
++      /* Preserve at least one pixel where the raw cell has one. Never expand
++       * collapsed cells or cross a neighboring cell's shared boundary. */
++      int available = std::max(0, hi - lo - 1);
++      const int low = internal_low ? std::min(inset_high, available / 2) : 0;
++      lo += low;
++      available -= low;
++      hi -= internal_high ? std::min(inset_low, available) : 0;
++    };
++    inset(cell.xmin, cell.xmax, area.original.xmin != original.xmin,
++          area.original.xmax != original.xmax);
++    inset(cell.ymin, cell.ymax, area.original.ymin != original.ymin,
++          area.original.ymax != original.ymax);
++    result.push_back({area.id, cell, area.role});
 +  }
 +  return result;
 +}

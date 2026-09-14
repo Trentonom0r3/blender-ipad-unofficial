@@ -123,6 +123,44 @@ int main()
   handle_seam.vertical=false;handle_seam.line={0,398,1000,402};
   handle=p::seam_handle_rect(handle_seam,handle_bounds,{},44);
   assert(!handle.empty() && handle.ymin==402);
+  // A non-slicing pinwheel has shared inclusive native border vertices.
+  // Scaling those duplicate pixels must not overlap editor draw/input bounds.
+  std::vector<p::Area> pinwheel{{0,{0,0,601,301},p::Role::Working},
+                               {1,{600,0,901,601},p::Role::Working},
+                               {2,{300,600,901,901},p::Role::Working},
+                               {3,{0,300,301,901},p::Role::Working},
+                               {4,{300,300,601,601},p::Role::Working}};
+  for (int transpose=0; transpose<2; ++transpose) {
+    for (int extent : {1,2,3,8,44,301,900,1400}) {
+      for (int gap : {0,1,4,9,100}) {
+        const p::Rect target{-20,30,-20+extent,30+extent*2};
+        seams.clear();
+        const auto layout=p::working_layout(pinwheel,target,gap,&seams);
+        assert(layout.size()==5 && seams.empty());
+        for (std::size_t i=0;i<layout.size();++i) {
+          const auto &r=layout[i].original;
+          assert(layout[i].id==pinwheel[i].id);
+          assert(r.xmin>=target.xmin && r.xmax<=target.xmax);
+          assert(r.ymin>=target.ymin && r.ymax<=target.ymax);
+          assert(r.xmin<=r.xmax && r.ymin<=r.ymax);
+          for (std::size_t j=0;j<i;++j) {
+            const auto &other=layout[j].original;
+            assert(std::min(r.xmax,other.xmax)<=std::max(r.xmin,other.xmin) ||
+                   std::min(r.ymax,other.ymax)<=std::max(r.ymin,other.ymin));
+          }
+        }
+        if (gap==0) {
+          long long area=0;
+          for (const auto &entry:layout) area+=entry.original.width()*entry.original.height();
+          assert(area==static_cast<long long>(target.width())*target.height());
+        }
+      }
+    }
+    for(auto &area:pinwheel) {
+      std::swap(area.original.xmin,area.original.ymin);
+      std::swap(area.original.xmax,area.original.ymax);
+    }
+  }
   std::cout << "PASS: seam provenance, saved constraints, hidden/connected editors, "
                "horizontal symmetry, invalid topology and displayed minima\n";
 }
