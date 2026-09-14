@@ -1,5 +1,54 @@
 # Project handoff — 2026-09-13
 
+## Seam geometry helpers — 2026-09-14
+
+Source now includes tested seam provenance and saved-geometry constraints in
+ipad_workspace_panels.hh. working_layout can append WorkingSeam records containing
+the recursive saved/display node bounds, saved cut coordinate and sorted before/
+after editor IDs without changing its ordinary displayed output. Connected-edge
+selection follows native shared-endpoint topology and excludes disconnected
+collinear edges. Constraints include all saved faces, including hidden supporting
+editors; partial edges/nonrectangular faces/invalid indexes and non-native coordinate
+ranges are rejected. Per-face minima allow the adapter to include interior border
+padding. Delta conversion uses the original recursive mapping and symmetric rounding.
+Displayed candidate validation checks identity, containment, overlap and minimum size.
+
+This is a tested geometry implementation, NOT a completed seam-resize interaction.
+No modal adapter, visible seam handle or saved-vertex write is connected yet. The
+ordinary working_layout output is unchanged. Non-slicing layouts still need native
+adjacency mapping; missing supporting spaces must be resolved against actual edges
+before exposing a displayed seam. Do not mark the workspace milestone complete.
+
+All 16 local tests pass, including the new compiled geometry cases, 699,649 existing
+panel checks and 132 shipped layout cases. New cases cover nested cuts, both axes,
+connected hidden constraints, disconnected collinear edges, malformed topology,
+negative/invalid native coordinates, border-aware per-face limits, symmetric delta
+rounding, editor loss/overlap and already-small displayed editors. Full 49-file
+preflight passes. Independent read-only review found no blocker for the pure helpers.
+No iOS build is requested for this helper-only stage; integrate the native operator
+and handles before the next device build. Host tests are not native/device acceptance.
+
+Next implementation: snapshot the live screen UID/window, window bounds, vertex/edge/
+face pointer topology and original coordinates. Resolve a displayed seam to a real
+saved edge. Supply screen topology only (exclude global areas); minimum widths and
+heights are vertex distances, not inclusive dimensions. Use per-face border-aware
+minima. Clamp moves against saved constraints AND candidate displayed layout, and
+separately compare seam partition identity. Keep the gesture-start coordinate mapping
+fixed. Before dereferencing or restoring, validate live ownership/topology and handle
+window rescaling explicitly; do not restore stale absolute coordinates after rotation.
+Use existing WorkspaceResize typed touch capture and pointer-cancel release for the
+modal lifecycle. Draw and publish the same seam handles behind popups, floating
+content and existing chrome. Continue non-slicing adjacency, two-axis floating sizes,
+launcher reordering, layout reversal and the native Files requirements afterward.
+
+Verified touch-capture source 01c078123c0e50be0cd2da7fbcfbb4e8af763723:
+[build 34825902884](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34825902884)
+**succeeded**. IPA Blender-iPad-Unofficial-ipa, ID10340817211, 248,394,969 bytes,
+is not expired. This establishes iOS compilation/packaging for finger resize
+cancellation, not device acceptance, and predates these geometry helpers. Older
+in-progress build status and the description of the seam sketch as untracked below
+are historical; the expanded tested helpers are now authoritative in the patch.
+
 ## Finger resize capture and interruption — 2026-09-14
 
 Source **01c078123c0e50be0cd2da7fbcfbb4e8af763723** is pushed. New iOS

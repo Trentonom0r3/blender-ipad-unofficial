@@ -5462,14 +5462,17 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,551 @@
+@@ -0,0 +1,745 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
 +
 +#include <algorithm>
++#include <array>
++#include <limits>
 +#include <cstddef>
 +#include <vector>
++#include <utility>
 +
 +namespace blender::ed::ipad::panels {
 +
@@ -5609,12 +5612,24 @@ new file mode 100644
 +  return result;
 +}
 +
++/* A displayed seam retains the saved-coordinate mapping of its recursive node.
++ * IDs describe the partition, so capture can reject topology changes on redraw. */
++struct WorkingSeam {
++  bool vertical;
++  int coordinate;
++  Rect saved_bounds;
++  Rect display_bounds;
++  Rect line;
++  std::vector<int> before, after;
++};
++
 +/* Reconstruct working splits from saved geometry after auxiliary editors move
 + * into panels. Recursively preserve full-span cuts and their relative proportions.
 + * A shorter editor next to a full-height editor grows into the space vacated below
 + * it; editor identity and saved vertices remain untouched. */
 +inline std::vector<Area> working_layout(const std::vector<Area> &areas, const Rect bounds,
-+                                       const int gap = 4)
++                                       const int gap = 4,
++                                       std::vector<WorkingSeam> *seams = nullptr)
 +{
 +  if (areas.empty() || bounds.empty()) {
 +    return {};
@@ -5672,8 +5687,18 @@ new file mode 100644
 +        first.ymax = bounds.ymin + split;
 +        second.ymin = first.ymax + seam;
 +      }
-+      auto result = working_layout(before, first, gap);
-+      const auto next = working_layout(after, second, gap);
++      if (seams) {
++        WorkingSeam info{vertical, cut - 1, original, bounds,
++                         vertical ? Rect{first.xmax, bounds.ymin, second.xmin, bounds.ymax} :
++                                    Rect{bounds.xmin, first.ymax, bounds.xmax, second.ymin}, {}, {}};
++        for (const Area &area : before) { info.before.push_back(area.id); }
++        for (const Area &area : after) { info.after.push_back(area.id); }
++        std::sort(info.before.begin(), info.before.end());
++        std::sort(info.after.begin(), info.after.end());
++        seams->push_back(std::move(info));
++      }
++      auto result = working_layout(before, first, gap, seams);
++      const auto next = working_layout(after, second, gap, seams);
 +      result.insert(result.end(), next.begin(), next.end());
 +      return result;
 +    }
@@ -5690,6 +5715,175 @@ new file mode 100644
 +                               x(area.original.xmax), y(area.original.ymax)}, area.role});
 +  }
 +  return result;
++}
++
++
++/* Saved topology uses native shared inclusive vertices; do not substitute the
++ * adapted WINDOW rectangles for these coordinates or constraints. */
++struct SeamVertex {
++  int x, y;
++};
++struct SeamEdge {
++  std::size_t a, b;
++};
++struct SeamFace {
++  /* Native corner order: bottom-left, top-left, top-right, bottom-right. */
++  std::array<std::size_t, 4> vertices;
++  /* Adapter-supplied native minima can include per-area interior border padding. */
++  int minimum_width = 0, minimum_height = 0;
++};
++
++inline std::vector<bool> seam_connected_vertices(const std::vector<SeamVertex> &vertices,
++                                                  const std::vector<SeamEdge> &edges,
++                                                  const std::size_t seed,
++                                                  const bool vertical)
++{
++  if (seed >= edges.size()) {
++    return {};
++  }
++  for (const SeamEdge &edge : edges) {
++    if (edge.a >= vertices.size() || edge.b >= vertices.size()) {
++      return {};
++    }
++  }
++  auto coordinate = [&](std::size_t v) { return vertical ? vertices[v].x : vertices[v].y; };
++  const int line = coordinate(edges[seed].a);
++  if (line != coordinate(edges[seed].b) ||
++      (vertices[edges[seed].a].x == vertices[edges[seed].b].x &&
++       vertices[edges[seed].a].y == vertices[edges[seed].b].y)) {
++    return {};
++  }
++  std::vector<bool> selected(vertices.size(), false);
++  selected[edges[seed].a] = selected[edges[seed].b] = true;
++  bool changed;
++  do {
++    changed = false;
++    for (const SeamEdge &edge : edges) {
++      if (coordinate(edge.a) == line && coordinate(edge.b) == line &&
++          selected[edge.a] != selected[edge.b])
++      {
++        selected[edge.a] = selected[edge.b] = true;
++        changed = true;
++      }
++    }
++  } while (changed);
++  return selected;
++}
++
++struct SeamLimits {
++  int minimum = 0, maximum = 0;
++  bool valid = false;
++};
++
++/* Intersect native size constraints for ALL faces, including hidden auxiliary
++ * editors connected to the moved edge. Minima are vertex distances (inclusive
++ * area dimension minus one); callers supply border-aware per-face minima.
++ * Existing undersized faces may grow but
++ * must not shrink further. No selection flags or saved vertices are modified. */
++inline SeamLimits seam_saved_limits(const std::vector<SeamVertex> &vertices,
++                                    const std::vector<SeamFace> &faces,
++                                    const std::vector<bool> &selected,
++                                    const bool vertical,
++                                    const int minimum_width,
++                                    const int minimum_height)
++{
++  SeamLimits limits{std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), false};
++  if (vertices.empty() || faces.empty() || selected.size() != vertices.size() ||
++      std::none_of(selected.begin(), selected.end(), [](bool v) { return v; })) {
++    return {};
++  }
++  int outer_min = std::numeric_limits<int>::max();
++  int outer_max = std::numeric_limits<int>::min();
++  for (const SeamVertex &v : vertices) {
++    if (v.x < std::numeric_limits<short>::min() || v.x > std::numeric_limits<short>::max() ||
++        v.y < std::numeric_limits<short>::min() || v.y > std::numeric_limits<short>::max()) {
++      return {};
++    }
++    const int coordinate = vertical ? v.x : v.y;
++    outer_min = std::min(outer_min, coordinate);
++    outer_max = std::max(outer_max, coordinate);
++  }
++  for (std::size_t i = 0; i < vertices.size(); ++i) {
++    if (!selected[i]) { continue; }
++    const int coordinate = vertical ? vertices[i].x : vertices[i].y;
++    if (coordinate <= outer_min || coordinate >= outer_max) {
++      return {}; /* The outer window border is never an internal resize seam. */
++    }
++    limits.minimum = std::max(limits.minimum, int(std::numeric_limits<short>::min()) - coordinate);
++    limits.maximum = std::min(limits.maximum, int(std::numeric_limits<short>::max()) - coordinate);
++  }
++  for (const SeamFace &face : faces) {
++    for (const std::size_t i : face.vertices) {
++      if (i >= vertices.size()) { return {}; }
++    }
++    const auto [a, b, c, d] = face.vertices;
++    const SeamVertex &v1 = vertices[a], &v2 = vertices[b], &v3 = vertices[c], &v4 = vertices[d];
++    if (v1.x != v2.x || v2.y != v3.y || v3.x != v4.x || v4.y != v1.y ||
++        v4.x <= v1.x || v2.y <= v1.y) {
++      return {};
++    }
++    const bool low = selected[a];
++    const bool high = selected[c];
++    if (vertical ? (low != selected[b] || high != selected[d]) :
++                   (low != selected[d] || high != selected[b])) {
++      return {}; /* Reject a partial edge that would turn a rectangle into a trapezoid. */
++    }
++    const int size = vertical ? v4.x - v1.x : v2.y - v1.y;
++    const int required = std::min(size, std::max({1, vertical ? minimum_width : minimum_height,
++                                                  vertical ? face.minimum_width : face.minimum_height}));
++    if (low && !high) {
++      limits.maximum = std::min(limits.maximum, size - required);
++    }
++    else if (!low && high) {
++      limits.minimum = std::max(limits.minimum, required - size);
++    }
++  }
++  limits.valid = limits.minimum <= 0 && limits.maximum >= 0;
++  return limits;
++}
++
++/* Convert from the gesture-start recursive node mapping. Recomputing this scale
++ * from each already-moved layout would compound rounding and cause drag drift. */
++inline int seam_saved_delta(const WorkingSeam &seam, const int display_delta)
++{
++  const int saved = seam.vertical ? seam.saved_bounds.width() : seam.saved_bounds.height();
++  const int displayed = seam.vertical ? seam.display_bounds.width() : seam.display_bounds.height();
++  if (saved <= 0 || displayed <= 0) { return 0; }
++  const long long numerator = static_cast<long long>(display_delta) * saved;
++  const long long rounded = (numerator + (numerator < 0 ? -displayed / 2 : displayed / 2)) / displayed;
++  return int(std::clamp(rounded, static_cast<long long>(std::numeric_limits<int>::min()),
++                                static_cast<long long>(std::numeric_limits<int>::max())));
++}
++
++/* Display constraints complement saved topology constraints. Compare by editor
++ * identity, permit already-small windows, and reject overlap/editor loss. */
++inline bool seam_display_valid(const std::vector<Area> &original,
++                                const std::vector<Area> &candidate,
++                                const Rect bounds, const int minimum_width,
++                                const int minimum_height)
++{
++  if (original.empty() || original.size() != candidate.size()) { return false; }
++  std::vector<int> ids;
++  for (std::size_t i = 0; i < candidate.size(); ++i) {
++    const Area &area = candidate[i];
++    if (std::find(ids.begin(), ids.end(), area.id) != ids.end()) { return false; }
++    ids.push_back(area.id);
++    const auto old = std::find_if(original.begin(), original.end(),
++                                  [&](const Area &v) { return v.id == area.id; });
++    const Rect &r = area.original;
++    if (old == original.end() || r.empty() || r.xmin < bounds.xmin || r.ymin < bounds.ymin ||
++        r.xmax > bounds.xmax || r.ymax > bounds.ymax ||
++        r.width() < std::min(old->original.width(), std::max(1, minimum_width)) ||
++        r.height() < std::min(old->original.height(), std::max(1, minimum_height))) {
++      return false;
++    }
++    for (std::size_t j = 0; j < i; ++j) {
++      const Rect &other = candidate[j].original;
++      if (r.xmin < other.xmax && other.xmin < r.xmax &&
++          r.ymin < other.ymax && other.ymin < r.ymax) { return false; }
++    }
++  }
++  return true;
 +}
 +
 +struct Slot {

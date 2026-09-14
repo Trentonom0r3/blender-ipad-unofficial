@@ -42,6 +42,10 @@ class IPadWorkspacePanelsTests(unittest.TestCase):
         repo = Path(__file__).resolve().parents[1]
         self._run_source((repo / 'build/tests/ipad_workspace_panels_test.cc').read_text(encoding='utf-8'))
 
+    def test_saved_seam_geometry(self):
+        repo = Path(__file__).resolve().parents[1]
+        self._run_source((repo / 'build/tests/ipad_workspace_seams_test.cc').read_text(encoding='utf-8'))
+
     def test_shipped_workspace_layouts(self):
         repo = Path(__file__).resolve().parents[1]
         fixture = json.loads((repo / 'build/tests/ipad_workspace_layouts.json').read_text(encoding='utf-8'))
