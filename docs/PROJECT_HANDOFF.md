@@ -1,5 +1,50 @@
 # Project handoff — 2026-09-13
 
+## Panel resize ownership — 2026-09-13 follow-up
+
+Current source repair binds Pencil/pointer panel-resize modal state to the
+originating screen session UID and window. Cancellation previously wrote the saved
+size into whichever screen was current. The repair resolves the owner through
+live Main IDs before restoring it, cancels on workspace/window change or disabled
+presentation, and safely discards state when the owner was removed. It rejects
+resize invocation without an open panel and movement after panel closure.
+No new split-seam or two-axis sizing capability is claimed.
+
+All 15 local tests pass, including the extracted native resize callbacks with
+simulated context transitions for both axes, 699,649 panel checks and 132 shipped
+layout cases. The callback harness mocks Blender context/lifetime plumbing; it is
+not a full Blender or UIKit integration test. It covers owner removal, session UID
+replacement, wrong workspace/window, escape/right-click/deactivation, owner-live
+cancellation without a current window, confirmation and repeated cleanup. The new
+regression is included in cloud preflight. Full 48-file pinned source preflight
+passes. Independent source review found no blocking issue. Native build and device
+acceptance of this follow-up remain pending.
+
+Verified previous source a47b895ad6953b6c309828e7d1b19675b4bd15ae:
+[build 34788075029](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34788075029)
+**succeeded**. IPA artifact Blender-iPad-Unofficial-ipa, ID 10327443148,
+248,394,606 bytes, is not expired. It includes Layout removal/shelf bounds but
+predates this modal ownership repair. Older in-progress status below is historical.
+
+Next coherent implementation remains split-seam resizing. Independent review
+confirms working_layout must expose recursive cut provenance (axis, saved/display
+node bounds, participating editor IDs), rather than deriving identity solely from
+displayed adjacency. Use a fixed gesture-start mapping and snapshot connected saved
+vertices, including auxiliary editors. Validate candidate saved minima and displayed
+working minima before applying; reject changed topology/partition and restore the
+snapshot on cancellation. Non-slicing layouts need explicit native-edge mapping.
+Existing anchored MOUSEPAN panel capture has no ordinary release lifecycle; establish
+a reliable touch completion/cancellation route before reusing it for seams. Do not
+call native area_move with converted coordinates while it constrains saved geometry
+using adapted winx/winy. Keep hit regions behind native popups and floating content.
+
+Device acceptance for the repair: Pencil/pointer resize side and bottom panels;
+release to keep size; repeat with Escape, right click and window deactivation to
+restore size. Switch workspace during capture where possible and verify neither
+workspace inherits the other's size. Repeat after loading another project. Existing
+finger resize, lock, shelf tabs, native menus and desktop input remain in the device
+matrix; host callback checks do not prove UIKit behavior.
+
 ## Layout rail removal and native shelf bounds — current source work
 
 Source **a47b895** is pushed. New iOS build

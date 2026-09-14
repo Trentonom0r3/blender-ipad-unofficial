@@ -6038,7 +6038,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1322 @@
+@@ -0,0 +1,1362 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -6064,6 +6064,7 @@ new file mode 100644
 +#include "BLF_api.hh"
 +#include "BKE_context.hh"
 +#include "BKE_global.hh"
++#include "BKE_main.hh"
 +#include "BKE_screen.hh"
 +#include "BKE_report.hh"
 +#include "ED_asset_shelf.hh"
@@ -6614,6 +6615,8 @@ new file mode 100644
 +}
 +
 +struct ResizeData {
++  unsigned int screen_uid;
++  wmWindow *window;
 +  int axis;
 +  int start;
 +  float original;
@@ -6627,33 +6630,66 @@ new file mode 100644
 +    return OPERATOR_CANCELLED;
 +  }
 +  const int axis = RNA_int_get(op->ptr, "axis");
++  if (!CTX_wm_window(C) || axis < 0 || axis > 1) {
++    return OPERATOR_CANCELLED;
++  }
 +  const Model model = make_model(C, CTX_wm_window(C));
++  if (!model.main || !model.state.slot(axis == 0 ? Edge::Side : Edge::Bottom).open()) {
++    return OPERATOR_CANCELLED;
++  }
 +  const float displayed = axis == 0 ? model.layout.side_panel.width() : model.layout.bottom_panel.height();
-+  op->customdata = MEM_new<ResizeData>(__func__, ResizeData{axis, event->xy[axis],
++  op->customdata = MEM_new<ResizeData>(__func__, ResizeData{screen->id.session_uid, CTX_wm_window(C),
++                                                          axis, event->xy[axis],
 +                                                          screen->ipad_panel_size[axis],
 +                                                          displayed / UI_SCALE_FAC});
 +  WM_event_add_modal_handler(C, op);
 +  return OPERATOR_RUNNING_MODAL;
 +}
 +
++/* Resolve IDs through the live Main before restoring anything. The active screen
++ * can change while a modal drag is pending, and project loading can free its owner. */
++static bScreen *resize_owner(bContext *C, const ResizeData &data)
++{
++  if (Main *bmain = CTX_data_main(C)) {
++    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
++      if (screen->id.session_uid == data.screen_uid) {
++        return screen;
++      }
++    }
++  }
++  return nullptr;
++}
++
 +static void resize_cancel(bContext *C, wmOperator *op)
 +{
 +  auto *data = static_cast<ResizeData *>(op->customdata);
 +  if (data) {
-+    if (bScreen *screen = CTX_wm_screen(C)) {
++    if (bScreen *screen = resize_owner(C, *data)) {
 +      screen->ipad_panel_size[data->axis] = data->original;
++      screen->do_refresh = true;
++      screen->do_draw = true;
++      if (CTX_wm_window(C) && CTX_wm_screen(C) == screen) {
++        tag_layout(C, CTX_wm_window(C));
++      }
 +    }
 +    MEM_delete(data);
 +    op->customdata = nullptr;
-+    if (CTX_wm_window(C) && CTX_wm_screen(C)) {
-+      tag_layout(C, CTX_wm_window(C));
-+    }
 +  }
 +}
 +
 +static wmOperatorStatus resize_modal(bContext *C, wmOperator *op, const wmEvent *event)
 +{
 +  auto *data = static_cast<ResizeData *>(op->customdata);
++  if (!data) {
++    return OPERATOR_CANCELLED;
++  }
++  bScreen *screen = resize_owner(C, *data);
++  if (!screen || CTX_wm_screen(C) != screen || CTX_wm_window(C) != data->window ||
++      !ED_ipad_panels_enabled(screen))
++  {
++    resize_cancel(C, op);
++    return OPERATOR_CANCELLED;
++  }
 +  if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
 +    resize_cancel(C, op);
 +    return OPERATOR_CANCELLED;
@@ -6665,6 +6701,10 @@ new file mode 100644
 +  }
 +  if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
 +    Model model = make_model(C, CTX_wm_window(C));
++    if (!model.main || !model.state.slot(data->axis == 0 ? Edge::Side : Edge::Bottom).open()) {
++      resize_cancel(C, op);
++      return OPERATOR_CANCELLED;
++    }
 +    const float delta = (event->xy[data->axis] - data->start) / UI_SCALE_FAC;
 +    const float requested = data->initial_size + (data->axis == 0 ? -delta : delta);
 +    policy::resize(model.state, data->axis == 0 ? Edge::Side : Edge::Bottom,
