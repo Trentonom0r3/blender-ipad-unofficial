@@ -3046,12 +3046,13 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
  }
 
  void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
-@@ -6858,6 +6889,14 @@
+@@ -6858,6 +6889,15 @@
    WM_operatortype_append(SCREEN_OT_region_quadview);
    WM_operatortype_append(SCREEN_OT_region_scale);
    WM_operatortype_append(SCREEN_OT_region_toggle);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_resize);
++  WM_operatortype_append(SCREEN_OT_ipad_working_resize);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_menu);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_split);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_swap);
@@ -5356,7 +5357,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,39 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -5390,6 +5391,7 @@ new file mode 100644
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_pin(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot);
++void SCREEN_OT_ipad_working_resize(wmOperatorType *ot);
 +void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout);
 +void SCREEN_OT_ipad_working_menu(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_split(wmOperatorType *ot);
@@ -5462,7 +5464,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,745 @@
+@@ -0,0 +1,772 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5717,6 +5719,33 @@ new file mode 100644
 +  return result;
 +}
 +
++
++/* Prefer the center, then search both directions along the seam. Every candidate
++ * shares the same rectangle for drawing, pointer hit testing and touch capture. */
++inline Rect seam_handle_rect(const WorkingSeam &seam, const Rect bounds,
++                              const std::vector<Rect> &occluders, const int requested_extent)
++{
++  const int extent = std::max(1, requested_extent);
++  const int low = seam.vertical ? seam.line.ymin : seam.line.xmin;
++  const int high = seam.vertical ? seam.line.ymax : seam.line.xmax;
++  for (int step = 0; step <= 2 * std::max(0, high - low) / extent; ++step) {
++    const int along = (low + high) / 2 + ((step + 1) / 2) * extent * (step % 2 ? -1 : 1);
++    if (along - extent / 2 < low || along + extent - extent / 2 > high) { continue; }
++    const int cross = seam.vertical ? (seam.line.xmin + seam.line.xmax) / 2 : seam.line.ymax;
++    const Rect handle = seam.vertical ? Rect{cross - extent / 2, along - extent / 2,
++                                              cross + extent - extent / 2, along + extent - extent / 2} :
++                                         Rect{along - extent / 2, cross,
++                                              along + extent - extent / 2, cross + extent};
++    if (handle.xmin < bounds.xmin || handle.ymin < bounds.ymin ||
++        handle.xmax > bounds.xmax || handle.ymax > bounds.ymax) { continue; }
++    const bool blocked = std::any_of(occluders.begin(), occluders.end(), [&](const Rect &r) {
++      return !r.empty() && handle.xmin < r.xmax && r.xmin < handle.xmax &&
++                          handle.ymin < r.ymax && r.ymin < handle.ymax;
++    });
++    if (!blocked) { return handle; }
++  }
++  return {};
++}
 +
 +/* Saved topology uses native shared inclusive vertices; do not substitute the
 + * adapted WINDOW rectangles for these coordinates or constraints. */
@@ -6332,7 +6361,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1386 @@
+@@ -0,0 +1,1736 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
@@ -6401,7 +6430,8 @@ new file mode 100644
 +  std::vector<ScrArea *> areas;
 +  ScrArea *main = nullptr;
 +  std::vector<Tab> tabs;
-+  std::vector<policy::Area> working;
++  std::vector<policy::Area> working, inputs;
++  std::vector<policy::WorkingSeam> seams;
 +  policy::State state;
 +  policy::Metrics metrics;
 +  policy::Layout layout;
@@ -6587,12 +6617,18 @@ new file mode 100644
 +                      clip && clip->view == SC_VIEW_CLIP ? policy::Role::Canvas :
 +                      service ? policy::Role::Service : policy::Role::Content});
 +  }
++  model.inputs = inputs;
 +  const policy::Mapping mapping = policy::classify(inputs, int(2 * UI_SCALE_FAC));
 +  if (mapping.primary_id < 0) {
 +    return model;
 +  }
 +  model.main = model.areas[mapping.primary_id];
 +  model.working = mapping.working;
++  rcti workspace;
++  WM_window_screen_rect_calc(win, &workspace);
++  policy::working_layout(model.working,
++                          {workspace.xmin, workspace.ymin, workspace.xmax, workspace.ymax},
++                          int(4 * UI_SCALE_FAC), &model.seams);
 +  std::vector<ScrArea *> working_areas;
 +  for (const policy::Area &working : model.working) {
 +    ScrArea *area = model.areas[working.id];
@@ -6725,7 +6761,7 @@ new file mode 100644
 +  return policy::panel_content(model.layout, edge);
 +}
 +
-+enum class Action { Tab, Previous, Next, Resize, Lock };
++enum class Action { Tab, Previous, Next, Resize, Lock, Seam };
 +struct Button {
 +  Rect rect;
 +  std::string label;
@@ -6805,6 +6841,49 @@ new file mode 100644
 +    if (model.state.slot(edge).open()) {
 +      const Rect resize = edge == Edge::Side ? model.layout.side_resize : model.layout.bottom_resize;
 +      result.push_back({resize, "", Action::Resize, edge});
++    }
++  }
++  /* Local grips keep the rest of each seam available to native editor UI.
++   * Never place a hit target over panels, rails or another chrome control. */
++  std::vector<Rect> occluders{model.layout.side_panel, model.layout.bottom_panel,
++                              model.layout.tools_panel, model.layout.left_rail, model.layout.side_rail};
++  for (const Button &button : result) { occluders.push_back(button.rect); }
++  for (const ScrArea *area : model.areas) {
++    if (area->runtime.ipad_layer != 1) { continue; }
++    LISTBASE_FOREACH (const ARegion *, region, &area->regionbase) {
++      if (region->runtime->visible &&
++          ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER, RGN_TYPE_FOOTER)) {
++        occluders.push_back({region->winrct.xmin, region->winrct.ymin,
++                             region->winrct.xmax + 1, region->winrct.ymax + 1});
++      }
++    }
++    occluders.push_back({area->runtime.ipad_navigation_rect.xmin,
++                         area->runtime.ipad_navigation_rect.ymin,
++                         area->runtime.ipad_navigation_rect.xmax + 1,
++                         area->runtime.ipad_navigation_rect.ymax + 1});
++  }
++  for (size_t i = 0; !(U.app_flag & USER_APP_LOCK_EDGE_RESIZE) && i < model.seams.size(); ++i) {
++    const auto &seam = model.seams[i];
++    const int extent = int(44 * UI_SCALE_FAC);
++    const bool native_edge = [&]() {
++      LISTBASE_FOREACH (const ScrEdge *, edge, &screen->edgebase) {
++        const int a = seam.vertical ? edge->v1->vec.x : edge->v1->vec.y;
++        const int b = seam.vertical ? edge->v2->vec.x : edge->v2->vec.y;
++        const int u = seam.vertical ? edge->v1->vec.y : edge->v1->vec.x;
++        const int v = seam.vertical ? edge->v2->vec.y : edge->v2->vec.x;
++        const int start = seam.vertical ? seam.saved_bounds.ymin : seam.saved_bounds.xmin;
++        const int end = seam.vertical ? seam.saved_bounds.ymax : seam.saved_bounds.xmax;
++        if (a == seam.coordinate && b == a && u != v &&
++            std::max(u,v) > start && std::min(u,v) < end) { return true; }
++      }
++      return false;
++    }();
++    if (!native_edge) { continue; }
++    const Rect handle = policy::seam_handle_rect(seam, model.bounds, occluders, extent);
++    if (!handle.empty()) {
++      result.push_back({handle, "", Action::Seam,
++                         seam.vertical ? Edge::Side : Edge::Bottom, int(i)});
++      occluders.push_back(handle);
 +    }
 +  }
 +  return result;
@@ -7010,6 +7089,273 @@ new file mode 100644
 +  }
 +  return OPERATOR_RUNNING_MODAL;
 +}
++struct SeamDragData {
++  unsigned int uid;
++  wmWindow *window;
++  policy::WorkingSeam seam;
++  std::vector<policy::WorkingSeam> partitions;
++  int start, delta = 0;
++  int original_owner = 0, captured_owner = 0;
++  Rect bounds;
++  std::vector<ScrVert *> vertices;
++  std::vector<policy::SeamVertex> original, last;
++  std::vector<ScrArea *> areas;
++  std::vector<ScrEdge *> edges;
++  std::vector<policy::SeamEdge> edge_indices;
++  std::vector<policy::SeamFace> faces;
++  std::vector<bool> selected;
++  std::vector<policy::Area> working, displayed, inputs;
++  policy::SeamLimits limits;
++};
++
++static bScreen *seam_owner(bContext *C, const SeamDragData &data)
++{
++  if (Main *bmain = CTX_data_main(C)) {
++    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
++      if (screen->id.session_uid == data.uid) { return screen; }
++    }
++  }
++  return nullptr;
++}
++
++static bool seam_snapshot_matches(const bScreen *screen, const SeamDragData &data,
++                                   const bool coordinates = true)
++{
++  size_t i = 0;
++  LISTBASE_FOREACH (ScrVert *, vertex, &screen->vertbase) {
++    if (i >= data.vertices.size() || vertex != data.vertices[i] ||
++        (coordinates && (vertex->vec.x != data.last[i].x || vertex->vec.y != data.last[i].y))) { return false; }
++    ++i;
++  }
++  if (i != data.vertices.size()) { return false; }
++  i = 0;
++  LISTBASE_FOREACH (ScrEdge *, edge, &screen->edgebase) {
++    if (i >= data.edges.size() || edge != data.edges[i] ||
++        edge->v1 != data.vertices[data.edge_indices[i].a] ||
++        edge->v2 != data.vertices[data.edge_indices[i].b]) { return false; }
++    ++i;
++  }
++  if (i != data.edges.size()) { return false; }
++  i = 0;
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    if (i >= data.areas.size() || area != data.areas[i]) { return false; }
++    const auto &v = data.faces[i].vertices;
++    if (area->v1 != data.vertices[v[0]] || area->v2 != data.vertices[v[1]] ||
++        area->v3 != data.vertices[v[2]] || area->v4 != data.vertices[v[3]]) { return false; }
++    ++i;
++  }
++  return i == data.areas.size();
++}
++
++static void seam_cancel(bContext *C, wmOperator *op)
++{
++  auto *data = static_cast<SeamDragData *>(op->customdata);
++  if (!data) { return; }
++  if (bScreen *screen = seam_owner(C, *data)) {
++    bool resized = false;
++    if (CTX_wm_screen(C) == screen && CTX_wm_window(C) == data->window) {
++      rcti rect;
++      WM_window_screen_rect_calc(data->window, &rect);
++      resized = rect.xmin != data->bounds.xmin || rect.ymin != data->bounds.ymin ||
++                rect.xmax != data->bounds.xmax || rect.ymax != data->bounds.ymax;
++    }
++    /* On an active window resize, restore the original layout THEN let Blender's
++     * normal refresh rescale it to the new window. Never retain the old extents. */
++    if (seam_snapshot_matches(screen, *data, !resized)) {
++      for (size_t i = 0; i < data->vertices.size(); ++i) {
++        data->vertices[i]->vec.x = data->original[i].x;
++        data->vertices[i]->vec.y = data->original[i].y;
++      }
++      if (screen->ipad_panel_owner == data->captured_owner) {
++        screen->ipad_panel_owner = data->original_owner;
++      }
++      screen->do_refresh = screen->do_draw = true;
++      if (CTX_wm_screen(C) == screen && CTX_wm_window(C)) { tag_layout(C, CTX_wm_window(C)); }
++    }
++  }
++  MEM_delete(data);
++  op->customdata = nullptr;
++}
++
++static wmOperatorStatus seam_invoke(bContext *C, wmOperator *op, const wmEvent *event)
++{
++  bScreen *screen = CTX_wm_screen(C);
++  wmWindow *win = CTX_wm_window(C);
++  if (!win || !ED_ipad_panels_enabled(screen) || (U.app_flag & USER_APP_LOCK_EDGE_RESIZE)) {
++    return OPERATOR_CANCELLED;
++  }
++  Model model = make_model(C, win);
++  rcti window_rect;
++  WM_window_screen_rect_calc(win, &window_rect);
++  Rect bounds{window_rect.xmin, window_rect.ymin, window_rect.xmax, window_rect.ymax};
++  std::vector<policy::WorkingSeam> seams;
++  auto displayed = policy::working_layout(model.working, bounds, int(4 * UI_SCALE_FAC), &seams);
++  const int index = RNA_int_get(op->ptr, "seam");
++  if (index < 0 || index >= int(seams.size())) { return OPERATOR_CANCELLED; }
++  auto *data = MEM_new<SeamDragData>(__func__);
++  data->uid = screen->id.session_uid;
++  data->window = win;
++  data->seam = seams[index];
++  data->partitions = seams;
++  data->start = event->xy[data->seam.vertical ? 0 : 1];
++  data->bounds = bounds;
++  data->working = model.working;
++  data->inputs = model.inputs;
++  data->original_owner = screen->ipad_panel_owner;
++  data->captured_owner = int(std::find(model.areas.begin(), model.areas.end(), model.main) -
++                            model.areas.begin()) + 1;
++  data->displayed = std::move(displayed);
++  LISTBASE_FOREACH (ScrVert *, vertex, &screen->vertbase) {
++    data->vertices.push_back(vertex);
++    data->original.push_back({vertex->vec.x, vertex->vec.y});
++  }
++  data->last = data->original;
++  auto vertex_index = [&](ScrVert *v) {
++    return size_t(std::find(data->vertices.begin(), data->vertices.end(), v) - data->vertices.begin());
++  };
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    data->areas.push_back(area);
++    data->faces.push_back({{vertex_index(area->v1), vertex_index(area->v2),
++                            vertex_index(area->v3), vertex_index(area->v4)},
++                           int(29 * UI_SCALE_FAC + 2 * U.pixelsize),
++                           int(ED_area_headersize() + 2 * U.pixelsize)});
++  }
++  std::vector<policy::SeamEdge> edges;
++  size_t seed = size_t(-1);
++  int distance = INT_MAX;
++  const auto &seam = data->seam;
++  const int along_axis = seam.vertical ? 1 : 0;
++  const int display_low = seam.vertical ? seam.display_bounds.ymin : seam.display_bounds.xmin;
++  const int display_size = seam.vertical ? seam.display_bounds.height() : seam.display_bounds.width();
++  const int saved_low = seam.vertical ? seam.saved_bounds.ymin : seam.saved_bounds.xmin;
++  const int saved_size = seam.vertical ? seam.saved_bounds.height() : seam.saved_bounds.width();
++  const int along = saved_low + int(static_cast<long long>(event->xy[along_axis] - display_low) *
++                                   saved_size / std::max(1, display_size));
++  LISTBASE_FOREACH (ScrEdge *, edge, &screen->edgebase) {
++    const size_t a = vertex_index(edge->v1), b = vertex_index(edge->v2);
++    if (a >= data->vertices.size() || b >= data->vertices.size()) {
++      MEM_delete(data); return OPERATOR_CANCELLED;
++    }
++    const auto &v1 = data->original[a], &v2 = data->original[b];
++    const int c1 = seam.vertical ? v1.x : v1.y, c2 = seam.vertical ? v2.x : v2.y;
++    if (c1 == seam.coordinate && c2 == seam.coordinate) {
++      const int low = std::min(seam.vertical ? v1.y : v1.x, seam.vertical ? v2.y : v2.x);
++      const int high = std::max(seam.vertical ? v1.y : v1.x, seam.vertical ? v2.y : v2.x);
++      if (high >= saved_low && low < saved_low + saved_size) {
++        const int d = std::max({low - along, along - high, 0});
++        if (d < distance) { distance = d; seed = edges.size(); }
++      }
++    }
++    edges.push_back({a,b});
++    data->edges.push_back(edge);
++  }
++  data->edge_indices = edges;
++  data->selected = policy::seam_connected_vertices(data->original, edges, seed, seam.vertical);
++  data->limits = policy::seam_saved_limits(data->original, data->faces, data->selected,
++                                           seam.vertical, 1, 1);
++  if (!data->limits.valid || !seam_snapshot_matches(screen, *data)) {
++    MEM_delete(data); return OPERATOR_CANCELLED;
++  }
++  screen->ipad_panel_owner = data->captured_owner;
++  op->customdata = data;
++  WM_event_add_modal_handler(C, op);
++  return OPERATOR_RUNNING_MODAL;
++}
++
++static bool seam_candidate_valid(const SeamDragData &data, const int delta)
++{
++  auto inputs = data.inputs;
++  for (auto &area : inputs) {
++    const auto &v = data.faces[area.id].vertices;
++    if (data.seam.vertical) {
++      area.original.xmin += data.selected[v[0]] ? delta : 0;
++      area.original.xmax += data.selected[v[3]] ? delta : 0;
++    }
++    else {
++      area.original.ymin += data.selected[v[0]] ? delta : 0;
++      area.original.ymax += data.selected[v[1]] ? delta : 0;
++    }
++  }
++  const auto mapping = policy::classify(inputs, int(2 * UI_SCALE_FAC));
++  const auto original_mapping = policy::classify(data.inputs, int(2 * UI_SCALE_FAC));
++  auto ids = [](const auto &areas) {
++    std::vector<int> result;
++    for (const auto &area : areas) { result.push_back(area.id); }
++    std::sort(result.begin(), result.end());
++    return result;
++  };
++  if (ids(mapping.working) != ids(data.working) || mapping.panels.size() != original_mapping.panels.size()) {
++    return false;
++  }
++  for (const auto &panel : original_mapping.panels) {
++    if (std::none_of(mapping.panels.begin(), mapping.panels.end(), [&](const auto &p) {
++          return p.id == panel.id && p.edge == panel.edge;
++        })) { return false; }
++  }
++  std::vector<policy::WorkingSeam> seams;
++  auto placed = policy::working_layout(mapping.working, data.bounds, int(4 * UI_SCALE_FAC), &seams);
++  if (seams.size() != data.partitions.size()) { return false; }
++  for (const auto &original : data.partitions) {
++    if (std::none_of(seams.begin(), seams.end(), [&](const auto &candidate) {
++          return candidate.vertical == original.vertical && candidate.before == original.before &&
++                 candidate.after == original.after;
++        })) { return false; }
++  }
++  const bool same_partition = std::any_of(seams.begin(), seams.end(), [&](const auto &seam) {
++    return seam.vertical == data.seam.vertical && seam.before == data.seam.before &&
++           seam.after == data.seam.after && seam.coordinate == data.seam.coordinate + delta;
++  });
++  return same_partition && policy::seam_display_valid(data.displayed, placed, data.bounds,
++                                                       int(160 * UI_SCALE_FAC), int(100 * UI_SCALE_FAC));
++}
++
++static wmOperatorStatus seam_modal(bContext *C, wmOperator *op, const wmEvent *event)
++{
++  auto *data = static_cast<SeamDragData *>(op->customdata);
++  if (!data) { return OPERATOR_CANCELLED; }
++  bScreen *screen = seam_owner(C, *data);
++  if (!screen || CTX_wm_screen(C) != screen || CTX_wm_window(C) != data->window ||
++      !ED_ipad_panels_enabled(screen) || !seam_snapshot_matches(screen, *data) ||
++      (event->flag & WM_EVENT_IS_POINTER_CANCEL) || ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE, WINDEACTIVATE)) {
++    seam_cancel(C, op); return OPERATOR_CANCELLED;
++  }
++  rcti rect;
++  WM_window_screen_rect_calc(data->window, &rect);
++  if (rect.xmin != data->bounds.xmin || rect.ymin != data->bounds.ymin ||
++      rect.xmax != data->bounds.xmax || rect.ymax != data->bounds.ymax) {
++    seam_cancel(C, op); return OPERATOR_CANCELLED;
++  }
++  if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
++    MEM_delete(data); op->customdata = nullptr;
++    WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++    return OPERATOR_FINISHED;
++  }
++  if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
++    int requested = policy::seam_saved_delta(data->seam, event->xy[data->seam.vertical ? 0 : 1] - data->start);
++    requested = std::clamp(requested, data->limits.minimum, data->limits.maximum);
++    int accepted = 0, rejected = std::abs(requested), sign = requested < 0 ? -1 : 1;
++    if (seam_candidate_valid(*data, requested)) { accepted = rejected; }
++    else {
++      while (accepted + 1 < rejected) {
++        const int middle = accepted + (rejected - accepted) / 2;
++        if (seam_candidate_valid(*data, middle * sign)) { accepted = middle; }
++        else { rejected = middle; }
++      }
++    }
++    data->delta = accepted * sign;
++    for (size_t i = 0; i < data->vertices.size(); ++i) {
++      data->last[i] = data->original[i];
++      if (data->selected[i]) {
++        (data->seam.vertical ? data->last[i].x : data->last[i].y) += data->delta;
++      }
++      data->vertices[i]->vec.x = data->last[i].x;
++      data->vertices[i]->vec.y = data->last[i].y;
++    }
++    tag_layout(C, data->window);
++  }
++  return OPERATOR_RUNNING_MODAL;
++}
++
 +}  // namespace
 +
 +void ED_ipad_panels_resize_regions(bContext *C, wmWindow *win, std::vector<rcti> &regions)
@@ -7023,7 +7369,7 @@ new file mode 100644
 +    return;
 +  }
 +  for (const Button &button : buttons(model, screen)) {
-+    if (button.action == Action::Resize && !button.rect.empty()) {
++    if (ELEM(button.action, Action::Resize, Action::Seam) && !button.rect.empty()) {
 +      regions.push_back(to_rect(button.rect));
 +    }
 +  }
@@ -7344,7 +7690,19 @@ new file mode 100644
 +    if (button.native) {
 +      continue; /* Native gizmo draws it; shared press/release capture owns taps. */
 +    }
-+    if (button.action == Action::Lock) {
++    if (button.action == Action::Seam) {
++      draw_box(button.rect, "", false, win->eventstate && contains(button.rect, win->eventstate->xy));
++      const bool vertical = button.edge == Edge::Side;
++      const float cx = (button.rect.xmin + button.rect.xmax) * 0.5f;
++      const float cy = (button.rect.ymin + button.rect.ymax) * 0.5f;
++      const float dx = (vertical ? 2 : 12) * UI_SCALE_FAC;
++      const float dy = (vertical ? 12 : 2) * UI_SCALE_FAC;
++      rctf grip{cx - dx, cx + dx, cy - dy, cy + dy};
++      float color[4];
++      UI_GetThemeColor4fv(TH_TEXT, color);
++      UI_draw_roundbox_4fv(&grip, true, 2 * UI_SCALE_FAC, color);
++    }
++    else if (button.action == Action::Lock) {
 +      float color[4];
 +      UI_GetThemeColor4fv(button.selected ? TH_TAB_ACTIVE : TH_TAB_INACTIVE, color);
 +      const Rect &r = button.rect;
@@ -7647,7 +8005,15 @@ new file mode 100644
 +    }
 +    if (event->type == LEFTMOUSE && event->val == KM_PRESS) {
 +      const int axis = button.edge == Edge::Side ? 0 : 1;
-+      if (button.action == Action::Resize) {
++      if (button.action == Action::Seam) {
++        PointerRNA props;
++        WM_operator_properties_create(&props, "SCREEN_OT_ipad_working_resize");
++        RNA_int_set(&props, "seam", button.id);
++        WM_operator_name_call(C, "SCREEN_OT_ipad_working_resize",
++                              blender::wm::OpCallContext::InvokeDefault, &props, event);
++        WM_operator_properties_free(&props);
++      }
++      else if (button.action == Action::Resize) {
 +        PointerRNA props;
 +        WM_operator_properties_create(&props, "SCREEN_OT_ipad_panel_resize");
 +        RNA_int_set(&props, "axis", axis);
@@ -7704,6 +8070,19 @@ new file mode 100644
 +    }
 +  }
 +  return false;
++}
++
++void SCREEN_OT_ipad_working_resize(wmOperatorType *ot)
++{
++  ot->name = "Resize Working Editors";
++  ot->idname = "SCREEN_OT_ipad_working_resize";
++  ot->description = "Drag a working-editor seam while preserving connected native editors";
++  ot->invoke = seam_invoke;
++  ot->modal = seam_modal;
++  ot->cancel = seam_cancel;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_int(ot->srna, "seam", 0, 0, INT_MAX, "Seam", "Working editor seam", 0, INT_MAX);
 +}
 +
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot)

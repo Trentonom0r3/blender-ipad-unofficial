@@ -14,7 +14,7 @@ class ResizeLifetimeTests(unittest.TestCase):
         source = ''.join(line[1:] for line in section.splitlines(True)
                          if line.startswith('+') and not line.startswith('+++'))
         callbacks = source.split('struct ResizeData {', 1)[1].split('}  // namespace', 1)[0]
-        callbacks = 'struct ResizeData {' + callbacks
+        callbacks = ('struct ResizeData {' + callbacks).split('struct SeamDragData {', 1)[0]
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(PREFIX + callbacks + CASES)
 
 

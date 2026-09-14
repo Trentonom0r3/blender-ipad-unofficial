@@ -1,5 +1,51 @@
 # Project handoff — 2026-09-13
 
+## Native working seam controls — 2026-09-14
+
+The seam operator and visible handles are now integrated in source. Finger/Pencil/
+pointer drags use the existing typed WorkspaceResize capture and native modal
+operator. Grips search both directions from the center, use the same drawing/hit/
+GHOST rectangles, and avoid floating panels, rails, navigation and visible working
+headers. Native USER_APP_LOCK_EDGE_RESIZE is respected. Slicing layouts receive
+handles only where the saved native edge can be found; irregular non-slicing
+layouts still need adjacency handling and are not claimed complete.
+
+Drag start snapshots live screen UID/window, saved vertices, native edge identity/
+endpoints, face topology, current working classification and every recursive seam
+partition. Candidate moves honor saved limits for hidden supporting editors and
+visible minimum sizes. They reclassify ALL candidate areas to preserve working
+membership and supporting panel placement, and preserve every seam partition.
+The chosen panel owner remains stable even if another working editor becomes larger.
+Commit keeps geometry; cancellation restores the original snapshot. Changed topology
+or removed owners are never written through. For active window resizing, original
+geometry is restored first and normal Blender refresh rescales it to the new bounds.
+Inactive-window rescaling and provider/script topology changes remain device/runtime
+edge cases; unrelated changed coordinates are preserved rather than overwritten.
+
+All 17 local tests pass, including compiled extracted native seam callbacks for
+vertical/horizontal motion, reversal, commit, cancellation, full-classification
+regression, changed edges, workspace loss, native resize lock and resize restoration
+ordering. Context and native rescaling are mocked: this does not execute Blender's
+real refresh, UIKit or iPad drawing. The real handle-placement helper is tested for
+both search directions, occlusion and varied target extents. Existing 699,649 panel
+checks and 132 shipped-layout cases pass. Full 49-file source preflight passes.
+Independent review found no remaining source blocker after classification/edge/
+lock repairs. iOS compilation/packaging and device acceptance are still pending.
+
+This supersedes the unintegrated-draft status below. Next verify the exact new iOS
+build, fix actual failures, then extend non-slicing adjacency and verify rotation/
+touch cancellation on hardware. Continue two-axis floating panel sizing, launcher
+reordering, layout reversal and native Files lifecycle. Do not declare the full
+workspace milestone or project complete from these source checks.
+
+Device protocol after build success: use native working-editor menu to split
+horizontally/vertically; drag the visible grip with finger, Pencil and mouse in each
+orientation. Resize past the center, reverse, drag far toward minimum sizes, release
+outside and cancel via Escape/right-click/multi-touch interruption. Verify hidden
+supporting editors and working editor identity survive. Repeat with Tools, side/
+bottom panels, lock, native popups, Stage Manager resize and rotation during a drag.
+Compare final saved layout after reopening and confirm desktop input remains intact.
+
 ## Native seam adapter draft checkpoint — 2026-09-14
 
 Authoritative code remains 8538747 (16 local tests and cloud preflight passed).

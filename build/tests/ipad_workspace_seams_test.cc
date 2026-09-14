@@ -106,6 +106,23 @@ int main()
   p::working_layout(separated,bounds,4,&seams);
   assert(seams.size()==1 && seams[0].coordinate==300);
   // Adapter must resolve adjacency in saved topology before offering this seam.
+  p::WorkingSeam handle_seam{true,400,{0,0,1000,700},{0,0,1000,700},{398,0,402,700},{0},{1}};
+  const p::Rect handle_bounds{0,0,1000,700};
+  auto handle=p::seam_handle_rect(handle_seam,handle_bounds,{},44);
+  assert(handle.width()==44 && handle.height()==44);
+  auto below=p::seam_handle_rect(handle_seam,handle_bounds,{{0,328,1000,700}},44);
+  assert(!below.empty() && below.ymax<=328);
+  auto above=p::seam_handle_rect(handle_seam,handle_bounds,{{0,0,1000,372}},44);
+  assert(!above.empty() && above.ymin>=372);
+  assert(p::seam_handle_rect(handle_seam,handle_bounds,{handle_bounds},44).empty());
+  for(int extent=1;extent<90;++extent){
+    auto hit=p::seam_handle_rect(handle_seam,handle_bounds,{{}},extent);
+    assert(hit.width()==extent && hit.height()==extent);
+    assert(hit.xmin>=0 && hit.xmax<=1000 && hit.ymin>=0 && hit.ymax<=700);
+  }
+  handle_seam.vertical=false;handle_seam.line={0,398,1000,402};
+  handle=p::seam_handle_rect(handle_seam,handle_bounds,{},44);
+  assert(!handle.empty() && handle.ymin==402);
   std::cout << "PASS: seam provenance, saved constraints, hidden/connected editors, "
                "horizontal symmetry, invalid topology and displayed minima\n";
 }
