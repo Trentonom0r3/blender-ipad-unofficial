@@ -1,6 +1,7 @@
 #include "ipad_workspace_panels.hh"
 #include <cassert>
 #include <iostream>
+#include <set>
 namespace p = blender::ed::ipad::panels;
 int main()
 {
@@ -160,6 +161,98 @@ int main()
       std::swap(area.original.xmin,area.original.ymin);
       std::swap(area.original.xmax,area.original.ymax);
     }
+  }
+  // Fallback adjacency is local pair identity, never a fabricated full-span cut.
+  const std::set<std::pair<int,int>> expected_pairs{{0,1},{0,3},{0,4},{1,2},
+                                                   {1,4},{2,3},{2,4},{3,4}};
+  for (int transpose=0; transpose<2; ++transpose) {
+    for (int gap : {0,1,4,9}) {
+      const p::Rect target{-70,40,1280,1840};
+      std::vector<p::WorkingFallback> nodes;
+      seams.clear();
+      const auto displayed=p::working_layout(pinwheel,target,gap,&seams,&nodes);
+      assert(seams.empty() && nodes.size()==1);
+      assert((nodes[0].members==std::vector<int>{0,1,2,3,4}));
+      assert(nodes[0].saved_bounds.width()==901 && nodes[0].display_bounds.width()==1350);
+      const auto adjacent=p::working_adjacencies(pinwheel,displayed,nodes);
+      assert(adjacent.size()==8);
+      std::set<std::pair<int,int>> actual_pairs;
+      int vertical=0;
+      for (const auto &edge:adjacent) {
+        actual_pairs.emplace(std::min(edge.before_id,edge.after_id),
+                             std::max(edge.before_id,edge.after_id));
+        vertical+=edge.vertical;
+        assert(edge.coordinate==300 || edge.coordinate==600);
+        assert(edge.saved_max-edge.saved_min==300);
+        assert(edge.node.members==nodes[0].members);
+        const auto &before=displayed[edge.before_id].original;
+        const auto &after=displayed[edge.after_id].original;
+        if(edge.vertical) {
+          assert(edge.line.xmin==before.xmax && edge.line.xmax==after.xmin);
+          assert(edge.line.ymin==std::max(before.ymin,after.ymin));
+          assert(edge.line.ymax==std::min(before.ymax,after.ymax));
+          assert(edge.line.ymax>edge.line.ymin && edge.line.width()==gap);
+        }
+        else {
+          assert(edge.line.ymin==before.ymax && edge.line.ymax==after.ymin);
+          assert(edge.line.xmin==std::max(before.xmin,after.xmin));
+          assert(edge.line.xmax==std::min(before.xmax,after.xmax));
+          assert(edge.line.xmax>edge.line.xmin && edge.line.height()==gap);
+        }
+      }
+      assert(vertical==4 && actual_pairs==expected_pairs);
+    }
+    for(auto &area:pinwheel) {
+      std::swap(area.original.xmin,area.original.ymin);
+      std::swap(area.original.xmax,area.original.ymax);
+    }
+  }
+  // Shared coordinate alone must not join corner-only or disconnected contacts.
+  std::vector<p::Area> corner{{0,{0,0,101,101},p::Role::Working},
+                             {1,{100,100,201,201},p::Role::Working}};
+  std::vector<p::WorkingFallback> manual{{{0,0,201,201},{0,0,200,200},{0,1}}};
+  assert(p::working_adjacencies(corner,corner,manual).empty());
+  std::vector<p::Area> separate{{0,{0,0,101,101},p::Role::Working},
+                               {1,{100,0,201,101},p::Role::Working},
+                               {2,{0,200,101,301},p::Role::Working},
+                               {3,{100,200,201,301},p::Role::Working}};
+  auto separate_display=separate;
+  for(auto &area:separate_display) { --area.original.xmax; --area.original.ymax; }
+  manual={{{0,0,201,301},{0,0,200,300},{0,1,2,3}}};
+  auto separate_edges=p::working_adjacencies(separate,separate_display,manual);
+  assert(separate_edges.size()==2);
+  assert(separate_edges[0].before_id==0 && separate_edges[0].after_id==1);
+  assert(separate_edges[1].before_id==2 && separate_edges[1].after_id==3);
+  assert(separate_edges[0].coordinate==separate_edges[1].coordinate);
+  assert(separate_edges[0].saved_max<separate_edges[1].saved_min);
+  // Collapsed displayed cells and invalid displayed overlap expose no local edge.
+  separate_display[0].original.xmax=0;
+  separate_display[2].original.xmax=150;
+  assert(p::working_adjacencies(separate,separate_display,manual).empty());
+  // A fallback nested beneath a recursive cut retains its own mapping/member IDs.
+  auto nested=pinwheel;
+  nested.push_back({5,{900,0,1201,901},p::Role::Working});
+  const p::Rect nested_bounds{20,30,1620,1030};
+  std::vector<p::WorkingFallback> nested_nodes;
+  seams.clear();
+  const auto nested_display=p::working_layout(nested,nested_bounds,4,&seams,&nested_nodes);
+  assert(seams.size()==1 && nested_nodes.size()==1);
+  assert(seams[0].vertical && seams[0].coordinate==900);
+  assert((nested_nodes[0].members==std::vector<int>{0,1,2,3,4}));
+  assert(nested_nodes[0].display_bounds.xmax<nested_bounds.xmax);
+  assert(nested_nodes[0].saved_bounds.xmax==901);
+  const auto nested_edges=p::working_adjacencies(nested,nested_display,nested_nodes);
+  assert(nested_edges.size()==8);
+  for(const auto &edge:nested_edges) {
+    assert(edge.before_id!=5 && edge.after_id!=5);
+    assert(edge.node.display_bounds.xmax==nested_nodes[0].display_bounds.xmax);
+    assert(edge.line.xmax<=nested_nodes[0].display_bounds.xmax);
+  }
+  const auto untraced=p::working_layout(nested,nested_bounds,4);
+  for(std::size_t i=0;i<untraced.size();++i) {
+    assert(untraced[i].id==nested_display[i].id);
+    const auto &a=untraced[i].original, &b=nested_display[i].original;
+    assert(a.xmin==b.xmin && a.ymin==b.ymin && a.xmax==b.xmax && a.ymax==b.ymax);
   }
   std::cout << "PASS: seam provenance, saved constraints, hidden/connected editors, "
                "horizontal symmetry, invalid topology and displayed minima\n";

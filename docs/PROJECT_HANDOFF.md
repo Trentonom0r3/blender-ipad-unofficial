@@ -1,5 +1,43 @@
 # Project handoff — 2026-09-13
 
+## Native irregular-layout seam controls — 2026-09-14
+
+Non-slicing layouts now have source-integrated local seam controls. Fallback nodes
+retain saved/displayed bounds and sorted working editor IDs. Separate adjacency
+records identify positive-overlap editor pairs; they never pretend to be recursive
+full-span partitions. Each offered control binds an actual edge of an adjacent
+native face, and invocation captures that exact edge before connected-vertex
+selection. Disconnected collinear edges cannot become the drag seed by proximity.
+Fallback movement maps through native vertex extents (saved area extent minus one).
+Candidate layouts preserve every recursive partition and local adjacency identity,
+full working/support classification, saved minima and displayed bounds. Existing
+modal owner, window, topology and cancellation protections remain in use.
+
+All 17 local tests pass, including all eight pinwheel adjacencies in both
+orientations, odd gaps, corner-only rejection, disconnected segments, nested
+fallback node mapping and unchanged untraced layout output. Extracted native
+callbacks exercise each pinwheel control, both drag directions, extreme limits,
+pointer cancellation and rollback. An unrelated collinear edge is deliberately
+first in edgebase and remains untouched. A hidden side-editor fixture proves an
+80-pixel displayed drag maps to 60 saved units at 1200/900 scale and commits without
+changing the supporting editor. Full 49-file source preflight and independent
+read-only review pass. These mocks do not execute real Blender refresh or UIKit;
+new native compilation, packaging and device acceptance are pending.
+
+Previous seam-control source **1bbe4063c3d4c6eaa22dc931e7d43a597699b0a4** has now
+passed [iOS run 34855054521](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34855054521).
+IPA `Blender-iPad-Unofficial-ipa`, artifact **10353371480**, **248,410,968 bytes**,
+was verified present and not expired. This successful IPA predates both the
+69585b9 overlap repair and the current adjacency implementation. It is not evidence
+for the newer source, and no device validation is claimed.
+
+Next verify the new adjacency iOS build and actual finger/Pencil/pointer drag,
+cancellation, saved-layout restoration and rotation on hardware. Retain runtime
+coverage gaps for connected hidden auxiliary constraints in a non-slicing native
+fixture and inactive-window rescaling. Continue two-axis floating panel sizing,
+launcher reordering, layout reversal and native Files lifecycle; the complete
+workspace milestone and product goal remain unfinished.
+
 ## Non-slicing editor overlap repair — 2026-09-14
 
 Non-slicing fallback layout now maps native shared vertex coordinates rather than

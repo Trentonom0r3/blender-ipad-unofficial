@@ -5464,7 +5464,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,789 @@
+@@ -0,0 +1,870 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -5625,13 +5625,21 @@ new file mode 100644
 +  std::vector<int> before, after;
 +};
 +
++/* Fallback nodes are distinct from recursive cuts. Their shared-vertex mapping
++ * uses saved_bounds.width()/height() - 1, unlike recursive WorkingSeam mapping. */
++struct WorkingFallback {
++  Rect saved_bounds, display_bounds;
++  std::vector<int> members;
++};
++
 +/* Reconstruct working splits from saved geometry after auxiliary editors move
 + * into panels. Recursively preserve full-span cuts and their relative proportions.
 + * A shorter editor next to a full-height editor grows into the space vacated below
 + * it; editor identity and saved vertices remain untouched. */
 +inline std::vector<Area> working_layout(const std::vector<Area> &areas, const Rect bounds,
 +                                       const int gap = 4,
-+                                       std::vector<WorkingSeam> *seams = nullptr)
++                                       std::vector<WorkingSeam> *seams = nullptr,
++                                       std::vector<WorkingFallback> *fallbacks = nullptr)
 +{
 +  if (areas.empty() || bounds.empty()) {
 +    return {};
@@ -5699,8 +5707,8 @@ new file mode 100644
 +        std::sort(info.after.begin(), info.after.end());
 +        seams->push_back(std::move(info));
 +      }
-+      auto result = working_layout(before, first, gap, seams);
-+      const auto next = working_layout(after, second, gap, seams);
++      auto result = working_layout(before, first, gap, seams, fallbacks);
++      const auto next = working_layout(after, second, gap, seams, fallbacks);
 +      result.insert(result.end(), next.begin(), next.end());
 +      return result;
 +    }
@@ -5709,6 +5717,12 @@ new file mode 100644
 +   * the shared border pixel; scale the vertex itself so both neighbors use one
 +   * display boundary, then leave a gap without moving either outside its cell. */
 +  std::vector<Area> result;
++  if (fallbacks) {
++    WorkingFallback node{original, bounds, {}};
++    for (const Area &area : areas) { node.members.push_back(area.id); }
++    std::sort(node.members.begin(), node.members.end());
++    fallbacks->push_back(std::move(node));
++  }
 +  const int inset_low = std::max(0, gap) / 2;
 +  const int inset_high = std::max(0, gap) - inset_low;
 +  for (const Area &area : areas) {
@@ -5736,6 +5750,73 @@ new file mode 100644
 +  return result;
 +}
 +
++
++/* Local adjacency describes two faces, not a full-span recursive partition.
++ * Native integration must bind the exact edge/connected vertices separately;
++ * disconnected collinear segments must never be merged by coordinate alone. */
++struct WorkingAdjacency {
++  bool vertical;
++  int before_id, after_id; /* Left/right or bottom/top editor IDs. */
++  int coordinate, saved_min, saved_max; /* Native vertex coordinates, max inclusive. */
++  Rect line; /* Displayed gap restricted to the two visible faces' overlap. */
++  WorkingFallback node;
++};
++
++inline std::vector<WorkingAdjacency> working_adjacencies(
++    const std::vector<Area> &saved, const std::vector<Area> &displayed,
++    const std::vector<WorkingFallback> &fallbacks)
++{
++  std::vector<WorkingAdjacency> result;
++  auto find = [](const std::vector<Area> &areas, const int id) -> const Area * {
++    const auto found = std::find_if(areas.begin(), areas.end(),
++                                     [&](const Area &area) { return area.id == id; });
++    return found == areas.end() ? nullptr : &*found;
++  };
++  for (const WorkingFallback &node : fallbacks) {
++    for (std::size_t i = 0; i < node.members.size(); ++i) {
++      for (std::size_t j = i + 1; j < node.members.size(); ++j) {
++        const Area *a = find(saved, node.members[i]), *b = find(saved, node.members[j]);
++        if (!a || !b || a->id == b->id || a->original.empty() || b->original.empty()) {
++          continue;
++        }
++        for (const bool vertical : {true, false}) {
++          const Area *before = a, *after = b;
++          auto low = [&](const Area *area) {
++            return vertical ? area->original.xmin : area->original.ymin;
++          };
++          auto high = [&](const Area *area) {
++            return (vertical ? area->original.xmax : area->original.ymax) - 1;
++          };
++          if (high(before) != low(after)) { std::swap(before, after); }
++          if (high(before) != low(after)) { continue; }
++          const Rect &s = before->original, &t = after->original;
++          const int saved_min = std::max(vertical ? s.ymin : s.xmin,
++                                         vertical ? t.ymin : t.xmin);
++          const int saved_max = std::min(vertical ? s.ymax : s.xmax,
++                                         vertical ? t.ymax : t.xmax) - 1;
++          if (saved_min >= saved_max) { continue; } /* Corner contact is not an edge. */
++          const Area *display_before = find(displayed, before->id);
++          const Area *display_after = find(displayed, after->id);
++          if (!display_before || !display_after || display_before->original.empty() ||
++              display_after->original.empty()) { continue; }
++          const Rect &u = display_before->original, &v = display_after->original;
++          const int along_min = std::max(vertical ? u.ymin : u.xmin,
++                                         vertical ? v.ymin : v.xmin);
++          const int along_max = std::min(vertical ? u.ymax : u.xmax,
++                                         vertical ? v.ymax : v.xmax);
++          const int cross_min = vertical ? u.xmax : u.ymax;
++          const int cross_max = vertical ? v.xmin : v.ymin;
++          if (along_min >= along_max || cross_min > cross_max) { continue; }
++          const Rect line = vertical ? Rect{cross_min, along_min, cross_max, along_max} :
++                                       Rect{along_min, cross_min, along_max, cross_max};
++          result.push_back({vertical, before->id, after->id, high(before),
++                            saved_min, saved_max, line, node});
++        }
++      }
++    }
++  }
++  return result;
++}
 +
 +/* Prefer the center, then search both directions along the seam. Every candidate
 + * shares the same rectangle for drawing, pointer hit testing and touch capture. */
@@ -6378,10 +6459,10 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1736 @@
+@@ -0,0 +1,1812 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
-+/** iPad presentation of existing workspace editors. Saved ScrVerts are never modified. */
++/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +
 +#include <algorithm>
@@ -6443,12 +6524,66 @@ new file mode 100644
 +  std::string category;
 +};
 +
++struct NativeSeamControl {
++  policy::WorkingSeam seam;
++  bool fallback = false;
++  policy::WorkingAdjacency adjacency{};
++  ScrEdge *edge = nullptr;
++};
++
++/* Bind local fallback adjacency to an actual face edge, never merely a nearby
++ * collinear edge. The captured pointer is resolved again in the live snapshot. */
++static std::vector<policy::Area> working_controls(
++    bScreen *screen, const std::vector<policy::Area> &working, const Rect bounds,
++    std::vector<NativeSeamControl> &controls)
++{
++  std::vector<policy::WorkingSeam> partitions;
++  std::vector<policy::WorkingFallback> nodes;
++  auto displayed = policy::working_layout(working, bounds, int(4 * UI_SCALE_FAC),
++                                           &partitions, &nodes);
++  for (const auto &seam : partitions) { controls.push_back({seam, false, {}, nullptr}); }
++  std::vector<ScrArea *> areas;
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) { areas.push_back(area); }
++  for (const auto &adj : policy::working_adjacencies(working, displayed, nodes)) {
++    if (adj.before_id < 0 || adj.after_id < 0 || adj.before_id >= int(areas.size()) ||
++        adj.after_id >= int(areas.size())) { continue; }
++    const ScrArea *before = areas[adj.before_id], *after = areas[adj.after_id];
++    ScrVert *a = adj.vertical ? before->v4 : before->v2;
++    ScrVert *b = before->v3;
++    ScrVert *c = after->v1;
++    ScrVert *d = adj.vertical ? after->v2 : after->v4;
++    ScrEdge *bound = nullptr;
++    LISTBASE_FOREACH (ScrEdge *, edge, &screen->edgebase) {
++      auto joins = [&](ScrVert *v, ScrVert *w) {
++        return (edge->v1 == v && edge->v2 == w) || (edge->v1 == w && edge->v2 == v);
++      };
++      if (!joins(a,b) && !joins(c,d)) { continue; }
++      const int x = adj.vertical ? edge->v1->vec.x : edge->v1->vec.y;
++      const int y = adj.vertical ? edge->v2->vec.x : edge->v2->vec.y;
++      const int u = adj.vertical ? edge->v1->vec.y : edge->v1->vec.x;
++      const int v = adj.vertical ? edge->v2->vec.y : edge->v2->vec.x;
++      if (x == adj.coordinate && y == x &&
++          std::min(std::max(u,v), adj.saved_max) > std::max(std::min(u,v), adj.saved_min)) {
++        bound = edge;
++        break;
++      }
++    }
++    if (!bound) { continue; }
++    Rect native_bounds = adj.node.saved_bounds;
++    --native_bounds.xmax;
++    --native_bounds.ymax;
++    controls.push_back({{adj.vertical, adj.coordinate, native_bounds, adj.node.display_bounds,
++                          adj.line, {}, {}}, true, adj, bound});
++  }
++  return displayed;
++}
++
 +struct Model {
 +  std::vector<ScrArea *> areas;
 +  ScrArea *main = nullptr;
 +  std::vector<Tab> tabs;
 +  std::vector<policy::Area> working, inputs;
-+  std::vector<policy::WorkingSeam> seams;
++  std::vector<NativeSeamControl> seams;
 +  policy::State state;
 +  policy::Metrics metrics;
 +  policy::Layout layout;
@@ -6643,9 +6778,8 @@ new file mode 100644
 +  model.working = mapping.working;
 +  rcti workspace;
 +  WM_window_screen_rect_calc(win, &workspace);
-+  policy::working_layout(model.working,
-+                          {workspace.xmin, workspace.ymin, workspace.xmax, workspace.ymax},
-+                          int(4 * UI_SCALE_FAC), &model.seams);
++  working_controls(screen, model.working,
++                   {workspace.xmin, workspace.ymin, workspace.xmax, workspace.ymax}, model.seams);
 +  std::vector<ScrArea *> working_areas;
 +  for (const policy::Area &working : model.working) {
 +    ScrArea *area = model.areas[working.id];
@@ -6880,7 +7014,7 @@ new file mode 100644
 +                         area->runtime.ipad_navigation_rect.ymax + 1});
 +  }
 +  for (size_t i = 0; !(U.app_flag & USER_APP_LOCK_EDGE_RESIZE) && i < model.seams.size(); ++i) {
-+    const auto &seam = model.seams[i];
++    const auto &seam = model.seams[i].seam;
 +    const int extent = int(44 * UI_SCALE_FAC);
 +    const bool native_edge = [&]() {
 +      LISTBASE_FOREACH (const ScrEdge *, edge, &screen->edgebase) {
@@ -7110,6 +7244,9 @@ new file mode 100644
 +  unsigned int uid;
 +  wmWindow *window;
 +  policy::WorkingSeam seam;
++  bool fallback = false;
++  policy::WorkingAdjacency adjacency{};
++  std::vector<policy::WorkingAdjacency> adjacencies;
 +  std::vector<policy::WorkingSeam> partitions;
 +  int start, delta = 0;
 +  int original_owner = 0, captured_owner = 0;
@@ -7205,15 +7342,19 @@ new file mode 100644
 +  rcti window_rect;
 +  WM_window_screen_rect_calc(win, &window_rect);
 +  Rect bounds{window_rect.xmin, window_rect.ymin, window_rect.xmax, window_rect.ymax};
-+  std::vector<policy::WorkingSeam> seams;
-+  auto displayed = policy::working_layout(model.working, bounds, int(4 * UI_SCALE_FAC), &seams);
++  std::vector<NativeSeamControl> seams;
++  auto displayed = working_controls(screen, model.working, bounds, seams);
 +  const int index = RNA_int_get(op->ptr, "seam");
 +  if (index < 0 || index >= int(seams.size())) { return OPERATOR_CANCELLED; }
 +  auto *data = MEM_new<SeamDragData>(__func__);
 +  data->uid = screen->id.session_uid;
 +  data->window = win;
-+  data->seam = seams[index];
-+  data->partitions = seams;
++  data->seam = seams[index].seam;
++  data->fallback = seams[index].fallback;
++  data->adjacency = seams[index].adjacency;
++  std::vector<policy::WorkingFallback> nodes;
++  policy::working_layout(model.working, bounds, int(4 * UI_SCALE_FAC), &data->partitions, &nodes);
++  data->adjacencies = policy::working_adjacencies(model.working, displayed, nodes);
 +  data->start = event->xy[data->seam.vertical ? 0 : 1];
 +  data->bounds = bounds;
 +  data->working = model.working;
@@ -7255,7 +7396,8 @@ new file mode 100644
 +    }
 +    const auto &v1 = data->original[a], &v2 = data->original[b];
 +    const int c1 = seam.vertical ? v1.x : v1.y, c2 = seam.vertical ? v2.x : v2.y;
-+    if (c1 == seam.coordinate && c2 == seam.coordinate) {
++    if (data->fallback && edge == seams[index].edge) { seed = edges.size(); }
++    if (!data->fallback && c1 == seam.coordinate && c2 == seam.coordinate) {
 +      const int low = std::min(seam.vertical ? v1.y : v1.x, seam.vertical ? v2.y : v2.x);
 +      const int high = std::max(seam.vertical ? v1.y : v1.x, seam.vertical ? v2.y : v2.x);
 +      if (high >= saved_low && low < saved_low + saved_size) {
@@ -7310,7 +7452,19 @@ new file mode 100644
 +        })) { return false; }
 +  }
 +  std::vector<policy::WorkingSeam> seams;
-+  auto placed = policy::working_layout(mapping.working, data.bounds, int(4 * UI_SCALE_FAC), &seams);
++  std::vector<policy::WorkingFallback> nodes;
++  auto placed = policy::working_layout(mapping.working, data.bounds, int(4 * UI_SCALE_FAC), &seams, &nodes);
++  const auto adjacencies = policy::working_adjacencies(mapping.working, placed, nodes);
++  auto same_adjacency = [](const auto &a, const auto &b) {
++    return a.vertical == b.vertical && a.before_id == b.before_id && a.after_id == b.after_id &&
++           a.node.members == b.node.members;
++  };
++  if (adjacencies.size() != data.adjacencies.size()) { return false; }
++  for (const auto &original : data.adjacencies) {
++    if (std::none_of(adjacencies.begin(), adjacencies.end(), [&](const auto &candidate) {
++          return same_adjacency(original, candidate);
++        })) { return false; }
++  }
 +  if (seams.size() != data.partitions.size()) { return false; }
 +  for (const auto &original : data.partitions) {
 +    if (std::none_of(seams.begin(), seams.end(), [&](const auto &candidate) {
@@ -7318,7 +7472,10 @@ new file mode 100644
 +                 candidate.after == original.after;
 +        })) { return false; }
 +  }
-+  const bool same_partition = std::any_of(seams.begin(), seams.end(), [&](const auto &seam) {
++  const bool same_partition = data.fallback ?
++      std::any_of(adjacencies.begin(), adjacencies.end(), [&](const auto &adj) {
++        return same_adjacency(data.adjacency, adj) && adj.coordinate == data.seam.coordinate + delta;
++      }) : std::any_of(seams.begin(), seams.end(), [&](const auto &seam) {
 +    return seam.vertical == data.seam.vertical && seam.before == data.seam.before &&
 +           seam.after == data.seam.after && seam.coordinate == data.seam.coordinate + delta;
 +  });

@@ -13,7 +13,9 @@ class WorkingSeamTests(unittest.TestCase):
         source = ''.join(line[1:] for line in section.splitlines(True)
                          if line.startswith('+') and not line.startswith('+++'))
         callbacks = 'struct SeamDragData {' + source.split('struct SeamDragData {', 1)[1].split('}  // namespace', 1)[0]
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(PREFIX + callbacks + CASES)
+        helpers = 'struct NativeSeamControl {' + source.split('struct NativeSeamControl {', 1)[1].split('struct Model {', 1)[0]
+        prefix = PREFIX.replace('struct Model {', helpers + 'struct Model {', 1)
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(prefix + callbacks + CASES)
 
 PREFIX = r'''
 #include "ipad_workspace_panels.hh"
@@ -117,7 +119,77 @@ struct ClassificationFixture {
  }
  ~ClassificationFixture(){seam_cancel(&C,&op);}
 };
+struct PinwheelFixture {
+ std::vector<ScrVert> v;std::vector<ScrEdge> e;ScrArea a[6];bScreen screen;Main main;wmWindow win;
+ bContext C{&main,&screen,&win};int index=0;wmOperator op{nullptr,&index};
+ PinwheelFixture(bool transpose=false, bool support=false):v(20){
+  win.bounds={0,0,900,900};e.reserve(32);
+  for(int i=0;i<16;++i){v[i].vec={(i%4)*300,(i/4)*300};if(i<15)v[i].next=&v[i+1];}
+  v[15].next=&v[16];v[16].next=&v[17];v[16].vec={600,100};v[17].vec={600,200};
+  v[17].next=&v[18];v[18].next=&v[19];v[18].vec={900,0};v[19].vec={900,900};
+  const int corners[5][4]={{0,4,6,2},{2,10,11,3},{9,13,15,11},{4,12,13,5},{5,9,10,6}};
+  for(int i=0;i<5;++i){
+   a[i].v1=&v[corners[i][0]];a[i].v2=&v[corners[i][1]];
+   a[i].v3=&v[corners[i][2]];a[i].v4=&v[corners[i][3]];
+   a[i].role=policy::Role::Working;if(i<4)a[i].next=&a[i+1];
+   for(int side=0;side<4;++side){
+    auto *x=&v[corners[i][side]],*y=&v[corners[i][(side+1)%4]];
+    bool found=false;for(auto &edge:e){found|=(edge.v1==x && edge.v2==y)||(edge.v1==y && edge.v2==x);}
+    if(!found)e.push_back({nullptr,x,y});
+   }
+  }
+  if(support){
+   win.bounds.xmax=1200;v[18].vec.x=v[19].vec.x=1200;
+   a[4].next=&a[5];a[5].v1=&v[3];a[5].v2=&v[15];a[5].v3=&v[19];a[5].v4=&v[18];a[5].role=policy::Role::Service;
+   e.push_back({nullptr,&v[3],&v[18]});e.push_back({nullptr,&v[18],&v[19]});e.push_back({nullptr,&v[19],&v[15]});
+  }
+  e.insert(e.begin(),{nullptr,&v[16],&v[17]}); // Unrelated collinear edge precedes real face edges.
+  for(std::size_t i=0;i+1<e.size();++i)e[i].next=&e[i+1];
+  if(transpose){for(auto &vertex:v)std::swap(vertex.vec.x,vertex.vec.y);for(auto &area:a)std::swap(area.v2,area.v4);}
+  screen.vertbase.first=v.data();screen.edgebase.first=e.data();screen.areabase.first=a;main.screens.first=&screen;
+ }
+ ~PinwheelFixture(){seam_cancel(&C,&op);}
+};
 int main(){
+ { // Hidden supporting editor leaves the fallback 900 saved units across 1200 displayed pixels.
+  PinwheelFixture f(false,true);auto model=make_model(&f.C,&f.win);assert(model.working.size()==5);
+  std::vector<NativeSeamControl> controls;working_controls(&f.screen,model.working,f.win.bounds,controls);
+  const auto found=std::find_if(controls.begin(),controls.end(),[](const auto &control){return control.seam.vertical;});
+  assert(found!=controls.end());f.index=int(found-controls.begin());const auto &r=found->seam.line;
+  wmEvent press{LEFTMOUSE,0,{(r.xmin+r.xmax)/2,(r.ymin+r.ymax)/2}};
+  assert(seam_invoke(&f.C,&f.op,&press)==OPERATOR_RUNNING_MODAL);
+  auto *data=static_cast<SeamDragData *>(f.op.customdata);
+  assert(data->seam.saved_bounds.width()==900 && data->seam.display_bounds.width()==1200);
+  wmEvent move=press;move.type=MOUSEMOVE;move.xy[0]+=80;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_RUNNING_MODAL);assert(data->delta==60);
+  move.val=KM_RELEASE;move.type=LEFTMOUSE;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_FINISHED && !f.op.customdata);
+  assert(f.a[5].v1->vec.x==900 && f.a[5].v4->vec.x==1200);
+ }
+
+ for(bool transpose:{false,true})for(int seam_index=0;seam_index<8;++seam_index){
+  PinwheelFixture f(transpose);auto model=make_model(&f.C,&f.win);
+  std::vector<NativeSeamControl> controls;working_controls(&f.screen,model.working,f.win.bounds,controls);
+  assert(controls.size()==8);const auto &control=controls[seam_index];
+  assert(control.fallback && control.edge && control.edge!=f.e.data());
+  const auto &r=control.seam.line;f.index=seam_index;
+  wmEvent press{LEFTMOUSE,0,{(r.xmin+r.xmax)/2,(r.ymin+r.ymax)/2}};
+  assert(seam_invoke(&f.C,&f.op,&press)==OPERATOR_RUNNING_MODAL);
+  auto *data=static_cast<SeamDragData *>(f.op.customdata);assert(data->fallback && seam_candidate_valid(*data,0));
+  assert(!data->selected[16] && !data->selected[17]);
+  const auto original=data->original;
+  wmEvent move=press;move.type=MOUSEMOVE;move.xy[control.seam.vertical?0:1]+=30;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_RUNNING_MODAL);assert(data->delta>0);
+  move.xy[control.seam.vertical?0:1]-=60;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_RUNNING_MODAL);assert(data->delta<0);
+  move.xy[control.seam.vertical?0:1]+=10000;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_RUNNING_MODAL);
+  assert(seam_candidate_valid(*data,data->delta));
+  move.flag=WM_EVENT_IS_POINTER_CANCEL;
+  assert(seam_modal(&f.C,&f.op,&move)==OPERATOR_CANCELLED);
+  for(std::size_t i=0;i<f.v.size();++i){assert(f.v[i].vec.x==original[i].x && f.v[i].vec.y==original[i].y);}
+ }
+
  {ClassificationFixture f;wmEvent press{LEFTMOUSE,0,{602,500}};
   assert(seam_invoke(&f.C,&f.op,&press)==OPERATOR_RUNNING_MODAL);
   auto *data=static_cast<SeamDragData *>(f.op.customdata);

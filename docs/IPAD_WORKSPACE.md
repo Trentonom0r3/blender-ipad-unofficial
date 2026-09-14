@@ -93,10 +93,11 @@ Keep these controls reachable in portrait, landscape, narrow Stage Manager windo
 with safe areas and an onscreen keyboard.
 
 Current source offers side-width and bottom-height resizing, native split commands,
-working-editor content swapping and draggable seams for recursively split layouts.
+working-editor content swapping and draggable seams for recursive and irregular layouts.
 Seam controls are source-implemented and host-tested; current build/device evidence
-is in PROJECT_HANDOFF.md. Non-slicing seam adjacency, two-axis floating sizing and
-launcher reordering remain unfinished. Swapping
+is in PROJECT_HANDOFF.md. Irregular adjacency is source-implemented with exact
+native edge capture; device acceptance, two-axis floating sizing and launcher
+reordering remain unfinished. Swapping
 working-editor contents does not complete launcher reordering. Restoration and
 reversal must preserve native editor state rather than discard a workspace.
 
