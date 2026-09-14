@@ -2,6 +2,13 @@
 
 ## Panel resize ownership — 2026-09-13 follow-up
 
+Source **e2224ae3b50ca7efdcbb3a0e72e20eaaebe0fec2** is pushed on
+codex/ipad-secondary-view-escape. New iOS
+[build 34804106133](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34804106133)
+is verified **queued**, with that exact head SHA; cloud preflight has not yet
+started. Check this existing run and fix actual failures before dispatching another
+build. No successful iOS compilation or IPA packaging is claimed for this repair.
+
 Current source repair binds Pencil/pointer panel-resize modal state to the
 originating screen session UID and window. Cancellation previously wrote the saved
 size into whichever screen was current. The repair resolves the owner through
