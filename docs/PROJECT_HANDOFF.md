@@ -2,6 +2,12 @@
 
 ## Finger resize capture and interruption — 2026-09-14
 
+Source **01c078123c0e50be0cd2da7fbcfbb4e8af763723** is pushed. New iOS
+[build 34825902884](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34825902884)
+is verified **in progress** at this exact SHA: cloud preflight passed; native job
+is fetching pinned Blender/LFS source. No compiled IPA is yet verified for this
+change. Inspect this run rather than rebuilding unchanged code.
+
 New source routes finger drags starting on actual panel resize handles through the
 same press/move/release modal operator as Pencil/pointer drags. The published hit
 map uses the exact compositor handle rectangles; native popups still clear the
@@ -41,6 +47,25 @@ finger, another window and app deactivation; cancellation must restore the initi
 size and leave no stuck drag. Repeat locked/unlocked, with native menus and Sculpt
 shelf categories visible. Trackpad scrolling and external mouse dragging retain
 their existing behavior. Touch interpretation still needs real iPad evidence.
+
+Additional pinned-source audit: screen_geom_find_area_split_point already uses
+saved vertex width/height, unlike area_move_set_limits and area_split_allowed.
+AREAMINX is 29, vertical minimum is ED_area_headersize; split clamps add U.pixelsize
+for interior endpoints. Do not replace correct saved-size logic based on the
+older suspicion alone. The native split clamp does not recheck both limits after
+its if/else-if adjustment; candidate geometry still needs validation.
+
+Refresh trap: tag_layout -> ED_screen_ensure_updated -> screen_refresh_if_needed
+calls screen_geom_vertices_scale before area init. With unchanged outer bounds this
+is inert, but rotation/window resize mutates saved coordinates. A seam capture must
+recognize/rebase or cancel that transition without restoring an old absolute snapshot
+over the legitimate resized screen. Same-size native moves use area redraw/no rebuild
+and NC_SCREEN|NA_EDITED notification; defer duplicate-edge/vertex merge until commit.
+
+The disposable touch-resize-work header contains an unintegrated seam-provenance
+sketch (WorkingSeam/optional working_layout output). It is not in the authoritative
+patch or the iOS build, is not tested, and lacks non-slicing adjacency/movement.
+Continue from the actual overlay; treat that sketch as reference only.
 
 Next: implement seam provenance and constrained saved-vertex movement, with
 snapshot cancellation through this input path. Preserve the seam/topology audit
