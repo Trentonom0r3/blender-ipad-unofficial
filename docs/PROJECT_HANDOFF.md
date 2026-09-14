@@ -2,6 +2,10 @@
 
 ## Native irregular-layout seam controls — 2026-09-14
 
+Source **97e9ebb9a2b2c75ffe78ba6b58510eff58ecb54c** is pushed. Exact
+[iOS run 34889078809](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34889078809)
+was verified in progress at that SHA. Inspect this run before dispatching another build.
+
 Non-slicing layouts now have source-integrated local seam controls. Fallback nodes
 retain saved/displayed bounds and sorted working editor IDs. Separate adjacency
 records identify positive-overlap editor pairs; they never pretend to be recursive
