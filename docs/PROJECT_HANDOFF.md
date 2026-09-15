@@ -1,5 +1,42 @@
 # Project handoff — 2026-09-13
 
+## Launcher ordering validation — 2026-09-15
+
+User commit **0ad4debbfc1e22606b9e3e191c3cd3a5a75a5d02** integrated the launcher
+storage and native Arrange Launchers draft. The authoritative checkout was clean
+at that commit on resumption; the previously rejected integration command was not
+rerun over it. The new surface is reached through the existing working-editor
+menu. Earlier/Later actions sort the Tab presentation within its physical rail;
+native areabase order and active editor content remain unchanged. Editor ranks
+live on ScrArea; Tools/shelf/category ranks use a screen-owned iPadPanelOrder list
+with explicit copy/free/read/write ownership. Category keys use native strings,
+editor keys use runtime session identities reset on load/copy. Popup signatures
+include screen, owner, editor identities/types and visible launcher keys/order.
+
+Added compiled exact-helper regressions for Tools interleaving with bottom editors,
+independent side ordering, duplicate labels, unchanged native area order, hidden
+entries returning, generated category IDs changing, stale screen/editor/type/poll
+state, invalid directions, boundary rejection and repeated reversible moves with
+bounded unique ranks. All existing 17 tests and the new launcher test pass (18 total).
+Full 49-file source preflight passes. New test is included in cloud preflight.
+This validates ordering helpers against mocks, not popup drawing, actual native
+save/reload or touch usability. Native launcher compilation/device acceptance remain
+pending; no successful main-branch build is attributed to this feature branch.
+
+Two-axis source **b5a35ce3deb14d11307024d888a2707a7b3ccbd6** passed
+[iOS run 34914477666](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34914477666).
+IPA artifact **10375309821**, `Blender-iPad-Unofficial-ipa`, **248,415,211 bytes**,
+was verified present/not expired. This predates workspace-copy and launcher changes.
+Run 34915699291 succeeded for unrelated main source de0058c and is not branch evidence.
+
+Next verify an iOS build of this exact launcher checkpoint, inspect/review native
+popup lifecycle and test save/reload including hidden category order. On hardware,
+open Arrange Launchers, move entries repeatedly, cross rail pagination boundaries,
+switch workspaces/modes, duplicate/save/reopen, and verify active content, lock and
+sizes survive. Confirm earlier/later controls remain reachable in narrow windows.
+Layout reversal, broad touch/Pencil/desktop regression acceptance and native Files
+lifecycle remain unfinished. The persistent product goal is not complete.
+
 ## Workspace-copy preferences and build checkpoint — 2026-09-14
 
 Screen duplication was copying native geometry/editors but omitting iPad panel

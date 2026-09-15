@@ -95,8 +95,9 @@ with safe areas and an onscreen keyboard.
 Current source offers side-width and bottom-height strips, two-axis corner sizing,
 native split commands, working-editor content swapping and draggable seams for
 recursive and irregular layouts. These are source-implemented and host-tested;
-exact build/device evidence is in PROJECT_HANDOFF.md. Launcher reordering remains
-unfinished. Swapping working-editor contents does not complete launcher reordering.
+exact build/device evidence is in PROJECT_HANDOFF.md. Arrange Launchers now offers
+earlier/later ordering within each physical rail; helper tests pass, while native
+build and device/save-reload acceptance remain pending.
 Restoration and
 reversal must preserve native editor state rather than discard a workspace.
 
