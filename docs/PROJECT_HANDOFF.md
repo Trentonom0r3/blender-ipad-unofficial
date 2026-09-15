@@ -2,6 +2,10 @@
 
 ## Launcher ordering validation — 2026-09-15
 
+Exact source **e0bf957992e84e91ade9a3cc3bb585a963250f92** is building in
+[iOS run 34935229012](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34935229012).
+The run was verified in progress at that SHA; inspect it before any replacement.
+
 User commit **0ad4debbfc1e22606b9e3e191c3cd3a5a75a5d02** integrated the launcher
 storage and native Arrange Launchers draft. The authoritative checkout was clean
 at that commit on resumption; the previously rejected integration command was not
