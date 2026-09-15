@@ -3046,12 +3046,18 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
  }
 
  void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
-@@ -6858,6 +6889,15 @@
+@@ -6858,6 +6889,21 @@
    WM_operatortype_append(SCREEN_OT_region_quadview);
    WM_operatortype_append(SCREEN_OT_region_scale);
    WM_operatortype_append(SCREEN_OT_region_toggle);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_resize);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_arrange);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_move);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_arrange);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_move);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_arrange);
++  WM_operatortype_append(SCREEN_OT_ipad_launcher_move);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_resize);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_menu);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_split);
@@ -4949,7 +4955,34 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -113,6 +113,23 @@
+@@ -7,6 +7,8 @@
+  */
+
+ #pragma once
++
++#include <stdint.h>
+
+ #include "BLI_utildefines.h"
+
+@@ -49,6 +51,17 @@
+  * Once the top-bar is merged bScreen should be refactored to use ScrAreaMap. */
+ #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->vertbase)
+
++/* Persistent special-launcher order, owned by one screen. Native editor order
++ * lives on ScrArea; categories use their native identifier, never a polled index. */
++typedef struct iPadPanelOrder {
++  struct iPadPanelOrder *next, *prev;
++  /** 1 Tools, 2 brush shelf, 3 native sidebar category. */
++  int kind;
++  /** Zero leaves the natural order; positive values express an explicit order. */
++  int rank;
++  char category[64];
++} iPadPanelOrder;
++
+ typedef struct bScreen {
+ #ifdef __cplusplus
+   /** See #ID_Type comment for why this is here. */
+@@ -113,6 +126,25 @@
    struct wmTooltipState *tool_tip;
 
    PreviewImage *preview;
@@ -4970,13 +5003,17 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  int _pad_ipad_owner;
 +  /* Secondary preferred dimensions: side height, bottom width (UI units). */
 +  float ipad_panel_extent[2];
++  /** iPadPanelOrder; deep-copied and freed with the owning screen. */
++  ListBase ipad_panel_order;
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +445,24 @@
+@@ -428,6 +460,26 @@
    struct bToolRef *tool;
    char is_tool_set;
    char _pad0[7];
++  /** Popup identity, zero until assigned; reset on file read and screen copy. */
++  uint64_t ipad_launcher_session;
 +  /* Runtime-only visual bounds. 0 native, 1 canvas, 2 bottom, 3 side, 4 hidden. */
 +  int ipad_layer;
 +  int ipad_panel_host;
@@ -4998,7 +5035,7 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } ScrArea_Runtime;
 
  typedef struct ScrArea {
-@@ -468,7 +501,9 @@
+@@ -468,7 +520,9 @@
     * runtime variable, updated by executing operators.
     */
    short region_active_win;
@@ -5009,6 +5046,17 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 
    /** Callbacks for this space type. */
    struct SpaceType *type;
+@@ -494,6 +548,10 @@
+
+   /** #AZone. */
+   ListBase actionzones;
++
++  /** Persistent native-editor launcher rank; zero retains natural placement. */
++  int ipad_launcher_order;
++  int _pad_ipad_launcher;
+
+   ScrArea_Runtime runtime;
+ } ScrArea;
 diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/windowmanager/intern/wm_draw.cc
 --- a/source/blender/windowmanager/intern/wm_draw.cc
 +++ b/source/blender/windowmanager/intern/wm_draw.cc
@@ -5359,7 +5407,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,45 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -5393,6 +5441,12 @@ new file mode 100644
 +void SCREEN_OT_ipad_panel_activate(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_pin(wmOperatorType *ot);
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_arrange(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_move(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_arrange(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_move(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_arrange(wmOperatorType *ot);
++void SCREEN_OT_ipad_launcher_move(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_resize(wmOperatorType *ot);
 +void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout);
 +void SCREEN_OT_ipad_working_menu(wmOperatorType *ot);
@@ -6444,7 +6498,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
    /* remove double vertices en edges */
    if (merge) {
      BKE_screen_remove_double_scrverts(screen);
-@@ -222,6 +231,21 @@
+@@ -222,6 +231,22 @@
    BKE_screen_free_data(to);
 
    to->flag = from->flag;
@@ -6463,10 +6517,20 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 +  to->ipad_panel_initialized = from->ipad_panel_initialized;
 +  to->ipad_sculpt_shelf_initialized = from->ipad_sculpt_shelf_initialized;
 +  to->ipad_panel_owner = from->ipad_panel_owner;
++  BLI_duplicatelist(&to->ipad_panel_order, &from->ipad_panel_order);
 
    BLI_duplicatelist(&to->vertbase, &from->vertbase);
    BLI_duplicatelist(&to->edgebase, &from->edgebase);
-@@ -840,7 +864,25 @@
+@@ -254,6 +279,8 @@
+     BLI_listbase_clear(&area->handlers);
+
+     ED_area_data_copy(area, from_area, true);
++    /* The persistent rank was copied with the area; popup identity is runtime. */
++    area->runtime.ipad_launcher_session = 0;
+
+     from_area = from_area->next;
+   }
+@@ -840,7 +867,25 @@
 
      screen_geom_vertices_scale(win, screen);
 
@@ -6492,7 +6556,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
        /* Set space-type and region callbacks, calls init() */
        /* Sets sub-windows for regions, adds handlers. */
        ED_area_init(C, win, area);
-@@ -1108,16 +1150,35 @@
+@@ -1108,16 +1153,35 @@
    ScrArea *area = nullptr;
    ARegion *region_prev = screen->active_region;
 
@@ -6541,7 +6605,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,1866 @@
+@@ -0,0 +1,2024 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -6837,12 +6901,95 @@ new file mode 100644
 +  return result;
 +}
 +
++/* Launcher ranks belong to editor identity or a stable native category name. */
++static int *launcher_rank(bScreen *screen, const Tab &tab, const bool create)
++{
++  if (tab.region_type == 0) { return &tab.area->ipad_launcher_order; }
++  const int kind = tab.id == tools_id ? 1 : tab.id == shelf_id ? 2 : 3;
++  LISTBASE_FOREACH (iPadPanelOrder *, entry, &screen->ipad_panel_order) {
++    if (entry->kind == kind && (kind != 3 || tab.category == entry->category)) { return &entry->rank; }
++  }
++  if (!create) { return nullptr; }
++  auto *entry = MEM_callocN<iPadPanelOrder>(__func__);
++  entry->kind = kind;
++  STRNCPY(entry->category, tab.category.c_str());
++  BLI_addtail(&screen->ipad_panel_order, entry);
++  return &entry->rank;
++}
++
++static std::string launcher_key(const Tab &tab)
++{
++  if (tab.region_type == 0) { return "editor:" + std::to_string(tab.area->runtime.ipad_launcher_session); }
++  if (tab.id == tools_id) { return "tools"; }
++  if (tab.id == shelf_id) { return "shelf"; }
++  return "category:" + tab.category;
++}
++
++static std::string launcher_signature(const bScreen *screen, const Model &model)
++{
++  std::string result = std::to_string(screen->id.session_uid) + ":" + std::to_string(screen->ipad_panel_owner);
++  LISTBASE_FOREACH (const ScrArea *, area, &screen->areabase) {
++    result += ":" + std::to_string(area->runtime.ipad_launcher_session) + "/" + std::to_string(area->spacetype);
++  }
++  result += ":owner=" + std::to_string(model.main ? model.main->runtime.ipad_launcher_session : 0);
++  for (const Tab &tab : model.tabs) {
++    const auto key = launcher_key(tab);
++    result += ":" + std::to_string(key.size()) + ":" + key;
++  }
++  return result;
++}
++
++static bool move_launcher(bScreen *screen, const Model &model, const std::string &key,
++                          const std::string &signature, const int direction)
++{
++  if (signature != launcher_signature(screen, model) || (direction != -1 && direction != 1)) { return false; }
++  const auto found = std::find_if(model.tabs.begin(), model.tabs.end(), [&](const Tab &tab) {
++    return launcher_key(tab) == key;
++  });
++  if (found == model.tabs.end()) { return false; }
++  std::vector<const Tab *> rail;
++  for (const Tab &tab : model.tabs) {
++    if ((tab.edge == Edge::Side) == (found->edge == Edge::Side)) { rail.push_back(&tab); }
++  }
++  const int index = int(std::find(rail.begin(), rail.end(), &*found) - rail.begin());
++  const int target = index + direction;
++  if (target < 0 || target >= int(rail.size())) { return false; }
++  /* Normalize all saved ranks, including currently hidden launchers. New visible
++   * entries append in natural order. Swap visible positions without discarding
++   * hidden records or modifying editor content, lock or size state. */
++  std::vector<int *> ranked;
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    if (area->ipad_launcher_order > 0) { ranked.push_back(&area->ipad_launcher_order); }
++  }
++  LISTBASE_FOREACH (iPadPanelOrder *, entry, &screen->ipad_panel_order) {
++    if (entry->rank > 0) { ranked.push_back(&entry->rank); }
++  }
++  std::stable_sort(ranked.begin(), ranked.end(), [](const int *a, const int *b) { return *a < *b; });
++  for (const Tab &tab : model.tabs) {
++    int *rank = launcher_rank(screen, tab, true);
++    if (std::find(ranked.begin(), ranked.end(), rank) == ranked.end()) { ranked.push_back(rank); }
++  }
++  for (size_t i = 0; i < ranked.size(); ++i) { *ranked[i] = int(i + 1); }
++  std::swap(*launcher_rank(screen, *rail[index], false), *launcher_rank(screen, *rail[target], false));
++  return true;
++}
++
++static void sort_launchers(bScreen *screen, Model &model)
++{
++  std::stable_sort(model.tabs.begin(), model.tabs.end(), [&](const Tab &a, const Tab &b) {
++    const int *ra = launcher_rank(screen, a, false), *rb = launcher_rank(screen, b, false);
++    return (ra && *ra > 0 ? *ra : INT_MAX) < (rb && *rb > 0 ? *rb : INT_MAX);
++  });
++}
++
 +static Model make_model(bContext *C, wmWindow *win)
 +{
 +  Model model;
 +  bScreen *screen = WM_window_get_active_screen(win);
 +  std::vector<policy::Area> inputs;
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    static uint64_t next_launcher_session = 1;
++    if (area->runtime.ipad_launcher_session == 0) { area->runtime.ipad_launcher_session = next_launcher_session++; }
 +    const int id = int(model.areas.size());
 +    model.areas.push_back(area);
 +    const bool service = ELEM(area->spacetype, SPACE_OUTLINER, SPACE_PROPERTIES, SPACE_FILE);
@@ -6959,6 +7106,7 @@ new file mode 100644
 +  preferred_sizes(screen, model.state);
 +  model.metrics = panel_metrics(model.main);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
++  sort_launchers(screen, model);
 +  return model;
 +}
 +
@@ -8065,8 +8213,59 @@ new file mode 100644
 +  return nullptr;
 +}
 +
++static wmOperatorStatus launcher_arrange_exec(bContext *C, wmOperator * /*op*/)
++{
++  const Model model = make_model(C, CTX_wm_window(C));
++  bScreen *screen = CTX_wm_screen(C);
++  const std::string signature = launcher_signature(screen, model);
++  uiPopupMenu *popup = UI_popup_menu_begin(C, "Arrange Launchers", ICON_NONE);
++  uiLayout *layout = UI_popup_menu_layout(popup);
++  for (const bool left : {true, false}) {
++    layout->label(left ? "Left Rail" : "Right Rail", ICON_NONE);
++    std::vector<const Tab *> rail;
++    for (const Tab &tab : model.tabs) { if ((tab.edge != Edge::Side) == left) { rail.push_back(&tab); } }
++    for (size_t i = 0; i < rail.size(); ++i) {
++      const Tab &tab = *rail[i];
++      uiLayout *row = &layout->row(true);
++      row->scale_y_set(2.2f);
++      const std::string label = tab.label + (tab.region_type == 0 ? " (" + std::to_string(tab.id + 1) + ")" : "");
++      row->label(label.c_str(), ICON_NONE);
++      for (const int direction : {-1, 1}) {
++        uiLayout *action = &row->row(true);
++        action->enabled_set(direction < 0 ? i > 0 : i + 1 < rail.size());
++        PointerRNA props = action->op("SCREEN_OT_ipad_launcher_move", direction < 0 ? "Earlier" : "Later",
++                                      direction < 0 ? ICON_TRIA_UP : ICON_TRIA_DOWN,
++                                      blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++        RNA_string_set(&props, "target", launcher_key(tab).c_str());
++        RNA_string_set(&props, "signature", signature.c_str());
++        RNA_int_set(&props, "direction", direction);
++      }
++    }
++    layout->separator();
++  }
++  UI_popup_menu_end(C, popup);
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus launcher_move_exec(bContext *C, wmOperator *op)
++{
++  const Model model = make_model(C, CTX_wm_window(C));
++  auto property = [&](const char *name) {
++    std::vector<char> value(size_t(RNA_string_length(op->ptr, name)) + 1);
++    RNA_string_get(op->ptr, name, value.data());
++    return std::string(value.data());
++  };
++  if (!move_launcher(CTX_wm_screen(C), model, property("target"), property("signature"),
++                     RNA_int_get(op->ptr, "direction"))) { return OPERATOR_CANCELLED; }
++  tag_layout(C, CTX_wm_window(C));
++  return launcher_arrange_exec(C, nullptr);
++}
++
 +void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout)
 +{
++  layout->op("SCREEN_OT_ipad_launcher_arrange", "Arrange Launchers", ICON_SORTSIZE,
++               blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++  layout->separator();
 +  Model model = make_model(C, CTX_wm_window(C));
 +  ScrArea *source = CTX_wm_area(C);
 +  if (!source || source->runtime.ipad_layer != 1) {
@@ -8395,6 +8594,29 @@ new file mode 100644
 +  RNA_def_int(ot->srna, "seam", 0, 0, INT_MAX, "Seam", "Working editor seam", 0, INT_MAX);
 +}
 +
++void SCREEN_OT_ipad_launcher_arrange(wmOperatorType *ot)
++{
++  ot->name = "Arrange Launchers";
++  ot->idname = "SCREEN_OT_ipad_launcher_arrange";
++  ot->description = "Arrange native editor and category launchers on their rails";
++  ot->exec = launcher_arrange_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++}
++
++void SCREEN_OT_ipad_launcher_move(wmOperatorType *ot)
++{
++  ot->name = "Move Launcher";
++  ot->idname = "SCREEN_OT_ipad_launcher_move";
++  ot->description = "Move this launcher earlier or later without changing its editor";
++  ot->exec = launcher_move_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_string(ot->srna, "target", nullptr, 0, "Target", "Runtime editor or native category identity");
++  RNA_def_string(ot->srna, "signature", nullptr, 0, "Layout", "Originating screen and editor identities");
++  RNA_def_int(ot->srna, "direction", 1, -1, 1, "Direction", "Earlier or later", -1, 1);
++}
++
 +void SCREEN_OT_ipad_panel_resize(wmOperatorType *ot)
 +{
 +  ot->name = "Resize iPad Panel";
@@ -8411,7 +8633,36 @@ new file mode 100644
 diff --git a/source/blender/blenkernel/intern/screen.cc b/source/blender/blenkernel/intern/screen.cc
 --- a/source/blender/blenkernel/intern/screen.cc
 +++ b/source/blender/blenkernel/intern/screen.cc
-@@ -965,6 +965,39 @@
+@@ -80,6 +80,7 @@
+   }
+
+   BLI_freelistN(&screen->regionbase);
++  BLI_freelistN(&screen->ipad_panel_order);
+
+   BKE_screen_area_map_free(AREAMAP_FROM_SCREEN(screen));
+
+@@ -135,6 +136,7 @@
+   BKE_previewimg_blend_write(writer, screen->preview);
+
+   /* direct data */
++  BLO_write_struct_list(writer, iPadPanelOrder, &screen->ipad_panel_order);
+   BKE_screen_area_map_blend_write(writer, AREAMAP_FROM_SCREEN(screen));
+ }
+
+@@ -148,6 +150,12 @@
+   screen->animtimer = nullptr; /* saved in rare cases */
+   screen->tool_tip = nullptr;
+   screen->scrubbing = false;
++
++  /* Older files have no list and retain the zero/natural-order defaults. */
++  BLO_read_struct_list(reader, iPadPanelOrder, &screen->ipad_panel_order);
++  LISTBASE_FOREACH (iPadPanelOrder *, order, &screen->ipad_panel_order) {
++    order->category[sizeof(order->category) - 1] = '\0';
++  }
+
+   BLO_read_struct(reader, PreviewImage, &screen->preview);
+   BKE_previewimg_blend_read(reader, screen->preview);
+@@ -965,6 +973,39 @@
                                            const int spacetype,
                                            const int xy[2])
  {
