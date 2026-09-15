@@ -6444,7 +6444,29 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
    /* remove double vertices en edges */
    if (merge) {
      BKE_screen_remove_double_scrverts(screen);
-@@ -840,7 +849,25 @@
+@@ -222,6 +231,21 @@
+   BKE_screen_free_data(to);
+
+   to->flag = from->flag;
++
++  /* A duplicated workspace retains its presentation preferences as well as its
++   * native editor geometry. Area order is preserved by the copy below, so saved
++   * active-editor indices and the panel host still refer to the same editors. */
++  memcpy(to->ipad_panel_size, from->ipad_panel_size, sizeof(to->ipad_panel_size));
++  memcpy(to->ipad_panel_extent, from->ipad_panel_extent, sizeof(to->ipad_panel_extent));
++  memcpy(to->ipad_panel_active, from->ipad_panel_active, sizeof(to->ipad_panel_active));
++  memcpy(to->ipad_panel_page, from->ipad_panel_page, sizeof(to->ipad_panel_page));
++  memcpy(to->ipad_panel_locked, from->ipad_panel_locked, sizeof(to->ipad_panel_locked));
++  memcpy(to->ipad_panel_category, from->ipad_panel_category, sizeof(to->ipad_panel_category));
++  to->ipad_panels_locked = from->ipad_panels_locked;
++  to->ipad_tools_open = from->ipad_tools_open;
++  to->ipad_panel_initialized = from->ipad_panel_initialized;
++  to->ipad_sculpt_shelf_initialized = from->ipad_sculpt_shelf_initialized;
++  to->ipad_panel_owner = from->ipad_panel_owner;
+
+   BLI_duplicatelist(&to->vertbase, &from->vertbase);
+   BLI_duplicatelist(&to->edgebase, &from->edgebase);
+@@ -840,7 +864,25 @@
 
      screen_geom_vertices_scale(win, screen);
 
@@ -6470,7 +6492,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
        /* Set space-type and region callbacks, calls init() */
        /* Sets sub-windows for regions, adds handlers. */
        ED_area_init(C, win, area);
-@@ -1108,16 +1135,35 @@
+@@ -1108,16 +1150,35 @@
    ScrArea *area = nullptr;
    ARegion *region_prev = screen->active_region;
 

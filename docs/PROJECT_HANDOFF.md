@@ -1,5 +1,40 @@
 # Project handoff — 2026-09-13
 
+## Workspace-copy preferences and build checkpoint — 2026-09-14
+
+Screen duplication was copying native geometry/editors but omitting iPad panel
+preferences. screen_data_copy now copies both dimension arrays, active panel IDs,
+rail pages, per-slot/global lock, Tools visibility, initialization flags, native
+category name and panel owner. The native area list retains its order, so these
+saved indices preserve their existing meaning. Full 49-file source preflight and
+diff whitespace checks pass. This is a source repair; actual workspace duplication,
+save/reload and old-file defaults still require runtime/device acceptance.
+
+Adjacency source **97e9ebb9a2b2c75ffe78ba6b58510eff58ecb54c** passed
+[iOS run 34889078809](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34889078809).
+Its IPA artifact **10365889195**, `Blender-iPad-Unofficial-ipa`, **248,409,048 bytes**,
+was verified present and not expired. This validates compilation/packaging of
+irregular seams and the overlap repair, not hardware behavior or later corner sizing.
+
+The tested two-axis source is now building in
+[iOS run 34914477666](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/34914477666)
+at exact HEAD **b5a35ce3deb14d11307024d888a2707a7b3ccbd6** (code 6c3679a).
+That run is in progress and excludes this subsequent workspace-copy repair.
+No replacement build is needed while it runs. Five-hour allowance reset was verified.
+
+Next launcher-reordering architecture: sort the Tab presentation, never areabase.
+Use physical rail domains (Tools/shelf/bottom editors left, categories/side editors
+right). Native editor ranks belong to ScrArea; stable category names, Tools and
+shelf preferences need independent saved storage, not generated tab IDs or native
+active-category history. Any new ListBase requires explicit screen free/copy/read/
+write ownership. A native Arrange Launchers surface with earlier/later controls
+must bind the originating screen UID and validated editor identity; reject actions
+after topology/workspace replacement or category disappearance. Retain hidden
+category preferences and deterministic placement of newly appearing launchers.
+Tests must cover duplicate labels, poll changes, pagination, interleaved Tools and
+bottom launchers, stale popup actions and save/reload. No reorder implementation is
+yet claimed. Continue layout reversal, input/device validation and native Files.
+
 ## Two-axis floating panel sizing — 2026-09-14
 
 Checkpoint source **6c3679a** is pushed and the checkout is clean. Latest live
