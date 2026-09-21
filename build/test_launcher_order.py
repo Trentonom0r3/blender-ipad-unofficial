@@ -17,12 +17,13 @@ PREFIX = r'''
 #include "ipad_workspace_panels.hh"
 #include <cassert>
 #include <climits>
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include <iostream>
 using Edge=blender::ed::ipad::panels::Edge;
 struct iPadPanelOrder {iPadPanelOrder *next=nullptr,*prev=nullptr;int kind=0,rank=0;char category[64]{};};
-struct ScrArea {ScrArea *next=nullptr;int ipad_launcher_order=0,spacetype=1;struct {uint64_t ipad_launcher_session=0;} runtime;};
+struct ScrArea {ScrArea *next=nullptr;int ipad_launcher_order=0,spacetype=1;struct {std::uint64_t ipad_launcher_session=0;} runtime;};
 struct ListBase {void *first=nullptr,*last=nullptr;};
 struct bScreen {struct {unsigned int session_uid=1;} id;int ipad_panel_owner=0;ListBase areabase,ipad_panel_order;};
 struct Tab {int id;Edge edge;std::string label;ScrArea *area;int region_type;std::string category;};

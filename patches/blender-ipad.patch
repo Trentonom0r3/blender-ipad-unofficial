@@ -1,3 +1,137 @@
+diff --git a/scripts/startup/bl_ui/space_properties.py b/scripts/startup/bl_ui/space_properties.py
+--- a/scripts/startup/bl_ui/space_properties.py
++++ b/scripts/startup/bl_ui/space_properties.py
+@@ -2,7 +2,7 @@
+ #
+ # SPDX-License-Identifier: GPL-2.0-or-later
+
+-from bpy.types import Header, Panel
++from bpy.types import Header, Panel, UILayout
+ from rna_prop_ui import PropertyPanel
+ from bl_ui import anim
+ from bpy.app.translations import (
+@@ -73,6 +73,16 @@
+
+         view = context.space_data
+
++        if view.is_ipad_inspector:
++            # Use the native enum's current label/icon, including object-data context.
++            layout.scale_y = 2.0
++            layout.popover(
++                panel="PROPERTIES_PT_ipad_categories",
++                text=UILayout.enum_item_name(view, "context", view.context),
++                icon_value=UILayout.enum_item_icon(view, "context", view.context),
++            )
++            return
++
+         layout.scale_x = 1.4
+         layout.scale_y = 1.4
+         if view.search_filter:
+@@ -82,6 +92,30 @@
+             )
+         else:
+             layout.prop_tabs_enum(view, "context", icon_only=True)
++
++
++class PROPERTIES_PT_ipad_categories(Panel):
++    bl_space_type = 'PROPERTIES'
++    bl_region_type = 'HEADER'
++    bl_label = "Inspector Categories"
++    bl_ui_units_x = 22
++
++    @classmethod
++    def poll(cls, context):
++        return context.space_data.is_ipad_inspector
++
++    def draw(self, context):
++        layout = self.layout.column_flow(columns=2, align=True)
++        view = context.space_data
++        layout.scale_y = 2.2
++        # Keep native visibility, pinning, enum updates and search-result markers.
++        if view.search_filter:
++            layout.prop_tabs_enum(
++                view, "context", data_highlight=view,
++                property_highlight="tab_search_results", icon_only=False,
++            )
++        else:
++            layout.prop_tabs_enum(view, "context", icon_only=False)
+
+
+ class PROPERTIES_PT_options(Panel):
+@@ -187,6 +221,7 @@
+ classes = (
+     PROPERTIES_HT_header,
+     PROPERTIES_PT_navigation_bar,
++    PROPERTIES_PT_ipad_categories,
+     PROPERTIES_PT_options,
+ )
+
+diff --git a/source/blender/editors/space_buttons/space_buttons.cc b/source/blender/editors/space_buttons/space_buttons.cc
+--- a/source/blender/editors/space_buttons/space_buttons.cc
++++ b/source/blender/editors/space_buttons/space_buttons.cc
+@@ -6,6 +6,7 @@
+  * \ingroup spbuttons
+  */
+
++#include <algorithm>
+ #include <cstring>
+
+ #include "MEM_guardedalloc.h"
+@@ -17,6 +18,8 @@
+ #include "BLI_bitmap.h"
+ #include "BLI_listbase.h"
+ #include "BLI_span.hh"
++#include "BLI_scope_exit.hh"
++#include "BLI_vector.hh"
+ #include "BLI_string.h"
+ #include "BLI_string_ref.hh"
+ #include "BLI_string_utf8.h"
+@@ -686,13 +689,42 @@
+   SpaceProperties *sbuts = CTX_wm_space_properties(C);
+   buttons_context_compute(C, sbuts);
+
++  bool ipad_inspector = false;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const ScrArea *area = CTX_wm_area(C);
++  ipad_inspector = area && area->runtime.ipad_layer == 3;
++#endif
++  struct NavigationPanelFlag {
++    PanelType *type;
++    bool vertical_bar;
++  };
++  blender::Vector<NavigationPanelFlag> saved_flags;
+   LISTBASE_FOREACH (PanelType *, pt, &region->runtime->type->paneltypes) {
+-    pt->flag |= PANEL_TYPE_LAYOUT_VERT_BAR;
+-  }
+-
++    saved_flags.append({pt, bool(pt->flag & PANEL_TYPE_LAYOUT_VERT_BAR)});
++    SET_FLAG_FROM_TEST(pt->flag, !ipad_inspector, PANEL_TYPE_LAYOUT_VERT_BAR);
++  }
++  /* PanelType is shared by all Properties editors, including popup drawing.
++   * Keep this presentation decision scoped to this region's layout and draw. */
++  BLI_SCOPED_DEFER([&]() {
++    for (const NavigationPanelFlag &saved : saved_flags) {
++      SET_FLAG_FROM_TEST(saved.type->flag, saved.vertical_bar, PANEL_TYPE_LAYOUT_VERT_BAR);
++    }
++  });
++
++  if (ipad_inspector) {
++    /* A saved icon-strip scroll offset must not hide the new single-row selector.
++     * Preserve normal panel layout and its button/view coordinate updates. */
++    region->v2d.cur.xmin = 0;
++    region->v2d.cur.xmax = std::max(1, region->winx);
++    region->v2d.cur.ymin = -std::max(1, region->winy);
++    region->v2d.cur.ymax = 0;
++  }
+   ED_region_panels_layout(C, region);
+   /* #ED_region_panels_layout adds vertical scroll-bars, we don't want them. */
+   region->v2d.scroll &= ~V2D_SCROLL_VERTICAL;
++  if (ipad_inspector) {
++    region->v2d.scroll &= ~V2D_SCROLL_HORIZONTAL;
++  }
+   ED_region_panels_draw(C, region);
+ }
+
 diff --git a/build_files/cmake/platform/platform_apple.cmake b/build_files/cmake/platform/platform_apple.cmake
 --- a/build_files/cmake/platform/platform_apple.cmake
 +++ b/build_files/cmake/platform/platform_apple.cmake
@@ -2802,11 +2936,29 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    const bool is_fullscreen = screen->state == SCREENFULL;
 
    /* Only display tab or icons when the header region is hidden
-@@ -1538,6 +1590,17 @@
+@@ -1526,6 +1578,18 @@
+   return false;
+ }
 
++/* Presentation-only geometry: saved Properties navigation stays desktop-compatible. */
++static bool region_is_ipad_inspector_navigation(const ScrArea *area, const ARegion *region)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return area->spacetype == SPACE_PROPERTIES && area->runtime.ipad_layer == 3 &&
++         region->regiontype == RGN_TYPE_NAV_BAR;
++#else
++  UNUSED_VARS(area, region);
++  return false;
++#endif
++}
++
+ static void region_rect_recursive(
+     ScrArea *area, ARegion *region, rcti *remainder, rcti *overlap_remainder, int quad)
+ {
+@@ -1539,17 +1603,32 @@
    int prev_winx = region->winx;
    int prev_winy = region->winy;
-+
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  /* Existing UI/tool/shelf regions float without consuming the main editor's rectangle. */
 +  if (ED_ipad_panels_region_rect(area, region)) {
@@ -2817,13 +2969,77 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 +    return;
 +  }
 +#endif
-
++
    /* no returns in function, winrct gets set in the end again */
    BLI_rcti_init(&region->winrct, 0, 0, 0, 0);
-@@ -1869,6 +1932,28 @@
-   region->runtime->visible_rect = rcti{};
- }
 
++  const bool ipad_inspector_nav = region_is_ipad_inspector_navigation(area, region);
++  const bool split_previous = !ipad_inspector_nav && (region->alignment & RGN_SPLIT_PREV);
++
+   /* for test; allow split of previously defined region */
+-  if (region->alignment & RGN_SPLIT_PREV) {
++  if (split_previous) {
+     if (region->prev) {
+       remainder = &region->prev->winrct;
+     }
+   }
+
+-  int alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
++  int alignment = ipad_inspector_nav ? RGN_ALIGN_TOP :
++                                       RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
+
+   /* set here, assuming userpref switching forces to call this again */
+   region->overlap = ED_region_is_overlap(area->spacetype, region->regiontype);
+@@ -1566,7 +1645,8 @@
+    * #wm_draw_window_offscreen() allows the layout to be created despite the #RGN_FLAG_TOO_SMALL
+    * flag being set. But there may still be regions that don't have a separate #ARegionType.layout
+    * callback. For those, set a default #ARegionType.prefsizex/y so they can become visible. */
+-  if ((region->flag & RGN_FLAG_DYNAMIC_SIZE) && !(region->runtime->type->layout)) {
++  if (!ipad_inspector_nav && (region->flag & RGN_FLAG_DYNAMIC_SIZE) &&
++      !(region->runtime->type->layout)) {
+     if ((region->sizex == 0) && (region->runtime->type->prefsizex == 0)) {
+       region->runtime->type->prefsizex = AREAMINX;
+     }
+@@ -1602,6 +1682,11 @@
+   else {
+     prefsizey = UI_SCALE_FAC *
+                 (region->sizey > 1 ? region->sizey + 0.5f : region->runtime->type->prefsizey);
++  }
++
++  if (ipad_inspector_nav) {
++    /* The normal TOP-region fitting logic handles insufficient remaining height. */
++    prefsizey = std::max(1, int(56 * UI_SCALE_FAC));
+   }
+
+   if (region->flag & (RGN_FLAG_POLL_FAILED | RGN_FLAG_HIDDEN)) {
+@@ -1795,10 +1880,10 @@
+
+   /* If region opened normally, we store this for hide/reveal usage. */
+   /* Prevent rounding errors for UI_SCALE_FAC multiply and divide. */
+-  if (region->winx > 1) {
++  if (!ipad_inspector_nav && region->winx > 1) {
+     region->sizex = (region->winx + 0.5f) / UI_SCALE_FAC;
+   }
+-  if (region->winy > 1) {
++  if (!ipad_inspector_nav && region->winy > 1) {
+     region->sizey = (region->winy + 0.5f) / UI_SCALE_FAC;
+   }
+
+@@ -1835,7 +1920,7 @@
+   }
+
+   /* restore prev-split exception */
+-  if (region->alignment & RGN_SPLIT_PREV) {
++  if (split_previous) {
+     if (region->prev) {
+       remainder = remainder_prev;
+       region->prev->winx = BLI_rcti_size_x(&region->prev->winrct) + 1;
+@@ -1867,6 +1952,28 @@
+
+   /* Clear, initialize on demand. */
+   region->runtime->visible_rect = rcti{};
++}
++
 +static void area_region_rects_calc(const wmWindow *win, ScrArea *area)
 +{
 +  rcti rect = area->totrct;
@@ -2844,12 +3060,10 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 +#else
 +  UNUSED_VARS(win);
 +#endif
-+}
-+
+ }
+
  static void area_calc_totrct(const bScreen *screen, ScrArea *area, const rcti *window_rect)
- {
-   /* Padding around each area, except at window edges. */
-@@ -1912,6 +1997,12 @@
+@@ -1912,6 +2019,12 @@
    BLI_assert(area->totrct.ymax >= 0);
  #endif
 
@@ -2862,7 +3076,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    /* for speedup */
    area->winx = BLI_rcti_size_x(&area->totrct) + 1;
    area->winy = BLI_rcti_size_y(&area->totrct) + 1;
-@@ -1929,6 +2020,12 @@
+@@ -1929,6 +2042,12 @@
      hidden = hidden || (region->prev->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL));
    }
 
@@ -2875,7 +3089,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    region->runtime->visible = !hidden;
  }
 
-@@ -2054,10 +2151,7 @@
+@@ -2054,10 +2173,7 @@
    area_calc_totrct(screen, area, &window_rect);
 
    /* region rect sizes */
@@ -2887,7 +3101,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
    /* Dynamically sized regions may have changed region sizes, so we have to force azone update. */
    area_azone_init(win, screen, area);
-@@ -2159,10 +2253,7 @@
+@@ -2159,10 +2275,7 @@
    area_regions_poll(C, screen, area);
 
    /* region rect sizes */
@@ -2899,7 +3113,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    area->flag &= ~AREA_FLAG_REGION_SIZE_UPDATE;
 
    /* default area handlers */
-@@ -2356,6 +2447,11 @@
+@@ -2356,6 +2469,11 @@
 
  void region_toggle_hidden(bContext *C, ARegion *region, const bool do_fade)
  {
@@ -2911,7 +3125,17 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    ScrArea *area = CTX_wm_area(C);
 
    region->flag ^= RGN_FLAG_HIDDEN;
-@@ -3802,7 +3898,7 @@
+@@ -3256,7 +3374,8 @@
+   const char *category = nullptr;
+   const int category_tabs_width = UI_PANEL_CATEGORY_MARGIN_WIDTH;
+   int margin_x = 0;
+-  const bool region_layout_based = region->flag & RGN_FLAG_DYNAMIC_SIZE;
++  const bool region_layout_based = (region->flag & RGN_FLAG_DYNAMIC_SIZE) &&
++                                   !region_is_ipad_inspector_navigation(area, region);
+   bool update_tot_size = true;
+
+   /* only allow scrolling in vertical direction */
+@@ -3802,7 +3921,7 @@
    const int offset = is_global ? 4.0f * UI_SCALE_FAC : int(UI_HEADER_OFFSET);
 
    /* Height of buttons and scaling needed to achieve it. */
@@ -2920,7 +3144,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    const float buttony_scale = buttony / float(UI_UNIT_Y);
 
    /* Vertically center buttons. */
-@@ -4239,6 +4335,14 @@
+@@ -4239,6 +4358,14 @@
  /* rect gets returned in local region coordinates */
  static void region_visible_rect_calc(ARegion *region, rcti *rect)
  {
@@ -5403,6 +5627,45 @@ diff --git a/source/blender/makesrna/intern/rna_space.cc b/source/blender/makesr
      if (region_flag == RGN_FLAG_HIDDEN) {
        /* Only support animation when the area is in the current context. */
        if (region->overlap && (area == CTX_wm_area(C)) && !(U.uiflag & USER_REDUCE_MOTION)) {
+@@ -2093,6 +2126,26 @@
+ }
+
+ /* Space Properties */
++
++static bool rna_SpaceProperties_is_ipad_inspector_get(PointerRNA *ptr)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (ptr->owner_id && GS(ptr->owner_id->name) == ID_SCR) {
++    const bScreen *screen = reinterpret_cast<const bScreen *>(ptr->owner_id);
++    if (ED_ipad_panels_enabled(screen)) {
++      LISTBASE_FOREACH (const ScrArea *, area, &screen->areabase) {
++        if (area->spacetype == SPACE_PROPERTIES && area->runtime.ipad_layer == 3 &&
++            area->spacedata.first == ptr->data) {
++          return true;
++        }
++      }
++    }
++  }
++#else
++  UNUSED_VARS(ptr);
++#endif
++  return false;
++}
+
+ static StructRNA *rna_SpaceProperties_pin_id_typef(PointerRNA *ptr)
+ {
+@@ -5751,6 +5804,11 @@
+   RNA_def_struct_sdna(srna, "SpaceProperties");
+   RNA_def_struct_ui_text(srna, "Properties Space", "Properties space data");
+
++  prop = RNA_def_property(srna, "is_ipad_inspector", PROP_BOOLEAN, PROP_NONE);
++  RNA_def_property_boolean_funcs(prop, "rna_SpaceProperties_is_ipad_inspector_get", nullptr);
++  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
++  RNA_def_property_ui_text(prop, "iPad Inspector", "Use touch navigation in the floating iPad Inspector");
++
+   prop = RNA_def_property(srna, "context", PROP_ENUM, PROP_NONE);
+   RNA_def_property_enum_sdna(prop, nullptr, "mainb");
+   RNA_def_property_enum_items(prop, buttons_context_items);
 diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/editors/include/ED_ipad_panels.hh
 new file mode 100644
 --- /dev/null
@@ -6605,7 +6868,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2024 @@
+@@ -0,0 +1,2031 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -6800,7 +7063,7 @@ new file mode 100644
 +  return area->type ? area->type->name : "Editor";
 +}
 +
-+static policy::Metrics panel_metrics(const ScrArea *owner)
++static policy::Metrics panel_metrics(const ScrArea *owner, const ScrArea *side_editor = nullptr)
 +{
 +  policy::Metrics metrics;
 +  const float scale = UI_SCALE_FAC;
@@ -6813,7 +7076,10 @@ new file mode 100644
 +                                tools->runtime->type->prefsizex : 40) * scale);
 +  metrics.resize_extent = int(24 * scale);
 +  metrics.corner_extent = int(44 * scale);
-+  metrics.minimum_side_height = int(120 * scale);
++  /* Inspector includes its native header, the labeled selector and corner chrome.
++   * Keep useful native content below them without enlarging other side editors. */
++  metrics.minimum_side_height = int((side_editor && side_editor->spacetype == SPACE_PROPERTIES ?
++                                        220 : 120) * scale);
 +  metrics.minimum_canvas_width = int(160 * scale);
 +  metrics.minimum_canvas_height = int(120 * scale);
 +  metrics.minimum_side_width = int(180 * scale);
@@ -7104,7 +7370,9 @@ new file mode 100644
 +      model.state, model.sculpt, screen->ipad_sculpt_shelf_initialized,
 +      find_tab(model, shelf_id) != nullptr, shelf_id);
 +  preferred_sizes(screen, model.state);
-+  model.metrics = panel_metrics(model.main);
++  const Tab *side_tab = find_tab(model, model.state.side.active_id);
++  model.metrics = panel_metrics(model.main,
++                                side_tab && side_tab->region_type == 0 ? side_tab->area : nullptr);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
 +  sort_launchers(screen, model);
 +  return model;
@@ -7952,7 +8220,7 @@ new file mode 100644
 +  }
 +  model.main = host;
 +  model.bounds = workspace_content_bounds(win, working_areas);
-+  model.metrics = panel_metrics(model.main);
++  ScrArea *side_editor = nullptr;
 +  preferred_sizes(screen, model.state);
 +  /* prepare() has already selected the real editor/region instances. Recompute
 +   * only their geometry here, after native headers establish the WINDOW rect. */
@@ -7962,11 +8230,13 @@ new file mode 100644
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +    if (area->runtime.ipad_layer == 3) {
 +      model.state.side.active_id = 0;
++      side_editor = area;
 +    }
 +    else if (area->runtime.ipad_layer == 2) {
 +      model.state.bottom.active_id = 0;
 +    }
 +  }
++  model.metrics = panel_metrics(model.main, side_editor);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
 +  const rcti side = to_rect(panel_content(model, Edge::Side));
 +  const rcti bottom = to_rect(panel_content(model, Edge::Bottom));

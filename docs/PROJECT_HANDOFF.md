@@ -1,5 +1,43 @@
 # Project handoff — 2026-09-13
 
+## Labeled touch Inspector — 2026-09-21
+
+Latest user report: the last successful build still feels like desktop Blender
+with a little touch added. The supplied 9.65-second recording shows dense native
+Inspector contents behind the large rail launchers. They explicitly confirm the
+Pencil squeeze radial works and want us to own reversible interface decisions.
+Prioritize perceptible usability; preserve the approved radial and full editors.
+
+This checkpoint replaces the floating native Properties editor's vertical icon
+strip with a full-width current-category label/icon at the top. Its popover uses
+two columns of large labeled native categories. Native dynamic enum filtering,
+data-type icons, selection, search-result highlighting and context updates remain
+owned by Blender; search, breadcrumbs, pinning and all property panels remain.
+Working/desktop Properties editors retain the normal navigation. Presentation
+uses a local TOP alignment and 56 scaled units without overwriting saved region
+alignment/dimensions; shared PanelType flags are restored after drawing. Only the
+active Properties side editor gets a useful minimum height of 220 scaled units.
+The ordinary side-editor minimum and saved preferences are unchanged.
+
+Also fixed the previous Linux launcher-test failure (run34935229012 at e0bf957):
+its exact-helper mock now explicitly includes cstdint and uses std::uint64_t.
+All19 local tests pass, including exact Inspector ownership gates compiled for
+both platform defines. Full51-file pinned-source preflight passes. A separate
+Windows Blender5.1.2 host harness visually confirms the actual Python category
+popover has labeled, large two-column targets and a selected-category marker.
+That harness injects the presentation flag only; it does not validate the native
+TOP region, touch input or an iOS build. Scratch evidence is inspector-pass/
+native-category-picker.png in the old workspace. No iPad acceptance is claimed.
+
+Next: build this coherent checkpoint, address actual native compiler failures,
+and verify the new selector/contents on hardware in normal and narrow windows.
+Check mesh, camera/light, pinned data, search, multiple Properties editors,
+workspace switching and save/reload. Confirm squeeze tools remain unchanged.
+Use common actions (select, adjust camera/object settings, dismiss and resume)
+to judge the improvement. Broader Inspector content density, layout reversal,
+input regression coverage and native Files lifecycle remain unfinished. The
+persistent product goal remains incomplete.
+
 ## Launcher ordering validation — 2026-09-15
 
 Exact source **e0bf957992e84e91ade9a3cc3bb585a963250f92** is building in

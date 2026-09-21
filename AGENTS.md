@@ -1,5 +1,21 @@
 # Blender iPad development
 
+## Latest user refinement — perceptible iPad usability, 2026-09-20
+
+The user reports that the last successful build still feels like desktop Blender
+with a little touch added. Their recording shows touch launchers opening dense
+native Inspector contents and a narrow icon-only category strip. Pencil squeeze
+and the existing radial tools work; preserve them. Own reversible design choices
+without asking the user to specify the interface or manage implementation.
+
+Prioritize a visibly more usable Inspector: a labeled current-category selector,
+large labeled category choices, and full-width native property contents. Keep
+native context filtering, search, pinning, editor state and advanced panels. This
+refines the existing workspace contract; it does not replace Blender's editors or
+remove the remaining splits, layout reversal, input and Files requirements.
+Source implementation, host preview, packaged iOS build and device acceptance
+must remain distinct. Judge further changes by common tasks on the device.
+
 ## Latest user refinement — left rail, global lock and working splits
 
 Latest feedback: the permanent Layout button is rejected and reportedly
