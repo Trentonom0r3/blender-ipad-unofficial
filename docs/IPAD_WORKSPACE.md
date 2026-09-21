@@ -53,7 +53,21 @@ button must accept Pencil press-and-drag just as Zoom does, while preserving dir
 finger navigation, external pointer input and the approved radial/Pencil mappings.
 
 
-## Active milestone: floating panels for every workspace
+## Active milestone: usable everyday iPad workflows
+
+The updated product goal prioritizes felt usability in an installable build.
+The floating-panel contract below remains required. Its feature checklist alone
+is not acceptance: verify opening a project, selecting/moving an object, adjusting
+a camera/property, switching/dismissing panels, undo, save and reopen using touch
+and Pencil. Preserve working radial tools and external input. See PRODUCT_DIRECTION
+for the complete goal and delivery sequence.
+
+The immediate delivery is the labeled Inspector change after fixing its failed
+native build. Source and host-preview evidence already exist; iOS packaging and
+device acceptance remain pending. Next improve the settings and panel interactions
+that still interrupt these common workflows, while retaining native functionality.
+
+### Floating panels for every workspace
 
 Implementation is in progress. PROJECT_HANDOFF.md records exact source, build,
 artifact and device evidence. Earlier successful builds do not validate newer changes.

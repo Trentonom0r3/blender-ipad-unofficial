@@ -1,5 +1,19 @@
 # Blender iPad development
 
+## Updated goal — 2026-09-21
+
+The user explicitly requested updating the goal after reviewing progress. The
+success criterion is comfortable everyday iPad use while preserving full Blender
+capability and external input. Follow the revised Goal and user section in
+`docs/PRODUCT_DIRECTION.md`. Prioritize visible workflow improvements in coherent,
+installable builds; the workspace feature list remains required but does not by
+itself establish usability. Preserve the confirmed working Pencil squeeze radial.
+Own reversible decisions and ask for device evidence only when needed.
+
+Immediate order: repair the current failed native build, deliver and verify the
+Inspector improvement, then address observed friction in object/camera editing,
+panel use and saving. Continue unfinished workspace and Files requirements.
+
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
 The user reports that the last successful build still feels like desktop Blender

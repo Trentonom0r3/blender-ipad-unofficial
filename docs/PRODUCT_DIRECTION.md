@@ -53,12 +53,53 @@ evidence changes; do not restart the design each session.
 
 ## Goal and user
 
-Make Blender intentionally useful on iPad while retaining Blender's power and
-identity. The primary user is a filmmaker: scene blocking, cameras, previs,
-environment layout, simple modeling, review and quick on-set adjustments. Success
-is opening a project, manipulating it, saving it and moving on with little friction.
-The user tests M5 iPad Pro / Pencil Pro builds; the agent owns engineering,
-prioritization and reversible product decisions.
+Develop the existing Blender iPad app into a coherent, comfortable touch and
+Apple Pencil experience for real work, while preserving Blender's full editor
+architecture, project compatibility, advanced capabilities and normal external
+keyboard/mouse/trackpad use. The user should be able to remove the keyboard and
+continue without tiny unexplained controls, awkward panel transitions or missing
+touch equivalents for essential actions.
+
+The primary user is a filmmaker: scene blocking, cameras, previs, environment
+layout, simple modeling, review and quick on-set adjustments. Prioritize visible
+improvements to these everyday tasks. Preserve the working Pencil squeeze radial
+and double-tap context menu. Reuse native Blender state and operators. Own
+reversible design choices and engineering; the user supplies device observations
+and judges whether the result feels better, without managing the implementation.
+
+Deliver coherent, installable builds with a short account of what visibly changed.
+A source commit, passing tests, a desktop preview or successful compilation alone
+cannot establish that an interaction is comfortable on an iPad.
+
+### Immediate delivery sequence
+
+1. Repair the failed native build for the current Inspector checkpoint and produce
+   a verified IPA. Diagnose the actual failure before adding another feature or
+   dispatching a replacement build.
+2. Deliver the labeled Inspector selector and large category choices; verify that
+   selecting categories, editing settings, scrolling and returning to the canvas
+   work naturally with finger and Pencil, including narrow windows.
+3. Improve the remaining everyday friction through complete workflows: selecting
+   and transforming objects, adjusting cameras and settings, opening/dismissing
+   panels, undoing changes, and saving/reopening projects. Choose the next change
+   from observed friction; do not treat more launchers or layout features as proof
+   of a better iPad experience.
+4. Complete the remaining workspace restoration/reversal and native Files lifecycle
+   requirements. Preserve all earlier functionality and unresolved regression
+   reports while improving usability.
+
+### Outcome used to judge progress
+
+On the user's M5 iPad Pro with Pencil Pro and no keyboard attached, a representative
+scene-blocking session should allow opening a project, selecting/moving an object,
+adjusting a camera and a property, changing and dismissing panels, undoing an edit,
+saving, and reopening with the intended state intact. Controls should be readable,
+reachable and predictable in landscape, portrait and a narrow supported window.
+Repeat the relevant workflow with external input to catch regressions.
+
+For each increment, record the exact source/build and distinguish implemented,
+host-previewed, packaged and device-verified behavior. Keep the overall goal open
+until the usability outcome and remaining capability requirements are satisfied.
 
 ## Established direction
 
@@ -160,9 +201,11 @@ IPA packaging, simulator, actual device. Build success is not touch/Files valida
 Startup and closing success does not imply pressure, mouse, restoration or performance
 acceptance. Record device reports narrowly.
 
-Current priority: complete the floating-panel workspace contract in
-IPAD_WORKSPACE.md, including permanent rails, real editors, global lock, working
-splits, resizing, reordering and input ownership across all layouts. Preserve the
+Current priority: deliver perceptible everyday iPad usability in installable builds,
+starting with a successful current Inspector build and the workflow checks above.
+Complete the floating-panel contract in IPAD_WORKSPACE.md, including permanent
+rails, real editors, global lock, working splits, resizing, reordering and input
+ownership across all layouts, as part of that usability outcome. Preserve the
 native Files work, radial palette and unresolved Frame Scene navigation report.
 Address confirmed P0 regressions before extending the milestone. Source, build,
 packaging and actual device acceptance remain separate gates.

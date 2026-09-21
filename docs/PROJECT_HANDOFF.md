@@ -1,5 +1,31 @@
 # Project handoff — 2026-09-13
 
+## Goal updated and build failure recorded — 2026-09-21
+
+The user requested an updated goal. PRODUCT_DIRECTION now defines comfortable,
+complete everyday touch/Pencil workflows as the outcome, alongside full Blender
+capability and external input compatibility. AGENTS and IPAD_WORKSPACE point to
+that outcome. Deliver visible improvements in installable builds and own reversible
+choices; preserve the user's confirmed working squeeze radial. A completed feature
+list or passing source checks alone does not satisfy the goal.
+
+Run35582136863 at **1057ce3c293ab1bf286dfd5ca14f4a3f317716d7** has now FAILED.
+Cloud preflight passed, including the repaired launcher test and new Inspector
+ownership test. The native build failed while generating makesdna/dna.cc for the
+host tools; packaging/upload were skipped, so there is no new IPA. The log also
+contains Homebrew HOME messages, but the root cause has not yet been diagnosed.
+Do not mistake those messages for an established diagnosis. Inspect the full
+failed-step log, repair the actual blocker, then build the coherent checkpoint.
+The earlier in-progress entry below is historical.
+
+Next deliver the Inspector selector/category changes on device, then reduce
+observed friction in selecting/transforming objects, camera/settings adjustment,
+panel transitions and saving/reopening. Existing workspace reversal, input and
+Files lifecycle obligations remain. The persistent goal is incomplete. The app's
+stored goal objective/status was not replaced: the available goal API only allows
+status changes, and the unfinished goal is currently marked usageLimited. The
+repository documents carry this revised objective for future continuation.
+
 ## Labeled touch Inspector — 2026-09-21
 
 Exact source **1057ce3c293ab1bf286dfd5ca14f4a3f317716d7** is now building in
