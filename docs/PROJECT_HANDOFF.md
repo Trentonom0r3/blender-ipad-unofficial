@@ -2,6 +2,11 @@
 
 ## Labeled touch Inspector — 2026-09-21
 
+Exact source **1057ce3c293ab1bf286dfd5ca14f4a3f317716d7** is now building in
+[iOS run35582136863](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35582136863).
+The run was verified in progress at this SHA; Linux launcher and Inspector tests
+both passed its preflight stage. Inspect this run before dispatching a replacement.
+
 Latest user report: the last successful build still feels like desktop Blender
 with a little touch added. The supplied 9.65-second recording shows dense native
 Inspector contents behind the large rail launchers. They explicitly confirm the
