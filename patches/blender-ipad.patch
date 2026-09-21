@@ -5232,8 +5232,10 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +460,26 @@
+@@ -428,6 +460,28 @@
    struct bToolRef *tool;
++  /* Keep the following 64-bit identity aligned in both 32/64-bit SDNA layouts. */
++  void *_pad_ipad_runtime_ptr;
    char is_tool_set;
    char _pad0[7];
 +  /** Popup identity, zero until assigned; reset on file read and screen copy. */
@@ -5259,7 +5261,7 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } ScrArea_Runtime;
 
  typedef struct ScrArea {
-@@ -468,7 +520,9 @@
+@@ -468,7 +522,9 @@
     * runtime variable, updated by executing operators.
     */
    short region_active_win;
@@ -5270,7 +5272,7 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 
    /** Callbacks for this space type. */
    struct SpaceType *type;
-@@ -494,6 +548,10 @@
+@@ -494,6 +550,10 @@
 
    /** #AZone. */
    ListBase actionzones;

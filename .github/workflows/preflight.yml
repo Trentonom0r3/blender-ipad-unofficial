@@ -36,6 +36,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_resize_lifetime.py -v
       - name: Test working seam modal geometry and lifetime
         run: python3 -m unittest discover -s build -p test_working_seam.py -v
+      - name: Test screen DNA layout for both pointer widths
+        run: python3 -m unittest discover -s build -p test_screen_dna_layout.py -v
       - name: Test launcher ordering and stale actions
         run: python3 -m unittest discover -s build -p test_launcher_order.py -v
       - name: Test Inspector presentation ownership

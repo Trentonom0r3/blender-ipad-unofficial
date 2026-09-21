@@ -1,5 +1,25 @@
 # Project handoff — 2026-09-13
 
+## Native build blocker repaired — 2026-09-21
+
+The exact failed35582136863 log identifies an SDNA alignment failure, not the
+incidental Homebrew HOME messages: ScrArea_Runtime.ipad_launcher_session begins
+at byte12 in the 32-bit serialized layout, and the struct tail is misaligned.
+Blender's makesdna validates both pointer widths even when targeting arm64.
+
+Added pointer-sized padding immediately after tool. The session field is now
+at16/24 and the struct size160/168 for32/64-bit pointer layouts. This follows
+existing DNA pointer-padding conventions; no identity, rank, copy/free or input
+behavior is changed. Runtime is still cleared on file read and copied sessions
+are reset by the existing code.
+
+New test_screen_dna_layout compiles the exact runtime fields from the overlay,
+using packed32/64-bit pointer models so automatic compiler padding cannot hide
+missing explicit SDNA padding. It reproduces both original failures, passes with
+the repair, and now runs in cloud preflight. Full51-file pinned-source preflight
+and diff checks pass. Native makesdna and final IPA still require the next build.
+The Inspector and remaining product goal are not device-validated or complete.
+
 ## Goal updated and build failure recorded — 2026-09-21
 
 The user requested an updated goal. PRODUCT_DIRECTION now defines comfortable,
