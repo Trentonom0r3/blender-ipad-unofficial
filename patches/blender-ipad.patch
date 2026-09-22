@@ -10,24 +10,28 @@ diff --git a/scripts/startup/bl_ui/space_properties.py b/scripts/startup/bl_ui/s
  from rna_prop_ui import PropertyPanel
  from bl_ui import anim
  from bpy.app.translations import (
-@@ -73,6 +73,16 @@
+@@ -73,6 +73,20 @@
 
          view = context.space_data
 
 +        if view.is_ipad_inspector:
 +            # Use the native enum's current label/icon, including object-data context.
 +            layout.scale_y = 2.0
-+            layout.popover(
-+                panel="PROPERTIES_PT_ipad_categories",
-+                text=UILayout.enum_item_name(view, "context", view.context),
++            # Native popup lifecycle closes after selection and preserves area context.
++            picker = layout.operator(
++                "wm.call_panel",
++                text=UILayout.enum_item_name(view, "context", view.context) + " ▾",
++                translate=False,
 +                icon_value=UILayout.enum_item_icon(view, "context", view.context),
 +            )
++            picker.name = "PROPERTIES_PT_ipad_categories"
++            picker.keep_open = False
 +            return
 +
          layout.scale_x = 1.4
          layout.scale_y = 1.4
          if view.search_filter:
-@@ -82,6 +92,30 @@
+@@ -82,6 +96,30 @@
              )
          else:
              layout.prop_tabs_enum(view, "context", icon_only=True)
@@ -58,7 +62,7 @@ diff --git a/scripts/startup/bl_ui/space_properties.py b/scripts/startup/bl_ui/s
 
 
  class PROPERTIES_PT_options(Panel):
-@@ -187,6 +221,7 @@
+@@ -187,6 +225,7 @@
  classes = (
      PROPERTIES_HT_header,
      PROPERTIES_PT_navigation_bar,

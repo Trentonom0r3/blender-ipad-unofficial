@@ -1,5 +1,29 @@
 # Project handoff — 2026-09-13
 
+## Category choice closes directly to settings — 2026-09-21
+
+The Inspector selector now invokes Blender's existing wm.call_panel operator with
+keep_open=False. Selecting a category updates the native Properties context and
+closes the chooser immediately, removing the extra outside tap. The button retains
+the dynamic native label/icon and a disclosure glyph. No custom modal operator,
+parallel category list or changes to Pencil mappings were introduced.
+
+Host evidence: opening from the real Properties NAV_BAR button and simulating a
+click selects MODIFIER; the following screenshot shows the chooser gone and Add
+Modifier accessible. Ordinary Row drawing substitutes for the new style argument
+in the unpatched Windows host, as described below. The chooser also fits a
+640-by-900 host window (the requested500 width was clamped by Blender to640).
+This does not prove smaller iPad windows, native TOP geometry or UIKit behavior.
+Evidence: inspector-pass/choice_preview.py, inspector-choice-popup.png,
+inspector-choice-selected.png and inspector-choice-narrow.png in the old workspace.
+Full54-file source preflight and diff checks pass; no new native code changed.
+
+Current iOS run35677001412 is still compiling exact source
+ba296b984ab2827e5cb663d555557f962bf27572. It includes the Row-style picker and
+both DNA repairs but EXCLUDES this later Python dismissal refinement. Let it
+finish; inspect its actual result before the next coherent iOS build. No IPA
+from it has yet been verified. All device acceptance and the full goal remain open.
+
 ## Inspector popup and enclosing DNA repair — 2026-09-21
 
 Exact combined source **ba296b984ab2827e5cb663d555557f962bf27572** is building in
