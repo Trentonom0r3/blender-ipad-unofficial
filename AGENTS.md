@@ -1,5 +1,15 @@
 # Blender iPad development
 
+## Goal clarification: usability over a fixed UI mechanism
+
+Follow the goal clarification in `docs/PRODUCT_DIRECTION.md` (or
+`PRODUCT_DIRECTION.md` from this docs directory). It supersedes wording below
+that treats a particular rail, panel or lock mechanism as immutable. Preserve the
+underlying capabilities and lessons; improve the design when evidence supports a
+better iPad interaction. Preserve the working Pencil mappings and external input.
+Judge progress by complete workflows in installable builds and actual-device
+acceptance, while continuing unfinished workspace and Files requirements.
+
 ## Updated goal — 2026-09-21
 
 The user explicitly requested updating the goal after reviewing progress. The
@@ -68,7 +78,8 @@ The user is the hardware tester, not the project manager. Own implementation and
 reversible design choices. Ask for hardware evidence or consequential subjective
 decisions only when needed. Do not restart design discovery each session.
 
-The active UI contract is the rail, global lock and working split design above.
+The current UI implementation follows the rail, global lock and working split
+design above, subject to the goal clarification at the top of this file.
 Apply it at startup, file load and workspace switching. Preserve native editor
 instances and state. Bound floating content to actual WINDOW regions, accounting
 for variable headers, and align drawing with input. See `docs/IPAD_WORKSPACE.md`

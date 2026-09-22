@@ -1,5 +1,34 @@
 # Product direction and decisions
 
+## Goal clarification: usability over a fixed UI mechanism
+
+Build a full Blender experience that feels as though iPad was an intended
+platform: comfortable, discoverable and predictable with fingers and Apple
+Pencil, while remaining natural with a keyboard, mouse or trackpad. Preserve
+Blender's real editors, advanced functionality and normal project compatibility.
+
+The current rails, floating panels, global lock and layout controls are a working
+design, not immutable product requirements. Preserve the problems they solve:
+reachable tools, useful canvas space, discoverable navigation, independent native
+editors, working splits, reversible layouts and retained editor state. Improve or
+replace a mechanism when evidence supports a better interaction; document the
+reason and check that earlier problems do not return. Do not redesign functioning
+controls merely for novelty. Preserve the confirmed working Pencil squeeze radial
+and double-tap context mapping.
+
+Own reversible design and implementation decisions. Deliver coherent, installable
+increments with a short account of what visibly changed. Judge progress through
+complete touch/Pencil workflows: open a real project, navigate, select and move an
+object, adjust a camera and properties, switch and dismiss panels, undo, save and
+reopen. Check portrait, landscape, narrow windows and external input. Continue
+broader editing and native Files requirements; this first workflow is a delivery
+checkpoint, not the limit of Blender's supported capabilities.
+
+Resolve the current native build outcome and deliver the Inspector improvements
+first, then address the largest observed interruption in those workflows. Keep
+source implementation, host tests, packaged IPA and actual-device acceptance
+separate. The full goal remains active until the product outcome is satisfied.
+
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
 The user reports that the last successful build still feels like desktop Blender

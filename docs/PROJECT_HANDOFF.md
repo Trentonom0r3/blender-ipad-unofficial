@@ -1,5 +1,21 @@
 # Project handoff — 2026-09-13
 
+## Goal clarification: design flexibility and usable delivery
+
+Following the user's request to update the goal, AGENTS, PRODUCT_DIRECTION and
+IPAD_WORKSPACE now explicitly prioritize comfortable complete iPad workflows over
+preserving a particular rail/panel/lock mechanism. This reflects the pasted goal's
+instruction to preserve design intent and challenge implementation. Working Pencil
+mappings, full Blender capability, external input, editor state, workspace reversal
+and unfinished Files requirements remain protected. The Inspector is the immediate
+delivery checkpoint; it is not the entire product goal.
+
+This is a documentation-only goal clarification. It makes no new build or device
+validation claim; implementation and evidence remain recorded below. The active
+persistent goal remains open. The available goal tool can change status but cannot
+edit an active objective's text, so the detailed revision lives in the repository's
+authoritative product guidance.
+
 ## Category choice closes directly to settings — 2026-09-21
 
 The Inspector selector now invokes Blender's existing wm.call_panel operator with

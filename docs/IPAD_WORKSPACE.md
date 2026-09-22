@@ -1,5 +1,15 @@
 # iPad workspace design and delivery
 
+## Goal clarification: usability over a fixed UI mechanism
+
+Follow the goal clarification in `docs/PRODUCT_DIRECTION.md` (or
+`PRODUCT_DIRECTION.md` from this docs directory). It supersedes wording below
+that treats a particular rail, panel or lock mechanism as immutable. Preserve the
+underlying capabilities and lessons; improve the design when evidence supports a
+better iPad interaction. Preserve the working Pencil mappings and external input.
+Judge progress by complete workflows in installable builds and actual-device
+acceptance, while continuing unfinished workspace and Files requirements.
+
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
 The user reports that the last successful build still feels like desktop Blender
@@ -56,7 +66,8 @@ finger navigation, external pointer input and the approved radial/Pencil mapping
 ## Active milestone: usable everyday iPad workflows
 
 The updated product goal prioritizes felt usability in an installable build.
-The floating-panel contract below remains required. Its feature checklist alone
+The floating-panel design below remains the implementation baseline; its
+mechanisms may evolve under the goal clarification above. Its feature checklist alone
 is not acceptance: verify opening a project, selecting/moving an object, adjusting
 a camera/property, switching/dismissing panels, undo, save and reopen using touch
 and Pencil. Preserve working radial tools and external input. See PRODUCT_DIRECTION
