@@ -46,6 +46,42 @@ new file mode 100644
             with self.assertRaises(ValueError):
                 patch_files(patch)
 
+    def test_duplicate_ipad_registration_is_rejected(self):
+        registration = 'WM_operatortype_append(SCREEN_OT_ipad_launcher_arrange);'
+        patch = PATCH.replace('source/example.cc', 'source/blender/editors/screen/screen_ops.cc')
+        patch = patch.replace('@@ -1 +1 @@', '@@ -1 +1,2 @@')
+        patch = patch.replace('+new', '+' + registration + '\n+' + registration)
+        with self.assertRaisesRegex(ValueError, 'Duplicate iPad operator registration'):
+            check_patch(patch, patch_files(patch), lambda _: b'old\n')
+
+    def test_unique_ipad_registrations_pass(self):
+        patch = PATCH.replace('source/example.cc', 'source/blender/editors/screen/screen_ops.cc')
+        patch = patch.replace('@@ -1 +1 @@', '@@ -1 +1,2 @@')
+        patch = patch.replace('+new', '+WM_operatortype_append(SCREEN_OT_ipad_launcher_arrange);\n'
+                              '+WM_operatortype_append(SCREEN_OT_ipad_launcher_move);')
+        check_patch(patch, patch_files(patch), lambda _: b'old\n')
+
+    def test_added_bli_header_must_exist_in_pinned_source(self):
+        patch = PATCH.replace('+new', '+#include "BLI_missing.hh"')
+        def load(path):
+            if path == 'source/example.cc':
+                return b'old\n'
+            self.assertEqual(path, 'source/blender/blenlib/BLI_missing.hh')
+            raise ValueError('Missing pinned header')
+        with self.assertRaisesRegex(ValueError, 'Missing pinned header'):
+            check_patch(patch, patch_files(patch), load)
+
+    def test_added_bli_header_is_verified_once(self):
+        patch = PATCH.replace('@@ -1 +1 @@', '@@ -1 +1,2 @@')
+        patch = patch.replace('+new', '+#include "BLI_memory_utils.hh"\n'
+                              '+#include "BLI_memory_utils.hh"')
+        requested = []
+        def load(path):
+            requested.append(path)
+            return b'old\n' if path == 'source/example.cc' else b'#pragma once\n'
+        check_patch(patch, patch_files(patch), load)
+        self.assertEqual(requested.count('source/blender/blenlib/BLI_memory_utils.hh'), 1)
+
     def test_patched_python_is_parsed(self):
         invalid = PATCH.replace('source/example.cc', 'source/example.py').replace('+new', '+if')
         with self.assertRaises(SyntaxError):

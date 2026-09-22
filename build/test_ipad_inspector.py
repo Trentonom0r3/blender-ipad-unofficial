@@ -13,6 +13,18 @@ def added_function(patch, path, signature):
 
 
 class InspectorIdentityTests(unittest.TestCase):
+    def test_navigation_bounds_use_native_short_dimensions(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        name = 'source/blender/editors/space_buttons/space_buttons.cc'
+        section = patch.split(f'diff --git a/{name} b/{name}\n', 1)[1].split('diff --git ', 1)[0]
+        additions = ''.join(line[1:] for line in section.splitlines(True)
+                            if line.startswith('+') and not line.startswith('+++'))
+        start = additions.index('  if (ipad_inspector) {')
+        bounds = additions[start:additions.index('\n  }', start) + 4]
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(
+            BOUNDS_PREFIX + bounds + BOUNDS_CASES)
+
     def test_active_owner_floating_layer_and_desktop(self):
         repo = Path(__file__).resolve().parents[1]
         patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
@@ -82,5 +94,33 @@ int main() {
  screen.id.name = 2; assert(!rna_SpaceProperties_is_ipad_inspector_get(&ptr));
  ptr.owner_id = nullptr; assert(!rna_SpaceProperties_is_ipad_inspector_get(&ptr));
  std::cout << "PASS: Inspector uses active screen/space identity and floating presentation only\n";
+}
+'''
+
+
+BOUNDS_PREFIX = r'''
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+// ARegion's pinned DNA declares winx and winy as short, not int.
+struct ARegion {
+ short winx, winy;
+ struct {struct {float xmin, xmax, ymin, ymax;} cur;} v2d;
+};
+void reset_bounds(ARegion *region, bool ipad_inspector) {
+'''
+BOUNDS_CASES = r'''
+}
+int main() {
+ ARegion region{640, 56, {{12, 88, -30, 9}}};
+ reset_bounds(&region, false);
+ assert(region.v2d.cur.xmin == 12 && region.v2d.cur.ymax == 9);
+ reset_bounds(&region, true);
+ assert(region.v2d.cur.xmin == 0 && region.v2d.cur.xmax == 640);
+ assert(region.v2d.cur.ymin == -56 && region.v2d.cur.ymax == 0);
+ region.winx = 0; region.winy = -1;
+ reset_bounds(&region, true);
+ assert(region.v2d.cur.xmax == 1 && region.v2d.cur.ymin == -1);
+ std::cout << "PASS: Inspector navigation uses native short dimensions and nonempty bounds\n";
 }
 '''

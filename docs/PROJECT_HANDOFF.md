@@ -1,6 +1,66 @@
 # Project handoff — 2026-09-13
 
 
+## Inspector native compile fixes — 2026-09-22
+
+Run35677001412 at ba296b984ab2827e5cb663d555557f962bf27572 completed with
+FAILURE. Native compilation stopped in space_buttons.cc because BLI_scope_exit.hh
+does not exist at the pinned upstream commit. The prior editor/runtime DNA repairs
+passed that stage; no IPA was produced. The older in-progress entries are historical.
+
+Replaced the nonexistent include with BLI_memory_utils.hh, whose pinned source
+defines BLI_SCOPED_DEFER. Preflight now verifies newly added BLI includes against
+the same pinned source, so missing utility headers fail before the native build.
+New checker tests cover missing dependencies and deduplicated header requests.
+
+Independent static Inspector API review also caught std::max(int, short) in the
+navigation bounds: ARegion.winx/winy are short in native DNA. A new host compile
+regression extracts the exact overlay bounds code with those real field types;
+it reproduces the compiler error before explicit std::max<int> calls are applied.
+The fixed code preserves nonempty bounds and leaves desktop bounds unchanged.
+The reviewer found no further obvious Inspector API mismatch, which is not a
+substitute for the forthcoming native build.
+
+This checkpoint also includes the single launcher registrations described below
+and the 2310bda chooser-dismissal improvement. The prior publish attempt never ran
+because automatic approval review exhausted its usage window; the fresh usage
+check now shows the window reset, and authorized operations resumed normally.
+
+Validation: the 25-test suite passed before the independently found bounds fix;
+both Inspector tests, including the new compile regression, pass after it. Full
+54-file preflight with pinned-header checks and git diff checks pass.
+
+Next compile this combined checkpoint, inspect native results and verify the IPA
+artifact before requesting device acceptance. Layout reversal, the broader
+workspace/input matrix and native Files lifecycle remain incomplete.
+
+## Duplicate launcher operator registration repaired
+
+Workspace reversal review found both SCREEN_OT_ipad_launcher_arrange and
+SCREEN_OT_ipad_launcher_move registered three times in WM_operatortypes_screen,
+with triplicated declarations in the added iPad public header. Removed the extra
+registrations and declarations. Each command retains one implementation and one
+registration. This repairs startup registration; it does not implement layout
+reversal or change launcher behavior.
+
+Preflight now checks the fully applied screen_ops.cc for duplicate iPad operator
+registrations. The new check reproduced the defect in the current overlay before
+the repair, then the complete 54-file source preflight passed after it. Eight
+preflight checker tests pass, including duplicate rejection and valid distinct
+registrations. Native startup/device validation remains pending.
+
+The still-running iOS run35677001412 at ba296b9 predates this repair and the
+2310bda chooser-dismissal refinement. Even if that build packages successfully,
+it is compilation evidence for the older checkpoint, not the final delivery
+candidate. Preserve it for diagnostics; build current source after its result is
+known. The new source has not yet been compiled for iOS.
+
+Reversal audit confirms the current iPad working-editor menu exposes split and
+swap but replaces the native Move/Split Area entry. There is no explicit iPad join
+or reversal action. Do not treat native context-menu access as satisfying that
+requirement. A next implementation must preserve editor state and saved topology,
+not merely hide a split or discard its editor.
+
 ## Inspector cancellation and reopen evidence
 
 Verified the chooser's native popup lifecycle against the current overlay Python

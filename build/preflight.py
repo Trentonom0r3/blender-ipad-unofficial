@@ -91,6 +91,15 @@ def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> Non
                 destination = work / path
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(data)
+        # New BLI includes must exist in the pinned source, not merely in a
+        # different Blender release. Syntax-only patch checks cannot catch this.
+        added_headers = set(re.findall(
+            r'^\+\s*#\s*include "(BLI_[A-Za-z0-9_]+\.hh?)"', patch, re.MULTILINE))
+        changed_paths = {path for path, _ in files}
+        dependencies = sorted('source/blender/blenlib/' + header for header in added_headers
+                              if 'source/blender/blenlib/' + header not in changed_paths)
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(source_loader, dependencies))
         encoded = patch.encode('utf-8')
         for flags in (['--check'], []):
             subprocess.run(['git', 'apply', '--whitespace=error-all', *flags, '-'],
@@ -101,6 +110,15 @@ def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> Non
                 plistlib.loads(target.read_bytes())
             elif target.suffix == '.py':
                 ast.parse(target.read_text(encoding='utf-8'), filename=path)
+            if path == 'source/blender/editors/screen/screen_ops.cc':
+                registrations = re.findall(
+                    r'WM_operatortype_append\s*\(\s*(SCREEN_OT_ipad_\w+)\s*\)',
+                    target.read_text(encoding='utf-8'))
+                seen = set()
+                for operator in registrations:
+                    if operator in seen:
+                        raise ValueError(f'Duplicate iPad operator registration: {operator}')
+                    seen.add(operator)
 
 
 def find_bash() -> str | None:
