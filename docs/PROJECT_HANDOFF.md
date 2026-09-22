@@ -1,5 +1,32 @@
 # Project handoff — 2026-09-13
 
+
+## Inspector cancellation and reopen evidence
+
+Verified the chooser's native popup lifecycle against the current overlay Python
+source, materialized fresh from pinned upstream plus the exact patch. In a real
+Windows Blender window, simulated Escape and outside-click cancellation each
+closed the chooser and retained OBJECT context. Reopening after each cancellation
+worked; selecting MODIFIER updated the originating Properties editor, closed the
+chooser and exposed Add Modifier. Screenshots were inspected for both cancelled
+states and the final selected state. The initial category baseline is sampled
+after the editor's first draw, since changing an area's type initializes context
+asynchronously; an earlier pre-draw assertion was a harness error.
+
+Reproducible scratch evidence: inspector-pass/lifecycle/preview.py, stdout.log and
+01-open.png through 05-selected.png in the old workspace. As with the earlier host
+preview, SpaceProperties.is_ipad_inspector is supplied by the harness and native
+Row expansion substitutes for the new API absent in Blender 5.1.2. This checks
+native popup cancellation/reopening and context selection, not iPad TOP geometry,
+the new C++ bindings, touch event ownership or device acceptance. No production
+code change was needed from this audit.
+
+Latest live check: run35677001412 at ba296b984ab2827e5cb663d555557f962bf27572
+remains in Build (Release, install target), with cloud preflight successful.
+Do not restart it on an observation timeout. It excludes the dismissal refinement
+2310bda. Inspect the completed result/artifacts before dispatching the next coherent
+build containing that refinement. Full product acceptance remains incomplete.
+
 ## Goal clarification: design flexibility and usable delivery
 
 Following the user's request to update the goal, AGENTS, PRODUCT_DIRECTION and
