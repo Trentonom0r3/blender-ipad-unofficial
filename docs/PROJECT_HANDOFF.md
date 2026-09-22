@@ -2,6 +2,12 @@
 
 ## Inspector popup and enclosing DNA repair — 2026-09-21
 
+Exact combined source **ba296b984ab2827e5cb663d555557f962bf27572** is building in
+[iOS run 35677001412](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35677001412).
+Verified: cloud preflight passed; native build job is in progress fetching source.
+All 21 local tests passed again on this combined checkpoint, including expanded
+editor/runtime DNA validation. Inspect this run before dispatching another build.
+
 Run 35648995879 at 672ecbeb646861ad021372c41fc0fd748d5d3bec passed cloud
 preflight and the original ScrArea_Runtime alignment check, then failed makesdna
 on the enclosing ScrArea's 32-bit tail alignment. No IPA was packaged. Added
