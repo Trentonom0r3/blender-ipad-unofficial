@@ -40,6 +40,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_screen_dna_layout.py -v
       - name: Test launcher ordering and stale actions
         run: python3 -m unittest discover -s build -p test_launcher_order.py -v
+      - name: Test native category picker styles and highlights
+        run: python3 -m unittest discover -s build -p test_enum_picker.py -v
       - name: Test Inspector presentation ownership
         run: python3 -m unittest discover -s build -p test_ipad_inspector.py -v
       - name: Test native navigation hit ownership

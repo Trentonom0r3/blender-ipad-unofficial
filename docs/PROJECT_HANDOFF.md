@@ -1,5 +1,46 @@
 # Project handoff — 2026-09-13
 
+## Inspector popup and enclosing DNA repair — 2026-09-21
+
+Run 35648995879 at 672ecbeb646861ad021372c41fc0fd748d5d3bec passed cloud
+preflight and the original ScrArea_Runtime alignment check, then failed makesdna
+on the enclosing ScrArea's 32-bit tail alignment. No IPA was packaged. Added
+pointer-sized padding immediately before ScrArea.runtime. The expanded regression
+now extracts both complete declarations from extended patch context and checks
+all member offsets and tails for both pointer widths. It reproduces the enclosing
+failure before the fix and passes afterward; this is still not native makesdna.
+
+Opening the Inspector category popup through its actual navigation button in the
+Windows host exposed a real visual flaw missed by wm.call_panel preview: tab
+styling anchors buttons to the originating region edge, making columns overlap.
+Added a trailing use_tab_style option to native UILayout.prop_tabs_enum, default
+true in C++ and RNA. Only the Inspector popup opts out and uses ordinary Row
+buttons. Native dynamic categories, labels/icons, updates and search highlights
+are retained. Fixed highlight indexing relative to preceding block buttons and
+an empty-enum return in the same native helper. Exact-helper mocks exercise both
+styles, separators, preexisting buttons, search highlights and empty categories.
+
+Host interaction evidence: the existing native Row renderer shows both columns
+correctly when opened from NAV_BAR, and a simulated click selects MODIFIER in the
+real Properties editor. The host lacks the new optional API, so the harness uses
+layout.prop(expand=True) for equivalent Row drawing; it does not validate generated
+RNA bindings, the native TOP geometry or UIKit input. The popup currently retains
+normal outside-tap dismissal after category selection. Scratch script and images:
+inspector-pass/interaction_preview.py and inspector-interaction-*.png in the old
+workspace. Preserve that distinction from the earlier direct-popup preview.
+
+Full 54-file pinned-source preflight and both-layout DNA regression pass. The
+21-test suite passed for the popup change; the expanded DNA test passes after its
+additional enclosing-structure repair. Independent API/default/highlight review
+found no blocker. Native compilation, packaging and device acceptance remain open.
+The approval-review usage limit interrupted integration once; it has now reset
+and the rejected command was resumed successfully, without bypassing review.
+
+Next build this combined checkpoint and inspect actual native failure/success.
+Do not attribute an older IPA to these changes. Device checks remain category
+selection/search/pinning, dismissal, narrow windows and editor-state preservation.
+The full workspace, everyday usability and Files goal remains incomplete.
+
 ## Native build blocker repaired — 2026-09-21
 
 The exact failed35582136863 log identifies an SDNA alignment failure, not the

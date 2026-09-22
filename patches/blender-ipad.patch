@@ -51,10 +51,10 @@ diff --git a/scripts/startup/bl_ui/space_properties.py b/scripts/startup/bl_ui/s
 +        if view.search_filter:
 +            layout.prop_tabs_enum(
 +                view, "context", data_highlight=view,
-+                property_highlight="tab_search_results", icon_only=False,
++                property_highlight="tab_search_results", icon_only=False, use_tab_style=False,
 +            )
 +        else:
-+            layout.prop_tabs_enum(view, "context", icon_only=False)
++            layout.prop_tabs_enum(view, "context", icon_only=False, use_tab_style=False)
 
 
  class PROPERTIES_PT_options(Panel):
@@ -66,6 +66,177 @@ diff --git a/scripts/startup/bl_ui/space_properties.py b/scripts/startup/bl_ui/s
      PROPERTIES_PT_options,
  )
 
+diff --git a/source/blender/editors/include/UI_interface_layout.hh b/source/blender/editors/include/UI_interface_layout.hh
+--- a/source/blender/editors/include/UI_interface_layout.hh
++++ b/source/blender/editors/include/UI_interface_layout.hh
+@@ -613,7 +613,8 @@
+                       PropertyRNA *prop,
+                       PointerRNA *ptr_highlight,
+                       PropertyRNA *prop_highlight,
+-                      bool icon_only);
++                      bool icon_only,
++                      bool use_tab_style = true);
+
+   /** Expands enum property value items as radio buttons. */
+   void props_enum(PointerRNA *ptr, blender::StringRefNull propname);
+diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makesrna/intern/rna_ui_api.cc
+--- a/source/blender/makesrna/intern/rna_ui_api.cc
++++ b/source/blender/makesrna/intern/rna_ui_api.cc
+@@ -246,7 +246,8 @@
+                                 const char *propname,
+                                 PointerRNA *ptr_highlight,
+                                 const char *propname_highlight,
+-                                bool icon_only)
++                                bool icon_only,
++                                bool use_tab_style)
+ {
+   PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+
+@@ -283,7 +284,7 @@
+     }
+   }
+
+-  layout->prop_tabs_enum(C, ptr, prop, ptr_highlight, prop_highlight, icon_only);
++  layout->prop_tabs_enum(C, ptr, prop, ptr_highlight, prop_highlight, icon_only, use_tab_style);
+ }
+
+ static void rna_uiItemEnumR_string(uiLayout *layout,
+@@ -1462,6 +1463,11 @@
+   parm = RNA_def_string(
+       func, "property_highlight", nullptr, 0, "", "Identifier of highlight property in data");
+   RNA_def_boolean(func, "icon_only", false, "", "Draw only icons in tabs, no text");
++  RNA_def_boolean(func,
++                  "use_tab_style",
++                  true,
++                  "",
++                  "Draw area-aligned tabs; disable for ordinary selection buttons in popovers");
+
+   func = RNA_def_function(srna, "prop_enum", "rna_uiItemEnumR_string");
+   api_ui_item_rna_common(func);
+diff --git a/source/blender/editors/interface/interface_layout.cc b/source/blender/editors/interface/interface_layout.cc
+--- a/source/blender/editors/interface/interface_layout.cc
++++ b/source/blender/editors/interface/interface_layout.cc
+@@ -964,60 +964,64 @@
+                                 const std::optional<StringRef> uiname,
+                                 const int h,
+                                 const bool icon_only)
+ {
+   ui_item_enum_expand_exec(layout, block, ptr, prop, uiname, h, ButType::Row, icon_only);
+ }
+ static void ui_item_enum_expand_tabs(uiLayout *layout,
+                                      bContext *C,
+                                      uiBlock *block,
+                                      PointerRNA *ptr,
+                                      PropertyRNA *prop,
+                                      PointerRNA *ptr_highlight,
+                                      PropertyRNA *prop_highlight,
+                                      const std::optional<StringRef> uiname,
+                                      const int h,
+-                                     const bool icon_only)
++                                     const bool icon_only,
++                                     const bool use_tab_style)
+ {
+   const int start_size = block->buttons.size();
+
+-  ui_item_enum_expand_exec(layout, block, ptr, prop, uiname, h, ButType::Tab, icon_only);
+-
+-  if (block->buttons.is_empty()) {
++  const ButType button_type = use_tab_style ? ButType::Tab : ButType::Row;
++  ui_item_enum_expand_exec(layout, block, ptr, prop, uiname, h, button_type, icon_only);
++
++  if (block->buttons.size() == start_size) {
+     return;
+   }
+
+   BLI_assert(start_size != block->buttons.size());
+
+   for (int i = start_size; i < block->buttons.size(); i++) {
+     uiBut *tab = block->buttons[i].get();
+-    UI_but_drawflag_enable(tab, ui_but_align_opposite_to_area_align_get(CTX_wm_region(C)));
++    if (use_tab_style) {
++      UI_but_drawflag_enable(tab, ui_but_align_opposite_to_area_align_get(CTX_wm_region(C)));
++    }
+     if (icon_only) {
+       UI_but_drawflag_enable(tab, UI_BUT_HAS_QUICK_TOOLTIP);
+     }
+   }
+
+   const bool use_custom_highlight = (prop_highlight != nullptr);
+
+   if (use_custom_highlight) {
+     const int highlight_array_len = RNA_property_array_length(ptr_highlight, prop_highlight);
+     blender::Array<bool, 64> highlight_array(highlight_array_len);
+     RNA_property_boolean_get_array(ptr_highlight, prop_highlight, highlight_array.data());
+     const int end = std::min<int>(start_size + highlight_array_len, block->buttons.size());
+     for (int i = start_size; i < end; i++) {
+       uiBut *tab_but = block->buttons[i].get();
+-      SET_FLAG_FROM_TEST(tab_but->flag, !highlight_array[i], UI_BUT_INACTIVE);
++      SET_FLAG_FROM_TEST(tab_but->flag, !highlight_array[i - start_size], UI_BUT_INACTIVE);
+     }
+   }
+ }
+
+ /* callback for keymap item change button */
+ static void ui_keymap_but_cb(bContext * /*C*/, void *but_v, void * /*key_v*/)
+ {
+   uiBut *but = static_cast<uiBut *>(but_v);
+   BLI_assert(but->type == ButType::HotkeyEvent);
+   const uiButHotkeyEvent *hotkey_but = (uiButHotkeyEvent *)but;
+
+   RNA_int_set(
+       &but->rnapoin, "shift", (hotkey_but->modifier_key & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING);
+   RNA_int_set(
+       &but->rnapoin, "ctrl", (hotkey_but->modifier_key & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING);
+@@ -3450,45 +3454,47 @@
+                icon,
+                menu_item_enum_rna_menu,
+                nullptr,
+                lvl,
+                RNA_property_description(prop),
+                false,
+                but_func_argN_free<MenuItemLevel>,
+                but_func_argN_copy<MenuItemLevel>);
+ }
+
+ void uiLayout::prop_tabs_enum(bContext *C,
+                               PointerRNA *ptr,
+                               PropertyRNA *prop,
+                               PointerRNA *ptr_highlight,
+                               PropertyRNA *prop_highlight,
+-                              bool icon_only)
++                              bool icon_only,
++                              bool use_tab_style)
+ {
+   uiBlock *block = this->block();
+
+   blender::ui::block_layout_set_current(block, this);
+   ui_item_enum_expand_tabs(this,
+                            C,
+                            block,
+                            ptr,
+                            prop,
+                            ptr_highlight,
+                            prop_highlight,
+                            std::nullopt,
+                            UI_UNIT_Y,
+-                           icon_only);
++                           icon_only,
++                           use_tab_style);
+ }
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name Layout Items
+  * \{ */
+
+ /* single-row layout */
+ static void ui_litem_estimate_row(uiLayout *litem)
+ {
+   int itemw, itemh;
+   bool min_size_flag = true;
+
+   litem->w_ = 0;
 diff --git a/source/blender/editors/space_buttons/space_buttons.cc b/source/blender/editors/space_buttons/space_buttons.cc
 --- a/source/blender/editors/space_buttons/space_buttons.cc
 +++ b/source/blender/editors/space_buttons/space_buttons.cc
@@ -5179,7 +5350,13 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -7,6 +7,8 @@
+@@ -1,150 +1,182 @@
+ /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup DNA
   */
 
  #pragma once
@@ -5188,7 +5365,42 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 
  #include "BLI_utildefines.h"
 
-@@ -49,6 +51,17 @@
+ #include "DNA_asset_types.h"
+ #include "DNA_defs.h"
+ #include "DNA_listBase.h"
+ #include "DNA_vec_types.h"
+ #include "DNA_view2d_types.h"
+
+ #include "DNA_ID.h"
+
+ struct ARegion;
+ struct ARegionType;
+ struct PanelType;
+ struct PointerRNA;
+ struct Scene;
+ struct SpaceLink;
+ struct SpaceType;
+ struct uiBlock;
+ struct uiLayout;
+ struct uiList;
+ struct uiListType;
+ struct wmDrawBuffer;
+ struct wmTimer;
+ struct wmTooltipState;
+ struct Panel_Runtime;
+ #ifdef __cplusplus
+ namespace blender::bke {
+ struct ARegionRuntime;
+ struct FileHandlerType;
+ }  // namespace blender::bke
+ using ARegionRuntimeHandle = blender::bke::ARegionRuntime;
+ using FileHandlerTypeHandle = blender::bke::FileHandlerType;
+ #else
+ typedef struct ARegionRuntimeHandle ARegionRuntimeHandle;
+ typedef struct FileHandlerTypeHandle FileHandlerTypeHandle;
+ #endif
+
+ /* TODO: Doing this is quite ugly :)
   * Once the top-bar is merged bScreen should be refactored to use ScrAreaMap. */
  #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->vertbase)
 
@@ -5206,7 +5418,64 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  typedef struct bScreen {
  #ifdef __cplusplus
    /** See #ID_Type comment for why this is here. */
-@@ -113,6 +126,25 @@
+   static constexpr ID_Type id_type = ID_SCR;
+ #endif
+
+   ID id;
+
+   /* TODO: Should become ScrAreaMap now.
+    * NOTE: KEEP ORDER IN SYNC WITH #ScrAreaMap! (see AREAMAP_FROM_SCREEN macro above). */
+   /** Screens have vertices/edges to define areas. */
+   ListBase vertbase;
+   ListBase edgebase;
+   ListBase areabase;
+   /* End variables that must be in sync with #ScrAreaMap. */
+
+   /** Screen level regions (menus), runtime only. */
+   ListBase regionbase;
+
+   struct Scene *scene DNA_DEPRECATED;
+
+   /** General flags. */
+   short flag;
+   /** Window-ID from WM, starts with 1. */
+   short winid;
+   /** User-setting for which editors get redrawn during animation playback. */
+   short redraws_flag;
+
+   /** Temp screen in a temp window, don't save (like user-preferences). */
+   char temp;
+   /** Temp screen for image render display or file-select. */
+   char state;
+   /** Notifier for drawing edges. */
+   char do_draw;
+   /** Notifier for scale screen, changed screen, etc. */
+   char do_refresh;
+   /** Notifier for gesture draw. */
+   char do_draw_gesture;
+   /** Notifier for paint cursor draw. */
+   char do_draw_paintcursor;
+   /** Notifier for dragging draw. */
+   char do_draw_drag;
+   /** Set to delay screen handling after switching back from maximized area. */
+   char skip_handling;
+   /** Set when scrubbing to avoid some costly updates. */
+   char scrubbing;
+   char _pad[1];
+
+   /** Active region that has mouse focus. */
+   struct ARegion *active_region;
+
+   /** If set, screen has timer handler added in window. */
+   struct wmTimer *animtimer;
+   /** Context callback. */
+   void /*bContextDataCallback*/ *context;
+
+   /* Used to restore after SCREENFULL state. */
+   short fullscreen_flag;
+   char _pad2[6];
+
+   /** Runtime. */
    struct wmTooltipState *tool_tip;
 
    PreviewImage *preview;
@@ -5232,7 +5501,73 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } bScreen;
 
  typedef struct ScrVert {
-@@ -428,6 +460,28 @@
+   struct ScrVert *next, *prev, *newv;
+   vec2s vec;
+   /* first one used internally, second one for tools */
+   short flag, editflag;
+ } ScrVert;
+
+ typedef struct ScrEdge {
+   struct ScrEdge *next, *prev;
+   ScrVert *v1, *v2;
+   /** 1 when at edge of screen. */
+   short border;
+   short flag;
+   char _pad[4];
+ } ScrEdge;
+
+ typedef struct ScrAreaMap {
+   /* ** NOTE: KEEP ORDER IN SYNC WITH LISTBASES IN bScreen! ** */
+
+   /** ScrVert - screens have vertices/edges to define areas. */
+   ListBase vertbase;
+   /** ScrEdge. */
+   ListBase edgebase;
+   /** ScrArea. */
+   ListBase areabase;
+ } ScrAreaMap;
+
+ typedef struct LayoutPanelState {
+   struct LayoutPanelState *next, *prev;
+   /** Identifier of the panel. */
+   char *idname;
+   uint8_t flag;
+   char _pad[3];
+@@ -394,139 +426,169 @@
+   /** Preview needs re-rendering, handled in #ED_preview_draw(). */
+   UI_PREVIEW_TAG_DIRTY = (1 << 0),
+ } uiPreviewTag;
+
+ typedef struct ScrGlobalAreaData {
+   /**
+    * Global areas have a non-dynamic size. That means, changing the window size doesn't
+    * affect their size at all. However, they can still be 'collapsed', by changing this value.
+    * Ignores DPI (#ED_area_global_size_y and winx/winy don't).
+    */
+   short cur_fixed_height;
+   /**
+    * For global areas, this is the min and max size they can use depending on
+    * if they are 'collapsed' or not.
+    */
+   short size_min, size_max;
+   /** GlobalAreaAlign. */
+   short align;
+
+   /** GlobalAreaFlag. */
+   short flag;
+   char _pad[2];
+ } ScrGlobalAreaData;
+
+ enum GlobalAreaFlag {
+   GLOBAL_AREA_IS_HIDDEN = (1 << 0),
+ };
+
+ typedef enum GlobalAreaAlign {
+   GLOBAL_AREA_ALIGN_TOP = 0,
+   GLOBAL_AREA_ALIGN_BOTTOM = 1,
+ } GlobalAreaAlign;
+
+ typedef struct ScrArea_Runtime {
    struct bToolRef *tool;
 +  /* Keep the following 64-bit identity aligned in both 32/64-bit SDNA layouts. */
 +  void *_pad_ipad_runtime_ptr;
@@ -5261,7 +5596,40 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
  } ScrArea_Runtime;
 
  typedef struct ScrArea {
-@@ -468,7 +522,9 @@
+   DNA_DEFINE_CXX_METHODS(ScrArea)
+
+   struct ScrArea *next, *prev;
+
+   /** Ordered (bottom-left, top-left, top-right, bottom-right). */
+   ScrVert *v1, *v2, *v3, *v4;
+   /** If area==full, this is the parent. */
+   bScreen *full;
+
+   /** Rect bound by v1 v2 v3 v4. */
+   rcti totrct;
+
+   /** eSpace_Type (SPACE_FOO). */
+   char spacetype;
+   /**
+    * eSpace_Type (SPACE_FOO).
+    *
+    * Temporarily used while switching area type, otherwise this should be SPACE_EMPTY.
+    * Also, versioning uses it to nicely replace deprecated editors.
+    * It's been there for ages, name doesn't fit any more.
+    */
+   char butspacetype;
+   short butspacetype_subtype;
+
+   /** Size. */
+   short winx, winy;
+
+   /** OLD! 0=no header, 1= down, 2= up. */
+   char headertype DNA_DEPRECATED;
+   /** Private, for spacetype refresh callback. */
+   char do_refresh;
+   short flag;
+   /**
+    * Index of last used region of 'RGN_TYPE_WINDOW'
     * runtime variable, updated by executing operators.
     */
    short region_active_win;
@@ -5272,17 +5640,70 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 
    /** Callbacks for this space type. */
    struct SpaceType *type;
-@@ -494,6 +550,10 @@
+
+   /** Non-NULL if this area is global. */
+   ScrGlobalAreaData *global;
+
+   /**
+    * #SpaceLink.
+    * A list of space links (editors) that were open in this area before. When
+    * changing the editor type, we try to reuse old editor data from this list.
+    * The first item is the active/visible one.
+    */
+   ListBase spacedata;
+   /**
+    * #ARegion.
+    * \note This region list is the one from the active/visible editor (first item in
+    * spacedata list). Use SpaceLink.regionbase if it's inactive (but only then)!
+    */
+   ListBase regionbase;
+   /** #wmEventHandler. */
+   ListBase handlers;
 
    /** #AZone. */
    ListBase actionzones;
-+
+
 +  /** Persistent native-editor launcher rank; zero retains natural placement. */
 +  int ipad_launcher_order;
 +  int _pad_ipad_launcher;
-
++
++  /* Preserve explicit alignment of runtime and the enclosing 32/64-bit SDNA. */
++  void *_pad_ipad_area_runtime;
    ScrArea_Runtime runtime;
  } ScrArea;
+
+ typedef struct ARegion {
+   struct ARegion *next, *prev;
+
+   /** 2D-View scrolling/zoom info (most regions are 2d anyways). */
+   View2D v2d;
+   /** Coordinates of region. */
+   rcti winrct;
+   /** Size. */
+   short winx, winy;
+   /**
+    * This is a Y offset on the panel tabs that represents pixels,
+    * where zero represents no scroll - the first category always shows first at the top.
+    */
+   int category_scroll;
+
+   /** Window, header, etc. identifier for drawing. */
+   short regiontype;
+   /** How it should split. */
+   short alignment;
+   /** Hide, .... */
+   short flag;
+
+   /** Current split size in unscaled pixels (if zero it uses regiontype).
+    * To convert to pixels use: `UI_SCALE_FAC * region->sizex + 0.5f`.
+    * However to get the current region size, you should usually use winx/winy from above, not this!
+    */
+   short sizex, sizey;
+
+   /** Private, set for indicate drawing overlapped. */
+   short overlap;
+   /** Temporary copy of flag settings for clean full-screen. */
+   short flagfullscreen;
 diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/windowmanager/intern/wm_draw.cc
 --- a/source/blender/windowmanager/intern/wm_draw.cc
 +++ b/source/blender/windowmanager/intern/wm_draw.cc
