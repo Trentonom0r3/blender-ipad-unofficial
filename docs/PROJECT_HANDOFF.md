@@ -3,6 +3,12 @@
 
 ## Inspector native compile fixes — 2026-09-22
 
+Combined source **cb7966c3f978c72356486be50afe1ece797fe297** was pushed and
+[iOS run 35698122851](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35698122851)
+was dispatched for that exact SHA. Initial state: queued. Inspect this run before
+starting another build. It includes the chooser dismissal, both native compile
+repairs and single launcher registrations. No new IPA is verified yet.
+
 Run35677001412 at ba296b984ab2827e5cb663d555557f962bf27572 completed with
 FAILURE. Native compilation stopped in space_buttons.cc because BLI_scope_exit.hh
 does not exist at the pinned upstream commit. The prior editor/runtime DNA repairs
