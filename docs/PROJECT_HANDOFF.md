@@ -1,6 +1,43 @@
 # Project handoff — 2026-09-13
 
 
+## Layout reversal lifecycle findings — 2026-09-22
+
+Pinned-source review (including an independent review) confirms ordinary native
+Join frees the removed area's space history and regions. General partial-edge
+join can also trim/split and close remainders. A reversible touch join therefore
+needs a native layout checkpoint plus a deliberate retained-editor choice; simply
+exposing SCREEN_OT_area_join would not preserve the requested editor state.
+
+ED_workspace_layout_duplicate uses screen_data_copy for a normal screen, preserving
+native geometry and editor data. Workspace layouts are written/read by the native
+workspace ID code, with their screen references participating in ID traversal.
+ED_screen_change performs normal popup/modal teardown, window ownership handling,
+refresh and scene synchronization. This provides a viable restoration route without
+reverting scene data; retain the outgoing layout too so newer editor settings stay
+recoverable when an older layout is restored.
+
+Additional constraint found in workspace_layout_edit.cc: naming a duplicate a
+checkpoint is insufficient. workspace_layout_set_poll accepts any unused normal
+screen, and ensure_unused_layout can select it for another window; layout cycling
+uses the same poll. Checkpoints need an explicit persistent role excluded from
+ordinary layout reuse/cycling, and restoration must deliberately activate a copy
+or safely transfer that role. Do not use temp screens, which are not saved like
+normal layouts, or rely on a dot-name/user preference to protect history.
+
+Next implement checkpoint ownership/lifecycle and deliberate restore before a
+join transaction. Begin join geometry with exact full-edge rectangular neighbors
+(no implicit remainder deletion), then handle broader layouts explicitly. Rebind
+index-based panel owner/active-editor references after any area removal. Validate
+save/reopen, workspace duplication/deletion, scene edits since checkpoint, multiple
+windows, modal cancellation and outgoing-layout recovery. Bound/manage history
+without silently deleting the only copy of a removed editor. This is researched
+design, not implemented or device-validated layout reversal.
+
+The active delivery build remains run35698122851 at cb7966c. It was confirmed live
+in source fetch after successful cloud preflight during this review; inspect its
+actual result before dispatching anything else.
+
 ## Inspector native compile fixes — 2026-09-22
 
 Combined source **cb7966c3f978c72356486be50afe1ece797fe297** was pushed and
