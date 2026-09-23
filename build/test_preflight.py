@@ -18,6 +18,18 @@ class PreflightTests(unittest.TestCase):
     def test_existing_source_patch(self):
         check_patch(PATCH, patch_files(PATCH), lambda _: b'old\n')
 
+    def test_stale_hunk_count_is_rejected(self):
+        patch = '''diff --git a/new.cc b/new.cc
+new file mode 100644
+--- /dev/null
++++ b/new.cc
+@@ -0,0 +1,1 @@
++first line
++second line
+'''
+        with self.assertRaisesRegex(ValueError, 'hunk counts do not match'):
+            check_patch(patch, patch_files(patch), lambda _: self.fail('New files need no source'))
+
     def test_wrong_upstream_is_rejected(self):
         import subprocess
         with self.assertRaises(subprocess.CalledProcessError):

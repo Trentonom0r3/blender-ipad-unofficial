@@ -83,8 +83,17 @@ def get_source(commit: str, path: str, cache: Path, offline: bool) -> bytes:
 
 
 def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> None:
+    encoded = patch.encode('utf-8')
     with tempfile.TemporaryDirectory(prefix='blender-ipad-preflight-') as directory:
         work = Path(directory)
+        raw_numstat = subprocess.run(
+            ['git', 'apply', '--numstat', '-'], input=encoded, cwd=work,
+            check=True, capture_output=True).stdout
+        recounted_numstat = subprocess.run(
+            ['git', 'apply', '--recount', '--numstat', '-'], input=encoded, cwd=work,
+            check=True, capture_output=True).stdout
+        if raw_numstat != recounted_numstat:
+            raise ValueError('Patch hunk counts do not match its added/removed lines')
         existing = [path for path, needs_source in files if needs_source]
         with ThreadPoolExecutor(max_workers=4) as pool:
             for path, data in zip(existing, pool.map(source_loader, existing)):
@@ -100,7 +109,6 @@ def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> Non
                               if 'source/blender/blenlib/' + header not in changed_paths)
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(source_loader, dependencies))
-        encoded = patch.encode('utf-8')
         for flags in (['--check'], []):
             subprocess.run(['git', 'apply', '--whitespace=error-all', *flags, '-'],
                            input=encoded, cwd=work, check=True)

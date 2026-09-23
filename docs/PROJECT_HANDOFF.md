@@ -14,7 +14,7 @@ check still reference the layout; repeated checkpoint names receive distinct lab
 
 Host C++ regression coverage compiles the exact checkpoint-validity, unique-name,
 reference-audit, exact-edge-neighbor and post-join remapping helpers from the patch.
-All 28 build tests pass, `git diff --check` is clean, and pinned source preflight
+All 29 build tests pass, `git diff --check` is clean, and pinned source preflight
 applies the patch to 56 files. Commit `0a7b0054d4b83ff9144b0aca6edce129534c532e`
 passed native iOS Release compilation and IPA packaging in [run
 35833417772](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35833417772).
@@ -22,11 +22,16 @@ Verified artifact `Blender-iPad-Unofficial-ipa`, id `10738791172`, 248,429,090
 bytes, SHA-256 `8be6605aefb018afec4125eae1a7bbde276e41fd9b475b4e71d5dd7df6343cf7`,
 expires 2026-12-22. It includes saved-layout history and exact-edge join, but
 predates the follow-up that refuses to swap editor contents if recovery checkpoint
-capture fails. That follow-up is commit `56f5e23bc1f652dca711cbc52416a79d278b30f2`;
-its preflight passed and native build 35833932550 has started. No saved-layout
-save/reopen test or iPad acceptance has been completed.
+capture fails. Build 35833932550 for commit `56f5e23bc1f652dca711cbc52416a79d278b30f2`
+failed in native compilation: its edited new-file hunk retained the old 2,141-line
+count after three guard lines were added, so raw `git apply` omitted the file's
+closing brace and `#endif`. The hunk is now 2,144 lines, and preflight compares
+normal and recounted `git apply --numstat` totals; a regression test rejects stale
+hunk counts. The corrected patch passes all 29 host tests and pinned-source
+preflight. It still needs a fresh native build. No saved-layout save/reopen test or
+iPad acceptance has been completed.
 
-Still required in this layout milestone: build the latest recovery-guard commit,
+Still required in this layout milestone: rebuild the corrected recovery-guard patch,
 validate persistence across save/reopen, workspace duplication/deletion and
 multiple-window lifecycle, then perform iPad acceptance. Neither the cb7966 IPA nor
 run 358334 contains the latest guard.
