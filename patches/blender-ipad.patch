@@ -5046,11 +5046,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
-@@ -0,0 +1,150 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
-+ * context, operator or callback is retained while UIKit owns the picker. */
+@@ -0,0 +1,163 @@
 +@interface GHOST_IOSProjectExporter : NSObject <UIDocumentPickerDelegate,
 +                                               UIAdaptivePresentationControllerDelegate>
 +{
@@ -5058,9 +5054,26 @@ new file mode 100644
 +  UIDocumentPickerViewController *_picker;
 +  NSURL *_staging;
 +  BOOL _busy;
-+  NSString *_exportFilename;
-+  NSString *_exportTitle;
 +}
++- (BOOL)present:(NSString *)filename
++          title:(NSString *)title
++         writer:(const std::function<bool(const char *)> &)writer;
++@end
++
++@implementation GHOST_IOSProjectExporter
++- (void)finish
++{
++  if (_staging) {
++    /* This URL is always our unique temporary directory, never a provider URL. */
++    [[NSFileManager defaultManager] removeItemAtURL:_staging error:nullptr];
++    [_staging release];
++    _staging = nil;
++  }
++  [_presenter release];
++  _presenter = nil;
++  _busy = NO;
++}
++
 +- (BOOL)present:(NSString *)filename
 +          title:(NSString *)title
 +         writer:(const std::function<bool(const char *)> &)writer

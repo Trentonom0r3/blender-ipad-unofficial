@@ -33,9 +33,18 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertNotIn("std::function", save)
 
         model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")
-        self.assertNotIn("_compressWriter", model_export)
-        self.assertNotIn("_on_saved", model_export)
-        self.assertNotIn("presentWithCompressPrompt", model_export)
+        self.assertIn("@interface GHOST_IOSProjectExporter", model_export)
+        self.assertIn("@implementation GHOST_IOSProjectExporter", model_export)
+        self.assertIn("bool GHOST_IOS_export_file", model_export)
+
+    def test_model_exporter_header_keeps_interface_separate_from_implementation(self):
+        model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")
+        declaration = model_export.index("@interface GHOST_IOSProjectExporter")
+        interface_end = model_export.index("@end", declaration)
+        implementation = model_export.index("@implementation GHOST_IOSProjectExporter")
+        self.assertLess(interface_end, implementation)
+        self.assertIn("writer:(const std::function<bool(const char *)> &)writer;", model_export)
+        self.assertGreater(model_export.index("bool GHOST_IOS_export_file"), implementation)
 
     def test_native_action_reaches_the_blender_modal_event(self):
         ghost_types = diff_for("intern/ghost/GHOST_Types.h")
