@@ -74,10 +74,11 @@ working editors and an object that can be moved without saving the original:
    edits, stale active-editor ownership, lost editor state or any desktop-input
    regression.
 
-Use the run/source listed above and record orientation, input device and exact
-result. Run 358334 is usable for the normal layout path; run 358339 adds the
-recovery guard and should be preferred once its IPA is verified. This protocol is
-not evidence of acceptance until performed on the iPad.
+Use the newest verified IPA and record orientation, input device and exact result.
+The last verified package is run 358357 at source `965bb708`; run 358379 at source
+`e7cce601` adds unique restore-history labels and is currently building. Prefer
+its artifact after packaging succeeds. This protocol is not evidence of acceptance
+until performed on the iPad.
 
 
 ## Layout reversal lifecycle findings — 2026-09-22
