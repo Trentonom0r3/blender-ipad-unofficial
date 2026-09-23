@@ -414,7 +414,21 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
  #include "GPU_context.hh"
 
-@@ -2321,6 +2324,21 @@
+@@ -174,6 +177,13 @@
+ /** \name Misc Utility Functions
+  * \{ */
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++static uint64_t ipad_file_modified_generation = 0;
++#endif
++
+ void WM_file_tag_modified()
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ++ipad_file_modified_generation;
++#endif
+   wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+@@ -2321,6 +2331,21 @@
      SNPRINTF(filename, "%d_autosave.blend", pid);
    }
 
@@ -436,7 +450,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3202,6 +3220,13 @@
+@@ -3202,6 +3227,13 @@
      return OPERATOR_CANCELLED;
    }
 
@@ -450,7 +464,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    /* If possible, get the name of the most recently used `.blend` file. */
    if (G.recent_files.first) {
      RecentFile *recent = static_cast<RecentFile *>(G.recent_files.first);
-@@ -3217,6 +3242,7 @@
+@@ -3217,6 +3249,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -458,7 +472,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3403,252 @@
+@@ -3377,6 +3410,305 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -475,9 +489,22 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  return OPERATOR_FINISHED;
 +}
 +
++static wmOperatorStatus wm_import_project_folder_from_files_exec(bContext * /*C*/,
++                                                                 wmOperator *op)
++{
++  if (!GHOST_IOS_import_project_folder()) {
++    BKE_report(op->reports, RPT_WARNING, "Close the current dialog before importing a folder");
++    return OPERATOR_CANCELLED;
++  }
++  return OPERATOR_FINISHED;
++}
++
 +struct IpadFilesSaveData {
 +  bool save_copy;
 +  bool provider_update;
++  bool reported_pending_save;
++  uint64_t modification_generation;
++  Main *main_at_stage;
 +};
 +
 +static void wm_save_to_files_data_free(wmOperator *op)
@@ -504,6 +531,13 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +    return OPERATOR_CANCELLED;
 +  }
 +  if (event->type == EVT_ESCKEY && event->val == KM_PRESS) {
++    if (data->provider_update) {
++      if (!data->reported_pending_save) {
++        BKE_report(op->reports, RPT_INFO, "Saving to Files; wait for the result");
++        data->reported_pending_save = true;
++      }
++      return OPERATOR_RUNNING_MODAL;
++    }
 +    wm_save_to_files_data_free(op);
 +    GHOST_IOS_project_export_cancel();
 +    return OPERATOR_CANCELLED;
@@ -535,6 +569,8 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +      GHOST_IOS_project_export_cancel();
 +      return OPERATOR_CANCELLED;
 +    }
++    data->modification_generation = ipad_file_modified_generation;
++    data->main_at_stage = CTX_data_main(C);
 +    if (!GHOST_IOS_project_export_present_picker()) {
 +      BKE_report(op->reports, RPT_ERROR, "Could not present the Files save sheet");
 +      wm_save_to_files_data_free(op);
@@ -546,17 +582,36 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  if (action == GHOST_IOSProjectExportAction_Saved) {
 +    if (!data->save_copy) {
 +      Main *bmain = CTX_data_main(C);
-+      if (!data->provider_update) {
++      const bool same_main = bmain && bmain == data->main_at_stage;
++      const bool snapshot_current = same_main &&
++                                    data->modification_generation == ipad_file_modified_generation;
++      if (same_main && !data->provider_update) {
 +        STRNCPY(bmain->filepath, path);
 +      }
-+      bmain->has_forward_compatibility_issues = false;
-+      bmain->colorspace.is_missing_opencolorio_config = false;
-+      WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
++      if (snapshot_current) {
++        bmain->has_forward_compatibility_issues = false;
++        bmain->colorspace.is_missing_opencolorio_config = false;
++        /* Set the saved flag now. A later edit can clear it before notifiers
++         * are drained; a delayed ND_FILESAVE would incorrectly set it again. */
++        if (wmWindowManager *wm = CTX_wm_manager(C)) {
++          wm->file_saved = 1;
++          WM_event_add_notifier(C, NC_WM | ND_DATACHANGED, nullptr);
++        }
++      }
++      else if (same_main) {
++        /* The provider wrote the staged snapshot, but later edits must retain
++         * Blender's unsaved marker and autosave schedule. */
++        WM_file_tag_modified();
++      }
 +      if (wmWindowManager *wm = CTX_wm_manager(C)) {
-+        wm_autosave_timer_end(wm);
-+        wm_autosave_timer_begin(wm);
-+        wm->autosave_scheduled = false;
++        if (snapshot_current) {
++          wm_autosave_timer_end(wm);
++          wm_autosave_timer_begin(wm);
++          wm->autosave_scheduled = false;
++        }
 +        BKE_reportf(&wm->runtime->reports, RPT_INFO,
++                    !same_main ? "Saved prior project \"%s\"; current project unchanged" :
++                    !snapshot_current ? "Saved snapshot \"%s\"; newer edits remain unsaved" :
 +                    data->provider_update ? "Saved \"%s\"" : "Saved as \"%s\"",
 +                    BLI_path_basename(path));
 +      }
@@ -608,7 +663,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  op->customdata = MEM_callocN<IpadFilesSaveData>("iPad Files provider save data");
 +  auto *data = static_cast<IpadFilesSaveData *>(op->customdata);
 +  data->provider_update = true;
-+  if (!GHOST_IOS_begin_project_update(BLI_path_basename(current))) {
++  if (!GHOST_IOS_begin_project_update(current)) {
 +    BKE_report(op->reports, RPT_ERROR, "Could not begin a coordinated Files save");
 +    wm_save_to_files_data_free(op);
 +    return OPERATOR_CANCELLED;
@@ -623,6 +678,8 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +    GHOST_IOS_project_export_cancel();
 +    return OPERATOR_CANCELLED;
 +  }
++  data->modification_generation = ipad_file_modified_generation;
++  data->main_at_stage = CTX_data_main(C);
 +  WM_event_add_modal_handler(C, op);
 +  return OPERATOR_RUNNING_MODAL;
 +}
@@ -683,6 +740,16 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->poll = WM_operator_winactive;
 +}
 +
++void WM_OT_import_project_folder_from_files(wmOperatorType *ot)
++{
++  ot->name = "Import Project Folder from Files";
++  ot->idname = "WM_OT_import_project_folder_from_files";
++  ot->description = "Copy a complete project folder, including textures and libraries, "
++                    "into Blender's Projects folder and open a .blend file inside it";
++  ot->exec = wm_import_project_folder_from_files_exec;
++  ot->poll = WM_operator_winactive;
++}
++
 +static wmOperatorStatus wm_save_as_to_files_invoke(bContext *C,
 +                                                   wmOperator *op,
 +                                                   const wmEvent * /*event*/)
@@ -711,7 +778,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
-@@ -3696,7 +3896,10 @@
+@@ -3696,7 +3956,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -723,7 +790,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +3911,7 @@
+@@ -3708,6 +3971,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -731,7 +798,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3745,4 +3949,14 @@
+@@ -3745,4 +4009,14 @@
      return OPERATOR_CANCELLED;
    }
 
@@ -746,7 +813,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +#endif
 +
    if ((is_save_as == false) && is_incremental) {
-@@ -3924,3 +4138,8 @@
+@@ -3924,3 +4198,8 @@
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (GHOST_IOS_project_document_bookmark_matches(blendfile_path)) {
@@ -755,7 +822,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +#endif
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
-@@ -3939,8 +4158,13 @@
+@@ -3939,8 +4218,13 @@
      }
    }
    else {
@@ -769,7 +836,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3967,4 +4191,8 @@
+@@ -3967,4 +4251,8 @@
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -2829,7 +2896,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,227 @@
+@@ -0,0 +1,230 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -2955,7 +3022,10 @@ new file mode 100644
 +        if "import_project_from_files" in dir(bpy.ops.wm):
 +            project = layout.column(align=True)
 +            project.scale_y = 1.6
-+            project.operator('wm.open_mainfile', text="Open Project", icon='FILE_FOLDER')
++            project.operator('wm.open_mainfile', text="Open Project Copy", icon='FILE_FOLDER')
++            if "import_project_folder_from_files" in dir(bpy.ops.wm):
++                project.operator('wm.import_project_folder_from_files',
++                                 text="Import Project Folder", icon='FILE_FOLDER')
 +            project.operator('wm.save_mainfile', text="Save Project", icon='FILE_TICK')
 +            layout.separator()
 +
@@ -3092,6 +3162,15 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
  @interface IOSAppDelegate : UIResponder <UIApplicationDelegate>
 
  @property(strong, nonatomic) UIWindow *window;
+@@ -54,7 +59,8 @@
+ - (BOOL)application:(UIApplication *)application
+     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
++  GHOST_IOS_cleanup_abandoned_project_imports();
+   main_ios_callback(argc, argv);
+
+   return YES;
+ }
 @@ -94,6 +98,15 @@
  - (void)drawInMTKView:(nonnull MTKView *)MTKView
  {
@@ -3648,7 +3727,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,53 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3657,6 +3736,8 @@ new file mode 100644
 +/* Present a native picker for an independent local .blend copy. Main thread only.
 + * Returns whether presentation began, not whether a project has been opened. */
 +bool GHOST_IOS_import_project();
++/* Import a chosen folder as an independent local project, including sibling assets. */
++bool GHOST_IOS_import_project_folder();
 +
 +enum GHOST_IOSProjectExportAction {
 +  GHOST_IOSProjectExportAction_None,
@@ -3670,7 +3751,7 @@ new file mode 100644
 +/* Project-save UI reports native choices as window events. Blender serializes
 + * from its live operator context after receiving the compression choice. */
 +bool GHOST_IOS_begin_project_export(const char *filename, bool save_copy);
-+bool GHOST_IOS_begin_project_update(const char *filename);
++bool GHOST_IOS_begin_project_update(const char *path);
 +GHOST_IOSProjectExportAction GHOST_IOS_project_export_take_action(char *out_path,
 +                                                                  size_t max_len);
 +bool GHOST_IOS_project_export_staging_path(char *out_path, size_t max_len);
@@ -3704,7 +3785,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,502 @@
+@@ -0,0 +1,827 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. This service imports an independent
@@ -3717,10 +3798,13 @@ new file mode 100644
 +  UIViewController *_presenter;
 +  UIDocumentPickerViewController *_picker;
 +  UIAlertController *_progress;
++  NSProgress *_copyProgress;
++  NSURL *_pendingProject;
 +  NSUInteger _generation;
 +  BOOL _busy;
++  BOOL _folderMode;
 +}
-+- (BOOL)present;
++- (BOOL)presentWithFolderMode:(BOOL)folderMode;
 +@end
 +
 +@implementation GHOST_IOSProjectImporter
@@ -3738,6 +3822,34 @@ new file mode 100644
 +- (void)finish
 +{
 +  _busy = NO;
++  _folderMode = NO;
++  if (_copyProgress) {
++    [_copyProgress cancel];
++    [_copyProgress release];
++    _copyProgress = nil;
++  }
++  if (_picker) {
++    _picker.delegate = nil;
++    _picker.presentationController.delegate = nil;
++    [_picker dismissViewControllerAnimated:NO completion:nil];
++    [_picker release];
++    _picker = nil;
++  }
++  if (_progress) {
++    [_progress dismissViewControllerAnimated:NO completion:nil];
++    [_progress release];
++    _progress = nil;
++  }
++  if (_pendingProject) {
++    NSURL *project = _pendingProject;
++    _pendingProject = nil;
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++      @autoreleasepool {
++        [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++        [project release];
++      }
++    });
++  }
 +  [_presenter release];
 +  _presenter = nil;
 +}
@@ -3759,6 +3871,33 @@ new file mode 100644
 +  [self finish];
 +}
 +
++- (void)openImportedProject:(NSURL *)file
++               projectRoot:(NSURL *)project
++                generation:(NSUInteger)generation
++{
++  if (generation != _generation) {
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++      [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++    });
++    return;
++  }
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (![self hasLivePresenter] || !system || !system->handleOpenDocumentRequest(file.path)) {
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++      [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++    });
++    [self showError:@"The project could not be opened. Check that the file is a valid Blender project."];
++    return;
++  }
++  /* Normal GHOST open event retains Blender's unsaved-changes dialog and script
++   * policy. No operator/context pointer survives UIKit. */
++  if (_pendingProject == project) {
++    [_pendingProject release];
++    _pendingProject = nil;
++  }
++  [self finish];
++}
++
 +- (void)dismissPicker:(void (^)(void))completion
 +{
 +  UIDocumentPickerViewController *picker = _picker;
@@ -3769,9 +3908,13 @@ new file mode 100644
 +  [picker release];
 +}
 +
-+- (BOOL)present
++- (BOOL)presentWithFolderMode:(BOOL)folderMode
 +{
 +  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy && ![self hasLivePresenter]) {
++    ++_generation;
++    [self finish];
++  }
 +  if (_busy || !system || !system->current_active_window_) {
 +    return NO;
 +  }
@@ -3781,14 +3924,20 @@ new file mode 100644
 +  }
 +  _presenter = [presenter retain];
 +  _busy = YES;
++  _folderMode = folderMode;
 +  ++_generation;
 +  UTType *blend = [UTType typeWithFilenameExtension:@"blend" conformingToType:UTTypeData];
-+  _picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:@[blend ?: UTTypeData]
-+                                                                     asCopy:YES];
++  NSArray<UTType *> *types = folderMode ? @[UTTypeFolder] : @[blend ?: UTTypeData];
++  _picker = [[UIDocumentPickerViewController alloc]
++      initForOpeningContentTypes:types asCopy:NO];
++  if (!_picker) {
++    [self finish];
++    return NO;
++  }
 +  _picker.allowsMultipleSelection = NO;
 +  _picker.delegate = self;
 +  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = @"Open a Blender Project";
++  _picker.title = folderMode ? @"Import a Project Folder" : @"Open a Project Copy";
 +  [_presenter presentViewController:_picker animated:YES completion:nil];
 +  _picker.presentationController.delegate = self;
 +  return YES;
@@ -3816,26 +3965,110 @@ new file mode 100644
 +  [self finish];
 +}
 +
++/* Coordinate each item separately. A coordinated read of an ordinary directory
++ * does not coordinate writes to files inside it. Enumerate names while holding
++ * the directory read, then coordinate each child using its original provider URL.
++ * Never nest coordinator calls inside an accessor. */
++- (BOOL)copyItemAtURL:(NSURL *)source
++                toURL:(NSURL *)destination
++              manager:(NSFileManager *)manager
++             progress:(NSProgress *)copyProgress
++                error:(NSError **)outError
++{
++  if (copyProgress.cancelled) {
++    if (outError) {
++      *outError = [NSError errorWithDomain:NSCocoaErrorDomain
++                                      code:NSUserCancelledError userInfo:nil];
++    }
++    return NO;
++  }
++  __block BOOL copied = NO;
++  __block NSArray<NSString *> *childNames = nil;
++  NSError *coordinationError = nil;
++  NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
++  [coordinator coordinateReadingItemAtURL:source options:0 error:&coordinationError
++                               byAccessor:^(NSURL *readURL) {
++    NSNumber *directory = nil;
++    NSNumber *symbolicLink = nil;
++    if (![readURL getResourceValue:&directory forKey:NSURLIsDirectoryKey error:outError] ||
++        ![readURL getResourceValue:&symbolicLink forKey:NSURLIsSymbolicLinkKey error:outError]) {
++      return;
++    }
++    if (!directory.boolValue || symbolicLink.boolValue) {
++      copied = [manager copyItemAtURL:readURL toURL:destination error:outError];
++      return;
++    }
++    if (![manager createDirectoryAtURL:destination
++            withIntermediateDirectories:YES attributes:nil error:outError]) {
++      return;
++    }
++    NSArray<NSURL *> *children = [manager contentsOfDirectoryAtURL:readURL
++                                       includingPropertiesForKeys:nil
++                                                          options:0 error:outError];
++    if (!children) {
++      return;
++    }
++    NSMutableArray<NSString *> *names = [NSMutableArray arrayWithCapacity:children.count];
++    for (NSURL *child in children) {
++      [names addObject:child.lastPathComponent];
++    }
++    childNames = [names copy];
++    copied = YES;
++  }];
++  [coordinator release];
++  if (!copied && outError && !*outError) {
++    *outError = coordinationError;
++  }
++  if (copied && childNames) {
++    for (NSString *name in childNames) {
++      NSURL *childSource = [source URLByAppendingPathComponent:name];
++      NSURL *childDestination = [destination URLByAppendingPathComponent:name];
++      if (![self copyItemAtURL:childSource toURL:childDestination manager:manager
++                       progress:copyProgress error:outError]) {
++        copied = NO;
++        break;
++      }
++    }
++  }
++  [childNames release];
++  if (copyProgress.cancelled) {
++    if (outError) {
++      *outError = [NSError errorWithDomain:NSCocoaErrorDomain
++                                      code:NSUserCancelledError userInfo:nil];
++    }
++    return NO;
++  }
++  return copied;
++}
++
 +- (void)importURL:(NSURL *)source
 +{
 +  if (![self hasLivePresenter]) {
 +    [self finish];
 +    return;
 +  }
-+  if (!source.isFileURL || [source.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
-+    [self showError:@"Choose a Blender (.blend) project."];
++  const BOOL folderMode = _folderMode;
++  if (!source.isFileURL ||
++      (!folderMode && [source.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame))
++  {
++    [self showError:folderMode ? @"Choose a project folder." : @"Choose a Blender (.blend) project."];
 +    return;
 +  }
 +  const NSUInteger generation = _generation;
-+  _progress = [[UIAlertController alertControllerWithTitle:@"Opening Project"
-+                                                  message:@"Preparing project in Blender's Projects folder."
++  _copyProgress = [[NSProgress progressWithTotalUnitCount:1] retain];
++  NSProgress *copyProgress = _copyProgress;
++  _progress = [[UIAlertController alertControllerWithTitle:folderMode ? @"Importing Project Folder" :
++                                                                    @"Opening Project"
++                                                  message:@"Copying project into Blender's Projects folder."
 +                                           preferredStyle:UIAlertControllerStyleAlert] retain];
++  [_progress setModalInPresentation:YES];
 +  [_progress addAction:[UIAlertAction actionWithTitle:@"Cancel"
 +                                               style:UIAlertActionStyleCancel
 +                                             handler:^(UIAlertAction *action) {
 +    /* File-provider work may finish later. Its generation cannot open a project
 +     * or dismiss UI belonging to a newer request. */
 +    ++_generation;
++    [copyProgress cancel];
 +    [_progress release];
 +    _progress = nil;
 +    [self finish];
@@ -3848,38 +4081,109 @@ new file mode 100644
 +                                            inDomains:NSUserDomainMask] firstObject];
 +        /* Never overwrite an existing import, even for equal filenames. Keep the
 +         * original filename inside its own visible project directory. */
++        NSString *identifier = [NSUUID UUID].UUIDString;
 +        NSString *folder = [NSString stringWithFormat:@"%@ - %@",
-+                            source.lastPathComponent.stringByDeletingPathExtension,
-+                            [NSUUID UUID].UUIDString];
-+        NSURL *project = [[documents URLByAppendingPathComponent:@"Projects" isDirectory:YES]
-+                          URLByAppendingPathComponent:folder isDirectory:YES];
-+        NSURL *destination = [project URLByAppendingPathComponent:source.lastPathComponent];
++                            folderMode ? source.lastPathComponent :
++                                         source.lastPathComponent.stringByDeletingPathExtension,
++                            identifier];
++        NSURL *projects = [documents URLByAppendingPathComponent:@"Projects" isDirectory:YES];
++        NSURL *project = [projects URLByAppendingPathComponent:folder isDirectory:YES];
++        NSURL *stagingProject = [projects URLByAppendingPathComponent:
++            [@".BlenderImport-" stringByAppendingString:identifier] isDirectory:YES];
++        NSURL *destination = folderMode ? project :
++                                           [project URLByAppendingPathComponent:source.lastPathComponent];
++        NSURL *stagingDestination = folderMode ? stagingProject :
++            [stagingProject URLByAppendingPathComponent:source.lastPathComponent];
 +        __block NSError *copy_error = nil;
-+        NSError *coordination_error = nil;
-+        __block BOOL copied = NO;
++        BOOL copied = NO;
 +        const BOOL scoped = [source startAccessingSecurityScopedResource];
-+        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-+        [coordinator coordinateReadingItemAtURL:source options:0 error:&coordination_error
-+                                     byAccessor:^(NSURL *read_url) {
-+          NSNumber *regular = nil;
-+          if (![read_url getResourceValue:&regular forKey:NSURLIsRegularFileKey error:&copy_error] ||
-+              !regular.boolValue) {
-+            return;
-+          }
-+          if ([manager createDirectoryAtURL:project withIntermediateDirectories:YES
-+                                 attributes:nil error:&copy_error]) {
-+            /* The actual copy is inside the coordinator's accessor. Blender
-+             * subsequently reads our local copy, outside the provider lease. */
-+            copied = [manager copyItemAtURL:read_url toURL:destination error:&copy_error];
-+          }
-+        }];
-+        [coordinator release];
++        if ([manager createDirectoryAtURL:folderMode ? projects : stagingProject
++                    withIntermediateDirectories:YES attributes:nil error:&copy_error]) {
++          copied = [self copyItemAtURL:source toURL:stagingDestination
++                                 manager:manager progress:copyProgress error:&copy_error];
++        }
 +        if (scoped) {
 +          [source stopAccessingSecurityScopedResource];
 +        }
-+        NSString *failure = (coordination_error ?: copy_error).localizedDescription;
++        NSMutableArray<NSURL *> *blendFiles = [NSMutableArray array];
++        __block BOOL enumerationFailed = NO;
++        if (copied && folderMode) {
++          NSDirectoryEnumerator<NSURL *> *contents = [manager
++              enumeratorAtURL:stagingDestination
++              includingPropertiesForKeys:@[NSURLIsRegularFileKey]
++              options:NSDirectoryEnumerationSkipsHiddenFiles |
++                      NSDirectoryEnumerationSkipsPackageDescendants
++              errorHandler:^BOOL(NSURL *url, NSError *error) {
++                copy_error = error;
++                enumerationFailed = YES;
++                return NO;
++              }];
++          for (NSURL *item in contents) {
++            if (copyProgress.cancelled) {
++              copied = NO;
++              break;
++            }
++            if ([item.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++              continue;
++            }
++            NSNumber *regular = nil;
++            if (![item getResourceValue:&regular forKey:NSURLIsRegularFileKey error:&copy_error]) {
++              enumerationFailed = YES;
++              break;
++            }
++            if (regular.boolValue) {
++              [blendFiles addObject:item];
++            }
++          }
++          if (copyProgress.cancelled) {
++            copied = NO;
++          }
++          else {
++            [blendFiles sortUsingComparator:^NSComparisonResult(NSURL *a, NSURL *b) {
++              return [a.path localizedStandardCompare:b.path];
++            }];
++          }
++        }
++        NSString *failure = copy_error.localizedDescription;
++        if (copied && folderMode && (enumerationFailed || !blendFiles.count)) {
++          copied = NO;
++          if (!enumerationFailed) {
++            failure = @"This folder has no .blend file. Choose a folder containing a project file.";
++          }
++        }
++        BOOL moved = NO;
++        if (copied && !copyProgress.cancelled) {
++          moved = [manager moveItemAtURL:stagingProject toURL:project error:&copy_error];
++          copied = moved;
++          if (!moved) {
++            failure = copy_error.localizedDescription;
++          }
++        }
++        else {
++          copied = NO;
++        }
++        if (copied && folderMode) {
++          NSString *prefix = [stagingDestination.path stringByAppendingString:@"/"];
++          for (NSUInteger i = 0; i < blendFiles.count; ++i) {
++            NSURL *file = blendFiles[i];
++            if (![file.path hasPrefix:prefix]) {
++              copied = NO;
++              failure = @"The copied project paths could not be validated.";
++              break;
++            }
++            NSString *relative = [file.path substringFromIndex:prefix.length];
++            [blendFiles replaceObjectAtIndex:i
++                                 withObject:[destination URLByAppendingPathComponent:relative]];
++          }
++        }
++        if (copyProgress.cancelled) {
++          copied = NO;
++        }
 +        if (!copied) {
-+          [manager removeItemAtURL:project error:nullptr];
++          [manager removeItemAtURL:stagingProject error:nullptr];
++          if (moved) {
++            [manager removeItemAtURL:project error:nullptr];
++          }
 +        }
 +        dispatch_async(dispatch_get_main_queue(), ^{
 +          if (generation != _generation) {
@@ -3890,24 +4194,68 @@ new file mode 100644
 +            }
 +            return;
 +          }
++          if (![self hasLivePresenter]) {
++            ++_generation;
++            if (copied) {
++              dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++                [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++              });
++            }
++            [self finish];
++            return;
++          }
 +          UIAlertController *progress = _progress;
 +          _progress = nil;
 +          [progress dismissViewControllerAnimated:YES completion:^{
 +            if (generation != _generation) {
++              if (copied) {
++                dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++                  [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++                });
++              }
 +              return;
 +            }
 +            if (!copied) {
 +              [self showError:failure ?: @"The project could not be copied. Check available storage and try again."];
 +              return;
 +            }
-+            GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
-+            if (![self hasLivePresenter] || !system->handleOpenDocumentRequest(destination.path)) {
-+              [self showError:@"The project could not be opened. Check that the file is a valid Blender project."];
++            if (!folderMode || blendFiles.count == 1) {
++              [self openImportedProject:folderMode ? blendFiles.firstObject : destination
++                              projectRoot:project
++                               generation:generation];
 +              return;
 +            }
-+            /* Normal GHOST open event retains Blender's unsaved-changes dialog
-+             * and script policy. No operator/context pointer survives UIKit. */
-+            [self finish];
++            if (![self hasLivePresenter]) {
++              [self finish];
++              dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++                [[NSFileManager defaultManager] removeItemAtURL:project error:nullptr];
++              });
++              return;
++            }
++            UIAlertController *choice = [UIAlertController
++                alertControllerWithTitle:@"Choose Project File"
++                             message:@"The complete folder is copied. Which .blend file should open?"
++                      preferredStyle:UIAlertControllerStyleAlert];
++            _pendingProject = [project retain];
++            [choice setModalInPresentation:YES];
++            NSString *prefix = [destination.path stringByAppendingString:@"/"];
++            for (NSURL *file in blendFiles) {
++              NSString *label = [file.path hasPrefix:prefix] ?
++                                    [file.path substringFromIndex:prefix.length] :
++                                    file.lastPathComponent;
++              [choice addAction:[UIAlertAction actionWithTitle:label
++                                                       style:UIAlertActionStyleDefault
++                                                     handler:^(UIAlertAction *action) {
++                [self openImportedProject:file projectRoot:project generation:generation];
++              }]];
++            }
++            [choice addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                                   style:UIAlertActionStyleCancel
++                                                 handler:^(UIAlertAction *action) {
++              ++_generation;
++              [self finish];
++            }]];
++            [_presenter presentViewController:choice animated:YES completion:nil];
 +          }];
 +          [progress release];
 +        });
@@ -3934,17 +4282,75 @@ new file mode 100644
 +}
 +@end
 +
-+bool GHOST_IOS_import_project()
++static void GHOST_IOS_cleanup_abandoned_project_imports()
++{
++  NSFileManager *manager = [NSFileManager defaultManager];
++  NSURL *documents = [[manager URLsForDirectory:NSDocumentDirectory
++                                      inDomains:NSUserDomainMask] firstObject];
++  NSURL *projects = [documents URLByAppendingPathComponent:@"Projects" isDirectory:YES];
++  NSArray<NSURL *> *entries = [manager contentsOfDirectoryAtURL:projects
++                                     includingPropertiesForKeys:nil options:0 error:nil];
++  NSMutableArray<NSURL *> *abandoned = [NSMutableArray array];
++  NSString *prefix = @".BlenderImport-";
++  for (NSURL *entry in entries) {
++    NSString *name = entry.lastPathComponent;
++    if (![name hasPrefix:prefix]) {
++      continue;
++    }
++    NSString *identifier = [name substringFromIndex:prefix.length];
++    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:identifier];
++    const BOOL ours = uuid && [[uuid UUIDString] isEqualToString:identifier];
++    [uuid release];
++    if (ours) {
++      [abandoned addObject:entry];
++    }
++  }
++  if (!abandoned.count) {
++    return;
++  }
++  NSArray<NSURL *> *candidates = [abandoned copy];
++  /* Capture the old names before a new picker can start another import. */
++  dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++    @autoreleasepool {
++      NSFileManager *cleanupManager = [NSFileManager defaultManager];
++      for (NSURL *candidate in candidates) {
++        NSNumber *directory = nil;
++        NSNumber *symbolicLink = nil;
++        if (![candidate getResourceValue:&directory forKey:NSURLIsDirectoryKey error:nil] ||
++            ![candidate getResourceValue:&symbolicLink forKey:NSURLIsSymbolicLinkKey error:nil] ||
++            !directory.boolValue || symbolicLink.boolValue) {
++          continue;
++        }
++        NSError *error = nil;
++        if (![cleanupManager removeItemAtURL:candidate error:&error]) {
++          NSLog(@"Could not remove abandoned project import %@: %@", candidate.path, error);
++        }
++      }
++      [candidates release];
++    }
++  });
++}
++
++static GHOST_IOSProjectImporter *GHOST_IOS_project_importer()
 +{
 +  /* Application-lifetime delegate; UIKit delegates are non-owning. */
 +  static GHOST_IOSProjectImporter *importer = nil;
-+  if (![NSThread isMainThread]) {
-+    return false;
-+  }
 +  if (!importer) {
 +    importer = [[GHOST_IOSProjectImporter alloc] init];
 +  }
-+  return [importer present];
++  return importer;
++}
++
++bool GHOST_IOS_import_project()
++{
++  return [NSThread isMainThread] &&
++         [GHOST_IOS_project_importer() presentWithFolderMode:NO];
++}
++
++bool GHOST_IOS_import_project_folder()
++{
++  return [NSThread isMainThread] &&
++         [GHOST_IOS_project_importer() presentWithFolderMode:YES];
 +}
 +
 +bool GHOST_IOS_get_project_save_path(const char *filename, char *out_path, size_t max_len)
@@ -4210,12 +4616,13 @@ new file mode 100644
 diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
 --- a/source/blender/windowmanager/wm_files.hh
 +++ b/source/blender/windowmanager/wm_files.hh
-@@ -113,6 +113,12 @@
+@@ -113,6 +113,13 @@
  void WM_OT_read_factory_settings(wmOperatorType *ot);
 
  void WM_OT_open_mainfile(wmOperatorType *ot);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +void WM_OT_import_project_from_files(wmOperatorType *ot);
++void WM_OT_import_project_folder_from_files(wmOperatorType *ot);
 +void WM_OT_save_as_to_files(wmOperatorType *ot);
 +void WM_OT_save_copy_to_files(wmOperatorType *ot);
 +void WM_OT_ipad_flythrough_toggle(wmOperatorType *ot);
@@ -4226,12 +4633,13 @@ diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowman
 diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blender/windowmanager/intern/wm_operators.cc
 --- a/source/blender/windowmanager/intern/wm_operators.cc
 +++ b/source/blender/windowmanager/intern/wm_operators.cc
-@@ -4210,6 +4210,12 @@
+@@ -4210,6 +4210,13 @@
    WM_operatortype_append(WM_OT_window_fullscreen_toggle);
    WM_operatortype_append(WM_OT_quit_blender);
    WM_operatortype_append(WM_OT_open_mainfile);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_operatortype_append(WM_OT_import_project_from_files);
++  WM_operatortype_append(WM_OT_import_project_folder_from_files);
 +  WM_operatortype_append(WM_OT_save_as_to_files);
 +  WM_operatortype_append(WM_OT_save_copy_to_files);
 +  WM_operatortype_append(WM_OT_ipad_flythrough_toggle);
@@ -4258,7 +4666,19 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
 --- a/scripts/startup/bl_ui/space_topbar.py
 +++ b/scripts/startup/bl_ui/space_topbar.py
-@@ -169,22 +169,31 @@
+@@ -163,5 +163,10 @@
+         layout.operator_context = 'INVOKE_AREA'
+         layout.menu("TOPBAR_MT_file_new", text="New", text_ctxt=i18n_contexts.id_windowmanager, icon='FILE_NEW')
+-        layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
++        if "import_project_from_files" in dir(bpy.ops.wm):
++            layout.operator("wm.open_mainfile", text="Open Project Copy...", icon='FILE_FOLDER')
++        else:
++            layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
++        if "import_project_folder_from_files" in dir(bpy.ops.wm):
++            layout.operator("wm.import_project_folder_from_files", text="Import Project Folder...", icon='FILE_FOLDER')
+         layout.menu("TOPBAR_MT_file_open_recent")
+         layout.operator("wm.revert_mainfile")
+@@ -169,22 +174,31 @@
 
          layout.separator()
 
@@ -4296,7 +4716,7 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
          sub.operator_context = 'EXEC_AREA'
          sub.operator("wm.save_mainfile", text="Save Incremental").incremental = True
 
-@@ -536,6 +544,14 @@
+@@ -536,6 +549,14 @@
          from bl_ui_utils.layout import operator_context
 
          layout = self.layout
@@ -7613,7 +8033,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2145 @@
+@@ -0,0 +1,2208 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -7632,6 +8052,7 @@ new file mode 100644
 +#include "DNA_space_types.h"
 +#include "DNA_userdef_types.h"
 +#include "DNA_view3d_types.h"
++#include "DNA_workspace_types.h"
 +#include "BLI_listbase.h"
 +#include "BLI_rect.h"
 +#include "BLI_string.h"
@@ -7743,6 +8164,7 @@ new file mode 100644
 +  policy::Layout layout;
 +  Rect bounds;
 +  bool sculpt = false;
++  bool object_mode = false;
 +  bool default_sculpt_shelf = false;
 +};
 +
@@ -8069,7 +8491,9 @@ new file mode 100644
 +  if (tools && !(tools->flag & RGN_FLAG_POLL_FAILED)) {
 +    model.tabs.push_back({tools_id, Edge::Tools, "Tools", model.main, RGN_TYPE_TOOLS, ""});
 +  }
-+  model.sculpt = model.main->spacetype == SPACE_VIEW3D && STREQ(CTX_data_mode_string(C), "SCULPT");
++  const char *mode = CTX_data_mode_string(C);
++  model.sculpt = model.main->spacetype == SPACE_VIEW3D && mode && STREQ(mode, "SCULPT");
++  model.object_mode = model.main->spacetype == SPACE_VIEW3D && mode && STREQ(mode, "OBJECT");
 +  ARegion *shelf = BKE_area_find_region_type(model.main, RGN_TYPE_ASSET_SHELF);
 +  if (shelf && !(shelf->flag & RGN_FLAG_POLL_FAILED)) {
 +    model.tabs.push_back({shelf_id, Edge::Bottom, "Brushes", model.main, RGN_TYPE_ASSET_SHELF, ""});
@@ -8160,7 +8584,7 @@ new file mode 100644
 +  return policy::panel_content(model.layout, edge);
 +}
 +
-+enum class Action { Tab, Previous, Next, Resize, Lock, Seam };
++enum class Action { Tab, ToolHeader, Previous, Next, Resize, Lock, Seam };
 +struct Button {
 +  Rect rect;
 +  std::string label;
@@ -8174,21 +8598,35 @@ new file mode 100644
 +static std::vector<Button> buttons(const Model &model, const bScreen *screen)
 +{
 +  std::vector<Button> result;
++  ARegion *tool_header = model.main && model.main->spacetype == SPACE_VIEW3D ?
++                             BKE_area_find_region_type(model.main, RGN_TYPE_TOOL_HEADER) : nullptr;
 +  for (const bool left : {false, true}) {
 +    Rect rail = left ? model.layout.left_rail : model.layout.side_rail;
 +    std::vector<const Tab *> tabs;
++    bool tool_header_added = false;
 +    for (const Tab &tab : model.tabs) {
 +      if ((tab.edge != Edge::Side) == left) {
 +        tabs.push_back(&tab);
++        if (left && tool_header && tab.id == tools_id) {
++          /* Reopen Blender's complete native tool row without leaving it above
++           * the canvas when the iPad workspace first opens. */
++          tabs.push_back(nullptr);
++          tool_header_added = true;
++        }
 +      }
++    }
++    if (left && tool_header && !tool_header_added) {
++      tabs.insert(tabs.begin(), nullptr);
 +    }
 +    const uiFontStyle *font = &UI_style_get_dpi()->widget;
 +    UI_fontstyle_set(font);
 +    int label_extent = int(44 * UI_SCALE_FAC);
 +    for (const Tab *tab : tabs) {
 +      label_extent = std::max(label_extent,
-+                              int(std::ceil(BLF_width(font->uifont_id, tab->label.c_str(),
-+                                                      tab->label.size()) + 20 * UI_SCALE_FAC)));
++                              int(std::ceil(BLF_width(font->uifont_id,
++                                                      tab ? tab->label.c_str() : "Settings",
++                                                      tab ? tab->label.size() : 8) +
++                                            20 * UI_SCALE_FAC)));
 +    }
 +    const policy::RailPage page = policy::rail_page(
 +        tabs.size(), rail.height(), std::max(0, screen->ipad_panel_page[left ? 1 : 0]),
@@ -8206,8 +8644,15 @@ new file mode 100644
 +      add("Prev", Action::Previous, page_edge, int(page.page > 0 ? page.page - 1 : 0), false);
 +    }
 +    for (size_t i = page.first; i < page.first + page.count; i++) {
-+      const Tab &tab = *tabs[i];
-+      add(tab.label, Action::Tab, tab.edge, tab.id, model.state.slot(tab.edge).active_id == tab.id);
++      const Tab *tab = tabs[i];
++      if (tab) {
++        add(tab->label, Action::Tab, tab->edge, tab->id,
++            model.state.slot(tab->edge).active_id == tab->id);
++      }
++      else {
++        add("Settings", Action::ToolHeader, Edge::Tools, -1,
++            !(tool_header->flag & RGN_FLAG_HIDDEN_BY_USER));
++      }
 +    }
 +    if (page.paged) {
 +      add("Next", Action::Next, page_edge, int(std::min(page.page + 1, page.pages - 1)), false);
@@ -8321,6 +8766,28 @@ new file mode 100644
 +  else if (button.action == Action::Tab) {
 +    model.state.tap(button.edge, button.id);
 +    save_slot(screen, model, button.edge);
++  }
++  else if (button.action == Action::ToolHeader) {
++    ARegion *header = model.main ?
++                          BKE_area_find_region_type(model.main, RGN_TYPE_TOOL_HEADER) : nullptr;
++    if (header) {
++      ScrArea *previous_area = CTX_wm_area(C);
++      ARegion *previous_region = CTX_wm_region(C);
++      CTX_wm_area_set(C, model.main);
++      CTX_wm_region_set(C, header);
++      /* Match SpaceView3D.show_region_tool_header: its getter reads the user
++       * flag while its setter updates both flags. Keep native RNA, saving and
++       * workspace switching consistent with the rail's selected state. */
++      if (header->flag & RGN_FLAG_HIDDEN_BY_USER) {
++        header->flag &= ~(RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER);
++      }
++      else {
++        header->flag |= RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER;
++      }
++      ED_region_visibility_change_update(C, model.main, header);
++      CTX_wm_area_set(C, previous_area);
++      CTX_wm_region_set(C, previous_region);
++    }
 +  }
 +  else if (ELEM(button.action, Action::Previous, Action::Next)) {
 +    screen->ipad_panel_page[axis] = button.id;
@@ -8900,6 +9367,22 @@ new file mode 100644
 +  Model model = make_model(C, win);
 +  if (!model.main) {
 +    return;
++  }
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  Main *bmain = CTX_data_main(C);
++  /* Saved projects own their Tool Header preference even when their workspace
++   * retains the factory name. Only adapt an unsaved startup/new layout. */
++  const bool factory_new_file = bmain && BKE_main_blendfile_path(bmain)[0] == '\0';
++  if (!screen->ipad_panel_initialized && factory_new_file && workspace &&
++      STREQ(workspace->id.name + 2, "Layout") && model.main->spacetype == SPACE_VIEW3D &&
++      find_tab(model, tools_id) && model.object_mode)
++  {
++    ARegion *header = BKE_area_find_region_type(model.main, RGN_TYPE_TOOL_HEADER);
++    if (header && !(header->flag & RGN_FLAG_HIDDEN_BY_USER)) {
++      header->flag |= RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER;
++      ED_region_tag_redraw(header);
++      model = make_model(C, win);
++    }
 +  }
 +  rcti screen_rect;
 +  WM_window_screen_rect_calc(win, &screen_rect);
@@ -10051,7 +10534,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectSaveIOS.hh b/intern/ghost/intern/G
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
-@@ -0,0 +1,559 @@
+@@ -0,0 +1,605 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. UIKit reports choices as GHOST events;
@@ -10068,6 +10551,8 @@ new file mode 100644
 +  NSURL *_source;
 +  NSString *_filename;
 +  NSString *_destination;
++  NSData *_documentBookmark;
++  NSString *_documentPath;
 +  GHOST_IWindow *_window;
 +  GHOST_IOSProjectExportAction _pendingAction;
 +  BOOL _busy;
@@ -10076,7 +10561,7 @@ new file mode 100644
 +  NSUInteger _generation;
 +}
 +- (BOOL)begin:(NSString *)filename saveCopy:(BOOL)saveCopy;
-+- (BOOL)beginUpdate:(NSString *)filename;
++- (BOOL)beginUpdate:(NSString *)path;
 +- (BOOL)stagingPath:(char *)outPath maxLength:(size_t)maxLength;
 +- (GHOST_IOSProjectExportAction)takeAction:(char *)outPath maxLength:(size_t)maxLength;
 +- (BOOL)presentPicker;
@@ -10087,6 +10572,44 @@ new file mode 100644
 +- (void)dismissPickerWithAction:(GHOST_IOSProjectExportAction)action
 +                    destination:(NSString *)destination;
 +@end
++
++/* Keep access for every Files document saved by Blender. A prior build stored
++ * only the most recent document; read that pair until it is migrated here. */
++static NSData *GHOST_IOS_bookmark_for_project(NSString *path)
++{
++  if (!path.length) {
++    return nil;
++  }
++  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++  id saved = [defaults dictionaryForKey:@"BlenderWorkingProjectBookmarks"][path];
++  if ([saved isKindOfClass:[NSData class]]) {
++    return saved;
++  }
++  NSString *legacyPath = [defaults stringForKey:@"BlenderWorkingProjectPath"];
++  return [path isEqualToString:legacyPath] ?
++             [defaults dataForKey:@"BlenderWorkingProjectBookmark"] : nil;
++}
++
++static void GHOST_IOS_remember_project_bookmark(NSString *path, NSData *bookmark)
++{
++  if (!path.length || !bookmark.length) {
++    return;
++  }
++  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++  NSMutableDictionary *bookmarks = [[defaults dictionaryForKey:@"BlenderWorkingProjectBookmarks"]
++                                    mutableCopy];
++  if (!bookmarks) {
++    bookmarks = [[NSMutableDictionary alloc] init];
++  }
++  NSString *legacyPath = [defaults stringForKey:@"BlenderWorkingProjectPath"];
++  NSData *legacyBookmark = [defaults dataForKey:@"BlenderWorkingProjectBookmark"];
++  if (legacyPath.length && legacyBookmark.length && !bookmarks[legacyPath]) {
++    bookmarks[legacyPath] = legacyBookmark;
++  }
++  bookmarks[path] = bookmark;
++  [defaults setObject:bookmarks forKey:@"BlenderWorkingProjectBookmarks"];
++  [bookmarks release];
++}
 +
 +@implementation GHOST_IOSProjectSaveExporter
 +
@@ -10115,6 +10638,10 @@ new file mode 100644
 +  _filename = nil;
 +  [_destination release];
 +  _destination = nil;
++  [_documentBookmark release];
++  _documentBookmark = nil;
++  [_documentPath release];
++  _documentPath = nil;
 +  _window = nullptr;
 +  _pendingAction = GHOST_IOSProjectExportAction_None;
 +  _busy = NO;
@@ -10215,20 +10742,21 @@ new file mode 100644
 +  return YES;
 +}
 +
-+- (BOOL)beginUpdate:(NSString *)filename
++- (BOOL)beginUpdate:(NSString *)path
 +{
 +  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
 +  GHOST_IWindow *window = system ? system->getWindowManager()->getActiveWindow() : nullptr;
-+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-+  if (_busy || !window || ![defaults dataForKey:@"BlenderWorkingProjectBookmark"] ||
-+      ![defaults stringForKey:@"BlenderWorkingProjectPath"])
++  NSData *bookmark = GHOST_IOS_bookmark_for_project(path);
++  if (_busy || !window || !bookmark)
 +  {
 +    return NO;
 +  }
 +  _busy = YES;
 +  _generation++;
 +  _window = window;
-+  _filename = [filename.lastPathComponent copy];
++  _filename = [path.lastPathComponent copy];
++  _documentBookmark = [bookmark retain];
++  _documentPath = [path copy];
 +  _pendingAction = GHOST_IOSProjectExportAction_None;
 +  return YES;
 +}
@@ -10297,9 +10825,8 @@ new file mode 100644
 +  {
 +    return NO;
 +  }
-+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-+  NSData *bookmark = [[defaults dataForKey:@"BlenderWorkingProjectBookmark"] retain];
-+  NSString *expected = [[defaults stringForKey:@"BlenderWorkingProjectPath"] copy];
++  NSData *bookmark = [_documentBookmark retain];
++  NSString *expected = [_documentPath copy];
 +  if (!bookmark || !expected) {
 +    [bookmark release];
 +    [expected release];
@@ -10353,8 +10880,11 @@ new file mode 100644
 +      dispatch_async(dispatch_get_main_queue(), ^{
 +        if (_busy && _generation == generation && !_picker) {
 +          if (refreshed) {
-+            [[NSUserDefaults standardUserDefaults] setObject:refreshed
-+                                               forKey:@"BlenderWorkingProjectBookmark"];
++            GHOST_IOS_remember_project_bookmark(expected, refreshed);
++            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++            if ([expected isEqualToString:[defaults stringForKey:@"BlenderWorkingProjectPath"]]) {
++              [defaults setObject:refreshed forKey:@"BlenderWorkingProjectBookmark"];
++            }
 +          }
 +          [self queueAction:written ? GHOST_IOSProjectExportAction_Saved :
 +                                      GHOST_IOSProjectExportAction_Failed
@@ -10486,6 +11016,7 @@ new file mode 100644
 +          _remembering = NO;
 +          if (bookmark && path.length) {
 +            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++            GHOST_IOS_remember_project_bookmark(path, bookmark);
 +            [defaults setObject:bookmark forKey:@"BlenderWorkingProjectBookmark"];
 +            [defaults setObject:path forKey:@"BlenderWorkingProjectPath"];
 +            [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Saved destination:path];
@@ -10549,12 +11080,12 @@ new file mode 100644
 +  return [GHOST_IOS_project_save_exporter() begin:name saveCopy:save_copy];
 +}
 +
-+bool GHOST_IOS_begin_project_update(const char *filename)
++bool GHOST_IOS_begin_project_update(const char *path)
 +{
-+  if (![NSThread isMainThread] || !filename) {
++  if (![NSThread isMainThread] || !path) {
 +    return false;
 +  }
-+  NSString *name = [NSString stringWithUTF8String:filename];
++  NSString *name = [NSString stringWithUTF8String:path];
 +  return name && [GHOST_IOS_project_save_exporter() beginUpdate:name];
 +}
 +
@@ -10597,9 +11128,7 @@ new file mode 100644
 +    return false;
 +  }
 +  NSString *candidate = [NSString stringWithUTF8String:path];
-+  NSString *saved = [[NSUserDefaults standardUserDefaults]
-+      stringForKey:@"BlenderWorkingProjectPath"];
-+  return candidate && saved && [candidate isEqualToString:saved];
++  return candidate && GHOST_IOS_bookmark_for_project(candidate) != nil;
 +}
 +
 +void GHOST_IOS_project_export_finish()

@@ -1,5 +1,184 @@
 # Project handoff — 2026-09-23
 
+## Per-project Files bookmark candidate — local source, 2026-09-23
+
+The packaged `e88e377` ordinary Save retained only one Files document bookmark.
+Saving a second project with Save As replaced the first bookmark, so a later
+ordinary Save of the first project could no longer find its provider identity.
+The uncommitted overlay now stores bookmarks by full project path. The Blender
+save operator passes that path into the native update service, which retains the
+matching bookmark and path for its asynchronous coordinated write. Save As first
+migrates the older single-bookmark pair into the map, then records the new file;
+a refreshed stale bookmark updates its own entry. The legacy pair remains for
+existing installs and is refreshed when it still names the active destination.
+Save Copy remains independent. This closes the source-level one-bookmark
+overwrite path, but does not implement coordinated in-place opening, sidecar
+access, or provider recovery after access is revoked.
+
+The change passes the existing 38 host tests and pinned-source preflight; the
+overlay applies to 57 pinned files. `git diff --check` is clean. Native iOS
+compilation, IPA packaging and provider/device behavior are not checked for
+this candidate. At HEAD `ebfccb2b70522cdfd77e53c942d9ab0d91117f49`, the
+current patch's UTF-8, LF-normalized SHA-256 is
+`711c2c32a19abd99e7fc6a689978091b091b106e235870801d7679fc5ec15f20`
+(446,159 bytes). The next IPA can test that sequential Save As operations keep
+both bookmark entries. A full A/B ordinary-Save test still needs a supported
+bookmark-backed reopen route: the current Open Project Copy command deliberately
+opens a separate local copy, and this change does not make provider reads
+in-place. Test both documents after relaunch and with a cloud-backed provider
+when that route exists. Until then, this is a source-level identity increment,
+not a complete multi-document workflow.
+
+## Complete-folder import candidate — local source, 2026-09-23
+
+The current uncommitted overlay adds a distinct **Import Project Folder** route
+to the iPad File menu and workspace controls. The Files picker requests a folder
+grant, coordinates each directory listing and file read in the background, and
+copies the whole folder under a hidden `.BlenderImport-<UUID>` staging name in
+`Documents/Projects`. It promotes the complete copy to a visible project name
+only after finding a `.blend`. Relative sibling
+textures and library files retain their layout. It searches the copy for `.blend`
+files at any depth, opens the sole match, or shows relative paths for a choice
+when several exist. Cancel marks a per-import progress token. The worker checks
+it between coordinated items and during the local `.blend` scan, then removes a
+partial copy. An individual coordination or file copy already in progress may
+finish before cleanup. Late-copy paths and a failed handoff to Blender's open
+request also remove the copy. Once a multi-file choice is shown, the importer
+holds the completed copy as pending until the user chooses a file; Cancel or a
+lost presenter on a later import removes it. The copy and choice alerts require
+their explicit Cancel actions, avoiding an untracked swipe dismissal. At next
+launch, a background cleanup removes only abandoned staging directories with
+the app's prefix and a valid UUID. A force quit after promotion but before the
+file choice can leave a **complete** visible copy; cleanup preserves that data.
+If cleanup itself fails, a hidden incomplete staging directory may remain.
+Native/provider behavior and recovery after force quit still need device checks.
+
+The single-file route is labeled **Open Project Copy** so it does not imply that
+edits update the provider original. Its picker now grants read access to the
+provider file without first making a picker-managed copy; the coordinated importer
+makes the one local copy in Projects, with its own cancellation and cleanup path.
+Both routes open an independent local copy, not an in-place provider project.
+Apple's [document picker initializer](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/init%28foropeningcontenttypes%3Aascopy%3A%29)
+defines the `asCopy` switch; the local-copy behavior here comes from the importer.
+Apple documents that folder picker grants cover
+descendants: [Providing access to directories](https://developer.apple.com/documentation/uikit/providing-access-to-directories).
+Apple's [file coordination guidance](https://developer.apple.com/documentation/foundation/nsfilecoordinator/coordinate%28readingitemat%3Aoptions%3Aerror%3Abyaccessor%3A%29)
+explains why the folder read alone does not protect individual contents.
+
+Source review caught an Objective-C block-capture compile error in the local
+folder scan: its error handler assigns to `copy_error`, which must be declared
+`__block`. This is corrected before dispatching a native build. All 38 host tests
+pass, pinned-source preflight applies to 57 files, and `git diff --check` is
+clean. Native iOS compilation, IPA packaging, and device behavior are **not yet
+checked for this candidate**. At HEAD
+`ebfccb2b70522cdfd77e53c942d9ab0d91117f49`, the current patch's UTF-8,
+LF-normalized SHA-256 is
+`711c2c32a19abd99e7fc6a689978091b091b106e235870801d7679fc5ec15f20`
+(446,159 bytes). Compare it before committing or building; this identifies the
+source overlay, not an IPA. The commit/push attempt was
+rejected by automatic approval review because the account usage limit prevented
+review; it was not a safety finding. Keep the local changes intact. Once the
+approval gate is available, commit/push the exact source, run one iOS build, fix
+any native failure, and verify the IPA artifact. Device acceptance should cover a
+folder with one `.blend`, a folder with multiple `.blend` files in subfolders,
+nested textures, cancellation during a cloud-backed copy, and saving/reopening
+the imported copy. Force quit during a cloud-backed folder copy, relaunch,
+and check that no partial folder appears as a finished project; then force quit
+after promotion and confirm the complete copy is retained.
+Project folders without any `.blend` currently report an error; external
+absolute asset paths, in-place Open, and other Files lifecycle work remain
+unfinished. Per-item provider coordination is source-implemented but still needs
+native and real-provider validation, including concurrent source changes.
+
+## Provider Save completion semantics — local source, 2026-09-23
+
+The packaged `e88e377` provider Save starts a background coordinated write after
+Blender stages the `.blend`. Its modal Escape path previously reported
+cancellation even though the provider write could still finish. The uncommitted
+candidate now keeps that ordinary-save modal active on Escape and reports once
+that the user should wait for the Files result. The existing native completion
+event remains responsible for reporting success or failure and releasing staging.
+
+Pinned Blender source shows `ND_FILESAVE` sets `wm->file_saved = 1`. A user edit
+while an asynchronous Files write is running can therefore make a later success
+event falsely mark newer, unstored edits as saved. The local candidate now counts
+`WM_file_tag_modified` calls and captures that generation and `Main` identity
+after staging. On provider Save or Save As completion, it marks `wm->file_saved`
+immediately and restarts autosave only if the current project is still that staged
+snapshot. It uses `ND_DATACHANGED` to refresh the title because a queued
+`ND_FILESAVE` could run after another edit and falsely mark the project saved. If
+there were later edits, the destination has the staged snapshot, the project
+stays dirty, and the report explicitly says newer edits remain unsaved. Save As
+still adopts the new path for that same project. A file load that changes `Main`
+cannot let an old completion alter the new project's path or saved marker. This
+tracks Blender's own dirty-tag granularity; native and device behavior remain
+unverified. Test a slow cloud-backed Save and Save As while editing after
+staging, then Save again and confirm the unsaved marker clears.
+
+The Escape change closes the misleading routine path, but does not promise that a
+provider write already in progress can be rolled back if its owning window or
+app is torn down. Test a slow cloud-backed Save and Escape on device. Native
+compilation and provider behavior of this follow-up are unverified; the exact
+patch hash above includes it.
+
+## Recording-based workspace design audit — 2026-09-23
+
+Revisited the user's September 20 screen recording against the current patch.
+The recording predates the wider rails and labeled Inspector, so it cannot judge
+those changes. It does show three dense native rows above the canvas: global
+menus/workspaces, the 3D View header, and the active Tool Header. The verified
+IPA leaves that top chrome in place. The Tool Header repeats visible Annotate
+settings in this recording, but the pinned Blender source also puts mode-specific
+tool and brush controls there; simply hiding it would remove access to native
+functionality. This is a concrete remaining source-backed reason the interface
+can still feel like desktop Blender after the Inspector improvement.
+
+The current uncommitted source candidate collapses the native Tool Header when
+the unsaved factory/new Layout workspace's primary Object Mode 3D View is first
+adapted on iPad. A **Settings** entry after Tools on the left rail toggles the same native
+row. Opened `.blend` projects, even ones whose workspace is named Layout, keep
+their saved Tool Header visibility. Other workspaces retain their saved/default visibility. Changing modes in
+an adapted view preserves its current setting until the user taps Settings.
+Existing iPad screens also preserve their chosen visibility. The short rail label prevents
+every left-rail button from becoming taller: the rail policy sizes all buttons
+from its longest label and pages them in narrow windows.
+
+A host read of the five archived bundled startup files, whose SHA-256 values
+match the pinned fixture, found the factory Sculpting workspace still has a
+visible Tool Header while its starting context is Object Mode. A broad
+Object-Mode default would collapse that row before switching into Sculpt. The
+automatic default is therefore limited to Layout; the Settings toggle remains
+available in every 3D View. This is host data evidence, not iOS runtime proof.
+
+A subsequent source audit found that the first-use Layout rule read Object Mode
+after `make_model` restored the previous editor context. Screen setup may have no
+active area, so the rule could silently miss its one opportunity before the
+screen is marked initialized. The model now records Object Mode while its primary
+3D View is the active context, alongside the existing Sculpt check. This is a
+source correction, not evidence that the row collapses on an iPad.
+
+The workspace name alone does not identify a factory layout: a saved project
+may still call its customized workspace Layout. The automatic collapse now also
+requires an unsaved `Main` filepath. Loading a `.blend` therefore preserves its
+Tool Header setting. Verify both a fresh/new factory Layout and a saved desktop
+project named Layout with the Tool Header visible in the next IPA. A host Blender
+5.1.2 check reported an empty `bpy.data.filepath` at factory startup and after
+File > New; this confirms the host-side assumption, not the iOS layout path.
+
+A source audit of pinned Blender RNA found that native `show_region_tool_header`
+stores both
+`RGN_FLAG_HIDDEN_BY_USER` and `RGN_FLAG_HIDDEN`; the rail and first-use default
+now update both before native region reinitialization. A disposable host Blender
+5.1 project preserved the hidden setting after save/reopen and could restore it.
+That is host evidence, not proof of iOS layout or touch input. The policy is
+source-implemented only: 38 host tests and pinned-source preflight pass; native
+compilation, layout/input behavior, persistence and device acceptance remain
+unverified. In the next IPA, compare the same object/camera/property task with
+the recording baseline in portrait and narrow windows. Switch from Object Mode
+to Sculpt in the same view, reopen Tool Header from Settings, then switch back.
+Repeat with keyboard/pointer input and check that Settings remains reachable
+without blocking native bottom-editor tabs.
+
 ## Provider-aware Save source checkpoint — 2026-09-23
 
 Source `e88e3776e8a03fc4b11702a2740b4000e16c9441` changes Save As to move its

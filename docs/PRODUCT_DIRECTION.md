@@ -51,6 +51,16 @@ Release compilation and packaging; device acceptance remains open.
 Provider-aware Save source `e88e377` also passed native Release compilation and
 IPA packaging in run 35858987938. Its Files behavior and the broader touch design
 still need iPad acceptance.
+Revisiting the user's recording shows that global menus/workspaces, the 3D View
+header, and the Tool Header still form three dense rows above the canvas. The
+verified Inspector and rail IPA does not address this. The next local source
+candidate collapses the Object Mode Tool Header on first iPad adaptation of an
+unsaved factory/new Layout workspace and adds a labeled left-rail control to restore the same
+native row. The factory Sculpting workspace can initially be in Object Mode, so
+its native row remains untouched. Opened projects keep their saved Tool Header
+visibility, even when their workspace is named Layout. Preserve all mode-specific controls and
+external-input routes; verify the new layout on device
+before treating it as an improvement to felt usability.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 
@@ -214,7 +224,11 @@ native build exposed an accidentally truncated, unrelated model-exporter header;
 `35846812298` passed native Release compilation and IPA packaging for exact source
 `bd240bf`; artifact identity is in PROJECT_HANDOFF. Device acceptance remains open.
 This closes the callback-lifetime audit only. Provider-safe later Save, security
-scopes/bookmarks and coordinated I/O remain unfinished.
+scopes/bookmarks and coordinated I/O remained unfinished at that checkpoint.
+Verified IPA run `35858987938` at source `e88e377` adds a bookmark-backed,
+coordinated ordinary Save route for documents moved into Files by Save As.
+Hardware/provider acceptance, sibling assets and the rest of the Files lifecycle
+remain open.
 
 Preserve the platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document

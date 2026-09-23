@@ -28,6 +28,15 @@ scaled UI units and makes the two permanent rails 44 units wide where space perm
 tapering to 28 in narrow windows. This responds to cramped native controls and
 undersized rail hit targets identified in a read-only review. Exact-source IPA
 run 35850985308 passed native iOS compilation and packaging; device judgment is open.
+The next uncommitted source candidate reduces Object Mode top chrome in an
+unsaved factory/new Layout workspace by initially collapsing the native Tool Header. A
+labeled Settings entry after Tools on the left rail reopens that same row.
+Opened projects and dedicated workspaces retain their saved visibility even if they first open in
+Object Mode; changing modes within Layout keeps the current setting until
+Settings is used.
+This needs native
+compilation and device checks, including narrow-window rail paging and saved
+workspace persistence.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 
@@ -178,6 +187,8 @@ rather than discard a workspace.
 6. Repeat opening, closing, resizing and workspace switching in portrait, landscape,
    narrow windows and with the keyboard. Verify actual header clearance, no blocked
    essential controls, aligned drawing/input and correct context across split areas.
+   In Object Mode, toggle the left-rail Settings entry and confirm the complete
+   native Tool Header returns; check Sculpt and other modes keep their controls.
 7. Native navigation controls accept finger and Pencil press-drag-release like a
    mouse. Verify cancellation, multi-touch interruption, popup occlusion, fullscreen,
    temporary views and quad views. Preserve direct finger navigation elsewhere.
@@ -209,6 +220,8 @@ implementations. Their exact source/build history is in PROJECT_HANDOFF.md. Pres
 that work while implementing the active workspace milestone. FBX export currently
 reports unsupported because NumPy is unavailable; do not describe every model format
 as working or infer complete Files acceptance from a native picker appearing.
+The next local source candidate adds an explicit folder-copy import for projects
+with sibling assets; PROJECT_HANDOFF records its unbuilt status and limits.
 
 Source `5e11388` removes the retained `bContext *` callbacks from project Save As
 and Save Copy. UIKit sends a native event to a live modal operator; Blender performs
@@ -222,6 +235,10 @@ run `35858987938`, changes Save As to retain a bookmark for a moved Files docume
 and coordinates subsequent ordinary Save through local staging. This remains
 unaccepted on device and does not yet solve sibling assets, multi-document
 identity or all recovery paths.
+The unbuilt follow-up source preserves the unsaved marker when the user edits
+after Save or Save As stages its snapshot but before the Files write completes.
+Device acceptance must exercise that delayed-provider case as well as an
+unchanged Save that clears the marker.
 
 The durable Files contract still requires correct document identity for later Save,
 security scopes/bookmarks, actual provider I/O coordination, project-folder/sibling
