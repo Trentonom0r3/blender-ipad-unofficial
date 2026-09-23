@@ -78,9 +78,9 @@ The labeled Inspector change is present in verified IPA build 35698122851 at sou
 join are in verified IPA run 35833417772 at source `0a7b005`. Follow-up run 35833932550
 failed because the patch's new-file hunk count omitted the closing lines of
 `screen_ipad_panels.cc`. The patch and preflight now check matching hunk totals; all
-29 host tests and pinned-source preflight pass. A corrected native rebuild remains
-required. Save/reopen behavior, multiple-window lifecycle and device acceptance
-remain open.
+29 host tests and pinned-source preflight pass. Corrected commit `965bb70` is in
+native build run 35835722868 after preflight passed. Save/reopen behavior,
+multiple-window lifecycle and device acceptance remain open.
 Continue improving settings and panel interactions that interrupt common workflows,
 while retaining native functionality.
 
