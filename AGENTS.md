@@ -20,15 +20,14 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest feature IPA is run `35833417772` at source `0a7b005`; it adds saved-layout
-history and exact-edge joins alongside the prior Inspector improvements. The
-recovery-guard follow-up at `56f5e23` failed native compilation because its patch
-hunk count truncated `screen_ipad_panels.cc`; the corrected patch and preflight
-regression test now pass locally. Corrected commit `965bb70` has a verified IPA in
-run 35835722868 (see PROJECT_HANDOFF). Actual iPad acceptance is still open.
-Validate category choice and settings edits, then save/split/join/restore/reopen
-layouts with finger and Pencil. Continue unfinished workspace and Files
-requirements.
+The latest feature IPA is run `35837932326` at source `e7cce60`; it includes the
+saved-layout history, exact-edge joins, recovery guard, and distinct restore-history
+labels. Its artifact identity and checksum are in PROJECT_HANDOFF. Earlier native
+build failures at `56f5e23` (stale patch hunk count) and `1057ce3` (32-bit
+`ScrArea_Runtime` alignment) were fixed; do not retry those SHAs. Actual iPad
+acceptance is still open. Validate Inspector category/settings interaction, then
+save/split/join/restore/reopen layouts with finger and Pencil. Continue unfinished
+workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

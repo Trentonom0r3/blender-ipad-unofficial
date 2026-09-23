@@ -7,11 +7,16 @@ so history could become ambiguous. Restore now uses the existing workspace-wide
 unique-name helper and labels collisions `Before Restore 2`, `Before Restore 3`,
 and so on. A host regression test exercises both suffix selection and its use by
 the restore operator. All 30 host tests pass, `git diff --check` is clean, patch
-hunk totals match, and pinned-source preflight applies to 56 files. This is source
-and host-test evidence only. iOS Release compile/package run
-[35837932326](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35837932326)
-has been dispatched for exact source `e7cce60185610f95f1d1619fe1688b87fe9e9118`;
-verify the IPA artifact if it succeeds, then validate history on iPad.
+hunk totals match, and pinned-source preflight applies to 56 files. Exact source
+`e7cce60185610f95f1d1619fe1688b87fe9e9118` passed native iOS Release compilation
+and IPA packaging in [run
+35837932326](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35837932326).
+Verified artifact `Blender-iPad-Unofficial-ipa`, id `10740138012`, 248,429,900
+bytes, SHA-256 `ede95617e01445fb50b2b3d936e94b567581ad6da4ac6465c3355889d5d0381f`,
+expires 2026-12-22. The GitHub artifact download endpoint succeeded. This IPA
+contains the distinct restore-history labels; it has not been tested on iPad.
+Next: install this exact IPA and validate the saved-layout workflow below, then
+choose the next everyday-workflow change from the device observations.
 
 ## Saved layout history source checkpoint — 2026-09-23
 
@@ -74,11 +79,10 @@ working editors and an object that can be moved without saving the original:
    edits, stale active-editor ownership, lost editor state or any desktop-input
    regression.
 
-Use the newest verified IPA and record orientation, input device and exact result.
-The last verified package is run 358357 at source `965bb708`; run 358379 at source
-`e7cce601` adds unique restore-history labels and is currently building. Prefer
-its artifact after packaging succeeds. This protocol is not evidence of acceptance
-until performed on the iPad.
+Use run 358379 at source `e7cce601` (artifact id `10740138012`) and record
+orientation, input device and exact result. The previous package is run 358357 at
+source `965bb708`. This protocol is not evidence of acceptance until performed
+on the iPad.
 
 
 ## Layout reversal lifecycle findings — 2026-09-22
