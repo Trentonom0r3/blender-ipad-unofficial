@@ -17,9 +17,10 @@ reference-audit, exact-edge-neighbor and post-join remapping helpers from the pa
 All 28 build tests pass, `git diff --check` is clean, and pinned source preflight
 applies the patch to 56 files. A follow-up safety fix now refuses to swap editor
 contents if its recovery checkpoint cannot be captured. Run 35833417772 is building
-the preceding source commit `0a7b005`; the follow-up still needs its own iOS build.
-These are source/host-test and in-progress build evidence only: no saved-layout
-save/reopen test or iPad acceptance has been completed.
+the preceding source commit `0a7b005`; build 35833932550 is queued against the
+follow-up commit `56f5e23`. These are source/host-test and in-progress build
+evidence only: no saved-layout save/reopen test or iPad acceptance has been
+completed.
 
 Still required in this layout milestone: native build validation, persistence
 across save/reopen, workspace duplication/deletion and multiple-window lifecycle

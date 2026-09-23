@@ -142,11 +142,11 @@ exact build/device evidence is in PROJECT_HANDOFF.md. Arrange Launchers now offe
 earlier/later ordering within each physical rail; helper tests pass, while native
 build and device/save-reload acceptance remain pending.
 The active source checkpoint adds Save Layout/History, native screen-copy restore,
-automatic checkpoints before split/swap, and guarded removal; see the latest
-PROJECT_HANDOFF.md entry. It has source and host-helper tests only. Exact-edge touch
-join, native build, save/reopen, multiple-window lifecycle, and device acceptance
-remain open. Restoration and reversal must preserve native editor state rather
-than discard a workspace.
+automatic checkpoints before split/swap/join, a retained-editor exact-edge join,
+and guarded removal; see the latest PROJECT_HANDOFF.md entry. Source and host-helper
+tests pass. Native build, save/reopen, multiple-window lifecycle and device
+acceptance remain open. Restoration and reversal must preserve native editor state
+rather than discard a workspace.
 
 ### Acceptance criteria
 
