@@ -11,21 +11,41 @@ so cancelling the Files destination does not replace `Main.filepath`; Save As
 becomes the active project only after a destination is selected. Save Copy keeps
 the current path and dirty state.
 
-All 33 host tests pass, including new guards for the callback-free UIKit boundary
-and event route. `git diff --check` is clean; pinned-source preflight applies to 57
-files. This source has not yet passed native iOS compilation or IPA packaging, and
-has no device acceptance. The earlier run35582136863 was inspected: exact source
-`1057ce3c293ab1bf286dfd5ca14f4a3f317716d7` failed makesdna because of 32-bit
-`ScrArea_Runtime` alignment; the later verified IPA remains run35837932326 at
-`e7cce60`, and neither contains this fix.
+All 33 host tests passed on `5e11388`, including guards for the callback-free UIKit
+boundary and event route. Its exact-source iOS run [35844483198](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35844483198)
+passed cloud preflight but failed native compilation in
+`GHOST_ProjectExportIOS.hh`: a patch edit had reduced the separate model-exporter
+header from 333 lines to a malformed 150-line Objective-C interface containing a
+method body without its declaration terminator or implementation block. No IPA was
+produced. Corrected source `bd240bfbe9316c53d96b8778885c44a205c46aec` restores a
+complete synchronous model-exporter interface/implementation, removes the obsolete
+callback-based project-save methods, and adds a regression that checks the class
+boundaries and exported-file API. All 34 host tests pass; pinned-source preflight
+applies to 57 files and `git diff --check` is clean.
 
-Next: build exact source `5e11388`, fix any actual compile/package failure, verify
-the IPA artifact and checksum, then test on iPad. Use a disposable project to
-cancel at both the compression prompt and Files picker, confirming Save As keeps
-the previous path/dirty state; confirm Save Copy also keeps both; then complete
-Save As and reopen the chosen file. Repeat with finger and Pencil. Provider
-bookmarks, coordinated later Save, sibling assets, broader cancellation/recovery
-and full Files lifecycle acceptance remain unfinished.
+Replacement iOS run [35846812298](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35846812298)
+targets exactly `bd240bfbe9316c53d96b8778885c44a205c46aec`; it was dispatched on
+2026-09-23 and is still running. No artifact or device acceptance is claimed. The
+latest successful IPA remains run `35837932326` at `e7cce60`; it does not contain
+the Save As/Save Copy context-lifetime fix.
+
+Provider-save audit: Save As currently uses the document picker in export-as-copy
+mode and stores the callback URL as Blender's active filepath. Apple's delegate
+documentation says that in export-as-copy mode this URL only reports that the
+provider created a copy; the app cannot access that copy as a live document. That
+makes a later ordinary Save to the stored path invalid. The next Files repair must
+give Save As an actual document identity and route later writes through balanced
+security-scoped access and real provider coordination; it must not report success
+until that write completes. See [UIDocumentPickerDelegate](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/documentpicker%28_%3Adidpickdocumentsat%3A%29),
+[document picker requirements](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller),
+and [NSFileCoordinator](https://developer.apple.com/documentation/foundation/nsfilecoordinator).
+
+After the replacement build, verify the IPA artifact and checksum, then use a
+disposable project to cancel at both the compression prompt and Files picker,
+confirming Save As keeps the previous path/dirty state; confirm Save Copy also
+keeps both; then complete Save As and reopen the chosen file. Repeat with finger
+and Pencil. Provider bookmarks, coordinated later Save, sibling assets, broader
+cancellation/recovery and full Files lifecycle acceptance remain unfinished.
 
 ## Restore checkpoint labels — 2026-09-23
 

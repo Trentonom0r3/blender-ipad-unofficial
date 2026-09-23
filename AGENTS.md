@@ -23,14 +23,17 @@ Own reversible decisions and ask for device evidence only when needed.
 The latest successful feature IPA remains run `35837932326` at source `e7cce60`;
 it includes saved-layout history, exact-edge joins, the recovery guard and distinct
 restore-history labels. Its artifact identity and checksum are in PROJECT_HANDOFF.
-Current source `5e11388` fixes the Save As/Save Copy callback lifetime through a
-live Blender modal event; host tests and pinned-source preflight pass, but its iOS
-build is pending. Earlier native build failures at `56f5e23` (stale patch hunk
-count), `1057ce3` (32-bit `ScrArea_Runtime` alignment) and `35833932550` (layout
-patch hunk count) were fixed; do not retry those SHAs. Actual iPad acceptance is
-still open. Validate the latest successful IPA's Inspector and layout workflows,
-then test the new Files lifecycle in its own exact-source IPA. Continue unfinished
-workspace and Files requirements.
+The Save As/Save Copy callback-lifetime source `5e11388` was tested in run
+`35844483198` at `6028dd1`; iOS compilation failed because that patch accidentally
+truncated the separate native model-exporter header. Fix `bd240bf` restores the
+complete model-export route and adds a regression test; all 34 host tests and
+pinned-source preflight pass. Replacement run `35846812298` targets exact source
+`bd240bf` and is in progress. Do not retry `6028dd1`. Earlier native build failures
+at `56f5e23` (stale patch hunk count), `1057ce3` (32-bit `ScrArea_Runtime`
+alignment) and `35833932550` (layout patch hunk count) were fixed; do not retry
+those SHAs. Actual iPad acceptance is still open. Validate Inspector and layout
+workflows in an installable build, then test Files lifecycle in its own exact-source
+IPA. Continue unfinished workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

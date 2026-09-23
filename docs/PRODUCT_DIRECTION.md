@@ -199,10 +199,12 @@ Source checkpoint `5e11388` routes Save As and Save Copy through a live Blender
 modal operator event. UIKit now returns compression and picker choices without
 retaining `bContext *`; serialization and document-state updates run under the
 operator's current context. Save As stages with copy semantics so cancellation
-does not replace the active path before a Files destination is chosen. Host tests
-and pinned-source preflight pass; iOS compilation, IPA packaging and device tests
-are pending. This closes the callback-lifetime audit only. Provider-safe later
-Save, security scopes/bookmarks and coordinated I/O remain unfinished.
+does not replace the active path before a Files destination is chosen. The first
+native build exposed an accidentally truncated, unrelated model-exporter header;
+`bd240bf` restores that path and adds a regression test. Replacement iOS run
+`35846812298` is building exact source `bd240bf`. This closes the callback-lifetime
+audit only. Provider-safe later Save, security scopes/bookmarks and coordinated I/O
+remain unfinished.
 
 Preserve the platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document
