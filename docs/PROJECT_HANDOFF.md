@@ -1,5 +1,35 @@
 # Project handoff — 2026-09-23
 
+## Provider-aware Save source checkpoint — 2026-09-23
+
+Source `e88e3776e8a03fc4b11702a2740b4000e16c9441` changes Save As to move its
+staged `.blend` into Files and records a bookmark for the destination URL. A later
+ordinary Save, including the File menu's execute route, serializes into local
+staging and coordinates a replacement at that bookmarked URL off the Blender event
+loop. Save Copy remains an independent export. The native delegate reports success
+only after the coordinated write completes; cancellation or write failure does not
+change the active project identity or send a filesaved notifier. The File menu
+keeps Save enabled when a bookmark supplies access that `os.access` cannot see.
+
+All 37 host tests pass, pinned-source preflight applies to 57 files, and
+`git diff --check` is clean. Exact-source iOS run
+[35858987938](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35858987938)
+passed cloud preflight, native iOS Release compilation and IPA packaging.
+Verified artifact `Blender-iPad-Unofficial-ipa`, id `10750435106`, archive size
+248,432,872 bytes, GitHub digest
+`sha256:5e68310b2ebf6ba877dcfaf9893358e6b3a593445e013a974c6b261603eea062`,
+expires 2026-12-22 12:11:57 UTC. The artifact downloaded successfully. Extracted
+`Blender-iPad-Unofficial.ipa` is 248,432,704 bytes with SHA-256
+`2d96f9eac21fb5e8e4f51239a1522f095da7f16ecc6b7962bf8a52c1e369c98e`.
+Its ZIP integrity is clean; `Payload/Blender.app/Info.plist` reports bundle ID
+`com.unofficial.blenderipad`, version `5.0.0`. This is packaged-build evidence,
+not iPad acceptance. The provider route is a first working path, not complete
+Files acceptance: opened projects still become local copies; sidecars, relative
+assets, multi-document bookmarks, recovery and real-provider/device behavior still
+need work. The user's latest recorded UI predates the labeled Inspector and wider
+rails. Design review found no source-only reason to change those controls again
+before testing common object/camera/property work on the iPad.
+
 ## Inspector readability and touch rail checkpoint — 2026-09-23
 
 The user's 9.65-second recording predates the labeled Inspector IPA. An independent

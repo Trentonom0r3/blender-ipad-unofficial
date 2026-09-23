@@ -217,7 +217,11 @@ Its first native build failed on a truncated model-exporter header; source `bd24
 restores that separate route and adds regression coverage. Replacement iOS run
 `35846812298` passed native Release compilation and IPA packaging; the artifact
 was downloaded and checked. See PROJECT_HANDOFF.md for exact build evidence,
-pending device acceptance and the unresolved provider-safe ordinary Save lifecycle.
+pending device acceptance. A later checkpoint, source `e88e377` in verified IPA
+run `35858987938`, changes Save As to retain a bookmark for a moved Files document
+and coordinates subsequent ordinary Save through local staging. This remains
+unaccepted on device and does not yet solve sibling assets, multi-document
+identity or all recovery paths.
 
 The durable Files contract still requires correct document identity for later Save,
 security scopes/bookmarks, actual provider I/O coordination, project-folder/sibling

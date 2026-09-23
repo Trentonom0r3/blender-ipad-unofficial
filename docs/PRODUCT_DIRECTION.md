@@ -48,6 +48,9 @@ now expand to 44-unit touch targets when there is room and contract toward 28
 units in narrow windows. Validate this on device before treating it as a solution
 to the broader desktop-like feel. Exact-source IPA run 35850985308 passed native
 Release compilation and packaging; device acceptance remains open.
+Provider-aware Save source `e88e377` also passed native Release compilation and
+IPA packaging in run 35858987938. Its Files behavior and the broader touch design
+still need iPad acceptance.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 

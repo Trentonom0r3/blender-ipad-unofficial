@@ -20,21 +20,22 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest successful feature IPA is run `35850985308` at source `011bf08`;
-it adds adaptive 28–44-unit side rails and a 360-unit Inspector width floor to
-the prior Inspector, saved-layout, and Save As/Save Copy work. The IPA was
+The latest successful feature IPA is run `35858987938` at source `e88e377`;
+it adds bookmark-backed, coordinated ordinary Save for a project moved into Files
+by Save As. The earlier `35850985308` IPA added adaptive 28–44-unit side rails
+and a 360-unit Inspector width floor to the labeled Inspector. The newest IPA was
 downloaded; ZIP integrity, bundle metadata, size and SHA-256 are recorded in
-PROJECT_HANDOFF. All 35 host tests, pinned-source preflight and native iOS Release
+PROJECT_HANDOFF. All 37 host tests, pinned-source preflight and native iOS Release
 compilation pass. This is packaged-build evidence, not iPad acceptance. The first
 build of the save change, run `35844483198` at `6028dd1`, failed because its patch
 truncated the model-exporter header; do not retry that SHA. Earlier native build failures
 at `56f5e23` (stale patch hunk count), `1057ce3` (32-bit `ScrArea_Runtime`
 alignment) and `35833932550` (layout patch hunk count) were fixed; do not retry
 those SHAs. Actual iPad acceptance is still open. Validate Inspector, rail hits,
-layout and Save As/Save Copy cancellation in this exact IPA. The export-as-copy picker URL
-does not provide a writable identity for later ordinary Save; fix that Files
-lifecycle before calling external document saving complete. Continue unfinished
-workspace and Files requirements.
+layout, Save As/Save Copy cancellation and provider-backed ordinary Save in this
+exact IPA. The new Files route still needs device/provider testing, sibling assets,
+multi-document identity and recovery before external document saving is complete.
+Continue unfinished workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

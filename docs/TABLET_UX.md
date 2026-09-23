@@ -1,5 +1,14 @@
 # Tablet UX implementation
 
+The Canvas First and early implementation sections below are historical notes.
+For the current design and acceptance criteria, use `PRODUCT_DIRECTION.md`,
+`IPAD_WORKSPACE.md`, and the newest `PROJECT_HANDOFF.md` entry. The active source
+uses persistent adaptive rails, native working-editor splits, a labeled Inspector
+category chooser and full native Properties content. Pencil squeeze opens the
+nine-tool radial; Pencil double tap opens the context menu. Preserve those working
+mappings. A successful IPA proves compilation and packaging, while the user's
+judgment of touch comfort still requires the iPad workflow check.
+
 ## Current engineering state
 
 See [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md) for the durable product goals.
