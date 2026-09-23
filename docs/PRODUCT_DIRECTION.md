@@ -202,9 +202,10 @@ operator's current context. Save As stages with copy semantics so cancellation
 does not replace the active path before a Files destination is chosen. The first
 native build exposed an accidentally truncated, unrelated model-exporter header;
 `bd240bf` restores that path and adds a regression test. Replacement iOS run
-`35846812298` is building exact source `bd240bf`. This closes the callback-lifetime
-audit only. Provider-safe later Save, security scopes/bookmarks and coordinated I/O
-remain unfinished.
+`35846812298` passed native Release compilation and IPA packaging for exact source
+`bd240bf`; artifact identity is in PROJECT_HANDOFF. Device acceptance remains open.
+This closes the callback-lifetime audit only. Provider-safe later Save, security
+scopes/bookmarks and coordinated I/O remain unfinished.
 
 Preserve the platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document

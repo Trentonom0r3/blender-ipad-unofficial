@@ -20,20 +20,21 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest successful feature IPA remains run `35837932326` at source `e7cce60`;
-it includes saved-layout history, exact-edge joins, the recovery guard and distinct
-restore-history labels. Its artifact identity and checksum are in PROJECT_HANDOFF.
-The Save As/Save Copy callback-lifetime source `5e11388` was tested in run
-`35844483198` at `6028dd1`; iOS compilation failed because that patch accidentally
-truncated the separate native model-exporter header. Fix `bd240bf` restores the
-complete model-export route and adds a regression test; all 34 host tests and
-pinned-source preflight pass. Replacement run `35846812298` targets exact source
-`bd240bf` and is in progress. Do not retry `6028dd1`. Earlier native build failures
+The latest successful feature IPA is run `35846812298` at source `bd240bf`;
+it includes the prior Inspector and saved-layout work plus the Save As/Save Copy
+modal-context repair and restored model exporter. The IPA was downloaded, its ZIP
+integrity and bundle metadata checked, and its size and SHA-256 recorded in
+PROJECT_HANDOFF. This is packaged-build evidence, not iPad acceptance. The first
+build of the save change, run `35844483198` at `6028dd1`, failed because its patch
+truncated the model-exporter header; do not retry that SHA. All 34 host tests and
+pinned-source preflight pass on the repaired source. Earlier native build failures
 at `56f5e23` (stale patch hunk count), `1057ce3` (32-bit `ScrArea_Runtime`
 alignment) and `35833932550` (layout patch hunk count) were fixed; do not retry
-those SHAs. Actual iPad acceptance is still open. Validate Inspector and layout
-workflows in an installable build, then test Files lifecycle in its own exact-source
-IPA. Continue unfinished workspace and Files requirements.
+those SHAs. Actual iPad acceptance is still open. Validate Inspector, layout and
+Save As/Save Copy cancellation in this exact IPA. The export-as-copy picker URL
+does not provide a writable identity for later ordinary Save; fix that Files
+lifecycle before calling external document saving complete. Continue unfinished
+workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

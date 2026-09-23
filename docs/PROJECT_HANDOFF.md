@@ -24,10 +24,18 @@ boundaries and exported-file API. All 34 host tests pass; pinned-source prefligh
 applies to 57 files and `git diff --check` is clean.
 
 Replacement iOS run [35846812298](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35846812298)
-targets exactly `bd240bfbe9316c53d96b8778885c44a205c46aec`; it was dispatched on
-2026-09-23 and is still running. No artifact or device acceptance is claimed. The
-latest successful IPA remains run `35837932326` at `e7cce60`; it does not contain
-the Save As/Save Copy context-lifetime fix.
+targets exactly `bd240bfbe9316c53d96b8778885c44a205c46aec`. It passed cloud
+preflight, native iOS Release compilation, IPA packaging and artifact upload on
+2026-09-23. Verified artifact `Blender-iPad-Unofficial-ipa`, id `10744810628`,
+archive size 248,429,947 bytes, GitHub archive digest
+`sha256:a051beb5141bca018768b9797c47518fb66fea102e4bc01a75ab50f0d2fa5af1`,
+expires 2026-12-22 10:05:55 UTC. The download endpoint succeeded. Extracted
+`Blender-iPad-Unofficial.ipa` is 248,429,779 bytes with SHA-256
+`0ce771b19b80f011228284a4c01eb7c3b83f7555de79f73d39a398b7931a305f`.
+Its ZIP integrity is clean, and `Payload/Blender.app/Info.plist` reports bundle ID
+`com.unofficial.blenderipad`, version `5.0.0`. This is now the latest successful
+IPA and contains the Save As/Save Copy context-lifetime fix, but no iPad behavior
+or usability acceptance is claimed.
 
 Provider-save audit: Save As currently uses the document picker in export-as-copy
 mode and stores the callback URL as Blender's active filepath. Apple's delegate
@@ -40,8 +48,8 @@ until that write completes. See [UIDocumentPickerDelegate](https://developer.app
 [document picker requirements](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller),
 and [NSFileCoordinator](https://developer.apple.com/documentation/foundation/nsfilecoordinator).
 
-After the replacement build, verify the IPA artifact and checksum, then use a
-disposable project to cancel at both the compression prompt and Files picker,
+On the M5 iPad, use this exact IPA and a disposable project to cancel at both the
+compression prompt and Files picker,
 confirming Save As keeps the previous path/dirty state; confirm Save Copy also
 keeps both; then complete Save As and reopen the chosen file. Repeat with finger
 and Pencil. Provider bookmarks, coordinated later Save, sibling assets, broader

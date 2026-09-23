@@ -211,8 +211,9 @@ and Save Copy. UIKit sends a native event to a live modal operator; Blender perf
 serialization and Save As identity updates when that operator has a current context.
 Its first native build failed on a truncated model-exporter header; source `bd240bf`
 restores that separate route and adds regression coverage. Replacement iOS run
-`35846812298` is in progress. See PROJECT_HANDOFF.md for exact build and device
-evidence and the unresolved provider-safe ordinary Save lifecycle.
+`35846812298` passed native Release compilation and IPA packaging; the artifact
+was downloaded and checked. See PROJECT_HANDOFF.md for exact build evidence,
+pending device acceptance and the unresolved provider-safe ordinary Save lifecycle.
 
 The durable Files contract still requires correct document identity for later Save,
 security scopes/bookmarks, actual provider I/O coordination, project-folder/sibling
