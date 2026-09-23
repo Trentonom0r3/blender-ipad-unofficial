@@ -76,7 +76,7 @@ for the complete goal and delivery sequence.
 The labeled Inspector change is present in verified IPA build 35698122851 at source
 `cb7966c`; its iPad acceptance is still pending. Saved-layout history and exact-edge
 join are in verified IPA run 35833417772 at source `0a7b005`. The follow-up recovery
-guard is in commit `56f5e23`, whose preflight passed and native build is queued.
+guard is in commit `56f5e23`, whose preflight passed and native build is in progress.
 Save/reopen behavior, multiple-window lifecycle and device acceptance remain open.
 Continue improving settings and panel interactions that interrupt common workflows,
 while retaining native functionality.

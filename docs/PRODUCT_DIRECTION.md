@@ -105,9 +105,11 @@ cannot establish that an interaction is comfortable on an iPad.
 1. Completed: diagnose the failed native build and produce a verified IPA for
    source `cb7966c`. The actual failure and replacement artifact are recorded in
    PROJECT_HANDOFF.md; do not retry the failed SHA.
-2. Validate that IPA on iPad. It includes the labeled Inspector selector and large
-   category choices; check category selection, settings edits, scrolling and return
-   to canvas with finger and Pencil, including narrow windows.
+2. Completed: package the saved-layout history and exact-edge join in verified IPA
+   run `35833417772` at source `0a7b005`. A follow-up native build for `56f5e23`
+   adds the recovery guard and is in progress. Validate the newest IPA on iPad:
+   check Inspector category selection/settings/scrolling, then save, split, join,
+   restore and reopen a layout with finger and Pencil, including a narrow window.
 3. Improve the remaining everyday friction through complete workflows: selecting
    and transforming objects, adjusting cameras and settings, opening/dismissing
    panels, undoing changes, and saving/reopening projects. Choose the next change

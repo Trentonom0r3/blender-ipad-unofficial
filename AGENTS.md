@@ -20,11 +20,12 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The Inspector checkpoint now has a verified IPA at source `cb7966c` (see the latest
-PROJECT_HANDOFF entry); actual iPad acceptance is still open. Next use that build
-to check category choice, settings edits, scrolling and return-to-canvas, then
-address observed friction in object/camera editing, panel use and saving. Continue
-unfinished workspace and Files requirements.
+The latest feature IPA is run `35833417772` at source `0a7b005`; it adds saved-layout
+history and exact-edge joins alongside the prior Inspector improvements. The
+recovery-guard follow-up at `56f5e23` passed preflight and its native build is in
+progress (see PROJECT_HANDOFF). Actual iPad acceptance is still open. Validate
+category choice and settings edits, then save/split/join/restore/reopen layouts with
+finger and Pencil. Continue unfinished workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
