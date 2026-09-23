@@ -8,7 +8,10 @@ unique-name helper and labels collisions `Before Restore 2`, `Before Restore 3`,
 and so on. A host regression test exercises both suffix selection and its use by
 the restore operator. All 30 host tests pass, `git diff --check` is clean, patch
 hunk totals match, and pinned-source preflight applies to 56 files. This is source
-and host-test evidence only; package the change and then validate history on iPad.
+and host-test evidence only. iOS Release compile/package run
+[35837932326](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35837932326)
+has been dispatched for exact source `e7cce60185610f95f1d1619fe1688b87fe9e9118`;
+verify the IPA artifact if it succeeds, then validate history on iPad.
 
 ## Saved layout history source checkpoint — 2026-09-23
 
