@@ -75,10 +75,11 @@ for the complete goal and delivery sequence.
 
 The labeled Inspector change is present in verified IPA build 35698122851 at source
 `cb7966c`; its iPad acceptance is still pending. Saved-layout history and exact-edge
-join have now been implemented in source with host helper coverage. Native
-compilation, IPA packaging, save/reopen behavior and device acceptance for those new
-workspace changes remain pending. Continue improving settings and panel interactions
-that interrupt common workflows, while retaining native functionality.
+join are in verified IPA run 35833417772 at source `0a7b005`. The follow-up recovery
+guard is in commit `56f5e23`, whose preflight passed and native build is queued.
+Save/reopen behavior, multiple-window lifecycle and device acceptance remain open.
+Continue improving settings and panel interactions that interrupt common workflows,
+while retaining native functionality.
 
 ### Floating panels for every workspace
 

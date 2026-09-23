@@ -15,16 +15,21 @@ check still reference the layout; repeated checkpoint names receive distinct lab
 Host C++ regression coverage compiles the exact checkpoint-validity, unique-name,
 reference-audit, exact-edge-neighbor and post-join remapping helpers from the patch.
 All 28 build tests pass, `git diff --check` is clean, and pinned source preflight
-applies the patch to 56 files. A follow-up safety fix now refuses to swap editor
-contents if its recovery checkpoint cannot be captured. Run 35833417772 is building
-the preceding source commit `0a7b005`; build 35833932550 is queued against the
-follow-up commit `56f5e23`. These are source/host-test and in-progress build
-evidence only: no saved-layout save/reopen test or iPad acceptance has been
-completed.
+applies the patch to 56 files. Commit `0a7b0054d4b83ff9144b0aca6edce129534c532e`
+passed native iOS Release compilation and IPA packaging in [run
+35833417772](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35833417772).
+Verified artifact `Blender-iPad-Unofficial-ipa`, id `10738791172`, 248,429,090
+bytes, SHA-256 `8be6605aefb018afec4125eae1a7bbde276e41fd9b475b4e71d5dd7df6343cf7`,
+expires 2026-12-22. It includes saved-layout history and exact-edge join, but
+predates the follow-up that refuses to swap editor contents if recovery checkpoint
+capture fails. That follow-up is commit `56f5e23bc1f652dca711cbc52416a79d278b30f2`;
+its preflight passed and native build 35833932550 is queued. No saved-layout
+save/reopen test or iPad acceptance has been completed.
 
-Still required in this layout milestone: native build validation, persistence
-across save/reopen, workspace duplication/deletion and multiple-window lifecycle
-checks. Do not treat the older cb7966 IPA as containing this work.
+Still required in this layout milestone: build the latest recovery-guard commit,
+validate persistence across save/reopen, workspace duplication/deletion and
+multiple-window lifecycle, then perform iPad acceptance. Neither the cb7966 IPA nor
+run 358334 contains the latest guard.
 
 
 ## Layout reversal lifecycle findings — 2026-09-22
