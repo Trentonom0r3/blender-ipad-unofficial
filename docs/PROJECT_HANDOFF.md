@@ -14,10 +14,12 @@ check still reference the layout; repeated checkpoint names receive distinct lab
 
 Host C++ regression coverage compiles the exact checkpoint-validity, unique-name,
 reference-audit, exact-edge-neighbor and post-join remapping helpers from the patch.
-All 27 build tests pass, `git diff --check` is clean, and pinned source preflight
-applies the patch to 56 files. This is source/host-test evidence only: this
-uncommitted revision has not had a native iOS compile, IPA, save/reopen test or iPad
-acceptance.
+All 28 build tests pass, `git diff --check` is clean, and pinned source preflight
+applies the patch to 56 files. A follow-up safety fix now refuses to swap editor
+contents if its recovery checkpoint cannot be captured. Run 35833417772 is building
+the preceding source commit `0a7b005`; the follow-up still needs its own iOS build.
+These are source/host-test and in-progress build evidence only: no saved-layout
+save/reopen test or iPad acceptance has been completed.
 
 Still required in this layout milestone: native build validation, persistence
 across save/reopen, workspace duplication/deletion and multiple-window lifecycle
@@ -48,15 +50,15 @@ ordinary layout reuse/cycling, and restoration must deliberately activate a copy
 or safely transfer that role. Do not use temp screens, which are not saved like
 normal layouts, or rely on a dot-name/user preference to protect history.
 
-The checkpoint and exact-edge join implementations are recorded above. Next handle
-broader layouts explicitly and validate save/reopen, workspace duplication/deletion,
-scene edits since checkpoint, multiple windows, modal cancellation and
-outgoing-layout recovery. Keep history removable without silently deleting the only
-copy of a removed editor.
+The checkpoint and exact-edge join implementations are recorded above. Broader
+layouts still need explicit handling. Validate save/reopen, workspace
+duplication/deletion, scene edits since checkpoint, multiple windows, modal
+cancellation and outgoing-layout recovery. Keep history removable without silently
+deleting the only copy of a removed editor.
 
-The Inspector delivery build below has since completed successfully. Layout
-reversal is still the next workspace capability to implement; the lifecycle work
-here is design research only.
+The Inspector delivery build below completed successfully. Saved-layout reversal
+and exact-edge join are now implemented in source; native compilation and lifecycle
+validation are recorded in the newer checkpoint above.
 
 ## Inspector IPA verified — 2026-09-23
 
@@ -81,8 +83,8 @@ Next: validate the Inspector on the M5 iPad in landscape/portrait and a narrow
 window (category choice, scrolling, settings edits, return to canvas), while
 preserving squeeze radial and double-tap context. Then use actual friction from
 the everyday object/camera/property workflow to guide the next visible usability
-increment. Implement saved-layout reversal and exact-edge touch joins after that;
-they remain required and not implemented.
+increment. Saved-layout reversal and exact-edge joins are implemented in later
+source, but still require native build and device/lifecycle validation.
 
 ## Inspector native compile fixes — 2026-09-22
 

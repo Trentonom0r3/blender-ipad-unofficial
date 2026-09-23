@@ -26,6 +26,19 @@ def added_functions(patch, source_path, signatures):
 
 
 class LayoutHistoryTests(unittest.TestCase):
+    def test_swap_refuses_to_mutate_without_checkpoint(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        function = added_functions(
+            patch,
+            'source/blender/editors/screen/screen_ipad_panels.cc',
+            ['static wmOperatorStatus working_swap_exec'])
+        capture = function.index('if (!ED_ipad_panels_layout_checkpoint_capture(C, "Before Swap"))')
+        cancel = function.index('return OPERATOR_CANCELLED;', capture)
+        mutation = function.index('ED_area_swapspace(C, source, model.areas[target]);')
+        self.assertLess(capture, cancel)
+        self.assertLess(cancel, mutation)
+
     def test_checkpoint_validity_and_all_native_references(self):
         repo = Path(__file__).resolve().parents[1]
         patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')

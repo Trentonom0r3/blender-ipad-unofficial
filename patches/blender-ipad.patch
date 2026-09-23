@@ -9436,7 +9436,10 @@ new file mode 100644
 +  const int target = RNA_int_get(op->ptr, "target");
 +  for (const policy::Area &working : model.working) {
 +    if (working.id == target && model.areas[target] != source) {
-+      ED_ipad_panels_layout_checkpoint_capture(C, "Before Swap");
++      if (!ED_ipad_panels_layout_checkpoint_capture(C, "Before Swap")) {
++        BKE_report(op->reports, RPT_WARNING, "Could not preserve the current layout");
++        return OPERATOR_CANCELLED;
++      }
 +      ED_area_swapspace(C, source, model.areas[target]);
 +      tag_layout(C, win);
 +      WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
