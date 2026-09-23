@@ -55,6 +55,17 @@ class LayoutHistoryTests(unittest.TestCase):
              'static void working_area_indices_remap_after_join'])
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(PREFIX + functions + panels + CASES)
 
+    def test_restore_names_outgoing_checkpoints_uniquely(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        restore = added_functions(
+            patch,
+            'source/blender/editors/screen/screen_ipad_layout_history.cc',
+            ['static wmOperatorStatus layout_restore_exec'])
+        unique_name = restore.index('layout_unique_name(workspace, "Before Restore")')
+        set_name = restore.index('BKE_workspace_layout_name_set(workspace, outgoing, outgoing_name.c_str())')
+        self.assertLess(unique_name, set_name)
+
 
 PREFIX = r'''
 #include <cassert>
@@ -108,10 +119,12 @@ int main() {
  assert(!layout_checkpoint_referenced(&main,&workspace,&layout));
  screen.used=true; assert(layout_checkpoint_referenced(&main,&workspace,&layout));
 
- WorkSpace names; WorkSpaceLayout first,second; first.name="Before Split";first.next=&second;
- second.name="Before Split 2";names.layouts.first=&first;
+ WorkSpace names; WorkSpaceLayout first,second,third,fourth; first.name="Before Split";first.next=&second;
+ second.name="Before Split 2";second.next=&third;third.name="Before Restore";third.next=&fourth;
+ fourth.name="Before Restore 2";names.layouts.first=&first;
  assert(layout_unique_name(&names,"Before Split")=="Before Split 3");
  assert(layout_unique_name(&names,"Before Swap")=="Before Swap");
+ assert(layout_unique_name(&names,"Before Restore")=="Before Restore 3");
 
  ScrArea keep,removed,last;keep.direction=SCREEN_DIR_E;keep.next=&last;
  assert(working_areas_are_full_edge_neighbors(&keep,&removed));

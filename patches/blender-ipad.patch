@@ -6201,7 +6201,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_layout_history.cc b/sourc
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_layout_history.cc
-@@ -0,0 +1,280 @@
+@@ -0,0 +1,281 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -6422,7 +6422,8 @@ new file mode 100644
 +  bScreen *active_screen = CTX_wm_screen(C);
 +  if (outgoing_screen && outgoing_screen != active_screen) {
 +    outgoing_screen->flag |= screen_ipad_layout_checkpoint;
-+    BKE_workspace_layout_name_set(workspace, outgoing, "Before Restore");
++    const std::string outgoing_name = layout_unique_name(workspace, "Before Restore");
++    BKE_workspace_layout_name_set(workspace, outgoing, outgoing_name.c_str());
 +  }
 +  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
 +  return OPERATOR_FINISHED;

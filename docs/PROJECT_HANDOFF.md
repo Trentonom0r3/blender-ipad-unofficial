@@ -1,5 +1,15 @@
 # Project handoff — 2026-09-13
 
+## Restore checkpoint labels — 2026-09-23
+
+Repeatedly restoring a layout named each outgoing arrangement `Before Restore`,
+so history could become ambiguous. Restore now uses the existing workspace-wide
+unique-name helper and labels collisions `Before Restore 2`, `Before Restore 3`,
+and so on. A host regression test exercises both suffix selection and its use by
+the restore operator. All 30 host tests pass, `git diff --check` is clean, patch
+hunk totals match, and pinned-source preflight applies to 56 files. This is source
+and host-test evidence only; package the change and then validate history on iPad.
+
 ## Saved layout history source checkpoint — 2026-09-23
 
 Added a persistent **Save Layout** and **Layout History** surface to the working-
