@@ -5,10 +5,11 @@
 The packaged `e88e377` ordinary Save retained only one Files document bookmark.
 Saving a second project with Save As replaced the first bookmark, so a later
 ordinary Save of the first project could no longer find its provider identity.
-The uncommitted overlay now stores bookmarks by full project path. The Blender
-save operator passes that path into the native update service, which retains the
-matching bookmark and path for its asynchronous coordinated write. Save As first
-migrates the older single-bookmark pair into the map, then records the new file;
+Source commit `1a51dec84e759f5ce27564bd0a25667e6d1cd515` stores bookmarks
+by full project path. The Blender save operator passes that path into the native
+update service, which retains the matching bookmark and path for its asynchronous
+coordinated write. Save As first migrates the older single-bookmark pair into
+the map, then records the new file;
 a refreshed stale bookmark updates its own entry. The legacy pair remains for
 existing installs and is refreshed when it still names the active destination.
 Save Copy remains independent. This closes the source-level one-bookmark
@@ -17,8 +18,10 @@ access, or provider recovery after access is revoked.
 
 The change passes the existing 38 host tests and pinned-source preflight; the
 overlay applies to 57 pinned files. `git diff --check` is clean. Native iOS
-compilation, IPA packaging and provider/device behavior are not checked for
-this candidate. At HEAD `ebfccb2b70522cdfd77e53c942d9ab0d91117f49`, the
+compilation, IPA packaging and provider/device behavior are not yet checked for
+this candidate. Exact-source iOS build
+[35935225155](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35935225155)
+is in progress. At source commit `1a51dec84e759f5ce27564bd0a25667e6d1cd515`, the
 current patch's UTF-8, LF-normalized SHA-256 is
 `711c2c32a19abd99e7fc6a689978091b091b106e235870801d7679fc5ec15f20`
 (446,159 bytes). The next IPA can test that sequential Save As operations keep
@@ -31,7 +34,7 @@ not a complete multi-document workflow.
 
 ## Complete-folder import candidate — local source, 2026-09-23
 
-The current uncommitted overlay adds a distinct **Import Project Folder** route
+Source commit `1a51dec` adds a distinct **Import Project Folder** route
 to the iPad File menu and workspace controls. The Files picker requests a folder
 grant, coordinates each directory listing and file read in the background, and
 copies the whole folder under a hidden `.BlenderImport-<UUID>` staging name in
@@ -69,17 +72,17 @@ Source review caught an Objective-C block-capture compile error in the local
 folder scan: its error handler assigns to `copy_error`, which must be declared
 `__block`. This is corrected before dispatching a native build. All 38 host tests
 pass, pinned-source preflight applies to 57 files, and `git diff --check` is
-clean. Native iOS compilation, IPA packaging, and device behavior are **not yet
-checked for this candidate**. At HEAD
-`ebfccb2b70522cdfd77e53c942d9ab0d91117f49`, the current patch's UTF-8,
+clean. Native iOS compilation and IPA packaging are being checked by run
+`35935225155`; device behavior is **not checked for this candidate**. At source
+`1a51dec84e759f5ce27564bd0a25667e6d1cd515`, the patch's UTF-8,
 LF-normalized SHA-256 is
 `711c2c32a19abd99e7fc6a689978091b091b106e235870801d7679fc5ec15f20`
 (446,159 bytes). Compare it before committing or building; this identifies the
-source overlay, not an IPA. The commit/push attempt was
-rejected by automatic approval review because the account usage limit prevented
-review; it was not a safety finding. Keep the local changes intact. Once the
-approval gate is available, commit/push the exact source, run one iOS build, fix
-any native failure, and verify the IPA artifact. Device acceptance should cover a
+source overlay, not an IPA. An earlier commit/push attempt was rejected by
+automatic approval review because the account usage limit prevented review; it
+was not a safety finding. A fresh review accepted the source checkpoint, and it
+was pushed to origin. Inspect exact-source run `35935225155`, fix any native
+failure, and verify the IPA artifact on success. Device acceptance should cover a
 folder with one `.blend`, a folder with multiple `.blend` files in subfolders,
 nested textures, cancellation during a cloud-backed copy, and saving/reopening
 the imported copy. Force quit during a cloud-backed folder copy, relaunch,
@@ -94,8 +97,8 @@ native and real-provider validation, including concurrent source changes.
 
 The packaged `e88e377` provider Save starts a background coordinated write after
 Blender stages the `.blend`. Its modal Escape path previously reported
-cancellation even though the provider write could still finish. The uncommitted
-candidate now keeps that ordinary-save modal active on Escape and reports once
+cancellation even though the provider write could still finish. Source commit
+`1a51dec` keeps that ordinary-save modal active on Escape and reports once
 that the user should wait for the Files result. The existing native completion
 event remains responsible for reporting success or failure and releasing staging.
 
@@ -133,7 +136,7 @@ tool and brush controls there; simply hiding it would remove access to native
 functionality. This is a concrete remaining source-backed reason the interface
 can still feel like desktop Blender after the Inspector improvement.
 
-The current uncommitted source candidate collapses the native Tool Header when
+Source commit `1a51dec` collapses the native Tool Header when
 the unsaved factory/new Layout workspace's primary Object Mode 3D View is first
 adapted on iPad. A **Settings** entry after Tools on the left rail toggles the same native
 row. Opened `.blend` projects, even ones whose workspace is named Layout, keep
