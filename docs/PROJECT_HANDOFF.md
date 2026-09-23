@@ -29,9 +29,8 @@ closing brace and `#endif`. The hunk is now 2,144 lines, and preflight compares
 normal and recounted `git apply --numstat` totals; a regression test rejects stale
 hunk counts. The corrected patch passes all 29 host tests and pinned-source
 preflight. Corrected source commit `965bb708cf314cc2fc1126a609ff0eb61a07f394` is
-being built in [run 35835722868](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35835722868); its preflight passed and the native job is fetching the pinned source.
-No artifact is available yet. No saved-layout save/reopen test or iPad acceptance
-has been completed.
+being built in [run 35835722868](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35835722868); its preflight passed and the native job is running. No artifact is available yet.
+No saved-layout save/reopen test or iPad acceptance has been completed.
 
 Still required in this layout milestone: rebuild the corrected recovery-guard patch,
 validate persistence across save/reopen, workspace duplication/deletion and
