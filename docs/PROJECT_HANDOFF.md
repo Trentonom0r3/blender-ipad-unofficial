@@ -31,6 +31,31 @@ validate persistence across save/reopen, workspace duplication/deletion and
 multiple-window lifecycle, then perform iPad acceptance. Neither the cb7966 IPA nor
 run 358334 contains the latest guard.
 
+### M5 iPad protocol — saved layout history and join
+
+After installing the newest successful IPA, use a disposable `.blend` with two
+working editors and an object that can be moved without saving the original:
+
+1. Save Layout from the working-editor menu. Split one editor horizontally or
+   vertically, then use Join from its neighbor and confirm the label says which
+   editor will remain. Check that the chosen editor and its native contents survive.
+2. Restore the saved layout. Confirm the original working editors and split return,
+   and that a scene edit made after saving the layout is still present. Layout
+   restoration must not roll back object or scene data.
+3. Save the project under a new name, close it, and reopen it. Confirm saved layout
+   history is still listed and can restore the intended editor arrangement. Switch
+   workspaces and return; history checkpoints must not appear as ordinary cycle
+   destinations.
+4. Repeat the menu, split, join and restore sequence with finger and Pencil in
+   landscape, portrait and a narrow window. Note missed targets, accidental canvas
+   edits, stale active-editor ownership, lost editor state or any desktop-input
+   regression.
+
+Use the run/source listed above and record orientation, input device and exact
+result. Run 358334 is usable for the normal layout path; run 358339 adds the
+recovery guard and should be preferred once its IPA is verified. This protocol is
+not evidence of acceptance until performed on the iPad.
+
 
 ## Layout reversal lifecycle findings — 2026-09-22
 
