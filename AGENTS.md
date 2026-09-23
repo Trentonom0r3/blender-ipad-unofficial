@@ -24,11 +24,11 @@ The latest feature IPA is run `35833417772` at source `0a7b005`; it adds saved-l
 history and exact-edge joins alongside the prior Inspector improvements. The
 recovery-guard follow-up at `56f5e23` failed native compilation because its patch
 hunk count truncated `screen_ipad_panels.cc`; the corrected patch and preflight
-regression test now pass locally. Corrected commit `965bb70` has passed preflight
-and is in native build run 35835722868 (see PROJECT_HANDOFF). Actual iPad acceptance
-is still open. Validate category choice and settings edits, then
-save/split/join/restore/reopen layouts with finger and Pencil. Continue unfinished
-workspace and Files requirements.
+regression test now pass locally. Corrected commit `965bb70` has a verified IPA in
+run 35835722868 (see PROJECT_HANDOFF). Actual iPad acceptance is still open.
+Validate category choice and settings edits, then save/split/join/restore/reopen
+layouts with finger and Pencil. Continue unfinished workspace and Files
+requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

@@ -28,14 +28,18 @@ count after three guard lines were added, so raw `git apply` omitted the file's
 closing brace and `#endif`. The hunk is now 2,144 lines, and preflight compares
 normal and recounted `git apply --numstat` totals; a regression test rejects stale
 hunk counts. The corrected patch passes all 29 host tests and pinned-source
-preflight. Corrected source commit `965bb708cf314cc2fc1126a609ff0eb61a07f394` is
-being built in [run 35835722868](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35835722868); its preflight passed and the native job is running. No artifact is available yet.
-No saved-layout save/reopen test or iPad acceptance has been completed.
+preflight. Corrected source commit `965bb708cf314cc2fc1126a609ff0eb61a07f394`
+passed native iOS Release compilation and IPA packaging in [run
+35835722868](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35835722868).
+Verified artifact `Blender-iPad-Unofficial-ipa`, id `10739757301`, 248,429,225
+bytes, GitHub artifact digest `sha256:92e0191f87c0d43be4673e128df00c4f9384836efdec0fb07576e2c4996b8891`,
+expires 2026-12-22. This IPA includes the recovery guard and the complete layout
+history/join change. The artifact download endpoint succeeded. No saved-layout
+save/reopen test or iPad acceptance has been completed.
 
-Still required in this layout milestone: rebuild the corrected recovery-guard patch,
-validate persistence across save/reopen, workspace duplication/deletion and
-multiple-window lifecycle, then perform iPad acceptance. Neither the cb7966 IPA nor
-run 358334 contains the latest guard.
+Still required in this layout milestone: validate persistence across save/reopen,
+workspace duplication/deletion and multiple-window lifecycle, then perform iPad
+acceptance. Neither the cb7966 IPA nor run 358334 contains the latest guard.
 
 ### M5 iPad protocol — saved layout history and join
 

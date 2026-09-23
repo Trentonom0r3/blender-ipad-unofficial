@@ -108,8 +108,8 @@ cannot establish that an interaction is comfortable on an iPad.
 2. Completed: package the saved-layout history and exact-edge join in verified IPA
    run `35833417772` at source `0a7b005`. The follow-up native build for `56f5e23`
    exposed a stale patch hunk count, now corrected with a preflight regression test.
-   corrected native build is running as workflow `35835722868`. Validate the
-   newest IPA on iPad:
+   Corrected source `965bb70` passed native compilation and IPA packaging in run
+   `35835722868`. Validate that IPA on iPad:
    check Inspector category selection/settings/scrolling, then save, split, join,
    restore and reopen a layout with finger and Pencil, including a narrow window.
 3. Improve the remaining everyday friction through complete workflows: selecting
