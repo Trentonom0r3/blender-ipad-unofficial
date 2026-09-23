@@ -458,7 +458,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3403,214 @@
+@@ -3377,6 +3403,252 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -477,6 +477,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +
 +struct IpadFilesSaveData {
 +  bool save_copy;
++  bool provider_update;
 +};
 +
 +static void wm_save_to_files_data_free(wmOperator *op)
@@ -545,7 +546,9 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  if (action == GHOST_IOSProjectExportAction_Saved) {
 +    if (!data->save_copy) {
 +      Main *bmain = CTX_data_main(C);
-+      STRNCPY(bmain->filepath, path);
++      if (!data->provider_update) {
++        STRNCPY(bmain->filepath, path);
++      }
 +      bmain->has_forward_compatibility_issues = false;
 +      bmain->colorspace.is_missing_opencolorio_config = false;
 +      WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
@@ -553,7 +556,9 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +        wm_autosave_timer_end(wm);
 +        wm_autosave_timer_begin(wm);
 +        wm->autosave_scheduled = false;
-+        BKE_reportf(&wm->runtime->reports, RPT_INFO, "Saved as \"%s\"", BLI_path_basename(path));
++        BKE_reportf(&wm->runtime->reports, RPT_INFO,
++                    data->provider_update ? "Saved \"%s\"" : "Saved as \"%s\"",
++                    BLI_path_basename(path));
 +      }
 +    }
 +    else {
@@ -562,6 +567,14 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +    wm_save_to_files_data_free(op);
 +    GHOST_IOS_project_export_finish();
 +    return OPERATOR_FINISHED;
++  }
++  if (action == GHOST_IOSProjectExportAction_Failed) {
++    BKE_report(op->reports, RPT_ERROR,
++               data->provider_update ? "Could not write the Files project; the project remains unsaved" :
++                                       "Files created the project but Blender could not retain access; reopen it from Files");
++    wm_save_to_files_data_free(op);
++    GHOST_IOS_project_export_finish();
++    return OPERATOR_CANCELLED;
 +  }
 +  if (action == GHOST_IOSProjectExportAction_Cancelled) {
 +    wm_save_to_files_data_free(op);
@@ -583,6 +596,31 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  if (!GHOST_IOS_begin_project_export(filename, save_copy)) {
 +    BKE_report(op->reports, RPT_ERROR, "Could not open Files sheet. Close other dialogs and try again");
 +    wm_save_to_files_data_free(op);
++    return OPERATOR_CANCELLED;
++  }
++  WM_event_add_modal_handler(C, op);
++  return OPERATOR_RUNNING_MODAL;
++}
++
++static wmOperatorStatus wm_save_provider_invoke(bContext *C, wmOperator *op)
++{
++  const char *current = BKE_main_blendfile_path(CTX_data_main(C));
++  op->customdata = MEM_callocN<IpadFilesSaveData>("iPad Files provider save data");
++  auto *data = static_cast<IpadFilesSaveData *>(op->customdata);
++  data->provider_update = true;
++  if (!GHOST_IOS_begin_project_update(BLI_path_basename(current))) {
++    BKE_report(op->reports, RPT_ERROR, "Could not begin a coordinated Files save");
++    wm_save_to_files_data_free(op);
++    return OPERATOR_CANCELLED;
++  }
++  char staging_path[FILE_MAX];
++  if (!GHOST_IOS_project_export_staging_path(staging_path, sizeof(staging_path)) ||
++      !wm_file_write(C, staging_path, G.fileflags, BLO_WRITE_PATH_REMAP_NONE, true, op->reports) ||
++      !GHOST_IOS_project_export_publish_update())
++  {
++    BKE_report(op->reports, RPT_ERROR, "Could not stage the project for Files");
++    wm_save_to_files_data_free(op);
++    GHOST_IOS_project_export_cancel();
 +    return OPERATOR_CANCELLED;
 +  }
 +  WM_event_add_modal_handler(C, op);
@@ -673,7 +711,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
-@@ -3696,7 +3858,10 @@
+@@ -3696,7 +3896,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -685,7 +723,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +3873,7 @@
+@@ -3708,6 +3911,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -693,7 +731,31 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3939,8 +4105,13 @@
+@@ -3745,4 +3949,14 @@
+     return OPERATOR_CANCELLED;
+   }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (GHOST_IOS_project_document_bookmark_matches(filepath)) {
++    if (is_save_as || is_incremental) {
++      BKE_report(op->reports, RPT_ERROR, "Use Save As to choose a new Files destination");
++      return OPERATOR_CANCELLED;
++    }
++    return wm_save_provider_invoke(C, op);
++  }
++#endif
++
+   if ((is_save_as == false) && is_incremental) {
+@@ -3924,3 +4138,8 @@
+   const char *blendfile_path = BKE_main_blendfile_path_from_global();
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (GHOST_IOS_project_document_bookmark_matches(blendfile_path)) {
++    return wm_save_provider_invoke(C, op);
++  }
++#endif
+   if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
+     PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
+@@ -3939,8 +4158,13 @@
      }
    }
    else {
@@ -707,6 +769,15 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
+@@ -3967,4 +4191,8 @@
+   ot->invoke = wm_save_mainfile_invoke;
+   ot->exec = wm_save_as_mainfile_exec;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ot->modal = wm_save_to_files_modal;
++  ot->cancel = wm_save_to_files_cancel;
++#endif
+   ot->check = wm_save_mainfile_check;
+   ot->get_description = wm_save_mainfile_get_description;
 diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
 --- a/scripts/startup/bl_ui/__init__.py
 +++ b/scripts/startup/bl_ui/__init__.py
@@ -3577,7 +3648,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,51 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3592,16 +3663,20 @@ new file mode 100644
 +  GHOST_IOSProjectExportAction_Compress,
 +  GHOST_IOSProjectExportAction_NoCompress,
 +  GHOST_IOSProjectExportAction_Saved,
++  GHOST_IOSProjectExportAction_Failed,
 +  GHOST_IOSProjectExportAction_Cancelled,
 +};
 +
 +/* Project-save UI reports native choices as window events. Blender serializes
 + * from its live operator context after receiving the compression choice. */
 +bool GHOST_IOS_begin_project_export(const char *filename, bool save_copy);
++bool GHOST_IOS_begin_project_update(const char *filename);
 +GHOST_IOSProjectExportAction GHOST_IOS_project_export_take_action(char *out_path,
 +                                                                  size_t max_len);
 +bool GHOST_IOS_project_export_staging_path(char *out_path, size_t max_len);
 +bool GHOST_IOS_project_export_present_picker();
++bool GHOST_IOS_project_export_publish_update();
++bool GHOST_IOS_project_document_bookmark_matches(const char *path);
 +void GHOST_IOS_project_export_finish();
 +void GHOST_IOS_project_export_cancel();
 +
@@ -4183,16 +4258,17 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
 --- a/scripts/startup/bl_ui/space_topbar.py
 +++ b/scripts/startup/bl_ui/space_topbar.py
-@@ -169,22 +169,30 @@
+@@ -169,22 +169,31 @@
 
          layout.separator()
 
 -        # iOS Workaround: Provide a clean alternative to write errors caused by sandbox restrictions
-+        # On iPad, unsaved files route to native Save As; saved files in Documents/Projects are writable.
++        # The native Files save route may use a bookmark instead of path permissions.
          import os
 -        file_is_writable = os.access(bpy.data.filepath, os.W_OK)
 +        is_saved = context.blend_data.is_saved
-+        file_is_writable = not is_saved or (bool(bpy.data.filepath) and os.access(bpy.data.filepath, os.W_OK))
++        native_files = "save_as_to_files" in dir(bpy.ops.wm)
++        file_is_writable = not is_saved or native_files or (bool(bpy.data.filepath) and os.access(bpy.data.filepath, os.W_OK))
 
          sub = layout.row()
          sub.enabled = file_is_writable
@@ -4203,7 +4279,7 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
          layout.operator_context = 'INVOKE_AREA'
 -        layout.operator("wm.save_as_mainfile", text="Save As...")
 +        # Query the operator registry: bpy.types does not expose native C++ operators.
-+        if "save_as_to_files" in dir(bpy.ops.wm):
++        if native_files:
 +            layout.operator("wm.save_as_to_files", text="Save As...")
 +        else:
 +            layout.operator("wm.save_as_mainfile", text="Save As...")
@@ -9975,7 +10051,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectSaveIOS.hh b/intern/ghost/intern/G
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,559 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. UIKit reports choices as GHOST events;
@@ -9995,11 +10071,16 @@ new file mode 100644
 +  GHOST_IWindow *_window;
 +  GHOST_IOSProjectExportAction _pendingAction;
 +  BOOL _busy;
++  BOOL _saveCopy;
++  BOOL _remembering;
++  NSUInteger _generation;
 +}
 +- (BOOL)begin:(NSString *)filename saveCopy:(BOOL)saveCopy;
++- (BOOL)beginUpdate:(NSString *)filename;
 +- (BOOL)stagingPath:(char *)outPath maxLength:(size_t)maxLength;
 +- (GHOST_IOSProjectExportAction)takeAction:(char *)outPath maxLength:(size_t)maxLength;
 +- (BOOL)presentPicker;
++- (BOOL)publishUpdate;
 +- (void)finish;
 +- (void)cancel;
 +- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination;
@@ -10037,6 +10118,8 @@ new file mode 100644
 +  _window = nullptr;
 +  _pendingAction = GHOST_IOSProjectExportAction_None;
 +  _busy = NO;
++  _saveCopy = NO;
++  _remembering = NO;
 +}
 +
 +- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination
@@ -10094,6 +10177,8 @@ new file mode 100644
 +  }
 +
 +  _busy = YES;
++  _generation++;
++  _saveCopy = saveCopy;
 +  _window = window;
 +  _presenter = [presenter retain];
 +  _filename = [name copy];
@@ -10127,6 +10212,24 @@ new file mode 100644
 +    [self finish];
 +    return NO;
 +  }
++  return YES;
++}
++
++- (BOOL)beginUpdate:(NSString *)filename
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  GHOST_IWindow *window = system ? system->getWindowManager()->getActiveWindow() : nullptr;
++  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++  if (_busy || !window || ![defaults dataForKey:@"BlenderWorkingProjectBookmark"] ||
++      ![defaults stringForKey:@"BlenderWorkingProjectPath"])
++  {
++    return NO;
++  }
++  _busy = YES;
++  _generation++;
++  _window = window;
++  _filename = [filename.lastPathComponent copy];
++  _pendingAction = GHOST_IOSProjectExportAction_None;
 +  return YES;
 +}
 +
@@ -10169,7 +10272,10 @@ new file mode 100644
 +    return NO;
 +  }
 +  @try {
-+    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[_source] asCopy:YES];
++    /* Save As moves the staged document into a writable provider location;
++     * Save Copy leaves the active document independent. */
++    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[_source]
++                                                                   asCopy:_saveCopy];
 +    _picker.delegate = self;
 +    _picker.modalPresentationStyle = UIModalPresentationFormSheet;
 +    _picker.title = @"Save to Files";
@@ -10181,6 +10287,88 @@ new file mode 100644
 +    NSLog(@"Failed to present project destination picker: %@", exception);
 +    return NO;
 +  }
++}
++
++- (BOOL)publishUpdate
++{
++  if (!_busy || !_source || _picker || _compressAlert ||
++      _pendingAction != GHOST_IOSProjectExportAction_None ||
++      ![[NSFileManager defaultManager] fileExistsAtPath:_source.path])
++  {
++    return NO;
++  }
++  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++  NSData *bookmark = [[defaults dataForKey:@"BlenderWorkingProjectBookmark"] retain];
++  NSString *expected = [[defaults stringForKey:@"BlenderWorkingProjectPath"] copy];
++  if (!bookmark || !expected) {
++    [bookmark release];
++    [expected release];
++    return NO;
++  }
++  NSURL *source = [_source retain];
++  const NSUInteger generation = _generation;
++  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++    @autoreleasepool {
++      BOOL stale = NO;
++      NSError *error = nil;
++      NSURL *destination = [NSURL URLByResolvingBookmarkData:bookmark options:0
++          relativeToURL:nil bookmarkDataIsStale:&stale error:&error];
++      const BOOL scoped = destination && [destination startAccessingSecurityScopedResource];
++      const BOOL owned = destination && [destination.path hasPrefix:
++          [NSHomeDirectory() stringByAppendingString:@"/"]];
++      __block BOOL written = NO;
++      if (destination && [destination.path isEqualToString:expected] && (scoped || owned)) {
++        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
++        NSError *coordinateError = nil;
++        [coordinator coordinateWritingItemAtURL:destination
++                                        options:NSFileCoordinatorWritingForReplacing
++                                          error:&coordinateError
++                                     byAccessor:^(NSURL *url) {
++          NSError *writeError = nil;
++          NSData *bytes = [NSData dataWithContentsOfURL:source
++                                               options:NSDataReadingMappedIfSafe error:&writeError];
++          written = bytes && [bytes writeToURL:url options:NSDataWritingAtomic error:&writeError];
++          if (!written) {
++            NSLog(@"Could not write coordinated Blender project: %@", writeError);
++          }
++        }];
++        if (coordinateError) {
++          NSLog(@"Could not coordinate Blender project Save: %@", coordinateError);
++        }
++        written = written && !coordinateError;
++        [coordinator release];
++      }
++      else {
++        NSLog(@"Files project bookmark is unavailable or no longer matches: %@", error);
++      }
++      NSData *refreshed = nil;
++      if (written && stale) {
++        refreshed = [[destination bookmarkDataWithOptions:0
++                        includingResourceValuesForKeys:nil relativeToURL:nil error:nil] retain];
++      }
++      if (scoped) {
++        [destination stopAccessingSecurityScopedResource];
++      }
++      NSString *path = [destination.path copy];
++      dispatch_async(dispatch_get_main_queue(), ^{
++        if (_busy && _generation == generation && !_picker) {
++          if (refreshed) {
++            [[NSUserDefaults standardUserDefaults] setObject:refreshed
++                                               forKey:@"BlenderWorkingProjectBookmark"];
++          }
++          [self queueAction:written ? GHOST_IOSProjectExportAction_Saved :
++                                      GHOST_IOSProjectExportAction_Failed
++                destination:written ? path : nil];
++        }
++        [path release];
++        [refreshed release];
++        [source release];
++        [bookmark release];
++        [expected release];
++      });
++    }
++  });
++  return YES;
 +}
 +
 +- (void)dismissPickerWithAction:(GHOST_IOSProjectExportAction)action
@@ -10228,6 +10416,7 @@ new file mode 100644
 +  }
 +  _busy = NO;
 +  _pendingAction = GHOST_IOSProjectExportAction_None;
++  _remembering = NO;
 +  [_destination release];
 +  _destination = nil;
 +
@@ -10269,12 +10458,60 @@ new file mode 100644
 +    [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Cancelled destination:nil];
 +    return;
 +  }
-+  [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Saved destination:destination.path];
++  if (_saveCopy) {
++    [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Saved destination:destination.path];
++    return;
++  }
++  if (_remembering) {
++    return;
++  }
++  _remembering = YES;
++  const NSUInteger generation = _generation;
++  NSURL *document = [destination retain];
++  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++    @autoreleasepool {
++      const BOOL scoped = [document startAccessingSecurityScopedResource];
++      NSError *error = nil;
++      /* On iOS, a bookmark made from the picker URL retains its implicit scope;
++       * the macOS-only WithSecurityScope option is not declared by the iOS SDK. */
++      NSData *bookmark = [[document bookmarkDataWithOptions:0
++                          includingResourceValuesForKeys:nil relativeToURL:nil error:&error] retain];
++      if (scoped) {
++        [document stopAccessingSecurityScopedResource];
++      }
++      NSString *errorText = [error.localizedDescription copy];
++      NSString *path = [document.path copy];
++      dispatch_async(dispatch_get_main_queue(), ^{
++        if (_busy && _generation == generation && _picker) {
++          _remembering = NO;
++          if (bookmark && path.length) {
++            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++            [defaults setObject:bookmark forKey:@"BlenderWorkingProjectBookmark"];
++            [defaults setObject:path forKey:@"BlenderWorkingProjectPath"];
++            [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Saved destination:path];
++          }
++          else {
++            NSLog(@"Cannot retain access to moved Blender project: %@", errorText);
++            [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Failed destination:nil];
++          }
++        }
++        [path release];
++        [errorText release];
++        [bookmark release];
++        [document release];
++      });
++    }
++  });
 +}
 +
 +- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
 +{
 +  if (controller.presentedViewController == _picker && _picker) {
++    if (_remembering) {
++      /* The picker may auto-dismiss after a move while the bookmark is created.
++       * The pending move callback, rather than dismissal, owns completion. */
++      return;
++    }
 +    UIDocumentPickerViewController *picker = _picker;
 +    _picker = nil;
 +    picker.delegate = nil;
@@ -10312,6 +10549,15 @@ new file mode 100644
 +  return [GHOST_IOS_project_save_exporter() begin:name saveCopy:save_copy];
 +}
 +
++bool GHOST_IOS_begin_project_update(const char *filename)
++{
++  if (![NSThread isMainThread] || !filename) {
++    return false;
++  }
++  NSString *name = [NSString stringWithUTF8String:filename];
++  return name && [GHOST_IOS_project_save_exporter() beginUpdate:name];
++}
++
 +GHOST_IOSProjectExportAction GHOST_IOS_project_export_take_action(char *out_path,
 +                                                                  const size_t max_len)
 +{
@@ -10335,6 +10581,25 @@ new file mode 100644
 +    return false;
 +  }
 +  return [GHOST_IOS_project_save_exporter() presentPicker];
++}
++
++bool GHOST_IOS_project_export_publish_update()
++{
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  return [GHOST_IOS_project_save_exporter() publishUpdate];
++}
++
++bool GHOST_IOS_project_document_bookmark_matches(const char *path)
++{
++  if (![NSThread isMainThread] || !path) {
++    return false;
++  }
++  NSString *candidate = [NSString stringWithUTF8String:path];
++  NSString *saved = [[NSUserDefaults standardUserDefaults]
++      stringForKey:@"BlenderWorkingProjectPath"];
++  return candidate && saved && [candidate isEqualToString:saved];
 +}
 +
 +void GHOST_IOS_project_export_finish()
