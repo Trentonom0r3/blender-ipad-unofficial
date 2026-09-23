@@ -20,13 +20,16 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest feature IPA is run `35837932326` at source `e7cce60`; it includes the
-saved-layout history, exact-edge joins, recovery guard, and distinct restore-history
-labels. Its artifact identity and checksum are in PROJECT_HANDOFF. Earlier native
-build failures at `56f5e23` (stale patch hunk count) and `1057ce3` (32-bit
-`ScrArea_Runtime` alignment) were fixed; do not retry those SHAs. Actual iPad
-acceptance is still open. Validate Inspector category/settings interaction, then
-save/split/join/restore/reopen layouts with finger and Pencil. Continue unfinished
+The latest successful feature IPA remains run `35837932326` at source `e7cce60`;
+it includes saved-layout history, exact-edge joins, the recovery guard and distinct
+restore-history labels. Its artifact identity and checksum are in PROJECT_HANDOFF.
+Current source `5e11388` fixes the Save As/Save Copy callback lifetime through a
+live Blender modal event; host tests and pinned-source preflight pass, but its iOS
+build is pending. Earlier native build failures at `56f5e23` (stale patch hunk
+count), `1057ce3` (32-bit `ScrArea_Runtime` alignment) and `35833932550` (layout
+patch hunk count) were fixed; do not retry those SHAs. Actual iPad acceptance is
+still open. Validate the latest successful IPA's Inspector and layout workflows,
+then test the new Files lifecycle in its own exact-source IPA. Continue unfinished
 workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20

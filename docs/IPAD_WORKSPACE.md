@@ -206,6 +206,12 @@ that work while implementing the active workspace milestone. FBX export currentl
 reports unsupported because NumPy is unavailable; do not describe every model format
 as working or infer complete Files acceptance from a native picker appearing.
 
+Source `5e11388` removes the retained `bContext *` callbacks from project Save As
+and Save Copy. UIKit sends a native event to a live modal operator; Blender performs
+serialization and Save As identity updates when that operator has a current context.
+Host tests and pinned-source preflight pass, while iOS build and device acceptance
+remain pending. See PROJECT_HANDOFF.md for the exact device checks.
+
 The durable Files contract still requires correct document identity for later Save,
 security scopes/bookmarks, actual provider I/O coordination, project-folder/sibling
 asset access, exporter sidecars/options, cancellation, Open Recent, Link/Append and

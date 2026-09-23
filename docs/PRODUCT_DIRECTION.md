@@ -195,6 +195,15 @@ compression prompts and Files destination selection. FBX export is currently gua
 as unsupported due to the unavailable NumPy dependency; do not claim full format
 coverage or full Files lifecycle acceptance from these routes.
 
+Source checkpoint `5e11388` routes Save As and Save Copy through a live Blender
+modal operator event. UIKit now returns compression and picker choices without
+retaining `bContext *`; serialization and document-state updates run under the
+operator's current context. Save As stages with copy semantics so cancellation
+does not replace the active path before a Files destination is chosen. Host tests
+and pinned-source preflight pass; iOS compilation, IPA packaging and device tests
+are pending. This closes the callback-lifetime audit only. Provider-safe later
+Save, security scopes/bookmarks and coordinated I/O remain unfinished.
+
 Preserve the platform document service connected to the existing file-selector
 operator lifecycle. Supported normal workflows should present UIKit document
 pickers. No desktop filesystem-browser fallback in the final product. During

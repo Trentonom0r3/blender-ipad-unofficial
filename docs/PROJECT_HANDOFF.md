@@ -1,17 +1,31 @@
 # Project handoff — 2026-09-13
 
-## Native project-save callback audit — 2026-09-23
+## Native project-save context fix — source checkpoint `5e11388` (2026-09-23)
 
-Source review found that the iOS Save Copy and Save As operators pass writer
-callbacks capturing `bContext *C` into `GHOST_IOSProjectExporter`. The exporter
-retains those callbacks while UIKit presents the compression alert and Files
-picker; Save As also retains an `onSaved` callback that uses `C` to mutate the
-active `Main` after picker completion. This leaves Blender context correctness
-dependent on reuse of the app-loop context across native UI and is not adequate
-evidence for the required Save As/document lifecycle. Do not claim full Files
-acceptance. Next, route native choices back through a live Blender operator event
-so serialization and document-state updates run with fresh context; keep provider
-bookmarks, coordinated later Save, cancellation, and recovery as separate checks.
+Save As and Save Copy no longer pass writer or completion callbacks capturing
+`bContext *` into UIKit. A modal Blender operator stays live while the compression
+prompt and Files picker are shown. Native choices return through a window-scoped
+GHOST event; the operator writes the staging file and applies Save As document
+identity updates with its current context. Staging uses `use_save_as_copy=true`,
+so cancelling the Files destination does not replace `Main.filepath`; Save As
+becomes the active project only after a destination is selected. Save Copy keeps
+the current path and dirty state.
+
+All 33 host tests pass, including new guards for the callback-free UIKit boundary
+and event route. `git diff --check` is clean; pinned-source preflight applies to 57
+files. This source has not yet passed native iOS compilation or IPA packaging, and
+has no device acceptance. The earlier run35582136863 was inspected: exact source
+`1057ce3c293ab1bf286dfd5ca14f4a3f317716d7` failed makesdna because of 32-bit
+`ScrArea_Runtime` alignment; the later verified IPA remains run35837932326 at
+`e7cce60`, and neither contains this fix.
+
+Next: build exact source `5e11388`, fix any actual compile/package failure, verify
+the IPA artifact and checksum, then test on iPad. Use a disposable project to
+cancel at both the compression prompt and Files picker, confirming Save As keeps
+the previous path/dirty state; confirm Save Copy also keeps both; then complete
+Save As and reopen the chosen file. Repeat with finger and Pencil. Provider
+bookmarks, coordinated later Save, sibling assets, broader cancellation/recovery
+and full Files lifecycle acceptance remain unfinished.
 
 ## Restore checkpoint labels — 2026-09-23
 
