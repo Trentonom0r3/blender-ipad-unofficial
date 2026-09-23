@@ -23,7 +23,7 @@ bytes, SHA-256 `8be6605aefb018afec4125eae1a7bbde276e41fd9b475b4e71d5dd7df6343cf7
 expires 2026-12-22. It includes saved-layout history and exact-edge join, but
 predates the follow-up that refuses to swap editor contents if recovery checkpoint
 capture fails. That follow-up is commit `56f5e23bc1f652dca711cbc52416a79d278b30f2`;
-its preflight passed and native build 35833932550 is queued. No saved-layout
+its preflight passed and native build 35833932550 has started. No saved-layout
 save/reopen test or iPad acceptance has been completed.
 
 Still required in this layout milestone: build the latest recovery-guard commit,
