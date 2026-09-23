@@ -258,12 +258,31 @@ static void geometry()
   }
   p::State closed;
   const auto l = p::layout({0, 0, 1024, 768}, closed);
-  check(!l.side_rail.empty() && l.side_rail.width() == 28, "Closed panels retain narrow vertical side rail");
+  check(!l.side_rail.empty() && l.side_rail.width() == 44,
+        "Closed panels retain finger-sized vertical side rail");
+  const auto narrow = p::layout({0, 0, 480, 768}, closed);
+  check(narrow.left_rail.width() == 29 && narrow.side_rail.width() == 29,
+        "Narrow windows reclaim canvas space with adaptive rails");
   check(l.bottom_rail.empty() && l.canvas.ymin == 8,
         "Closed panels leave bottom canvas clear");
   check(l.side_panel.empty() && l.bottom_panel.empty(), "Closed panels reserve no panel space");
   check(p::layout({}, state).canvas.empty(), "Zero-sized window handled");
   check(p::layout({50, 50, 10, 10}, state).canvas.empty(), "Inverted window bounds handled");
+
+  p::State cramped_inspector;
+  cramped_inspector.tap(p::Edge::Side, 4);
+  cramped_inspector.tap(p::Edge::Bottom, 5);
+  cramped_inspector.side_width = 180;
+  p::Metrics inspector_metrics;
+  inspector_metrics.minimum_side_width = 360;
+  const auto readable = p::layout({0, 0, 1024, 768}, cramped_inspector, inspector_metrics);
+  check(readable.side_panel.width() == 360 &&
+            p::panel_content(readable, p::Edge::Side).width() == 336,
+        "Saved narrow Inspector reopens with readable native content width");
+  const auto constrained = p::layout({0, 0, 768, 900}, cramped_inspector, inspector_metrics);
+  check(constrained.side_panel.width() < 360 && !constrained.canvas.empty() &&
+            !overlaps(constrained.side_panel, constrained.bottom_panel),
+        "Inspector width floor yields to narrow windows and preserves the canvas");
 }
 
 static void resizing()
@@ -311,7 +330,7 @@ static void automatic_sizes()
   for (const p::Rect bounds : {p::Rect{0, 0, 1366, 1024}, p::Rect{0, 0, 1024, 1366},
                                p::Rect{20, 70, 788, 970}}) {
     const auto l = p::layout(bounds, state);
-    check(l.side_panel.width() > 300 && l.bottom_panel.height() > 400,
+    check(l.side_panel.width() > 280 && l.bottom_panel.height() > 400,
           "Automatic defaults use useful available space in landscape and portrait");
     const int usable_width = l.side_panel.xmax - l.bottom_panel.xmin;
     check(l.bottom_panel.width() >= usable_width / 2,

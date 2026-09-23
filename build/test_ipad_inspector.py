@@ -13,6 +13,11 @@ def added_function(patch, path, signature):
 
 
 class InspectorIdentityTests(unittest.TestCase):
+    def test_readable_inspector_width_is_scoped_to_properties(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        self.assertIn('side_editor && side_editor->spacetype == SPACE_PROPERTIES ? 360 : 180', patch)
+
     def test_navigation_bounds_use_native_short_dimensions(self):
         repo = Path(__file__).resolve().parents[1]
         patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')

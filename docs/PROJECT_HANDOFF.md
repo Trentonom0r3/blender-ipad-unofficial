@@ -1,4 +1,23 @@
-# Project handoff — 2026-09-13
+# Project handoff — 2026-09-23
+
+## Inspector readability and touch rail checkpoint — 2026-09-23
+
+The user's 9.65-second recording predates the labeled Inspector IPA. An independent
+read-only design review found two remaining source-backed constraints: the
+permanent side launchers were 28 scaled UI units wide, and a saved Inspector could
+reopen at a 180-unit side width with 24 units reserved for its resize strip. The
+category chooser alone does not make those native fields easy to tap or read.
+
+The current source widens rails to 44 units when space permits and reduces them
+toward 28 units in narrow windows, leaving the canvas usable. An Inspector now has
+a 360-unit minimum side width when space permits, including the resize strip;
+other side editors retain their 180-unit floor. The existing layout policy clamps
+both rails and the Inspector to available bounds. A previously saved cramped
+Inspector therefore opens at a readable width while a narrow Stage Manager window
+can still shrink it. The 35 host tests pass, including a saved-width/narrow-window
+geometry check; pinned-source preflight applies to 57 files and `git diff --check`
+is clean. This is source evidence only. The last packaged IPA below predates these
+geometry changes; native build and iPad acceptance for them are pending.
 
 ## Native project-save context fix — source checkpoint `5e11388` (2026-09-23)
 

@@ -23,6 +23,11 @@ large labeled category choices, and full-width native property contents. Keep
 native context filtering, search, pinning, editor state and advanced panels. This
 refines the existing workspace contract; it does not replace Blender's editors or
 remove the remaining splits, layout reversal, input and Files requirements.
+The next source checkpoint also raises the Inspector's minimum side width to 360
+scaled UI units and makes the two permanent rails 44 units wide where space permits,
+tapering to 28 in narrow windows. This responds to cramped native controls and
+undersized rail hit targets identified in a read-only review; it still awaits an
+iOS build and device judgment.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 
@@ -80,8 +85,8 @@ failed because the patch's new-file hunk count omitted the closing lines of
 `screen_ipad_panels.cc`. The patch and preflight now check matching hunk totals; all
 29 host tests and pinned-source preflight pass. Corrected commit `965bb70` is in
 verified IPA run 35835722868. Follow-up `e7cce60` adds distinct saved-layout
-restore labels; its verified IPA is run 35837932326. The current source passes 30
-host tests and pinned-source preflight. Save/reopen behavior, multiple-window
+restore labels; its verified IPA is run 35837932326. The latest source-check and
+build status is in PROJECT_HANDOFF.md. Save/reopen behavior, multiple-window
 lifecycle and device acceptance remain open.
 Continue improving settings and panel interactions that interrupt common workflows,
 while retaining native functionality.
@@ -144,14 +149,13 @@ with safe areas and an onscreen keyboard.
 Current source offers side-width and bottom-height strips, two-axis corner sizing,
 native split commands, working-editor content swapping and draggable seams for
 recursive and irregular layouts. These are source-implemented and host-tested;
-exact build/device evidence is in PROJECT_HANDOFF.md. Arrange Launchers now offers
-earlier/later ordering within each physical rail; helper tests pass, while native
-build and device/save-reload acceptance remain pending.
-The active source checkpoint adds Save Layout/History, native screen-copy restore,
+exact build/device evidence is in PROJECT_HANDOFF.md. Arrange Launchers offers
+earlier/later ordering within each physical rail; device/save-reload acceptance
+remains pending. A later checkpoint added Save Layout/History, native screen-copy restore,
 automatic checkpoints before split/swap/join, a retained-editor exact-edge join,
 and guarded removal; see the latest PROJECT_HANDOFF.md entry. Source and host-helper
-tests pass. Native build, save/reopen, multiple-window lifecycle and device
-acceptance remain open. Restoration and reversal must preserve native editor state
+tests pass. Native builds for those features passed; save/reopen, multiple-window
+lifecycle and device acceptance remain open. Restoration and reversal must preserve native editor state
 rather than discard a workspace.
 
 ### Acceptance criteria

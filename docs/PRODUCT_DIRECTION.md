@@ -42,6 +42,11 @@ large labeled category choices, and full-width native property contents. Keep
 native context filtering, search, pinning, editor state and advanced panels. This
 refines the existing workspace contract; it does not replace Blender's editors or
 remove the remaining splits, layout reversal, input and Files requirements.
+The follow-up source review found that narrow saved Inspector widths can still
+cramp native fields; its new 360-unit floor yields to actual window bounds. Rails
+now expand to 44-unit touch targets when there is room and contract toward 28
+units in narrow windows. Validate this on device before treating it as a solution
+to the broader desktop-like feel.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 

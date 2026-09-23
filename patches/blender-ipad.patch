@@ -6448,7 +6448,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,928 @@
+@@ -0,0 +1,932 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -7095,7 +7095,8 @@ new file mode 100644
 +struct Metrics {
 +  int inset = 8;
 +  int gap = 8;
-+  int side_rail_extent = 28;
++  int side_rail_extent = 44;
++  int minimum_side_rail_extent = 28;
 +  int tools_width = 48;
 +  bool left_rail = true;
 +  int bottom_rail_extent = 0;
@@ -7150,8 +7151,11 @@ new file mode 100644
 +  const int inset_y = std::min(std::max(0, metrics.inset), bounds.height() / 8);
 +  const Rect interior{bounds.xmin + inset_x, bounds.ymin + inset_y,
 +                      bounds.xmax - inset_x, bounds.ymax - inset_y};
++  const int rail_limit = std::max(0, metrics.side_rail_extent);
++  const int rail_floor = std::clamp(metrics.minimum_side_rail_extent, 0, rail_limit);
 +  const int side_rail_width = metrics.side_rail ?
-+                                  std::min(std::max(0, metrics.side_rail_extent), interior.width() / 4) :
++                                  std::min(std::clamp(interior.width() / 16, rail_floor, rail_limit),
++                                           interior.width() / 4) :
 +                                  0;
 +  const int bottom_rail_height = metrics.bottom_rail ?
 +                                     std::min(std::max(0, metrics.bottom_rail_extent), interior.height() / 4) :
@@ -7533,7 +7537,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2144 @@
+@@ -0,0 +1,2145 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -7734,7 +7738,8 @@ new file mode 100644
 +  const float scale = UI_SCALE_FAC;
 +  metrics.inset = int(6 * scale);
 +  metrics.gap = int(6 * scale);
-+  metrics.side_rail_extent = int(28 * scale);
++  metrics.side_rail_extent = int(44 * scale);
++  metrics.minimum_side_rail_extent = int(28 * scale);
 +  metrics.bottom_rail = false;
 +  const ARegion *tools = owner ? BKE_area_find_region_type(owner, RGN_TYPE_TOOLS) : nullptr;
 +  metrics.tools_width = int((tools && tools->runtime->type ?
@@ -7747,7 +7752,7 @@ new file mode 100644
 +                                        220 : 120) * scale);
 +  metrics.minimum_canvas_width = int(160 * scale);
 +  metrics.minimum_canvas_height = int(120 * scale);
-+  metrics.minimum_side_width = int(180 * scale);
++  metrics.minimum_side_width = int((side_editor && side_editor->spacetype == SPACE_PROPERTIES ? 360 : 180) * scale);
 +  metrics.minimum_bottom_height = int(140 * scale);
 +  metrics.minimum_bottom_width = int(320 * scale);
 +  return metrics;
