@@ -458,7 +458,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3403,142 @@
+@@ -3377,6 +3403,214 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -475,32 +475,130 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  return OPERATOR_FINISHED;
 +}
 +
-+static wmOperatorStatus wm_save_copy_to_files_invoke(bContext *C,
-+                                                     wmOperator *op,
-+                                                     const wmEvent * /*event*/)
++struct IpadFilesSaveData {
++  bool save_copy;
++};
++
++static void wm_save_to_files_data_free(wmOperator *op)
++{
++  if (op->customdata) {
++    MEM_freeN(op->customdata);
++    op->customdata = nullptr;
++  }
++}
++
++static void wm_save_to_files_cancel(bContext * /*C*/, wmOperator *op)
++{
++  GHOST_IOS_project_export_cancel();
++  wm_save_to_files_data_free(op);
++}
++
++static wmOperatorStatus wm_save_to_files_modal(bContext *C,
++                                               wmOperator *op,
++                                               const wmEvent *event)
++{
++  IpadFilesSaveData *data = static_cast<IpadFilesSaveData *>(op->customdata);
++  if (!data) {
++    GHOST_IOS_project_export_cancel();
++    return OPERATOR_CANCELLED;
++  }
++  if (event->type == EVT_ESCKEY && event->val == KM_PRESS) {
++    wm_save_to_files_data_free(op);
++    GHOST_IOS_project_export_cancel();
++    return OPERATOR_CANCELLED;
++  }
++  if (event->type != IPAD_PROJECT_EXPORT) {
++    return OPERATOR_RUNNING_MODAL;
++  }
++
++  char path[FILE_MAX];
++  const GHOST_IOSProjectExportAction action = GHOST_IOS_project_export_take_action(
++      path, sizeof(path));
++  if (action == GHOST_IOSProjectExportAction_Compress ||
++      action == GHOST_IOSProjectExportAction_NoCompress)
++  {
++    char staging_path[FILE_MAX];
++    if (!GHOST_IOS_project_export_staging_path(staging_path, sizeof(staging_path))) {
++      BKE_report(op->reports, RPT_ERROR, "Could not prepare a temporary project for Files");
++      wm_save_to_files_data_free(op);
++      GHOST_IOS_project_export_cancel();
++      return OPERATOR_CANCELLED;
++    }
++    int flags = G.fileflags;
++    SET_FLAG_FROM_TEST(flags, action == GHOST_IOSProjectExportAction_Compress, G_FILE_COMPRESS);
++    const eBLO_WritePathRemap remap = data->save_copy ? BLO_WRITE_PATH_REMAP_ABSOLUTE :
++                                                       BLO_WRITE_PATH_REMAP_RELATIVE;
++    /* Keep Main's filepath and dirty state intact while Files owns the destination choice. */
++    if (!wm_file_write(C, staging_path, flags, remap, true, op->reports)) {
++      wm_save_to_files_data_free(op);
++      GHOST_IOS_project_export_cancel();
++      return OPERATOR_CANCELLED;
++    }
++    if (!GHOST_IOS_project_export_present_picker()) {
++      BKE_report(op->reports, RPT_ERROR, "Could not present the Files save sheet");
++      wm_save_to_files_data_free(op);
++      GHOST_IOS_project_export_cancel();
++      return OPERATOR_CANCELLED;
++    }
++    return OPERATOR_RUNNING_MODAL;
++  }
++  if (action == GHOST_IOSProjectExportAction_Saved) {
++    if (!data->save_copy) {
++      Main *bmain = CTX_data_main(C);
++      STRNCPY(bmain->filepath, path);
++      bmain->has_forward_compatibility_issues = false;
++      bmain->colorspace.is_missing_opencolorio_config = false;
++      WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
++      if (wmWindowManager *wm = CTX_wm_manager(C)) {
++        wm_autosave_timer_end(wm);
++        wm_autosave_timer_begin(wm);
++        wm->autosave_scheduled = false;
++        BKE_reportf(&wm->runtime->reports, RPT_INFO, "Saved as \"%s\"", BLI_path_basename(path));
++      }
++    }
++    else {
++      BKE_reportf(op->reports, RPT_INFO, "Saved copy as \"%s\"", BLI_path_basename(path));
++    }
++    wm_save_to_files_data_free(op);
++    GHOST_IOS_project_export_finish();
++    return OPERATOR_FINISHED;
++  }
++  if (action == GHOST_IOSProjectExportAction_Cancelled) {
++    wm_save_to_files_data_free(op);
++    GHOST_IOS_project_export_finish();
++    return OPERATOR_CANCELLED;
++  }
++  return OPERATOR_RUNNING_MODAL;
++}
++
++static wmOperatorStatus wm_save_to_files_invoke(bContext *C,
++                                                 wmOperator *op,
++                                                 const bool save_copy)
 +{
 +  Main *bmain = CTX_data_main(C);
 +  const char *path = BKE_main_blendfile_path(bmain);
 +  const char *filename = path[0] ? BLI_path_basename(path) : "Untitled.blend";
-+
-+  const bool presented = GHOST_IOS_export_project(
-+      filename,
-+      [C](const char *staging_path, bool compress) {
-+        int flags = G.fileflags;
-+        SET_FLAG_FROM_TEST(flags, compress, G_FILE_COMPRESS);
-+        return wm_file_write(C, staging_path, flags, BLO_WRITE_PATH_REMAP_ABSOLUTE, true, nullptr);
-+      });
-+
-+  if (!presented) {
++  op->customdata = MEM_callocN<IpadFilesSaveData>("iPad Files save data");
++  static_cast<IpadFilesSaveData *>(op->customdata)->save_copy = save_copy;
++  if (!GHOST_IOS_begin_project_export(filename, save_copy)) {
 +    BKE_report(op->reports, RPT_ERROR, "Could not open Files sheet. Close other dialogs and try again");
++    wm_save_to_files_data_free(op);
 +    return OPERATOR_CANCELLED;
 +  }
-+  return OPERATOR_FINISHED;
++  WM_event_add_modal_handler(C, op);
++  return OPERATOR_RUNNING_MODAL;
++}
++
++static wmOperatorStatus wm_save_copy_to_files_invoke(bContext *C,
++                                                     wmOperator *op,
++                                                     const wmEvent * /*event*/)
++{
++  return wm_save_to_files_invoke(C, op, true);
 +}
 +
 +static wmOperatorStatus wm_save_copy_to_files_exec(bContext *C, wmOperator *op)
 +{
-+  return wm_save_copy_to_files_invoke(C, op, nullptr);
++  return wm_save_to_files_invoke(C, op, true);
 +}
 +
 +void WM_OT_save_copy_to_files(wmOperatorType *ot)
@@ -512,6 +610,8 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->poll = WM_operator_winactive;
 +  ot->invoke = wm_save_copy_to_files_invoke;
 +  ot->exec = wm_save_copy_to_files_exec;
++  ot->modal = wm_save_to_files_modal;
++  ot->cancel = wm_save_to_files_cancel;
 +}
 +
 +static wmOperatorStatus wm_ipad_flythrough_toggle_exec(bContext *C, wmOperator * /*op*/)
@@ -549,37 +649,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +                                                   wmOperator *op,
 +                                                   const wmEvent * /*event*/)
 +{
-+  Main *bmain = CTX_data_main(C);
-+  const char *path = BKE_main_blendfile_path(bmain);
-+  const char *filename = path[0] ? BLI_path_basename(path) : "Untitled.blend";
-+
-+  const bool presented = GHOST_IOS_save_as_project(
-+      filename,
-+      [C](const char *staging_path, bool compress) {
-+        int flags = G.fileflags;
-+        SET_FLAG_FROM_TEST(flags, compress, G_FILE_COMPRESS);
-+        return wm_file_write(C, staging_path, flags, BLO_WRITE_PATH_REMAP_RELATIVE, false, nullptr);
-+      },
-+      [C](const char *dest_path) {
-+        Main *bmain = CTX_data_main(C);
-+        STRNCPY(bmain->filepath, dest_path);
-+        bmain->has_forward_compatibility_issues = false;
-+        bmain->colorspace.is_missing_opencolorio_config = false;
-+
-+        WM_event_add_notifier(C, NC_WM | ND_FILESAVE, nullptr);
-+        if (wmWindowManager *wm = CTX_wm_manager(C)) {
-+          wm_autosave_timer_end(wm);
-+          wm_autosave_timer_begin(wm);
-+          wm->autosave_scheduled = false;
-+          BKE_reportf(&wm->runtime->reports, RPT_INFO, "Saved as \"%s\"", BLI_path_basename(dest_path));
-+        }
-+      });
-+
-+  if (!presented) {
-+    BKE_report(op->reports, RPT_ERROR, "Could not open Files sheet. Close other dialogs and try again");
-+    return OPERATOR_CANCELLED;
-+  }
-+  return OPERATOR_FINISHED;
++  return wm_save_to_files_invoke(C, op, false);
 +}
 +
 +static wmOperatorStatus wm_save_as_to_files_exec(bContext *C, wmOperator *op)
@@ -596,6 +666,8 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->poll = WM_operator_winactive;
 +  ot->invoke = wm_save_as_to_files_invoke;
 +  ot->exec = wm_save_as_to_files_exec;
++  ot->modal = wm_save_to_files_modal;
++  ot->cancel = wm_save_to_files_cancel;
 +}
 +#endif
 
@@ -2938,12 +3010,13 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
 
  #include "GHOST_Debug.hh"
  #include "GHOST_EventButton.hh"
-@@ -43,6 +44,9 @@
+@@ -43,6 +44,10 @@
  void WM_main_loop_body(bContext *C);
  int main_ios_callback(int argc, const char **argv);
 
 +#include "GHOST_ProjectImportIOS.hh"
 +#include "GHOST_ProjectExportIOS.hh"
++#include "GHOST_ProjectSaveIOS.hh"
 +
  @interface IOSAppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -3504,7 +3577,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,47 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3514,19 +3587,23 @@ new file mode 100644
 + * Returns whether presentation began, not whether a project has been opened. */
 +bool GHOST_IOS_import_project();
 +
-+/* Prompt user with simple alert ("Compress .blend file?"), then serialize copy
-+ * synchronously via writer, and present the native export picker.
-+ * The writer must leave working-document identity and unsaved state unchanged. */
-+bool GHOST_IOS_export_project(const char *filename,
-+                              const std::function<bool(const char *staging_path, bool compress)> &writer,
-+                              const std::function<void(const char *dest_path)> &on_saved = nullptr);
++enum GHOST_IOSProjectExportAction {
++  GHOST_IOSProjectExportAction_None,
++  GHOST_IOSProjectExportAction_Compress,
++  GHOST_IOSProjectExportAction_NoCompress,
++  GHOST_IOSProjectExportAction_Saved,
++  GHOST_IOSProjectExportAction_Cancelled,
++};
 +
-+/* Prompt user with simple alert ("Compress .blend file?"), then serialize project
-+ * synchronously via writer, and present the native export picker.
-+ * When a destination is chosen in Files, on_saved is called with the destination path. */
-+bool GHOST_IOS_save_as_project(const char *filename,
-+                               const std::function<bool(const char *staging_path, bool compress)> &writer,
-+                               const std::function<void(const char *dest_path)> &on_saved);
++/* Project-save UI reports native choices as window events. Blender serializes
++ * from its live operator context after receiving the compression choice. */
++bool GHOST_IOS_begin_project_export(const char *filename, bool save_copy);
++GHOST_IOSProjectExportAction GHOST_IOS_project_export_take_action(char *out_path,
++                                                                  size_t max_len);
++bool GHOST_IOS_project_export_staging_path(char *out_path, size_t max_len);
++bool GHOST_IOS_project_export_present_picker();
++void GHOST_IOS_project_export_finish();
++void GHOST_IOS_project_export_cancel();
 +
 +/* Prepare a destination path for saving a project inside Documents/Projects.
 + * Creates the containing directory if needed.
@@ -4161,12 +4238,14 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
 diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 --- a/intern/ghost/GHOST_Types.h
 +++ b/intern/ghost/GHOST_Types.h
-@@ -338,6 +338,8 @@
+@@ -338,6 +338,10 @@
    GHOST_kEventTwoFingerTap,
    GHOST_kEventThreeFingerTap,
    GHOST_kEventFourFingerTap,
 +  /** Pencil tool-palette request; no keyboard or mouse button is synthesized. */
 +  GHOST_kEventPencilToolPalette,
++  /** A native iOS project-save choice for a live Blender modal operator. */
++  GHOST_kEventIOSProjectExport,
 
  #ifdef WITH_INPUT_NDOF
    /**
@@ -4193,13 +4272,14 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 diff --git a/source/blender/windowmanager/wm_event_types.hh b/source/blender/windowmanager/wm_event_types.hh
 --- a/source/blender/windowmanager/wm_event_types.hh
 +++ b/source/blender/windowmanager/wm_event_types.hh
-@@ -347,8 +347,10 @@
+@@ -347,8 +347,11 @@
    TOUCH_EDGE_SWIPE_IN_LEFT = 0x0203,  /* 515 */
    TOUCH_EDGE_SWIPE_IN_RIGHT = 0x0204, /* 516 */
 
 -/* Maximum mouse value (inclusive). */
 -#define _EVT_TOUCH_MAX 0x0204 /* 516 */
 +  PENCIL_TOOL_PALETTE = 0x0205, /* 517 */
++  IPAD_PROJECT_EXPORT = 0x0206, /* 518 */
 +
 +/* Maximum touch value (inclusive). */
 +#define _EVT_TOUCH_MAX 0x0205 /* 517 */
@@ -4664,12 +4744,17 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6481,11 @@
+@@ -6105,6 +6481,16 @@
        }
        break;
      }
 +    case GHOST_kEventPencilToolPalette:
 +      event.type = PENCIL_TOOL_PALETTE;
++      event.val = KM_PRESS;
++      wm_event_add_intern(win, &event);
++      break;
++    case GHOST_kEventIOSProjectExport:
++      event.type = IPAD_PROJECT_EXPORT;
 +      event.val = KM_PRESS;
 +      wm_event_add_intern(win, &event);
 +      break;
@@ -4961,7 +5046,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectExportIOS.hh
-@@ -0,0 +1,333 @@
+@@ -0,0 +1,150 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The writer runs synchronously: no Blender
@@ -4975,152 +5060,7 @@ new file mode 100644
 +  BOOL _busy;
 +  NSString *_exportFilename;
 +  NSString *_exportTitle;
-+  std::function<bool(const char *, bool)> _compressWriter;
-+  std::function<void(const char *)> _on_saved;
 +}
-+- (BOOL)presentWithCompressPrompt:(NSString *)filename
-+                            title:(NSString *)title
-+                           writer:(const std::function<bool(const char *, bool)> &)writer
-+                          onSaved:(const std::function<void(const char *)> &)onSaved;
-+- (BOOL)present:(NSString *)filename
-+          title:(NSString *)title
-+         writer:(const std::function<bool(const char *)> &)writer;
-+@end
-+
-+@implementation GHOST_IOSProjectExporter
-+- (void)finish
-+{
-+  if (_staging) {
-+    /* This URL is always our unique temporary directory, never a provider URL. */
-+    [[NSFileManager defaultManager] removeItemAtURL:_staging error:nullptr];
-+    [_staging release];
-+    _staging = nil;
-+  }
-+  [_presenter release];
-+  _presenter = nil;
-+  [_exportFilename release];
-+  _exportFilename = nil;
-+  [_exportTitle release];
-+  _exportTitle = nil;
-+  _compressWriter = nullptr;
-+  _on_saved = nullptr;
-+  _busy = NO;
-+}
-+
-+- (void)startExportWithCompress:(BOOL)compress
-+{
-+  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
-+  if (!system || !system->current_active_window_ ||
-+      system->current_active_window_->rootWindow.rootViewController != _presenter ||
-+      !_presenter.view.window || _presenter.presentedViewController)
-+  {
-+    [self finish];
-+    return;
-+  }
-+  NSFileManager *manager = [NSFileManager defaultManager];
-+  NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
-+  _staging = [[root URLByAppendingPathComponent:
-+      [@"BlenderExport-" stringByAppendingString:[NSUUID UUID].UUIDString]
-+                                   isDirectory:YES] retain];
-+  NSError *error = nil;
-+  if (![manager createDirectoryAtURL:_staging withIntermediateDirectories:YES
-+                          attributes:nil error:&error]) {
-+    NSLog(@"Cannot prepare Blender export: %@", error);
-+    [self finish];
-+    return;
-+  }
-+  NSString *name = _exportFilename.lastPathComponent;
-+  if (!name.length || [name isEqualToString:@"."] || [name isEqualToString:@".."]) {
-+    name = @"Untitled.blend";
-+  }
-+  if ([name.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
-+    name = [name stringByAppendingPathExtension:@"blend"];
-+  }
-+  NSURL *source = [_staging URLByAppendingPathComponent:name];
-+  if (!_compressWriter || !_compressWriter(source.path.UTF8String, compress)) {
-+    [self finish];
-+    return;
-+  }
-+  if (!system->current_active_window_ ||
-+      system->current_active_window_->rootWindow.rootViewController != _presenter ||
-+      !_presenter.view.window || _presenter.presentedViewController)
-+  {
-+    [self finish];
-+    return;
-+  }
-+  if (![manager fileExistsAtPath:source.path]) {
-+    NSLog(@"Blender export error: file %@ does not exist on disk", source.path);
-+    [self finish];
-+    return;
-+  }
-+  @try {
-+    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[source] asCopy:YES];
-+    _picker.delegate = self;
-+    _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+    _picker.title = _exportTitle ?: @"Save to Files";
-+    UIViewController *top = _presenter;
-+    while (top.presentedViewController && !top.presentedViewController.isBeingDismissed) {
-+      top = top.presentedViewController;
-+    }
-+    [top presentViewController:_picker animated:YES completion:nil];
-+    _picker.presentationController.delegate = self;
-+  }
-+  @catch (NSException *ex) {
-+    NSLog(@"Failed to present project export picker: %@", ex);
-+    [self finish];
-+  }
-+}
-+
-+- (BOOL)presentWithCompressPrompt:(NSString *)filename
-+                            title:(NSString *)title
-+                           writer:(const std::function<bool(const char *, bool)> &)writer
-+                          onSaved:(const std::function<void(const char *)> &)onSaved
-+{
-+  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
-+  if (_busy || !system || !system->current_active_window_) {
-+    return NO;
-+  }
-+  UIViewController *presenter = system->current_active_window_->rootWindow.rootViewController;
-+  if (!presenter.view.window || presenter.presentedViewController) {
-+    return NO;
-+  }
-+  _busy = YES;
-+  _presenter = [presenter retain];
-+  _exportFilename = [filename copy];
-+  _exportTitle = [title copy];
-+  _compressWriter = writer;
-+  _on_saved = onSaved;
-+
-+  UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
-+                                                                 message:@"Compress .blend file?"
-+                                                          preferredStyle:UIAlertControllerStyleAlert];
-+
-+  [alert addAction:[UIAlertAction actionWithTitle:@"Compress (Yes)"
-+                                           style:UIAlertActionStyleDefault
-+                                         handler:^(UIAlertAction *action) {
-+    dispatch_async(dispatch_get_main_queue(), ^{
-+      [self startExportWithCompress:YES];
-+    });
-+  }]];
-+
-+  [alert addAction:[UIAlertAction actionWithTitle:@"Don't Compress (No)"
-+                                           style:UIAlertActionStyleDefault
-+                                         handler:^(UIAlertAction *action) {
-+    dispatch_async(dispatch_get_main_queue(), ^{
-+      [self startExportWithCompress:NO];
-+    });
-+  }]];
-+
-+  [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
-+                                           style:UIAlertActionStyleCancel
-+                                         handler:^(UIAlertAction *action) {
-+    [self finish];
-+  }]];
-+
-+  [_presenter presentViewController:alert animated:YES completion:nil];
-+  return YES;
-+}
-+
 +- (BOOL)present:(NSString *)filename
 +          title:(NSString *)title
 +         writer:(const std::function<bool(const char *)> &)writer
@@ -5227,10 +5167,6 @@ new file mode 100644
 +- (void)documentPicker:(UIDocumentPickerViewController *)controller
 +    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 +{
-+  NSURL *destination = urls.firstObject;
-+  if (destination && _on_saved) {
-+    _on_saved(destination.path.UTF8String);
-+  }
 +  [self dismissPicker:controller];
 +}
 +
@@ -5246,40 +5182,6 @@ new file mode 100644
 +  [self finish];
 +}
 +@end
-+
-+bool GHOST_IOS_export_project(const char *filename,
-+                              const std::function<bool(const char *, bool)> &writer,
-+                              const std::function<void(const char *)> &on_saved)
-+{
-+  if (![NSThread isMainThread] || !filename || !writer) {
-+    return false;
-+  }
-+  static GHOST_IOSProjectExporter *exporter = nil;
-+  if (!exporter) {
-+    exporter = [[GHOST_IOSProjectExporter alloc] init];
-+  }
-+  return [exporter presentWithCompressPrompt:[NSString stringWithUTF8String:filename]
-+                                       title:@"Save a Copy to Files"
-+                                      writer:writer
-+                                     onSaved:on_saved];
-+}
-+
-+bool GHOST_IOS_save_as_project(const char *filename,
-+                               const std::function<bool(const char *, bool)> &writer,
-+                               const std::function<void(const char *)> &on_saved)
-+{
-+  if (![NSThread isMainThread] || !filename || !writer) {
-+    return false;
-+  }
-+  static GHOST_IOSProjectExporter *exporter = nil;
-+  if (!exporter) {
-+    exporter = [[GHOST_IOSProjectExporter alloc] init];
-+  }
-+  return [exporter presentWithCompressPrompt:[NSString stringWithUTF8String:filename]
-+                                       title:@"Save Project As"
-+                                      writer:writer
-+                                     onSaved:on_saved];
-+}
 +
 +bool GHOST_IOS_export_file(const char *filename,
 +                           const std::function<bool(const char *)> &writer)
@@ -10051,6 +9953,381 @@ new file mode 100644
 +}
 +
 +}  // namespace ghost::ios
+diff --git a/intern/ghost/intern/GHOST_ProjectSaveIOS.hh b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
+@@ -0,0 +1,370 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++/* Included only by GHOST_SystemIOS.mm. UIKit reports choices as GHOST events;
++ * the live Blender operator performs document serialization and state changes. */
++#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
++
++@interface GHOST_IOSProjectSaveExporter : NSObject <UIDocumentPickerDelegate,
++                                                    UIAdaptivePresentationControllerDelegate>
++{
++  UIViewController *_presenter;
++  UIAlertController *_compressAlert;
++  UIDocumentPickerViewController *_picker;
++  NSURL *_staging;
++  NSURL *_source;
++  NSString *_filename;
++  NSString *_destination;
++  GHOST_IWindow *_window;
++  GHOST_IOSProjectExportAction _pendingAction;
++  BOOL _busy;
++}
++- (BOOL)begin:(NSString *)filename saveCopy:(BOOL)saveCopy;
++- (BOOL)stagingPath:(char *)outPath maxLength:(size_t)maxLength;
++- (GHOST_IOSProjectExportAction)takeAction:(char *)outPath maxLength:(size_t)maxLength;
++- (BOOL)presentPicker;
++- (void)finish;
++- (void)cancel;
++- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination;
++- (void)dismissPickerWithAction:(GHOST_IOSProjectExportAction)action
++                    destination:(NSString *)destination;
++@end
++
++@implementation GHOST_IOSProjectSaveExporter
++
++- (BOOL)hasLiveWindow
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  return system && _window && system->getWindowManager()->getWindowFound(_window);
++}
++
++- (void)finish
++{
++  if (_staging) {
++    [[NSFileManager defaultManager] removeItemAtURL:_staging error:nil];
++    [_staging release];
++    _staging = nil;
++  }
++  [_source release];
++  _source = nil;
++  [_presenter release];
++  _presenter = nil;
++  [_compressAlert release];
++  _compressAlert = nil;
++  [_picker release];
++  _picker = nil;
++  [_filename release];
++  _filename = nil;
++  [_destination release];
++  _destination = nil;
++  _window = nullptr;
++  _pendingAction = GHOST_IOSProjectExportAction_None;
++  _busy = NO;
++}
++
++- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination
++{
++  if (!_busy || _pendingAction != GHOST_IOSProjectExportAction_None) {
++    return;
++  }
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!system || ![self hasLiveWindow]) {
++    [self finish];
++    return;
++  }
++  _pendingAction = action;
++  [_destination release];
++  _destination = [destination copy];
++  system->pushEvent(new GHOST_Event(
++      system->getMilliSeconds(), GHOST_kEventIOSProjectExport, _window));
++}
++
++- (void)dismissCompressAlertWithAction:(GHOST_IOSProjectExportAction)action
++{
++  UIAlertController *alert = _compressAlert;
++  _compressAlert = nil;
++  if (!alert) {
++    dispatch_async(dispatch_get_main_queue(), ^{
++      [self queueAction:action destination:nil];
++    });
++    return;
++  }
++  [alert dismissViewControllerAnimated:YES completion:^{
++    [alert release];
++    [self queueAction:action destination:nil];
++  }];
++}
++
++- (BOOL)begin:(NSString *)filename saveCopy:(BOOL)saveCopy
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  GHOST_IWindow *window = system ? system->getWindowManager()->getActiveWindow() : nullptr;
++  if (_busy || !window) {
++    return NO;
++  }
++  UIViewController *presenter =
++      static_cast<GHOST_WindowIOS *>(window)->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++
++  NSString *name = filename.lastPathComponent;
++  if (!name.length || [name isEqualToString:@"."] || [name isEqualToString:@".."]) {
++    name = @"Untitled.blend";
++  }
++  if ([name.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++    name = [name stringByAppendingPathExtension:@"blend"];
++  }
++
++  _busy = YES;
++  _window = window;
++  _presenter = [presenter retain];
++  _filename = [name copy];
++  _pendingAction = GHOST_IOSProjectExportAction_None;
++
++  NSString *title = saveCopy ? @"Save a Copy to Files" : @"Save Project As";
++  _compressAlert = [[UIAlertController alertControllerWithTitle:title
++                                                        message:@"Compress .blend file?"
++                                                 preferredStyle:UIAlertControllerStyleAlert] retain];
++  [_compressAlert addAction:[UIAlertAction actionWithTitle:@"Compress (Yes)"
++                                                   style:UIAlertActionStyleDefault
++                                                 handler:^(UIAlertAction *action) {
++    [self dismissCompressAlertWithAction:GHOST_IOSProjectExportAction_Compress];
++  }]];
++  [_compressAlert addAction:[UIAlertAction actionWithTitle:@"Don't Compress (No)"
++                                                   style:UIAlertActionStyleDefault
++                                                 handler:^(UIAlertAction *action) {
++    [self dismissCompressAlertWithAction:GHOST_IOSProjectExportAction_NoCompress];
++  }]];
++  [_compressAlert addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                                   style:UIAlertActionStyleCancel
++                                                 handler:^(UIAlertAction *action) {
++    [self dismissCompressAlertWithAction:GHOST_IOSProjectExportAction_Cancelled];
++  }]];
++  @try {
++    [_presenter presentViewController:_compressAlert animated:YES completion:nil];
++    _compressAlert.presentationController.delegate = self;
++  }
++  @catch (NSException *exception) {
++    NSLog(@"Failed to present project compression prompt: %@", exception);
++    [self finish];
++    return NO;
++  }
++  return YES;
++}
++
++- (BOOL)stagingPath:(char *)outPath maxLength:(size_t)maxLength
++{
++  if (!_busy || !outPath || maxLength == 0) {
++    return NO;
++  }
++  if (!_staging) {
++    NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++    _staging = [[root URLByAppendingPathComponent:
++        [@"BlenderProject-" stringByAppendingString:[NSUUID UUID].UUIDString]
++                                     isDirectory:YES] retain];
++    NSError *error = nil;
++    if (![[NSFileManager defaultManager] createDirectoryAtURL:_staging
++                                  withIntermediateDirectories:YES
++                                                   attributes:nil
++                                                        error:&error])
++    {
++      NSLog(@"Cannot prepare Blender project export: %@", error);
++      [self finish];
++      return NO;
++    }
++    _source = [[_staging URLByAppendingPathComponent:_filename] retain];
++  }
++  const char *path = _source.path.UTF8String;
++  if (!path || strlen(path) >= maxLength) {
++    return NO;
++  }
++  strncpy(outPath, path, maxLength - 1);
++  outPath[maxLength - 1] = '\0';
++  return YES;
++}
++
++- (BOOL)presentPicker
++{
++  if (!_busy || !_source || _picker || ![self hasLiveWindow] ||
++      ![[NSFileManager defaultManager] fileExistsAtPath:_source.path])
++  {
++    return NO;
++  }
++  @try {
++    _picker = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[_source] asCopy:YES];
++    _picker.delegate = self;
++    _picker.modalPresentationStyle = UIModalPresentationFormSheet;
++    _picker.title = @"Save to Files";
++    [_presenter presentViewController:_picker animated:YES completion:nil];
++    _picker.presentationController.delegate = self;
++    return YES;
++  }
++  @catch (NSException *exception) {
++    NSLog(@"Failed to present project destination picker: %@", exception);
++    return NO;
++  }
++}
++
++- (void)dismissPickerWithAction:(GHOST_IOSProjectExportAction)action
++                    destination:(NSString *)destination
++{
++  if (!_picker) {
++    return;
++  }
++  UIDocumentPickerViewController *picker = _picker;
++  _picker = nil;
++  picker.delegate = nil;
++  picker.presentationController.delegate = nil;
++  [picker dismissViewControllerAnimated:YES completion:^{
++    [self queueAction:action destination:destination];
++  }];
++  [picker release];
++}
++
++- (GHOST_IOSProjectExportAction)takeAction:(char *)outPath maxLength:(size_t)maxLength
++{
++  GHOST_IOSProjectExportAction action = _pendingAction;
++  _pendingAction = GHOST_IOSProjectExportAction_None;
++  if (action == GHOST_IOSProjectExportAction_Saved) {
++    const char *path = _destination.UTF8String;
++    if (!outPath || maxLength == 0 || !path || strlen(path) >= maxLength) {
++      action = GHOST_IOSProjectExportAction_Cancelled;
++    }
++    else {
++      strncpy(outPath, path, maxLength - 1);
++      outPath[maxLength - 1] = '\0';
++    }
++  }
++  if (outPath && maxLength > 0 && action != GHOST_IOSProjectExportAction_Saved) {
++    outPath[0] = '\0';
++  }
++  [_destination release];
++  _destination = nil;
++  return action;
++}
++
++- (void)cancel
++{
++  if (!_busy) {
++    return;
++  }
++  _busy = NO;
++  _pendingAction = GHOST_IOSProjectExportAction_None;
++  [_destination release];
++  _destination = nil;
++
++  UIDocumentPickerViewController *picker = _picker;
++  _picker = nil;
++  picker.delegate = nil;
++  picker.presentationController.delegate = nil;
++  UIAlertController *alert = _compressAlert;
++  _compressAlert = nil;
++
++  if (picker) {
++    [picker dismissViewControllerAnimated:NO completion:^{ [self finish]; }];
++    [picker release];
++  }
++  else if (alert) {
++    [alert dismissViewControllerAnimated:NO completion:^{ [self finish]; }];
++    [alert release];
++  }
++  else {
++    [self finish];
++  }
++}
++
++- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
++{
++  if (controller == _picker) {
++    [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Cancelled destination:nil];
++  }
++}
++
++- (void)documentPicker:(UIDocumentPickerViewController *)controller
++    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
++{
++  if (controller != _picker) {
++    return;
++  }
++  NSURL *destination = urls.firstObject;
++  if (!destination) {
++    [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Cancelled destination:nil];
++    return;
++  }
++  [self dismissPickerWithAction:GHOST_IOSProjectExportAction_Saved destination:destination.path];
++}
++
++- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
++{
++  if (controller.presentedViewController == _picker && _picker) {
++    UIDocumentPickerViewController *picker = _picker;
++    _picker = nil;
++    picker.delegate = nil;
++    picker.presentationController.delegate = nil;
++    [picker release];
++    [self queueAction:GHOST_IOSProjectExportAction_Cancelled destination:nil];
++  }
++  else if (controller.presentedViewController == _compressAlert && _compressAlert) {
++    UIAlertController *alert = _compressAlert;
++    _compressAlert = nil;
++    [alert release];
++    [self queueAction:GHOST_IOSProjectExportAction_Cancelled destination:nil];
++  }
++}
++@end
++
++static GHOST_IOSProjectSaveExporter *GHOST_IOS_project_save_exporter()
++{
++  static GHOST_IOSProjectSaveExporter *exporter = nil;
++  if (!exporter) {
++    exporter = [[GHOST_IOSProjectSaveExporter alloc] init];
++  }
++  return exporter;
++}
++
++bool GHOST_IOS_begin_project_export(const char *filename, const bool save_copy)
++{
++  if (![NSThread isMainThread] || !filename) {
++    return false;
++  }
++  NSString *name = [NSString stringWithUTF8String:filename];
++  if (!name) {
++    return false;
++  }
++  return [GHOST_IOS_project_save_exporter() begin:name saveCopy:save_copy];
++}
++
++GHOST_IOSProjectExportAction GHOST_IOS_project_export_take_action(char *out_path,
++                                                                  const size_t max_len)
++{
++  if (![NSThread isMainThread]) {
++    return GHOST_IOSProjectExportAction_None;
++  }
++  return [GHOST_IOS_project_save_exporter() takeAction:out_path maxLength:max_len];
++}
++
++bool GHOST_IOS_project_export_staging_path(char *out_path, const size_t max_len)
++{
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  return [GHOST_IOS_project_save_exporter() stagingPath:out_path maxLength:max_len];
++}
++
++bool GHOST_IOS_project_export_present_picker()
++{
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  return [GHOST_IOS_project_save_exporter() presentPicker];
++}
++
++void GHOST_IOS_project_export_finish()
++{
++  [GHOST_IOS_project_save_exporter() finish];
++}
++
++void GHOST_IOS_project_export_cancel()
++{
++  [GHOST_IOS_project_save_exporter() cancel];
++}
 diff --git a/intern/ghost/intern/GHOST_EventButton.hh b/intern/ghost/intern/GHOST_EventButton.hh
 --- a/intern/ghost/intern/GHOST_EventButton.hh
 +++ b/intern/ghost/intern/GHOST_EventButton.hh

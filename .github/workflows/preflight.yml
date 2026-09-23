@@ -28,6 +28,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test preflight checker
         run: python3 -m unittest discover -s build -p test_preflight.py -v
+      - name: Test native project-save context lifetime
+        run: python3 -m unittest discover -s build -p test_project_save_lifecycle.py -v
       - name: Test native tool-ring geometry with host compiler
         run: python3 -m unittest discover -s build -p test_tool_ring.py -v
       - name: Test floating workspace panels with host compiler
