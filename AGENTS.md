@@ -20,9 +20,11 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-Immediate order: repair the current failed native build, deliver and verify the
-Inspector improvement, then address observed friction in object/camera editing,
-panel use and saving. Continue unfinished workspace and Files requirements.
+The Inspector checkpoint now has a verified IPA at source `cb7966c` (see the latest
+PROJECT_HANDOFF entry); actual iPad acceptance is still open. Next use that build
+to check category choice, settings edits, scrolling and return-to-canvas, then
+address observed friction in object/camera editing, panel use and saving. Continue
+unfinished workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

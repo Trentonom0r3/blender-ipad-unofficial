@@ -73,10 +73,12 @@ a camera/property, switching/dismissing panels, undo, save and reopen using touc
 and Pencil. Preserve working radial tools and external input. See PRODUCT_DIRECTION
 for the complete goal and delivery sequence.
 
-The immediate delivery is the labeled Inspector change after fixing its failed
-native build. Source and host-preview evidence already exist; iOS packaging and
-device acceptance remain pending. Next improve the settings and panel interactions
-that still interrupt these common workflows, while retaining native functionality.
+The labeled Inspector change is present in verified IPA build 35698122851 at source
+`cb7966c`; its iPad acceptance is still pending. Saved-layout history and exact-edge
+join have now been implemented in source with host helper coverage. Native
+compilation, IPA packaging, save/reopen behavior and device acceptance for those new
+workspace changes remain pending. Continue improving settings and panel interactions
+that interrupt common workflows, while retaining native functionality.
 
 ### Floating panels for every workspace
 
@@ -139,8 +141,12 @@ recursive and irregular layouts. These are source-implemented and host-tested;
 exact build/device evidence is in PROJECT_HANDOFF.md. Arrange Launchers now offers
 earlier/later ordering within each physical rail; helper tests pass, while native
 build and device/save-reload acceptance remain pending.
-Restoration and
-reversal must preserve native editor state rather than discard a workspace.
+The active source checkpoint adds Save Layout/History, native screen-copy restore,
+automatic checkpoints before split/swap, and guarded removal; see the latest
+PROJECT_HANDOFF.md entry. It has source and host-helper tests only. Exact-edge touch
+join, native build, save/reopen, multiple-window lifecycle, and device acceptance
+remain open. Restoration and reversal must preserve native editor state rather
+than discard a workspace.
 
 ### Acceptance criteria
 

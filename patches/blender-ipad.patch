@@ -3445,7 +3445,7 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
  }
 
  void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
-@@ -6858,6 +6889,17 @@
+@@ -6858,6 +6889,21 @@
    WM_operatortype_append(SCREEN_OT_region_quadview);
    WM_operatortype_append(SCREEN_OT_region_scale);
    WM_operatortype_append(SCREEN_OT_region_toggle);
@@ -3457,6 +3457,10 @@ diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editor
 +  WM_operatortype_append(SCREEN_OT_ipad_working_menu);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_split);
 +  WM_operatortype_append(SCREEN_OT_ipad_working_swap);
++  WM_operatortype_append(SCREEN_OT_ipad_working_join);
++  WM_operatortype_append(SCREEN_OT_ipad_layout_save);
++  WM_operatortype_append(SCREEN_OT_ipad_layout_restore);
++  WM_operatortype_append(SCREEN_OT_ipad_layout_remove);
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_activate);
 +  WM_operatortype_append(SCREEN_OT_ipad_panel_pin);
 +#endif
@@ -6093,7 +6097,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,48 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -6105,6 +6109,7 @@ new file mode 100644
 +struct ScrArea;
 +struct ARegion;
 +struct wmWindow;
++struct WorkSpaceLayout;
 +struct wmEvent;
 +struct wmOperatorType;
 +struct uiLayout;
@@ -6134,6 +6139,12 @@ new file mode 100644
 +void SCREEN_OT_ipad_working_menu(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_split(wmOperatorType *ot);
 +void SCREEN_OT_ipad_working_swap(wmOperatorType *ot);
++void SCREEN_OT_ipad_working_join(wmOperatorType *ot);
++WorkSpaceLayout *ED_ipad_panels_layout_checkpoint_capture(bContext *C, const char *name);
++void ED_ipad_panels_layout_history_menu(bContext *C, uiLayout *layout);
++void SCREEN_OT_ipad_layout_save(wmOperatorType *ot);
++void SCREEN_OT_ipad_layout_restore(wmOperatorType *ot);
++void SCREEN_OT_ipad_layout_remove(wmOperatorType *ot);
 +#endif
 diff --git a/source/blender/editors/interface/interface_panel.cc b/source/blender/editors/interface/interface_panel.cc
 --- a/source/blender/editors/interface/interface_panel.cc
@@ -6186,14 +6197,333 @@ diff --git a/source/blender/editors/screen/area_query.cc b/source/blender/editor
    /* Only use the margin when inside the region. */
    if (BLI_rcti_isect_pt_v(&region->winrct, event_xy)) {
      if (region->overlap) {
+diff --git a/source/blender/editors/screen/screen_ipad_layout_history.cc b/source/blender/editors/screen/screen_ipad_layout_history.cc
+new file mode 100644
+--- /dev/null
++++ b/source/blender/editors/screen/screen_ipad_layout_history.cc
+@@ -0,0 +1,280 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++
++#include <string>
++
++#include "DNA_screen_types.h"
++#include "DNA_windowmanager_types.h"
++#include "DNA_workspace_types.h"
++
++#include "BLI_listbase.h"
++#include "BLI_utildefines.h"
++
++#include "BKE_context.hh"
++#include "BKE_main.hh"
++#include "BKE_screen.hh"
++#include "BKE_workspace.hh"
++#include "BKE_report.hh"
++
++#include "ED_ipad_panels.hh"
++#include "ED_screen.hh"
++
++#include "RNA_access.hh"
++#include "RNA_define.hh"
++#include "UI_interface.hh"
++#include "UI_interface_layout.hh"
++#include "UI_resources.hh"
++#include "WM_api.hh"
++#include "WM_types.hh"
++
++namespace {
++
++constexpr int screen_ipad_layout_checkpoint = (1 << 2);
++
++bool layout_is_checkpoint(const WorkSpaceLayout *layout)
++{
++  if (!layout) {
++    return false;
++  }
++  const bScreen *screen = BKE_workspace_layout_screen_get(layout);
++  return screen && (screen->flag & screen_ipad_layout_checkpoint) &&
++         screen->state == SCREENNORMAL && !screen->temp &&
++         !BKE_screen_is_fullscreen_area(screen);
++}
++
++WorkSpaceLayout *layout_find_checkpoint(WorkSpace *workspace, const char *screen_id)
++{
++  if (!workspace || !screen_id || !screen_id[0]) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (WorkSpaceLayout *, layout, &workspace->layouts) {
++    const bScreen *screen = BKE_workspace_layout_screen_get(layout);
++    if (layout_is_checkpoint(layout) && screen && STREQ(screen->id.name, screen_id)) {
++      return layout;
++    }
++  }
++  return nullptr;
++}
++
++std::string layout_unique_name(WorkSpace *workspace, const char *requested_name)
++{
++  const std::string base = requested_name && requested_name[0] ? requested_name : "Saved Layout";
++  std::string candidate = base;
++  int suffix = 2;
++  while (true) {
++    bool used = false;
++    LISTBASE_FOREACH (WorkSpaceLayout *, layout, &workspace->layouts) {
++      if (candidate == BKE_workspace_layout_name_get(layout)) {
++        used = true;
++        break;
++      }
++    }
++    if (!used) {
++      return candidate;
++    }
++    candidate = base + " " + std::to_string(suffix++);
++  }
++}
++
++bool layout_checkpoint_referenced(const Main *bmain,
++                                  const WorkSpace *workspace,
++                                  const WorkSpaceLayout *layout)
++{
++  LISTBASE_FOREACH (WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
++    if (relation->value == layout) {
++      return true;
++    }
++  }
++
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      const WorkSpaceInstanceHook *hook = win->workspace_hook;
++      if (hook && (hook->act_layout == layout || hook->temp_layout_store == layout)) {
++        return true;
++      }
++    }
++  }
++
++  return BKE_screen_is_used(BKE_workspace_layout_screen_get(layout));
++}
++
++}  // namespace
++
++WorkSpaceLayout *ED_ipad_panels_layout_checkpoint_capture(bContext *C, const char *name)
++{
++  Main *bmain = CTX_data_main(C);
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  wmWindow *win = CTX_wm_window(C);
++  if (!bmain || !workspace || !win || !win->workspace_hook) {
++    return nullptr;
++  }
++
++  WorkSpaceLayout *active = BKE_workspace_active_layout_get(win->workspace_hook);
++  bScreen *screen = active ? BKE_workspace_layout_screen_get(active) : nullptr;
++  if (!screen || screen->state != SCREENNORMAL || screen->temp ||
++      BKE_screen_is_fullscreen_area(screen)) {
++    return nullptr;
++  }
++
++  WorkSpaceLayout *checkpoint = ED_workspace_layout_duplicate(bmain, workspace, active, win);
++  if (!checkpoint) {
++    return nullptr;
++  }
++  bScreen *checkpoint_screen = BKE_workspace_layout_screen_get(checkpoint);
++  checkpoint_screen->flag |= screen_ipad_layout_checkpoint;
++  const std::string checkpoint_name = layout_unique_name(workspace, name);
++  BKE_workspace_layout_name_set(workspace, checkpoint, checkpoint_name.c_str());
++  return checkpoint;
++}
++
++void ED_ipad_panels_layout_history_menu(bContext *C, uiLayout *layout)
++{
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  if (!workspace) {
++    return;
++  }
++
++  bool found = false;
++  LISTBASE_FOREACH (WorkSpaceLayout *, checkpoint, &workspace->layouts) {
++    if (!layout_is_checkpoint(checkpoint)) {
++      continue;
++    }
++    found = true;
++    bScreen *screen = BKE_workspace_layout_screen_get(checkpoint);
++    const std::string name = BKE_workspace_layout_name_get(checkpoint);
++    const std::string restore_label = "Restore " + name;
++    PointerRNA restore = layout->op("SCREEN_OT_ipad_layout_restore",
++                                    restore_label.c_str(),
++                                    ICON_LOOP_BACK,
++                                    blender::wm::OpCallContext::ExecDefault,
++                                    UI_ITEM_NONE);
++    RNA_string_set(&restore, "screen_id", screen->id.name);
++
++    const std::string remove_label = "Remove " + name;
++    PointerRNA remove = layout->op("SCREEN_OT_ipad_layout_remove",
++                                   remove_label.c_str(),
++                                   ICON_X,
++                                   blender::wm::OpCallContext::ExecDefault,
++                                   UI_ITEM_NONE);
++    RNA_string_set(&remove, "screen_id", screen->id.name);
++  }
++
++  if (!found) {
++    layout->label("No saved layouts yet", ICON_INFO);
++  }
++}
++
++static wmOperatorStatus layout_save_exec(bContext *C, wmOperator * /*op*/)
++{
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  if (!workspace) {
++    return OPERATOR_CANCELLED;
++  }
++
++  int number = 1;
++  std::string name;
++  bool name_used;
++  do {
++    name = "Saved Layout " + std::to_string(number++);
++    name_used = false;
++    LISTBASE_FOREACH (WorkSpaceLayout *, layout, &workspace->layouts) {
++      if (name == BKE_workspace_layout_name_get(layout)) {
++        name_used = true;
++        break;
++      }
++    }
++  } while (name_used);
++
++  if (!ED_ipad_panels_layout_checkpoint_capture(C, name.c_str())) {
++    return OPERATOR_CANCELLED;
++  }
++  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus layout_restore_exec(bContext *C, wmOperator *op)
++{
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  wmWindow *win = CTX_wm_window(C);
++  if (!workspace || !win || !win->workspace_hook) {
++    return OPERATOR_CANCELLED;
++  }
++
++  char screen_id[sizeof(((bScreen *)nullptr)->id.name)] = {};
++  RNA_string_get(op->ptr, "screen_id", screen_id);
++  WorkSpaceLayout *checkpoint = layout_find_checkpoint(workspace, screen_id);
++  WorkSpaceLayout *outgoing = BKE_workspace_active_layout_get(win->workspace_hook);
++  if (!checkpoint || !outgoing || checkpoint == outgoing) {
++    return OPERATOR_CANCELLED;
++  }
++
++  bScreen *outgoing_screen = BKE_workspace_layout_screen_get(outgoing);
++  bScreen *checkpoint_screen = BKE_workspace_layout_screen_get(checkpoint);
++  if (!ED_screen_change(C, checkpoint_screen)) {
++    return OPERATOR_CANCELLED;
++  }
++
++  bScreen *active_screen = CTX_wm_screen(C);
++  if (outgoing_screen && outgoing_screen != active_screen) {
++    outgoing_screen->flag |= screen_ipad_layout_checkpoint;
++    BKE_workspace_layout_name_set(workspace, outgoing, "Before Restore");
++  }
++  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++  return OPERATOR_FINISHED;
++}
++
++static wmOperatorStatus layout_remove_exec(bContext *C, wmOperator *op)
++{
++  Main *bmain = CTX_data_main(C);
++  WorkSpace *workspace = CTX_wm_workspace(C);
++  if (!bmain || !workspace) {
++    return OPERATOR_CANCELLED;
++  }
++
++  char screen_id[sizeof(((bScreen *)nullptr)->id.name)] = {};
++  RNA_string_get(op->ptr, "screen_id", screen_id);
++  WorkSpaceLayout *checkpoint = layout_find_checkpoint(workspace, screen_id);
++  if (!checkpoint) {
++    return OPERATOR_CANCELLED;
++  }
++  if (layout_checkpoint_referenced(bmain, workspace, checkpoint)) {
++    BKE_report(op->reports, RPT_WARNING, "This saved layout is still in use");
++    return OPERATOR_CANCELLED;
++  }
++
++  BKE_workspace_layout_remove(bmain, workspace, checkpoint);
++  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++  return OPERATOR_FINISHED;
++}
++
++void SCREEN_OT_ipad_layout_save(wmOperatorType *ot)
++{
++  ot->name = "Save iPad Layout";
++  ot->idname = "SCREEN_OT_ipad_layout_save";
++  ot->description = "Keep a recoverable copy of this editor layout";
++  ot->exec = layout_save_exec;
++  ot->flag = OPTYPE_INTERNAL;
++}
++
++void SCREEN_OT_ipad_layout_restore(wmOperatorType *ot)
++{
++  ot->name = "Restore iPad Layout";
++  ot->idname = "SCREEN_OT_ipad_layout_restore";
++  ot->description = "Restore editor arrangement while keeping the current arrangement recoverable";
++  ot->exec = layout_restore_exec;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_string(ot->srna, "screen_id", nullptr, 0, "Saved Layout", "Checkpoint screen identity");
++}
++
++void SCREEN_OT_ipad_layout_remove(wmOperatorType *ot)
++{
++  ot->name = "Remove iPad Layout";
++  ot->idname = "SCREEN_OT_ipad_layout_remove";
++  ot->description = "Remove an unused saved editor layout";
++  ot->exec = layout_remove_exec;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_string(ot->srna, "screen_id", nullptr, 0, "Saved Layout", "Checkpoint screen identity");
++}
++
++#endif
+diff --git a/source/blender/editors/screen/workspace_layout_edit.cc b/source/blender/editors/screen/workspace_layout_edit.cc
+--- a/source/blender/editors/screen/workspace_layout_edit.cc
++++ b/source/blender/editors/screen/workspace_layout_edit.cc
+@@ -89,7 +89,12 @@
+ bool workspace_layout_set_poll(const WorkSpaceLayout *layout)
+ {
+   const bScreen *screen = BKE_workspace_layout_screen_get(layout);
+-
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (screen->flag & (1 << 2)) {
++    return false;
++  }
++#endif
+   return ((BKE_screen_is_used(screen) == false) &&
+           /* in typical usage temp screens should have a nonzero winid
+            * (all temp screens should be used, or closed & freed). */
+@@ -177,4 +182,13 @@
+   screen_temp = screen_fullscreen_find_associated_normal_screen(bmain, screen_temp);
+   layout_temp = BKE_workspace_layout_find(workspace, screen_temp);
+-
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (screen_temp && (screen_temp->flag & (1 << 2))) {
++    layout_temp = ED_workspace_layout_duplicate(bmain, workspace, layout_temp, win);
++    if (layout_temp) {
++      BKE_workspace_layout_screen_get(layout_temp)->flag &= ~(1 << 2);
++    }
++    return layout_temp;
++  }
++#endif
+   if (screen_is_used_by_other_window(win, screen_temp)) {
+
 diff --git a/source/blender/editors/screen/CMakeLists.txt b/source/blender/editors/screen/CMakeLists.txt
 --- a/source/blender/editors/screen/CMakeLists.txt
 +++ b/source/blender/editors/screen/CMakeLists.txt
-@@ -33,6 +33,8 @@
+@@ -33,6 +33,9 @@
    workspace_listen.cc
 
    screen_intern.hh
 +  screen_ipad_panels.cc
++  screen_ipad_layout_history.cc
 +  ipad_workspace_panels.hh
  )
 
@@ -7287,7 +7617,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2031 @@
+@@ -0,0 +1,2141 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -8950,8 +9280,48 @@ new file mode 100644
 +  return launcher_arrange_exec(C, nullptr);
 +}
 +
++static bool working_areas_are_full_edge_neighbors(ScrArea *source, ScrArea *target)
++{
++  const eScreenDir direction = area_getorientation(source, target);
++  if (direction == SCREEN_DIR_NONE) {
++    return false;
++  }
++  int offset1, offset2;
++  area_getoffsets(source, target, direction, &offset1, &offset2);
++  return offset1 == 0 && offset2 == 0;
++}
++
++static int working_area_index_after_join(const Model &before, const bScreen *screen, const int saved)
++{
++  if (saved <= 0) {
++    return saved;
++  }
++  const int old_index = saved - 1;
++  if (old_index >= int(before.areas.size())) {
++    return 0;
++  }
++  const int new_index = BLI_findindex(&screen->areabase, before.areas[old_index]);
++  return new_index < 0 ? 0 : new_index + 1;
++}
++
++static void working_area_indices_remap_after_join(
++    bScreen *screen, const Model &before, const ScrArea * /*removed*/)
++{
++  for (int axis = 0; axis < 2; axis++) {
++    screen->ipad_panel_active[axis] = working_area_index_after_join(
++        before, screen, screen->ipad_panel_active[axis]);
++  }
++  screen->ipad_panel_owner = working_area_index_after_join(
++      before, screen, screen->ipad_panel_owner);
++}
++
 +void ED_ipad_panels_working_menu(bContext *C, uiLayout *layout)
 +{
++  layout->op("SCREEN_OT_ipad_layout_save", "Save Layout", ICON_DUPLICATE,
++             blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++  layout->separator();
++  ED_ipad_panels_layout_history_menu(C, layout);
++  layout->separator();
 +  layout->op("SCREEN_OT_ipad_launcher_arrange", "Arrange Launchers", ICON_SORTSIZE,
 +               blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
 +  layout->separator();
@@ -8977,6 +9347,23 @@ new file mode 100644
 +                                 blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
 +    RNA_boolean_set(&props, "vertical", vertical);
 +    RNA_int_set(&props, "source", source_id);
++  }
++  bool has_full_edge_join = false;
++  for (const policy::Area &working : model.working) {
++    ScrArea *target = model.areas[working.id];
++    if (target == source || !working_areas_are_full_edge_neighbors(source, target)) {
++      continue;
++    }
++    if (!has_full_edge_join) {
++      layout->separator();
++      has_full_edge_join = true;
++    }
++    const std::string label = "Keep this editor; close " + area_label(target) + " (" +
++                              std::to_string(working.id + 1) + ")";
++    PointerRNA props = layout->op("SCREEN_OT_ipad_working_join", label.c_str(), ICON_AREA_JOIN,
++                                 blender::wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
++    RNA_int_set(&props, "source", source_id);
++    RNA_int_set(&props, "target", working.id);
 +  }
 +  if (model.working.size() > 1) {
 +    layout->separator();
@@ -9021,6 +9408,10 @@ new file mode 100644
 +  if (!source) {
 +    return OPERATOR_CANCELLED;
 +  }
++  if (!ED_ipad_panels_layout_checkpoint_capture(C, "Before Split")) {
++    BKE_report(op->reports, RPT_WARNING, "Could not preserve the current layout");
++    return OPERATOR_CANCELLED;
++  }
 +  ScrArea *created = area_split(win, CTX_wm_screen(C), source,
 +                                 RNA_boolean_get(op->ptr, "vertical") ? SCREEN_AXIS_V : SCREEN_AXIS_H,
 +                                 0.5f, true);
@@ -9045,6 +9436,7 @@ new file mode 100644
 +  const int target = RNA_int_get(op->ptr, "target");
 +  for (const policy::Area &working : model.working) {
 +    if (working.id == target && model.areas[target] != source) {
++      ED_ipad_panels_layout_checkpoint_capture(C, "Before Swap");
 +      ED_area_swapspace(C, source, model.areas[target]);
 +      tag_layout(C, win);
 +      WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -9052,6 +9444,54 @@ new file mode 100644
 +    }
 +  }
 +  return OPERATOR_CANCELLED;
++}
++
++static wmOperatorStatus working_join_exec(bContext *C, wmOperator *op)
++{
++  wmWindow *win = CTX_wm_window(C);
++  bScreen *screen = CTX_wm_screen(C);
++  Model model = make_model(C, win);
++  ScrArea *source = working_source(model, RNA_int_get(op->ptr, "source"));
++  ScrArea *target = nullptr;
++  const int target_id = RNA_int_get(op->ptr, "target");
++  for (const policy::Area &working : model.working) {
++    if (working.id == target_id) {
++      target = model.areas[working.id];
++      break;
++    }
++  }
++  if (!source || !target || source == target ||
++      !working_areas_are_full_edge_neighbors(source, target))
++  {
++    return OPERATOR_CANCELLED;
++  }
++  if (!ED_ipad_panels_layout_checkpoint_capture(C, "Before Join")) {
++    BKE_report(op->reports, RPT_WARNING, "Could not preserve the current layout");
++    return OPERATOR_CANCELLED;
++  }
++  if (!screen_area_join(C, op->reports, screen, source, target)) {
++    return OPERATOR_CANCELLED;
++  }
++  if (CTX_wm_area(C) == target) {
++    CTX_wm_area_set(C, nullptr);
++    CTX_wm_region_set(C, nullptr);
++  }
++  working_area_indices_remap_after_join(screen, model, target);
++  tag_layout(C, win);
++  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
++  return OPERATOR_FINISHED;
++}
++
++void SCREEN_OT_ipad_working_join(wmOperatorType *ot)
++{
++  ot->name = "Join Working Editors";
++  ot->idname = "SCREEN_OT_ipad_working_join";
++  ot->description = "Keep the active editor and close an exactly aligned neighbor";
++  ot->exec = working_join_exec;
++  ot->poll = panel_poll;
++  ot->flag = OPTYPE_INTERNAL;
++  RNA_def_int(ot->srna, "source", -1, -1, INT_MAX, "Source", "Editor to keep", -1, INT_MAX);
++  RNA_def_int(ot->srna, "target", 0, 0, INT_MAX, "Editor", "Full-edge neighbor to close", 0, INT_MAX);
 +}
 +
 +void SCREEN_OT_ipad_working_split(wmOperatorType *ot)

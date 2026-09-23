@@ -102,12 +102,12 @@ cannot establish that an interaction is comfortable on an iPad.
 
 ### Immediate delivery sequence
 
-1. Repair the failed native build for the current Inspector checkpoint and produce
-   a verified IPA. Diagnose the actual failure before adding another feature or
-   dispatching a replacement build.
-2. Deliver the labeled Inspector selector and large category choices; verify that
-   selecting categories, editing settings, scrolling and returning to the canvas
-   work naturally with finger and Pencil, including narrow windows.
+1. Completed: diagnose the failed native build and produce a verified IPA for
+   source `cb7966c`. The actual failure and replacement artifact are recorded in
+   PROJECT_HANDOFF.md; do not retry the failed SHA.
+2. Validate that IPA on iPad. It includes the labeled Inspector selector and large
+   category choices; check category selection, settings edits, scrolling and return
+   to canvas with finger and Pencil, including narrow windows.
 3. Improve the remaining everyday friction through complete workflows: selecting
    and transforming objects, adjusting cameras and settings, opening/dismissing
    panels, undoing changes, and saving/reopening projects. Choose the next change

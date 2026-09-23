@@ -1,5 +1,28 @@
 # Project handoff — 2026-09-13
 
+## Saved layout history source checkpoint — 2026-09-23
+
+Added a persistent **Save Layout** and **Layout History** surface to the working-
+editor menu. Restoring a saved screen uses Blender's native screen-change path on a
+fresh copy, then retains the outgoing arrangement as a new checkpoint. Checkpoints
+are excluded from ordinary workspace cycling/selection. Split, swap and exact-edge
+join now save a named checkpoint first. Join choices name the editor to retain and
+only appear for full-edge neighbors, avoiding native partial-edge trimming. Panel
+owner/active-editor area references are remapped after the removed area is freed.
+Remove is refused while workspace relations, window hooks or Blender's screen-use
+check still reference the layout; repeated checkpoint names receive distinct labels.
+
+Host C++ regression coverage compiles the exact checkpoint-validity, unique-name,
+reference-audit, exact-edge-neighbor and post-join remapping helpers from the patch.
+All 27 build tests pass, `git diff --check` is clean, and pinned source preflight
+applies the patch to 56 files. This is source/host-test evidence only: this
+uncommitted revision has not had a native iOS compile, IPA, save/reopen test or iPad
+acceptance.
+
+Still required in this layout milestone: native build validation, persistence
+across save/reopen, workspace duplication/deletion and multiple-window lifecycle
+checks. Do not treat the older cb7966 IPA as containing this work.
+
 
 ## Layout reversal lifecycle findings — 2026-09-22
 
@@ -25,18 +48,41 @@ ordinary layout reuse/cycling, and restoration must deliberately activate a copy
 or safely transfer that role. Do not use temp screens, which are not saved like
 normal layouts, or rely on a dot-name/user preference to protect history.
 
-Next implement checkpoint ownership/lifecycle and deliberate restore before a
-join transaction. Begin join geometry with exact full-edge rectangular neighbors
-(no implicit remainder deletion), then handle broader layouts explicitly. Rebind
-index-based panel owner/active-editor references after any area removal. Validate
-save/reopen, workspace duplication/deletion, scene edits since checkpoint, multiple
-windows, modal cancellation and outgoing-layout recovery. Bound/manage history
-without silently deleting the only copy of a removed editor. This is researched
-design, not implemented or device-validated layout reversal.
+The checkpoint and exact-edge join implementations are recorded above. Next handle
+broader layouts explicitly and validate save/reopen, workspace duplication/deletion,
+scene edits since checkpoint, multiple windows, modal cancellation and
+outgoing-layout recovery. Keep history removable without silently deleting the only
+copy of a removed editor.
 
-The active delivery build remains run35698122851 at cb7966c. It was confirmed live
-in source fetch after successful cloud preflight during this review; inspect its
-actual result before dispatching anything else.
+The Inspector delivery build below has since completed successfully. Layout
+reversal is still the next workspace capability to implement; the lifecycle work
+here is design research only.
+
+## Inspector IPA verified — 2026-09-23
+
+The failed iOS run35582136863 built exact source
+`1057ce3c293ab1bf286dfd5ca14f4a3f317716d7`. Its cloud preflight passed, but
+makesdna failed on `ScrArea_Runtime.ipad_launcher_session` alignment and its
+32-bit tail. No artifact was produced. The failure was caused by missing explicit
+pointer-sized padding in that source revision; commit `672ecbe` adds it. Do not
+retry the failed SHA.
+
+The later combined repair checkpoint `cb7966c3f978c72356486be50afe1ece797fe297`
+passed cloud preflight, native iOS compilation and IPA packaging in [run
+35698122851](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35698122851).
+Verified artifact: `Blender-iPad-Unofficial-ipa`, id `10681404564`, 248,425,761
+bytes, SHA-256 `9a54ac9d441f85411d76bac80e7a42deab959bc1079ef0ce7c114caa5c72ce2d`,
+not expired at verification. It contains the Inspector's labeled category
+selector and direct-close category selection, plus the native compile and
+launcher-registration repairs. This is packaged-build evidence, not device
+acceptance; no iPad testing of this IPA is recorded.
+
+Next: validate the Inspector on the M5 iPad in landscape/portrait and a narrow
+window (category choice, scrolling, settings edits, return to canvas), while
+preserving squeeze radial and double-tap context. Then use actual friction from
+the everyday object/camera/property workflow to guide the next visible usability
+increment. Implement saved-layout reversal and exact-edge touch joins after that;
+they remain required and not implemented.
 
 ## Inspector native compile fixes — 2026-09-22
 
@@ -246,14 +292,11 @@ that outcome. Deliver visible improvements in installable builds and own reversi
 choices; preserve the user's confirmed working squeeze radial. A completed feature
 list or passing source checks alone does not satisfy the goal.
 
-Run35582136863 at **1057ce3c293ab1bf286dfd5ca14f4a3f317716d7** has now FAILED.
-Cloud preflight passed, including the repaired launcher test and new Inspector
-ownership test. The native build failed while generating makesdna/dna.cc for the
-host tools; packaging/upload were skipped, so there is no new IPA. The log also
-contains Homebrew HOME messages, but the root cause has not yet been diagnosed.
-Do not mistake those messages for an established diagnosis. Inspect the full
-failed-step log, repair the actual blocker, then build the coherent checkpoint.
-The earlier in-progress entry below is historical.
+Run35582136863 at **1057ce3c293ab1bf286dfd5ca14f4a3f317716d7** failed while
+generating makesdna/dna.cc for host tools because the runtime session field and
+32-bit structure tail lacked explicit alignment. This was repaired in
+`672ecbe`; the later successful IPA is recorded above. The earlier in-progress
+entry below is historical.
 
 Next deliver the Inspector selector/category changes on device, then reduce
 observed friction in selecting/transforming objects, camera/settings adjustment,
