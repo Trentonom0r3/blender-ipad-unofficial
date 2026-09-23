@@ -16,8 +16,25 @@ both rails and the Inspector to available bounds. A previously saved cramped
 Inspector therefore opens at a readable width while a narrow Stage Manager window
 can still shrink it. The 35 host tests pass, including a saved-width/narrow-window
 geometry check; pinned-source preflight applies to 57 files and `git diff --check`
-is clean. This is source evidence only. The last packaged IPA below predates these
-geometry changes; native build and iPad acceptance for them are pending.
+is clean. Source `011bf085babc9838811ae9252ef62e39a4aea5db` passed cloud
+preflight, native iOS Release compilation and IPA packaging in
+[run 35850985308](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35850985308).
+Verified artifact `Blender-iPad-Unofficial-ipa`, id `10745897695`, archive size
+248,430,787 bytes, GitHub digest
+`sha256:2b6eff7bec445dba10ebb30900bb7659868f3913498629d26afdf486952e8f2f`,
+expires 2026-12-22 10:49:28 UTC. The download succeeded. Extracted
+`Blender-iPad-Unofficial.ipa` is 248,430,619 bytes with SHA-256
+`bfde1ac1421dfa31085ec973c38410fe5eeadb797bf8eddb7c8e1be79da37f9c`.
+Its ZIP integrity is clean; `Payload/Blender.app/Info.plist` reports bundle ID
+`com.unofficial.blenderipad`, version `5.0.0`. This is the latest installable
+build; Inspector readability and rail touch acceptance remain untested on iPad.
+
+On the M5 iPad, open Inspector on an object, switch among Object, Modifiers and
+Render with finger and Pencil, and edit a numeric property. Close and reopen it
+at a deliberately narrow saved width; check that controls remain readable and
+touchable. Repeat in portrait and a narrow Stage Manager window, and tap both
+rails while a bottom editor is open. Note any missed target, obstructed native
+control or lost canvas space. Preserve the working Pencil squeeze radial.
 
 ## Native project-save context fix — source checkpoint `5e11388` (2026-09-23)
 
@@ -52,8 +69,8 @@ expires 2026-12-22 10:05:55 UTC. The download endpoint succeeded. Extracted
 `Blender-iPad-Unofficial.ipa` is 248,429,779 bytes with SHA-256
 `0ce771b19b80f011228284a4c01eb7c3b83f7555de79f73d39a398b7931a305f`.
 Its ZIP integrity is clean, and `Payload/Blender.app/Info.plist` reports bundle ID
-`com.unofficial.blenderipad`, version `5.0.0`. This is now the latest successful
-IPA and contains the Save As/Save Copy context-lifetime fix, but no iPad behavior
+`com.unofficial.blenderipad`, version `5.0.0`. This IPA contains the Save As/Save Copy
+context-lifetime fix, but no iPad behavior
 or usability acceptance is claimed.
 
 Provider-save audit: Save As currently uses the document picker in export-as-copy

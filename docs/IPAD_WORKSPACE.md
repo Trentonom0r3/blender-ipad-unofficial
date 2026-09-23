@@ -26,8 +26,8 @@ remove the remaining splits, layout reversal, input and Files requirements.
 The next source checkpoint also raises the Inspector's minimum side width to 360
 scaled UI units and makes the two permanent rails 44 units wide where space permits,
 tapering to 28 in narrow windows. This responds to cramped native controls and
-undersized rail hit targets identified in a read-only review; it still awaits an
-iOS build and device judgment.
+undersized rail hit targets identified in a read-only review. Exact-source IPA
+run 35850985308 passed native iOS compilation and packaging; device judgment is open.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 

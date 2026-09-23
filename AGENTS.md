@@ -20,18 +20,18 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest successful feature IPA is run `35846812298` at source `bd240bf`;
-it includes the prior Inspector and saved-layout work plus the Save As/Save Copy
-modal-context repair and restored model exporter. The IPA was downloaded, its ZIP
-integrity and bundle metadata checked, and its size and SHA-256 recorded in
-PROJECT_HANDOFF. This is packaged-build evidence, not iPad acceptance. The first
+The latest successful feature IPA is run `35850985308` at source `011bf08`;
+it adds adaptive 28–44-unit side rails and a 360-unit Inspector width floor to
+the prior Inspector, saved-layout, and Save As/Save Copy work. The IPA was
+downloaded; ZIP integrity, bundle metadata, size and SHA-256 are recorded in
+PROJECT_HANDOFF. All 35 host tests, pinned-source preflight and native iOS Release
+compilation pass. This is packaged-build evidence, not iPad acceptance. The first
 build of the save change, run `35844483198` at `6028dd1`, failed because its patch
-truncated the model-exporter header; do not retry that SHA. All 34 host tests and
-pinned-source preflight pass on the repaired source. Earlier native build failures
+truncated the model-exporter header; do not retry that SHA. Earlier native build failures
 at `56f5e23` (stale patch hunk count), `1057ce3` (32-bit `ScrArea_Runtime`
 alignment) and `35833932550` (layout patch hunk count) were fixed; do not retry
-those SHAs. Actual iPad acceptance is still open. Validate Inspector, layout and
-Save As/Save Copy cancellation in this exact IPA. The export-as-copy picker URL
+those SHAs. Actual iPad acceptance is still open. Validate Inspector, rail hits,
+layout and Save As/Save Copy cancellation in this exact IPA. The export-as-copy picker URL
 does not provide a writable identity for later ordinary Save; fix that Files
 lifecycle before calling external document saving complete. Continue unfinished
 workspace and Files requirements.

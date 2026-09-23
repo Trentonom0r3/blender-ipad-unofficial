@@ -46,7 +46,8 @@ The follow-up source review found that narrow saved Inspector widths can still
 cramp native fields; its new 360-unit floor yields to actual window bounds. Rails
 now expand to 44-unit touch targets when there is room and contract toward 28
 units in narrow windows. Validate this on device before treating it as a solution
-to the broader desktop-like feel.
+to the broader desktop-like feel. Exact-source IPA run 35850985308 passed native
+Release compilation and packaging; device acceptance remains open.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 
