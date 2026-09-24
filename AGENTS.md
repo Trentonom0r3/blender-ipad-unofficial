@@ -20,22 +20,17 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest successful feature IPA is run `35858987938` at source `e88e377`;
-it adds bookmark-backed, coordinated ordinary Save for a project moved into Files
-by Save As. The earlier `35850985308` IPA added adaptive 28–44-unit side rails
-and a 360-unit Inspector width floor to the labeled Inspector. The newest IPA was
-downloaded; ZIP integrity, bundle metadata, size and SHA-256 are recorded in
-PROJECT_HANDOFF. All 37 host tests, pinned-source preflight and native iOS Release
-compilation pass. This is packaged-build evidence, not iPad acceptance. The first
-build of the save change, run `35844483198` at `6028dd1`, failed because its patch
-truncated the model-exporter header; do not retry that SHA. Earlier native build failures
-at `56f5e23` (stale patch hunk count), `1057ce3` (32-bit `ScrArea_Runtime`
-alignment) and `35833932550` (layout patch hunk count) were fixed; do not retry
-those SHAs. Actual iPad acceptance is still open. Validate Inspector, rail hits,
-layout, Save As/Save Copy cancellation and provider-backed ordinary Save in this
-exact IPA. The new Files route still needs device/provider testing, sibling assets,
-multi-document identity and recovery before external document saving is complete.
-Continue unfinished workspace and Files requirements.
+The latest successful feature IPA is run `35975045387` at source `86c0591`.
+It includes project-folder import, per-project Files bookmarks, provider Save
+completion fixes, and first-use Layout Tool Header collapse with a left-rail
+Settings toggle, alongside the earlier Inspector and rail changes. All 38 host
+tests, pinned-source preflight, native iOS Release compilation, packaging and
+artifact upload pass. The downloaded IPA's integrity, size, SHA-256 and bundle
+metadata are recorded in PROJECT_HANDOFF. This is packaged-build evidence, not
+iPad acceptance. The user now needs to test this exact build on device; stop
+automated development after explicitly notifying them and await their feedback.
+Preserve the working Pencil mappings and continue the broader usability,
+workspace and Files requirements after that feedback.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

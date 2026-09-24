@@ -1,10 +1,18 @@
-# Project handoff — 2026-09-23
+# Project handoff — 2026-09-24
 
-## Native compile repair — source only, 2026-09-24
+## Verified iOS IPA; device acceptance needed — 2026-09-24
+
+Exact-source [build-ipa run 35975045387](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35975045387) succeeded at `86c0591e6acf223c19e8befe664514d2cc7f69c5`. Cloud preflight, native iOS Release compilation, IPA packaging and artifact upload all passed. The overlay patch's LF-normalized SHA-256 is `efb964efd29b425df5650e68783771091f8108932ece19f31ab5321bd5c1050d` (446,173 bytes); 38 host tests and pinned-source preflight applying to 57 files passed before dispatch. The prior native name-collision failure at `1a51dec` is repaired in this source.
+
+Artifact `Blender-iPad-Unofficial-ipa`, id `10798800264`, has GitHub archive size 248,437,969 bytes and digest `sha256:b9aeeabc8d94feda05bbfab4770403d20afe49708224181c01f6402484c2f0bc`; it expires 2026-12-23 08:24:25 UTC. Downloaded `Blender-iPad-Unofficial.ipa` is 248,437,801 bytes with SHA-256 `62b1a9290b94c0c2feff8ca7dad5e5e73d19693a8f85caf7a4c598621aab56e2`. The IPA ZIP passes a full CRC test across 3,368 entries. `Payload/Blender.app/Info.plist` reports bundle ID `com.unofficial.blenderipad`, short version `5.0.0`, bundle version `5.0.0`, and executable `Blender`. This verifies a downloadable package, not its behavior on iPad.
+
+The user explicitly asked for a notification and a stop when their testing is needed. Notify them that this exact IPA is ready, pause automated development, and await their device report. Ask for a short scene-blocking pass without a keyboard: fresh Layout startup and Settings/Tool Header toggle; Inspector and rail hits; select/move, camera/property, undo; import a project folder with a relative texture, save and reopen the local copy; and provider-backed Save/Save As. Check landscape and portrait if practical. Preserve working Pencil squeeze radial and double-tap context, and note any external-input regression. The user's September 20 recording predates these Inspector, rail and Tool Header changes, so it cannot establish current device acceptance. Broader in-place Files Open, provider lifecycle/recovery, and complete touch comfort remain unfinished.
+
+## Native compile repair — built, 2026-09-24
 
 Exact-source iOS run [35935225155](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35935225155) at `1a51dec84e759f5ce27564bd0a25667e6d1cd515` passed cloud preflight and failed native Release compilation. The new first-use Layout rule declared `WorkSpace *workspace`, then the same function declared `const Rect workspace`. Clang reported the redefinition and the resulting type mismatch in `policy::working_layout`. The local repair renames only the rectangle to `workspace_bounds` and passes that rectangle to the layout policy. No behavior or Pencil mapping changes.
 
-After the repair, all 38 host tests pass, pinned-source preflight applies to 57 files, and `git diff --check` is clean. The repaired patch's UTF-8, LF-normalized SHA-256 is `efb964efd29b425df5650e68783771091f8108932ece19f31ab5321bd5c1050d` (446,173 bytes). This is source validation only; a replacement native build and IPA verification are required before device testing. Do not retry `1a51dec` unchanged.
+After the repair, all 38 host tests pass, pinned-source preflight applies to 57 files, and `git diff --check` is clean. The repaired patch's UTF-8, LF-normalized SHA-256 is `efb964efd29b425df5650e68783771091f8108932ece19f31ab5321bd5c1050d` (446,173 bytes). Replacement native compilation and IPA verification passed in run `35975045387`; device acceptance remains open. Do not retry `1a51dec` unchanged.
 
 ## Per-project Files bookmark candidate — local source, 2026-09-23
 

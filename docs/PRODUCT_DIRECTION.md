@@ -24,10 +24,11 @@ reopen. Check portrait, landscape, narrow windows and external input. Continue
 broader editing and native Files requirements; this first workflow is a delivery
 checkpoint, not the limit of Blender's supported capabilities.
 
-Resolve the current native build outcome and deliver the Inspector improvements
-first, then address the largest observed interruption in those workflows. Keep
-source implementation, host tests, packaged IPA and actual-device acceptance
-separate. The full goal remains active until the product outcome is satisfied.
+Exact-source IPA run `35975045387` at `86c0591` passed native compilation,
+packaging and artifact verification. Ask the user to test its everyday workflows
+on iPad before choosing the next interaction change. Keep source implementation,
+host tests, packaged IPA and actual-device acceptance separate. The full goal
+remains active until the product outcome is satisfied.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
@@ -51,16 +52,14 @@ Release compilation and packaging; device acceptance remains open.
 Provider-aware Save source `e88e377` also passed native Release compilation and
 IPA packaging in run 35858987938. Its Files behavior and the broader touch design
 still need iPad acceptance.
-Revisiting the user's recording shows that global menus/workspaces, the 3D View
-header, and the Tool Header still form three dense rows above the canvas. The
-verified Inspector and rail IPA does not address this. The next local source
-candidate collapses the Object Mode Tool Header on first iPad adaptation of an
-unsaved factory/new Layout workspace and adds a labeled left-rail control to restore the same
-native row. The factory Sculpting workspace can initially be in Object Mode, so
-its native row remains untouched. Opened projects keep their saved Tool Header
-visibility, even when their workspace is named Layout. Preserve all mode-specific controls and
-external-input routes; verify the new layout on device
-before treating it as an improvement to felt usability.
+Revisiting the user's recording shows three dense rows above the canvas: global
+menus/workspaces, the 3D View header, and the Tool Header. Verified IPA run
+`35975045387` initially collapses the native Tool Header only for an unsaved
+factory/new Layout workspace in Object Mode. A left-rail Settings control
+restores that same row. Sculpting and opened projects retain their saved
+visibility, including a saved project named Layout. Preserve mode-specific
+controls and external-input routes; verify this behavior and its effect on
+felt usability on the iPad before treating it as an improvement.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 

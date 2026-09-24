@@ -28,15 +28,13 @@ scaled UI units and makes the two permanent rails 44 units wide where space perm
 tapering to 28 in narrow windows. This responds to cramped native controls and
 undersized rail hit targets identified in a read-only review. Exact-source IPA
 run 35850985308 passed native iOS compilation and packaging; device judgment is open.
-The next uncommitted source candidate reduces Object Mode top chrome in an
-unsaved factory/new Layout workspace by initially collapsing the native Tool Header. A
-labeled Settings entry after Tools on the left rail reopens that same row.
-Opened projects and dedicated workspaces retain their saved visibility even if they first open in
+Verified IPA run `35975045387` at source `86c0591` initially collapses the
+native Tool Header for an unsaved factory/new Layout workspace in Object Mode.
+The labeled Settings entry after Tools reopens the same row. Opened projects
+and dedicated workspaces retain saved visibility, even when they start in
 Object Mode; changing modes within Layout keeps the current setting until
-Settings is used.
-This needs native
-compilation and device checks, including narrow-window rail paging and saved
-workspace persistence.
+Settings is used. Native compilation and IPA packaging pass. Device checks
+remain open, including narrow-window rail paging and saved-workspace persistence.
 Source implementation, host preview, packaged iOS build and device acceptance
 must remain distinct. Judge further changes by common tasks on the device.
 
