@@ -1,5 +1,33 @@
 # Project handoff — 2026-09-24
 
+## Inspector width and native icon follow-up — source only, 2026-09-24
+
+The user tested IPA run 35975045387 and says the app generally works, but its
+visual design still feels basic. The concrete Inspector findings are that it
+opens too wide, cannot shrink far enough, and offers category names without
+visible desktop-style icons. This is useful device feedback on that package,
+not blanket acceptance of Files workflows or the overall iPad goal.
+
+The next source candidate restores Blender's own Properties NAV_BAR icon strip
+instead of forcing that region into a 56-unit top selector. It moves the labeled
+current-category control to the native Properties header and preserves the
+two-column native-enum popup. This keeps dynamic context filtering, object-data
+icons, search highlights, pinning and real Properties panels. Inspector-only
+metrics now use a 280-unit scaled width floor and 35% automatic opening width,
+down from 360 and 45%; saved width preferences remain until a user drag changes
+them. Other side editors retain their dimensions. The working Pencil squeeze
+radial, double-tap context and external input paths are untouched.
+
+All 38 host tests pass, pinned-source preflight applies to 56 files and
+Git diff --check is clean. The LF-normalized patch is 440,457 bytes with
+SHA-256 186c1228ba8e3d22b75721bd78fc046d7434d8d28e08196fe9d1dd5f6957bc9a.
+This is source validation only. Commit and push the exact candidate, run one
+native iOS build, fix actual compile failures if any, verify the IPA, then
+request a focused iPad check of native category icons, header picker/search,
+resizing, dense Properties content and saved widths across fresh/saved layouts
+and a narrow window. The user asked for explicit notification and a stop when
+that hardware check is needed.
+
 ## Verified iOS IPA; device acceptance needed — 2026-09-24
 
 Exact-source [build-ipa run 35975045387](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35975045387) succeeded at `86c0591e6acf223c19e8befe664514d2cc7f69c5`. Cloud preflight, native iOS Release compilation, IPA packaging and artifact upload all passed. The overlay patch's LF-normalized SHA-256 is `efb964efd29b425df5650e68783771091f8108932ece19f31ab5321bd5c1050d` (446,173 bytes); 38 host tests and pinned-source preflight applying to 57 files passed before dispatch. The prior native name-collision failure at `1a51dec` is repaired in this source.

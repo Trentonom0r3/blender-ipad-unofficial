@@ -274,13 +274,19 @@ static void geometry()
   cramped_inspector.tap(p::Edge::Bottom, 5);
   cramped_inspector.side_width = 180;
   p::Metrics inspector_metrics;
-  inspector_metrics.minimum_side_width = 360;
+  inspector_metrics.minimum_side_width = 280;
+  inspector_metrics.automatic_side_percent = 35;
   const auto readable = p::layout({0, 0, 1024, 768}, cramped_inspector, inspector_metrics);
-  check(readable.side_panel.width() == 360 &&
-            p::panel_content(readable, p::Edge::Side).width() == 336,
-        "Saved narrow Inspector reopens with readable native content width");
-  const auto constrained = p::layout({0, 0, 768, 900}, cramped_inspector, inspector_metrics);
-  check(constrained.side_panel.width() < 360 && !constrained.canvas.empty() &&
+  check(readable.side_panel.width() == 280 &&
+            p::panel_content(readable, p::Edge::Side).width() == 256,
+        "Inspector can shrink while retaining native content and the resize grip");
+  cramped_inspector.side_width = 0;
+  const auto initial = p::layout({0, 0, 1024, 768}, cramped_inspector, inspector_metrics);
+  check(initial.side_panel.width() > 280 && initial.side_panel.width() < 360,
+        "Fresh Inspector opens narrower than the prior forty-five-percent default");
+  cramped_inspector.side_width = 180;
+  const auto constrained = p::layout({0, 0, 600, 900}, cramped_inspector, inspector_metrics);
+  check(constrained.side_panel.width() < 280 && !constrained.canvas.empty() &&
             !overlaps(constrained.side_panel, constrained.bottom_panel),
         "Inspector width floor yields to narrow windows and preserves the canvas");
 }

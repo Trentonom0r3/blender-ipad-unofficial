@@ -10,6 +10,19 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Current Inspector follow-up — 2026-09-24
+
+User device feedback on IPA run 35975045387: most tested interactions seem to
+work, but visual design feels basic, the Inspector opens too wide and has a
+hard-to-shrink minimum, and only category names are visible. Own this reversible
+design iteration. Source candidate restores the native desktop Properties icons
+beside the full Properties editor, moves the labeled current-category picker to
+the native header, reduces the Inspector-specific width floor from 360 to 280
+scaled UI units and its automatic opening share from 45% to 35%. Other side
+editors keep their dimensions. Saved user widths remain intact; a user drag can
+now reduce the Inspector further. Native compilation and iPad acceptance of this
+candidate are still pending. Do not claim that host checks prove touch comfort.
+
 ## Updated goal — 2026-09-21
 
 The user explicitly requested updating the goal after reviewing progress. The
@@ -27,10 +40,12 @@ Settings toggle, alongside the earlier Inspector and rail changes. All 38 host
 tests, pinned-source preflight, native iOS Release compilation, packaging and
 artifact upload pass. The downloaded IPA's integrity, size, SHA-256 and bundle
 metadata are recorded in PROJECT_HANDOFF. This is packaged-build evidence, not
-iPad acceptance. The user now needs to test this exact build on device; stop
-automated development after explicitly notifying them and await their feedback.
-Preserve the working Pencil mappings and continue the broader usability,
-workspace and Files requirements after that feedback.
+iPad acceptance. The user tested this build and reported broad functionality
+with two concrete Inspector issues: it opens too wide and cannot shrink enough,
+and its category icons are not visible. A new source candidate restores the
+native Properties icon strip, retains a labeled category picker, and reduces
+Inspector width. Preserve the working Pencil mappings and continue broader
+usability, workspace and Files requirements.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

@@ -10,6 +10,20 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Current Inspector iteration — source only, 2026-09-24
+
+The user tested IPA run 35975045387 and reports that the Inspector opens too
+wide, resists further shrinking, and lacks visible desktop-style category icons.
+The next source candidate restores the native Properties navigation strip on the
+left of its floating editor, retains the labeled native enum picker in the
+header, lowers the Inspector-only minimum side width to 280 scaled units, and
+opens it at 35% of usable content width when no saved width exists. The native
+enum still controls filtering, active context, search highlighting and the
+dynamic object-data icon. Saved widths and other side editors are unchanged.
+Host tests and pinned-source preflight pass; no IPA or device validation exists
+for this iteration yet. Check fresh and saved Layout, portrait and narrow
+windows, dense Properties fields, and Inspector/Scene switching on device.
+
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 
 The user reports that the last successful build still feels like desktop Blender
