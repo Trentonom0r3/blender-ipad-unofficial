@@ -20,8 +20,12 @@ beside the full Properties editor, moves the labeled current-category picker to
 the native header, reduces the Inspector-specific width floor from 360 to 280
 scaled UI units and its automatic opening share from 45% to 35%. Other side
 editors keep their dimensions. Saved user widths remain intact; a user drag can
-now reduce the Inspector further. Native compilation and iPad acceptance of this
-candidate are still pending. Do not claim that host checks prove touch comfort.
+now reduce the Inspector further. First native run 35983302880 at 39f708d
+failed in area.cc because a leftover split_previous reference remained after
+restoring native navigation. The current local patch removes that stale hunk;
+38 host tests and pinned-source preflight pass. A replacement native build and
+iPad acceptance are still pending. Do not retry 39f708d unchanged or claim
+that host checks prove touch comfort.
 
 ## Updated goal — 2026-09-21
 

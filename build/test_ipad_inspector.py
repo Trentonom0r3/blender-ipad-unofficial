@@ -29,6 +29,7 @@ class InspectorIdentityTests(unittest.TestCase):
         # No separate icon map or top-row replacement for Blender's native strip.
         self.assertNotIn('diff --git a/source/blender/editors/space_buttons/space_buttons.cc', patch)
         self.assertNotIn('region_is_ipad_inspector_navigation', patch)
+        self.assertNotIn('split_previous', patch)
 
     def test_active_owner_floating_layer_and_desktop(self):
         repo = Path(__file__).resolve().parents[1]

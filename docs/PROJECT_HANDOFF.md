@@ -1,5 +1,27 @@
 # Project handoff — 2026-09-24
 
+## Native split-condition compile repair — source only, 2026-09-24
+
+Exact-source iOS run https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35983302880
+at 39f708d9c97001ab1190c5a7178d1defb68e6642 passed cloud preflight
+but failed native Release compilation. Clang reported area.cc:1901:7:
+undeclared identifier split_previous. Restoring Blender's native vertical
+Properties navigation removed the special-case declaration at region layout
+entry, but a later restore-previous-split branch in the overlay still referenced
+that variable. The repair removes only that stale hunk, leaving Blender's
+original region->alignment and RGN_SPLIT_PREV condition at both entry and
+restore. This changes no Pencil mapping, Files code or saved editor state.
+
+The applied area.cc source was checked for both native split conditions and
+absence of the stale identifiers. All 38 host tests pass; pinned-source
+preflight applies to 56 files; Git diff --check is clean. The repaired
+LF-normalized overlay is 440,189 bytes with SHA-256
+4a3ff0be68d8a12fb4a007fba8935d335aaaf45df4e763f94935f9ce04f05f86.
+These are source and host checks only. Do not retry 39f708d unchanged. Commit
+and push this exact repair, dispatch one replacement native build, inspect
+actual failure logs if it fails, and verify its IPA if it succeeds before
+asking the user to test the Inspector.
+
 ## Inspector width and native icon follow-up — source only, 2026-09-24
 
 The user tested IPA run 35975045387 and says the app generally works, but its

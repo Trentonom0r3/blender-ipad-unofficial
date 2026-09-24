@@ -3283,15 +3283,6 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
    /* no returns in function, winrct gets set in the end again */
    BLI_rcti_init(&region->winrct, 0, 0, 0, 0);
-@@ -1835,7 +1898,7 @@
-   }
-
-   /* restore prev-split exception */
--  if (region->alignment & RGN_SPLIT_PREV) {
-+  if (split_previous) {
-     if (region->prev) {
-       remainder = remainder_prev;
-       region->prev->winx = BLI_rcti_size_x(&region->prev->winrct) + 1;
 @@ -1867,6 +1930,28 @@
 
    /* Clear, initialize on demand. */
