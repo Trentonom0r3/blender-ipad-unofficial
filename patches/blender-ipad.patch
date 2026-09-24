@@ -9389,8 +9389,8 @@ new file mode 100644
 +  for (ScrArea *area : model.areas) {
 +    area->runtime.ipad_layer = 4;
 +  }
-+  const Rect workspace{screen_rect.xmin, screen_rect.ymin, screen_rect.xmax, screen_rect.ymax};
-+  for (const policy::Area &working : policy::working_layout(model.working, workspace,
++  const Rect workspace_bounds{screen_rect.xmin, screen_rect.ymin, screen_rect.xmax, screen_rect.ymax};
++  for (const policy::Area &working : policy::working_layout(model.working, workspace_bounds,
 +                                                          int(4 * UI_SCALE_FAC))) {
 +    ScrArea *area = model.areas[working.id];
 +    area->runtime.ipad_layer = 1;

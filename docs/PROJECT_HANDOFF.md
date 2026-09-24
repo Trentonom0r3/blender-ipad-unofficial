@@ -1,5 +1,11 @@
 # Project handoff — 2026-09-23
 
+## Native compile repair — source only, 2026-09-24
+
+Exact-source iOS run [35935225155](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35935225155) at `1a51dec84e759f5ce27564bd0a25667e6d1cd515` passed cloud preflight and failed native Release compilation. The new first-use Layout rule declared `WorkSpace *workspace`, then the same function declared `const Rect workspace`. Clang reported the redefinition and the resulting type mismatch in `policy::working_layout`. The local repair renames only the rectangle to `workspace_bounds` and passes that rectangle to the layout policy. No behavior or Pencil mapping changes.
+
+After the repair, all 38 host tests pass, pinned-source preflight applies to 57 files, and `git diff --check` is clean. The repaired patch's UTF-8, LF-normalized SHA-256 is `efb964efd29b425df5650e68783771091f8108932ece19f31ab5321bd5c1050d` (446,173 bytes). This is source validation only; a replacement native build and IPA verification are required before device testing. Do not retry `1a51dec` unchanged.
+
 ## Per-project Files bookmark candidate — local source, 2026-09-23
 
 The packaged `e88e377` ordinary Save retained only one Files document bookmark.
@@ -21,7 +27,7 @@ overlay applies to 57 pinned files. `git diff --check` is clean. Native iOS
 compilation, IPA packaging and provider/device behavior are not yet checked for
 this candidate. Exact-source iOS build
 [35935225155](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35935225155)
-is in progress. At source commit `1a51dec84e759f5ce27564bd0a25667e6d1cd515`, the
+failed native compilation as recorded above. At source commit `1a51dec84e759f5ce27564bd0a25667e6d1cd515`, the
 current patch's UTF-8, LF-normalized SHA-256 is
 `711c2c32a19abd99e7fc6a689978091b091b106e235870801d7679fc5ec15f20`
 (446,159 bytes). The next IPA can test that sequential Save As operations keep
@@ -72,7 +78,7 @@ Source review caught an Objective-C block-capture compile error in the local
 folder scan: its error handler assigns to `copy_error`, which must be declared
 `__block`. This is corrected before dispatching a native build. All 38 host tests
 pass, pinned-source preflight applies to 57 files, and `git diff --check` is
-clean. Native iOS compilation and IPA packaging are being checked by run
+clean. Native iOS compilation failed in run
 `35935225155`; device behavior is **not checked for this candidate**. At source
 `1a51dec84e759f5ce27564bd0a25667e6d1cd515`, the patch's UTF-8,
 LF-normalized SHA-256 is
@@ -82,7 +88,7 @@ source overlay, not an IPA. An earlier commit/push attempt was rejected by
 automatic approval review because the account usage limit prevented review; it
 was not a safety finding. A fresh review accepted the source checkpoint, and it
 was pushed to origin. Inspect exact-source run `35935225155`, fix any native
-failure, and verify the IPA artifact on success. Device acceptance should cover a
+failure as recorded above, then verify the replacement IPA artifact on success. Device acceptance should cover a
 folder with one `.blend`, a folder with multiple `.blend` files in subfolders,
 nested textures, cancellation during a cloud-backed copy, and saving/reopening
 the imported copy. Force quit during a cloud-backed folder copy, relaunch,
