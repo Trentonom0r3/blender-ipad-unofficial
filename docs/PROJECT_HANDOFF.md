@@ -21,12 +21,15 @@ radial, double-tap context and external input paths are untouched.
 All 38 host tests pass, pinned-source preflight applies to 56 files and
 Git diff --check is clean. The LF-normalized patch is 440,457 bytes with
 SHA-256 186c1228ba8e3d22b75721bd78fc046d7434d8d28e08196fe9d1dd5f6957bc9a.
-This is source validation only. Commit and push the exact candidate, run one
-native iOS build, fix actual compile failures if any, verify the IPA, then
-request a focused iPad check of native category icons, header picker/search,
-resizing, dense Properties content and saved widths across fresh/saved layouts
-and a narrow window. The user asked for explicit notification and a stop when
-that hardware check is needed.
+This is source validation only. Source commit
+39f708d9c97001ab1190c5a7178d1defb68e6642 was pushed. Exact-source
+iOS run https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35983302880
+passed cloud preflight and is still building. Inspect this run before
+dispatching another. If it fails, fix the actual native failure; on success,
+verify the IPA and request a focused iPad check of native category icons,
+header picker/search, resizing, dense Properties content and saved widths
+across fresh/saved layouts and a narrow window. The user asked for explicit
+notification and a stop when that hardware check is needed.
 
 ## Verified iOS IPA; device acceptance needed — 2026-09-24
 
