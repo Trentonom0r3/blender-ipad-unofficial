@@ -1,5 +1,41 @@
 # Project handoff — 2026-09-24
 
+## Verified Inspector IPA; focused device check needed — 2026-09-24
+
+Exact-source iOS run https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35984874300
+succeeded at 46bd48ddc60cada6abbe3b0bed501358623c6e65. Cloud preflight,
+native iOS Release compilation, packaging and artifact upload passed. This is
+the replacement for failed run 35983302880; the native split-condition repair
+is described below. All 38 host tests and pinned-source preflight passed
+before dispatch, with the overlay applying to 56 pinned files. The
+LF-normalized patch SHA-256 is
+4a3ff0be68d8a12fb4a007fba8935d335aaaf45df4e763f94935f9ce04f05f86
+(440,189 bytes).
+
+Artifact Blender-iPad-Unofficial-ipa, id 10802092115, has GitHub archive
+size 248,439,711 bytes and digest
+sha256:2b82a5f3b62fc45c0b8c7f829592f2b8bd8e1fe5c58dcb99fd1f0c22fa6b2b51;
+it expires 2026-12-23 10:02:22 UTC. Downloaded
+Blender-iPad-Unofficial.ipa is 248,439,543 bytes with SHA-256
+ba002c4da15ed23e5c8259f454413dc0427dd27fd21aa7899771498aecb2063f.
+The IPA ZIP passes a full CRC test across 3,368 entries. Info.plist reports
+bundle ID com.unofficial.blenderipad, short and bundle version 5.0.0, and
+executable Blender. The main executable is Mach-O arm64 (CPU type 0x100000c).
+The packaged space_properties.py is present and contains the native
+icon-tab draw and labeled picker. These checks verify the package and source
+contents, not the interaction on iPad.
+
+The user explicitly asked for a notification and development to stop when
+hardware testing is needed. This is that point: notify them with the exact
+run link, pause the heartbeat and goal, and await their report. Request a
+short no-keyboard check: open Inspector in a fresh Layout and a saved project;
+look for the native category icons, use the labeled picker and search, drag
+the Inspector narrower and confirm dense Camera/Modifiers/Material fields
+remain usable, switch Scene to Inspector and back, and try portrait or a
+narrow Stage Manager window. Ask whether the layout feels better. The prior
+device report did not verify this new package. Broader Files and touch
+workflow acceptance remains open.
+
 ## Native split-condition compile repair — source only, 2026-09-24
 
 Exact-source iOS run https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35983302880

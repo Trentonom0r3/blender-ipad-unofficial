@@ -10,22 +10,22 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
-## Current Inspector follow-up — 2026-09-24
+## Current Inspector package — 2026-09-24
 
-User device feedback on IPA run 35975045387: most tested interactions seem to
-work, but visual design feels basic, the Inspector opens too wide and has a
-hard-to-shrink minimum, and only category names are visible. Own this reversible
-design iteration. Source candidate restores the native desktop Properties icons
-beside the full Properties editor, moves the labeled current-category picker to
-the native header, reduces the Inspector-specific width floor from 360 to 280
-scaled UI units and its automatic opening share from 45% to 35%. Other side
-editors keep their dimensions. Saved user widths remain intact; a user drag can
-now reduce the Inspector further. First native run 35983302880 at 39f708d
-failed in area.cc because a leftover split_previous reference remained after
-restoring native navigation. The current local patch removes that stale hunk;
-38 host tests and pinned-source preflight pass. A replacement native build and
-iPad acceptance are still pending. Do not retry 39f708d unchanged or claim
-that host checks prove touch comfort.
+The user's test of IPA 35975045387 found broad working behavior but a basic
+visual design, an Inspector that opened too wide and could not shrink enough,
+and no visible desktop Properties icons. The new exact-source IPA run
+35984874300 at 46bd48ddc60cada6abbe3b0bed501358623c6e65 restores
+Blender's native Properties icon strip beside a labeled header picker and
+reduces the Inspector-specific opening share from 45% to 35% and minimum
+width from 360 to 280 scaled UI units. Other side editors and saved user
+widths are preserved. All 38 host tests, pinned-source preflight, native iOS
+Release compilation, packaging and artifact verification pass; exact metadata
+is in PROJECT_HANDOFF. This does not prove device visibility or comfort. The
+user now needs to test the exact new IPA; explicitly notify them and stop
+development until feedback arrives. Preserve the working Pencil mappings and
+external input. Failed run 35983302880 at 39f708d had a stale split_previous
+reference, repaired before the successful replacement; do not retry it.
 
 ## Updated goal — 2026-09-21
 
@@ -37,19 +37,15 @@ installable builds; the workspace feature list remains required but does not by
 itself establish usability. Preserve the confirmed working Pencil squeeze radial.
 Own reversible decisions and ask for device evidence only when needed.
 
-The latest successful feature IPA is run `35975045387` at source `86c0591`.
-It includes project-folder import, per-project Files bookmarks, provider Save
-completion fixes, and first-use Layout Tool Header collapse with a left-rail
-Settings toggle, alongside the earlier Inspector and rail changes. All 38 host
-tests, pinned-source preflight, native iOS Release compilation, packaging and
-artifact upload pass. The downloaded IPA's integrity, size, SHA-256 and bundle
-metadata are recorded in PROJECT_HANDOFF. This is packaged-build evidence, not
-iPad acceptance. The user tested this build and reported broad functionality
-with two concrete Inspector issues: it opens too wide and cannot shrink enough,
-and its category icons are not visible. A new source candidate restores the
-native Properties icon strip, retains a labeled category picker, and reduces
-Inspector width. Preserve the working Pencil mappings and continue broader
-usability, workspace and Files requirements.
+The latest successful feature IPA is run 35984874300 at source 46bd48d.
+It includes the narrower Inspector and native category icon strip along with
+the earlier project-folder import, per-project Files bookmarks, provider Save
+completion fixes and Layout Tool Header adaptation. The artifact was downloaded
+and verified; see PROJECT_HANDOFF for hashes and bundle metadata. This is
+packaged-build evidence, not acceptance of the new Inspector on iPad. The user
+has provided device feedback on the preceding IPA and should now test this one
+before further visual decisions. The broader usability, workspace and Files
+requirements remain open.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
 

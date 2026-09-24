@@ -24,13 +24,13 @@ reopen. Check portrait, landscape, narrow windows and external input. Continue
 broader editing and native Files requirements; this first workflow is a delivery
 checkpoint, not the limit of Blender's supported capabilities.
 
-Exact-source IPA run 35975045387 passed native compilation, packaging
-and artifact verification. The user's device pass found broad working behavior
-but a too-wide Inspector and no visible desktop category icons; its design
-still looks basic. The next source candidate addresses those concrete Inspector
-problems. Keep source implementation, host tests, packaged IPA and actual-device
-acceptance separate. The full goal remains active until the product outcome
-is satisfied.
+Exact-source IPA run 35984874300 at 46bd48d passed native compilation,
+packaging and artifact verification after one compile repair. It addresses
+the user's device report of a too-wide Inspector and missing visible desktop
+category icons. Ask for a focused iPad check of this package before choosing
+the next interaction or visual change. Keep source implementation, host tests,
+packaged IPA and actual-device acceptance separate. The full goal remains
+active until the product outcome is satisfied.
 
 ## Device feedback and next design change — 2026-09-24
 
@@ -43,7 +43,8 @@ of usable width and shrink to 280 rather than 360 scaled UI units, yielding
 to narrow window bounds. Keep existing saved widths unless the user drags, and
 leave non-Inspector side editors' sizing alone. Validate category visibility,
 header/search access, content readability, resizing, and Scene-to-Inspector
-switching on the next exact-source IPA. Do not treat the user's broader visual
+switching in exact-source IPA run 35984874300. Packaging passed, but device
+acceptance of this new layout is open. Do not treat the user's broader visual
 comment as acceptance of the new layout.
 
 ## Latest user refinement — perceptible iPad usability, 2026-09-20
