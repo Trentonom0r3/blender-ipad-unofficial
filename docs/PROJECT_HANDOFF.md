@@ -1,5 +1,33 @@
 # Project handoff — 2026-09-24
 
+## Saved Inspector width separated; iOS run dispatched — 2026-10-01
+
+The verified 35984874300 IPA contains the native Properties icons, 35%
+automatic opening width and 280-unit minimum. Its device acceptance has not
+been reported. A source audit found a remaining saved-project gap:
+ipad_panel_size[0] was shared by all side editors, so an existing saved width
+could suppress the new Inspector opening default. Source commit
+e3a4effc1bc22ae5e09f03ade007b927e27861ed adds
+ipad_inspector_width to screen DNA, copies it when duplicating a screen,
+reads it only for active Properties side editors and writes it through both
+modal and finger resize paths. Older projects have zero in the new field and
+get the compact default until the user drags Inspector. Other side editors
+retain their own previously saved width. Cancel restores the exact preference
+captured at drag start, including after a workspace/window change.
+
+All 39 host tests pass, including compiled width-isolation and modal-lifetime
+checks. Pinned-source preflight applies the overlay to 56 files and
+git diff --check is clean. The LF-normalized patch is 441,516 bytes, SHA-256
+10653d8804adc16f2077b3bd51046f6dc8b21f20138399aa298881a66cd18c32.
+Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36818147730
+was dispatched at e3a4eff. Inspect its actual result before another build;
+if compilation fails, repair the reported failure and rebuild once. Verify
+artifact identity, integrity, bundle metadata and packaged source on success.
+Neither host checks nor an IPA prove iPad comfort. Focus device comparison on
+fresh and saved Layout, Inspector/Scene switching, width drag/cancel and native
+category icons. The broader first-class iPad and Files outcomes remain open.
+
 ## Verified Inspector IPA; focused device check needed — 2026-09-24
 
 Exact-source iOS run https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/35984874300

@@ -10,6 +10,21 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Inspector saved-width follow-up — 2026-10-01
+
+The active goal resumed after the verified 35984874300 test request; no user
+device report on that IPA has been recorded. A source audit found that Inspector
+and Scene shared ipad_panel_size[0]. Thus a previously saved wide side editor
+could override the new 35% Inspector default in an existing project. Source
+e3a4effc1bc22ae5e09f03ade007b927e27861ed gives Inspector a separate
+saved width: zero in older projects chooses its compact default, later drags
+persist independently, and other side editors keep their saved width. The
+modal resize path restores the right preference on cancellation. All 39 host
+tests and pinned-source preflight pass. Exact-source iOS run 36818147730 is
+dispatched; inspect it before any replacement. Native compilation, packaging
+and device acceptance of this follow-up remain open. Do not claim the earlier
+IPA or host tests prove the new saved-project behavior.
+
 ## Current Inspector package — 2026-09-24
 
 The user's test of IPA 35975045387 found broad working behavior but a basic

@@ -32,6 +32,18 @@ the next interaction or visual change. Keep source implementation, host tests,
 packaged IPA and actual-device acceptance separate. The full goal remains
 active until the product outcome is satisfied.
 
+## Saved-project Inspector sizing follow-up — 2026-10-01
+
+Source audit after the verified 35984874300 IPA found that all side editors
+shared one saved width. The 35% Inspector default therefore applied only when
+no side width was saved; a saved project could still open Inspector at a wide
+width inherited from Scene or another editor. Source e3a4eff gives Inspector
+its own persisted width, using the compact default in older projects until
+the user resizes it, without changing other side editors. The 39 host tests and
+pinned-source preflight pass; exact-source iOS run 36818147730 is in progress.
+This addresses a source-backed gap, not a report that the previous IPA failed
+on device. Device judgment remains open for both the visual design and sizing.
+
 ## Device feedback and next design change — 2026-09-24
 
 The user says the latest IPA generally works, while the Inspector opens large,

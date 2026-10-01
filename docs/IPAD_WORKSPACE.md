@@ -10,6 +10,19 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Inspector width persistence follow-up — source, 2026-10-01
+
+The first narrower Inspector IPA was verified as a package, but a source audit
+found that its 35% opening width is bypassed by a width previously saved for
+any side editor. Follow-up source e3a4eff stores Inspector width separately.
+Existing projects initially use the compact default for Inspector; a new
+Inspector resize persists, and other side-editor widths stay intact. Modal
+cancel restores the preference belonging to the editor that began the drag.
+All 39 host tests and pinned-source preflight pass. iOS run 36818147730 is
+dispatched; compilation, package verification and real-device behavior are
+pending. Compare fresh and saved projects, Scene/Inspector switching and
+Inspector resize/cancel on the exact new IPA when available.
+
 ## Current Inspector iteration — packaged, device check needed, 2026-09-24
 
 The user tested IPA run 35975045387 and reports that the Inspector opens too
