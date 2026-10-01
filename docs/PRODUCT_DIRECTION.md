@@ -1,5 +1,17 @@
 # Product direction and decisions
 
+## Verified Link/Append bridge and data-block chooser refinement — 2026-10-01
+
+The first Link/Append bridge compiled and packaged in exact-source iOS run
+36848386081; the downloaded IPA passed integrity and bundle checks, with
+iPad behavior still unverified. The next source candidate removes the left
+filesystem shortcut list after Files has already chosen the `.blend`, and
+puts Search, category back, All/Clear and Options in a compact top bar. It
+keeps the native Blender data-block list and operator options. Source checks
+pass; this refinement needs its own build and device check. Linked libraries
+are durable app-owned snapshots, so provider refresh and project portability
+remain unfinished.
+
 ## Link/Append Files bridge — source candidate, 2026-10-01
 
 Link and Append now begin with Apple Files selection of a `.blend` and keep a

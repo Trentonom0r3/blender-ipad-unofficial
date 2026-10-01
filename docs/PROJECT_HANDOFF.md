@@ -1,5 +1,34 @@
 # Project handoff — 2026-10-01
 
+## Verified Link/Append Files bridge IPA and touch chooser candidate — 2026-10-01
+
+Exact-source [iOS run 36848386081](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36848386081)
+passed at `3d70e9e6472ddd13ec208996e3b38500604b11ef`: cloud preflight,
+native Release compilation, IPA packaging and upload. This source passed 42
+host tests and pinned-source preflight against 56 files. The normalized
+overlay was 458,516 bytes, SHA-256
+`196856e94afe7bd5d8e0baeca22aabf33cb38de132e14c8305d3ef7da0e60c04`.
+Artifact `Blender-iPad-Unofficial-ipa` id `11154853489` has GitHub archive
+size 248,445,607 bytes, digest
+`sha256:140149d31e54b57e6f93e5d2631da6094bbfb7f12b92ca96ed7f28a098b3ef22`,
+and expires 2026-12-30 10:19:17 UTC. The downloaded IPA is 248,445,439
+bytes, SHA-256
+`d27ad8f2c1038b0736c311c1e2a692d2543ded1b5daa1f37e803b9561128f94d`.
+Full ZIP CRC across 3,368 entries, `iPhoneOS`/arm64 Mach-O bundle metadata,
+startup resources, menu entries and bundled native library-picking strings
+passed. These checks do not verify touch operation or linked paths on device.
+
+The next source candidate simplifies the second step: the `.blend` data-block
+browser hides desktop filesystem shortcuts and gives the top region a direct
+Search field, category back, All/Clear and Options controls. The native
+Blender category/list, multiselection, execution and operator settings remain.
+All 42 host tests and pinned-source preflight against 57 files pass; no iOS
+build or device acceptance is claimed for this subsequent UI change yet.
+Build its exact source once, verify the IPA, then request focused device
+checks of Link/Append category selection, multi-select, options, cancellation,
+save/relaunch links and external input. The app-owned library is still a
+snapshot and a project copied without its library is not portable.
+
 ## Link/Append native Files bridge — source candidate, 2026-10-01
 
 The iPad Link and Append file-select route now first chooses a `.blend` through

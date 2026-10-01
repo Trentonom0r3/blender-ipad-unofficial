@@ -5208,7 +5208,23 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -2985,6 +3370,12 @@
+@@ -2836,6 +3221,15 @@
+       sfile->op = handler->op;
+
+       ED_fileselect_set_params_from_userdef(sfile);
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (is_link_append) {
++        /* Apple Files already chose the library. Keep the data-block list and
++         * operator settings, but omit the desktop filesystem shortcuts. */
++        if (ARegion *source_list = BKE_area_find_region_type(area, RGN_TYPE_TOOLS)) {
++          source_list->flag |= RGN_FLAG_HIDDEN;
++        }
++      }
++#endif
+
+       action = WM_HANDLER_BREAK;
+       break;
+@@ -2985,6 +3379,12 @@
          }
 
          if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
@@ -5221,7 +5237,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            wm_operator_free_for_fileselect(handler->op);
          }
        }
-@@ -3808,6 +4199,24 @@
+@@ -3808,6 +4208,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -5246,7 +5262,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +4231,12 @@
+@@ -3822,6 +4240,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -5259,7 +5275,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4227,6 +4642,20 @@
+@@ -4227,6 +4651,20 @@
          }
        }
 
@@ -5280,7 +5296,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4676,15 @@
+@@ -4247,6 +4685,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -5296,7 +5312,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -5784,7 +6222,9 @@
+@@ -5784,7 +6231,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -5307,7 +5323,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -6032,6 +6472,9 @@
+@@ -6032,6 +6481,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -5317,7 +5333,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6548,16 @@
+@@ -6105,6 +6557,16 @@
        }
        break;
      }
@@ -5334,7 +5350,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6584,9 @@
+@@ -6131,6 +6593,9 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -5344,7 +5360,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6599,8 @@
+@@ -6143,7 +6608,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -11412,3 +11428,41 @@ diff --git a/intern/ghost/intern/GHOST_EventButton.hh b/intern/ghost/intern/GHOS
    {
      data_ = &button_event_data_;
    }
+diff --git a/scripts/startup/bl_ui/space_filebrowser.py b/scripts/startup/bl_ui/space_filebrowser.py
+--- a/scripts/startup/bl_ui/space_filebrowser.py
++++ b/scripts/startup/bl_ui/space_filebrowser.py
+@@ -3,6 +3,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+
+ import bpy
++import os
+
+ from bpy.types import Header, Panel, Menu, UIList
+
+@@ -433,6 +434,26 @@
+         layout = self.layout
+         space = context.space_data
+         params = space.params
++
++        # The native Files step selected the .blend already. This top region
++        # now serves only the in-library category and data-block choice.
++        directory = os.fsdecode(params.directory).replace("\\", "/")
++        native_library = (params.use_library_browsing and
++                          "/Libraries/BlenderLibrary-" in directory and
++                          ".blend/" in directory.lower())
++        if native_library:
++            layout.label(text=f"{params.title} Data Blocks", icon='FILE_BLEND')
++            search = layout.row()
++            search.scale_y = 1.3
++            search.prop(params, "filter_search", text="Search", icon='VIEWZOOM')
++
++            actions = layout.row(align=True)
++            if not directory.rstrip("/").lower().endswith(".blend"):
++                actions.operator("file.parent", text="Categories", icon='BACK')
++                actions.operator("file.select_all", text="All").action = 'SELECT'
++                actions.operator("file.select_all", text="Clear").action = 'DESELECT'
++            actions.operator("screen.region_toggle", text="Options", icon='PREFERENCES').region_type = 'TOOL_PROPS'
++            return
+
+         layout.scale_x = 1.3
+         layout.scale_y = 1.3

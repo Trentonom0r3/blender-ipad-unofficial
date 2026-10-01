@@ -1,5 +1,16 @@
 # iPad workspace design and delivery
 
+## Verified Link/Append IPA; touch chooser candidate — 2026-10-01
+
+Exact-source iOS run 36848386081 compiled and packaged the native Files
+`.blend` picker and durable library copy. IPA integrity and arm64 bundle
+checks pass; iPad acceptance is pending. The next source candidate keeps
+Blender's in-library category/data-block list and options, hides filesystem
+shortcuts, and exposes Search, category back, All/Clear and Options in the
+top bar. Its 42 host tests and 57-file pinned-source preflight pass; native
+build and device usability remain pending. Libraries are snapshots, and
+linked projects need their library copies to remain available.
+
 ## Link/Append Files bridge — source candidate, 2026-10-01
 
 Link and Append select a `.blend` through Apple Files, coordinate a persistent
