@@ -1,5 +1,13 @@
 # iPad workspace design and delivery
 
+## Link/Append Files bridge — source candidate, 2026-10-01
+
+Link and Append select a `.blend` through Apple Files, coordinate a persistent
+copy under `Documents/Libraries`, then start Blender's own selector inside that
+library for data-block categories and names. Existing multiselect and options
+remain. The copy is a snapshot, so provider refresh and sibling assets are
+unfinished. Source checks pass; native build and device usability are pending.
+
 ## Goal clarification: usability over a fixed UI mechanism
 
 Follow the goal clarification in `docs/PRODUCT_DIRECTION.md` (or

@@ -44,7 +44,7 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("[wm, op, picker_token](const char *local_path)", events)
         self.assertIn("[wm, op, picker_token]()", events)
         self.assertEqual(
-            events.count("wm_ipad_import_operator_is_live(wm, op, picker_token)"), 2
+            events.count("wm_ipad_import_operator_is_live(wm, op, picker_token)"), 4
         )
         self.assertIn("it->second != token", events)
         self.assertIn("!G_MAIN", events)
@@ -61,6 +61,22 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("removeItemAtURL:importDir", importer)
         self.assertIn("return false;", events)
         self.assertIn("WM_event_fileselect_event(wm, op, EVT_FILESELECT_EXEC);\n+              return true;", events)
+
+    def test_link_append_files_copy_survives_and_cancel_cleans_up(self):
+        events = diff_for("source/blender/windowmanager/intern/wm_event_system.cc")
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        api = diff_for("intern/ghost/GHOST_ProjectImport-api.hh")
+        self.assertIn('STREQ(idname, "WM_OT_link") || STREQ(idname, "WM_OT_append")', events)
+        self.assertIn('GHOST_IOS_pick_blend_library(', events)
+        self.assertIn("browser_path.push_back('/')", events)
+        self.assertIn('WM_event_fileselect_event(wm, op, EVT_FILESELECT_FULL_OPEN)', events)
+        self.assertIn('ipad_native_library_paths.erase(handler->op)', events)
+        self.assertIn('GHOST_IOS_discard_blend_library(library->second.c_str())', events)
+        self.assertIn('URLByAppendingPathComponent:@"Libraries" isDirectory:YES', importer)
+        self.assertIn('libraryCopy ? @"BlenderLibrary" : @"BlenderImport"', importer)
+        self.assertIn('coordinateReadingItemAtURL:source', importer)
+        self.assertIn('libraryCopy:YES', importer)
+        self.assertIn('GHOST_IOS_discard_blend_library', api)
 
     def test_model_exporter_header_keeps_interface_separate_from_implementation(self):
         model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")

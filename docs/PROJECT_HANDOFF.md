@@ -1,5 +1,24 @@
 # Project handoff — 2026-10-01
 
+## Link/Append native Files bridge — source candidate, 2026-10-01
+
+The iPad Link and Append file-select route now first chooses a `.blend` through
+Apple Files. A coordinated read places a uniquely named snapshot under visible
+`Documents/Libraries`; Blender's existing library selector then starts *inside*
+that `.blend` to choose data-block groups/names, multiselection and its existing
+operator settings. This is a two-step bridge, not a generic model import. A
+cancelled operator removes its uncommitted snapshot; a successful operator
+retains it so linked IDs do not point into temporary storage. Delayed picker
+callbacks use the same operator lease and live-manager guard as model import.
+
+The library is a snapshot of the chosen Files document, not a live provider
+link. Later provider edits do not automatically refresh it, and a single-file
+copy does not bring sibling assets. The internal selector still needs iPad
+comfort testing and may need more touch adaptation. All 42 host tests and
+pinned-source preflight pass; no native iOS build or device acceptance is
+claimed for this candidate. Next: compile/package the exact source, repair any
+native failures, verify the IPA, then assess the on-device Link/Append flow.
+
 ## Independent continuation and native import lifetime candidate — 2026-10-01
 
 The user explicitly resumed the broad goal without waiting for device

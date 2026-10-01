@@ -1,5 +1,15 @@
 # Product direction and decisions
 
+## Link/Append Files bridge — source candidate, 2026-10-01
+
+Link and Append now begin with Apple Files selection of a `.blend` and keep a
+durable app-owned library snapshot before Blender shows the data blocks inside
+it. This retains native multiselection and operator options while removing the
+desktop filesystem search from the first step. The snapshot does not
+automatically follow changes to the provider original; sibling assets and
+device comfort remain open. Source checks pass; native build and iPad
+acceptance are next.
+
 ## Goal clarification: usability over a fixed UI mechanism
 
 Build a full Blender experience that feels as though iPad was an intended

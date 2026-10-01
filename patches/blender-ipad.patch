@@ -3610,7 +3610,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,64 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3665,6 +3665,13 @@ new file mode 100644
 +                           const std::function<bool(const char *local_path)> &on_picked,
 +                           const std::function<void()> &on_cancelled);
 +
++/* Link/Append select a provider .blend through Files, then browse its data blocks.
++ * The chosen snapshot lives under Documents/Libraries so linked IDs survive relaunch. */
++bool GHOST_IOS_pick_blend_library(const std::function<bool(const char *local_path)> &on_picked,
++                                  const std::function<void()> &on_cancelled);
++/* Discard an uncommitted app-owned library snapshot after cancellation. */
++void GHOST_IOS_discard_blend_library(const char *local_path);
++
 +/* Flythrough navigation state toggle for iPad touch controls. */
 +void GHOST_IOS_set_flythrough_mode(bool enable);
 +bool GHOST_IOS_get_flythrough_mode();
@@ -3672,7 +3679,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,871 @@
+@@ -0,0 +1,916 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4331,10 +4338,12 @@ new file mode 100644
 +  UIDocumentPickerViewController *_picker;
 +  NSUInteger _generation;
 +  BOOL _busy;
++  BOOL _libraryCopy;
 +  std::function<bool(const char *)> _on_picked;
 +  std::function<void()> _on_cancelled;
 +}
 +- (BOOL)presentWithFilter:(NSString *)filterGlob
++              libraryCopy:(BOOL)libraryCopy
 +                 onPicked:(const std::function<bool(const char *)> &)onPicked
 +              onCancelled:(const std::function<void()> &)onCancelled;
 +@end
@@ -4370,6 +4379,7 @@ new file mode 100644
 +}
 +
 +- (BOOL)presentWithFilter:(NSString *)filterGlob
++              libraryCopy:(BOOL)libraryCopy
 +                 onPicked:(const std::function<bool(const char *)> &)onPicked
 +              onCancelled:(const std::function<void()> &)onCancelled
 +{
@@ -4383,6 +4393,7 @@ new file mode 100644
 +  }
 +  _presenter = [presenter retain];
 +  _busy = YES;
++  _libraryCopy = libraryCopy;
 +  ++_generation;
 +  _on_picked = onPicked;
 +  _on_cancelled = onCancelled;
@@ -4415,7 +4426,7 @@ new file mode 100644
 +  _picker.allowsMultipleSelection = NO;
 +  _picker.delegate = self;
 +  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = @"Import 3D Model";
++  _picker.title = libraryCopy ? @"Choose Library to Copy" : @"Import 3D Model";
 +  [_presenter presentViewController:_picker animated:YES completion:nil];
 +  _picker.presentationController.delegate = self;
 +  return YES;
@@ -4462,9 +4473,11 @@ new file mode 100644
 +  const NSUInteger generation = _generation;
 +  auto onPicked = _on_picked;
 +  auto onCancelled = _on_cancelled;
++  const BOOL libraryCopy = _libraryCopy;
 +
 +  [self dismissPicker:^{
-+    if (!source) {
++    if (!source || (libraryCopy &&
++                    [source.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame)) {
 +      if (onCancelled) {
 +        onCancelled();
 +      }
@@ -4474,8 +4487,12 @@ new file mode 100644
 +    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
 +      @autoreleasepool {
 +        NSFileManager *manager = [NSFileManager defaultManager];
-+        NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
-+        NSString *folder = [NSString stringWithFormat:@"BlenderImport-%@", [NSUUID UUID].UUIDString];
++        NSURL *root = libraryCopy ?
++            [[[manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject]
++                URLByAppendingPathComponent:@"Libraries" isDirectory:YES] :
++            [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++        NSString *folder = [NSString stringWithFormat:@"%@-%@",
++            (libraryCopy ? @"BlenderLibrary" : @"BlenderImport"), [NSUUID UUID].UUIDString];
 +        NSURL *importDir = [root URLByAppendingPathComponent:folder isDirectory:YES];
 +        NSURL *destination = [importDir URLByAppendingPathComponent:source.lastPathComponent];
 +        NSError *coordError = nil;
@@ -4530,7 +4547,42 @@ new file mode 100644
 +    importer = [[GHOST_IOSFileImporter alloc] init];
 +  }
 +  NSString *glob = filter_glob ? [NSString stringWithUTF8String:filter_glob] : @"";
-+  return [importer presentWithFilter:glob onPicked:on_picked onCancelled:on_cancelled];
++  return [importer presentWithFilter:glob libraryCopy:NO onPicked:on_picked
++                             onCancelled:on_cancelled];
++}
++
++
++bool GHOST_IOS_pick_blend_library(const std::function<bool(const char *)> &on_picked,
++                                  const std::function<void()> &on_cancelled)
++{
++  if (![NSThread isMainThread] || !on_picked) {
++    return false;
++  }
++  static GHOST_IOSFileImporter *library_importer = nil;
++  if (!library_importer) {
++    library_importer = [[GHOST_IOSFileImporter alloc] init];
++  }
++  return [library_importer presentWithFilter:@"*.blend" libraryCopy:YES
++                                  onPicked:on_picked onCancelled:on_cancelled];
++}
++
++void GHOST_IOS_discard_blend_library(const char *local_path)
++{
++  if (!local_path) {
++    return;
++  }
++  NSFileManager *manager = [NSFileManager defaultManager];
++  NSURL *documents = [manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
++  NSURL *root = [[documents URLByAppendingPathComponent:@"Libraries" isDirectory:YES]
++      URLByStandardizingPath];
++  NSURL *parent = [[[NSURL fileURLWithPath:[NSString stringWithUTF8String:local_path]]
++      URLByStandardizingPath] URLByDeletingLastPathComponent];
++  if (![[parent URLByDeletingLastPathComponent].path isEqualToString:root.path] ||
++      ![parent.lastPathComponent hasPrefix:@"BlenderLibrary-"])
++  {
++    return;
++  }
++  [manager removeItemAtURL:parent error:nil];
 +}
 +
 +static bool g_ipad_flythrough_mode = false;
@@ -4786,7 +4838,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        bool use_last_properties = true;
        PointerRNA tool_properties = {};
 
-@@ -2787,8 +2818,51 @@
+@@ -2787,8 +2818,57 @@
    return WM_HANDLER_BREAK;
  }
 
@@ -4794,6 +4846,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +/* A native picker can finish after its file-select handler has gone away.
 + * Reused operator or window-manager addresses must not acquire its callback. */
 +static std::unordered_map<wmOperator *, uint64_t> ipad_native_import_tokens;
++static std::unordered_map<wmOperator *, std::string> ipad_native_library_paths;
 +static uint64_t ipad_native_import_next_token = 0;
 +
 +static bool wm_ipad_import_operator_is_live(wmWindowManager *candidate,
@@ -4834,11 +4887,16 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  {
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  ipad_native_import_tokens.erase(file_operator);
++  const auto library = ipad_native_library_paths.find(file_operator);
++  if (library != ipad_native_library_paths.end()) {
++    GHOST_IOS_discard_blend_library(library->second.c_str());
++    ipad_native_library_paths.erase(library);
++  }
 +#endif
    LISTBASE_FOREACH (bScreen *, screen, &G_MAIN->screens) {
      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
        if (area->spacetype == SPACE_FILE) {
-@@ -2817,6 +2891,273 @@
+@@ -2817,6 +2897,311 @@
 
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -4849,6 +4907,44 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +                             (BLI_strcasestr(idname, "save") != nullptr);
 +      const bool is_import = (BLI_strcasestr(idname, "import") != nullptr) ||
 +                             (BLI_strcasestr(idname, "open") != nullptr);
++      const bool is_link_append = STREQ(idname, "WM_OT_link") || STREQ(idname, "WM_OT_append");
++
++      if (is_link_append && ipad_native_library_paths.find(op) ==
++                                ipad_native_library_paths.end())
++      {
++        const uint64_t picker_token = ++ipad_native_import_next_token;
++        ipad_native_import_tokens[op] = picker_token;
++        const bool presented = GHOST_IOS_pick_blend_library(
++            [wm, op, picker_token](const char *local_path) {
++              if (!wm_ipad_import_operator_is_live(wm, op, picker_token) ||
++                  strlen(local_path) + 2 >= FILE_MAX)
++              {
++                return false;
++              }
++              std::string browser_path(local_path);
++              browser_path.push_back('/');
++              RNA_string_set(op->ptr, "filepath", browser_path.c_str());
++              RNA_string_set(op->ptr, "directory", browser_path.c_str());
++              RNA_string_set(op->ptr, "filename", "");
++              if (PropertyRNA *files_prop = RNA_struct_find_property(op->ptr, "files")) {
++                RNA_property_collection_clear(op->ptr, files_prop);
++              }
++              ipad_native_library_paths[op] = local_path;
++              WM_event_fileselect_event(wm, op, EVT_FILESELECT_FULL_OPEN);
++              return true;
++            },
++            [wm, op, picker_token]() {
++              if (wm_ipad_import_operator_is_live(wm, op, picker_token)) {
++                WM_event_fileselect_event(wm, op, EVT_FILESELECT_CANCEL);
++              }
++            });
++        if (!presented) {
++          BKE_report(&wm->runtime->reports, RPT_ERROR, "Could not open Blender library in Files");
++          WM_event_fileselect_event(wm, op, EVT_FILESELECT_CANCEL);
++        }
++        action = WM_HANDLER_BREAK;
++        break;
++      }
 +
 +      if (is_export) {
 +        ScrArea *orig_area = CTX_wm_area(C);
@@ -5112,7 +5208,20 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -3808,6 +4149,24 @@
+@@ -2985,6 +3370,12 @@
+         }
+
+         if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++          if (retval & OPERATOR_FINISHED) {
++            /* Linked IDs may refer to this durable snapshot after relaunch. */
++            ipad_native_library_paths.erase(handler->op);
++          }
++#endif
+           wm_operator_free_for_fileselect(handler->op);
+         }
+       }
+@@ -3808,6 +4199,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -5137,7 +5246,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +4181,12 @@
+@@ -3822,6 +4231,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -5150,7 +5259,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4227,6 +4592,20 @@
+@@ -4227,6 +4642,20 @@
          }
        }
 
@@ -5171,7 +5280,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4626,15 @@
+@@ -4247,6 +4676,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -5187,7 +5296,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -5784,7 +6172,9 @@
+@@ -5784,7 +6222,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -5198,7 +5307,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -6032,6 +6422,9 @@
+@@ -6032,6 +6472,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -5208,7 +5317,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6498,16 @@
+@@ -6105,6 +6548,16 @@
        }
        break;
      }
@@ -5225,7 +5334,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6534,9 @@
+@@ -6131,6 +6584,9 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -5235,7 +5344,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6549,8 @@
+@@ -6143,7 +6599,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
