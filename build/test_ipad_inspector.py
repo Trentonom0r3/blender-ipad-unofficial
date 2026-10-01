@@ -19,6 +19,55 @@ class InspectorIdentityTests(unittest.TestCase):
         self.assertIn('metrics.minimum_side_width = int((inspector ? 280 : 180) * scale)', patch)
         self.assertIn('metrics.automatic_side_percent = inspector ? 35 : 45', patch)
 
+    def test_inspector_width_does_not_inherit_other_side_editor_width(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        path = 'source/blender/editors/screen/screen_ipad_panels.cc'
+        functions = ''.join(added_function(patch, path, signature) for signature in (
+            'static bool inspector_side',
+            'static float &saved_panel_size',
+            'static void preferred_sizes',
+        ))
+        source = r'''
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+constexpr int SPACE_PROPERTIES = 4;
+constexpr float UI_SCALE_FAC = 1.0f;
+struct ScrArea { int spacetype; };
+struct bScreen {
+  float ipad_panel_size[2] = {};
+  float ipad_panel_extent[2] = {};
+  float ipad_inspector_width = 0;
+};
+namespace policy {
+struct State {
+  int side_width = 0, bottom_height = 0, side_height = 0, bottom_width = 0;
+};
+}
+''' + functions + r'''
+int main() {
+  bScreen screen;
+  ScrArea scene{1}, inspector{SPACE_PROPERTIES};
+  screen.ipad_panel_size[0] = 520;
+  policy::State state;
+  preferred_sizes(&screen, state, &inspector);
+  assert(state.side_width == 0); // Existing projects use the new compact default.
+  preferred_sizes(&screen, state, &scene);
+  assert(state.side_width == 520); // Other editor preferences survive.
+  saved_panel_size(&screen, 0, true) = 300;
+  preferred_sizes(&screen, state, &inspector);
+  assert(state.side_width == 300); // Inspector drag has its own saved width.
+  preferred_sizes(&screen, state, &scene);
+  assert(state.side_width == 520);
+  saved_panel_size(&screen, 1, false) = 210;
+  assert(screen.ipad_panel_size[1] == 210); // Bottom size is independent.
+}
+'''
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source)
+        self.assertIn('to->ipad_inspector_width = from->ipad_inspector_width', patch)
+        self.assertIn('saved_panel_size(screen, panel, data->inspector_width)', patch)
+
     def test_native_icons_and_labeled_picker_share_context(self):
         repo = Path(__file__).resolve().parents[1]
         patch = (repo / 'patches/blender-ipad.patch').read_text(encoding='utf-8')

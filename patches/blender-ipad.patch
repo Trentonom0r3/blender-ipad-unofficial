@@ -5606,7 +5606,7 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdna/DNA_screen_types.h
 --- a/source/blender/makesdna/DNA_screen_types.h
 +++ b/source/blender/makesdna/DNA_screen_types.h
-@@ -1,150 +1,182 @@
+@@ -1,150 +1,185 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -5752,6 +5752,9 @@ diff --git a/source/blender/makesdna/DNA_screen_types.h b/source/blender/makesdn
 +  int _pad_ipad_owner;
 +  /* Secondary preferred dimensions: side height, bottom width (UI units). */
 +  float ipad_panel_extent[2];
++  /* Inspector has its own width; zero gives existing projects the compact default. */
++  float ipad_inspector_width;
++  float _pad_ipad_inspector;
 +  /** iPadPanelOrder; deep-copied and freed with the owning screen. */
 +  ListBase ipad_panel_order;
  } bScreen;
@@ -7767,7 +7770,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
    /* remove double vertices en edges */
    if (merge) {
      BKE_screen_remove_double_scrverts(screen);
-@@ -222,6 +231,22 @@
+@@ -222,6 +231,23 @@
    BKE_screen_free_data(to);
 
    to->flag = from->flag;
@@ -7777,6 +7780,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 +   * active-editor indices and the panel host still refer to the same editors. */
 +  memcpy(to->ipad_panel_size, from->ipad_panel_size, sizeof(to->ipad_panel_size));
 +  memcpy(to->ipad_panel_extent, from->ipad_panel_extent, sizeof(to->ipad_panel_extent));
++  to->ipad_inspector_width = from->ipad_inspector_width;
 +  memcpy(to->ipad_panel_active, from->ipad_panel_active, sizeof(to->ipad_panel_active));
 +  memcpy(to->ipad_panel_page, from->ipad_panel_page, sizeof(to->ipad_panel_page));
 +  memcpy(to->ipad_panel_locked, from->ipad_panel_locked, sizeof(to->ipad_panel_locked));
@@ -7874,7 +7878,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2210 @@
+@@ -0,0 +1,2232 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -8099,13 +8103,31 @@ new file mode 100644
 +  return metrics;
 +}
 +
-+static void preferred_sizes(const bScreen *screen, policy::State &state)
++static bool inspector_side(const ScrArea *area)
++{
++  return area && area->spacetype == SPACE_PROPERTIES;
++}
++
++static float &saved_panel_size(bScreen *screen, const int panel, const bool inspector)
++{
++  return panel == 0 && inspector ? screen->ipad_inspector_width : screen->ipad_panel_size[panel];
++}
++
++static bool active_inspector_side(const Model &model)
++{
++  const Tab *tab = find_tab(model, model.state.side.active_id);
++  return tab && tab->region_type == 0 && inspector_side(tab->area);
++}
++
++static void preferred_sizes(const bScreen *screen, policy::State &state,
++                            const ScrArea *side_editor)
 +{
 +  auto size = [](float value) {
 +    return std::isfinite(value) && value > 0 ?
 +               int(std::clamp(value, 1.0f, 4000.0f) * UI_SCALE_FAC) : 0;
 +  };
-+  state.side_width = size(screen->ipad_panel_size[0]);
++  state.side_width = size(inspector_side(side_editor) ? screen->ipad_inspector_width :
++                                                     screen->ipad_panel_size[0]);
 +  state.bottom_height = size(screen->ipad_panel_size[1]);
 +  state.side_height = size(screen->ipad_panel_extent[0]);
 +  state.bottom_width = size(screen->ipad_panel_extent[1]);
@@ -8382,8 +8404,9 @@ new file mode 100644
 +  model.default_sculpt_shelf = policy::open_default_sculpt_shelf(
 +      model.state, model.sculpt, screen->ipad_sculpt_shelf_initialized,
 +      find_tab(model, shelf_id) != nullptr, shelf_id);
-+  preferred_sizes(screen, model.state);
 +  const Tab *side_tab = find_tab(model, model.state.side.active_id);
++  preferred_sizes(screen, model.state,
++                  side_tab && side_tab->region_type == 0 ? side_tab->area : nullptr);
 +  model.metrics = panel_metrics(model.main,
 +                                side_tab && side_tab->region_type == 0 ? side_tab->area : nullptr);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
@@ -8708,6 +8731,7 @@ new file mode 100644
 +  float original_extent;
 +  float initial_extent;
 +  policy::Rect bounds;
++  bool inspector_width;
 +};
 +
 +static wmOperatorStatus resize_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -8729,9 +8753,10 @@ new file mode 100644
 +  const float extent = panel == 0 ? model.layout.side_panel.height() : model.layout.bottom_panel.width();
 +  op->customdata = MEM_new<ResizeData>(__func__, ResizeData{screen->id.session_uid, CTX_wm_window(C),
 +                                                          axis, {event->xy[0], event->xy[1]},
-+                                                          screen->ipad_panel_size[panel],
++                                                          saved_panel_size(screen, panel, panel == 0 && active_inspector_side(model)),
 +                                                          displayed / UI_SCALE_FAC,
-+                                                          screen->ipad_panel_extent[panel], extent / UI_SCALE_FAC, model.bounds});
++                                                          screen->ipad_panel_extent[panel], extent / UI_SCALE_FAC,
++                                                          model.bounds, panel == 0 && active_inspector_side(model)});
 +  WM_event_add_modal_handler(C, op);
 +  return OPERATOR_RUNNING_MODAL;
 +}
@@ -8755,7 +8780,7 @@ new file mode 100644
 +  auto *data = static_cast<ResizeData *>(op->customdata);
 +  if (data) {
 +    if (bScreen *screen = resize_owner(C, *data)) {
-+      screen->ipad_panel_size[data->axis % 2] = data->original;
++      saved_panel_size(screen, data->axis % 2, data->inspector_width) = data->original;
 +      if (data->axis >= 2) { screen->ipad_panel_extent[data->axis % 2] = data->original_extent; }
 +      screen->do_refresh = true;
 +      screen->do_draw = true;
@@ -8785,6 +8810,7 @@ new file mode 100644
 +  const int panel = data->axis % 2;
 +  const auto &old = data->bounds;
 +  if (!model.main || !model.state.slot(panel == 0 ? Edge::Side : Edge::Bottom).open() ||
++      (panel == 0 && active_inspector_side(model) != data->inspector_width) ||
 +      model.bounds.xmin != old.xmin || model.bounds.xmax != old.xmax ||
 +      model.bounds.ymin != old.ymin || model.bounds.ymax != old.ymax) {
 +    resize_cancel(C, op);
@@ -8816,7 +8842,7 @@ new file mode 100644
 +    else {
 +      policy::resize(model.state, edge, int(requested * UI_SCALE_FAC), model.bounds, model.metrics);
 +    }
-+    screen->ipad_panel_size[panel] =
++    saved_panel_size(screen, panel, data->inspector_width) =
 +        (panel == 0 ? model.state.side_width : model.state.bottom_height) / UI_SCALE_FAC;
 +    tag_layout(C, CTX_wm_window(C));
 +  }
@@ -9293,7 +9319,6 @@ new file mode 100644
 +  model.main = host;
 +  model.bounds = workspace_content_bounds(win, working_areas);
 +  ScrArea *side_editor = nullptr;
-+  preferred_sizes(screen, model.state);
 +  /* prepare() has already selected the real editor/region instances. Recompute
 +   * only their geometry here, after native headers establish the WINDOW rect. */
 +  model.state.tools.active_id = host->runtime.ipad_tools_region ? tools_id : -1;
@@ -9308,6 +9333,7 @@ new file mode 100644
 +      model.state.bottom.active_id = 0;
 +    }
 +  }
++  preferred_sizes(screen, model.state, side_editor);
 +  model.metrics = panel_metrics(model.main, side_editor);
 +  model.layout = policy::layout(model.bounds, model.state, model.metrics);
 +  const rcti side = to_rect(panel_content(model, Edge::Side));
@@ -9956,7 +9982,7 @@ new file mode 100644
 +      else {
 +        policy::resize(model.state, edge, requested, model.bounds, model.metrics);
 +      }
-+      screen->ipad_panel_size[axis] =
++      saved_panel_size(screen, axis, axis == 0 && active_inspector_side(model)) =
 +          (axis == 0 ? model.state.side_width : model.state.bottom_height) / UI_SCALE_FAC;
 +      /* Do not manufacture a cursor-begin while the same finger gesture is captured. */
 +      tag_layout(C, win, false);

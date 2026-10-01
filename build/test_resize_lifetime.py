@@ -28,8 +28,10 @@ struct bScreen {
   bScreen *next = nullptr;
   struct { unsigned int session_uid; } id{1};
   float ipad_panel_size[2]{0, 0};
+  float ipad_inspector_width = 0;
   float ipad_panel_extent[2]{0, 0};
   bool do_refresh = false, do_draw = false, enabled = true, panel_open = true;
+  bool inspector = false;
 };
 struct ListBase { bScreen *first; };
 struct Main { ListBase screens; };
@@ -61,16 +63,22 @@ struct Model {
   policy::Layout layout;
   policy::Rect bounds{0,0,1200,900};
   policy::Metrics metrics;
+  bool inspector = false;
 };
+float &saved_panel_size(bScreen *screen, int panel, bool inspector) {
+  return panel == 0 && inspector ? screen->ipad_inspector_width : screen->ipad_panel_size[panel];
+}
+bool active_inspector_side(const Model &model) { return model.inspector; }
 Model make_model(bContext *C, wmWindow *win) {
   Model m{};
   m.main = C->screen;
+  m.inspector = C->screen->inspector;
   m.bounds = win->bounds;
   if (C->screen->panel_open) {
     m.state.side.active_id = 1;
     m.state.bottom.active_id = 2;
   }
-  m.state.side_width = int(C->screen->ipad_panel_size[0] * UI_SCALE_FAC);
+  m.state.side_width = int(saved_panel_size(C->screen, 0, m.inspector) * UI_SCALE_FAC);
   m.state.bottom_height = int(C->screen->ipad_panel_size[1] * UI_SCALE_FAC);
   m.state.side_height = int(C->screen->ipad_panel_extent[0] * UI_SCALE_FAC);
   m.state.bottom_width = int(C->screen->ipad_panel_extent[1] * UI_SCALE_FAC);
@@ -194,6 +202,22 @@ int main() {
     resize_cancel(&C, &op);
     assert(!op.customdata);
   }
+  // Inspector drag must not overwrite a width saved for Scene or other side editors.
+  C = {&main, &a, &window};
+  a.inspector = true; a.panel_open = a.enabled = true;
+  a.ipad_panel_size[0] = 520; a.ipad_inspector_width = 0;
+  axis = 0;
+  assert(resize_invoke(&C, &op, &begin) == OPERATOR_RUNNING_MODAL);
+  assert(resize_modal(&C, &op, &move) == OPERATOR_RUNNING_MODAL);
+  assert(a.ipad_inspector_width > 0 && a.ipad_panel_size[0] == 520);
+  assert(resize_modal(&C, &op, &escape) == OPERATOR_CANCELLED);
+  assert(a.ipad_inspector_width == 0 && a.ipad_panel_size[0] == 520);
+  a.ipad_inspector_width = 300;
+  assert(resize_invoke(&C, &op, &begin) == OPERATOR_RUNNING_MODAL);
+  assert(resize_modal(&C, &op, &move) == OPERATOR_RUNNING_MODAL);
+  assert(resize_modal(&C, &op, &release) == OPERATOR_FINISHED);
+  assert(a.ipad_inspector_width != 300 && a.ipad_panel_size[0] == 520);
+  a.inspector = false;
   C = {&main, &a, &window};
   axis = 4;
   assert(resize_invoke(&C, &op, &begin) == OPERATOR_CANCELLED);
