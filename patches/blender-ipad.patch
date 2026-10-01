@@ -3679,7 +3679,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,916 @@
+@@ -0,0 +1,974 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4336,6 +4336,8 @@ new file mode 100644
 +{
 +  UIViewController *_presenter;
 +  UIDocumentPickerViewController *_picker;
++  UIAlertController *_progress;
++  NSProgress *_copyProgress;
 +  NSUInteger _generation;
 +  BOOL _busy;
 +  BOOL _libraryCopy;
@@ -4362,6 +4364,16 @@ new file mode 100644
 +- (void)finish
 +{
 +  _busy = NO;
++  if (_copyProgress) {
++    [_copyProgress cancel];
++    [_copyProgress release];
++    _copyProgress = nil;
++  }
++  if (_progress) {
++    [_progress dismissViewControllerAnimated:NO completion:nil];
++    [_progress release];
++    _progress = nil;
++  }
 +  [_presenter release];
 +  _presenter = nil;
 +  _on_picked = nullptr;
@@ -4484,7 +4496,35 @@ new file mode 100644
 +      [self finish];
 +      return;
 +    }
-+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++    if (![self hasLivePresenter] || _presenter.presentedViewController) {
++      if (onCancelled) {
++        onCancelled();
++      }
++      [self finish];
++      return;
++    }
++    _copyProgress = [[NSProgress progressWithTotalUnitCount:1] retain];
++    _progress = [[UIAlertController alertControllerWithTitle:
++        (libraryCopy ? @"Preparing Blender Library" : @"Preparing 3D Model")
++                                                 message:@"Copying the selected file. You can cancel."
++                                          preferredStyle:UIAlertControllerStyleAlert] retain];
++    [_progress setModalInPresentation:YES];
++    [_progress addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                                 style:UIAlertActionStyleCancel
++                                               handler:^(UIAlertAction *action) {
++      ++_generation;
++      [_copyProgress cancel];
++      if (onCancelled) {
++        onCancelled();
++      }
++      [self finish];
++    }]];
++    [_presenter presentViewController:_progress animated:YES completion:^{
++      if (!_busy || generation != _generation || !_copyProgress) {
++        return;
++      }
++      NSProgress *copyProgress = [_copyProgress retain];
++      dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
 +      @autoreleasepool {
 +        NSFileManager *manager = [NSFileManager defaultManager];
 +        NSURL *root = libraryCopy ?
@@ -4500,24 +4540,40 @@ new file mode 100644
 +        __block BOOL copied = NO;
 +        const BOOL scoped = [source startAccessingSecurityScopedResource];
 +        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-+        [coordinator coordinateReadingItemAtURL:source options:0 error:&coordError
-+                                     byAccessor:^(NSURL *read_url) {
-+          if ([manager createDirectoryAtURL:importDir withIntermediateDirectories:YES
-+                                 attributes:nil error:&copyError]) {
-+            copied = [manager copyItemAtURL:read_url toURL:destination error:&copyError];
-+          }
-+        }];
++        if (!copyProgress.cancelled) {
++          [coordinator coordinateReadingItemAtURL:source options:0 error:&coordError
++                                       byAccessor:^(NSURL *read_url) {
++            if (copyProgress.cancelled) {
++              return;
++            }
++            if ([manager createDirectoryAtURL:importDir withIntermediateDirectories:YES
++                                   attributes:nil error:&copyError]) {
++              copied = [manager copyItemAtURL:read_url toURL:destination error:&copyError];
++            }
++          }];
++        }
 +        [coordinator release];
 +        if (scoped) {
 +          [source stopAccessingSecurityScopedResource];
 +        }
 +        dispatch_async(dispatch_get_main_queue(), ^{
-+          if (generation != _generation) {
++          if (generation != _generation || copyProgress.cancelled || ![self hasLivePresenter]) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
 +              [[NSFileManager defaultManager] removeItemAtURL:importDir error:nil];
 +            });
++            if (generation == _generation) {
++              if (onCancelled) {
++                onCancelled();
++              }
++              [self finish];
++            }
++            [copyProgress release];
 +            return;
 +          }
++          UIAlertController *progress = _progress;
++          _progress = nil;
++          [progress dismissViewControllerAnimated:NO completion:nil];
++          [progress release];
 +          const bool accepted = copied && onPicked && onPicked(destination.path.UTF8String);
 +          if (!accepted) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
@@ -4528,9 +4584,11 @@ new file mode 100644
 +            }
 +          }
 +          [self finish];
++          [copyProgress release];
 +        });
 +      }
 +    });
++    }];
 +  }];
 +}
 +@end
