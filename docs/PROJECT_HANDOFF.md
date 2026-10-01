@@ -31,6 +31,13 @@ and confirm conflict recovery via Save As; check the independent copy and
 complete-folder routes. A cloud provider and app relaunch are useful. Distinguish
 package verification from device acceptance.
 
+Source commit 5839961e187614b2467452d6cfa3bf5bb1ada0ff is pushed on
+codex/ipad-secondary-view-escape. Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36829384514
+has passed cloud preflight and was in native Release compilation at
+2026-10-01 07:27 UTC. Inspect this run before dispatching a replacement; its
+package and device behavior are not yet verified.
+
 ## User response to latest Inspector IPA — 2026-10-01
 
 The user replied "seems fine to me" to the focused test request for run
