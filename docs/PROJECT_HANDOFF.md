@@ -36,14 +36,20 @@ backed Recent entry's local working copy directly. The bookmark entry stores
 `documentPath` and content digest, and ordinary Save checks provider edits,
 but Open Recent does not refresh its local copy. Target only linked entries
 where `documentPath` differs from working path and a digest exists; same-path
-Save As and independent project copies should retain normal behavior. After
-Blender's unsaved-change guard, coordinate a security-scoped provider read
-asynchronously, compare both provider and local digests with the stored
-revision, stage any update and replace the local mirror only when safe. Keep
+Save As and independent project copies should retain normal behavior. Before
+Blender's unsaved-change guard, coordinate a read-only provider snapshot
+asynchronously and compare both provider and local digests with the stored
+revision. Commit a safe local refresh only after an approved open. Keep
 the current scene on cancel, give a clear offline/conflict choice, and guard
 both invoke and exec entry paths and delayed callbacks. Do not retain a raw
 `bContext*` or `wmOperator*` across UIKit work. Provider refresh, linked
 library portability, external input and broader iPad acceptance remain open.
+
+The source audit also found an async Save hazard: the existing unsaved-change
+dialog treats OPERATOR_RUNNING_MODAL from a linked Files Save as completion
+and immediately invokes its open callback. Any project switch from a dirty
+Files-linked scene must wait for the provider save terminal result; failure or
+conflict must preserve the current scene. See the design document for the acceptance case.
 
 ## Focused iPad Link/Append response — 2026-10-01
 
