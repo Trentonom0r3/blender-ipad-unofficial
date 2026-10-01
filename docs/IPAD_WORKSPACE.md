@@ -18,10 +18,11 @@ any side editor. Follow-up source e3a4eff stores Inspector width separately.
 Existing projects initially use the compact default for Inspector; a new
 Inspector resize persists, and other side-editor widths stay intact. Modal
 cancel restores the preference belonging to the editor that began the drag.
-All 39 host tests and pinned-source preflight pass. iOS run 36818147730 is
-dispatched; compilation, package verification and real-device behavior are
-pending. Compare fresh and saved projects, Scene/Inspector switching and
-Inspector resize/cancel on the exact new IPA when available.
+All 39 host tests and pinned-source preflight pass. Exact-source iOS run
+36818147730 passed native Release compilation, packaging and downloaded IPA
+verification. Real-device behavior is still untested. Compare fresh and
+saved projects, Scene/Inspector switching, width resize/cancel and the native
+Properties icons on this exact IPA.
 
 ## Current Inspector iteration — packaged, device check needed, 2026-09-24
 

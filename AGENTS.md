@@ -20,10 +20,14 @@ e3a4effc1bc22ae5e09f03ade007b927e27861ed gives Inspector a separate
 saved width: zero in older projects chooses its compact default, later drags
 persist independently, and other side editors keep their saved width. The
 modal resize path restores the right preference on cancellation. All 39 host
-tests and pinned-source preflight pass. Exact-source iOS run 36818147730 is
-dispatched; inspect it before any replacement. Native compilation, packaging
-and device acceptance of this follow-up remain open. Do not claim the earlier
-IPA or host tests prove the new saved-project behavior.
+tests and pinned-source preflight pass. Exact-source iOS run 36818147730
+at e3a4eff succeeded: native Release compilation, IPA packaging, artifact
+download and integrity checks passed. Exact artifact metadata is in
+PROJECT_HANDOFF. This is packaged-build evidence, not iPad acceptance. The
+user should now test this IPA in a saved project and a fresh Layout, including
+Scene/Inspector width switching and the native Properties icons. Explicitly
+notify them and pause development until their report; preserve Pencil and
+external input. Do not retry an earlier source merely to repeat host checks.
 
 ## Current Inspector package — 2026-09-24
 

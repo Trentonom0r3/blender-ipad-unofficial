@@ -1,4 +1,40 @@
-# Project handoff — 2026-09-24
+# Project handoff — 2026-10-01
+
+## Verified saved-width Inspector IPA; device check needed — 2026-10-01
+
+Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36818147730
+completed successfully at e3a4effc1bc22ae5e09f03ade007b927e27861ed.
+Cloud preflight, native iOS Release compilation, IPA packaging and artifact
+upload passed. All 39 host tests and pinned-source preflight had passed before
+dispatch. The LF-normalized overlay SHA-256 is
+10653d8804adc16f2077b3bd51046f6dc8b21f20138399aa298881a66cd18c32
+(441,516 bytes).
+
+Artifact Blender-iPad-Unofficial-ipa, id 11143120017, has GitHub archive
+size 248,438,600 bytes and digest
+sha256:4ced890f9a54ff024ba3b466dc77cf23c317d51f425373f4a4baa6ffd619c620;
+it expires 2026-12-30 05:05:38 UTC. Downloaded
+Blender-iPad-Unofficial.ipa is 248,438,432 bytes with SHA-256
+87034a8e8c816e04de9f71ef01e7f2ac6aed56e037595fb92f4706c2aec8258f.
+The IPA ZIP passes a full CRC test across 3,368 entries. Info.plist reports
+bundle ID com.unofficial.blenderipad, short and bundle version 5.0.0 and
+executable Blender. The main executable is Mach-O arm64 (magic cffaedfe,
+CPU type 0x100000c). The packaged space_properties.py contains Blender's
+native icon-tab drawing and the labeled picker. These are package checks,
+not proof of visible/touch behavior on an iPad.
+
+The user asked to be notified and for development to stop when hardware
+testing is needed. Notify them with this exact run and pause the heartbeat
+and goal. Request a short check in a fresh Layout and an existing saved
+project: open Inspector and Scene, verify native category icons appear,
+switch between the two and see whether Inspector now opens narrower without
+changing Scene's width. Drag Inspector narrower, close/reopen it and verify
+the width is remembered; try the picker/search and a dense Camera, Modifiers
+or Material section. Portrait or narrow Stage Manager is useful if available.
+Ask whether the design feels better and what remains awkward. No device
+acceptance of this exact package has been reported. Files workflows and the
+broader first-class iPad goal remain open.
 
 ## Saved Inspector width separated; iOS run dispatched — 2026-10-01
 

@@ -40,9 +40,11 @@ no side width was saved; a saved project could still open Inspector at a wide
 width inherited from Scene or another editor. Source e3a4eff gives Inspector
 its own persisted width, using the compact default in older projects until
 the user resizes it, without changing other side editors. The 39 host tests and
-pinned-source preflight pass; exact-source iOS run 36818147730 is in progress.
-This addresses a source-backed gap, not a report that the previous IPA failed
-on device. Device judgment remains open for both the visual design and sizing.
+pinned-source preflight pass; exact-source iOS run 36818147730 passed native
+Release compilation, packaging and IPA artifact verification. This addresses
+a source-backed gap, not a report that the previous IPA failed on device.
+Ask for a focused check of saved-project Inspector width, native icons and
+overall feel. Device judgment remains open for both visual design and sizing.
 
 ## Device feedback and next design change — 2026-09-24
 
