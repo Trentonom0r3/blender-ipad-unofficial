@@ -17,9 +17,9 @@ earlier hardware-test pause no longer blocks source-backed improvements.
 The linked Files IPA remains unaccepted on device. A new source candidate
 guards delayed native model-import callbacks with an operator lease and
 cleans staged copies rejected after cancellation or context changes.
-It passes host checks and pinned-source preflight; native compilation and
-iPad behavior are still open. Preserve current Inspector design and Pencil
-mappings unless new evidence warrants change.
+It passes host checks, pinned-source preflight and exact-source iOS IPA
+run 36832783348; iPad behavior is still open. Preserve current Inspector
+design and Pencil mappings unless new evidence warrants change.
 
 ## Files-linked open — packaged, device check needed, 2026-10-01
 

@@ -24,9 +24,10 @@ The next source candidate hardens native model-import picker callbacks. A
 unique lease is assigned to each file-select operator and invalidated on
 free; delayed success/cancel callbacks check the lease, live window manager
 and handler before touching Blender state. Rejected or stale staged copies
-are removed. All 41 host tests and pinned-source preflight pass; native
-compilation and IPA verification are pending. Preserve model import options
-and the approved Pencil and external-input behavior.
+are removed. All 41 host tests, pinned-source preflight and exact-source iOS run
+36832783348 pass. The downloaded IPA passed integrity and bundle checks;
+device behavior remains unverified. Preserve model import options and the
+approved Pencil and external-input behavior.
 
 ## Verified Files-linked IPA; device test gate — 2026-10-01
 

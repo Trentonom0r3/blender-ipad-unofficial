@@ -30,14 +30,38 @@ build, repair actual compiler failures, and verify any IPA. Continue the
 remaining native Files and touch workspace requirements without treating
 the pending device report as a block.
 
+## Verified native import lifetime IPA — 2026-10-01
+
+Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36832783348
+succeeded at e46932fd9d7190e92c4dc7e32e649500bb6c9a53. Cloud
+preflight, native iOS Release compilation, IPA packaging and artifact
+upload passed. The source checkpoint passed 41 host tests and pinned-source
+preflight; the LF-normalized overlay is 453,475 bytes with SHA-256
+ed0f1f77e9b42da13458691ff44a2678c02b362b82f80b24f0cb4a978952eaa8.
+Artifact Blender-iPad-Unofficial-ipa, id 11148478485, has GitHub archive
+size 248,446,245 bytes and reported digest
+sha256:800a99057377cde59ae2252b2635a2879511859ca0a8fecc9ab4a023634afee2;
+it expires 2026-12-30 07:51:31 UTC. Downloaded
+Blender-iPad-Unofficial.ipa is 248,446,077 bytes with SHA-256
+61af1c049f9621a527e156dc57827a61862a432cf531b3ed62f421a15060cc16.
+The IPA ZIP passed full CRC across 3,368 entries. Info.plist reports
+bundle ID com.unofficial.blenderipad, versions 5.0.0 and executable
+Blender; the executable is Mach-O arm64 (magic feedfacf, CPU type
+0x100000c). Packaged File menu and workspace-control scripts retain
+Open Project from Files, and the executable contains the native project
+and model-import action strings. These package checks do not prove picker
+cancellation, provider behavior or touch comfort on a device. The user
+renewed independent continuation, so proceed with the remaining workspace
+and Files work while device acceptance remains open.
+
 ## Import build dispatch and Link/Append source audit — 2026-10-01
 
 Source e46932fd9d7190e92c4dc7e32e649500bb6c9a53 was pushed for the
 native import callback lease and cleanup change. Exact-source iOS run
 https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36832783348
-passed cloud preflight and was fetching the pinned Blender source at
-2026-10-01 07:53 UTC. Inspect its actual result before dispatching another
-build. Its native compilation, IPA and device behavior are still unverified.
+later passed native Release compilation and IPA verification; see the
+verified-build section above. Its device behavior is still unverified.
 
 A pinned-source audit found that the generic iPad file-selector intercept
 classifies operator IDs containing import/open or export/save. WM_OT_link and
