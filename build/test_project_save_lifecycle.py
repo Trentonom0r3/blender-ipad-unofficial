@@ -129,8 +129,22 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         branch = files[files.index("+      if ((status & OPERATOR_FINISHED) == 0) {"):]
         branch = branch[:branch.index("diff --git ") if "diff --git " in branch else len(branch)]
         self.assertIn("         execute_callback = false;", branch)
-        self.assertIn("+        if (status & OPERATOR_RUNNING_MODAL) {", branch)
+        self.assertIn("+        if ((status & OPERATOR_RUNNING_MODAL) && callback) {", branch)
         self.assertIn("Finish saving to Files, then open the project again", branch)
+        self.assertIn("data->post_close_callback = ipad_close_callback_handoff", files)
+        self.assertIn("GHOST_IOS_project_export_queue_close_resume(ticket)", files)
+        self.assertIn("wm_ipad_close_after_save_resume(bContext *C", files)
+        self.assertIn("wm_close_file_dialog(C, pending.callback)", files)
+        self.assertIn("execute_callback && ipad_close_callback_handoff == nullptr", files)
+        self.assertIn("WM_generic_callback_free(data->post_close_callback)", files)
+        self.assertIn("window != pending.window || CTX_data_main(C) != pending.main", files)
+        self.assertIn("ipad_file_modified_generation != pending.modification_generation", files)
+        event_types = diff_for("intern/ghost/GHOST_Types.h")
+        window = diff_for("source/blender/windowmanager/intern/wm_window.cc")
+        native_save = diff_for("intern/ghost/intern/GHOST_ProjectSaveIOS.hh")
+        self.assertIn("GHOST_kEventIOSProjectCloseResume", event_types)
+        self.assertIn("wm_ipad_close_after_save_resume(C, win", window)
+        self.assertIn("data_ = &ticket_", native_save)
 
     def test_files_linked_open_keeps_document_identity_and_local_working_file(self):
         importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")

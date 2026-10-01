@@ -405,7 +405,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3410,339 @@
+@@ -3377,6 +3410,399 @@
                    "Allow .blend file to execute scripts automatically, default available from "
                    "system preferences");
  }
@@ -442,18 +442,35 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  return OPERATOR_FINISHED;
 +}
 +
++/* The close-file dialog and provider Save run as separate operators. Transfer
++ * its copied callback only after a provider Save has actually started. */
++static wmGenericCallback *ipad_close_callback_handoff = nullptr;
++static uint64_t ipad_next_close_ticket = 0;
++struct IpadReadyCloseAction {
++  wmGenericCallback *callback = nullptr;
++  Main *main = nullptr;
++  wmWindow *window = nullptr;
++  uint64_t modification_generation = 0;
++  uint64_t ticket = 0;
++};
++static IpadReadyCloseAction ipad_ready_close_action;
++
 +struct IpadFilesSaveData {
 +  bool save_copy;
 +  bool provider_update;
 +  bool reported_pending_save;
 +  uint64_t modification_generation;
 +  Main *main_at_stage;
++  wmGenericCallback *post_close_callback;
 +};
 +
 +static void wm_save_to_files_data_free(wmOperator *op)
 +{
-+  if (op->customdata) {
-+    MEM_freeN(op->customdata);
++  if (auto *data = static_cast<IpadFilesSaveData *>(op->customdata)) {
++    if (data->post_close_callback) {
++      WM_generic_callback_free(data->post_close_callback);
++    }
++    MEM_freeN(data);
 +    op->customdata = nullptr;
 +  }
 +}
@@ -562,6 +579,23 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +    else {
 +      BKE_reportf(op->reports, RPT_INFO, "Saved copy as \"%s\"", BLI_path_basename(path));
 +    }
++    if (data->post_close_callback) {
++      Main *current = CTX_data_main(C);
++      if (current && current == data->main_at_stage) {
++        const uint64_t ticket = ++ipad_next_close_ticket;
++        if (GHOST_IOS_project_export_queue_close_resume(ticket)) {
++          if (ipad_ready_close_action.callback) {
++            WM_generic_callback_free(ipad_ready_close_action.callback);
++          }
++          ipad_ready_close_action = {data->post_close_callback,
++                                     current,
++                                     CTX_wm_window(C),
++                                     ipad_file_modified_generation,
++                                     ticket};
++          data->post_close_callback = nullptr;
++        }
++      }
++    }
 +    wm_save_to_files_data_free(op);
 +    GHOST_IOS_project_export_finish();
 +    return OPERATOR_FINISHED;
@@ -637,8 +671,34 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  }
 +  data->modification_generation = ipad_file_modified_generation;
 +  data->main_at_stage = CTX_data_main(C);
++  data->post_close_callback = ipad_close_callback_handoff;
++  ipad_close_callback_handoff = nullptr;
 +  WM_event_add_modal_handler(C, op);
 +  return OPERATOR_RUNNING_MODAL;
++}
++
++void wm_ipad_close_after_save_resume(bContext *C, wmWindow *window, uint64_t ticket)
++{
++  if (!ticket || ticket != ipad_ready_close_action.ticket ||
++      !ipad_ready_close_action.callback)
++  {
++    return;
++  }
++  IpadReadyCloseAction pending = ipad_ready_close_action;
++  ipad_ready_close_action = {};
++  if (window != pending.window || CTX_data_main(C) != pending.main) {
++    WM_generic_callback_free(pending.callback);
++    return;
++  }
++  if (ipad_file_modified_generation != pending.modification_generation ||
++      wm_file_or_session_data_has_unsaved_changes(CTX_data_main(C), CTX_wm_manager(C)))
++  {
++    /* Edits made during the asynchronous write need a fresh explicit choice. */
++    wm_close_file_dialog(C, pending.callback);
++    return;
++  }
++  pending.callback->exec(C, pending.callback->user_data);
++  WM_generic_callback_free(pending.callback);
 +}
 +
 +static wmOperatorStatus wm_save_copy_to_files_invoke(bContext *C,
@@ -745,7 +805,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
-@@ -3696,7 +4062,10 @@
+@@ -3696,7 +4122,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -757,7 +817,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +4077,7 @@
+@@ -3708,6 +4137,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -765,7 +825,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3744,6 +4114,16 @@
+@@ -3744,6 +4174,16 @@
                 "Unable to save an unsaved file with an empty or unset \"filepath\" property");
      return OPERATOR_CANCELLED;
    }
@@ -782,7 +842,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if ((is_save_as == false) && is_incremental) {
      char head[FILE_MAXFILE], tail[FILE_MAXFILE];
-@@ -3922,6 +4302,11 @@
+@@ -3922,6 +4362,11 @@
     * any existing paths will be absolute,
     * enable the option to remap paths to avoid confusion, see: #37240. */
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
@@ -794,7 +854,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
      if (!RNA_property_is_set(op->ptr, prop)) {
-@@ -3939,8 +4324,13 @@
+@@ -3939,8 +4384,13 @@
      }
    }
    else {
@@ -808,7 +868,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3966,6 +4356,10 @@
+@@ -3966,6 +4416,10 @@
 
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
@@ -819,17 +879,34 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    ot->check = wm_save_mainfile_check;
    ot->get_description = wm_save_mainfile_get_description;
    /* Omit window poll so this can work in background mode. */
-@@ -4660,8 +5054,17 @@
+@@ -4658,10 +5112,34 @@
+       execute_callback = false;
+     }
      else {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      const bool can_handoff = execute_callback && ipad_close_callback_handoff == nullptr;
++      if (can_handoff) {
++        ipad_close_callback_handoff = callback;
++      }
++#endif
        const wmOperatorStatus status = WM_operator_name_call(
            C, "WM_OT_save_mainfile", blender::wm::OpCallContext::ExecDefault, nullptr, nullptr);
 -      if (status & OPERATOR_CANCELLED) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (can_handoff) {
++        if (ipad_close_callback_handoff == callback) {
++          ipad_close_callback_handoff = nullptr;
++        }
++        else {
++          /* The live provider-save modal now owns the callback. */
++          callback = nullptr;
++        }
++      }
++#endif
 +      if ((status & OPERATOR_FINISHED) == 0) {
-+        /* A Files-backed Save can still be writing when this returns.
-+         * Never switch projects until there is a completed save result. */
          execute_callback = false;
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+        if (status & OPERATOR_RUNNING_MODAL) {
++        if ((status & OPERATOR_RUNNING_MODAL) && callback) {
 +          BKE_report(&wm->runtime->reports,
 +                     RPT_INFO,
 +                     "Finish saving to Files, then open the project again");
@@ -838,6 +915,23 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
        }
      }
    }
+@@ -4671,10 +5149,12 @@
+     execute_callback = false;
+   }
+
+-  if (execute_callback) {
+-    callback->exec(C, callback->user_data);
+-  }
+-  WM_generic_callback_free(callback);
++  if (callback) {
++    if (execute_callback) {
++      callback->exec(C, callback->user_data);
++    }
++    WM_generic_callback_free(callback);
++  }
+ }
+
+ static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.py
 --- a/scripts/startup/bl_ui/__init__.py
 +++ b/scripts/startup/bl_ui/__init__.py
@@ -3638,10 +3732,11 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,67 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
++#include <cstdint>
 +#include <functional>
 +
 +/* Present a native picker for an independent local .blend copy. Main thread only.
@@ -3672,6 +3767,8 @@ new file mode 100644
 +bool GHOST_IOS_project_export_staging_path(char *out_path, size_t max_len);
 +bool GHOST_IOS_project_export_present_picker();
 +bool GHOST_IOS_project_export_publish_update();
++/* Queue a later Blender event for a pending close-file action after Save. */
++bool GHOST_IOS_project_export_queue_close_resume(uint64_t ticket);
 +bool GHOST_IOS_project_document_bookmark_matches(const char *path);
 +void GHOST_IOS_project_export_finish();
 +void GHOST_IOS_project_export_cancel();
@@ -4734,7 +4831,16 @@ new file mode 100644
 diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowmanager/wm_files.hh
 --- a/source/blender/windowmanager/wm_files.hh
 +++ b/source/blender/windowmanager/wm_files.hh
-@@ -113,6 +113,14 @@
+@@ -7,6 +7,8 @@
+  */
+
+ #pragma once
++
++#include <cstdint>
+
+ #include "WM_types.hh"
+
+@@ -113,6 +115,15 @@
  void WM_OT_read_factory_settings(wmOperatorType *ot);
 
  void WM_OT_open_mainfile(wmOperatorType *ot);
@@ -4745,6 +4851,7 @@ diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowman
 +void WM_OT_save_as_to_files(wmOperatorType *ot);
 +void WM_OT_save_copy_to_files(wmOperatorType *ot);
 +void WM_OT_ipad_flythrough_toggle(wmOperatorType *ot);
++void wm_ipad_close_after_save_resume(bContext *C, wmWindow *window, uint64_t ticket);
 +#endif
 
  void WM_OT_revert_mainfile(wmOperatorType *ot);
@@ -4783,6 +4890,23 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
          WM_operator_name_call_ptr(
              C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
          WM_operator_properties_free(&props_ptr);
+@@ -1875,6 +1881,16 @@
+       }
+       break;
+     }
++#ifdef WITH_APPLE_CROSSPLATFORM
++    case GHOST_kEventIOSProjectCloseResume: {
++      if (data) {
++        CTX_wm_window_set(C, win);
++        wm_ipad_close_after_save_resume(C, win, *static_cast<const uint64_t *>(data));
++        CTX_wm_window_set(C, nullptr);
++      }
++      break;
++    }
++#endif
+     case GHOST_kEventDraggingDropDone: {
+       const GHOST_TEventDragnDropData *ddd = static_cast<const GHOST_TEventDragnDropData *>(data);
+
 diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space_topbar.py
 --- a/scripts/startup/bl_ui/space_topbar.py
 +++ b/scripts/startup/bl_ui/space_topbar.py
@@ -4856,7 +4980,7 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
 diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 --- a/intern/ghost/GHOST_Types.h
 +++ b/intern/ghost/GHOST_Types.h
-@@ -338,6 +338,10 @@
+@@ -338,6 +338,12 @@
    GHOST_kEventTwoFingerTap,
    GHOST_kEventThreeFingerTap,
    GHOST_kEventFourFingerTap,
@@ -4864,10 +4988,12 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 +  GHOST_kEventPencilToolPalette,
 +  /** A native iOS project-save choice for a live Blender modal operator. */
 +  GHOST_kEventIOSProjectExport,
++  /** Resume a close-file action after a coordinated Files save completes. */
++  GHOST_kEventIOSProjectCloseResume,
 
  #ifdef WITH_INPUT_NDOF
    /**
-@@ -651,6 +653,8 @@
+@@ -651,6 +657,8 @@
    GHOST_TButton button;
    /** Associated tablet data. */
    GHOST_TabletData tablet;
@@ -4876,7 +5002,7 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
  } GHOST_TEventButtonData;
 
  typedef enum {
-@@ -671,7 +675,9 @@
+@@ -671,7 +679,9 @@
    GHOST_kTrackpadEventRotate,
    GHOST_kTrackpadEventSwipe, /* Reserved, not used for now */
    GHOST_kTrackpadEventMagnify,
@@ -10790,13 +10916,25 @@ diff --git a/intern/ghost/intern/GHOST_ProjectSaveIOS.hh b/intern/ghost/intern/G
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
-@@ -0,0 +1,751 @@
+@@ -0,0 +1,783 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. UIKit reports choices as GHOST events;
 + * the live Blender operator performs document serialization and state changes. */
 +#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 +#import <CommonCrypto/CommonDigest.h>
++
++/* The event owns its ticket storage until Blender consumes it. */
++class GHOST_EventIOSProjectCloseResume final : public GHOST_Event {
++  uint64_t ticket_;
++
++ public:
++  GHOST_EventIOSProjectCloseResume(uint64_t time, GHOST_IWindow *window, uint64_t ticket)
++      : GHOST_Event(time, GHOST_kEventIOSProjectCloseResume, window), ticket_(ticket)
++  {
++    data_ = &ticket_;
++  }
++};
 +
 +/* A content fingerprint prevents a stale working copy opened from Recent from
 + * overwriting a Files document edited in another app or device. */
@@ -10850,6 +10988,7 @@ new file mode 100644
 +- (void)finish;
 +- (void)cancel;
 +- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination;
++- (BOOL)queueCloseResume:(uint64_t)ticket;
 +- (void)dismissPickerWithAction:(GHOST_IOSProjectExportAction)action
 +                    destination:(NSString *)destination;
 +@end
@@ -11005,6 +11144,17 @@ new file mode 100644
 +  _busy = NO;
 +  _saveCopy = NO;
 +  _remembering = NO;
++}
++
++- (BOOL)queueCloseResume:(uint64_t)ticket
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!_busy || !ticket || !system || ![self hasLiveWindow]) {
++    return NO;
++  }
++  system->pushEvent(new GHOST_EventIOSProjectCloseResume(
++      system->getMilliSeconds(), _window, ticket));
++  return YES;
 +}
 +
 +- (void)queueAction:(GHOST_IOSProjectExportAction)action destination:(NSString *)destination
@@ -11522,6 +11672,14 @@ new file mode 100644
 +    return false;
 +  }
 +  return [GHOST_IOS_project_save_exporter() publishUpdate];
++}
++
++bool GHOST_IOS_project_export_queue_close_resume(uint64_t ticket)
++{
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  return [GHOST_IOS_project_save_exporter() queueCloseResume:ticket];
 +}
 +
 +bool GHOST_IOS_project_document_bookmark_matches(const char *path)
