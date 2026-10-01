@@ -1,6 +1,6 @@
 # Provider-backed Open Recent design
 
-Status: source audit and implementation plan, 2026-10-01. No source change or device acceptance is claimed here. Latest verified IPA: run 36889708972 at b3faf93.
+Status: source candidate, 2026-10-01. The preceding async Save switch is packaged and verified in run 36922544096 at c9cd661. Provider-backed Recent source and host checks pass; native build and device acceptance are still open.
 
 Open Project from Files creates an app-owned working .blend and stores a provider bookmark, documentPath and digest in BlenderWorkingProjectBookmarks. Ordinary Save refuses to overwrite a provider document whose digest changed. Open Recent currently reads the working path directly, so an external edit can leave the user looking at an old local snapshot. Only entries with a bookmark, a documentPath different from the working path, and a digest qualify. Same-path Save As, independent Open Project Copy and folder import do not.
 

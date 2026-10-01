@@ -335,7 +335,15 @@ diff --git a/source/blender/editors/space_view3d/view3d_navigate_view_move.cc b/
 diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/windowmanager/intern/wm_files.cc
 --- a/source/blender/windowmanager/intern/wm_files.cc
 +++ b/source/blender/windowmanager/intern/wm_files.cc
-@@ -116,6 +116,9 @@
+@@ -11,6 +11,7 @@
+
+ /* Placed up here because of crappy WINSOCK stuff. */
+ #include <cerrno>
++#include <cstdint>
+ #include <cstddef>
+ #include <cstring>
+ #include <fcntl.h> /* For open flags (#O_BINARY, #O_RDONLY). */
+@@ -116,6 +117,9 @@
 
  #include "GHOST_C-api.h"
  #include "GHOST_Path-api.hh"
@@ -345,7 +353,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
  #include "GPU_context.hh"
 
-@@ -174,8 +177,15 @@
+@@ -174,8 +178,15 @@
  /** \name Misc Utility Functions
   * \{ */
 
@@ -361,7 +369,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
    if (wm->file_saved) {
      wm->file_saved = 0;
-@@ -2321,6 +2331,21 @@
+@@ -2321,6 +2332,21 @@
      SNPRINTF(filename, "%d_autosave.blend", pid);
    }
 
@@ -383,7 +391,57 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3202,6 +3227,13 @@
+@@ -3172,8 +3198,49 @@
+                                         nullptr);
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++static bool wm_open_mainfile_recent_begin(wmOperator *op, wmOperatorStatus *r_status)
++{
++  char path[FILE_MAX];
++  RNA_string_get(op->ptr, "filepath", path);
++  BLI_path_canonicalize_native(path, sizeof(path));
++  if (!GHOST_IOS_recent_project_is_linked(path)) {
++    GHOST_IOS_recent_project_cancel();
++    return false;
++  }
++  PropertyRNA *load_ui = RNA_struct_find_property(op->ptr, "load_ui");
++  PropertyRNA *scripts = RNA_struct_find_property(op->ptr, "use_scripts");
++  if (!GHOST_IOS_recent_project_begin(path,
++                                      RNA_property_is_set(op->ptr, load_ui),
++                                      RNA_boolean_get(op->ptr, "load_ui"),
++                                      RNA_property_is_set(op->ptr, scripts),
++                                      RNA_boolean_get(op->ptr, "use_scripts")))
++  {
++    BKE_report(op->reports, RPT_ERROR, "Could not check the Files project; close other dialogs and try again");
++    *r_status = OPERATOR_CANCELLED;
++  }
++  else {
++    *r_status = OPERATOR_FINISHED;
++  }
++  return true;
++}
++#endif
++
+ static wmOperatorStatus wm_open_mainfile__discard_changes_exec(bContext *C, wmOperator *op)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0) {
++    if (RNA_boolean_get(op->ptr, "display_file_selector")) {
++      GHOST_IOS_recent_project_cancel();
++    }
++    else {
++      wmOperatorStatus status;
++      if (wm_open_mainfile_recent_begin(op, &status)) {
++        return status;
++      }
++    }
++  }
++#endif
+   if (RNA_boolean_get(op->ptr, "display_file_selector")) {
+     set_next_operator_state(op, OPEN_MAINFILE_STATE_SELECT_FILE_PATH);
+   }
+@@ -3202,6 +3269,13 @@
      return OPERATOR_CANCELLED;
    }
 
@@ -397,7 +455,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    /* If possible, get the name of the most recently used `.blend` file. */
    if (G.recent_files.first) {
      RecentFile *recent = static_cast<RecentFile *>(G.recent_files.first);
-@@ -3217,6 +3249,7 @@
+@@ -3217,6 +3291,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -405,11 +463,72 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3377,6 +3410,399 @@
-                   "Allow .blend file to execute scripts automatically, default available from "
+@@ -3226,6 +3301,34 @@
+
+   RNA_string_get(op->ptr, "filepath", filepath);
+   BLI_path_canonicalize_native(filepath, sizeof(filepath));
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int recent_ticket = RNA_int_get(op->ptr, "ios_recent_ticket");
++  if (recent_ticket == 0) {
++    wmOperatorStatus status;
++    if (wm_open_mainfile_recent_begin(op, &status)) {
++      return status;
++    }
++  }
++  else {
++    const GHOST_IOSRecentProjectCommit result =
++        GHOST_IOS_recent_project_commit(filepath, recent_ticket);
++    if (result == GHOST_IOSRecentProjectCommit_Stale) {
++      GHOST_IOS_recent_project_cancel();
++      RNA_int_set(op->ptr, "ios_recent_ticket", 0);
++      wmOperatorStatus status;
++      if (wm_open_mainfile_recent_begin(op, &status)) {
++        return status;
++      }
++    }
++    if (result != GHOST_IOSRecentProjectCommit_Proceed) {
++      GHOST_IOS_recent_project_cancel();
++      BKE_report(op->reports, RPT_ERROR,
++                 "Files project changed or could not be prepared; try Open Recent again");
++      return OPERATOR_CANCELLED;
++    }
++  }
++#endif
+
+   /* For file opening, also print in console for warnings, not only errors. */
+   BKE_report_print_level_set(op->reports, RPT_WARNING);
+@@ -3237,6 +3340,11 @@
+   SET_FLAG_FROM_TEST(G.fileflags, !RNA_boolean_get(op->ptr, "load_ui"), G_FILE_NO_UI);
+   SET_FLAG_FROM_TEST(G.f, RNA_boolean_get(op->ptr, "use_scripts"), G_FLAG_SCRIPT_AUTOEXEC);
+   success = wm_file_read_opwrap(C, filepath, use_scripts_autoexec_check, op->reports);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (recent_ticket > 0) {
++    GHOST_IOS_recent_project_finish_open(recent_ticket, success);
++  }
++#endif
+
+   if (success) {
+     if (G.fileflags & G_FILE_NO_UI) {
+@@ -3269,6 +3377,14 @@
+
+ static wmOperatorStatus wm_open_mainfile_exec(bContext *C, wmOperator *op)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0) {
++    wmOperatorStatus status;
++    if (wm_open_mainfile_recent_begin(op, &status)) {
++      return status;
++    }
++  }
++#endif
+   return wm_open_mainfile__open(C, op);
+ }
+
+@@ -3378,6 +3494,400 @@
                    "system preferences");
  }
-+
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static wmOperatorStatus wm_import_project_from_files_exec(bContext * /*C*/, wmOperator *op)
 +{
@@ -468,6 +587,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +{
 +  if (auto *data = static_cast<IpadFilesSaveData *>(op->customdata)) {
 +    if (data->post_close_callback) {
++      GHOST_IOS_recent_project_cancel();
 +      WM_generic_callback_free(data->post_close_callback);
 +    }
 +    MEM_freeN(data);
@@ -802,10 +922,23 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  ot->cancel = wm_save_to_files_cancel;
 +}
 +#endif
-
++
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
-@@ -3696,7 +4122,10 @@
+   ot->name = "Open";
+@@ -3409,6 +3919,11 @@
+   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+   create_operator_state(ot, OPEN_MAINFILE_STATE_DISCARD_CHANGES);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  PropertyRNA *recent_ticket = RNA_def_int(
++      ot->srna, "ios_recent_ticket", 0, 0, INT32_MAX, "Files Recent Ticket", "", 0, INT32_MAX);
++  RNA_def_property_flag(recent_ticket, PROP_SKIP_SAVE | PROP_HIDDEN);
++#endif
+ }
+
+ /** \} */
+@@ -3696,7 +4211,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -817,7 +950,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +4137,7 @@
+@@ -3708,6 +4226,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -825,7 +958,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3744,6 +4174,16 @@
+@@ -3744,6 +4263,16 @@
                 "Unable to save an unsaved file with an empty or unset \"filepath\" property");
      return OPERATOR_CANCELLED;
    }
@@ -842,7 +975,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if ((is_save_as == false) && is_incremental) {
      char head[FILE_MAXFILE], tail[FILE_MAXFILE];
-@@ -3922,6 +4362,11 @@
+@@ -3922,6 +4451,11 @@
     * any existing paths will be absolute,
     * enable the option to remap paths to avoid confusion, see: #37240. */
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
@@ -854,7 +987,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
      if (!RNA_property_is_set(op->ptr, prop)) {
-@@ -3939,8 +4384,13 @@
+@@ -3939,8 +4473,13 @@
      }
    }
    else {
@@ -868,7 +1001,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3966,6 +4416,10 @@
+@@ -3966,6 +4505,10 @@
 
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
@@ -879,7 +1012,17 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    ot->check = wm_save_mainfile_check;
    ot->get_description = wm_save_mainfile_get_description;
    /* Omit window poll so this can work in background mode. */
-@@ -4658,10 +5112,34 @@
+@@ -4599,6 +5142,9 @@
+
+ static void wm_block_file_close_cancel(bContext *C, void *arg_block, void * /*arg_data*/)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  GHOST_IOS_recent_project_cancel();
++#endif
+   wmWindow *win = CTX_wm_window(C);
+   UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
+ }
+@@ -4658,10 +5204,34 @@
        execute_callback = false;
      }
      else {
@@ -915,7 +1058,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
        }
      }
    }
-@@ -4671,10 +5149,12 @@
+@@ -4671,10 +5241,12 @@
      execute_callback = false;
    }
 
@@ -3240,7 +3383,7 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
 
  #include "GHOST_Debug.hh"
  #include "GHOST_EventButton.hh"
-@@ -43,6 +44,16 @@
+@@ -43,6 +44,17 @@
  void WM_main_loop_body(bContext *C);
  int main_ios_callback(int argc, const char **argv);
 
@@ -3253,20 +3396,21 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
 +#include "GHOST_ProjectImportIOS.hh"
 +#include "GHOST_ProjectExportIOS.hh"
 +#include "GHOST_ProjectSaveIOS.hh"
++#include "GHOST_ProjectRecentIOS.hh"
 +
  @interface IOSAppDelegate : UIResponder <UIApplicationDelegate>
 
  @property(strong, nonatomic) UIWindow *window;
-@@ -54,7 +65,8 @@
+@@ -54,6 +66,8 @@
  - (BOOL)application:(UIApplication *)application
      didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
 +  GHOST_IOS_cleanup_abandoned_project_imports();
++  GHOST_IOS_cleanup_abandoned_recent_stages();
    main_ios_callback(argc, argv);
 
    return YES;
- }
-@@ -94,6 +104,15 @@
+@@ -94,6 +108,15 @@
  - (void)drawInMTKView:(nonnull MTKView *)MTKView
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -3282,7 +3426,7 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
 
    /* We should always have a window... */
    if (system->current_active_window_) {
-@@ -135,12 +154,15 @@
+@@ -135,12 +158,15 @@
  - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
  {
    GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -3732,7 +3876,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,94 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3770,6 +3914,33 @@ new file mode 100644
 +/* Queue a later Blender event for a pending close-file action after Save. */
 +bool GHOST_IOS_project_export_queue_close_resume(uint64_t ticket);
 +bool GHOST_IOS_project_document_bookmark_matches(const char *path);
++
++/* A provider-backed Recent entry is checked before Blender asks about unsaved
++ * work. The event carries only a path, options and ticket, never Blender state. */
++struct GHOST_IOSRecentProjectOpenData {
++  const char *path;
++  int ticket;
++  bool load_ui_set;
++  bool load_ui;
++  bool use_scripts_set;
++  bool use_scripts;
++};
++enum GHOST_IOSRecentProjectCommit {
++  GHOST_IOSRecentProjectCommit_Failed,
++  GHOST_IOSRecentProjectCommit_Stale,
++  GHOST_IOSRecentProjectCommit_Proceed,
++};
++bool GHOST_IOS_recent_project_is_linked(const char *path);
++bool GHOST_IOS_recent_project_is_ready(const char *path, int ticket);
++bool GHOST_IOS_recent_project_begin(const char *path,
++                                    bool load_ui_set,
++                                    bool load_ui,
++                                    bool use_scripts_set,
++                                    bool use_scripts);
++GHOST_IOSRecentProjectCommit GHOST_IOS_recent_project_commit(const char *path, int ticket);
++void GHOST_IOS_recent_project_finish_open(int ticket, bool success);
++void GHOST_IOS_recent_project_cancel();
++void GHOST_IOS_cleanup_abandoned_recent_stages();
 +void GHOST_IOS_project_export_finish();
 +void GHOST_IOS_project_export_cancel();
 +
@@ -4877,7 +5048,17 @@ diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blende
 diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/windowmanager/intern/wm_window.cc
 --- a/source/blender/windowmanager/intern/wm_window.cc
 +++ b/source/blender/windowmanager/intern/wm_window.cc
-@@ -1867,6 +1867,12 @@
+@@ -28,6 +28,9 @@
+ #include "MEM_guardedalloc.h"
+
+ #include "GHOST_C-api.h"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "GHOST_ProjectImport-api.hh"
++#endif
+
+ #include "BLI_fileops.h"
+ #include "BLI_listbase.h"
+@@ -1867,6 +1870,12 @@
          WM_operator_properties_create_ptr(&props_ptr, ot);
          RNA_string_set(&props_ptr, "filepath", path);
          RNA_boolean_set(&props_ptr, "display_file_selector", false);
@@ -4890,7 +5071,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
          WM_operator_name_call_ptr(
              C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
          WM_operator_properties_free(&props_ptr);
-@@ -1875,6 +1881,16 @@
+@@ -1875,6 +1884,40 @@
        }
        break;
      }
@@ -4899,6 +5080,30 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +      if (data) {
 +        CTX_wm_window_set(C, win);
 +        wm_ipad_close_after_save_resume(C, win, *static_cast<const uint64_t *>(data));
++        CTX_wm_window_set(C, nullptr);
++      }
++      break;
++    }
++    case GHOST_kEventIOSRecentProjectReady: {
++      const auto *recent = static_cast<const GHOST_IOSRecentProjectOpenData *>(data);
++      if (recent && recent->path && recent->ticket > 0 &&
++          GHOST_IOS_recent_project_is_ready(recent->path, recent->ticket)) {
++        wmOperatorType *ot = WM_operatortype_find("WM_OT_open_mainfile", false);
++        CTX_wm_window_set(C, win);
++        PointerRNA props_ptr;
++        WM_operator_properties_create_ptr(&props_ptr, ot);
++        RNA_string_set(&props_ptr, "filepath", recent->path);
++        RNA_boolean_set(&props_ptr, "display_file_selector", false);
++        RNA_int_set(&props_ptr, "ios_recent_ticket", recent->ticket);
++        if (recent->load_ui_set) {
++          RNA_boolean_set(&props_ptr, "load_ui", recent->load_ui);
++        }
++        if (recent->use_scripts_set) {
++          RNA_boolean_set(&props_ptr, "use_scripts", recent->use_scripts);
++        }
++        WM_operator_name_call_ptr(
++            C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
++        WM_operator_properties_free(&props_ptr);
 +        CTX_wm_window_set(C, nullptr);
 +      }
 +      break;
@@ -4980,7 +5185,7 @@ diff --git a/scripts/startup/bl_ui/space_topbar.py b/scripts/startup/bl_ui/space
 diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 --- a/intern/ghost/GHOST_Types.h
 +++ b/intern/ghost/GHOST_Types.h
-@@ -338,6 +338,12 @@
+@@ -338,6 +338,14 @@
    GHOST_kEventTwoFingerTap,
    GHOST_kEventThreeFingerTap,
    GHOST_kEventFourFingerTap,
@@ -4990,10 +5195,12 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 +  GHOST_kEventIOSProjectExport,
 +  /** Resume a close-file action after a coordinated Files save completes. */
 +  GHOST_kEventIOSProjectCloseResume,
++  /** A provider-backed Recent project is ready for Blender's unsaved-work guard. */
++  GHOST_kEventIOSRecentProjectReady,
 
  #ifdef WITH_INPUT_NDOF
    /**
-@@ -651,6 +657,8 @@
+@@ -651,6 +659,8 @@
    GHOST_TButton button;
    /** Associated tablet data. */
    GHOST_TabletData tablet;
@@ -5002,7 +5209,7 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
  } GHOST_TEventButtonData;
 
  typedef enum {
-@@ -671,7 +679,9 @@
+@@ -671,7 +681,9 @@
    GHOST_kTrackpadEventRotate,
    GHOST_kTrackpadEventSwipe, /* Reserved, not used for now */
    GHOST_kTrackpadEventMagnify,
@@ -10912,6 +11119,564 @@ new file mode 100644
 +}
 +
 +}  // namespace ghost::ios
+diff --git a/intern/ghost/intern/GHOST_ProjectRecentIOS.hh b/intern/ghost/intern/GHOST_ProjectRecentIOS.hh
+new file mode 100644
+--- /dev/null
++++ b/intern/ghost/intern/GHOST_ProjectRecentIOS.hh
+@@ -0,0 +1,553 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++/* Included after GHOST_ProjectSaveIOS.hh by GHOST_SystemIOS.mm. A Recent
++ * provider document is inspected without touching its app-owned working file.
++ * Blender decides whether the current scene may be replaced. */
++#include <string>
++#include <cstdint>
++#include <climits>
++
++class GHOST_EventIOSRecentProjectReady final : public GHOST_Event {
++  std::string path_;
++  GHOST_IOSRecentProjectOpenData payload_;
++
++ public:
++  GHOST_EventIOSRecentProjectReady(uint64_t time,
++                                   GHOST_IWindow *window,
++                                   NSString *path,
++                                   int ticket,
++                                   bool loadUISet,
++                                   bool loadUI,
++                                   bool useScriptsSet,
++                                   bool useScripts)
++      : GHOST_Event(time, GHOST_kEventIOSRecentProjectReady, window),
++        path_(path.UTF8String ? path.UTF8String : "")
++  {
++    payload_ = {path_.c_str(), ticket, loadUISet, loadUI, useScriptsSet, useScripts};
++    data_ = &payload_;
++  }
++};
++
++@interface GHOST_IOSRecentProjectOpener : NSObject
++{
++  GHOST_IWindow *_window;
++  UIViewController *_presenter;
++  UIAlertController *_sheet;
++  NSString *_workingPath;
++  NSString *_documentPath;
++  NSData *_bookmark;
++  NSData *_expectedDigest;
++  NSData *_localDigest;
++  NSData *_providerDigest;
++  NSData *_renewedBookmark;
++  NSURL *_stageDirectory;
++  NSURL *_stageFile;
++  NSURL *_backupFile;
++  NSUInteger _generation;
++  int _ticket;
++  BOOL _busy;
++  BOOL _ready;
++  BOOL _refresh;
++  BOOL _installed;
++  BOOL _bookmarkUpdated;
++  bool _loadUISet;
++  bool _loadUI;
++  bool _useScriptsSet;
++  bool _useScripts;
++}
++- (BOOL)begin:(NSString *)path
++    loadUISet:(bool)loadUISet
++       loadUI:(bool)loadUI
++useScriptsSet:(bool)useScriptsSet
++   useScripts:(bool)useScripts;
++- (GHOST_IOSRecentProjectCommit)commit:(NSString *)path ticket:(int)ticket;
++- (BOOL)isReady:(NSString *)path ticket:(int)ticket;
++- (void)finishOpen:(int)ticket success:(BOOL)success;
++- (void)cancel;
++@end
++
++@implementation GHOST_IOSRecentProjectOpener
++
++- (BOOL)hasLiveWindow
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  return system && _window && system->getWindowManager()->getWindowFound(_window) &&
++         _presenter.view.window != nil;
++}
++
++- (void)finish
++{
++  _busy = NO;
++  _ready = NO;
++  _refresh = NO;
++  _installed = NO;
++  _bookmarkUpdated = NO;
++  _ticket = 0;
++  if (_sheet) {
++    UIAlertController *sheet = _sheet;
++    _sheet = nil;
++    [sheet dismissViewControllerAnimated:NO completion:nil];
++    [sheet release];
++  }
++  NSURL *directory = _stageDirectory;
++  _stageDirectory = nil;
++  if (directory) {
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++      @autoreleasepool {
++        [[NSFileManager defaultManager] removeItemAtURL:directory error:nil];
++        [directory release];
++      }
++    });
++  }
++  [_stageFile release];
++  _stageFile = nil;
++  [_backupFile release];
++  _backupFile = nil;
++  [_workingPath release];
++  _workingPath = nil;
++  [_documentPath release];
++  _documentPath = nil;
++  [_bookmark release];
++  _bookmark = nil;
++  [_expectedDigest release];
++  _expectedDigest = nil;
++  [_localDigest release];
++  _localDigest = nil;
++  [_providerDigest release];
++  _providerDigest = nil;
++  [_renewedBookmark release];
++  _renewedBookmark = nil;
++  [_presenter release];
++  _presenter = nil;
++  _window = nullptr;
++}
++
++- (void)cancel
++{
++  ++_generation;
++  [self finish];
++}
++
++- (void)queueReady
++{
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!_busy || ![self hasLiveWindow] || !system) {
++    [self cancel];
++    return;
++  }
++  _ready = YES;
++  system->pushEvent(new GHOST_EventIOSRecentProjectReady(system->getMilliSeconds(),
++                                                         _window,
++                                                         _workingPath,
++                                                         _ticket,
++                                                         _loadUISet,
++                                                         _loadUI,
++                                                         _useScriptsSet,
++                                                         _useScripts));
++}
++
++- (void)showChoice:(NSString *)message allowLocal:(BOOL)allowLocal
++{
++  if (![self hasLiveWindow]) {
++    [self cancel];
++    return;
++  }
++  const NSUInteger generation = _generation;
++  UIAlertController *alert = [[UIAlertController alertControllerWithTitle:@"Open Recent"
++                                                                   message:message
++                                                            preferredStyle:UIAlertControllerStyleAlert] retain];
++  _sheet = alert;
++  if (allowLocal) {
++    [alert addAction:[UIAlertAction actionWithTitle:@"Open Local Copy"
++                                             style:UIAlertActionStyleDefault
++                                           handler:^(UIAlertAction *action) {
++      if (generation != _generation) {
++        return;
++      }
++      UIAlertController *shown = _sheet;
++      _sheet = nil;
++      [shown release];
++      _refresh = NO;
++      dispatch_async(dispatch_get_main_queue(), ^{
++        if (generation == _generation) {
++          [self queueReady];
++        }
++      });
++    }]];
++  }
++  [alert addAction:[UIAlertAction actionWithTitle:@"Retry Files"
++                                           style:UIAlertActionStyleDefault
++                                         handler:^(UIAlertAction *action) {
++    if (generation != _generation) {
++      return;
++    }
++    NSString *path = [_workingPath copy];
++    const bool loadUISet = _loadUISet, loadUI = _loadUI;
++    const bool scriptsSet = _useScriptsSet, scripts = _useScripts;
++    UIAlertController *shown = _sheet;
++    _sheet = nil;
++    [shown release];
++    [self cancel];
++    dispatch_async(dispatch_get_main_queue(), ^{
++      [self begin:path loadUISet:loadUISet loadUI:loadUI
++          useScriptsSet:scriptsSet useScripts:scripts];
++      [path release];
++    });
++  }]];
++  [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                           style:UIAlertActionStyleCancel
++                                         handler:^(UIAlertAction *action) {
++    if (generation == _generation) {
++      [self cancel];
++    }
++  }]];
++  [_presenter presentViewController:alert animated:YES completion:nil];
++}
++
++- (void)showResult
++{
++  if (!_busy || ![self hasLiveWindow]) {
++    [self cancel];
++    return;
++  }
++  if (!_localDigest) {
++    [self showChoice:@"The local working project cannot be read. The Files original is unchanged."
++         allowLocal:NO];
++  }
++  else if (!_providerDigest) {
++    [self showChoice:@"The Files project is unavailable. You can retry or explicitly open the last local copy. Saving that copy may require Save As."
++         allowLocal:YES];
++  }
++  else if (![_localDigest isEqualToData:_expectedDigest]) {
++    [self showChoice:@"The local copy has changed since it was linked to Files. Both versions are preserved. Open the local copy or retry; use Open Project from Files to make a separate working copy of the Files version."
++         allowLocal:YES];
++  }
++  else {
++    _refresh = ![_providerDigest isEqualToData:_expectedDigest];
++    [self queueReady];
++  }
++}
++
++- (BOOL)begin:(NSString *)path
++    loadUISet:(bool)loadUISet
++       loadUI:(bool)loadUI
++useScriptsSet:(bool)useScriptsSet
++   useScripts:(bool)useScripts
++{
++  if (_busy) {
++    [self cancel];
++  }
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  GHOST_IWindow *window = system ? system->getWindowManager()->getActiveWindow() : nullptr;
++  NSString *documentPath = GHOST_IOS_document_path_for_project(path);
++  NSData *bookmark = GHOST_IOS_bookmark_for_project(path);
++  NSData *digest = GHOST_IOS_document_digest_for_project(path);
++  if (!window || !path.length || !documentPath.length ||
++      [documentPath isEqualToString:path] || !bookmark.length || !digest.length)
++  {
++    return NO;
++  }
++  UIViewController *presenter =
++      static_cast<GHOST_WindowIOS *>(window)->rootWindow.rootViewController;
++  if (!presenter.view.window || presenter.presentedViewController) {
++    return NO;
++  }
++  static uint32_t nextTicket = 0;
++  nextTicket = (nextTicket + 1) & INT32_MAX;
++  if (!nextTicket) {
++    nextTicket = 1;
++  }
++  _busy = YES;
++  ++_generation;
++  _window = window;
++  _ticket = int(nextTicket);
++  _presenter = [presenter retain];
++  _workingPath = [path copy];
++  _documentPath = [documentPath copy];
++  _bookmark = [bookmark retain];
++  _expectedDigest = [digest retain];
++  _loadUISet = loadUISet;
++  _loadUI = loadUI;
++  _useScriptsSet = useScriptsSet;
++  _useScripts = useScripts;
++
++  NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++  _stageDirectory = [[root URLByAppendingPathComponent:
++      [@"BlenderRecent-" stringByAppendingString:[NSUUID UUID].UUIDString]
++                                       isDirectory:YES] retain];
++  _stageFile = [[_stageDirectory URLByAppendingPathComponent:@"provider.blend"] retain];
++  _backupFile = [[_stageDirectory URLByAppendingPathComponent:@"previous.blend"] retain];
++  const NSUInteger generation = _generation;
++  _sheet = [[UIAlertController alertControllerWithTitle:@"Checking Files Project"
++                                                message:@"Checking the latest version in Files..."
++                                         preferredStyle:UIAlertControllerStyleAlert] retain];
++  [_sheet setModalInPresentation:YES];
++  [_sheet addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                           style:UIAlertActionStyleCancel
++                                         handler:^(UIAlertAction *action) {
++    if (generation == _generation) {
++      [self cancel];
++    }
++  }]];
++  @try {
++    [_presenter presentViewController:_sheet animated:YES completion:nil];
++  }
++  @catch (NSException *exception) {
++    NSLog(@"Could not show Open Recent preparation: %@", exception);
++    [self cancel];
++    return NO;
++  }
++
++  NSString *working = [_workingPath copy];
++  NSString *expectedPath = [_documentPath copy];
++  NSData *savedBookmark = [_bookmark retain];
++  NSURL *stageDirectory = [_stageDirectory retain];
++  NSURL *stageFile = [_stageFile retain];
++  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++    @autoreleasepool {
++      BOOL stale = NO;
++      NSError *resolveError = nil;
++      NSURL *provider = [NSURL URLByResolvingBookmarkData:savedBookmark options:0
++          relativeToURL:nil bookmarkDataIsStale:&stale error:&resolveError];
++      const BOOL scoped = provider && [provider startAccessingSecurityScopedResource];
++      const BOOL owned = provider && [provider.path hasPrefix:
++          [NSHomeDirectory() stringByAppendingString:@"/"]];
++      NSData *providerDigest = nil;
++      NSData *renewedBookmark = nil;
++      if (provider && [provider.path isEqualToString:expectedPath] && (scoped || owned)) {
++        NSFileManager *manager = [NSFileManager defaultManager];
++        __block NSError *copyError = nil;
++        if ([manager createDirectoryAtURL:stageDirectory withIntermediateDirectories:YES
++                               attributes:nil error:&copyError])
++        {
++          NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
++          NSError *coordinateError = nil;
++          [coordinator coordinateReadingItemAtURL:provider options:0 error:&coordinateError
++                                       byAccessor:^(NSURL *readURL) {
++            [manager copyItemAtURL:readURL toURL:stageFile error:&copyError];
++          }];
++          [coordinator release];
++          if (!copyError && !coordinateError) {
++            NSData *bytes = [NSData dataWithContentsOfURL:stageFile
++                                                 options:NSDataReadingMappedIfSafe error:&copyError];
++            providerDigest = [GHOST_IOS_project_digest(bytes) retain];
++            if (providerDigest && stale) {
++              renewedBookmark = [[provider bookmarkDataWithOptions:0
++                  includingResourceValuesForKeys:nil relativeToURL:nil error:nil] retain];
++            }
++          }
++        }
++        if (copyError || coordinateError) {
++          NSLog(@"Open Recent could not read Files project: %@ %@", copyError, coordinateError);
++        }
++      }
++      else {
++        NSLog(@"Open Recent provider bookmark unavailable: %@", resolveError);
++      }
++      if (scoped) {
++        [provider stopAccessingSecurityScopedResource];
++      }
++      NSError *localError = nil;
++      NSData *localBytes = [NSData dataWithContentsOfFile:working
++                                                  options:NSDataReadingMappedIfSafe error:&localError];
++      NSData *localDigest = [GHOST_IOS_project_digest(localBytes) retain];
++      dispatch_async(dispatch_get_main_queue(), ^{
++        if (generation == _generation && _busy && [self hasLiveWindow]) {
++          _providerDigest = [providerDigest retain];
++          _localDigest = [localDigest retain];
++          _renewedBookmark = [renewedBookmark retain];
++          UIAlertController *sheet = _sheet;
++          _sheet = nil;
++          [sheet dismissViewControllerAnimated:YES completion:^{
++            [sheet release];
++            if (generation == _generation && _busy) {
++              [self showResult];
++            }
++          }];
++        }
++        else {
++          [[NSFileManager defaultManager] removeItemAtURL:stageDirectory error:nil];
++        }
++        [providerDigest release];
++        [localDigest release];
++        [renewedBookmark release];
++        [working release];
++        [expectedPath release];
++        [savedBookmark release];
++        [stageDirectory release];
++        [stageFile release];
++      });
++    }
++  });
++  return YES;
++}
++
++- (GHOST_IOSRecentProjectCommit)commit:(NSString *)path ticket:(int)ticket
++{
++  if (![self isReady:path ticket:ticket])
++  {
++    return GHOST_IOSRecentProjectCommit_Failed;
++  }
++  NSData *currentExpected = GHOST_IOS_document_digest_for_project(_workingPath);
++  NSError *error = nil;
++  NSData *localBytes = [NSData dataWithContentsOfFile:_workingPath
++                                             options:NSDataReadingMappedIfSafe error:&error];
++  NSData *currentLocal = GHOST_IOS_project_digest(localBytes);
++  if (!currentExpected || ![currentExpected isEqualToData:_expectedDigest] ||
++      !currentLocal || ![currentLocal isEqualToData:_localDigest])
++  {
++    return GHOST_IOSRecentProjectCommit_Stale;
++  }
++  if (_refresh) {
++    NSData *newBytes = [NSData dataWithContentsOfURL:_stageFile
++                                             options:NSDataReadingMappedIfSafe error:&error];
++    NSData *newDigest = GHOST_IOS_project_digest(newBytes);
++    if (!newDigest || ![newDigest isEqualToData:_providerDigest] ||
++        ![localBytes writeToURL:_backupFile options:NSDataWritingAtomic error:&error] ||
++        ![newBytes writeToFile:_workingPath options:NSDataWritingAtomic error:&error])
++    {
++      NSLog(@"Open Recent could not refresh the working project: %@", error);
++      return GHOST_IOSRecentProjectCommit_Failed;
++    }
++    GHOST_IOS_remember_project_digest(_workingPath, _providerDigest);
++    _installed = YES;
++  }
++  if (_renewedBookmark) {
++    GHOST_IOS_remember_project_bookmark(_workingPath, _renewedBookmark);
++    _bookmarkUpdated = YES;
++  }
++  _ready = NO;
++  return GHOST_IOSRecentProjectCommit_Proceed;
++}
++
++- (BOOL)isReady:(NSString *)path ticket:(int)ticket
++{
++  return _busy && _ready && ticket > 0 && ticket == _ticket &&
++         [path isEqualToString:_workingPath] && [self hasLiveWindow];
++}
++
++- (void)finishOpen:(int)ticket success:(BOOL)success
++{
++  if (!_busy || ticket != _ticket) {
++    return;
++  }
++  if (!success) {
++    if (_installed) {
++      NSError *error = nil;
++      NSData *oldBytes = [NSData dataWithContentsOfURL:_backupFile
++                                               options:NSDataReadingMappedIfSafe error:&error];
++      if (oldBytes && [oldBytes writeToFile:_workingPath
++                                   options:NSDataWritingAtomic error:&error])
++      {
++        GHOST_IOS_remember_project_digest(_workingPath, _expectedDigest);
++      }
++      else {
++        NSLog(@"Could not restore the previous Open Recent working copy: %@", error);
++        NSURL *documents = [[[NSFileManager defaultManager]
++            URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
++        NSURL *recovery = [documents URLByAppendingPathComponent:@"Recovery" isDirectory:YES];
++        [[NSFileManager defaultManager] createDirectoryAtURL:recovery
++                                 withIntermediateDirectories:YES attributes:nil error:nil];
++        NSURL *saved = [recovery URLByAppendingPathComponent:
++            [@"OpenRecent-" stringByAppendingString:[NSUUID UUID].UUIDString]];
++        saved = [saved URLByAppendingPathExtension:@"blend"];
++        NSError *moveError = nil;
++        if ([[NSFileManager defaultManager] moveItemAtURL:_backupFile toURL:saved
++                                                    error:&moveError]) {
++          NSLog(@"Previous working project retained at %@", saved.path);
++        }
++        else {
++          NSLog(@"Could not retain previous working project: %@", moveError);
++        }
++      }
++    }
++    if (_bookmarkUpdated) {
++      GHOST_IOS_remember_project_bookmark(_workingPath, _bookmark);
++    }
++  }
++  [self cancel];
++}
++@end
++
++static GHOST_IOSRecentProjectOpener *GHOST_IOS_recent_project_opener()
++{
++  static GHOST_IOSRecentProjectOpener *opener = nil;
++  if (!opener) {
++    opener = [[GHOST_IOSRecentProjectOpener alloc] init];
++  }
++  return opener;
++}
++
++bool GHOST_IOS_recent_project_is_linked(const char *path)
++{
++  if (![NSThread isMainThread] || !path) {
++    return false;
++  }
++  NSString *working = [NSString stringWithUTF8String:path];
++  if (!working.length) {
++    return false;
++  }
++  NSString *document = GHOST_IOS_document_path_for_project(working);
++  return document.length && ![document isEqualToString:working] &&
++         [GHOST_IOS_bookmark_for_project(working) length] &&
++         [GHOST_IOS_document_digest_for_project(working) length];
++}
++
++bool GHOST_IOS_recent_project_begin(const char *path,
++                                     bool loadUISet,
++                                     bool loadUI,
++                                     bool useScriptsSet,
++                                     bool useScripts)
++{
++  if (![NSThread isMainThread] || !path) {
++    return false;
++  }
++  NSString *working = [NSString stringWithUTF8String:path];
++  return working && [GHOST_IOS_recent_project_opener() begin:working
++      loadUISet:loadUISet loadUI:loadUI useScriptsSet:useScriptsSet useScripts:useScripts];
++}
++
++bool GHOST_IOS_recent_project_is_ready(const char *path, int ticket)
++{
++  if (![NSThread isMainThread] || !path) {
++    return false;
++  }
++  NSString *working = [NSString stringWithUTF8String:path];
++  return working && [GHOST_IOS_recent_project_opener() isReady:working ticket:ticket];
++}
++
++GHOST_IOSRecentProjectCommit GHOST_IOS_recent_project_commit(const char *path, int ticket)
++{
++  if (![NSThread isMainThread] || !path) {
++    return GHOST_IOSRecentProjectCommit_Failed;
++  }
++  NSString *working = [NSString stringWithUTF8String:path];
++  return working ? [GHOST_IOS_recent_project_opener() commit:working ticket:ticket] :
++                   GHOST_IOSRecentProjectCommit_Failed;
++}
++
++void GHOST_IOS_recent_project_finish_open(int ticket, bool success)
++{
++  if ([NSThread isMainThread]) {
++    [GHOST_IOS_recent_project_opener() finishOpen:ticket success:success];
++  }
++}
++
++void GHOST_IOS_recent_project_cancel()
++{
++  if ([NSThread isMainThread]) {
++    [GHOST_IOS_recent_project_opener() cancel];
++  }
++}
++
++void GHOST_IOS_cleanup_abandoned_recent_stages()
++{
++  NSURL *root = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++  NSArray<NSURL *> *entries = [[NSFileManager defaultManager]
++      contentsOfDirectoryAtURL:root includingPropertiesForKeys:nil options:0 error:nil];
++  for (NSURL *entry in entries) {
++    if ([entry.lastPathComponent hasPrefix:@"BlenderRecent-"]) {
++      [[NSFileManager defaultManager] removeItemAtURL:entry error:nil];
++    }
++  }
++}
 diff --git a/intern/ghost/intern/GHOST_ProjectSaveIOS.hh b/intern/ghost/intern/GHOST_ProjectSaveIOS.hh
 new file mode 100644
 --- /dev/null

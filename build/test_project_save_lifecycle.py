@@ -146,6 +146,25 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("wm_ipad_close_after_save_resume(C, win", window)
         self.assertIn("data_ = &ticket_", native_save)
 
+    def test_provider_recent_checks_before_unsaved_prompt_and_validates_ticket(self):
+        native = diff_for("intern/ghost/intern/GHOST_ProjectRecentIOS.hh")
+        files = diff_for("source/blender/windowmanager/intern/wm_files.cc")
+        window = diff_for("source/blender/windowmanager/intern/wm_window.cc")
+        api = diff_for("intern/ghost/GHOST_ProjectImport-api.hh")
+        self.assertIn("coordinateReadingItemAtURL:provider", native)
+        self.assertIn("[self showResult]", native)
+        self.assertIn("_localDigest isEqualToData:_expectedDigest", native)
+        self.assertIn("_providerDigest isEqualToData:_expectedDigest", native)
+        self.assertIn("GHOST_IOS_recent_project_is_ready", api)
+        self.assertIn("GHOST_IOS_recent_project_is_ready(recent->path, recent->ticket)", window)
+        self.assertIn("if (recent->load_ui_set)", window)
+        self.assertIn("if (recent->use_scripts_set)", window)
+        self.assertLess(files.index("GHOST_IOS_recent_project_begin(path,"),
+                        files.index("GHOST_IOS_recent_project_commit(filepath, recent_ticket)"))
+        self.assertIn("GHOST_IOS_recent_project_commit(filepath, recent_ticket)", files)
+        self.assertIn("GHOST_IOS_recent_project_finish_open(recent_ticket, success)", files)
+        self.assertIn("GHOST_IOS_recent_project_cancel();", files)
+
     def test_files_linked_open_keeps_document_identity_and_local_working_file(self):
         importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
         save = diff_for("intern/ghost/intern/GHOST_ProjectSaveIOS.hh")
