@@ -3679,7 +3679,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,992 @@
+@@ -0,0 +1,1019 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4213,22 +4213,31 @@ new file mode 100644
 +  NSFileManager *manager = [NSFileManager defaultManager];
 +  NSURL *documents = [[manager URLsForDirectory:NSDocumentDirectory
 +                                      inDomains:NSUserDomainMask] firstObject];
++  if (!documents) {
++    return;
++  }
 +  NSURL *projects = [documents URLByAppendingPathComponent:@"Projects" isDirectory:YES];
-+  NSArray<NSURL *> *entries = [manager contentsOfDirectoryAtURL:projects
-+                                     includingPropertiesForKeys:nil options:0 error:nil];
++  NSURL *libraries = [documents URLByAppendingPathComponent:@"Libraries" isDirectory:YES];
 +  NSMutableArray<NSURL *> *abandoned = [NSMutableArray array];
-+  NSString *prefix = @".BlenderImport-";
-+  for (NSURL *entry in entries) {
-+    NSString *name = entry.lastPathComponent;
-+    if (![name hasPrefix:prefix]) {
-+      continue;
-+    }
-+    NSString *identifier = [name substringFromIndex:prefix.length];
-+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:identifier];
-+    const BOOL ours = uuid && [[uuid UUIDString] isEqualToString:identifier];
-+    [uuid release];
-+    if (ours) {
-+      [abandoned addObject:entry];
++  for (NSArray *location in @[@[projects, @".BlenderImport-"],
++                             @[libraries, @".BlenderLibraryImport-"]])
++  {
++    NSURL *root = location[0];
++    NSString *prefix = location[1];
++    NSArray<NSURL *> *entries = [manager contentsOfDirectoryAtURL:root
++                                       includingPropertiesForKeys:nil options:0 error:nil];
++    for (NSURL *entry in entries) {
++      NSString *name = entry.lastPathComponent;
++      if (![name hasPrefix:prefix]) {
++        continue;
++      }
++      NSString *identifier = [name substringFromIndex:prefix.length];
++      NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:identifier];
++      const BOOL ours = uuid && [[uuid UUIDString] isEqualToString:identifier];
++      [uuid release];
++      if (ours) {
++        [abandoned addObject:entry];
++      }
 +    }
 +  }
 +  if (!abandoned.count) {
@@ -4531,10 +4540,17 @@ new file mode 100644
 +            [[[manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject]
 +                URLByAppendingPathComponent:@"Libraries" isDirectory:YES] :
 +            [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
++        NSString *identifier = [NSUUID UUID].UUIDString;
 +        NSString *folder = [NSString stringWithFormat:@"%@-%@",
-+            (libraryCopy ? @"BlenderLibrary" : @"BlenderImport"), [NSUUID UUID].UUIDString];
++            (libraryCopy ? @"BlenderLibrary" : @"BlenderImport"), identifier];
 +        NSURL *importDir = [root URLByAppendingPathComponent:folder isDirectory:YES];
++        /* Keep an unfinished library invisible in Files until its read succeeds. */
++        NSURL *stagingDir = libraryCopy ?
++            [root URLByAppendingPathComponent:
++                [@".BlenderLibraryImport-" stringByAppendingString:identifier] isDirectory:YES] :
++            importDir;
 +        NSURL *destination = [importDir URLByAppendingPathComponent:source.lastPathComponent];
++        NSURL *stagingDestination = [stagingDir URLByAppendingPathComponent:source.lastPathComponent];
 +        NSError *coordError = nil;
 +        __block NSError *copyError = nil;
 +        __block BOOL copied = NO;
@@ -4546,20 +4562,27 @@ new file mode 100644
 +            if (copyProgress.cancelled) {
 +              return;
 +            }
-+            if ([manager createDirectoryAtURL:importDir withIntermediateDirectories:YES
++            if ([manager createDirectoryAtURL:stagingDir withIntermediateDirectories:YES
 +                                   attributes:nil error:&copyError]) {
-+              copied = [manager copyItemAtURL:read_url toURL:destination error:&copyError];
++              copied = [manager copyItemAtURL:read_url toURL:stagingDestination error:&copyError];
 +            }
 +          }];
 +        }
 +        [coordinator release];
++        if (copied && libraryCopy && !copyProgress.cancelled) {
++          copied = [manager moveItemAtURL:stagingDir toURL:importDir error:&copyError];
++        }
 +        if (scoped) {
 +          [source stopAccessingSecurityScopedResource];
 +        }
 +        dispatch_async(dispatch_get_main_queue(), ^{
 +          if (generation != _generation || copyProgress.cancelled || ![self hasLivePresenter]) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
-+              [[NSFileManager defaultManager] removeItemAtURL:importDir error:nil];
++              NSFileManager *cleanupManager = [NSFileManager defaultManager];
++              if (libraryCopy) {
++                [cleanupManager removeItemAtURL:stagingDir error:nil];
++              }
++              [cleanupManager removeItemAtURL:importDir error:nil];
 +            });
 +            if (generation == _generation) {
 +              if (onCancelled) {
@@ -4577,7 +4600,11 @@ new file mode 100644
 +          const bool accepted = copied && onPicked && onPicked(destination.path.UTF8String);
 +          if (!accepted) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
-+              [[NSFileManager defaultManager] removeItemAtURL:importDir error:nil];
++              NSFileManager *cleanupManager = [NSFileManager defaultManager];
++              if (libraryCopy) {
++                [cleanupManager removeItemAtURL:stagingDir error:nil];
++              }
++              [cleanupManager removeItemAtURL:importDir error:nil];
 +            });
 +            if (onCancelled) {
 +              onCancelled();
