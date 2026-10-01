@@ -391,16 +391,25 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3172,8 +3198,49 @@
+@@ -3172,8 +3198,61 @@
                                          nullptr);
  }
 
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+static bool wm_open_mainfile_recent_begin(wmOperator *op, wmOperatorStatus *r_status)
++static bool wm_open_mainfile_recent_begin(bContext *C, wmOperator *op, wmOperatorStatus *r_status)
 +{
 +  char path[FILE_MAX];
 +  RNA_string_get(op->ptr, "filepath", path);
 +  BLI_path_canonicalize_native(path, sizeof(path));
++  const bool fresh = GHOST_IOS_recent_project_consume_fresh(path);
++  if (fresh && (!(U.uiflag & USER_SAVE_PROMPT) ||
++                !wm_file_or_session_data_has_unsaved_changes(CTX_data_main(C),
++                                                            CTX_wm_manager(C))))
++  {
++    GHOST_IOS_recent_project_cancel();
++    RNA_boolean_set(op->ptr, "ios_recent_fresh", true);
++    return false;
++  }
 +  if (!GHOST_IOS_recent_project_is_linked(path)) {
 +    GHOST_IOS_recent_project_cancel();
 +    return false;
@@ -426,13 +435,16 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  static wmOperatorStatus wm_open_mainfile__discard_changes_exec(bContext *C, wmOperator *op)
  {
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0) {
++  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0 &&
++      !RNA_boolean_get(op->ptr, "ios_recent_fresh"))
++  {
 +    if (RNA_boolean_get(op->ptr, "display_file_selector")) {
++      GHOST_IOS_recent_project_consume_fresh(nullptr);
 +      GHOST_IOS_recent_project_cancel();
 +    }
 +    else {
 +      wmOperatorStatus status;
-+      if (wm_open_mainfile_recent_begin(op, &status)) {
++      if (wm_open_mainfile_recent_begin(C, op, &status)) {
 +        return status;
 +      }
 +    }
@@ -441,7 +453,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if (RNA_boolean_get(op->ptr, "display_file_selector")) {
      set_next_operator_state(op, OPEN_MAINFILE_STATE_SELECT_FILE_PATH);
    }
-@@ -3202,6 +3269,13 @@
+@@ -3202,6 +3281,13 @@
      return OPERATOR_CANCELLED;
    }
 
@@ -455,7 +467,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    /* If possible, get the name of the most recently used `.blend` file. */
    if (G.recent_files.first) {
      RecentFile *recent = static_cast<RecentFile *>(G.recent_files.first);
-@@ -3217,6 +3291,7 @@
+@@ -3217,6 +3303,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -463,16 +475,16 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3226,6 +3301,34 @@
+@@ -3226,6 +3313,34 @@
 
    RNA_string_get(op->ptr, "filepath", filepath);
    BLI_path_canonicalize_native(filepath, sizeof(filepath));
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  const int recent_ticket = RNA_int_get(op->ptr, "ios_recent_ticket");
-+  if (recent_ticket == 0) {
++  if (recent_ticket == 0 && !RNA_boolean_get(op->ptr, "ios_recent_fresh")) {
 +    wmOperatorStatus status;
-+    if (wm_open_mainfile_recent_begin(op, &status)) {
++    if (wm_open_mainfile_recent_begin(C, op, &status)) {
 +      return status;
 +    }
 +  }
@@ -483,7 +495,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +      GHOST_IOS_recent_project_cancel();
 +      RNA_int_set(op->ptr, "ios_recent_ticket", 0);
 +      wmOperatorStatus status;
-+      if (wm_open_mainfile_recent_begin(op, &status)) {
++      if (wm_open_mainfile_recent_begin(C, op, &status)) {
 +        return status;
 +      }
 +    }
@@ -498,7 +510,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    /* For file opening, also print in console for warnings, not only errors. */
    BKE_report_print_level_set(op->reports, RPT_WARNING);
-@@ -3237,6 +3340,11 @@
+@@ -3237,6 +3352,11 @@
    SET_FLAG_FROM_TEST(G.fileflags, !RNA_boolean_get(op->ptr, "load_ui"), G_FILE_NO_UI);
    SET_FLAG_FROM_TEST(G.f, RNA_boolean_get(op->ptr, "use_scripts"), G_FLAG_SCRIPT_AUTOEXEC);
    success = wm_file_read_opwrap(C, filepath, use_scripts_autoexec_check, op->reports);
@@ -510,14 +522,16 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if (success) {
      if (G.fileflags & G_FILE_NO_UI) {
-@@ -3269,6 +3377,14 @@
+@@ -3269,6 +3389,16 @@
 
  static wmOperatorStatus wm_open_mainfile_exec(bContext *C, wmOperator *op)
  {
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0) {
++  if (RNA_int_get(op->ptr, "ios_recent_ticket") == 0 &&
++      !RNA_boolean_get(op->ptr, "ios_recent_fresh"))
++  {
 +    wmOperatorStatus status;
-+    if (wm_open_mainfile_recent_begin(op, &status)) {
++    if (wm_open_mainfile_recent_begin(C, op, &status)) {
 +      return status;
 +    }
 +  }
@@ -525,7 +539,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    return wm_open_mainfile__open(C, op);
  }
 
-@@ -3378,6 +3494,400 @@
+@@ -3378,6 +3508,400 @@
                    "system preferences");
  }
 
@@ -926,7 +940,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
    ot->name = "Open";
-@@ -3409,6 +3919,11 @@
+@@ -3409,6 +3933,14 @@
    RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
    create_operator_state(ot, OPEN_MAINFILE_STATE_DISCARD_CHANGES);
@@ -934,11 +948,14 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +  PropertyRNA *recent_ticket = RNA_def_int(
 +      ot->srna, "ios_recent_ticket", 0, 0, INT32_MAX, "Files Recent Ticket", "", 0, INT32_MAX);
 +  RNA_def_property_flag(recent_ticket, PROP_SKIP_SAVE | PROP_HIDDEN);
++  PropertyRNA *fresh = RNA_def_boolean(
++      ot->srna, "ios_recent_fresh", false, "Fresh Files Project", "");
++  RNA_def_property_flag(fresh, PROP_SKIP_SAVE | PROP_HIDDEN);
 +#endif
  }
 
  /** \} */
-@@ -3696,7 +4211,10 @@
+@@ -3696,7 +4228,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -950,7 +967,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +4226,7 @@
+@@ -3708,6 +4243,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -958,7 +975,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3744,6 +4263,16 @@
+@@ -3744,6 +4280,16 @@
                 "Unable to save an unsaved file with an empty or unset \"filepath\" property");
      return OPERATOR_CANCELLED;
    }
@@ -975,7 +992,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if ((is_save_as == false) && is_incremental) {
      char head[FILE_MAXFILE], tail[FILE_MAXFILE];
-@@ -3922,6 +4451,11 @@
+@@ -3922,6 +4468,11 @@
     * any existing paths will be absolute,
     * enable the option to remap paths to avoid confusion, see: #37240. */
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
@@ -987,7 +1004,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
      if (!RNA_property_is_set(op->ptr, prop)) {
-@@ -3939,8 +4473,13 @@
+@@ -3939,8 +4490,13 @@
      }
    }
    else {
@@ -1001,7 +1018,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3966,6 +4505,10 @@
+@@ -3966,6 +4522,10 @@
 
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
@@ -1012,7 +1029,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    ot->check = wm_save_mainfile_check;
    ot->get_description = wm_save_mainfile_get_description;
    /* Omit window poll so this can work in background mode. */
-@@ -4599,6 +5142,9 @@
+@@ -4599,6 +5159,9 @@
 
  static void wm_block_file_close_cancel(bContext *C, void *arg_block, void * /*arg_data*/)
  {
@@ -1022,7 +1039,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    wmWindow *win = CTX_wm_window(C);
    UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
  }
-@@ -4658,10 +5204,34 @@
+@@ -4658,10 +5221,34 @@
        execute_callback = false;
      }
      else {
@@ -1058,7 +1075,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
        }
      }
    }
-@@ -4671,10 +5241,12 @@
+@@ -4671,10 +5258,12 @@
      execute_callback = false;
    }
 
@@ -3876,7 +3893,7 @@ diff --git a/intern/ghost/GHOST_ProjectImport-api.hh b/intern/ghost/GHOST_Projec
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_ProjectImport-api.hh
-@@ -0,0 +1,94 @@
+@@ -0,0 +1,97 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +#include <cstddef>
@@ -3932,6 +3949,9 @@ new file mode 100644
 +};
 +bool GHOST_IOS_recent_project_is_linked(const char *path);
 +bool GHOST_IOS_recent_project_is_ready(const char *path, int ticket);
++/* Skip a second Files check only for the first open of a just-copied linked file. */
++void GHOST_IOS_recent_project_mark_fresh(const char *path);
++bool GHOST_IOS_recent_project_consume_fresh(const char *path);
 +bool GHOST_IOS_recent_project_begin(const char *path,
 +                                    bool load_ui_set,
 +                                    bool load_ui,
@@ -3975,7 +3995,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,1023 @@
+@@ -0,0 +1,1024 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4086,6 +4106,7 @@ new file mode 100644
 +  }
 +  if (bookmark && documentPath.length) {
 +    GHOST_IOS_remember_imported_project_bookmark(file.path, documentPath, bookmark, digest);
++    GHOST_IOS_recent_project_mark_fresh(file.path.UTF8String);
 +  }
 +  /* Normal GHOST open event retains Blender's unsaved-changes dialog and script
 +   * policy. No operator/context pointer survives UIKit. */
@@ -11123,7 +11144,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectRecentIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectRecentIOS.hh
-@@ -0,0 +1,553 @@
+@@ -0,0 +1,584 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included after GHOST_ProjectSaveIOS.hh by GHOST_SystemIOS.mm. A Recent
@@ -11443,11 +11464,11 @@ new file mode 100644
 +      if (provider && [provider.path isEqualToString:expectedPath] && (scoped || owned)) {
 +        NSFileManager *manager = [NSFileManager defaultManager];
 +        __block NSError *copyError = nil;
++        NSError *coordinateError = nil;
 +        if ([manager createDirectoryAtURL:stageDirectory withIntermediateDirectories:YES
 +                               attributes:nil error:&copyError])
 +        {
 +          NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-+          NSError *coordinateError = nil;
 +          [coordinator coordinateReadingItemAtURL:provider options:0 error:&coordinateError
 +                                       byAccessor:^(NSURL *readURL) {
 +            [manager copyItemAtURL:readURL toURL:stageFile error:&copyError];
@@ -11602,6 +11623,37 @@ new file mode 100644
 +    opener = [[GHOST_IOSRecentProjectOpener alloc] init];
 +  }
 +  return opener;
++}
++
++/* The picker already coordinated and copied this exact provider revision.
++ * A one-shot exemption avoids immediately showing a second preparation sheet.
++ * Any other open consumes the exemption without using it. */
++static NSString *GHOST_IOS_fresh_linked_project = nil;
++static NSTimeInterval GHOST_IOS_fresh_linked_since = 0;
++
++void GHOST_IOS_recent_project_mark_fresh(const char *path)
++{
++  if (![NSThread isMainThread]) {
++    return;
++  }
++  [GHOST_IOS_fresh_linked_project release];
++  GHOST_IOS_fresh_linked_project = path ? [[NSString stringWithUTF8String:path] copy] : nil;
++  GHOST_IOS_fresh_linked_since = [NSDate timeIntervalSinceReferenceDate];
++}
++
++bool GHOST_IOS_recent_project_consume_fresh(const char *path)
++{
++  if (![NSThread isMainThread]) {
++    return false;
++  }
++  NSString *candidate = path ? [NSString stringWithUTF8String:path] : nil;
++  const bool fresh = candidate &&
++                     [NSDate timeIntervalSinceReferenceDate] - GHOST_IOS_fresh_linked_since < 30 &&
++                     [candidate isEqualToString:GHOST_IOS_fresh_linked_project];
++  [GHOST_IOS_fresh_linked_project release];
++  GHOST_IOS_fresh_linked_project = nil;
++  GHOST_IOS_fresh_linked_since = 0;
++  return fresh;
 +}
 +
 +bool GHOST_IOS_recent_project_is_linked(const char *path)

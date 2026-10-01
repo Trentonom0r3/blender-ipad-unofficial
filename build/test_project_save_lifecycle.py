@@ -146,6 +146,19 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("wm_ipad_close_after_save_resume(C, win", window)
         self.assertIn("data_ = &ticket_", native_save)
 
+    def test_initial_linked_files_open_uses_its_fresh_coordinated_copy(self):
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        recent = diff_for("intern/ghost/intern/GHOST_ProjectRecentIOS.hh")
+        files = diff_for("source/blender/windowmanager/intern/wm_files.cc")
+        self.assertLess(importer.index("GHOST_IOS_remember_imported_project_bookmark(file.path,"),
+                        importer.index("GHOST_IOS_recent_project_mark_fresh(file.path.UTF8String)"))
+        self.assertIn("GHOST_IOS_recent_project_consume_fresh(path)", files)
+        self.assertIn('RNA_boolean_set(op->ptr, "ios_recent_fresh", true)', files)
+        self.assertIn("fresh && (!(U.uiflag & USER_SAVE_PROMPT) ||", files)
+        self.assertIn("wm_file_or_session_data_has_unsaved_changes(CTX_data_main(C)", files)
+        self.assertIn('!RNA_boolean_get(op->ptr, "ios_recent_fresh")', files)
+        self.assertIn("GHOST_IOS_fresh_linked_since < 30", recent)
+
     def test_provider_recent_checks_before_unsaved_prompt_and_validates_ticket(self):
         native = diff_for("intern/ghost/intern/GHOST_ProjectRecentIOS.hh")
         files = diff_for("source/blender/windowmanager/intern/wm_files.cc")
