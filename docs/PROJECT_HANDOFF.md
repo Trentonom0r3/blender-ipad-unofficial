@@ -1,5 +1,36 @@
 # Project handoff — 2026-10-01
 
+## Provider-linked Open source candidate — 2026-10-01
+
+After the user said the current Inspector "seems fine to me," development moved
+to the Files workflow. The patch adds **Open Project from Files** to the iPad
+File menu and 3D workspace controls. It preserves **Open Project Copy** as an
+independent local copy and **Import Project Folder** for sibling assets.
+The linked route requests the provider URL through the native picker, makes a
+coordinated local working copy, stores the provider bookmark and source content
+fingerprint under that local path, then queues Blender's normal open event.
+Ordinary Save uses the provider bookmark and a coordinated write. Within the
+write accessor, it compares current provider bytes with the stored fingerprint;
+a mismatch or unreadable file refuses the write and directs the user to Save
+As to preserve edits. A successful write updates the fingerprint and refreshes
+the local working copy. If that local refresh fails after a provider write, a
+distinct error leaves the project dirty. Existing Save As bookmarks and legacy
+entries remain supported. The new route does not import sibling assets or
+complete the provider sidecar, revocation and recovery lifecycle.
+
+All 40 host tests pass, including a new route/lifecycle regression check.
+Pinned-source preflight applies the overlay to 56 files, and git diff --check
+is clean. The LF-normalized overlay is 452,261 bytes, SHA-256
+29f69b604fc136f337aadb878652b1984f9590689fdb1513c24edbf45aa3a105.
+These are source and host checks only; no native IPA has been built for this
+candidate. Commit/push the exact source, dispatch one iOS build, inspect actual
+compiler results, and verify the IPA artifact if successful. Then ask the user
+for a focused Files test and pause development per their standing request:
+open a provider .blend, edit/Save/reopen; change the provider file externally
+and confirm conflict recovery via Save As; check the independent copy and
+complete-folder routes. A cloud provider and app relaunch are useful. Distinguish
+package verification from device acceptance.
+
 ## User response to latest Inspector IPA — 2026-10-01
 
 The user replied "seems fine to me" to the focused test request for run

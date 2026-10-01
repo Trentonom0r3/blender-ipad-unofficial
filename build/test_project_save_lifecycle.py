@@ -83,6 +83,42 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("_generation == generation && !_picker", save)
         self.assertIn("native_files = \"save_as_to_files\" in dir(bpy.ops.wm)", menu)
 
+    def test_files_linked_open_keeps_document_identity_and_local_working_file(self):
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        save = diff_for("intern/ghost/intern/GHOST_ProjectSaveIOS.hh")
+        api = diff_for("intern/ghost/GHOST_ProjectImport-api.hh")
+        files = diff_for("source/blender/windowmanager/intern/wm_files.cc")
+        menu = diff_for("scripts/startup/bl_ui/space_topbar.py")
+
+        self.assertIn("GHOST_IOS_open_provider_project()", api)
+        self.assertIn("presentWithFolderMode:NO linkedMode:YES", importer)
+        self.assertIn("presentWithFolderMode:NO linkedMode:NO", importer)
+        self.assertIn("presentWithFolderMode:YES linkedMode:NO", importer)
+        self.assertIn("bookmarkDataWithOptions:0", importer)
+        self.assertIn("if (!linkedBookmark.length || !linkedDigest.length)", importer)
+        self.assertIn("GHOST_IOS_remember_imported_project_bookmark(file.path, documentPath, bookmark, digest)", importer)
+        self.assertLess(
+            importer.index("handleOpenDocumentRequest(file.path)"),
+            importer.index("GHOST_IOS_remember_imported_project_bookmark(file.path, documentPath, bookmark, digest)"),
+        )
+
+        self.assertIn('@"documentPath": documentPath', save)
+        self.assertIn('@"digest": digest', save)
+        self.assertIn('@"bookmark": bookmark', save)
+        self.assertIn("_documentPath = [documentPath copy]", save)
+        self.assertIn("_workingPath = [path copy]", save)
+        self.assertIn("[destination.path isEqualToString:expected]", save)
+        self.assertIn("coordinateWritingItemAtURL:destination", save)
+        self.assertIn("[bytes writeToFile:working options:NSDataWritingAtomic", save)
+        self.assertIn("GHOST_IOSProjectExportAction_MirrorFailed", api)
+        self.assertIn("GHOST_IOSProjectExportAction_Conflict", api)
+        self.assertIn("[currentDigest isEqualToData:expectedDigest]", save)
+        self.assertIn("GHOST_IOS_remember_project_digest(working, newDigest)", save)
+        self.assertIn("GHOST_IOSProjectExportAction_MirrorFailed", files)
+        self.assertIn("WM_OT_open_provider_project_from_files", files)
+        self.assertIn("wm.open_provider_project_from_files", menu)
+        self.assertIn("Open Project Copy...", menu)
+
     def test_project_folder_import_preserves_sibling_files_and_native_open_lifecycle(self):
         importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
         api = diff_for("intern/ghost/GHOST_ProjectImport-api.hh")

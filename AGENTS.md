@@ -10,6 +10,23 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Files-linked project opening candidate — source only, 2026-10-01
+
+The user finds the current Inspector acceptable, so work moved to Files. The
+new explicit Open Project from Files route coordinates a local working copy,
+retains a bookmark for the selected provider document, and routes ordinary
+Save through the existing coordinated writer. The independent Open Project
+Copy and Import Project Folder choices remain. Linked projects store a content
+fingerprint and refuse a provider write when the source differs or cannot be
+checked; Save As preserves edits in that case. After a successful provider
+write, the local working file is refreshed for Open Recent and relative paths.
+A provider write that succeeds while local refresh fails has a distinct error.
+Single-file opening still requires packed assets if sibling resources matter;
+folder import remains the choice for full relative assets. This is a source
+candidate, not a verified native build or device acceptance. All 40 host tests
+and pinned-source preflight pass; see PROJECT_HANDOFF for the exact overlay.
+Inspect native build results before asking for a device workflow check.
+
 ## Latest device feedback — 2026-10-01
 
 After receiving the focused test request for exact-source IPA run 36818147730,
