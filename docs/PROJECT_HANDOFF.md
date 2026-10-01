@@ -30,6 +30,27 @@ build, repair actual compiler failures, and verify any IPA. Continue the
 remaining native Files and touch workspace requirements without treating
 the pending device report as a block.
 
+## Import build dispatch and Link/Append source audit — 2026-10-01
+
+Source e46932fd9d7190e92c4dc7e32e649500bb6c9a53 was pushed for the
+native import callback lease and cleanup change. Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36832783348
+passed cloud preflight and was fetching the pinned Blender source at
+2026-10-01 07:53 UTC. Inspect its actual result before dispatching another
+build. Its native compilation, IPA and device behavior are still unverified.
+
+A pinned-source audit found that the generic iPad file-selector intercept
+classifies operator IDs containing import/open or export/save. WM_OT_link and
+WM_OT_append contain neither, so they still fall through to Blender's desktop
+File Browser. The pinned wm_files_link.cc shows why treating them as a generic
+model import would be wrong: Link/Append execution requires a library path
+including a data-block group and name (or selected files). A bare .blend
+choice reports that nothing was indicated. A temporary .blend copy would also
+be an unsafe lasting target for linked data. The next coherent Files route
+needs native provider selection into durable storage, then a touch-usable
+Blender data-block selection surface that preserves Link/Append options and
+persistent library paths. Do not add them to the generic import classifier.
+
 ## Verified provider-linked Files IPA; device check needed — 2026-10-01
 
 Exact-source iOS run
