@@ -10,6 +10,17 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Latest device feedback — 2026-10-01
+
+After receiving the focused test request for exact-source IPA run 36818147730,
+the user replied, "seems fine to me." Treat the Inspector's current appearance
+and sizing as acceptable for now; no specific problems were reported. This
+brief report does not verify every fresh/saved, portrait, Files or external-input
+case. The requested testing pause is over. Continue the active first-class
+iPad goal, preserving the working Pencil mappings and native editors. Avoid
+another Inspector redesign without new evidence. The latest verified package
+is still run 36818147730 at e3a4eff; see PROJECT_HANDOFF for exact evidence.
+
 ## Inspector saved-width follow-up — 2026-10-01
 
 The active goal resumed after the verified 35984874300 test request; no user

@@ -10,6 +10,13 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Current device response — 2026-10-01
+
+The user answered the latest Inspector IPA test request with "seems fine to
+me." The existing Inspector design can stand while work continues elsewhere.
+No individual fresh/saved, orientation, Pencil or external-input steps were
+described, so do not mark the complete workspace acceptance matrix finished.
+
 ## Inspector width persistence follow-up — source, 2026-10-01
 
 The first narrower Inspector IPA was verified as a package, but a source audit

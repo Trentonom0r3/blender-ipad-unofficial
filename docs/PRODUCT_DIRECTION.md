@@ -32,6 +32,15 @@ the next interaction or visual change. Keep source implementation, host tests,
 packaged IPA and actual-device acceptance separate. The full goal remains
 active until the product outcome is satisfied.
 
+## Device response to current Inspector — 2026-10-01
+
+The user replied "seems fine to me" to the request to test IPA run
+36818147730. This supports proceeding with the current Inspector layout
+rather than changing it again now. The report is brief; it is not a detailed
+acceptance record for the full touch/Pencil workflow, Files lifecycle, narrow
+windows or external input. Keep those requirements open and pursue the next
+source-backed usability gap.
+
 ## Saved-project Inspector sizing follow-up — 2026-10-01
 
 Source audit after the verified 35984874300 IPA found that all side editors
