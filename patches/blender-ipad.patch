@@ -3679,7 +3679,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,974 @@
+@@ -0,0 +1,992 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4583,7 +4583,25 @@ new file mode 100644
 +              onCancelled();
 +            }
 +          }
++          /* A failed coordinated copy otherwise looks like a cancelled picker. */
++          UIViewController *errorPresenter = !copied && [self hasLivePresenter] ?
++              [_presenter retain] : nil;
 +          [self finish];
++          if (errorPresenter) {
++            dispatch_async(dispatch_get_main_queue(), ^{
++              if (errorPresenter.view.window && !errorPresenter.presentedViewController) {
++                UIAlertController *alert = [UIAlertController
++                    alertControllerWithTitle:libraryCopy ? @"Library Not Copied" : @"Model Not Copied"
++                                 message:@"The selected file could not be copied. Check Files access and available storage, then try again."
++                          preferredStyle:UIAlertControllerStyleAlert];
++                [alert addAction:[UIAlertAction actionWithTitle:@"OK"
++                                                         style:UIAlertActionStyleCancel
++                                                       handler:nil]];
++                [errorPresenter presentViewController:alert animated:YES completion:nil];
++              }
++              [errorPresenter release];
++            });
++          }
 +          [copyProgress release];
 +        });
 +      }
