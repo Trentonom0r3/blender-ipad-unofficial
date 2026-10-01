@@ -1,5 +1,35 @@
 # Project handoff — 2026-10-01
 
+## Independent continuation and native import lifetime candidate — 2026-10-01
+
+The user explicitly resumed the broad goal without waiting for device
+feedback and asked to work until the available five-hour/weekly account
+windows run low, scheduling a resume near reset when needed. This supersedes
+the earlier pause request in historical entries. Exact-source Files IPA run
+36829384514 remains packaged and verified but unaccepted on iPad.
+
+Source audit found the generic native model-import picker captured a
+wmOperator pointer in delayed success/cancel callbacks and recognized it
+only by address in a handler list. If an operator was freed and that address
+reused, the callback could mutate or cancel a different operator. The
+candidate assigns an increasing lease token at picker presentation,
+invalidates it when the file-select operator is freed, and checks the token,
+live window manager and handler before touching RNA or sending a file-select
+event. The picked callback now returns whether Blender accepted the staged
+file; rejected, canceled and stale-generation staging directories are
+removed. The accepted file remains staged for the existing import operator.
+This does not change model import settings, Pencil mappings or native
+editor behavior.
+
+All 41 host tests pass, including callback-lifetime regression assertions.
+Pinned-source preflight applies the overlay to 56 files; git diff --check
+is clean. The LF-normalized overlay is 453,475 bytes, SHA-256
+ed0f1f77e9b42da13458691ff44a2678c02b362b82f80b24f0cb4a978952eaa8.
+This is source evidence only. Commit/push exact source, dispatch one native
+build, repair actual compiler failures, and verify any IPA. Continue the
+remaining native Files and touch workspace requirements without treating
+the pending device report as a block.
+
 ## Verified provider-linked Files IPA; device check needed — 2026-10-01
 
 Exact-source iOS run

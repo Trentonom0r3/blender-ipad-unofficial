@@ -3662,7 +3662,7 @@ new file mode 100644
 + * When a file is chosen, it is coordinated/copied into a sandbox location
 + * and callback is invoked on the main thread with the local path. */
 +bool GHOST_IOS_import_file(const char *filter_glob,
-+                           const std::function<void(const char *local_path)> &on_picked,
++                           const std::function<bool(const char *local_path)> &on_picked,
 +                           const std::function<void()> &on_cancelled);
 +
 +/* Flythrough navigation state toggle for iPad touch controls. */
@@ -3672,7 +3672,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,865 @@
+@@ -0,0 +1,871 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4331,11 +4331,11 @@ new file mode 100644
 +  UIDocumentPickerViewController *_picker;
 +  NSUInteger _generation;
 +  BOOL _busy;
-+  std::function<void(const char *)> _on_picked;
++  std::function<bool(const char *)> _on_picked;
 +  std::function<void()> _on_cancelled;
 +}
 +- (BOOL)presentWithFilter:(NSString *)filterGlob
-+                 onPicked:(const std::function<void(const char *)> &)onPicked
++                 onPicked:(const std::function<bool(const char *)> &)onPicked
 +              onCancelled:(const std::function<void()> &)onCancelled;
 +@end
 +
@@ -4370,7 +4370,7 @@ new file mode 100644
 +}
 +
 +- (BOOL)presentWithFilter:(NSString *)filterGlob
-+                 onPicked:(const std::function<void(const char *)> &)onPicked
++                 onPicked:(const std::function<bool(const char *)> &)onPicked
 +              onCancelled:(const std::function<void()> &)onCancelled
 +{
 +  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
@@ -4496,13 +4496,19 @@ new file mode 100644
 +        }
 +        dispatch_async(dispatch_get_main_queue(), ^{
 +          if (generation != _generation) {
++            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++              [[NSFileManager defaultManager] removeItemAtURL:importDir error:nil];
++            });
 +            return;
 +          }
-+          if (copied && onPicked) {
-+            onPicked(destination.path.UTF8String);
-+          }
-+          else if (onCancelled) {
-+            onCancelled();
++          const bool accepted = copied && onPicked && onPicked(destination.path.UTF8String);
++          if (!accepted) {
++            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++              [[NSFileManager defaultManager] removeItemAtURL:importDir error:nil];
++            });
++            if (onCancelled) {
++              onCancelled();
++            }
 +          }
 +          [self finish];
 +        });
@@ -4513,7 +4519,7 @@ new file mode 100644
 +@end
 +
 +bool GHOST_IOS_import_file(const char *filter_glob,
-+                           const std::function<void(const char *)> &on_picked,
++                           const std::function<bool(const char *)> &on_picked,
 +                           const std::function<void()> &on_cancelled)
 +{
 +  if (![NSThread isMainThread] || !on_picked) {
@@ -4714,7 +4720,17 @@ diff --git a/source/blender/windowmanager/wm_event_types.hh b/source/blender/win
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -28,6 +28,7 @@
+@@ -12,6 +12,9 @@
+
+ #include <cstdlib>
+ #include <cstring>
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include <unordered_map>
++#endif
+ #include <fmt/format.h>
+
+ #include "AS_asset_library.hh"
+@@ -28,6 +31,7 @@
 
  #include "GHOST_C-api.h"
 
@@ -4722,7 +4738,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "BLI_ghash.h"
  #include "BLI_listbase.h"
  #include "BLI_math_vector.h"
-@@ -35,6 +36,10 @@
+@@ -35,6 +39,10 @@
  #include "BLI_string_utf8.h"
  #include "BLI_timer.h"
  #include "BLI_utildefines.h"
@@ -4733,7 +4749,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
  #include "BKE_context.hh"
  #include "BKE_customdata.hh"
-@@ -60,6 +65,10 @@
+@@ -60,6 +68,10 @@
  #include "ED_markers.hh"
  #include "ED_render.hh"
  #include "ED_screen.hh"
@@ -4744,7 +4760,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "ED_undo.hh"
  #include "ED_util.hh"
  #include "ED_view3d.hh"
-@@ -2711,6 +2720,25 @@
+@@ -2711,6 +2723,25 @@
      wmOperatorType *ot = WM_operatortype_find(kmi_idname, false);
 
      if (ot && wm_operator_check_locked_interface(C, ot)) {
@@ -4770,7 +4786,59 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        bool use_last_properties = true;
        PointerRNA tool_properties = {};
 
-@@ -2817,6 +2845,302 @@
+@@ -2787,8 +2818,51 @@
+   return WM_HANDLER_BREAK;
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* A native picker can finish after its file-select handler has gone away.
++ * Reused operator or window-manager addresses must not acquire its callback. */
++static std::unordered_map<wmOperator *, uint64_t> ipad_native_import_tokens;
++static uint64_t ipad_native_import_next_token = 0;
++
++static bool wm_ipad_import_operator_is_live(wmWindowManager *candidate,
++                                             wmOperator *op,
++                                             uint64_t token)
++{
++  const auto it = ipad_native_import_tokens.find(op);
++  if (it == ipad_native_import_tokens.end() || it->second != token || !G_MAIN) {
++    return false;
++  }
++  bool manager_live = false;
++  LISTBASE_FOREACH (wmWindowManager *, manager, &G_MAIN->wm) {
++    if (manager == candidate) {
++      manager_live = true;
++      break;
++    }
++  }
++  if (!manager_live) {
++    return false;
++  }
++  LISTBASE_FOREACH (wmWindow *, win, &candidate->windows) {
++    LISTBASE_FOREACH (wmEventHandler *, base_h, &win->modalhandlers) {
++      if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
++        return true;
++      }
++    }
++    LISTBASE_FOREACH (wmEventHandler *, base_h, &win->handlers) {
++      if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
++        return true;
++      }
++    }
++  }
++  return false;
++}
++#endif
++
+ static void wm_operator_free_for_fileselect(wmOperator *file_operator)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ipad_native_import_tokens.erase(file_operator);
++#endif
+   LISTBASE_FOREACH (bScreen *, screen, &G_MAIN->screens) {
+     LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+       if (area->spacetype == SPACE_FILE) {
+@@ -2817,6 +2891,273 @@
 
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -5000,27 +5068,13 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +          RNA_string_get(op->ptr, "filter_glob", filter_glob);
 +        }
 +
++        const uint64_t picker_token = ++ipad_native_import_next_token;
++        ipad_native_import_tokens[op] = picker_token;
 +        const bool presented = GHOST_IOS_import_file(
 +            filter_glob,
-+            [wm, op](const char *local_path) {
-+              auto is_op_live = [&]() {
-+                LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+                  LISTBASE_FOREACH (wmEventHandler *, base_h, &win->modalhandlers) {
-+                    if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
-+                      return true;
-+                    }
-+                  }
-+                  LISTBASE_FOREACH (wmEventHandler *, base_h, &win->handlers) {
-+                    if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
-+                      return true;
-+                    }
-+                  }
-+                }
++            [wm, op, picker_token](const char *local_path) {
++              if (!wm_ipad_import_operator_is_live(wm, op, picker_token)) {
 +                return false;
-+              };
-+
-+              if (!is_op_live()) {
-+                return;
 +              }
 +
 +              if (RNA_struct_find_property(op->ptr, "filepath")) {
@@ -5039,25 +5093,10 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +                RNA_string_set(&file_elem, "name", BLI_path_basename(local_path));
 +              }
 +              WM_event_fileselect_event(wm, op, EVT_FILESELECT_EXEC);
++              return true;
 +            },
-+            [wm, op]() {
-+              auto is_op_live = [&]() {
-+                LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+                  LISTBASE_FOREACH (wmEventHandler *, base_h, &win->modalhandlers) {
-+                    if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
-+                      return true;
-+                    }
-+                  }
-+                  LISTBASE_FOREACH (wmEventHandler *, base_h, &win->handlers) {
-+                    if (base_h->type == WM_HANDLER_TYPE_OP && ((wmEventHandler_Op *)base_h)->op == op) {
-+                      return true;
-+                    }
-+                  }
-+                }
-+                return false;
-+              };
-+
-+              if (is_op_live()) {
++            [wm, op, picker_token]() {
++              if (wm_ipad_import_operator_is_live(wm, op, picker_token)) {
 +                WM_event_fileselect_event(wm, op, EVT_FILESELECT_CANCEL);
 +              }
 +            });
@@ -5073,7 +5112,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -3808,6 +4132,24 @@
+@@ -3808,6 +4149,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -5098,7 +5137,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +4164,12 @@
+@@ -3822,6 +4181,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -5111,7 +5150,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4227,6 +4575,20 @@
+@@ -4227,6 +4592,20 @@
          }
        }
 
@@ -5132,7 +5171,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4609,15 @@
+@@ -4247,6 +4626,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -5148,7 +5187,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -5784,7 +6155,9 @@
+@@ -5784,7 +6172,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -5159,7 +5198,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -6032,6 +6405,9 @@
+@@ -6032,6 +6422,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -5169,7 +5208,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6481,16 @@
+@@ -6105,6 +6498,16 @@
        }
        break;
      }
@@ -5186,7 +5225,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6512,9 @@
+@@ -6131,6 +6534,9 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -5196,7 +5235,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6527,8 @@
+@@ -6143,7 +6549,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */

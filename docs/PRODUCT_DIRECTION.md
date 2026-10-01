@@ -32,6 +32,17 @@ the next interaction or visual change. Keep source implementation, host tests,
 packaged IPA and actual-device acceptance separate. The full goal remains
 active until the product outcome is satisfied.
 
+## Independent continuation and import lifetime — 2026-10-01
+
+The user renewed independent development and asked to continue without
+waiting for hardware input, scheduling a resume near account usage resets
+when needed. The verified linked-Files IPA still awaits provider/device
+acceptance. Meanwhile, source work now guards the native model-import
+picker against delayed callbacks reaching a freed or reused Blender
+operator and cleans abandoned staging. This has source/host checks only;
+it is not an iPad usability finding. Continue the broader workspace
+and Files outcome rather than stopping at this reliability increment.
+
 ## Next Files workflow increment — packaged, device check needed, 2026-10-01
 
 A new Open Project from Files choice links a local working project to the

@@ -10,6 +10,24 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Latest continuation directive — 2026-10-01
+
+The user explicitly renewed the full goal: continue independently without
+waiting for hardware feedback, use the available five-hour and weekly usage
+windows, and schedule a resume near renewal when limits run low. This
+supersedes the earlier request below to pause at each device test gate. Keep
+the Files IPA's iPad behavior unverified and invite a focused device report
+when useful, but continue source-backed work that does not require it. The
+recurring continuation heartbeat is active again.
+
+The next source candidate hardens native model-import picker callbacks. A
+unique lease is assigned to each file-select operator and invalidated on
+free; delayed success/cancel callbacks check the lease, live window manager
+and handler before touching Blender state. Rejected or stale staged copies
+are removed. All 41 host tests and pinned-source preflight pass; native
+compilation and IPA verification are pending. Preserve model import options
+and the approved Pencil and external-input behavior.
+
 ## Verified Files-linked IPA; device test gate — 2026-10-01
 
 Exact-source iOS run 36829384514 at 5839961e187614b2467452d6cfa3bf5bb1ada0ff

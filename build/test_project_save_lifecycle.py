@@ -37,6 +37,31 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("@implementation GHOST_IOSProjectExporter", model_export)
         self.assertIn("bool GHOST_IOS_export_file", model_export)
 
+    def test_native_import_callback_uses_a_live_operator_lease(self):
+        events = diff_for("source/blender/windowmanager/intern/wm_event_system.cc")
+        self.assertIn("ipad_native_import_tokens.erase(file_operator)", events)
+        self.assertIn("ipad_native_import_tokens[op] = picker_token", events)
+        self.assertIn("[wm, op, picker_token](const char *local_path)", events)
+        self.assertIn("[wm, op, picker_token]()", events)
+        self.assertEqual(
+            events.count("wm_ipad_import_operator_is_live(wm, op, picker_token)"), 2
+        )
+        self.assertIn("it->second != token", events)
+        self.assertIn("!G_MAIN", events)
+        self.assertLess(
+            events.index("LISTBASE_FOREACH (wmWindowManager *, manager, &G_MAIN->wm)"),
+            events.index("LISTBASE_FOREACH (wmWindow *, win, &candidate->windows)"),
+        )
+        self.assertNotIn("auto is_op_live =", events)
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        api = diff_for("intern/ghost/GHOST_ProjectImport-api.hh")
+        self.assertIn("std::function<bool(const char *local_path)>", api)
+        self.assertIn("const bool accepted = copied && onPicked", importer)
+        self.assertIn("if (!accepted)", importer)
+        self.assertIn("removeItemAtURL:importDir", importer)
+        self.assertIn("return false;", events)
+        self.assertIn("WM_event_fileselect_event(wm, op, EVT_FILESELECT_EXEC);\n+              return true;", events)
+
     def test_model_exporter_header_keeps_interface_separate_from_implementation(self):
         model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")
         declaration = model_export.index("@interface GHOST_IOSProjectExporter")

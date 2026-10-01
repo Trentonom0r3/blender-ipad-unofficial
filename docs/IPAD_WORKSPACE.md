@@ -10,6 +10,17 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Continued work while device feedback is pending — 2026-10-01
+
+The user asked to keep developing independently until usage limits, so the
+earlier hardware-test pause no longer blocks source-backed improvements.
+The linked Files IPA remains unaccepted on device. A new source candidate
+guards delayed native model-import callbacks with an operator lease and
+cleans staged copies rejected after cancellation or context changes.
+It passes host checks and pinned-source preflight; native compilation and
+iPad behavior are still open. Preserve current Inspector design and Pencil
+mappings unless new evidence warrants change.
+
 ## Files-linked open — packaged, device check needed, 2026-10-01
 
 The iPad File menu and workspace controls now offer Open Project from Files
