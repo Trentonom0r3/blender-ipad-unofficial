@@ -1,5 +1,16 @@
 # iPad workspace design and delivery
 
+## Files copy feedback and library staging — 2026-10-01
+
+The model importer and Link/Append library picker now show a cancellable
+Preparing sheet after Files selection, and a clear alert if the coordinated
+copy fails. A library is copied into a hidden staging folder, then moved to
+visible `Documents/Libraries` only when complete. Cancel invalidates the
+Blender callback immediately; an already-running file copy can finish in the
+background before its staging folder is removed. Abandoned staging folders
+are removed on next launch. Exact-source IPA run 36889708972 passed build and
+artifact checks; this interaction still needs an iPad usability check.
+
 ## Focused Link/Append device response — 2026-10-01
 
 The user replied "works" to a focused check of run 36850574490's

@@ -1,5 +1,17 @@
 # Product direction and decisions
 
+## Cancellable Files preparation and complete library visibility — 2026-10-01
+
+After a model or library is picked in Apple Files, show a native Preparing
+sheet while Blender copies it. Cancel leaves the workspace in place; an access
+or storage failure explains why no file opened. Publish a library in visible
+`Documents/Libraries` only after its hidden staging copy completes, and clean
+abandoned staging on launch. Keep the user-confirmed Link/Append chooser and
+native editors. Exact-source IPA run 36889708972 passed native build and
+package checks; the new sheet has no device comfort report. Provider-backed
+Open Recent still needs to compare its Files original before reading the local
+working copy.
+
 ## Focused Link/Append device response — 2026-10-01
 
 The user reported "works" for the current run's Files-to-data-block chooser

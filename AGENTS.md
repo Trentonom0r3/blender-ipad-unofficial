@@ -1,5 +1,19 @@
 # Blender iPad development
 
+## Verified Files copy lifecycle IPA — 2026-10-01
+
+Exact-source iOS run 36889708972 at
+`b3faf9340c9548c36d1fe58c5f7a2685c676daa1` passed native Release build,
+packaging and downloaded IPA checks; see `docs/PROJECT_HANDOFF.md` for evidence.
+After Files selection, model/library imports show a cancellable preparation
+sheet and visible copy-failure explanation. Library copies are staged under a
+hidden name and moved into visible `Documents/Libraries` only when complete;
+abandoned stages are cleaned on startup. The user's earlier "works" reply
+supports the Link/Append chooser in run 36850574490, not this new copy UI.
+Continue independent touch/Files work. Next, provider-backed Open Recent needs
+an asynchronous source check before opening its local working copy; preserve
+unsaved scene edits and local mirror conflicts.
+
 ## Focused Link/Append iPad response — 2026-10-01
 
 The user answered "works" to a question about IPA run 36850574490 opening

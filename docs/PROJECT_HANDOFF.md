@@ -1,5 +1,46 @@
 # Project handoff — 2026-10-01
 
+## Verified Files copy feedback and staged-library IPA — 2026-10-01
+
+Exact-source [iOS run 36889708972](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36889708972)
+at `b3faf9340c9548c36d1fe58c5f7a2685c676daa1` passed cloud preflight, native iOS Release compilation, IPA packaging and upload. The source
+passed 42 host tests, pinned-source preflight against 57 files and
+`git diff --check`. The normalized overlay is 465,637 bytes, SHA-256
+`ad4b9e5f5ede41aab72f23b9b39d2a06d8a1668474c63212301e7b12b1efb994`.
+Artifact `Blender-iPad-Unofficial-ipa` id `11175884589` has GitHub archive size 248,446,743 bytes, reported digest
+`sha256:0ebedfde77f98412fd5dfb6e32b34fa1246171d15b0052c758e95f848b551c6b`,
+and expires 2026-12-30 16:08:23 UTC. The downloaded IPA is 248,446,575 bytes, SHA-256
+`7db570ba608615ae043d10df2ec2490211e30b279f69687d4a38657b6f091cd3`.
+Full ZIP CRC across 3,368 entries,
+iPhoneOS arm64 Mach-O/bundle metadata, startup resources, existing Link/Append
+menus and new native copy-status, error and staging markers pass inspection.
+
+The app shows a cancellable Preparing sheet after Files returns a model or
+library. Failure to copy gives an access/storage explanation instead of looking
+like a silent cancellation. Successful library copies move from a hidden
+staging folder to `Documents/Libraries`; cancel suppresses the Blender callback
+and cleans a finished copy, while startup removes abandoned staging after a
+crash. A copy already inside `NSFileManager copyItemAtURL` may run to completion
+before cancellation cleanup. Intermediate exact-source runs 36883324041 at
+`704bd8e`, 36885218176 at `1d31a95`, and 36887304819 at `b8f817e` also
+passed native build and downloaded IPA checks. The user's focused "works"
+response applies to the earlier chooser IPA 36850574490, not to this new
+copy-status UI or every provider/cancel case.
+
+Next Files lifecycle step: `WM_OT_open_mainfile` currently reads a provider-
+backed Recent entry's local working copy directly. The bookmark entry stores
+`documentPath` and content digest, and ordinary Save checks provider edits,
+but Open Recent does not refresh its local copy. Target only linked entries
+where `documentPath` differs from working path and a digest exists; same-path
+Save As and independent project copies should retain normal behavior. After
+Blender's unsaved-change guard, coordinate a security-scoped provider read
+asynchronously, compare both provider and local digests with the stored
+revision, stage any update and replace the local mirror only when safe. Keep
+the current scene on cancel, give a clear offline/conflict choice, and guard
+both invoke and exec entry paths and delayed callbacks. Do not retain a raw
+`bContext*` or `wmOperator*` across UIKit work. Provider refresh, linked
+library portability, external input and broader iPad acceptance remain open.
+
 ## Focused iPad Link/Append response — 2026-10-01
 
 For exact-source IPA run 36850574490, the user answered "works" to the
