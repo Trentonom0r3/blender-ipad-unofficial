@@ -124,6 +124,14 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("_generation == generation && !_picker", save)
         self.assertIn("native_files = \"save_as_to_files\" in dir(bpy.ops.wm)", menu)
 
+    def test_project_switch_waits_for_a_completed_save(self):
+        files = diff_for("source/blender/windowmanager/intern/wm_files.cc")
+        branch = files[files.index("+      if ((status & OPERATOR_FINISHED) == 0) {"):]
+        branch = branch[:branch.index("diff --git ") if "diff --git " in branch else len(branch)]
+        self.assertIn("         execute_callback = false;", branch)
+        self.assertIn("+        if (status & OPERATOR_RUNNING_MODAL) {", branch)
+        self.assertIn("Finish saving to Files, then open the project again", branch)
+
     def test_files_linked_open_keeps_document_identity_and_local_working_file(self):
         importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
         save = diff_for("intern/ghost/intern/GHOST_ProjectSaveIOS.hh")
