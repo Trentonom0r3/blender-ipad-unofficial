@@ -1,5 +1,9 @@
 # Blender iPad development
 
+## Verified Files-backed Open Recent IPA — 2026-10-01
+
+Exact-source run 36926276105 at 675badc passed native Release build and downloaded IPA integrity/bundle checks; see `docs/PROJECT_HANDOFF.md`. Provider-backed Open Recent now checks Files before the unsaved-scene decision, handles conflict/offline/local-copy choices, and waits for terminal asynchronous Save success. The first direct Files open avoids a duplicate check when the scene is clean. No device acceptance is claimed. Preserve Pencil squeeze radial, double-tap, accepted Inspector, native editors and external input. Continue touch/Files usability and linked-library portability; distinguish source, package and device evidence.
+
 ## Verified Files copy lifecycle IPA — 2026-10-01
 
 Exact-source iOS run 36889708972 at

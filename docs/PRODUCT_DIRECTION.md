@@ -1,5 +1,9 @@
 # Product direction and decisions
 
+## Provider-backed Recent package — 2026-10-01
+
+Run 36926276105 at 675badc passed native iOS Release build and downloaded IPA checks for a Files-backed Open Recent refresh and safe asynchronous Save-before-switch. Device provider behavior and touch comfort remain open. Continue complete Files, library portability and everyday iPad usability without treating packaging as acceptance.
+
 ## Cancellable Files preparation and complete library visibility — 2026-10-01
 
 After a model or library is picked in Apple Files, show a native Preparing
