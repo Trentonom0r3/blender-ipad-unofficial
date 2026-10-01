@@ -1,5 +1,9 @@
 # Project handoff — 2026-10-01
 
+## Provider-backed Open Recent audit — 2026-10-01
+
+The active source still opens a linked Recent entry from its local working copy without checking the Files original. The source audit found a second unsaved-dialog hazard if an asynchronous refresh simply posts the existing GHOST OpenMainFile event. The safe state flow and conflict/acceptance matrix are in [OPEN_RECENT_PROVIDER_REFRESH.md](OPEN_RECENT_PROVIDER_REFRESH.md). This is design and source-audit progress only: no new implementation, IPA or device acceptance is claimed. The next code increment should stage a read-only coordinated provider snapshot before Blender's one unsaved-change guard, then commit the local refresh and open.
+
 ## Verified Files copy feedback and staged-library IPA — 2026-10-01
 
 Exact-source [iOS run 36889708972](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36889708972)
