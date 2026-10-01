@@ -1,5 +1,12 @@
 # Product direction and decisions
 
+## Focused Link/Append device response — 2026-10-01
+
+The user reported "works" for the current run's Files-to-data-block chooser
+and save/reopen question. Keep that working interaction. Continue native Files
+lifecycle and broader iPad acceptance without treating a short answer as a
+full provider, multi-select, options or external-input test.
+
 ## Current Link/Append IPA — packaged, device check open, 2026-10-01
 
 Exact-source run 36850574490 at 5e1a693 passed native iOS compilation,

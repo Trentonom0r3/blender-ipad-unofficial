@@ -1,5 +1,14 @@
 # Blender iPad development
 
+## Focused Link/Append iPad response — 2026-10-01
+
+The user answered "works" to a question about IPA run 36850574490 opening
+the Link/Append data-block chooser after Files selection and linked objects
+remaining after save/reopen. Treat that focused flow as user-reported working.
+The reply did not describe multi-selection, options, cancellation, large-file
+copying, provider refresh, project portability or external input. Preserve
+the accepted flow and continue unfinished Files lifecycle work.
+
 ## Goal clarification: usability over a fixed UI mechanism
 
 Follow the goal clarification in `docs/PRODUCT_DIRECTION.md` (or

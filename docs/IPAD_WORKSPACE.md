@@ -1,5 +1,12 @@
 # iPad workspace design and delivery
 
+## Focused Link/Append device response — 2026-10-01
+
+The user replied "works" to a focused check of run 36850574490's
+Files-to-data-block chooser and linked-object save/reopen path. This supports
+the core interaction on device; cancellation, options, multi-select, provider
+refresh, portability and external input remain unverified.
+
 ## Current touch Link/Append IPA — packaged, device check open, 2026-10-01
 
 Exact-source run 36850574490 at 5e1a693 passed native iOS Release compile,

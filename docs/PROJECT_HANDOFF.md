@@ -1,5 +1,16 @@
 # Project handoff — 2026-10-01
 
+## Focused iPad Link/Append response — 2026-10-01
+
+For exact-source IPA run 36850574490, the user answered "works" to the
+focused question whether Link or Append reaches the data-block chooser after
+Files selection and whether linked objects remain after save/reopen. This is
+device-reported acceptance of that path, without details on which operation
+and provider were tried. It is not evidence for multi-selection, all operator
+options, cancellation, large libraries, provider edits/refresh, portability,
+portrait/narrow layouts or external input. Preserve the working Pencil and
+Inspector behavior and continue those unfinished workflows independently.
+
 ## Verified touch Link/Append chooser IPA — 2026-10-01
 
 Exact-source [iOS run 36850574490](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36850574490)
