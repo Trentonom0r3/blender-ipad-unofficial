@@ -10,16 +10,16 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
-## Files-linked open candidate — source only, 2026-10-01
+## Files-linked open — packaged, device check needed, 2026-10-01
 
 The iPad File menu and workspace controls now offer Open Project from Files
 beside Open Project Copy and Import Project Folder. The linked route works from
 a coordinated local file while ordinary Save targets the provider original,
 then refreshes the local working file. It retains document access and checks
 the provider content before writing, failing closed if an external edit or
-unreadable state prevents comparison. This has source and host validation only;
-the exact iOS build and Files-provider device tests remain pending. Relative
-sibling assets are not imported by the single-file route.
+unreadable state prevents comparison. This passed source/host checks and exact-source iOS IPA run 36829384514;
+Files-provider device tests remain pending. Relative sibling assets are not
+imported by the single-file route.
 
 ## Current device response — 2026-10-01
 

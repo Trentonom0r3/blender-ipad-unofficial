@@ -10,6 +10,21 @@ better iPad interaction. Preserve the working Pencil mappings and external input
 Judge progress by complete workflows in installable builds and actual-device
 acceptance, while continuing unfinished workspace and Files requirements.
 
+## Verified Files-linked IPA; device test gate — 2026-10-01
+
+Exact-source iOS run 36829384514 at 5839961e187614b2467452d6cfa3bf5bb1ada0ff
+succeeded. Cloud preflight, native Release compilation, packaging, artifact
+upload, downloaded IPA CRC, arm64 bundle metadata and packaged action checks
+passed. The user has not tested the linked Files workflow on iPad. The next
+step is their short device check of Open Project from Files, ordinary Save
+updating the Files original, and reopen after app relaunch. Check that Open
+Project Copy still saves independently and Import Project Folder retains
+relative assets; an external-edit conflict check is useful if practical.
+The user asked development to stop when hardware testing is needed. Notify
+them with this run and pause the heartbeat and goal until their report.
+Do not infer provider behavior from package checks. Full artifact evidence
+is in PROJECT_HANDOFF.
+
 ## Files-linked project opening candidate — source only, 2026-10-01
 
 The user finds the current Inspector acceptable, so work moved to Files. The
@@ -22,10 +37,9 @@ checked; Save As preserves edits in that case. After a successful provider
 write, the local working file is refreshed for Open Recent and relative paths.
 A provider write that succeeds while local refresh fails has a distinct error.
 Single-file opening still requires packed assets if sibling resources matter;
-folder import remains the choice for full relative assets. This is a source
-candidate, not a verified native build or device acceptance. All 40 host tests
-and pinned-source preflight pass; see PROJECT_HANDOFF for the exact overlay.
-Inspect native build results before asking for a device workflow check.
+folder import remains the choice for full relative assets. All 40 host tests,
+pinned-source preflight and exact-source iOS run 36829384514 pass. This is not
+iPad device acceptance; see PROJECT_HANDOFF for artifact evidence.
 
 ## Latest device feedback — 2026-10-01
 

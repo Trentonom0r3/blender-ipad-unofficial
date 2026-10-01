@@ -1,5 +1,39 @@
 # Project handoff — 2026-10-01
 
+## Verified provider-linked Files IPA; device check needed — 2026-10-01
+
+Exact-source iOS run
+https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36829384514
+succeeded at 5839961e187614b2467452d6cfa3bf5bb1ada0ff. Cloud preflight,
+native iOS Release compilation, IPA packaging and artifact upload passed.
+The source checkpoint passed all 40 host tests and pinned-source preflight;
+the LF-normalized overlay is 452,261 bytes with SHA-256
+29f69b604fc136f337aadb878652b1984f9590689fdb1513c24edbf45aa3a105.
+Artifact Blender-iPad-Unofficial-ipa, id 11146408613, has GitHub archive
+size 248,437,274 bytes and reported digest
+sha256:e3115ab538ea4785b78fc4ca8409c2fcbd4fa80524ee6eb556a42fd3d2dce714;
+it expires 2026-12-30 07:16:34 UTC. Downloaded
+Blender-iPad-Unofficial.ipa is 248,437,106 bytes with SHA-256
+f7f7ac686456d1208c92e0420e494143544415f5f3201c5cb3a73365a4a84600.
+Its ZIP passed a full CRC check of 3,368 entries. Info.plist reports bundle
+ID com.unofficial.blenderipad, version 5.0.0 and executable Blender; the
+executable is Mach-O arm64 (magic feedfacf, CPU type 0x100000c). Packaged
+File menu and workspace-control scripts contain the new linked-open action
+beside Open Project Copy; the executable contains the linked action and
+distinct conflict and mirror-failure messages. These are package checks,
+not evidence of actual Files-provider behavior on an iPad.
+
+The user explicitly asked to stop development when hardware testing is
+needed. Notify them with the run link, pause the heartbeat and goal, and
+await their report. Ask for a short check with a provider .blend: open via
+Open Project from Files, make a small change, use ordinary Save, verify the
+original in Files changed, then relaunch and reopen. Check Open Project Copy
+still saves independently and Import Project Folder retains a relative
+texture or library if convenient. If they can change the provider original
+elsewhere between open and Save, verify the conflict prompt refuses overwrite
+and Save As preserves edits. Cloud provider, permission revocation, sidecars,
+multiwindow recovery and complete touch comfort remain open.
+
 ## Provider-linked Open source candidate — 2026-10-01
 
 After the user said the current Inspector "seems fine to me," development moved
@@ -22,21 +56,13 @@ All 40 host tests pass, including a new route/lifecycle regression check.
 Pinned-source preflight applies the overlay to 56 files, and git diff --check
 is clean. The LF-normalized overlay is 452,261 bytes, SHA-256
 29f69b604fc136f337aadb878652b1984f9590689fdb1513c24edbf45aa3a105.
-These are source and host checks only; no native IPA has been built for this
-candidate. Commit/push the exact source, dispatch one iOS build, inspect actual
-compiler results, and verify the IPA artifact if successful. Then ask the user
-for a focused Files test and pause development per their standing request:
+This source candidate was subsequently packaged in successful run
+36829384514; see the verified-build section above. The user still needs
+a focused Files test per their standing request:
 open a provider .blend, edit/Save/reopen; change the provider file externally
 and confirm conflict recovery via Save As; check the independent copy and
 complete-folder routes. A cloud provider and app relaunch are useful. Distinguish
 package verification from device acceptance.
-
-Source commit 5839961e187614b2467452d6cfa3bf5bb1ada0ff is pushed on
-codex/ipad-secondary-view-escape. Exact-source iOS run
-https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36829384514
-has passed cloud preflight and was in native Release compilation at
-2026-10-01 07:27 UTC. Inspect this run before dispatching a replacement; its
-package and device behavior are not yet verified.
 
 ## User response to latest Inspector IPA — 2026-10-01
 

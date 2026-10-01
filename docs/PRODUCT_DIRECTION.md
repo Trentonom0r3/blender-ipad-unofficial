@@ -32,14 +32,14 @@ the next interaction or visual change. Keep source implementation, host tests,
 packaged IPA and actual-device acceptance separate. The full goal remains
 active until the product outcome is satisfied.
 
-## Next Files workflow increment — source candidate, 2026-10-01
+## Next Files workflow increment — packaged, device check needed, 2026-10-01
 
 A new Open Project from Files choice links a local working project to the
 selected Files document so ordinary Save can update it. The existing Open
 Project Copy and complete-folder import remain explicit alternatives. A
 content fingerprint blocks a stale local project from overwriting a provider
-file changed elsewhere; Save As is the recovery path. Source checks pass, but
-native compilation and iPad behavior are pending. The route is single-file:
+file changed elsewhere; Save As is the recovery path. Source checks and exact-source native IPA run 36829384514 pass; iPad
+provider behavior is pending. The route is single-file:
 projects with relative sibling textures or libraries still need folder import
 or packed assets. Do not call this complete in-place Files support.
 
