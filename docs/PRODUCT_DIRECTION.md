@@ -1,5 +1,14 @@
 # Product direction and decisions
 
+## Current Link/Append IPA — packaged, device check open, 2026-10-01
+
+Exact-source run 36850574490 at 5e1a693 passed native iOS compilation,
+packaging and downloaded IPA checks. The iPad Link/Append route now begins in
+Files and shows a simplified in-library data-block selector with search,
+category back, All/Clear and options while keeping Blender's native data
+handling. Device comfort, provider refresh, portability and full Files
+lifecycle remain open; keep those distinct from packaged-build evidence.
+
 ## Verified Link/Append bridge and data-block chooser refinement — 2026-10-01
 
 The first Link/Append bridge compiled and packaged in exact-source iOS run

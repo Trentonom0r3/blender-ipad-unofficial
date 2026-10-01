@@ -1,5 +1,32 @@
 # Project handoff — 2026-10-01
 
+## Verified touch Link/Append chooser IPA — 2026-10-01
+
+Exact-source [iOS run 36850574490](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36850574490)
+passed at `5e1a69389edc16b8475af47e4cfc58727cef9cc2`: cloud preflight,
+native iOS Release compile, IPA packaging and upload. All 42 host tests and
+57-file pinned-source preflight pass. The normalized overlay is 460,754 bytes,
+SHA-256 `02a81c2c04df235069d8db0f6c87b4487b3408b4b5681c61f84c6a7eac757320`.
+Artifact `Blender-iPad-Unofficial-ipa` id `11156162614`, GitHub archive size
+248,448,106 bytes, reported digest
+`sha256:ebf438db517eed175e538f9713d16df397e5a05212f49ea1c8c63f5d1dbc00e8`,
+expires 2026-12-30 10:40:15 UTC. Downloaded IPA is 248,447,938 bytes,
+SHA-256 `92fc45fd2e9ca48adaaabc16fc1fa5f2e4a628b880c14ce944c4e417fc0996b2`.
+It passes full ZIP CRC on 3,368 entries, iPhoneOS arm64 Mach-O and bundle
+metadata, startup resources, native library picker strings, File-menu entries
+and packaged `space_filebrowser.py` data-block controls.
+
+The iPad interaction remains untested. Focused device check: Link from an
+iCloud or On My iPad `.blend`, see a data-block category/search UI rather than
+the Unix filesystem, select one or more objects or collections, inspect
+Options, confirm, save and reopen to verify links. Repeat Append; cancel at
+both Files and data-block stages and check the workspace remains usable.
+Check `Documents/Libraries` for retained successful library copies and no
+cancelled copy. Repeat one path with Pencil and one with external keyboard or
+mouse. This app-owned library is a snapshot: provider edits do not refresh it,
+and a `.blend` shared without its linked library is not portable. Continue
+source-backed Files lifecycle work while awaiting device evidence.
+
 ## Verified Link/Append Files bridge IPA and touch chooser candidate — 2026-10-01
 
 Exact-source [iOS run 36848386081](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36848386081)

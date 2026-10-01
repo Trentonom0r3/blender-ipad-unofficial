@@ -1,5 +1,15 @@
 # iPad workspace design and delivery
 
+## Current touch Link/Append IPA — packaged, device check open, 2026-10-01
+
+Exact-source run 36850574490 at 5e1a693 passed native iOS Release compile,
+IPA packaging and downloaded archive/bundle/script verification. Link and
+Append use Apple Files for `.blend` selection, then a focused Blender
+data-block list with search, category back, All/Clear and options. The iPad
+interaction and saved/reopened linked paths have not been checked on device.
+The selected library is a durable app-owned snapshot; refreshing it from its
+Files original and shipping it with a project remain unfinished.
+
 ## Verified Link/Append IPA; touch chooser candidate — 2026-10-01
 
 Exact-source iOS run 36848386081 compiled and packaged the native Files

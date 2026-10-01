@@ -15,11 +15,10 @@ acceptance, while continuing unfinished workspace and Files requirements.
 Exact-source IPA run 36848386081 at 3d70e9e passed native Release compile,
 packaging and downloaded artifact checks after native Files selection began
 using persistent app-owned library snapshots. It has no device acceptance.
-The subsequent local source candidate simplifies the in-library chooser's
-top bar and hides filesystem shortcuts while retaining Blender data-block
-selection and operator options; 42 host tests and pinned-source preflight
-pass, but it has no iOS build yet. Build and verify that exact source, then
-continue real-device workflow acceptance. Preserve the accepted Inspector,
+The subsequent touch chooser source is now packaged in exact-source IPA
+run 36850574490 at 5e1a693, with 42 host tests, 57-file pinned-source
+preflight, native Release compile, IPA integrity and bundled UI checks passing.
+Continue real-device workflow acceptance and the remaining Files lifecycle. Preserve the accepted Inspector,
 Pencil squeeze radial, double-tap context and external input. The library
 copy is a snapshot and linked-project portability remains open.
 
