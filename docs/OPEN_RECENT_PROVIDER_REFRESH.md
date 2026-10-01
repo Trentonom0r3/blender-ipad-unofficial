@@ -17,6 +17,8 @@ Do not simply post GHOST_kEventOpenMainFile at completion: wm_window.cc creates 
 
 The pinned wm_block_file_close_save currently treats WM_OT_save_mainfile returning OPERATOR_RUNNING_MODAL as success because it only checks OPERATOR_CANCELLED, then runs the open callback immediately. The iPad provider save returns OPERATOR_RUNNING_MODAL while a coordinated write is pending. The implementation must transfer the pending open continuation to the provider-save terminal result or otherwise make this dialog await it; simply reusing the present callback risks opening away from unsaved work.
 
+Implementation seam: wm_block_file_close_save steals and later frees a wmGenericCallback containing the open operator properties. wm_save_provider_invoke creates IpadFilesSaveData and returns OPERATOR_RUNNING_MODAL; wm_save_to_files_modal receives the terminal Saved, Conflict, MirrorFailed or Failed action and already tracks main_at_stage plus modification_generation. Transfer ownership of a pending open request into this modal lifecycle, defer continuation until terminal Saved with the same Main and no newer edits, and release it on every failure/cancel path. Do not directly read a different file from a modal stack frame that might be invalidated by the read; dispatch the validated continuation on a later window-manager event. A save of the same Recent project advances its digest, so the staged provider check must be repeated before installation.
+
 ## Acceptance matrix
 
 - Unchanged provider and mirror: one normal open, no extra dialog.
