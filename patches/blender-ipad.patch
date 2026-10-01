@@ -3679,7 +3679,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,1019 @@
+@@ -0,0 +1,1023 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4523,6 +4523,10 @@ new file mode 100644
 +                                               handler:^(UIAlertAction *action) {
 +      ++_generation;
 +      [_copyProgress cancel];
++      /* UIKit dismisses a Cancel action itself; release our ownership first. */
++      UIAlertController *progress = _progress;
++      _progress = nil;
++      [progress release];
 +      if (onCancelled) {
 +        onCancelled();
 +      }
