@@ -157,6 +157,7 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("fresh && (!(U.uiflag & USER_SAVE_PROMPT) ||", files)
         self.assertIn("wm_file_or_session_data_has_unsaved_changes(CTX_data_main(C)", files)
         self.assertIn('!RNA_boolean_get(op->ptr, "ios_recent_fresh")', files)
+        self.assertIn("else if (recent_ticket > 0) {", files)
         self.assertIn("GHOST_IOS_fresh_linked_since < 30", recent)
 
     def test_provider_recent_checks_before_unsaved_prompt_and_validates_ticket(self):
@@ -168,6 +169,14 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("[self showResult]", native)
         self.assertIn("_localDigest isEqualToData:_expectedDigest", native)
         self.assertIn("_providerDigest isEqualToData:_expectedDigest", native)
+        self.assertIn("_presenter.presentedViewController", native)
+        self.assertIn("dispatch_after(dispatch_time(DISPATCH_TIME_NOW", native)
+        self.assertIn("[self continueAfterChoice:generation retry:NO remaining:20]", native)
+        self.assertIn("[self continueAfterChoice:generation retry:YES remaining:20]", native)
+        self.assertIn("_openLocalCopy = YES", native)
+        self.assertIn("if (success && _openLocalCopy)", native)
+        self.assertIn("[entries removeObjectForKey:_workingPath]", native)
+        self.assertIn('removeObjectForKey:@"BlenderWorkingProjectBookmark"', native)
         self.assertIn("GHOST_IOS_recent_project_is_ready", api)
         self.assertIn("GHOST_IOS_recent_project_is_ready(recent->path, recent->ticket)", window)
         self.assertIn("if (recent->load_ui_set)", window)

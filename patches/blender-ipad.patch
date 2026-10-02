@@ -488,7 +488,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +      return status;
 +    }
 +  }
-+  else {
++  else if (recent_ticket > 0) {
 +    const GHOST_IOSRecentProjectCommit result =
 +        GHOST_IOS_recent_project_commit(filepath, recent_ticket);
 +    if (result == GHOST_IOSRecentProjectCommit_Stale) {
@@ -11144,7 +11144,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectRecentIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectRecentIOS.hh
-@@ -0,0 +1,584 @@
+@@ -0,0 +1,634 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included after GHOST_ProjectSaveIOS.hh by GHOST_SystemIOS.mm. A Recent
@@ -11153,6 +11153,7 @@ new file mode 100644
 +#include <string>
 +#include <cstdint>
 +#include <climits>
++#import <dispatch/dispatch.h>
 +
 +class GHOST_EventIOSRecentProjectReady final : public GHOST_Event {
 +  std::string path_;
@@ -11195,6 +11196,7 @@ new file mode 100644
 +  BOOL _busy;
 +  BOOL _ready;
 +  BOOL _refresh;
++  BOOL _openLocalCopy;
 +  BOOL _installed;
 +  BOOL _bookmarkUpdated;
 +  bool _loadUISet;
@@ -11209,6 +11211,7 @@ new file mode 100644
 +   useScripts:(bool)useScripts;
 +- (GHOST_IOSRecentProjectCommit)commit:(NSString *)path ticket:(int)ticket;
 +- (BOOL)isReady:(NSString *)path ticket:(int)ticket;
++- (void)continueAfterChoice:(NSUInteger)generation retry:(BOOL)retry remaining:(int)remaining;
 +- (void)finishOpen:(int)ticket success:(BOOL)success;
 +- (void)cancel;
 +@end
@@ -11227,6 +11230,7 @@ new file mode 100644
 +  _busy = NO;
 +  _ready = NO;
 +  _refresh = NO;
++  _openLocalCopy = NO;
 +  _installed = NO;
 +  _bookmarkUpdated = NO;
 +  _ticket = 0;
@@ -11293,6 +11297,47 @@ new file mode 100644
 +                                                         _useScripts));
 +}
 +
++- (void)continueAfterChoice:(NSUInteger)generation retry:(BOOL)retry remaining:(int)remaining
++{
++  if (generation != _generation || !_busy) {
++    return;
++  }
++  if (![self hasLiveWindow]) {
++    [self cancel];
++    return;
++  }
++  if (_presenter.presentedViewController) {
++    if (remaining <= 0) {
++      NSLog(@"Open Recent choice could not continue while another dialog is presented");
++      [self cancel];
++      return;
++    }
++    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC),
++                   dispatch_get_main_queue(), ^{
++      [self continueAfterChoice:generation retry:retry remaining:remaining - 1];
++    });
++    return;
++  }
++  if (!retry) {
++    [self queueReady];
++    return;
++  }
++  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (!system || system->getWindowManager()->getActiveWindow() != _window) {
++    [self cancel];
++    return;
++  }
++  NSString *path = [_workingPath copy];
++  const bool loadUISet = _loadUISet, loadUI = _loadUI;
++  const bool scriptsSet = _useScriptsSet, scripts = _useScripts;
++  [self cancel];
++  if (![self begin:path loadUISet:loadUISet loadUI:loadUI
++             useScriptsSet:scriptsSet useScripts:scripts]) {
++    NSLog(@"Open Recent could not restart its Files check");
++  }
++  [path release];
++}
++
 +- (void)showChoice:(NSString *)message allowLocal:(BOOL)allowLocal
 +{
 +  if (![self hasLiveWindow]) {
@@ -11315,11 +11360,8 @@ new file mode 100644
 +      _sheet = nil;
 +      [shown release];
 +      _refresh = NO;
-+      dispatch_async(dispatch_get_main_queue(), ^{
-+        if (generation == _generation) {
-+          [self queueReady];
-+        }
-+      });
++      _openLocalCopy = YES;
++      [self continueAfterChoice:generation retry:NO remaining:20];
 +    }]];
 +  }
 +  [alert addAction:[UIAlertAction actionWithTitle:@"Retry Files"
@@ -11328,18 +11370,10 @@ new file mode 100644
 +    if (generation != _generation) {
 +      return;
 +    }
-+    NSString *path = [_workingPath copy];
-+    const bool loadUISet = _loadUISet, loadUI = _loadUI;
-+    const bool scriptsSet = _useScriptsSet, scripts = _useScripts;
 +    UIAlertController *shown = _sheet;
 +    _sheet = nil;
 +    [shown release];
-+    [self cancel];
-+    dispatch_async(dispatch_get_main_queue(), ^{
-+      [self begin:path loadUISet:loadUISet loadUI:loadUI
-+          useScriptsSet:scriptsSet useScripts:scripts];
-+      [path release];
-+    });
++    [self continueAfterChoice:generation retry:YES remaining:20];
 +  }]];
 +  [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
 +                                           style:UIAlertActionStyleCancel
@@ -11362,11 +11396,11 @@ new file mode 100644
 +         allowLocal:NO];
 +  }
 +  else if (!_providerDigest) {
-+    [self showChoice:@"The Files project is unavailable. You can retry or explicitly open the last local copy. Saving that copy may require Save As."
++    [self showChoice:@"The Files project is unavailable. Retry, or open the last local copy independently. Saving that copy will not update the Files original."
 +         allowLocal:YES];
 +  }
 +  else if (![_localDigest isEqualToData:_expectedDigest]) {
-+    [self showChoice:@"The local copy has changed since it was linked to Files. Both versions are preserved. Open the local copy or retry; use Open Project from Files to make a separate working copy of the Files version."
++    [self showChoice:@"The local copy has changed since it was linked to Files. Open it independently, or retry. To open the Files version, choose Open Project from Files."
 +         allowLocal:YES];
 +  }
 +  else {
@@ -11559,7 +11593,7 @@ new file mode 100644
 +    GHOST_IOS_remember_project_digest(_workingPath, _providerDigest);
 +    _installed = YES;
 +  }
-+  if (_renewedBookmark) {
++  if (_renewedBookmark && !_openLocalCopy) {
 +    GHOST_IOS_remember_project_bookmark(_workingPath, _renewedBookmark);
 +    _bookmarkUpdated = YES;
 +  }
@@ -11577,6 +11611,22 @@ new file mode 100644
 +{
 +  if (!_busy || ticket != _ticket) {
 +    return;
++  }
++  if (success && _openLocalCopy) {
++    /* The recovery choice must not make an ordinary Save overwrite the Files
++     * original. Keep the app-owned file and detach only after it loads. */
++    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
++    NSMutableDictionary *entries = [[defaults dictionaryForKey:@"BlenderWorkingProjectBookmarks"]
++                                    mutableCopy];
++    if (entries) {
++      [entries removeObjectForKey:_workingPath];
++      [defaults setObject:entries forKey:@"BlenderWorkingProjectBookmarks"];
++      [entries release];
++    }
++    if ([_workingPath isEqualToString:[defaults stringForKey:@"BlenderWorkingProjectPath"]]) {
++      [defaults removeObjectForKey:@"BlenderWorkingProjectPath"];
++      [defaults removeObjectForKey:@"BlenderWorkingProjectBookmark"];
++    }
 +  }
 +  if (!success) {
 +    if (_installed) {
