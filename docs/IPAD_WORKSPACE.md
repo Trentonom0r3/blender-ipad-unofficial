@@ -1,5 +1,13 @@
 # iPad workspace design and delivery
 
+## Current interaction increment — 2026-10-02
+
+Prioritize actual object/edit interaction per the user's latest direction. The existing mechanisms may evolve to serve that outcome; keep the accepted Inspector and Pencil ring. Further Files/portable-copy expansion is deferred.
+
+For native Move, Rotate, Scale and Transform in Object, Pose and Edit modes, direct screen drags begin at the actual contact point and use Blender's tool/gizmo path. Finger navigation in other tools remains, and two-finger orbit/pinch zoom are available with a transform tool. Native navigation buttons and workspace resize grips win hit testing; Tool drags can start only in the currently exposed WINDOW canvas, outside headers/rails/panels, and visible popups clear the capture map. The capture owns its stream through release or cancellation. Interrupted transforms restore their original state rather than treating cancellation as release-confirm. Open panels stay geometrically stable during a captured editing stroke, even when unlocked; this deliberately supersedes the earlier blanket rule that every canvas press must be consumed to dismiss panels. Ordinary taps retain that dismissal rule. Header Undo/Redo are directly reachable. External pointer events do not carry this direct-tool provenance.
+
+Device check: choose Move via squeeze or Tools, drag the cube/gizmo with a finger and Pencil, then lift to confirm and Undo/Redo. Repeat Rotate/Scale, Edit/Pose, with an unlocked panel open, in portrait and a narrow window. Orbit with two fingers and pinch while the tool is active. Interrupt a drag by adding a second finger or backgrounding the app; no partial transform should remain. Check Select-mode navigation, context double tap, native menu scrolling and keyboard/mouse transforms. This source candidate has no device acceptance.
+
 ## Files copy feedback and library staging — 2026-10-01
 
 The model importer and Link/Append library picker now show a cancellable

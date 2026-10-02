@@ -65,6 +65,36 @@ int main() {
   capture.begin(Kind::Navigation);
   auto end = capture.finish(true);
   assert(end.release && !end.cancelled); // Preserve existing navigation behavior.
+  for (const char *tool : {"builtin.move", "builtin.rotate", "builtin.scale", "builtin.transform"}) {
+    for (const char *mode : {"OBJECT", "POSE", "EDIT_MESH", "EDIT_CURVE", "EDIT_ARMATURE"}) {
+      assert(nav::direct_transform_tool(tool, mode));
+    }
+    for (const char *mode : {"SCULPT", "PAINT_TEXTURE", "PAINT_VERTEX", "PAINT_WEIGHT", ""}) {
+      assert(!nav::direct_transform_tool(tool, mode));
+    }
+  }
+  for (const char *tool : {"builtin.select_box", "builtin.cursor", "builtin.annotate", "addon.move", ""}) {
+    assert(!nav::direct_transform_tool(tool, "OBJECT"));
+  }
+  assert(!nav::direct_transform_tool(nullptr, "OBJECT"));
+  assert(!nav::direct_transform_tool("builtin.move", nullptr));
+  // Narrow navigation/resize controls win over the editing canvas beneath them.
+  // An explicit None region represents covered UI and blocks that canvas too.
+  nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::Navigation},
+                                            {60,20,90,60,Kind::None},
+                                            {0,0,300,200,Kind::ToolManipulation}});
+  assert(nav::pointer_capture_hit(&main_window, 30, 40) == Kind::Navigation);
+  assert(nav::pointer_capture_hit(&main_window, 70, 40) == Kind::None);
+  assert(nav::pointer_capture_hit(&main_window, 150, 100) == Kind::ToolManipulation);
+  assert(nav::pointer_capture_hit(&main_window, 150, 100, false) == Kind::None);
+  assert(nav::pointer_capture_hit(&main_window, 30, 40, false) == Kind::Navigation);
+  for (bool interrupted : {false, true}) {
+    capture.begin(Kind::ToolManipulation);
+    nav::set_navigation_regions(&main_window, {});
+    end = capture.finish(interrupted);
+    assert(end.release && end.cancelled == interrupted);
+    assert(!capture.finish(true).release);
+  }
   capture.begin(Kind::None);
   assert(!capture.active() && !capture.ended);
   end = capture.finish(true);

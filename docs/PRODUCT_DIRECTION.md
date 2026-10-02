@@ -1,5 +1,11 @@
 # Product direction and decisions
 
+## Interaction priority restored — 2026-10-02
+
+The user says development has focused too much on import and wants progress on actual interaction. Deliver the next increments through selecting, moving/rotating/scaling, navigating, cancelling and undoing on the iPad. Keep Files work intact and defer further Portable Project Copy/import expansion unless a regression needs repair. A correct file pipeline does not establish comfortable everyday editing.
+
+The first candidate makes a selected native transform tool own a direct finger/Pencil drag, with release to confirm and UIKit interruption to cancel. Two-finger orbit, pinch zoom, existing non-transform finger navigation and external input remain. Stable panel geometry lets the first editing stroke reach its tool; it is no longer consumed only to dismiss open panels. Header Undo/Redo make edits immediately reversible. The native tool/gizmo operators and their constraints are preserved. Source and package checks cannot establish whether this feels comfortable on the device.
+
 ## Multi-library folder package — 2026-10-02
 
 Run 36957402486 at 79a265f passed native iOS Release build and downloaded IPA checks. A Link/Append Files folder with several `.blend` files now offers a native choice while retaining the folder's relative assets. Device interaction and provider behavior remain unverified; the accepted single-file chooser, Pencil mappings, Inspector, native editors and external input remain. Keep the main project plus linked-library portable-copy outcome separate; see `PORTABLE_PROJECT_COPY.md`.

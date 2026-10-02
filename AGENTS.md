@@ -1,5 +1,11 @@
 # Blender iPad development
 
+## Current priority — actual interaction, 2026-10-02
+
+The user explicitly redirected work: "I think we need to make progress on actual interaction. We've bee too focused on the improt and stuff." This supersedes earlier next steps calling for Portable Project Copy or more import expansion. Preserve the existing Files foundation and fix actual regressions, but prioritize selecting/manipulating objects, navigation, edit confirmation/cancellation and undo in perceptible installable increments. Preserve accepted Pencil squeeze radial, double-tap context, Inspector, native editors and external input. Continue independently without waiting for device input; keep device acceptance separate from source/package evidence.
+
+The current source candidate gives native Move/Rotate/Scale/Transform tools direct finger/Pencil drags in Object, Pose and Edit modes, starts captured drags at the real contact point, rolls back interrupted transforms and keeps panels stable during the first editing stroke. Undo/Redo are directly in the viewport header. Existing finger navigation remains in other tools, and two-finger orbit/pinch zoom remain available while manipulating. Check exact-source native build and device comfort before claiming acceptance. Latest verified IPA is run 36974715979 at 134ee8d, an internal writer foundation with no portable-export UI. See docs/PROJECT_HANDOFF.md.
+
 ## Portable writer source and latest IPA — 2026-10-02
 
 Latest verified package is exact-source run 36959654940 at 3cfd5b6, including a Save Copy linked-library notice; downloaded IPA checks pass, with no new device acceptance. The current writer source candidate adds a synchronous post-save-preparation resolver and scoped path restoration for Portable Project Copy. It has no export operator/UI yet. Continue the complete staged dependency-copy and relative-path project outcome; do not retain ID buffer pointers across native copying or save callbacks. See docs/PROJECT_HANDOFF.md and docs/PORTABLE_PROJECT_COPY.md. Preserve accepted Pencil, Inspector, native editors and external input.
