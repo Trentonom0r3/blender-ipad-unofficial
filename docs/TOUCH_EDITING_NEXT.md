@@ -1,0 +1,26 @@
+# Next touch editing increments — pinned-source audit, 2026-10-02
+
+User priority: actual interaction; import/portable-copy expansion is deferred. This is an implementation audit, not a shipped feature or device result. Preserve the accepted Pencil ring/mappings and Inspector, native editor contents, keyboard/mouse/trackpad and existing Files work. Latest verified interaction source is 8dad728 in IPA run 36984752140. No new device acceptance exists.
+
+## Complete point selection
+
+The shipped quick Replace/Add/Remove choices currently affect native Box/Lasso shape drags. Native view3d.select point taps remain standard desktop selection. First close this common touch gap and active-hardware-drag tap ownership before broadening precision controls.
+
+Pinned source d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e:
+
+- GHOST_WindowIOS.mm tap recognizer accepts only Pencil/Direct, not indirect mouse/trackpad (349). Reject its touch input while hardware buttons own the pointer, including a tap that begins during hardware ownership and lifts after that ownership ends. The existing handlePan Began suppression does not cover taps. Preserve accepted external releases and allow normal idle touch.
+- wm_event_system.cc synthesized CLICK preserves the release event's flags (3735–3747), whereas CLICK_DRAG inherits motion flags (3648–3661). Tag direct tap down/up, not unrelated input. Current direct-tool region kind covers transform tools too; restrict point provenance to Box/Lasso or deliberately document a broader panel-dismiss change. The current unlocked panel policy consumes an ordinary first tap and may rehost splits; decide explicitly how a deliberate selection tap stays stable.
+- view3d_select.cc view3d_select_invoke (3620) is a native seam before view3d_select_exec. Scope to LEFTMOUSE, direct selection provenance, unmodified input, active Box/Lasso and eligible Object/Pose/Edit context.
+- select_utils.cc ED_select_op_from_operator (132) reads extend before deselect before toggle. SET maps all three false with deselect_all=true; ADD maps extend=true and others/deselect_all=false; SUB maps deselect=true and others/deselect_all=false. For explicit direct point choices, select_passthrough=false avoids ignoring an already selected target. Preserve all native nonquick modes and external modifiers. AND has no point-pick equivalent; do not map it arbitrarily.
+
+Verify no selection apply on interruption, no hardware/touch release mismatch, empty Add/Remove taps retain selection, native modified clicks remain intact, active-target/edit-mode semantics and Undo. Build exact source and verify IPA before claiming it is installable.
+
+## Native transform constraints and numbers
+
+- Move/Rotate/Scale keymaps set release_confirm only; WM_toolsystem_ref_properties_init_for_keymap (wm_toolsystem.cc1319–1343) merges absent native tool properties without overwriting explicit keymap fields. Native constraint_axis arrays can represent Free/X/Y/Z and planes without synthetic keyboard state.
+- Combined Transform's transform_from_gizmo_invoke (transform_ops.cc1462–1501) creates a fresh child operator using native drag_action and release_confirm only. To honor child tool constraints, create a seed with explicit release_confirm=true, initialize a separate merged pointer through the native helper, invoke that child, and free both independent copies. Keep actual gizmo handles' explicit constraints and modal keyboard controls. Either merge consistently for generic tool drags (including mouse) as an explicit tool setting, or implement cursor provenance first for touch-only behavior: current GHOST cursor events do not carry DIRECT_TOOL and CLICK_DRAG will not have it.
+- Native toolbar uses transform_orientation_slots indices Move1, Rotate2, Scale3, combined1 (space_toolsystem_toolbar.py312/328/344/410); the top header's global slot0 is a different choice. Mirror the active native slot and ToolSettings.transform_pivot_point/use_snap. Reuse VIEW3D_PT_snapping for advanced snapping. Do not persist operator snap=True, which could override Ctrl inversion and Affect settings.
+- Native precision uses TFM_MODAL_PRECISION/MOD_PRECISION and mouse.precision (transform.cc1356–1376) with a Snap-to-Grid exception; there is no inspected public precision RNA bool. A per-touch native initialization hook can reuse that state. Do not latch synthetic Shift or distort UIKit coordinates; preserve external Shift ownership.
+- Native translate/rotate/resize EXEC is already supported (transform_ops.cc535–553, value definitions882/911/1004). A transient touch dialog can call EXEC_REGION_WIN once with Move vector, Rotate angle/axis or Scale factors plus the chosen native orientation and pivot, using native edit conversion and Undo. Never store numeric value in tool properties: modal invocation uses it as an initial offset (563–576).
+
+Keep controls focused and roughly 44-point where practical; avoid adding all operations to the header or redesigning the accepted ring/Inspector. Source/host tests cannot establish actual touch feel. Verify the complete select → constrain/drag or numeric edit → finish/cancel → Undo workflow on the packaged iPad build when feedback is available, without pausing independent source work.
