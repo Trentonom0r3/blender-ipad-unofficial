@@ -3317,7 +3317,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,367 @@
+@@ -0,0 +1,630 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3513,6 +3513,260 @@ new file mode 100644
 +            layout.menu(native_menu, text="More Selection Commands")
 +
 +
++# Tool properties constrain drags; numeric values belong only to a transient dialog.
++IPAD_TRANSFORM_TOOLS = {
++    'builtin.move': ('MOVE', 'transform.translate', 1),
++    'builtin.rotate': ('ROTATE', 'transform.rotate', 2),
++    'builtin.scale': ('SCALE', 'transform.resize', 3),
++}
++IPAD_TRANSFORM_ACTIONS = {
++    'TRANSLATE': ('MOVE', 'transform.translate'),
++    'ROTATE': ('ROTATE', 'transform.rotate'),
++    'SCALE': ('SCALE', 'transform.resize'),
++}
++IPAD_TRANSFORM_AXES = (
++    ('FREE', "Free", (False, False, False)),
++    ('X', "X", (True, False, False)), ('Y', "Y", (False, True, False)),
++    ('Z', "Z", (False, False, True)), ('XY', "XY", (True, True, False)),
++    ('XZ', "XZ", (True, False, True)), ('YZ', "YZ", (False, True, True)),
++)
++
++
++def ipad_transform_state(context):
++    active = ToolSelectPanelHelper.tool_active_from_context(context)
++    if active is None:
++        return None
++    if active.idname == 'builtin.transform':
++        action = active.gizmo_group_properties('VIEW3D_GGT_xform_gizmo').drag_action
++        if action not in IPAD_TRANSFORM_ACTIONS:
++            return active, None, None, 1
++        operation, operator = IPAD_TRANSFORM_ACTIONS[action]
++        slot = 1
++    elif active.idname in IPAD_TRANSFORM_TOOLS:
++        operation, operator, slot = IPAD_TRANSFORM_TOOLS[active.idname]
++    else:
++        return None
++    return active, operation, operator, slot
++
++
++def ipad_transform_orientation(context, slot_index):
++    slot = context.scene.transform_orientation_slots[slot_index]
++    return slot if slot.use else context.scene.transform_orientation_slots[0]
++
++
++def ipad_transform_context(context):
++    return (context.area is not None and context.area.type == 'VIEW_3D'
++            and context.window is not None
++            and context.mode in IPAD_SELECT_ALL
++            and not getattr(context.window_manager, "ipad_flythrough_active", False))
++
++
++class VIEW3D_OT_ipad_transform_axis(Operator):
++    bl_idname = "view3d.ipad_transform_axis"
++    bl_label = "Drag Constraint"
++    bl_description = "Constrain the next native tool drag to an axis or plane"
++
++    axis: bpy.props.EnumProperty(items=tuple((name, label, "") for name, label, _ in IPAD_TRANSFORM_AXES))
++
++    @classmethod
++    def poll(cls, context):
++        state = ipad_transform_state(context)
++        return ipad_transform_context(context) and state is not None and state[2] is not None
++
++    def execute(self, context):
++        state = ipad_transform_state(context)
++        if state is None or state[2] is None or (state[1] == 'ROTATE' and self.axis in {'XY', 'XZ', 'YZ'}):
++            return {'CANCELLED'}
++        active, _, operator, _ = state
++        active.operator_properties(operator).constraint_axis = next(
++            axes for name, _, axes in IPAD_TRANSFORM_AXES if name == self.axis)
++        context.area.tag_redraw()
++        return {'FINISHED'}
++
++
++def ipad_component_selection(context):
++    result = []
++    for obj in sorted(context.objects_in_mode, key=lambda item: item.as_pointer()):
++        data = obj.data
++        if context.mode == 'EDIT_MESH':
++            import bmesh
++            mesh = bmesh.from_edit_mesh(data)
++            parts = []
++            for elements in (mesh.verts, mesh.edges, mesh.faces):
++                elements.index_update()
++                parts.append((len(elements), tuple(item.index for item in elements if item.select)))
++            selection = tuple(parts)
++        elif context.mode == 'POSE':
++            # Blender 5.0 stores selection on Bone; newer hosts use PoseBone.
++            selection = tuple((bone.name, getattr(bone, 'select', getattr(bone.bone, 'select', False)))
++                              for bone in obj.pose.bones)
++            selection += (("active", data.bones.active.name if data.bones.active else None),)
++        elif context.mode == 'EDIT_ARMATURE':
++            selection = tuple((bone.name, bone.select, bone.select_head, bone.select_tail)
++                              for bone in data.edit_bones)
++            selection += (("active", data.edit_bones.active.name if data.edit_bones.active else None),)
++        elif context.mode in {'EDIT_CURVE', 'EDIT_SURFACE'}:
++            selection = tuple((tuple(point.select for point in spline.points),
++                tuple((point.select_control_point, point.select_left_handle, point.select_right_handle)
++                      for point in spline.bezier_points)) for spline in data.splines)
++        elif context.mode == 'EDIT_LATTICE':
++            selection = tuple(point.select for point in data.points)
++        elif context.mode == 'EDIT_METABALL':
++            selection = tuple(element.select for element in data.elements)
++        else:
++            def attributes(owner):
++                if owner is None:
++                    return ()
++                return tuple((attr.name, tuple(item.value for item in attr.data))
++                             for attr in owner.attributes
++                             if attr.name.startswith('.selection') and attr.data_type in {'BOOLEAN', 'FLOAT'})
++            if context.mode == 'EDIT_GREASE_PENCIL':
++                selection = tuple((layer.name, frame.frame_number, frame.drawing is not None,
++                                   attributes(frame.drawing))
++                                  for layer in data.layers for frame in layer.frames)
++            else:
++                selection = attributes(data)
++        result.append((obj.as_pointer(), selection))
++    return tuple(result)
++
++
++def ipad_numeric_target(context, slot_index):
++    # Store plain identities, never a retained context or live RNA object. A
++    # changed scene, editor, selection, mode or basis invalidates the dialog.
++    pointer = lambda data: data.as_pointer() if data else 0
++    basis = ipad_transform_orientation(context, slot_index)
++    custom = basis.custom_orientation
++    window_region = context.region if context.region and context.region.type == 'WINDOW' else next(
++        (region for region in context.area.regions if region.type == 'WINDOW'), None)
++    view = window_region.data if window_region else None
++    return (pointer(context.window), pointer(context.area), pointer(context.area.spaces.active),
++            pointer(window_region), pointer(context.scene),
++            pointer(context.view_layer), context.mode, pointer(context.active_object),
++            tuple(sorted(pointer(obj) for obj in context.selected_objects)),
++            tuple(sorted(pointer(obj) for obj in context.objects_in_mode)),
++            basis.type, pointer(custom),
++            tuple(value for row in custom.matrix for value in row) if custom else (),
++            context.tool_settings.transform_pivot_point,
++            tuple(value for row in context.scene.cursor.matrix for value in row),
++            tuple(view.view_rotation) if view else (),
++            context.scene.frame_current, context.scene.frame_subframe,
++            ipad_component_selection(context))
++
++
++class VIEW3D_OT_ipad_transform_numbers(Operator):
++    bl_idname = "view3d.ipad_transform_numbers"
++    bl_label = "Transform by Numbers"
++    bl_description = "Apply a precise native transform on OK; Cancel leaves the selection unchanged"
++    bl_options = {'UNDO'}
++
++    operation: bpy.props.EnumProperty(items=(
++        ('MOVE', "Move", "Offset along the orientation axes"),
++        ('ROTATE', "Rotate", "Angle around an orientation axis"),
++        ('SCALE', "Scale", "Factors along the orientation axes")))
++    slot_index: bpy.props.IntProperty(default=0, min=0, max=3, options={'HIDDEN', 'SKIP_SAVE'})
++    offset: bpy.props.FloatVectorProperty(name="Offset", size=3, default=(0, 0, 0),
++                                         subtype='TRANSLATION', unit='LENGTH', options={'SKIP_SAVE'})
++    factors: bpy.props.FloatVectorProperty(name="Factors", size=3, default=(1, 1, 1),
++                                          options={'SKIP_SAVE'})
++    angle: bpy.props.FloatProperty(name="Angle", default=0, subtype='ANGLE', unit='ROTATION',
++                                  options={'SKIP_SAVE'})
++    axis: bpy.props.EnumProperty(name="Axis", items=(('X', "X", ""), ('Y', "Y", ""), ('Z', "Z", "")),
++                                default='Z', options={'SKIP_SAVE'})
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_transform_context(context)
++
++    def invoke(self, context, event):
++        if not self.poll(context):
++            return {'CANCELLED'}
++        self._target = ipad_numeric_target(context, self.slot_index)
++        return context.window_manager.invoke_props_dialog(self, width=360)
++
++    def draw(self, context):
++        layout = self.layout
++        layout.scale_y = 2.2
++        basis = ipad_transform_orientation(context, self.slot_index)
++        layout.label(text=f"{self.operation.title()} · {basis.type.title()} axes")
++        if self.operation == 'MOVE':
++            layout.prop(self, 'offset', text="Offset")
++        elif self.operation == 'SCALE':
++            layout.prop(self, 'factors', text="Factors")
++        else:
++            layout.prop(self, 'axis', expand=True)
++            layout.prop(self, 'angle')
++        layout.label(text="OK applies once · Undo reverses the edit")
++
++    def execute(self, context):
++        if not self.poll(context):
++            return {'CANCELLED'}
++        if hasattr(self, '_target') and self._target != ipad_numeric_target(context, self.slot_index):
++            self.report({'WARNING'}, "Selection or transform settings changed; reopen Numbers")
++            return {'CANCELLED'}
++        basis = ipad_transform_orientation(context, self.slot_index)
++        kwargs = {'orient_type': basis.type}
++        if self.operation == 'MOVE':
++            if not any(self.offset):
++                return {'CANCELLED'}
++            return bpy.ops.transform.translate('EXEC_REGION_WIN', value=tuple(self.offset), **kwargs)
++        if self.operation == 'SCALE':
++            if tuple(self.factors) == (1, 1, 1):
++                return {'CANCELLED'}
++            return bpy.ops.transform.resize('EXEC_REGION_WIN', value=tuple(self.factors), **kwargs)
++        if self.angle == 0:
++            return {'CANCELLED'}
++        return bpy.ops.transform.rotate('EXEC_REGION_WIN', value=self.angle,
++            orient_axis=self.axis, constraint_axis=tuple(axis == self.axis for axis in 'XYZ'), **kwargs)
++
++
++class VIEW3D_PT_ipad_transform(Panel):
++    bl_label = "Transform"
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++    bl_ui_units_x = 20
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_transform_context(context) and ipad_transform_state(context) is not None
++
++    def draw(self, context):
++        layout = self.layout
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        layout.scale_y = 2.2
++        state = ipad_transform_state(context)
++        if state is None:
++            return
++        active, operation, operator, slot_index = state
++        if active.idname == 'builtin.transform':
++            layout.prop(active.gizmo_group_properties('VIEW3D_GGT_xform_gizmo'),
++                        'drag_action', text="Canvas Drag")
++        if operator is None:
++            layout.label(text="Choose Move, Rotate or Scale for canvas drags")
++            return
++        axes = tuple(active.operator_properties(operator).constraint_axis)
++        layout.label(text=f"{operation.title()} drag constraint")
++        for choices in (IPAD_TRANSFORM_AXES[:4], IPAD_TRANSFORM_AXES[4:]):
++            if operation == 'ROTATE' and choices == IPAD_TRANSFORM_AXES[4:]:
++                continue
++            row = layout.row(align=True)
++            for name, text, value in choices:
++                row.operator('view3d.ipad_transform_axis', text=text, depress=axes == value).axis = name
++        layout.prop(context.scene.transform_orientation_slots[slot_index], 'type', text="Orientation")
++        layout.prop(context.tool_settings, 'transform_pivot_point', text="Pivot")
++        snap = layout.row(align=True)
++        snap.prop(context.tool_settings, 'use_snap', text="Snap", toggle=True, icon='SNAP_ON')
++        snap.popover(panel='VIEW3D_PT_snapping', text="Snap Options")
++        layout.separator()
++        numbers = layout.operator('view3d.ipad_transform_numbers', text=f"{operation.title()} by Numbers",
++                                  icon='LINENUMBERS_ON')
++        numbers.operation, numbers.slot_index = operation, slot_index
++        numbers.axis = next((axis for index, axis in enumerate('XYZ')
++                             if axes[index] and sum(axes) == 1), 'Z')
++        # Whole vectors/factors use every basis axis, independently of drag constraints.
++        layout.label(text="Numbers use all axes of this orientation")
++        layout.label(text="Drag, lift to finish · two fingers to orbit")
++
++
 +class VIEW3D_OT_ipad_flythrough_toggle(Operator):
 +    bl_idname = "view3d.ipad_flythrough_toggle"
 +    bl_label = "Flythrough Mode"
@@ -3648,8 +3902,14 @@ new file mode 100644
 +    if (active and active.idname in {'builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.transform'}
 +            and (mode in {'OBJECT', 'POSE'} or mode.startswith('EDIT_'))
 +            and not getattr(bpy.context.window_manager, "ipad_flythrough_active", False)):
-+        label = next(label for label, name, _ in IPAD_RADIAL_TOOLS if name == active.idname)
-+        row.label(text=f"{label} · drag, lift to finish")
++        state = ipad_transform_state(bpy.context)
++        if state:
++            tool, operation, operator, slot_index = state
++            axes = tuple(tool.operator_properties(operator).constraint_axis) if operator else None
++            constraint = next((text for _, text, value in IPAD_TRANSFORM_AXES if value == axes), "Custom")
++            text = f"{operation.title()} · {constraint}" if operation else "Transform"
++            row.popover(panel="VIEW3D_PT_ipad_transform", text=text,
++                        icon='ORIENTATION_GIMBAL')
 +
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
@@ -3672,6 +3932,9 @@ new file mode 100644
 +    VIEW3D_MT_ipad_tool_settings,
 +    VIEW3D_OT_ipad_selection_tool,
 +    VIEW3D_PT_ipad_selection,
++    VIEW3D_OT_ipad_transform_axis,
++    VIEW3D_OT_ipad_transform_numbers,
++    VIEW3D_PT_ipad_transform,
 +    VIEW3D_PT_ipad_controls,
 +    VIEW3D_OT_ipad_flythrough_toggle,
 +)
@@ -5907,7 +6170,20 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        bool use_last_properties = true;
        PointerRNA tool_properties = {};
 
-@@ -2787,8 +2818,57 @@
+@@ -2732,6 +2763,12 @@
+       if (use_tool_properties) {
+         WM_toolsystem_ref_properties_init_for_keymap(
+             keymap_tool, &tool_properties, properties, ot);
++#ifdef WITH_APPLE_CROSSPLATFORM
++        /* Native gizmos own their basis, including the view-facing rotation ring. */
++        if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {
++          WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot);
++        }
++#endif
+         properties = &tool_properties;
+         use_last_properties = false;
+       }
+@@ -2787,8 +2824,57 @@
    return WM_HANDLER_BREAK;
  }
 
@@ -5965,7 +6241,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    LISTBASE_FOREACH (bScreen *, screen, &G_MAIN->screens) {
      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
        if (area->spacetype == SPACE_FILE) {
-@@ -2817,6 +2897,311 @@
+@@ -2817,6 +2903,311 @@
 
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -6277,7 +6553,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -2836,6 +3221,15 @@
+@@ -2836,6 +3227,15 @@
        sfile->op = handler->op;
 
        ED_fileselect_set_params_from_userdef(sfile);
@@ -6293,7 +6569,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        action = WM_HANDLER_BREAK;
        break;
-@@ -2985,6 +3379,12 @@
+@@ -2985,6 +3385,12 @@
          }
 
          if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
@@ -6306,7 +6582,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            wm_operator_free_for_fileselect(handler->op);
          }
        }
-@@ -3808,6 +4208,24 @@
+@@ -3808,6 +4214,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -6331,7 +6607,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +4240,12 @@
+@@ -3822,6 +4246,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -6344,7 +6620,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4227,6 +4651,20 @@
+@@ -4227,6 +4657,20 @@
          }
        }
 
@@ -6365,7 +6641,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4685,15 @@
+@@ -4247,6 +4691,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -6381,7 +6657,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -5784,7 +6231,9 @@
+@@ -5784,7 +6237,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -6392,7 +6668,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -6032,6 +6481,9 @@
+@@ -6032,6 +6487,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -6402,7 +6678,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6557,16 @@
+@@ -6105,6 +6563,16 @@
        }
        break;
      }
@@ -6419,7 +6695,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6593,12 @@
+@@ -6131,6 +6599,12 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -6432,7 +6708,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6611,8 @@
+@@ -6143,7 +6617,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -13441,6 +13717,25 @@ diff --git a/source/blender/editors/transform/transform_ops.cc b/source/blender/
  #if defined(WITH_INPUT_NDOF) && 0
    /* Stable 2D mouse coords map to different 3D coords while the 3D mouse is active
     * in other words, 2D deltas are no longer good enough!
+@@ -1492,7 +1502,18 @@
+         PointerRNA op_ptr;
+         WM_operator_properties_create_ptr(&op_ptr, ot);
+         RNA_boolean_set(&op_ptr, "release_confirm", true);
++#ifdef WITH_APPLE_CROSSPLATFORM
++        /* The combined tool delegates to the chosen native transform. Follow
++         * that child's tool settings just as Move/Rotate/Scale do, retaining
++         * explicit release-confirm and actual gizmo/keymap constraints. */
++        PointerRNA merged_ptr;
++        WM_toolsystem_ref_properties_init_for_keymap(tref, &merged_ptr, &op_ptr, ot);
++        WM_toolsystem_ref_properties_for_transform(C, tref, &merged_ptr, ot);
++        WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &merged_ptr, event);
++        WM_operator_properties_free(&merged_ptr);
++#else
+         WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &op_ptr, event);
++#endif
+         WM_operator_properties_free(&op_ptr);
+         return OPERATOR_FINISHED;
+       }
 diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blender/windowmanager/intern/wm_gesture_ops.cc
 --- a/source/blender/windowmanager/intern/wm_gesture_ops.cc
 +++ b/source/blender/windowmanager/intern/wm_gesture_ops.cc
@@ -13517,3 +13812,85 @@ diff --git a/source/blender/editors/space_view3d/view3d_select.cc b/source/blend
    RNA_int_set_array(op->ptr, "location", event->mval);
 
    const wmOperatorStatus retval = view3d_select_exec(C, op);
+diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blender/windowmanager/intern/wm_toolsystem.cc
+--- a/source/blender/windowmanager/intern/wm_toolsystem.cc
++++ b/source/blender/windowmanager/intern/wm_toolsystem.cc
+@@ -45,6 +45,7 @@
+ #include "BKE_main.hh"
+ #include "BKE_paint.hh"
+ #include "BKE_paint_types.hh"
++#include "BKE_scene.hh"
+ #include "BKE_workspace.hh"
+
+ #include "RNA_access.hh"
+@@ -1316,6 +1317,52 @@
+   *r_ptr = RNA_pointer_create_discrete(nullptr, type, prop);
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++void WM_toolsystem_ref_properties_for_transform(const bContext *C,
++                                                const bToolRef *tref,
++                                                PointerRNA *ptr,
++                                                const wmOperatorType *ot)
++{
++  /* Only deliberate transform-tool calls use the tool's native orientation slot.
++   * Leave shortcuts, other tools and explicit gizmo bases untouched. */
++  if (!tref || tref->space_type != SPACE_VIEW3D ||
++      !(STREQ(ot->idname, "TRANSFORM_OT_translate") ||
+++        STREQ(ot->idname, "TRANSFORM_OT_rotate") ||
+++        STREQ(ot->idname, "TRANSFORM_OT_resize")))
++  {
++    return;
++  }
++  const char *mode = CTX_data_mode_string(C);
++  if (!mode || !(STREQ(mode, "OBJECT") || STREQ(mode, "POSE") || STRPREFIX(mode, "EDIT_"))) {
++    return;
++  }
++  int slot = -1;
++  if (STREQ(tref->idname, "builtin.move") && STREQ(ot->idname, "TRANSFORM_OT_translate")) {
++    slot = SCE_ORIENT_TRANSLATE;
++  }
++  else if (STREQ(tref->idname, "builtin.rotate") && STREQ(ot->idname, "TRANSFORM_OT_rotate")) {
++    slot = SCE_ORIENT_ROTATE;
++  }
++  else if (STREQ(tref->idname, "builtin.scale") && STREQ(ot->idname, "TRANSFORM_OT_resize")) {
++    slot = SCE_ORIENT_SCALE;
++  }
++  else if (STREQ(tref->idname, "builtin.transform")) {
++    slot = SCE_ORIENT_TRANSLATE;
++  }
++  if (slot < 0 || RNA_struct_property_is_set(ptr, "orient_type") ||
++      RNA_struct_property_is_set(ptr, "orient_matrix") ||
++      RNA_struct_property_is_set(ptr, "orient_matrix_type"))
++  {
++    return;
++  }
++  Scene *scene = CTX_data_scene(C);
++  if (scene) {
++    /* Native resolver includes the Default fallback and custom orientation index. */
++    RNA_enum_set(ptr, "orient_type", BKE_scene_orientation_get_index(scene, slot));
++  }
++}
++#endif
++
+ void WM_toolsystem_ref_properties_init_for_keymap(bToolRef *tref,
+                                                   PointerRNA *dst_ptr,
+                                                   PointerRNA *src_ptr,
+diff --git a/source/blender/windowmanager/WM_toolsystem.hh b/source/blender/windowmanager/WM_toolsystem.hh
+--- a/source/blender/windowmanager/WM_toolsystem.hh
++++ b/source/blender/windowmanager/WM_toolsystem.hh
+@@ -134,6 +134,14 @@
+ #define WM_toolsystem_ref_properties_get_from_gizmo_group(tref, gzgroup, r_ptr) \
+   WM_toolsystem_ref_properties_get_ex(tref, (gzgroup)->idname, (gzgroup)->srna, r_ptr)
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/** Apply the native transform-tool orientation without replacing explicit operator bases. */
++void WM_toolsystem_ref_properties_for_transform(const bContext *C,
++                                                const bToolRef *tref,
++                                                PointerRNA *ptr,
++                                                const wmOperatorType *ot);
++#endif
++
+ void WM_toolsystem_ref_properties_init_for_keymap(bToolRef *tref,
+                                                   PointerRNA *dst_ptr,
+                                                   PointerRNA *src_ptr,

@@ -83,7 +83,7 @@ with bpy.context.temp_override(area=area, region=region):
     module.draw_canvas_header(Layout(records))
     assert [item[0] for item in records[:2]] == ['ed.undo', 'ed.redo'], records
     assert records[2][0] == 'popover' and records[2][2]['panel'] == 'VIEW3D_PT_ipad_selection', records
-    assert records[3][0] == 'label' and 'Move' in records[3][2]['text'], records
+    assert records[3][0] == 'popover' and records[3][2]['panel'] == 'VIEW3D_PT_ipad_transform', records
     assert records[4][0] == 'view3d.ipad_flythrough_toggle', records
     for idname in ('undo', 'redo'):
         getattr(bpy.ops.ed, idname).get_rna_type()

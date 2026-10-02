@@ -1,0 +1,14 @@
+{
+  "blender": "5.1.2",
+  "checks": [
+    "Native tool children, axis/plane RNA, combined None recovery and transient values",
+    "Local, Default fallback and custom named orientation geometry",
+    "Exact fractional Move, Rotate X/Y/Z and nonuniform Scale around native Cursor pivot",
+    "Multiple objects preserve Individual Origins pivot",
+    "No-op/Cancel, object-selection guard, Edit Mesh geometry and same-object component guard",
+    "Native Undo/Redo geometry with explicit headless checkpoints (automatic device push unverified)",
+    "Pose numeric Move and Pose/Edit Armature same-object bone-selection guards",
+    "Nullable Grease Pencil end frame and unsupported Edit Text regression guards"
+  ],
+  "scope": "Host RNA/geometry/ownership evidence. No visual preview, UIKit or device acceptance. Automatic UI Undo push unverified."
+}
