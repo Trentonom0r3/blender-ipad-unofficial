@@ -40,6 +40,9 @@ class Layout:
         self.records.append((name, props, kwargs, self.enabled))
         return props
 
+    def label(self, **kwargs):
+        self.records.append(('label', None, kwargs, True))
+
     def prop(self, data, prop, **kwargs):
         self.records.append(('property', prop, kwargs, True))
 
@@ -69,9 +72,14 @@ with bpy.context.temp_override(area=area, region=region):
             assert len(enabled) == 9, enabled
         results.append({'mode': bpy.context.mode, 'activated': enabled})
     bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.wm.tool_set_by_id(name='builtin.move')
     records = []
     module.draw_canvas_header(Layout(records))
-    assert records[0][0:2] == ('property', 'show_region_toolbar'), records
+    assert [item[0] for item in records[:2]] == ['ed.undo', 'ed.redo'], records
+    assert records[2][0] == 'label' and 'Move' in records[2][2]['text'], records
+    assert records[3][0] == 'view3d.ipad_flythrough_toggle', records
+    for idname in ('undo', 'redo'):
+        getattr(bpy.ops.ed, idname).get_rna_type()
     records = []
     module.VIEW3D_MT_ipad_tool_settings.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
     assert len(records) == 1 and records[0][1].data_path == 'space_data.show_region_toolbar'
@@ -97,7 +105,7 @@ assert not getattr(wm, "ipad_flythrough_active", False)
 
 output = repo / 'output/ui-preview/nine-tools-validation.json'
 output.write_text(json.dumps({'blender': bpy.app.version_string, 'checks': results,
-    'header_and_settings_shelf_toggle': 'passed',
+    'header_undo_redo_and_settings_shelf_toggle': 'passed',
     'scope': 'Host Python tool/UI wiring only. Native popup, gestures and UIKit require iOS testing.'},
     indent=2) + '\n', encoding='utf-8')
-print('PASS: nine tool slots, actual tool activation, no accidental cube creation, header/settings shelf toggle')
+print('PASS: nine tool slots, actual tool activation, no accidental cube creation, header Undo/Redo and settings shelf toggle')

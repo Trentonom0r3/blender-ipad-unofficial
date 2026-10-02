@@ -1705,7 +1705,17 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -458,6 +771,10 @@
+@@ -448,6 +761,9 @@
+ {
+   /* Lock access to ensure all input-events are received sequentially. */
+   @synchronized(self) {
++    /* Finger/indirect samples must not inherit a nearby Pencil's hover data. */
++    const GHOST_TabletData event_tablet = event_info.pencil_used ? tablet_data :
++                                                               GHOST_TABLET_DATA_NONE;
+     for (int i = 0; i < event_info.num_events; i++) {
+       UserInputEvent::EventTypes event_type = event_info.event_list[i];
+       IOS_INPUT_LOG(@"%d-%@ %f,%f",
+@@ -458,13 +774,17 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -1716,7 +1726,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            system->pushEvent(
                new GHOST_EventCursor(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                      GHOST_kEventCursorMove,
-@@ -490,27 +807,66 @@
+                                     window,
+                                     event_info.location.x,
+                                     event_info.location.y,
+-                                    tablet_data));
++                                    event_tablet));
+           break;
+         case UserInputEvent::EventTypes::PAN_GESTURE:
+           system->pushEvent(
+@@ -490,27 +810,66 @@
                                        true,
                                        2));
            break;
@@ -1764,7 +1782,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                      window,
                                      GHOST_kButtonMaskLeft,
 -                                    tablet_data));
-+                                    tablet_data,
++                                    event_tablet,
 +                                    false,
 +                                    event_info.direct_tool));
            break;
@@ -1775,7 +1793,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -                                    window,
 -                                    GHOST_kButtonMaskLeft,
 -                                    tablet_data));
-+                                    GHOST_kEventButtonUp, window, GHOST_kButtonMaskLeft, tablet_data,
++                                    GHOST_kEventButtonUp, window, GHOST_kButtonMaskLeft, event_tablet,
 +                                    event_info.cancelled,
 +                                    event_info.direct_tool));
            break;
@@ -1789,7 +1807,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                        event_info.location.x,
                                        event_info.location.y,
                                        event_info.distance,
-@@ -518,14 +874,24 @@
+@@ -518,14 +877,24 @@
                                        false,
                                        2));
            break;
@@ -1816,7 +1834,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,17 +905,29 @@
+@@ -539,17 +908,29 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -1853,7 +1871,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* Override touch methods to capture the UITouch object. */
-@@ -580,8 +958,10 @@
+@@ -580,8 +961,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
 
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -1866,7 +1884,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,22 +984,49 @@
+@@ -604,22 +987,49 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -1921,7 +1939,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, last_tap_with_pencil);
 
    /* Send events to indicate a 'click' on event end. */
-@@ -630,6 +1037,10 @@
+@@ -630,6 +1040,10 @@
    }
 
    [self generateUserInputEvents:event_info];
@@ -1932,7 +1950,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1088,180 @@
+@@ -677,12 +1091,180 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -2115,7 +2133,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1269,21 @@
+@@ -690,6 +1272,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -2137,7 +2155,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,8 +1316,109 @@
+@@ -722,8 +1319,109 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -2247,7 +2265,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Translation can be non-zero on begin event */
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -739,6 +1434,20 @@
+@@ -739,6 +1437,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -2268,7 +2286,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,67 +1463,139 @@
+@@ -754,67 +1466,145 @@
    }
  }
 
@@ -2373,6 +2391,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
 +{
 +  IOS_INPUT_LOG(@"HOVER fired, btn_pressed=%d", mouse_left_pressed);
++  /* A captured finger/Pencil drag owns both cursor and tablet samples.
++   * Apply this to hover end too; clearing pressure mid-stroke also corrupts input. */
++  if (pointer_capture.active() || current_pencil_touch ||
++      [pan_gesture_recognizer pencilTouch]) {
++    return;
++  }
 +  if (sender.state == UIGestureRecognizerStateBegan ||
 +      sender.state == UIGestureRecognizerStateChanged)
 +  {
@@ -2444,7 +2468,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1611,66 @@
+@@ -830,25 +1620,66 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -2514,7 +2538,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +2020,374 @@
+@@ -1198,11 +2029,374 @@
    }
  }
 
@@ -2889,7 +2913,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2483,12 @@
+@@ -1298,7 +2492,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -2903,7 +2927,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2496,163 @@
+@@ -1306,22 +2505,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -3073,7 +3097,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2696,12 @@
+@@ -1365,11 +2705,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -3087,7 +3111,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2709,6 @@
+@@ -1377,7 +2718,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3095,7 +3119,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2722,6 @@
+@@ -1391,7 +2731,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -3103,7 +3127,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2730,6 @@
+@@ -1400,7 +2739,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3111,7 +3135,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2739,12 @@
+@@ -1410,8 +2748,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -3126,7 +3150,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2757,14 @@
+@@ -1424,10 +2766,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -3142,7 +3166,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +2808,28 @@
+@@ -1471,14 +2817,28 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
@@ -3172,7 +3196,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2850,9 @@
+@@ -1499,6 +2859,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -3182,7 +3206,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2972,7 @@
+@@ -1618,7 +2981,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -3191,7 +3215,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3262,7 @@
+@@ -1908,6 +3271,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -3199,7 +3223,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3273,11 @@
+@@ -1918,6 +3282,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -3211,7 +3235,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
-@@ -1932,6 +3292,7 @@
+@@ -1932,6 +3301,7 @@
    GHOST_ASSERT(!request_to_make_active_,
                 "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
 
@@ -3223,7 +3247,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,237 @@
+@@ -0,0 +1,245 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3428,6 +3452,14 @@ new file mode 100644
 +    row.operator_context = 'INVOKE_REGION_WIN'
 +    row.operator('ed.undo', text="Undo", icon='LOOP_BACK')
 +    row.operator('ed.redo', text="Redo", icon='LOOP_FORWARDS')
++
++    active = ToolSelectPanelHelper.tool_active_from_context(bpy.context)
++    mode = bpy.context.mode
++    if (active and active.idname in {'builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.transform'}
++            and (mode in {'OBJECT', 'POSE'} or mode.startswith('EDIT_'))
++            and not getattr(bpy.context.window_manager, "ipad_flythrough_active", False)):
++        label = next(label for label, name, _ in IPAD_RADIAL_TOOLS if name == active.idname)
++        row.label(text=f"{label} · drag, lift to finish")
 +
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
@@ -7288,7 +7320,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    }
 
    /* After area regions so we can do area 'overlay' drawing. */
-@@ -1175,6 +1249,85 @@
+@@ -1175,6 +1249,86 @@
 
    wm_draw_callbacks(win);
    wmWindowViewport(win);
@@ -7364,7 +7396,8 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +  /* Floating menus own pointer interaction while visible. Do not let UIKit's
 +   * navigation bridge start a viewport drag through the popup or its dismiss area. */
 +  LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-+    if (region->runtime->visible) {
++    if (region->runtime->visible &&
++        region != (screen->tool_tip ? screen->tool_tip->region : nullptr)) {
 +      navigation.clear();
 +      break;
 +    }
@@ -7374,7 +7407,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
    /* Blend in floating regions (menus). */
    LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-@@ -1528,6 +1681,13 @@
+@@ -1528,6 +1682,13 @@
    }
 
    ED_screen_areas_iter (win, screen, area) {
@@ -9021,7 +9054,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2235 @@
+@@ -0,0 +1,2238 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -11194,7 +11227,10 @@ new file mode 100644
 +      return true;
 +    }
 +  }
++  /* Defer switching the panel host until ordinary canvas input; changing
++   * native sidebar/Tools geometry in the middle of a direct stroke is unsafe. */
 +  if (event->type == LEFTMOUSE && event->val == KM_PRESS &&
++      !(event->flag & WM_EVENT_IS_DIRECT_TOOL) &&
 +      contains(model.layout.canvas, event->xy) && !navigation_hit) {
 +    for (const policy::Area &working : model.working) {
 +      ScrArea *area = model.areas[working.id];
