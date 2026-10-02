@@ -1,5 +1,9 @@
 # Blender iPad development
 
+## Verified first Files open repair IPA — 2026-10-01
+
+Exact-source run 36950741895 at 4a777b6 passed native Release build and downloaded IPA archive/bundle checks; see `docs/PROJECT_HANDOFF.md`. It fixes the fresh direct Files open ticket-zero cancellation and makes Recent Retry/Open Local Copy wait for alert dismissal; a successfully opened local copy saves independently of the Files original. No iPad device acceptance is claimed. Preserve accepted Pencil squeeze radial, double-tap, Inspector, native editors, external input and the user's focused Link/Append chooser result. Continue complete Files and touch usability, especially sibling assets and linked-library portability; distinguish source, package and device evidence.
+
 ## Verified Files-backed Open Recent IPA — 2026-10-01
 
 Exact-source run 36926276105 at 675badc passed native Release build and downloaded IPA integrity/bundle checks; see `docs/PROJECT_HANDOFF.md`. Provider-backed Open Recent now checks Files before the unsaved-scene decision, handles conflict/offline/local-copy choices, and waits for terminal asynchronous Save success. The first direct Files open avoids a duplicate check when the scene is clean. No device acceptance is claimed. Preserve Pencil squeeze radial, double-tap, accepted Inspector, native editors and external input. Continue touch/Files usability and linked-library portability; distinguish source, package and device evidence.
