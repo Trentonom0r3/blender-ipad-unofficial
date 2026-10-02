@@ -1,5 +1,9 @@
 # Blender iPad development
 
+## Verified library-folder Link/Append IPA — 2026-10-01
+
+Exact-source run 36952644773 at 1abeea2 passed native Release build and downloaded IPA archive, arm64 bundle and packaged folder-marker checks; see `docs/PROJECT_HANDOFF.md`. Link/Append can now copy a selected folder containing one `.blend` with relative assets, or keep the existing single-file route. Folder selection, relative textures and cancellation have no device acceptance. The user's earlier "works" reply supports only the original chooser. Preserve accepted Pencil squeeze radial, double-tap, Inspector, native editors and external input. Continue touch/Files usability and portable project sharing; source, packaged build and device evidence are separate.
+
 ## Verified first Files open repair IPA — 2026-10-01
 
 Exact-source run 36950741895 at 4a777b6 passed native Release build and downloaded IPA archive/bundle checks; see `docs/PROJECT_HANDOFF.md`. It fixes the fresh direct Files open ticket-zero cancellation and makes Recent Retry/Open Local Copy wait for alert dismissal; a successfully opened local copy saves independently of the Files original. No iPad device acceptance is claimed. Preserve accepted Pencil squeeze radial, double-tap, Inspector, native editors, external input and the user's focused Link/Append chooser result. Continue complete Files and touch usability, especially sibling assets and linked-library portability; distinguish source, package and device evidence.

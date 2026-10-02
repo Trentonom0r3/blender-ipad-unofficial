@@ -1,5 +1,9 @@
 # Product direction and decisions
 
+## Library folder package — 2026-10-01
+
+Run 36952644773 at 1abeea2 passed native iOS Release build and downloaded IPA checks for a Link/Append Files folder choice that retains relative assets around one `.blend`. Device provider behavior is still open. The original single-file chooser and accepted Pencil/Inspector remain. A saved main project still needs a separate portable sharing workflow for linked libraries; do not call this snapshot a portable project.
+
 ## Provider-backed Recent package — 2026-10-01
 
 Run 36926276105 at 675badc passed native iOS Release build and downloaded IPA checks for a Files-backed Open Recent refresh and safe asynchronous Save-before-switch. Device provider behavior and touch comfort remain open. Continue complete Files, library portability and everyday iPad usability without treating packaging as acceptance.
