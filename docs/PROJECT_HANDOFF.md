@@ -1,5 +1,9 @@
 # Project handoff — 2026-10-01
 
+## Portable project copy source audit — 2026-10-02
+
+A project containing an app-owned linked-library snapshot is not portable when Save Copy exports only the main `.blend`. The pinned iPad `wm_save_to_files_modal` uses `BLO_WRITE_PATH_REMAP_ABSOLUTE` for ordinary Save Copy; pinned Blender's `BKE_packedfile_pack_all_libraries` rejects absolute library paths, so a simple chained packing command is not a safe substitute. The pinned writer backs up/restores path remaps for a save copy, but `wm_file_write` still performs pre-save/asset/edit work and neither routine gathers linked-library folders. The source-backed target and move-and-reopen acceptance matrix are in [PORTABLE_PROJECT_COPY.md](PORTABLE_PROJECT_COPY.md). This is audit/design evidence, with no new IPA or device result. The next safe source spike is staged library-path redirection with complete restoration before native Files folder export is added. Continue independent touch and Files work while the latest library-folder IPA awaits device feedback.
+
 ## Verified library-folder Link/Append IPA — 2026-10-01
 
 Exact-source [iOS run 36952644773](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36952644773) at `1abeea244e8bfa0b009dc9c5c28abaea7876dc2f` passed cloud preflight, native Release compilation, IPA packaging and upload. Artifact `Blender-iPad-Unofficial-ipa` id `11205091154` has GitHub archive size 248,460,650 bytes, reported digest `sha256:946486c4f4c4063cb500c1921c5280835b8b19d9db4fdf579d71b639065fc4c7`, and expires 2026-12-31 01:47:56 UTC. The downloaded IPA is 248,460,482 bytes, SHA-256 `db1f1a1f8d345f369d5f1fcfbec2541205b1d1673e72d0d51451908fd6ae21e8`. Full ZIP CRC across 3,368 entries, iPhoneOS arm64 Mach-O/bundle metadata, startup resources, Link/Append menus and packaged folder/Recent strings pass. All 46 host tests, 58-file pinned-source preflight and diff check passed at this source.
