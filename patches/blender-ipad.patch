@@ -539,7 +539,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    return wm_open_mainfile__open(C, op);
  }
 
-@@ -3378,6 +3508,400 @@
+@@ -3378,6 +3508,408 @@
                    "system preferences");
  }
 
@@ -712,6 +712,14 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 +    }
 +    else {
 +      BKE_reportf(op->reports, RPT_INFO, "Saved copy as \"%s\"", BLI_path_basename(path));
++      const Main *current = CTX_data_main(C);
++      if (current && current == data->main_at_stage &&
++          !BLI_listbase_is_empty(&current->libraries))
++      {
++        BKE_report(op->reports,
++                   RPT_WARNING,
++                   "This .blend copy may need separate linked library files when shared");
++      }
 +    }
 +    if (data->post_close_callback) {
 +      Main *current = CTX_data_main(C);
@@ -940,7 +948,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
    ot->name = "Open";
-@@ -3409,6 +3933,14 @@
+@@ -3409,6 +3941,14 @@
    RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
    create_operator_state(ot, OPEN_MAINFILE_STATE_DISCARD_CHANGES);
@@ -955,7 +963,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /** \} */
-@@ -3696,7 +4228,10 @@
+@@ -3696,7 +4236,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -967,7 +975,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +4243,7 @@
+@@ -3708,6 +4251,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -975,7 +983,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3744,6 +4280,16 @@
+@@ -3744,6 +4288,16 @@
                 "Unable to save an unsaved file with an empty or unset \"filepath\" property");
      return OPERATOR_CANCELLED;
    }
@@ -992,7 +1000,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if ((is_save_as == false) && is_incremental) {
      char head[FILE_MAXFILE], tail[FILE_MAXFILE];
-@@ -3922,6 +4468,11 @@
+@@ -3922,6 +4476,11 @@
     * any existing paths will be absolute,
     * enable the option to remap paths to avoid confusion, see: #37240. */
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
@@ -1004,7 +1012,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
      if (!RNA_property_is_set(op->ptr, prop)) {
-@@ -3939,8 +4490,13 @@
+@@ -3939,8 +4498,13 @@
      }
    }
    else {
@@ -1018,7 +1026,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3966,6 +4522,10 @@
+@@ -3966,6 +4530,10 @@
 
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
@@ -1029,7 +1037,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    ot->check = wm_save_mainfile_check;
    ot->get_description = wm_save_mainfile_get_description;
    /* Omit window poll so this can work in background mode. */
-@@ -4599,6 +5159,9 @@
+@@ -4599,6 +5167,9 @@
 
  static void wm_block_file_close_cancel(bContext *C, void *arg_block, void * /*arg_data*/)
  {
@@ -1039,7 +1047,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    wmWindow *win = CTX_wm_window(C);
    UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
  }
-@@ -4658,10 +5221,34 @@
+@@ -4658,10 +5229,34 @@
        execute_callback = false;
      }
      else {
@@ -1075,7 +1083,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
        }
      }
    }
-@@ -4671,10 +5258,12 @@
+@@ -4671,10 +5266,12 @@
      execute_callback = false;
    }
 
