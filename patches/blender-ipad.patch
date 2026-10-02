@@ -3317,7 +3317,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,630 @@
+@@ -0,0 +1,633 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3753,6 +3753,7 @@ new file mode 100644
 +                row.operator('view3d.ipad_transform_axis', text=text, depress=axes == value).axis = name
 +        layout.prop(context.scene.transform_orientation_slots[slot_index], 'type', text="Orientation")
 +        layout.prop(context.tool_settings, 'transform_pivot_point', text="Pivot")
++        layout.prop(active.operator_properties(operator), 'use_accurate', text="Fine Drag", toggle=True)
 +        snap = layout.row(align=True)
 +        snap.prop(context.tool_settings, 'use_snap', text="Snap", toggle=True, icon='SNAP_ON')
 +        snap.popover(panel='VIEW3D_PT_snapping', text="Snap Options")
@@ -3908,6 +3909,8 @@ new file mode 100644
 +            axes = tuple(tool.operator_properties(operator).constraint_axis) if operator else None
 +            constraint = next((text for _, text, value in IPAD_TRANSFORM_AXES if value == axes), "Custom")
 +            text = f"{operation.title()} · {constraint}" if operation else "Transform"
++            if operator and tool.operator_properties(operator).use_accurate:
++                text += " · Fine"
 +            row.popover(panel="VIEW3D_PT_ipad_transform", text=text,
 +                        icon='ORIENTATION_GIMBAL')
 +
@@ -6175,10 +6178,10 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          WM_toolsystem_ref_properties_init_for_keymap(
              keymap_tool, &tool_properties, properties, ot);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+        /* Native gizmos own their basis, including the view-facing rotation ring. */
-+        if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {
-+          WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot);
-+        }
++        /* Fine gain is deliberate tool state for canvas and gizmo drags.
++         * Native gizmos still own their basis, including the view-facing rotation ring. */
++        WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot,
++                                                  handler_base->type == WM_HANDLER_TYPE_KEYMAP);
 +#endif
          properties = &tool_properties;
          use_last_properties = false;
@@ -13717,7 +13720,37 @@ diff --git a/source/blender/editors/transform/transform_ops.cc b/source/blender/
  #if defined(WITH_INPUT_NDOF) && 0
    /* Stable 2D mouse coords map to different 3D coords while the 3D mouse is active
     * in other words, 2D deltas are no longer good enough!
-@@ -1492,7 +1502,18 @@
+@@ -460,8 +470,14 @@
+         if (t->modifiers & MOD_PRECISION) {
+           /* WORKAROUND: Remove precision modification, it may have be unintentionally enabled. */
+           t->modifiers &= ~MOD_PRECISION;
+-          t->mouse.precision = false;
+-          transform_input_virtual_mval_reset(t);
++#ifdef WITH_APPLE_CROSSPLATFORM
++          if (!transform_tool_precision(op)) {
++#endif
++            t->mouse.precision = false;
++            transform_input_virtual_mval_reset(t);
++#ifdef WITH_APPLE_CROSSPLATFORM
++          }
++#endif
+         }
+       }
+
+@@ -843,6 +859,12 @@
+     prop = RNA_def_boolean(
+         ot->srna, "use_accurate", false, "Accurate", "Use accurate transformation");
+     RNA_def_property_flag(prop, PROP_HIDDEN);
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* Per-invocation ownership only: the visible tool setting is use_accurate. */
++    prop = RNA_def_boolean(ot->srna, "ipad_tool_precision", false,
++                          "Fine Drag", "Internal ownership of configured tool precision");
++    RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
++#endif
+   }
+
+   if (flags & P_POST_TRANSFORM) {
+@@ -1492,7 +1514,18 @@
          PointerRNA op_ptr;
          WM_operator_properties_create_ptr(&op_ptr, ot);
          RNA_boolean_set(&op_ptr, "release_confirm", true);
@@ -13823,22 +13856,23 @@ diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blend
  #include "BKE_workspace.hh"
 
  #include "RNA_access.hh"
-@@ -1316,6 +1317,52 @@
+@@ -1316,6 +1317,65 @@
    *r_ptr = RNA_pointer_create_discrete(nullptr, type, prop);
  }
 
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +void WM_toolsystem_ref_properties_for_transform(const bContext *C,
-+                                                const bToolRef *tref,
++                                                bToolRef *tref,
 +                                                PointerRNA *ptr,
-+                                                const wmOperatorType *ot)
++                                                const wmOperatorType *ot,
++                                                const bool use_orientation)
 +{
 +  /* Only deliberate transform-tool calls use the tool's native orientation slot.
 +   * Leave shortcuts, other tools and explicit gizmo bases untouched. */
 +  if (!tref || tref->space_type != SPACE_VIEW3D ||
 +      !(STREQ(ot->idname, "TRANSFORM_OT_translate") ||
-++        STREQ(ot->idname, "TRANSFORM_OT_rotate") ||
-++        STREQ(ot->idname, "TRANSFORM_OT_resize")))
++        STREQ(ot->idname, "TRANSFORM_OT_rotate") ||
++        STREQ(ot->idname, "TRANSFORM_OT_resize")))
 +  {
 +    return;
 +  }
@@ -13859,7 +13893,19 @@ diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blend
 +  else if (STREQ(tref->idname, "builtin.transform")) {
 +    slot = SCE_ORIENT_TRANSLATE;
 +  }
-+  if (slot < 0 || RNA_struct_property_is_set(ptr, "orient_type") ||
++  if (slot < 0) {
++    return;
++  }
++  /* Fine gain is deliberate tool state, independent of held Shift.
++   * Respect explicit keymap overrides and never tag ordinary shortcuts. */
++  PointerRNA tool_ptr;
++  const bool fine_canvas = WM_toolsystem_ref_properties_get_from_operator(tref, ot, &tool_ptr) &&
++                           RNA_struct_property_is_set(&tool_ptr, "use_accurate") &&
++                           RNA_boolean_get(&tool_ptr, "use_accurate") &&
++                           RNA_boolean_get(ptr, "use_accurate");
++  RNA_boolean_set(ptr, "ipad_tool_precision", fine_canvas);
++
++  if (!use_orientation || RNA_struct_property_is_set(ptr, "orient_type") ||
 +      RNA_struct_property_is_set(ptr, "orient_matrix") ||
 +      RNA_struct_property_is_set(ptr, "orient_matrix_type"))
 +  {
@@ -13879,18 +13925,67 @@ diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blend
 diff --git a/source/blender/windowmanager/WM_toolsystem.hh b/source/blender/windowmanager/WM_toolsystem.hh
 --- a/source/blender/windowmanager/WM_toolsystem.hh
 +++ b/source/blender/windowmanager/WM_toolsystem.hh
-@@ -134,6 +134,14 @@
+@@ -134,6 +134,15 @@
  #define WM_toolsystem_ref_properties_get_from_gizmo_group(tref, gzgroup, r_ptr) \
    WM_toolsystem_ref_properties_get_ex(tref, (gzgroup)->idname, (gzgroup)->srna, r_ptr)
 
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +/** Apply the native transform-tool orientation without replacing explicit operator bases. */
 +void WM_toolsystem_ref_properties_for_transform(const bContext *C,
-+                                                const bToolRef *tref,
++                                                bToolRef *tref,
 +                                                PointerRNA *ptr,
-+                                                const wmOperatorType *ot);
++                                                const wmOperatorType *ot,
++                                                bool use_orientation = true);
 +#endif
 +
  void WM_toolsystem_ref_properties_init_for_keymap(bToolRef *tref,
                                                    PointerRNA *dst_ptr,
                                                    PointerRNA *src_ptr,
+diff --git a/source/blender/editors/transform/transform.cc b/source/blender/editors/transform/transform.cc
+--- a/source/blender/editors/transform/transform.cc
++++ b/source/blender/editors/transform/transform.cc
+@@ -1370,7 +1370,11 @@
+         }
+         else if (event->prev_val == KM_RELEASE) {
+           t->modifiers &= ~MOD_PRECISION;
++#ifdef WITH_APPLE_CROSSPLATFORM
++          t->mouse.precision = transform_tool_precision(op);
++#else
+           t->mouse.precision = false;
++#endif
+           t->redraw |= TREDRAW_HARD;
+         }
+         break;
+@@ -1916,6 +1920,17 @@
+   }
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++bool transform_tool_precision(const wmOperator *op)
++{
++  if (!op || !op->ptr) {
++    return false;
++  }
++  PropertyRNA *prop = RNA_struct_find_property(op->ptr, "ipad_tool_precision");
++  return prop && RNA_property_boolean_get(op->ptr, prop);
++}
++#endif
++
+ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *event, int mode)
+ {
+   int options = 0;
+diff --git a/source/blender/editors/transform/transform.hh b/source/blender/editors/transform/transform.hh
+--- a/source/blender/editors/transform/transform.hh
++++ b/source/blender/editors/transform/transform.hh
+@@ -982,6 +982,11 @@
+  * \warning \a event might be NULL (when tweaking from redo panel)
+  * \see #saveTransform which writes these values back.
+  */
++#ifdef WITH_APPLE_CROSSPLATFORM
++/** Configured canvas gain, independent of the native keyboard precision modifier. */
++bool transform_tool_precision(const wmOperator *op);
++#endif
++
+ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *event, int mode);
+ /**
+  * \see #initTransform which reads values from the operator.

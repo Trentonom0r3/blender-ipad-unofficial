@@ -56,6 +56,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_transform_touch.py -v
       - name: Test transform tool properties, orientation and ownership
         run: python3 -m unittest discover -s build -p test_transform_tool_properties.py -v
+      - name: Test fine drag gain and independent keyboard precision
+        run: python3 -m unittest discover -s build -p test_fine_drag_lifecycle.py -v
       - name: Test direct point selection and external modifier parity
         run: python3 -m unittest discover -s build -p test_touch_point_selection.py -v
       - name: Test direct-pinch navigation policy

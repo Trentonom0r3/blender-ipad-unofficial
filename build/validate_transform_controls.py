@@ -93,7 +93,17 @@ with bpy.context.temp_override(area=area, region=region):
                 assert tuple(active.operator_properties(state[2]).constraint_axis) == value
             assert not active.operator_properties(state[2]).is_property_set('value')
             assert not active.operator_properties(state[2]).is_property_set('snap')
-    checks.append('Native tool children, axis/plane RNA, combined None recovery and transient values')
+            props = active.operator_properties(state[2])
+            props.use_accurate = True
+            records = []
+            module.VIEW3D_PT_ipad_transform.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
+            assert any(r[0] == 'prop' and r[1] == 'use_accurate' and r[2]['text'] == 'Fine Drag' for r in records)
+            header = []
+            module.draw_canvas_header(Layout(header))
+            assert any(r[0] == 'popover' and r[2]['panel'] == 'VIEW3D_PT_ipad_transform'
+                       and r[2]['text'].endswith(' · Fine') for r in header), header
+            props.use_accurate = False
+    checks.append('Native tool children, axis/plane RNA, Fine Drag RNA/UI, combined None recovery and transient values')
     # Different per-tool and global bases must resolve deliberately.
     cube.rotation_euler = (0, 0, math.pi / 2)
     slots[1].type = 'LOCAL'
@@ -117,10 +127,15 @@ with bpy.context.temp_override(area=area, region=region):
     # Exact numbers do not inherit modal Snap or drag constraints.
     slots[1].type = 'GLOBAL'
     scene.tool_settings.use_snap = True
+    bpy.ops.wm.tool_set_by_id(name='builtin.move')
+    active = module.ToolSelectPanelHelper.tool_active_from_context(bpy.context)
+    active.operator_properties('transform.translate').use_accurate = True
     cube.location = (0, 0, 0)
     assert bpy.ops.view3d.ipad_transform_numbers(operation='MOVE', slot_index=1, offset=(0.3, 0.7, 0.2)) == {'FINISHED'}
     near(cube.location, (0.3, 0.7, 0.2))
     assert scene.tool_settings.use_snap
+    assert active.operator_properties('transform.translate').use_accurate
+    active.operator_properties('transform.translate').use_accurate = False
     scene.tool_settings.use_snap = False
     scene.tool_settings.transform_pivot_point = 'CURSOR'
     scene.cursor.location = (0, 0, 0)

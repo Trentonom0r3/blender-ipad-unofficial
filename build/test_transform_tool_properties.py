@@ -14,28 +14,28 @@ def patched_lines(path):
 class TransformToolPropertiesTests(unittest.TestCase):
     def test_view_rotation_ring_keeps_native_gizmo_dispatch(self):
         code = patched_lines('source/blender/windowmanager/intern/wm_event_system.cc')
-        start = code.index('        if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {',
-                           code.index('Native gizmos own their basis'))
-        end = code.index('\n        }', start) + len('\n        }')
-        guard = code[start:end]
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r'''
+        start = code.index('        WM_toolsystem_ref_properties_for_transform(',
+                           code.index('Native gizmos still own their basis'))
+        end = code.index(';', start) + 1
+        dispatch = code[start:end]
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r"""
 #include <cassert>
 #include <initializer_list>
 constexpr int WM_HANDLER_TYPE_KEYMAP=1, WM_HANDLER_TYPE_GIZMO=2;
 struct Handler { int type; };
-int injected=0;
-void WM_toolsystem_ref_properties_for_transform(int,int,int *,int) { ++injected; }
+bool injected=false;
+void WM_toolsystem_ref_properties_for_transform(int,int,int *,int,bool orientation) { injected=orientation; }
 void dispatch(Handler *handler_base) {
   int C=0,keymap_tool=0,tool_properties=0,ot=0;
-GUARD
+DISPATCH
 }
 int main() {
-  for(int type:{0,WM_HANDLER_TYPE_KEYMAP,WM_HANDLER_TYPE_GIZMO,3}) {
-    Handler handler{type}; injected=0; dispatch(&handler);
+  for(int type:{WM_HANDLER_TYPE_KEYMAP,WM_HANDLER_TYPE_GIZMO}) {
+    Handler handler{type}; dispatch(&handler);
     assert(injected==(type==WM_HANDLER_TYPE_KEYMAP));
   }
 }
-'''.replace('GUARD', guard))
+""".replace('DISPATCH', dispatch))
 
     def test_native_tool_basis_and_explicit_gizmo_precedence(self):
         code = patched_lines('source/blender/windowmanager/intern/wm_toolsystem.cc')
@@ -52,9 +52,9 @@ int main() {
 constexpr int SPACE_VIEW3D=1, SCE_ORIENT_TRANSLATE=1, SCE_ORIENT_ROTATE=2, SCE_ORIENT_SCALE=3;
 struct Scene { int orientation[4]={0,11,22,33}; bool use[4]={true,true,true,true}; };
 struct bContext { Scene *scene; const char *mode; };
-struct bToolRef { int space_type; const char *idname; };
+struct bToolRef { int space_type; const char *idname; bool stored_fine=false; };
 struct wmOperatorType { const char *idname; };
-struct PointerRNA { std::set<std::string> explicit_props; int orientation=-1; };
+struct PointerRNA { std::set<std::string> explicit_props; int orientation=-1; bool fine=false,baseline=false; };
 const char *CTX_data_mode_string(const bContext *C) { return C->mode; }
 Scene *CTX_data_scene(const bContext *C) { return C->scene; }
 bool RNA_struct_property_is_set(PointerRNA *ptr,const char *key) { return ptr->explicit_props.count(key); }
@@ -64,6 +64,16 @@ int BKE_scene_orientation_get_index(Scene *scene,int slot) {
 void RNA_enum_set(PointerRNA *ptr,const char *key,int value) {
   assert(STREQ(key,"orient_type")); ptr->orientation=value; ptr->explicit_props.insert(key);
 }
+bool WM_toolsystem_ref_properties_get_from_operator(bToolRef *tool,const wmOperatorType *,PointerRNA *ptr) {
+  ptr->fine=tool->stored_fine;
+  if(tool->stored_fine) ptr->explicit_props.insert("use_accurate");
+  return tool->stored_fine;
+}
+bool RNA_boolean_get(PointerRNA *ptr,const char *key) { assert(STREQ(key,"use_accurate")); return ptr->fine; }
+void RNA_boolean_set(PointerRNA *ptr,const char *key,bool value) {
+  assert(STREQ(key,"ipad_tool_precision")); ptr->baseline=value;
+}
+void WM_toolsystem_ref_properties_for_transform(const bContext *,bToolRef *,PointerRNA *,const wmOperatorType *,bool=true);
 HELPER
 int main() {
   Scene scene;
@@ -99,10 +109,25 @@ int main() {
   C.mode="OBJECT"; C.scene=nullptr;
   WM_toolsystem_ref_properties_for_transform(&C,&tref,&ptr,&ot);
   assert(ptr.orientation==-1);
+  C.scene=&scene;
+  for(bool configured:{false,true}) {
+    for(bool merged:{false,true}) {
+      for(bool use_orientation:{false,true}) {
+        for(const char *explicit_prop:{"", "orient_type", "orient_matrix", "orient_matrix_type"}) {
+          PointerRNA fine_ptr; fine_ptr.fine=merged;
+          if(*explicit_prop) fine_ptr.explicit_props.insert(explicit_prop);
+          tref.stored_fine=configured;
+          WM_toolsystem_ref_properties_for_transform(&C,&tref,&fine_ptr,&ot,use_orientation);
+          assert(fine_ptr.baseline==(configured && merged));
+          assert((fine_ptr.orientation!=-1)==(use_orientation && !*explicit_prop));
+        }
+      }
+    }
+  }
 }
 '''.replace('HELPER', helper))
         event_code = patched_lines('source/blender/windowmanager/intern/wm_event_system.cc')
-        self.assertIn('WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot)', event_code)
+        self.assertIn('WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot,', event_code)
 
     def test_combined_transform_owns_two_independent_copies(self):
         code = patched_lines('source/blender/editors/transform/transform_ops.cc')
