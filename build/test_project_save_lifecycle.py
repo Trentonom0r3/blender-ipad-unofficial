@@ -78,6 +78,18 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn('libraryCopy:YES', importer)
         self.assertIn('GHOST_IOS_discard_blend_library', api)
 
+    def test_library_folder_copy_preserves_relative_assets_and_cancel_removes_root(self):
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        self.assertIn("[types addObject:UTTypeFolder]", importer)
+        self.assertIn("const BOOL folderCopy = libraryCopy", importer)
+        self.assertIn("[GHOST_IOSProjectImporter copyItemAtURL:source", importer)
+        self.assertIn("blendFiles.count != 1", importer)
+        self.assertIn("selectedLibrary = [destination URLByAppendingPathComponent:", importer)
+        self.assertIn("onPicked(selectedLibrary.path.UTF8String)", importer)
+        self.assertIn('NSString *rootPrefix = [root.path stringByAppendingString:@"/"]', importer)
+        self.assertIn("[selectedPath hasPrefix:rootPrefix]", importer)
+        self.assertIn("[manager removeItemAtURL:importDir error:nil]", importer)
+
     def test_model_exporter_header_keeps_interface_separate_from_implementation(self):
         model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")
         declaration = model_export.index("@interface GHOST_IOSProjectExporter")
@@ -237,7 +249,7 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("[manager copyItemAtURL:readURL toURL:destination", importer)
         self.assertIn("contentsOfDirectoryAtURL:readURL", importer)
         self.assertIn("[source URLByAppendingPathComponent:name]", importer)
-        self.assertIn("[self copyItemAtURL:childSource toURL:childDestination", importer)
+        self.assertIn("[GHOST_IOSProjectImporter copyItemAtURL:childSource toURL:childDestination", importer)
         self.assertIn("_copyProgress = [[NSProgress progressWithTotalUnitCount:1] retain]", importer)
         self.assertIn("[copyProgress cancel]", importer)
         self.assertIn("if (copyProgress.cancelled)", importer)

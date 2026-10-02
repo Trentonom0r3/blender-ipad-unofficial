@@ -3995,7 +3995,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,1024 @@
+@@ -0,0 +1,1125 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4015,6 +4015,11 @@ new file mode 100644
 +  BOOL _folderMode;
 +  BOOL _linkedMode;
 +}
+++ (BOOL)copyItemAtURL:(NSURL *)source
++                toURL:(NSURL *)destination
++              manager:(NSFileManager *)manager
++             progress:(NSProgress *)copyProgress
++                error:(NSError **)outError;
 +- (BOOL)presentWithFolderMode:(BOOL)folderMode linkedMode:(BOOL)linkedMode;
 +@end
 +
@@ -4190,7 +4195,7 @@ new file mode 100644
 + * does not coordinate writes to files inside it. Enumerate names while holding
 + * the directory read, then coordinate each child using its original provider URL.
 + * Never nest coordinator calls inside an accessor. */
-+- (BOOL)copyItemAtURL:(NSURL *)source
+++ (BOOL)copyItemAtURL:(NSURL *)source
 +                toURL:(NSURL *)destination
 +              manager:(NSFileManager *)manager
 +             progress:(NSProgress *)copyProgress
@@ -4244,7 +4249,7 @@ new file mode 100644
 +    for (NSString *name in childNames) {
 +      NSURL *childSource = [source URLByAppendingPathComponent:name];
 +      NSURL *childDestination = [destination URLByAppendingPathComponent:name];
-+      if (![self copyItemAtURL:childSource toURL:childDestination manager:manager
++      if (![GHOST_IOSProjectImporter copyItemAtURL:childSource toURL:childDestination manager:manager
 +                       progress:copyProgress error:outError]) {
 +        copied = NO;
 +        break;
@@ -4322,7 +4327,7 @@ new file mode 100644
 +        const BOOL scoped = [source startAccessingSecurityScopedResource];
 +        if ([manager createDirectoryAtURL:folderMode ? projects : stagingProject
 +                    withIntermediateDirectories:YES attributes:nil error:&copy_error]) {
-+          copied = [self copyItemAtURL:source toURL:stagingDestination
++          copied = [GHOST_IOSProjectImporter copyItemAtURL:source toURL:stagingDestination
 +                                 manager:manager progress:copyProgress error:&copy_error];
 +        }
 +        /* A bookmark from the picked URL preserves access for later coordinated
@@ -4759,12 +4764,17 @@ new file mode 100644
 +  if (!types.count) {
 +    [types addObject:UTTypeData];
 +  }
++  if (libraryCopy) {
++    /* Files can also provide a complete asset folder. Keep the existing
++     * single-.blend choice available in this same picker. */
++    [types addObject:UTTypeFolder];
++  }
 +
 +  _picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:types asCopy:YES];
 +  _picker.allowsMultipleSelection = NO;
 +  _picker.delegate = self;
 +  _picker.modalPresentationStyle = UIModalPresentationFormSheet;
-+  _picker.title = libraryCopy ? @"Choose Library to Copy" : @"Import 3D Model";
++  _picker.title = libraryCopy ? @"Choose Library File or Folder" : @"Import 3D Model";
 +  [_presenter presentViewController:_picker animated:YES completion:nil];
 +  _picker.presentationController.delegate = self;
 +  return YES;
@@ -4812,9 +4822,18 @@ new file mode 100644
 +  auto onPicked = _on_picked;
 +  auto onCancelled = _on_cancelled;
 +  const BOOL libraryCopy = _libraryCopy;
++  NSNumber *isDirectory = nil;
++  const BOOL scopedForType = libraryCopy && source &&
++      [source startAccessingSecurityScopedResource];
++  const BOOL folderCopy = libraryCopy && source &&
++      [source getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil] &&
++      isDirectory.boolValue;
++  if (scopedForType) {
++    [source stopAccessingSecurityScopedResource];
++  }
 +
 +  [self dismissPicker:^{
-+    if (!source || (libraryCopy &&
++    if (!source || (libraryCopy && !folderCopy &&
 +                    [source.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame)) {
 +      if (onCancelled) {
 +        onCancelled();
@@ -4831,8 +4850,10 @@ new file mode 100644
 +    }
 +    _copyProgress = [[NSProgress progressWithTotalUnitCount:1] retain];
 +    _progress = [[UIAlertController alertControllerWithTitle:
-+        (libraryCopy ? @"Preparing Blender Library" : @"Preparing 3D Model")
-+                                                 message:@"Copying the selected file. You can cancel."
++        (folderCopy ? @"Preparing Library Folder" :
++         libraryCopy ? @"Preparing Blender Library" : @"Preparing 3D Model")
++                                                 message:folderCopy ? @"Copying the folder and its relative assets. You can cancel." :
++                                                                     @"Copying the selected file. You can cancel."
 +                                          preferredStyle:UIAlertControllerStyleAlert] retain];
 +    [_progress setModalInPresentation:YES];
 +    [_progress addAction:[UIAlertAction actionWithTitle:@"Cancel"
@@ -4878,24 +4899,89 @@ new file mode 100644
 +        const BOOL scoped = [source startAccessingSecurityScopedResource];
 +        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 +        if (!copyProgress.cancelled) {
-+          [coordinator coordinateReadingItemAtURL:source options:0 error:&coordError
-+                                       byAccessor:^(NSURL *read_url) {
-+            if (copyProgress.cancelled) {
-+              return;
-+            }
++          if (folderCopy) {
 +            if ([manager createDirectoryAtURL:stagingDir withIntermediateDirectories:YES
 +                                   attributes:nil error:&copyError]) {
-+              copied = [manager copyItemAtURL:read_url toURL:stagingDestination error:&copyError];
++              copied = [GHOST_IOSProjectImporter copyItemAtURL:source
++                  toURL:stagingDestination manager:manager progress:copyProgress error:&copyError];
 +            }
-+          }];
++          }
++          else {
++            [coordinator coordinateReadingItemAtURL:source options:0 error:&coordError
++                                         byAccessor:^(NSURL *read_url) {
++              if (copyProgress.cancelled) {
++                return;
++              }
++              if ([manager createDirectoryAtURL:stagingDir withIntermediateDirectories:YES
++                                     attributes:nil error:&copyError]) {
++                copied = [manager copyItemAtURL:read_url toURL:stagingDestination error:&copyError];
++              }
++            }];
++          }
 +        }
 +        [coordinator release];
++        NSURL *selectedLibrary = destination;
++        if (copied && folderCopy && !copyProgress.cancelled) {
++          NSMutableArray<NSURL *> *blendFiles = [NSMutableArray array];
++          __block BOOL enumerationFailed = NO;
++          NSDirectoryEnumerator<NSURL *> *contents = [manager
++              enumeratorAtURL:stagingDestination
++              includingPropertiesForKeys:@[NSURLIsRegularFileKey, NSURLIsSymbolicLinkKey]
++              options:NSDirectoryEnumerationSkipsHiddenFiles |
++                      NSDirectoryEnumerationSkipsPackageDescendants
++              errorHandler:^BOOL(NSURL *url, NSError *error) {
++                copyError = error;
++                enumerationFailed = YES;
++                return NO;
++              }];
++          for (NSURL *item in contents) {
++            if (copyProgress.cancelled) {
++              copied = NO;
++              break;
++            }
++            if ([item.pathExtension caseInsensitiveCompare:@"blend"] != NSOrderedSame) {
++              continue;
++            }
++            NSNumber *regular = nil, *symbolicLink = nil;
++            if (![item getResourceValue:&regular forKey:NSURLIsRegularFileKey error:&copyError] ||
++                ![item getResourceValue:&symbolicLink forKey:NSURLIsSymbolicLinkKey error:&copyError]) {
++              enumerationFailed = YES;
++              break;
++            }
++            if (regular.boolValue && !symbolicLink.boolValue) {
++              [blendFiles addObject:item];
++            }
++          }
++          if (enumerationFailed || blendFiles.count != 1) {
++            copied = NO;
++            if (!enumerationFailed) {
++              NSString *reason = blendFiles.count ?
++                  @"Choose a folder with one .blend file, or pick a single library file." :
++                  @"This folder has no .blend file.";
++              copyError = [NSError errorWithDomain:NSCocoaErrorDomain
++                                              code:NSFileReadUnknownError
++                                          userInfo:@{NSLocalizedDescriptionKey: reason}];
++            }
++          }
++          else if (copied && !copyProgress.cancelled) {
++            NSString *prefix = [stagingDestination.path stringByAppendingString:@"/"];
++            NSString *selectedPath = blendFiles.firstObject.path;
++            if (![selectedPath hasPrefix:prefix]) {
++              copied = NO;
++            }
++            else {
++              selectedLibrary = [destination URLByAppendingPathComponent:
++                  [selectedPath substringFromIndex:prefix.length]];
++            }
++          }
++        }
 +        if (copied && libraryCopy && !copyProgress.cancelled) {
 +          copied = [manager moveItemAtURL:stagingDir toURL:importDir error:&copyError];
 +        }
 +        if (scoped) {
 +          [source stopAccessingSecurityScopedResource];
 +        }
++        NSString *copyFailure = [copyError.localizedDescription copy];
 +        dispatch_async(dispatch_get_main_queue(), ^{
 +          if (generation != _generation || copyProgress.cancelled || ![self hasLivePresenter]) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
@@ -4918,7 +5004,7 @@ new file mode 100644
 +          _progress = nil;
 +          [progress dismissViewControllerAnimated:NO completion:nil];
 +          [progress release];
-+          const bool accepted = copied && onPicked && onPicked(destination.path.UTF8String);
++          const bool accepted = copied && onPicked && onPicked(selectedLibrary.path.UTF8String);
 +          if (!accepted) {
 +            dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
 +              NSFileManager *cleanupManager = [NSFileManager defaultManager];
@@ -4940,7 +5026,7 @@ new file mode 100644
 +              if (errorPresenter.view.window && !errorPresenter.presentedViewController) {
 +                UIAlertController *alert = [UIAlertController
 +                    alertControllerWithTitle:libraryCopy ? @"Library Not Copied" : @"Model Not Copied"
-+                                 message:@"The selected file could not be copied. Check Files access and available storage, then try again."
++                                 message:copyFailure ?: @"The selected item could not be copied. Check Files access and available storage, then try again."
 +                          preferredStyle:UIAlertControllerStyleAlert];
 +                [alert addAction:[UIAlertAction actionWithTitle:@"OK"
 +                                                         style:UIAlertActionStyleCancel
@@ -4952,6 +5038,7 @@ new file mode 100644
 +          }
 +          [copyProgress release];
 +        });
++        [copyFailure release];
 +      }
 +    });
 +    }];
@@ -4999,14 +5086,28 @@ new file mode 100644
 +  NSURL *documents = [manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
 +  NSURL *root = [[documents URLByAppendingPathComponent:@"Libraries" isDirectory:YES]
 +      URLByStandardizingPath];
-+  NSURL *parent = [[[NSURL fileURLWithPath:[NSString stringWithUTF8String:local_path]]
-+      URLByStandardizingPath] URLByDeletingLastPathComponent];
-+  if (![[parent URLByDeletingLastPathComponent].path isEqualToString:root.path] ||
-+      ![parent.lastPathComponent hasPrefix:@"BlenderLibrary-"])
-+  {
++  NSString *selectedPath = [[NSURL fileURLWithPath:[NSString stringWithUTF8String:local_path]]
++      URLByStandardizingPath].path;
++  NSString *rootPrefix = [root.path stringByAppendingString:@"/"];
++  if (![selectedPath hasPrefix:rootPrefix]) {
 +    return;
 +  }
-+  [manager removeItemAtURL:parent error:nil];
++  NSString *relative = [selectedPath substringFromIndex:rootPrefix.length];
++  NSString *folderName = relative.pathComponents.firstObject;
++  if (![folderName hasPrefix:@"BlenderLibrary-"]) {
++    return;
++  }
++  NSString *identifier = [folderName substringFromIndex:@"BlenderLibrary-".length];
++  NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:identifier];
++  const BOOL ours = uuid && [[uuid UUIDString] isEqualToString:identifier];
++  [uuid release];
++  if (!ours) {
++    return;
++  }
++  /* A folder selection can place the chosen .blend several levels below the
++   * copy root. Discard only that app-owned import, never its parent Library. */
++  NSURL *importDir = [root URLByAppendingPathComponent:folderName isDirectory:YES];
++  [manager removeItemAtURL:importDir error:nil];
 +}
 +
 +static bool g_ipad_flythrough_mode = false;
