@@ -1,5 +1,10 @@
 # Product direction and decisions
 
+## Multi-library folder package — 2026-10-02
+
+Run 36957402486 at 79a265f passed native iOS Release build and downloaded IPA checks. A Link/Append Files folder with several `.blend` files now offers a native choice while retaining the folder's relative assets. Device interaction and provider behavior remain unverified; the accepted single-file chooser, Pencil mappings, Inspector, native editors and external input remain. Keep the main project plus linked-library portable-copy outcome separate; see `PORTABLE_PROJECT_COPY.md`.
+
+
 ## Library folder package — 2026-10-01
 
 Run 36952644773 at 1abeea2 passed native iOS Release build and downloaded IPA checks for a Link/Append Files folder choice that retains relative assets around one `.blend`. Device provider behavior is still open. The original single-file chooser and accepted Pencil/Inspector remain. A saved main project still needs a separate portable sharing workflow for linked libraries; do not call this snapshot a portable project.

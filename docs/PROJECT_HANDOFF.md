@@ -1,4 +1,11 @@
-# Project handoff — 2026-10-01
+# Project handoff — 2026-10-02
+
+## Verified multi-library folder chooser IPA — 2026-10-02
+
+Exact-source [iOS run 36957402486](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/36957402486) at `79a265f3f51df1328357b55b48dba243e16ebaf6` passed cloud preflight, native Release compilation, IPA packaging and upload. Artifact `Blender-iPad-Unofficial-ipa` id `11206826167` has GitHub archive size 248,458,821 bytes, reported digest `sha256:c9f3e2d0e1b150bf38a50a1ea5ae16000d439fc6651e4ffb1e51c490eb52ca43`, and expires 2026-12-31 02:49:34 UTC. The downloaded IPA is 248,458,653 bytes, SHA-256 `f3c23dac79de04e21e43b6d248b465a801f17db2f630de40dfd4030c704d104d`. Full ZIP CRC across 3,368 entries, iPhoneOS arm64 Mach-O/bundle metadata, startup resources, Link/Append menus, library-folder and Recent recovery markers, and the new native library-choice strings pass. All 47 host tests, 58-file pinned-source preflight and diff check passed at this source.
+
+For Link/Append, a Files folder containing several `.blend` files now preserves the complete copied folder while a native alert asks which library to open in Blender's existing data-block chooser. The copy stays hidden until selection; Cancel or a rejected callback removes it, and startup clears an abandoned stage. The sole-library and single-file routes retain their prior behavior. This is packaged-source evidence only. Device acceptance still needs a folder with several `.blend` files (including nested paths), choice, Link or Append, save/reopen, and Cancel; folder picking across Files providers and relative assets also remain unverified. The earlier user's “works” reply supports only the original single-file chooser in run 36850574490. Portable sharing of a main project and its linked libraries is still open; see [PORTABLE_PROJECT_COPY.md](PORTABLE_PROJECT_COPY.md). Preserve Pencil squeeze radial, double-tap context, accepted Inspector, native editors and external input.
+
 
 ## Multiple `.blend` files in a copied library folder — source candidate, 2026-10-02
 

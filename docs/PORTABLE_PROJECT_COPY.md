@@ -1,6 +1,6 @@
 # Portable Blender project copy on iPad
 
-Status: source audit, 2026-10-02. The latest packaged IPA is run 36952644773 at `1abeea2`; it can snapshot one `.blend` with its containing folder, but no exported project has device portability acceptance.
+Status: source audit, 2026-10-02. The latest packaged IPA is run 36957402486 at `79a265f`; it can snapshot a folder and choose among multiple `.blend` files, but no exported project has device portability acceptance.
 
 ## Current boundary
 
