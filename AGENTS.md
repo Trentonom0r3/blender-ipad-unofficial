@@ -1,5 +1,10 @@
 # Blender iPad development
 
+## Portable writer source and latest IPA — 2026-10-02
+
+Latest verified package is exact-source run 36959654940 at 3cfd5b6, including a Save Copy linked-library notice; downloaded IPA checks pass, with no new device acceptance. The current writer source candidate adds a synchronous post-save-preparation resolver and scoped path restoration for Portable Project Copy. It has no export operator/UI yet. Continue the complete staged dependency-copy and relative-path project outcome; do not retain ID buffer pointers across native copying or save callbacks. See docs/PROJECT_HANDOFF.md and docs/PORTABLE_PROJECT_COPY.md. Preserve accepted Pencil, Inspector, native editors and external input.
+
+
 ## Verified multi-library folder IPA — 2026-10-02
 
 Exact-source run 36957402486 at 79a265f passed native Release build and downloaded IPA archive, arm64 bundle and packaged library-choice checks; see `docs/PROJECT_HANDOFF.md`. A Link/Append Files folder may contain several `.blend` files and the app asks which one to use while retaining the copied folder and its relative assets. This addition has no iPad device acceptance; the user's earlier “works” reply covers only the original single-file chooser. Continue touch and complete Files outcomes, especially portable sharing of projects with linked libraries. Preserve Pencil squeeze radial, double-tap context, accepted Inspector, native editors and external input. Keep source, packaged build and device evidence distinct.

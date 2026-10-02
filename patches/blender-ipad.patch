@@ -343,17 +343,18 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  #include <cstddef>
  #include <cstring>
  #include <fcntl.h> /* For open flags (#O_BINARY, #O_RDONLY). */
-@@ -116,6 +117,9 @@
+@@ -116,6 +117,10 @@
 
  #include "GHOST_C-api.h"
  #include "GHOST_Path-api.hh"
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include "GHOST_ProjectImport-api.hh"
++#  include "wm_ipad_portable_write.hh"
 +#endif
 
  #include "GPU_context.hh"
 
-@@ -174,8 +178,15 @@
+@@ -174,8 +179,15 @@
  /** \name Misc Utility Functions
   * \{ */
 
@@ -369,7 +370,66 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
    if (wm->file_saved) {
      wm->file_saved = 0;
-@@ -2321,6 +2332,21 @@
+@@ -2134,12 +2146,21 @@
+ /**
+  * \see #wm_homefile_write_exec wraps #BLO_write_file in a similar way.
+  */
++#ifdef WITH_APPLE_CROSSPLATFORM
++using IpadPortableWriteResolver = std::function<
++    bool(Main *, std::vector<blender::wm::ipad::PortablePathRedirect> &)>;
++#endif
++
+ static bool wm_file_write(bContext *C,
+                           const char *filepath,
+                           int fileflags,
+                           eBLO_WritePathRemap remap_mode,
+                           bool use_save_as_copy,
+-                          ReportList *reports)
++                          ReportList *reports
++#ifdef WITH_APPLE_CROSSPLATFORM
++                          , const IpadPortableWriteResolver *portable_paths = nullptr
++#endif
++                          )
+ {
+   Main *bmain = CTX_data_main(C);
+   BlendThumbnail *thumb = nullptr, *main_thumb = nullptr;
+@@ -2257,7 +2278,34 @@
+   blend_write_params.use_save_as_copy = use_save_as_copy;
+   blend_write_params.thumb = thumb;
+
+-  const bool success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
++  bool success;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (portable_paths) {
++    /* Save callbacks and edit flushing have completed. Export-only paths must
++     * be restored before any success/failure callbacks observe the live Main. */
++    std::vector<blender::wm::ipad::PortablePathRedirect> redirects;
++    if (remap_mode != BLO_WRITE_PATH_REMAP_NONE || !(*portable_paths) ||
++        !(*portable_paths)(bmain, redirects))
++    {
++      BKE_report(reports, RPT_ERROR, "Could not resolve portable project paths");
++      success = false;
++    }
++    else {
++      blender::wm::ipad::PortablePathScope paths(std::move(redirects));
++      if (!paths.apply()) {
++        BKE_report(reports, RPT_ERROR, "Could not apply portable project paths");
++        success = false;
++      }
++      else {
++        success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
++      }
++    }
++  }
++  else
++#endif
++  {
++    success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
++  }
+
+   if (success) {
+     const bool do_history_file_update = (G.background == false) &&
+@@ -2321,6 +2369,21 @@
      SNPRINTF(filename, "%d_autosave.blend", pid);
    }
 
@@ -391,7 +451,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    const char *tempdir_base = BKE_tempdir_base();
    BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
  }
-@@ -3172,8 +3198,61 @@
+@@ -3172,8 +3235,61 @@
                                          nullptr);
  }
 
@@ -453,7 +513,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if (RNA_boolean_get(op->ptr, "display_file_selector")) {
      set_next_operator_state(op, OPEN_MAINFILE_STATE_SELECT_FILE_PATH);
    }
-@@ -3202,6 +3281,13 @@
+@@ -3202,6 +3318,13 @@
      return OPERATOR_CANCELLED;
    }
 
@@ -467,7 +527,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    /* If possible, get the name of the most recently used `.blend` file. */
    if (G.recent_files.first) {
      RecentFile *recent = static_cast<RecentFile *>(G.recent_files.first);
-@@ -3217,6 +3303,7 @@
+@@ -3217,6 +3340,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -475,7 +535,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
-@@ -3226,6 +3313,34 @@
+@@ -3226,6 +3350,34 @@
 
    RNA_string_get(op->ptr, "filepath", filepath);
    BLI_path_canonicalize_native(filepath, sizeof(filepath));
@@ -510,7 +570,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    /* For file opening, also print in console for warnings, not only errors. */
    BKE_report_print_level_set(op->reports, RPT_WARNING);
-@@ -3237,6 +3352,11 @@
+@@ -3237,6 +3389,11 @@
    SET_FLAG_FROM_TEST(G.fileflags, !RNA_boolean_get(op->ptr, "load_ui"), G_FILE_NO_UI);
    SET_FLAG_FROM_TEST(G.f, RNA_boolean_get(op->ptr, "use_scripts"), G_FLAG_SCRIPT_AUTOEXEC);
    success = wm_file_read_opwrap(C, filepath, use_scripts_autoexec_check, op->reports);
@@ -522,7 +582,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if (success) {
      if (G.fileflags & G_FILE_NO_UI) {
-@@ -3269,6 +3389,16 @@
+@@ -3269,6 +3426,16 @@
 
  static wmOperatorStatus wm_open_mainfile_exec(bContext *C, wmOperator *op)
  {
@@ -539,7 +599,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    return wm_open_mainfile__open(C, op);
  }
 
-@@ -3378,6 +3508,408 @@
+@@ -3378,6 +3545,408 @@
                    "system preferences");
  }
 
@@ -948,7 +1008,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  void WM_OT_open_mainfile(wmOperatorType *ot)
  {
    ot->name = "Open";
-@@ -3409,6 +3941,14 @@
+@@ -3409,6 +3978,14 @@
    RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
    create_operator_state(ot, OPEN_MAINFILE_STATE_DISCARD_CHANGES);
@@ -963,7 +1023,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /** \} */
-@@ -3696,7 +4236,10 @@
+@@ -3696,7 +4273,10 @@
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
  {
@@ -975,7 +1035,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    save_set_compress(op);
    save_set_filepath(C, op);
 
-@@ -3708,6 +4251,7 @@
+@@ -3708,6 +4288,7 @@
    WM_event_add_fileselect(C, op);
 
    return OPERATOR_RUNNING_MODAL;
@@ -983,7 +1043,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
  }
 
  /* Function used for #WM_OT_save_mainfile too. */
-@@ -3744,6 +4288,16 @@
+@@ -3744,6 +4325,16 @@
                 "Unable to save an unsaved file with an empty or unset \"filepath\" property");
      return OPERATOR_CANCELLED;
    }
@@ -1000,7 +1060,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 
    if ((is_save_as == false) && is_incremental) {
      char head[FILE_MAXFILE], tail[FILE_MAXFILE];
-@@ -3922,6 +4476,11 @@
+@@ -3922,6 +4513,11 @@
     * any existing paths will be absolute,
     * enable the option to remap paths to avoid confusion, see: #37240. */
    const char *blendfile_path = BKE_main_blendfile_path_from_global();
@@ -1012,7 +1072,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    if ((blendfile_path[0] == '\0') && (U.flag & USER_RELPATHS)) {
      PropertyRNA *prop = RNA_struct_find_property(op->ptr, "relative_remap");
      if (!RNA_property_is_set(op->ptr, prop)) {
-@@ -3939,8 +4498,13 @@
+@@ -3939,8 +4535,13 @@
      }
    }
    else {
@@ -1026,7 +1086,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    }
 
    return ret;
-@@ -3966,6 +4530,10 @@
+@@ -3966,6 +4567,10 @@
 
    ot->invoke = wm_save_mainfile_invoke;
    ot->exec = wm_save_as_mainfile_exec;
@@ -1037,7 +1097,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    ot->check = wm_save_mainfile_check;
    ot->get_description = wm_save_mainfile_get_description;
    /* Omit window poll so this can work in background mode. */
-@@ -4599,6 +5167,9 @@
+@@ -4599,6 +5204,9 @@
 
  static void wm_block_file_close_cancel(bContext *C, void *arg_block, void * /*arg_data*/)
  {
@@ -1047,7 +1107,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
    wmWindow *win = CTX_wm_window(C);
    UI_popup_block_close(C, win, static_cast<uiBlock *>(arg_block));
  }
-@@ -4658,10 +5229,34 @@
+@@ -4658,10 +5266,34 @@
        execute_callback = false;
      }
      else {
@@ -1083,7 +1143,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
        }
      }
    }
-@@ -4671,10 +5266,12 @@
+@@ -4671,10 +5303,12 @@
      execute_callback = false;
    }
 
@@ -12903,3 +12963,112 @@ diff --git a/scripts/startup/bl_ui/space_filebrowser.py b/scripts/startup/bl_ui/
 
          layout.scale_x = 1.3
          layout.scale_y = 1.3
+diff --git a/source/blender/windowmanager/intern/wm_ipad_portable_write.hh b/source/blender/windowmanager/intern/wm_ipad_portable_write.hh
+new file mode 100644
+--- /dev/null
++++ b/source/blender/windowmanager/intern/wm_ipad_portable_write.hh
+@@ -0,0 +1,104 @@
++/* SPDX-FileCopyrightText: 2026 Blender iPad Contributors
++ *
++ * SPDX-License-Identifier: GPL-2.0-or-later */
++
++#pragma once
++
++#include <cstddef>
++#include <cstdint>
++#include <cstring>
++#include <functional>
++#include <limits>
++#include <string>
++#include <utility>
++#include <vector>
++
++namespace blender::wm::ipad {
++
++/** Synchronous writer-only replacement. The caller owns a live path buffer. */
++struct PortablePathRedirect {
++  char *path;
++  size_t capacity;
++  std::string replacement;
++};
++
++/**
++ * Validate every replacement before touching any buffer and restore all paths
++ * before the writer's caller runs save callbacks. Never retain this scope across
++ * an asynchronous operation or a change of Main.
++ */
++class PortablePathScope {
++ private:
++  std::vector<PortablePathRedirect> redirects_;
++  std::vector<std::string> originals_;
++  bool applied_ = false;
++
++ public:
++  explicit PortablePathScope(std::vector<PortablePathRedirect> redirects)
++      : redirects_(std::move(redirects))
++  {
++  }
++
++  PortablePathScope(const PortablePathScope &) = delete;
++  PortablePathScope &operator=(const PortablePathScope &) = delete;
++  PortablePathScope(PortablePathScope &&) = delete;
++  PortablePathScope &operator=(PortablePathScope &&) = delete;
++
++  ~PortablePathScope()
++  {
++    restore();
++  }
++
++  bool apply()
++  {
++    if (applied_) {
++      return false;
++    }
++    originals_.clear();
++    originals_.reserve(redirects_.size());
++    for (size_t i = 0; i < redirects_.size(); i++) {
++      const PortablePathRedirect &item = redirects_[i];
++      if (!item.path || item.capacity == 0 || item.replacement.size() >= item.capacity ||
++          item.replacement.find('\0') != std::string::npos)
++      {
++        return false;
++      }
++      const std::uintptr_t begin = reinterpret_cast<std::uintptr_t>(item.path);
++      if (item.capacity > std::numeric_limits<std::uintptr_t>::max() - begin) {
++        return false;
++      }
++      const std::uintptr_t end = begin + item.capacity;
++      for (size_t j = 0; j < i; j++) {
++        const PortablePathRedirect &prior = redirects_[j];
++        const std::uintptr_t prior_begin = reinterpret_cast<std::uintptr_t>(prior.path);
++        const std::uintptr_t prior_end = prior_begin + prior.capacity;
++        if (begin < prior_end && prior_begin < end) {
++          return false;
++        }
++      }
++      const char *terminator = static_cast<const char *>(std::memchr(item.path, '\0', item.capacity));
++      if (!terminator) {
++        return false;
++      }
++      originals_.emplace_back(item.path, size_t(terminator - item.path));
++    }
++    for (const PortablePathRedirect &item : redirects_) {
++      std::memcpy(item.path, item.replacement.c_str(), item.replacement.size() + 1);
++    }
++    applied_ = true;
++    return true;
++  }
++
++  void restore()
++  {
++    if (!applied_) {
++      return;
++    }
++    for (size_t i = 0; i < redirects_.size(); i++) {
++      std::memcpy(redirects_[i].path, originals_[i].c_str(), originals_[i].size() + 1);
++    }
++    applied_ = false;
++  }
++};
++
++}  // namespace blender::wm::ipad

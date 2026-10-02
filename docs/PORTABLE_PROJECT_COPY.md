@@ -1,6 +1,6 @@
 # Portable Blender project copy on iPad
 
-Status: source audit, 2026-10-02. The latest packaged IPA is run 36957402486 at `79a265f`; it can snapshot a folder and choose among multiple `.blend` files, but no exported project has device portability acceptance.
+Status: writer foundation source candidate, 2026-10-02. The latest packaged IPA is run 36959654940 at `3cfd5b6`, which retains the multi-library folder chooser and adds a Save Copy linked-library notice. The new writer seam has no export operator/UI yet, and no exported project has device portability acceptance.
 
 ## Current boundary
 
@@ -21,6 +21,8 @@ The pinned [window-manager save implementation](https://github.com/blender/blend
 The pinned [BPath API](https://github.com/blender/blender/blob/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/BKE_bpath.hh) supports read-only path enumeration with an owning ID, plus path backup/restore. The pinned `BLO_write_file` backs up paths for `use_save_as_copy` only inside its remapping branch; `BLO_WRITE_PATH_REMAP_NONE` does **not** protect paths deliberately substituted before the call. A portable writer therefore needs its own scope guard around backup, the exact library-path substitutions, writing and unconditional restore. The guard must run on the Blender main thread and leave no pending callback holding a raw `Main *` after the operation. If the path inventory includes a dependency the bundler cannot copy and remap, fail the export with an explicit dependency report before publishing any visible folder.
 
 Before implementing UI, exercise a hidden-stage write with one linked library and relative texture, reopen its staged `.blend` after temporarily hiding the original app-owned library, and verify that the live project still points to the original. Repeat for writer failure and multiple nested libraries. A clean source check or IPA package alone cannot prove these path and texture semantics.
+
+The source foundation now accepts an optional resolver at the low-level write seam. The resolver constructs fresh path-buffer redirects after save preparation, not from ID buffers captured before asynchronous copying or SAVE_PRE callbacks. A scope validates all buffer capacities and aliasing before applying the set, and restores the strings before save-result callbacks. Folder inventory, dependency copying, cancellation, staged reopen checks and touch export controls are still to be implemented.
 
 ## Acceptance
 
