@@ -1,5 +1,7 @@
 # Next touch editing increments — pinned-source audit, 2026-10-02
 
+The direct point-selection/admission seam below is now source-implemented with 52 host tests and 62-file preflight passing. See PROJECT_HANDOFF.md for its exact build status; the audit remains as implementation rationale. Next source work is the native transform controls below. No iPad acceptance is implied.
+
 User priority: actual interaction; import/portable-copy expansion is deferred. This is an implementation audit, not a shipped feature or device result. Preserve the accepted Pencil ring/mappings and Inspector, native editor contents, keyboard/mouse/trackpad and existing Files work. Latest verified interaction source is 8dad728 in IPA run 36984752140. No new device acceptance exists.
 
 ## Complete point selection

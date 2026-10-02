@@ -1264,12 +1264,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      }
      BLI_assert_unreachable();
      return @"Event undefined";
-@@ -103,8 +126,20 @@
+@@ -103,8 +126,23 @@
 
  /* GHOSTUITapGesture interface for capturing taps. */
  @interface GHOSTUITapGestureRecognizer : UITapGestureRecognizer
 +{
 +  __unsafe_unretained UITouch *pencil_touch;
++  ghost::ios::TouchAdmission touch_admission;
 +  CGFloat pencil_force;
 +  CGFloat pencil_max_force;
 +  CGFloat pencil_azimuth;
@@ -1278,6 +1279,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window;
 +- (UITouch *)pencilTouch;
++- (BOOL)touchStreamAllowed;
++- (void)invalidateTouchStream;
 +- (CGFloat)pencilForce;
 +- (CGFloat)pencilMaxForce;
 +- (CGFloat)pencilAzimuth;
@@ -1285,10 +1288,20 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -116,21 +151,117 @@
+@@ -116,21 +154,144 @@
    return window->scalePointToWindow(touch_point);
  }
 
++- (BOOL)touchStreamAllowed
++{
++  return touch_admission.allowed();
++}
++
++- (void)invalidateTouchStream
++{
++  touch_admission.interrupt();
++}
++
 +- (UITouch *)pencilTouch
 +{
 +  return pencil_touch;
@@ -1316,6 +1329,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 +{
++  touch_admission.begin();
 +  [super touchesBegan:touches withEvent:event];
 +  pencil_touch = nil;
 +  pencil_force = 0.0f;
@@ -1336,6 +1350,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)reset
 +{
++  touch_admission.reset();
 +  [super reset];
 +  pencil_touch = nil;
 +}
@@ -1351,6 +1366,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +   * Began already knows it's a pencil + its pressure. The view's touchesBegan that
 +   * sets current_pencil_touch runs AFTER the action. */
 +  __unsafe_unretained UITouch *pencil_touch;
++  ghost::ios::TouchAdmission touch_admission;
  }
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window;
  - (CGPoint)getScaledTranslation:(GHOST_WindowIOS *)window;
@@ -1358,12 +1374,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)setCachedTranslation:(CGPoint)translation;
  - (CGPoint)getCachedTranslation;
 +- (UITouch *)pencilTouch;
++- (BOOL)touchStreamAllowed;
++- (void)invalidateTouchStream;
  @end
 
  @implementation GHOSTUIPanGestureRecognizer
 +
 +- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 +{
++  touch_admission.begin();
 +  for (UITouch *t in touches) {
 +    if (t.type == UITouchTypePencil) {
 +      pencil_touch = t;
@@ -1391,9 +1410,20 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)reset
 +{
++  touch_admission.reset();
 +  [super reset];
 +  pencil_touch = nil;
 +  cached_translation = CGPointZero;
++}
++
++- (BOOL)touchStreamAllowed
++{
++  return touch_admission.allowed();
++}
++
++- (void)invalidateTouchStream
++{
++  touch_admission.interrupt();
 +}
 +
 +- (UITouch *)pencilTouch
@@ -1403,7 +1433,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
-@@ -179,15 +310,39 @@
+@@ -179,15 +340,39 @@
  @interface GHOSTUIPinchGestureRecognizer : UIPinchGestureRecognizer
  {
    CGFloat cached_distance;
@@ -1443,7 +1473,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window touch_id:(int)touch_id
  {
    CGPoint touch_point = [self locationOfTouch:touch_id inView:window->getView()];
-@@ -240,7 +395,13 @@
+@@ -240,7 +425,13 @@
    GHOSTUITapGestureRecognizer *tap4f_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan2f_gesture_recognizer;
@@ -1457,7 +1487,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOSTUIHoverGestureRecognizer *hover_gesture_recognizer;
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
-@@ -251,6 +412,8 @@
+@@ -251,6 +442,8 @@
    UITouch *current_pencil_touch;
    GHOST_TabletData tablet_data;
    bool last_tap_with_pencil;
@@ -1466,7 +1496,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Keyboard handling. */
    UITextField *text_field;
-@@ -259,6 +422,32 @@
+@@ -259,6 +452,32 @@
    const char *text_field_string;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
@@ -1499,7 +1529,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Toolbar */
    bool toolbar_enabled;
-@@ -276,13 +465,20 @@
+@@ -276,13 +495,20 @@
 
  /* Gesture recognizers. */
  - (void)registerGestureRecognizers;
@@ -1520,7 +1550,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -292,7 +488,36 @@
+@@ -292,7 +518,36 @@
  - (const char *)getLastKeyboardString;
  @end
 
@@ -1557,7 +1587,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)setSystemAndWindowIOS:(GHOST_SystemIOS *)sys windowIOS:(GHOST_WindowIOS *)win
  {
    system = sys;
-@@ -306,6 +531,14 @@
+@@ -306,6 +561,14 @@
    toolbar_enabled = true;
    toolbar = nil;
    last_tap_with_pencil = false;
@@ -1572,7 +1602,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
 
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +568,22 @@
+@@ -335,6 +598,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -1595,7 +1625,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)registerGestureRecognizers
-@@ -354,6 +603,8 @@
+@@ -354,6 +633,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -1604,7 +1634,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +615,8 @@
+@@ -364,6 +645,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -1613,7 +1643,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +627,8 @@
+@@ -374,6 +657,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -1622,7 +1652,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -392,24 +647,82 @@
+@@ -392,24 +677,82 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
 
@@ -1705,7 +1735,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -448,6 +761,9 @@
+@@ -448,6 +791,9 @@
  {
    /* Lock access to ensure all input-events are received sequentially. */
    @synchronized(self) {
@@ -1715,7 +1745,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      for (int i = 0; i < event_info.num_events; i++) {
        UserInputEvent::EventTypes event_type = event_info.event_list[i];
        IOS_INPUT_LOG(@"%d-%@ %f,%f",
-@@ -458,13 +774,17 @@
+@@ -458,13 +804,17 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -1734,7 +1764,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          case UserInputEvent::EventTypes::PAN_GESTURE:
            system->pushEvent(
-@@ -490,27 +810,66 @@
+@@ -490,27 +840,66 @@
                                        true,
                                        2));
            break;
@@ -1807,7 +1837,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                        event_info.location.x,
                                        event_info.location.y,
                                        event_info.distance,
-@@ -518,14 +877,24 @@
+@@ -518,14 +907,24 @@
                                        false,
                                        2));
            break;
@@ -1834,7 +1864,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,17 +908,29 @@
+@@ -539,17 +938,41 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -1862,6 +1892,18 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    return NO;
 +}
 +
++- (BOOL)gestureRecognizer:(UIGestureRecognizer *)recognizer shouldReceiveTouch:(UITouch *)touch
++{
++  /* Reject at touch-down, so lifting after a hardware release cannot synthesize
++   * a new click/release from a touch that began inside that hardware drag. */
++  if ((recognizer == tap_gesture_recognizer || recognizer == pan_gesture_recognizer) &&
++      (touch.type == UITouchTypeDirect || touch.type == UITouchTypePencil) &&
++      (mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)) {
++    return NO;
++  }
++  return YES;
++}
++
 +- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 +{
 +  if (gestureRecognizer == pan3f_gesture_recognizer && GHOST_IOS_get_flythrough_mode()) {
@@ -1871,7 +1913,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* Override touch methods to capture the UITouch object. */
-@@ -580,8 +961,10 @@
+@@ -580,8 +1003,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
 
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -1884,7 +1926,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,22 +987,49 @@
+@@ -604,23 +1029,58 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -1910,6 +1952,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender
  {
++  /* Hardware ownership can begin after this touch was admitted. */
++  if (sender.state != UIGestureRecognizerStateEnded ||
++      ![sender touchStreamAllowed] ||
++      mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed) {
++    return;
++  }
    CGPoint touch_point = [sender getScaledTouchPoint:window];
 -  last_tap_with_pencil = current_pencil_touch ? true : false;
 +  UITouch *pen = [sender pencilTouch];
@@ -1937,9 +1985,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  }
 +
    UserInputEvent event_info(&touch_point, nullptr, nullptr, last_tap_with_pencil);
++  event_info.direct_tool = ghost::ios::selection_hit(
++      window, int(touch_point.x), int(touch_point.y), !GHOST_IOS_get_flythrough_mode());
 
    /* Send events to indicate a 'click' on event end. */
-@@ -630,6 +1040,10 @@
+   if (sender.state == UIGestureRecognizerStateEnded) {
+@@ -630,6 +1090,10 @@
    }
 
    [self generateUserInputEvents:event_info];
@@ -1950,7 +2001,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1091,188 @@
+@@ -677,12 +1141,193 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -1997,6 +2048,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)cancelPointerCapture
 +{
++  [tap_gesture_recognizer invalidateTouchStream];
++  [pan_gesture_recognizer invalidateTouchStream];
 +  const auto end = pointer_capture.finish(true);
 +  if (end.release) {
 +    CGPoint location = CGPointMake(mouse_cursor_x, mouse_cursor_y);
@@ -2009,6 +2062,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender
  {
++  if (![sender touchStreamAllowed]) {
++    return;
++  }
 +  /* A hardware drag owns the shared pointer until its matched release.
 +   * Suppress this entire newly started touch stream, even if it outlasts that release. */
 +  if (sender.state == UIGestureRecognizerStateBegan &&
@@ -2141,7 +2197,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1280,21 @@
+@@ -690,6 +1335,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -2163,7 +2219,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,8 +1327,109 @@
+@@ -722,8 +1382,109 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -2273,7 +2329,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Translation can be non-zero on begin event */
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -739,6 +1445,20 @@
+@@ -739,6 +1500,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -2294,7 +2350,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,67 +1474,145 @@
+@@ -754,67 +1529,145 @@
    }
  }
 
@@ -2476,7 +2532,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1628,69 @@
+@@ -830,25 +1683,69 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -2549,7 +2605,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +2040,377 @@
+@@ -1198,11 +2095,377 @@
    }
  }
 
@@ -2927,7 +2983,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2506,12 @@
+@@ -1298,7 +2561,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -2941,7 +2997,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2519,163 @@
+@@ -1306,22 +2574,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -3111,7 +3167,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2719,12 @@
+@@ -1365,11 +2774,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -3125,7 +3181,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2732,6 @@
+@@ -1377,7 +2787,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3133,7 +3189,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2745,6 @@
+@@ -1391,7 +2800,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -3141,7 +3197,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2753,6 @@
+@@ -1400,7 +2808,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3149,7 +3205,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2762,12 @@
+@@ -1410,8 +2817,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -3164,7 +3220,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2780,14 @@
+@@ -1424,10 +2835,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -3180,7 +3236,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +2831,28 @@
+@@ -1471,14 +2886,28 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
@@ -3210,7 +3266,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2873,9 @@
+@@ -1499,6 +2928,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -3220,7 +3276,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2995,7 @@
+@@ -1618,7 +3050,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -3229,7 +3285,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3285,7 @@
+@@ -1908,6 +3340,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -3237,7 +3293,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3296,11 @@
+@@ -1918,6 +3351,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -3249,7 +3305,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
-@@ -1932,6 +3315,7 @@
+@@ -1932,6 +3370,7 @@
    GHOST_ASSERT(!request_to_make_active_,
                 "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
 
@@ -3439,7 +3495,7 @@ new file mode 100644
 +            layout.operator('view3d.ipad_flythrough_toggle',
 +                            text="Exit Flythrough to Select", icon='CAMERA_STEREO')
 +        else:
-+            layout.label(text="Drag to select · two fingers to orbit")
++            layout.label(text="Tap or drag to select · two fingers to orbit")
 +        if context.mode == 'EDIT_MESH':
 +            elements = layout.row(align=True)
 +            for index, (text, value, icon) in enumerate((
@@ -7456,7 +7512,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    }
 
    /* After area regions so we can do area 'overlay' drawing. */
-@@ -1175,6 +1249,86 @@
+@@ -1175,6 +1249,88 @@
 
    wm_draw_callbacks(win);
    wmWindowViewport(win);
@@ -7522,7 +7578,9 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +        if (r.xmax > r.xmin && r.ymax > r.ymin) {
 +          const int height = WM_window_native_pixel_y(win);
 +          navigation.push_back({r.xmin, height - 1 - r.ymax, r.xmax, height - 1 - r.ymin,
-+                                ghost::ios::PointerCaptureKind::ToolManipulation});
++                                ghost::ios::PointerCaptureKind::ToolManipulation,
++                                STREQ(tool->idname, "builtin.select_box") ||
++                                STREQ(tool->idname, "builtin.select_lasso")});
 +        }
 +      }
 +    }
@@ -7543,7 +7601,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
    /* Blend in floating regions (menus). */
    LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
-@@ -1528,6 +1682,13 @@
+@@ -1528,6 +1684,13 @@
    }
 
    ED_screen_areas_iter (win, screen, area) {
@@ -11642,7 +11700,7 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,124 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -11675,9 +11733,21 @@ new file mode 100644
 +         std::strcmp(tool, "builtin.transform") == 0;
 +}
 +
++/* Recognizer-owned admission survives hardware-down/up until UIKit reset.
++ * An idle interruption never rejects the first subsequent fresh touch. */
++struct TouchAdmission {
++  bool active = false;
++  bool interrupted = false;
++  void begin() { if (!active) { active = true; interrupted = false; } }
++  void interrupt() { if (active) { interrupted = true; } }
++  bool allowed() const { return !interrupted; }
++  void reset() { active = false; interrupted = false; }
++};
++
 +struct NavigationRect {
 +  int xmin, ymin, xmax, ymax;
 +  PointerCaptureKind kind = PointerCaptureKind::Navigation;
++  bool direct_selection = false;
 +  bool contains(const int x, const int y) const
 +  {
 +    return x >= xmin && x <= xmax && y >= ymin && y <= ymax;
@@ -11707,6 +11777,22 @@ new file mode 100644
 +    }
 +  }
 +  return PointerCaptureKind::None;
++}
++
++/* Point-selection provenance follows the same exposed-canvas snapshot, with
++ * first-hit priority for navigation, resize handles and covered UI. */
++inline bool selection_hit(const void *window, const int x, const int y, const bool enabled = true)
++{
++  const auto found = navigation_regions.find(window);
++  if (!enabled || found == navigation_regions.end()) {
++    return false;
++  }
++  for (const NavigationRect &rect : found->second) {
++    if (rect.contains(x, y)) {
++      return rect.kind == PointerCaptureKind::ToolManipulation && rect.direct_selection;
++    }
++  }
++  return false;
 +}
 +
 +inline bool navigation_hit(const void *window, const int x, const int y)
@@ -13388,3 +13474,46 @@ diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blen
    wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
    const float factor = gesture->use_smooth ? RNA_float_get(op->ptr, "smooth_stroke_factor") : 0.0f;
    const int radius = gesture->use_smooth ? RNA_int_get(op->ptr, "smooth_stroke_radius") : 0;
+diff --git a/source/blender/editors/space_view3d/view3d_select.cc b/source/blender/editors/space_view3d/view3d_select.cc
+--- a/source/blender/editors/space_view3d/view3d_select.cc
++++ b/source/blender/editors/space_view3d/view3d_select.cc
+@@ -20,6 +20,7 @@
+ #include "DNA_pointcloud_types.h"
+ #include "DNA_scene_types.h"
+ #include "DNA_tracking_types.h"
++#include "DNA_workspace_types.h"
+
+ #include "MEM_guardedalloc.h"
+
+@@ -3619,6 +3620,31 @@
+
+ static wmOperatorStatus view3d_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Only unmodified direct selection taps inherit the chosen shape operation.
++   * Hardware clicks, modified touches and advanced native modes keep their path. */
++  if (event->type == LEFTMOUSE && (event->flag & WM_EVENT_IS_DIRECT_TOOL) &&
++      event->modifier == 0 && event->keymodifier == 0) {
++    const char *mode = CTX_data_mode_string(C);
++    bToolRef *tool = WM_toolsystem_ref_from_context(C);
++    if (tool && (STREQ(mode, "OBJECT") || STREQ(mode, "POSE") || std::strncmp(mode, "EDIT_", 5) == 0)) {
++      const char *idname = STREQ(tool->idname, "builtin.select_box") ? "VIEW3D_OT_select_box" :
++                           STREQ(tool->idname, "builtin.select_lasso") ? "VIEW3D_OT_select_lasso" : nullptr;
++      wmOperatorType *shape = idname ? WM_operatortype_find(idname, false) : nullptr;
++      PointerRNA properties;
++      if (shape && WM_toolsystem_ref_properties_get_from_operator(tool, shape, &properties)) {
++        const int operation = RNA_enum_get(&properties, "mode");
++        if (ELEM(operation, SEL_OP_SET, SEL_OP_ADD, SEL_OP_SUB)) {
++          RNA_boolean_set(op->ptr, "extend", operation == SEL_OP_ADD);
++          RNA_boolean_set(op->ptr, "deselect", operation == SEL_OP_SUB);
++          RNA_boolean_set(op->ptr, "toggle", false);
++          RNA_boolean_set(op->ptr, "deselect_all", operation == SEL_OP_SET);
++          RNA_boolean_set(op->ptr, "select_passthrough", false);
++        }
++      }
++    }
++  }
++#endif
+   RNA_int_set_array(op->ptr, "location", event->mval);
+
+   const wmOperatorStatus retval = view3d_select_exec(C, op);

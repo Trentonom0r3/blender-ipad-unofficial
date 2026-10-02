@@ -95,6 +95,31 @@ int main() {
     assert(end.release && end.cancelled == interrupted);
     assert(!capture.finish(true).release);
   }
+  // Point taps are tagged only in Box/Lasso canvas snapshots, with first-hit
+  // occlusion and per-window ownership; transform taps retain their old path.
+  nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::Navigation},
+                                            {60,20,90,60,Kind::None},
+                                            {0,0,300,200,Kind::ToolManipulation,true}});
+  assert(!nav::selection_hit(&main_window, 30, 40));
+  assert(!nav::selection_hit(&main_window, 70, 40));
+  assert(nav::selection_hit(&main_window, 150, 100));
+  assert(!nav::selection_hit(&main_window, 150, 100, false));
+  assert(!nav::selection_hit(&auxiliary_window, 150, 100));
+  nav::set_navigation_regions(&main_window, {{0,0,300,200,Kind::ToolManipulation}});
+  assert(!nav::selection_hit(&main_window, 150, 100));
+  nav::TouchAdmission admission;
+  admission.interrupt(); // Idle hardware click cannot poison the next touch.
+  admission.begin();
+  assert(admission.allowed());
+  admission.interrupt(); // Pending tap/pan is invalidated before recognition.
+  assert(!admission.allowed());
+  admission.begin(); // An additional touch does not readmit the old stream.
+  assert(!admission.allowed());
+  // Hardware-up does not reset the admission; its later lift stays inert.
+  assert(admission.active && !admission.allowed());
+  admission.reset();
+  admission.begin();
+  assert(admission.allowed());
   capture.begin(Kind::None);
   assert(!capture.active() && !capture.ended);
   end = capture.finish(true);
