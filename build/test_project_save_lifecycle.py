@@ -83,12 +83,26 @@ class ProjectSaveLifecycleTests(unittest.TestCase):
         self.assertIn("[types addObject:UTTypeFolder]", importer)
         self.assertIn("const BOOL folderCopy = libraryCopy", importer)
         self.assertIn("[GHOST_IOSProjectImporter copyItemAtURL:source", importer)
-        self.assertIn("blendFiles.count != 1", importer)
-        self.assertIn("selectedLibrary = [destination URLByAppendingPathComponent:", importer)
+        self.assertIn("!blendFiles.count", importer)
+        self.assertIn("[availableLibraries addObject:[destination URLByAppendingPathComponent:", importer)
         self.assertIn("onPicked(selectedLibrary.path.UTF8String)", importer)
         self.assertIn('NSString *rootPrefix = [root.path stringByAppendingString:@"/"]', importer)
         self.assertIn("[selectedPath hasPrefix:rootPrefix]", importer)
         self.assertIn("[manager removeItemAtURL:importDir error:nil]", importer)
+
+    def test_library_folder_with_multiple_blends_waits_for_choice_and_cleans_cancel(self):
+        importer = diff_for("intern/ghost/intern/GHOST_ProjectImportIOS.hh")
+        self.assertIn('alertControllerWithTitle:@"Choose Library File"', importer)
+        self.assertIn('availableLibraries.count > 1', importer)
+        self.assertIn('_pendingLibraryDir = [stagingDir retain]', importer)
+        self.assertIn('moveItemAtURL:_pendingLibraryDir toURL:importDir', importer)
+        self.assertIn('continueLibraryChoice:file importDir:importDir', importer)
+        self.assertIn('_presenter.presentedViewController', importer)
+        self.assertIn('if (generation != _generation || !_busy)', importer)
+        self.assertIn('if (_libraryChoice && controller.presentedViewController == _libraryChoice)', importer)
+        self.assertIn('if (!_picker || controller.presentedViewController != _picker)', importer)
+        self.assertIn('if (pending) {', importer)
+        self.assertIn('removeItemAtURL:pending', importer)
 
     def test_model_exporter_header_keeps_interface_separate_from_implementation(self):
         model_export = diff_for("intern/ghost/intern/GHOST_ProjectExportIOS.hh")

@@ -3995,7 +3995,7 @@ diff --git a/intern/ghost/intern/GHOST_ProjectImportIOS.hh b/intern/ghost/intern
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/intern/GHOST_ProjectImportIOS.hh
-@@ -0,0 +1,1125 @@
+@@ -0,0 +1,1293 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/* Included only by GHOST_SystemIOS.mm. The explicit linked-project route
@@ -4668,13 +4668,16 @@ new file mode 100644
 +  UIViewController *_presenter;
 +  UIDocumentPickerViewController *_picker;
 +  UIAlertController *_progress;
++  UIAlertController *_libraryChoice;
 +  NSProgress *_copyProgress;
++  NSURL *_pendingLibraryDir;
 +  NSUInteger _generation;
 +  BOOL _busy;
 +  BOOL _libraryCopy;
 +  std::function<bool(const char *)> _on_picked;
 +  std::function<void()> _on_cancelled;
 +}
++- (void)continueLibraryChoice:(NSURL *)file importDir:(NSURL *)importDir generation:(NSUInteger)generation remaining:(int)remaining;
 +- (BOOL)presentWithFilter:(NSString *)filterGlob
 +              libraryCopy:(BOOL)libraryCopy
 +                 onPicked:(const std::function<bool(const char *)> &)onPicked
@@ -4705,10 +4708,85 @@ new file mode 100644
 +    [_progress release];
 +    _progress = nil;
 +  }
++  if (_libraryChoice) {
++    UIAlertController *choice = _libraryChoice;
++    _libraryChoice = nil;
++    choice.presentationController.delegate = nil;
++    [choice dismissViewControllerAnimated:NO completion:nil];
++    [choice release];
++  }
++  NSURL *pending = _pendingLibraryDir;
++  _pendingLibraryDir = nil;
++  if (pending) {
++    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
++      [[NSFileManager defaultManager] removeItemAtURL:pending error:nil];
++      [pending release];
++    });
++  }
 +  [_presenter release];
 +  _presenter = nil;
 +  _on_picked = nullptr;
 +  _on_cancelled = nullptr;
++}
++
++- (void)continueLibraryChoice:(NSURL *)file importDir:(NSURL *)importDir generation:(NSUInteger)generation remaining:(int)remaining
++{
++  if (generation != _generation || !_busy) {
++    return;
++  }
++  if (![self hasLivePresenter]) {
++    if (_on_cancelled) {
++      _on_cancelled();
++    }
++    [self finish];
++    return;
++  }
++  if (_presenter.presentedViewController) {
++    if (remaining <= 0) {
++      if (_on_cancelled) {
++        _on_cancelled();
++      }
++      [self finish];
++      return;
++    }
++    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC),
++                   dispatch_get_main_queue(), ^{
++      [self continueLibraryChoice:file importDir:importDir generation:generation remaining:remaining - 1];
++    });
++    return;
++  }
++  NSError *publishError = nil;
++  if (!_pendingLibraryDir || ![[NSFileManager defaultManager]
++      moveItemAtURL:_pendingLibraryDir toURL:importDir error:&publishError]) {
++    UIViewController *presenter = [_presenter retain];
++    if (_on_cancelled) {
++      _on_cancelled();
++    }
++    [self finish];
++    if (presenter.view.window && !presenter.presentedViewController) {
++      UIAlertController *alert = [UIAlertController
++          alertControllerWithTitle:@"Library Not Copied"
++                       message:publishError.localizedDescription ?:
++                           @"The library folder could not be published. Check available storage and try again."
++                preferredStyle:UIAlertControllerStyleAlert];
++      [alert addAction:[UIAlertAction actionWithTitle:@"OK"
++                                               style:UIAlertActionStyleCancel handler:nil]];
++      [presenter presentViewController:alert animated:YES completion:nil];
++    }
++    [presenter release];
++    return;
++  }
++  [_pendingLibraryDir release];
++  _pendingLibraryDir = [importDir retain];
++  const bool accepted = _on_picked && _on_picked(file.path.UTF8String);
++  if (accepted) {
++    [_pendingLibraryDir release];
++    _pendingLibraryDir = nil;
++  }
++  else if (_on_cancelled) {
++    _on_cancelled();
++  }
++  [self finish];
 +}
 +
 +- (void)dismissPicker:(void (^)(void))completion
@@ -4727,6 +4805,10 @@ new file mode 100644
 +              onCancelled:(const std::function<void()> &)onCancelled
 +{
 +  GHOST_SystemIOS *system = static_cast<GHOST_SystemIOS *>(GHOST_ISystem::getSystem());
++  if (_busy && ![self hasLivePresenter]) {
++    ++_generation;
++    [self finish];
++  }
 +  if (_busy || !system || !system->current_active_window_) {
 +    return NO;
 +  }
@@ -4797,7 +4879,19 @@ new file mode 100644
 +
 +- (void)presentationControllerDidDismiss:(UIPresentationController *)controller
 +{
-+  if (controller.presentedViewController != _picker) {
++  if (_libraryChoice && controller.presentedViewController == _libraryChoice) {
++    ++_generation;
++    auto onCancelled = _on_cancelled;
++    UIAlertController *choice = _libraryChoice;
++    _libraryChoice = nil;
++    [choice release];
++    if (onCancelled) {
++      onCancelled();
++    }
++    [self finish];
++    return;
++  }
++  if (!_picker || controller.presentedViewController != _picker) {
 +    return;
 +  }
 +  ++_generation;
@@ -4921,6 +5015,7 @@ new file mode 100644
 +        }
 +        [coordinator release];
 +        NSURL *selectedLibrary = destination;
++        NSMutableArray<NSURL *> *availableLibraries = [NSMutableArray array];
 +        if (copied && folderCopy && !copyProgress.cancelled) {
 +          NSMutableArray<NSURL *> *blendFiles = [NSMutableArray array];
 +          __block BOOL enumerationFailed = NO;
@@ -4952,30 +5047,35 @@ new file mode 100644
 +              [blendFiles addObject:item];
 +            }
 +          }
-+          if (enumerationFailed || blendFiles.count != 1) {
++          if (enumerationFailed || !blendFiles.count) {
 +            copied = NO;
 +            if (!enumerationFailed) {
-+              NSString *reason = blendFiles.count ?
-+                  @"Choose a folder with one .blend file, or pick a single library file." :
-+                  @"This folder has no .blend file.";
 +              copyError = [NSError errorWithDomain:NSCocoaErrorDomain
 +                                              code:NSFileReadUnknownError
-+                                          userInfo:@{NSLocalizedDescriptionKey: reason}];
++                                          userInfo:@{NSLocalizedDescriptionKey:
++                                              @"This folder has no .blend file."}];
 +            }
 +          }
 +          else if (copied && !copyProgress.cancelled) {
++            [blendFiles sortUsingComparator:^NSComparisonResult(NSURL *a, NSURL *b) {
++              return [a.path localizedStandardCompare:b.path];
++            }];
 +            NSString *prefix = [stagingDestination.path stringByAppendingString:@"/"];
-+            NSString *selectedPath = blendFiles.firstObject.path;
-+            if (![selectedPath hasPrefix:prefix]) {
-+              copied = NO;
++            for (NSURL *file in blendFiles) {
++              if (![file.path hasPrefix:prefix]) {
++                copied = NO;
++                break;
++              }
++              [availableLibraries addObject:[destination URLByAppendingPathComponent:
++                  [file.path substringFromIndex:prefix.length]]];
 +            }
-+            else {
-+              selectedLibrary = [destination URLByAppendingPathComponent:
-+                  [selectedPath substringFromIndex:prefix.length]];
++            if (copied) {
++              selectedLibrary = availableLibraries.firstObject;
 +            }
 +          }
 +        }
-+        if (copied && libraryCopy && !copyProgress.cancelled) {
++        if (copied && libraryCopy && !copyProgress.cancelled &&
++            !(folderCopy && availableLibraries.count > 1)) {
 +          copied = [manager moveItemAtURL:stagingDir toURL:importDir error:&copyError];
 +        }
 +        if (scoped) {
@@ -5002,6 +5102,74 @@ new file mode 100644
 +          }
 +          UIAlertController *progress = _progress;
 +          _progress = nil;
++          if (copied && folderCopy && availableLibraries.count > 1) {
++            /* Leave the complete copy hidden until a library is chosen. Startup
++             * cleanup removes it if the app exits at this native choice. */
++            _pendingLibraryDir = [stagingDir retain];
++            UIAlertController *choice = [[UIAlertController
++                alertControllerWithTitle:@"Choose Library File"
++                             message:@"The complete folder was copied. Which .blend should Link or Append use?"
++                      preferredStyle:UIAlertControllerStyleAlert] retain];
++            _libraryChoice = choice;
++            [choice setModalInPresentation:YES];
++            NSString *prefix = [destination.path stringByAppendingString:@"/"];
++            for (NSURL *file in availableLibraries) {
++              NSString *label = [file.path hasPrefix:prefix] ?
++                  [file.path substringFromIndex:prefix.length] : file.lastPathComponent;
++              [choice addAction:[UIAlertAction actionWithTitle:label
++                                                       style:UIAlertActionStyleDefault
++                                                     handler:^(UIAlertAction *action) {
++                if (generation != _generation || !_busy) {
++                  return;
++                }
++                if (![self hasLivePresenter]) {
++                  if (onCancelled) {
++                    onCancelled();
++                  }
++                  [self finish];
++                  return;
++                }
++                UIAlertController *shown = _libraryChoice;
++                _libraryChoice = nil;
++                shown.presentationController.delegate = nil;
++                [shown release];
++                [self continueLibraryChoice:file importDir:importDir generation:generation remaining:20];
++              }]];
++            }
++            [choice addAction:[UIAlertAction actionWithTitle:@"Cancel"
++                                                   style:UIAlertActionStyleCancel
++                                                 handler:^(UIAlertAction *action) {
++              if (generation != _generation || !_busy) {
++                return;
++              }
++              ++_generation;
++              UIAlertController *shown = _libraryChoice;
++              _libraryChoice = nil;
++              shown.presentationController.delegate = nil;
++              [shown release];
++              if (onCancelled) {
++                onCancelled();
++              }
++              [self finish];
++            }]];
++            [progress dismissViewControllerAnimated:YES completion:^{
++              if (generation != _generation || !_busy) {
++                return;
++              }
++              if (![self hasLivePresenter] || _presenter.presentedViewController) {
++                if (onCancelled) {
++                  onCancelled();
++                }
++                [self finish];
++                return;
++              }
++              [_presenter presentViewController:choice animated:YES completion:nil];
++              choice.presentationController.delegate = self;
++            }];
++            [progress release];
++            [copyProgress release];
++            return;
++          }
 +          [progress dismissViewControllerAnimated:NO completion:nil];
 +          [progress release];
 +          const bool accepted = copied && onPicked && onPicked(selectedLibrary.path.UTF8String);
