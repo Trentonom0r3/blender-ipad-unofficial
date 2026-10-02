@@ -1,5 +1,8 @@
 # iPad workspace design and delivery
 
+## Interaction package checkpoint — 2026-10-02
+
+Exact-source IPA run 36979119999 at e3d8b29 passed native Release build and downloaded archive, arm64 bundle and exact packaged UI checks. It includes direct transform-tool finger/Pencil drags, interruption rollback, stable first strokes, hover isolation, active-tool feedback and header Undo/Redo. All 50 host checks and pinned-source preflight pass; host Blender verifies tool/header wiring. There is no device acceptance for this increment. The user's latest priority remains actual interaction; preserve existing Files work and defer further import/portable-copy expansion. Continue selecting/manipulating, navigation and reversible editing improvements independently, preserving accepted Pencil mappings, Inspector, native editors and external input. See docs/PROJECT_HANDOFF.md (PROJECT_HANDOFF.md from this docs directory) for exact artifact evidence and focused device checks.
 ## Current interaction increment — 2026-10-02
 
 Prioritize actual object/edit interaction per the user's latest direction. The existing mechanisms may evolve to serve that outcome; keep the accepted Inspector and Pencil ring. Further Files/portable-copy expansion is deferred.
