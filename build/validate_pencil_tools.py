@@ -47,7 +47,13 @@ class Layout:
         self.records.append(('property', prop, kwargs, True))
 
     def popover(self, **kwargs):
+        self.records.append(('popover', None, kwargs, True))
+
+    def separator(self, **kwargs):
         pass
+
+    def menu(self, name, **kwargs):
+        self.records.append(('menu', name, kwargs, True))
 
 
 area = next(a for a in bpy.context.window.screen.areas if a.type == 'VIEW_3D')
@@ -76,8 +82,9 @@ with bpy.context.temp_override(area=area, region=region):
     records = []
     module.draw_canvas_header(Layout(records))
     assert [item[0] for item in records[:2]] == ['ed.undo', 'ed.redo'], records
-    assert records[2][0] == 'label' and 'Move' in records[2][2]['text'], records
-    assert records[3][0] == 'view3d.ipad_flythrough_toggle', records
+    assert records[2][0] == 'popover' and records[2][2]['panel'] == 'VIEW3D_PT_ipad_selection', records
+    assert records[3][0] == 'label' and 'Move' in records[3][2]['text'], records
+    assert records[4][0] == 'view3d.ipad_flythrough_toggle', records
     for idname in ('undo', 'redo'):
         getattr(bpy.ops.ed, idname).get_rna_type()
     records = []
@@ -96,6 +103,49 @@ for cls in module.classes:
         bpy.utils.register_class(cls)
     except ValueError:
         pass
+# Exercise the actual registered selection operator and native tool RNA.
+selection_checks = []
+with bpy.context.temp_override(area=area, region=region):
+    for object_mode in ('OBJECT', 'EDIT'):
+        bpy.ops.object.mode_set(mode=object_mode)
+        for tool in ('builtin.select_box', 'builtin.select_lasso'):
+            for action in ('SET', 'ADD', 'SUB'):
+                assert bpy.ops.view3d.ipad_selection_tool(tool=tool, mode=action) == {'FINISHED'}
+                assert module.ipad_selection_state(bpy.context)[:2] == (tool, action)
+                records = []
+                module.VIEW3D_PT_ipad_selection.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
+                shapes = [r for r in records if r[0] == 'view3d.ipad_selection_tool'][:2]
+                assert len(shapes) == 2 and all(r[1].mode == action for r in shapes), shapes
+                modes = [r for r in records if r[0] == 'view3d.ipad_selection_tool'][2:]
+                assert [r[1].mode for r in modes] == ['SET', 'ADD', 'SUB'], modes
+                assert all(r[1].tool == tool for r in modes), modes
+                # All/Clear/Invert and element-mode buttons are real native operators.
+                all_operator = module.IPAD_SELECT_ALL[bpy.context.mode]
+                select_all = getattr(getattr(bpy.ops, all_operator.split('.')[0]), 'select_all')
+                for value in ('SELECT', 'DESELECT', 'INVERT'):
+                    status = select_all(action=value)
+                    assert status in ({'FINISHED'}, {'CANCELLED'}), (bpy.context.mode, value, status)
+                    # Native no-op selection legitimately returns CANCELLED.
+                    if bpy.context.mode == 'OBJECT':
+                        selected = [obj.select_get() for obj in bpy.context.view_layer.objects]
+                    else:
+                        import bmesh
+                        selected = [v.select for v in bmesh.from_edit_mesh(bpy.context.object.data).verts]
+                    assert selected and all(v == (value != 'DESELECT') for v in selected), (value, selected)
+                if bpy.context.mode == 'EDIT_MESH':
+                    for index, value in enumerate(('VERT', 'EDGE', 'FACE')):
+                        assert bpy.ops.mesh.select_mode(type=value) in ({'FINISHED'}, {'CANCELLED'})
+                        assert tuple(bpy.context.tool_settings.mesh_select_mode) == tuple(i == index for i in range(3))
+                selection_checks.append({'mode': bpy.context.mode, 'tool': tool, 'action': action})
+    bpy.ops.object.mode_set(mode='OBJECT')
+    # Complete native selection menus remain reachable; dictionary operators expose action.
+    for context_mode, idname in module.IPAD_SELECT_ALL.items():
+        category, operator = idname.split('.')
+        rna = getattr(getattr(bpy.ops, category), operator).get_rna_type()
+        assert 'action' in rna.properties, idname
+        for value in ('SELECT', 'DESELECT', 'INVERT'):
+            assert value in rna.properties['action'].enum_items, (idname, value)
+        assert hasattr(bpy.types, 'VIEW3D_MT_select_' + context_mode.lower()), context_mode
 wm = bpy.context.window_manager
 assert not getattr(wm, "ipad_flythrough_active", False)
 assert bpy.ops.view3d.ipad_flythrough_toggle() == {'FINISHED'}
@@ -106,6 +156,7 @@ assert not getattr(wm, "ipad_flythrough_active", False)
 output = repo / 'output/ui-preview/nine-tools-validation.json'
 output.write_text(json.dumps({'blender': bpy.app.version_string, 'checks': results,
     'header_undo_redo_and_settings_shelf_toggle': 'passed',
+    'native_selection_controls': selection_checks,
     'scope': 'Host Python tool/UI wiring only. Native popup, gestures and UIKit require iOS testing.'},
     indent=2) + '\n', encoding='utf-8')
-print('PASS: nine tool slots, actual tool activation, no accidental cube creation, header Undo/Redo and settings shelf toggle')
+print('PASS: nine tool slots, header controls, native selection tools/modes and mesh elements')

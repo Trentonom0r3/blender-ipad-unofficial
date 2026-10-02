@@ -91,5 +91,52 @@ int main() {
   }
 }
 """.replace('GUARD', guard.replace('return;', 'return 0;')).replace('SNAPSHOT', snapshot).replace('#include <cassert>', '#include <cassert>\n#include <initializer_list>'))
+
+    def test_selection_interruption_discards_pending_shape(self):
+        patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        section = patch.split('diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc ', 1)[1].split('diff --git ', 1)[0]
+        code = '\n'.join(line[1:] for line in section.splitlines()
+                         if line.startswith((' ', '+')) and not line.startswith('+++'))
+        for shape in ('box', 'lasso'):
+            function = code.split('WM_gesture_' + shape + '_modal(', 1)[1]
+            start = function.index('#ifdef WITH_APPLE_CROSSPLATFORM')
+            end = function.index('#endif', start) + len('#endif')
+            # Compile the shipped pre-dispatch cancellation guard, including a
+            # cancelled release already translated to the native modal map.
+            test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r"""
+#define WITH_APPLE_CROSSPLATFORM
+#include <cassert>
+#include <initializer_list>
+constexpr int WM_EVENT_IS_POINTER_CANCEL = 64, WM_EVENT_IS_DIRECT_TOOL = 128;
+constexpr int OPERATOR_CANCELLED = 4, OPERATOR_FINISHED = 8;
+struct Context { int selection = 3; };
+struct Operator { int cleanup = 0; };
+struct Event { int flag; bool modal_map; };
+void gesture_modal_end(Context *, Operator *op) { ++op->cleanup; }
+int terminal(Context *C, Operator *op, const Event *event) {
+GUARD
+  // Both native terminal paths would apply the previewed shape here.
+  (void)event->modal_map;
+  C->selection = 9;
+  gesture_modal_end(C, op);
+  return OPERATOR_FINISHED;
+}
+int main() {
+  for (int flag : {0, WM_EVENT_IS_DIRECT_TOOL, WM_EVENT_IS_POINTER_CANCEL,
+                   WM_EVENT_IS_DIRECT_TOOL | WM_EVENT_IS_POINTER_CANCEL}) {
+    for (bool mapped : {false, true}) {
+      Context C;
+      Operator op;
+      Event event{flag, mapped};
+      const int result = terminal(&C, &op, &event);
+      const bool cancelled = flag & WM_EVENT_IS_POINTER_CANCEL;
+      assert(result == (cancelled ? OPERATOR_CANCELLED : OPERATOR_FINISHED));
+      assert(C.selection == (cancelled ? 3 : 9));
+      assert(op.cleanup == 1);
+    }
+  }
+}
+""".replace('GUARD', function[start:end]))
+
 if __name__ == '__main__':
     unittest.main()

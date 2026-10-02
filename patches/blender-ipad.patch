@@ -1950,7 +1950,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1091,180 @@
+@@ -677,12 +1091,188 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -2009,6 +2009,14 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender
  {
++  /* A hardware drag owns the shared pointer until its matched release.
++   * Suppress this entire newly started touch stream, even if it outlasts that release. */
++  if (sender.state == UIGestureRecognizerStateBegan &&
++      (mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)) {
++    pointer_capture.begin(ghost::ios::PointerCaptureKind::None);
++    pointer_capture.ended = true;
++    return;
++  }
    CGPoint touch_point = [sender getScaledTouchPoint:window];
    CGPoint translation = [sender getScaledTranslation:window];
 -  bool pencil_pan = current_pencil_touch ? true : false;
@@ -2133,7 +2141,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1272,21 @@
+@@ -690,6 +1280,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -2155,7 +2163,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,8 +1319,109 @@
+@@ -722,8 +1327,109 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -2265,7 +2273,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Translation can be non-zero on begin event */
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -739,6 +1437,20 @@
+@@ -739,6 +1445,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -2286,7 +2294,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,67 +1466,145 @@
+@@ -754,67 +1474,145 @@
    }
  }
 
@@ -2468,7 +2476,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1620,66 @@
+@@ -830,25 +1628,69 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -2503,6 +2511,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  {
 +    return;
 +  }
++  /* Finish a finger-owned stream before a popup can take its release. */
++  [self cancelPointerCapture];
    UserInputEvent event_info(nullptr, nullptr, nullptr, true);
 -  event_info.add_event(UserInputEvent::EventTypes::PENCIL_TAP);
 +  event_info.add_event(UserInputEvent::EventTypes::PENCIL_CONTEXT_MENU);
@@ -2521,6 +2531,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    {
 +      return;
 +    }
++    [self cancelPointerCapture];
 +    /* Prefer the recent Pencil position even if a connected mouse moved since.
 +     * A stale/missing position is handled by the viewport operator's fallback. */
 +    const bool recent_position = last_pencil_location_time != 0 &&
@@ -2538,7 +2549,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +2029,374 @@
+@@ -1198,11 +2040,377 @@
    }
  }
 
@@ -2679,6 +2690,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          if (!strong_self || strong_self->native_chrome_hovered) {
 +            return;
 +          }
++          [strong_self cancelPointerCapture];
 +          if (strong_self) {
 +            strong_self->mouse_left_pressed = pressed ? true : false;
 +          }
@@ -2711,6 +2723,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          if (!ss || ss->native_chrome_hovered) {
 +            return;
 +          }
++          [ss cancelPointerCapture];
 +          if (ss) { ss->mouse_right_pressed = pressed ? true : false; }
 +          GHOST_IWindow *active_win_r = sys->getWindowManager()->getActiveWindow();
 +          if (!active_win_r) { return; }
@@ -2741,6 +2754,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +          if (!ss || ss->native_chrome_hovered) {
 +            return;
 +          }
++          [ss cancelPointerCapture];
 +          if (ss) { ss->mouse_middle_pressed = pressed ? true : false; }
 +          IOS_INPUT_LOG(@"MIDDLE button pressed=%d", pressed);
 +          GHOST_IWindow *active_win_m = sys->getWindowManager()->getActiveWindow();
@@ -2913,7 +2927,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2492,12 @@
+@@ -1298,7 +2506,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -2927,7 +2941,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2505,163 @@
+@@ -1306,22 +2519,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -3097,7 +3111,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2705,12 @@
+@@ -1365,11 +2719,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -3111,7 +3125,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2718,6 @@
+@@ -1377,7 +2732,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3119,7 +3133,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2731,6 @@
+@@ -1391,7 +2745,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -3127,7 +3141,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2739,6 @@
+@@ -1400,7 +2753,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3135,7 +3149,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2748,12 @@
+@@ -1410,8 +2762,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -3150,7 +3164,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2766,14 @@
+@@ -1424,10 +2780,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -3166,7 +3180,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +2817,28 @@
+@@ -1471,14 +2831,28 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
@@ -3196,7 +3210,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2859,9 @@
+@@ -1499,6 +2873,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -3206,7 +3220,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +2981,7 @@
+@@ -1618,7 +2995,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -3215,7 +3229,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3271,7 @@
+@@ -1908,6 +3285,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -3223,7 +3237,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3282,11 @@
+@@ -1918,6 +3296,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -3235,7 +3249,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
-@@ -1932,6 +3301,7 @@
+@@ -1932,6 +3315,7 @@
    GHOST_ASSERT(!request_to_make_active_,
                 "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
 
@@ -3247,7 +3261,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,245 @@
+@@ -0,0 +1,367 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3328,6 +3342,119 @@ new file mode 100644
 +            else:
 +                slot.operator('wm.tool_set_by_id', text=label, icon=fallback_icon,
 +                              depress=active_id == name).name = name
++
++
++# Selection operations stay native and retain their mode-specific semantics.
++IPAD_SELECT_ALL = {
++    'OBJECT': 'object.select_all', 'POSE': 'pose.select_all',
++    'EDIT_MESH': 'mesh.select_all',
++    'EDIT_CURVE': 'curve.select_all', 'EDIT_SURFACE': 'curve.select_all',
++    'EDIT_METABALL': 'mball.select_all', 'EDIT_LATTICE': 'lattice.select_all',
++    'EDIT_ARMATURE': 'armature.select_all',
++    'EDIT_GREASE_PENCIL': 'grease_pencil.select_all',
++    'EDIT_POINTCLOUD': 'pointcloud.select_all', 'EDIT_CURVES': 'curves.select_all',
++}
++IPAD_SELECTION_TOOLS = (
++    ("Box", 'builtin.select_box', 'view3d.select_box', 'ops.generic.select_box'),
++    ("Lasso", 'builtin.select_lasso', 'view3d.select_lasso', 'ops.generic.select_lasso'),
++)
++IPAD_SELECTION_MODES = (("Replace", 'SET'), ("Add", 'ADD'), ("Remove", 'SUB'))
++
++
++def ipad_selection_state(context):
++    active = ToolSelectPanelHelper.tool_active_from_context(context)
++    if active:
++        for label, name, operator, _ in IPAD_SELECTION_TOOLS:
++            if active.idname == name:
++                return name, active.operator_properties(operator).mode, label
++    return 'builtin.select_box', 'SET', None
++
++
++class VIEW3D_OT_ipad_selection_tool(Operator):
++    bl_idname = "view3d.ipad_selection_tool"
++    bl_label = "Selection Tool"
++    bl_description = "Choose a native selection shape and how its next drag changes the selection"
++
++    tool: bpy.props.EnumProperty(items=(
++        ('builtin.select_box', "Box", "Drag a selection rectangle"),
++        ('builtin.select_lasso', "Lasso", "Draw a selection outline"),
++    ))
++    mode: bpy.props.EnumProperty(items=(
++        ('SET', "Replace", "Replace the selection with the next shape"),
++        ('ADD', "Add", "Add the next shape to the selection"),
++        ('SUB', "Remove", "Remove the next shape from the selection"),
++    ))
++
++    @classmethod
++    def poll(cls, context):
++        return (context.area is not None and context.area.type == 'VIEW_3D'
++                and context.mode in IPAD_SELECT_ALL)
++
++    def execute(self, context):
++        if bpy.ops.wm.tool_set_by_id(name=self.tool) != {'FINISHED'}:
++            return {'CANCELLED'}
++        active = ToolSelectPanelHelper.tool_active_from_context(context)
++        if active is None or active.idname != self.tool:
++            return {'CANCELLED'}
++        operator = next(op for _, name, op, _ in IPAD_SELECTION_TOOLS if name == self.tool)
++        # Native keymap properties retain priority for external Shift/Control.
++        active.operator_properties(operator).mode = self.mode
++        context.area.tag_redraw()
++        return {'FINISHED'}
++
++
++class VIEW3D_PT_ipad_selection(Panel):
++    bl_label = "Selection"
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++    bl_ui_units_x = 20
++
++    @classmethod
++    def poll(cls, context):
++        return context.mode in IPAD_SELECT_ALL
++
++    def draw(self, context):
++        layout = self.layout
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        layout.scale_y = 2.2
++        tool, mode, label = ipad_selection_state(context)
++        shapes = layout.row(align=True)
++        for text, name, _, icon in IPAD_SELECTION_TOOLS:
++            try:
++                icon_value = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
++            except Exception:
++                icon_value = 0
++            props = shapes.operator('view3d.ipad_selection_tool', text=text, icon_value=icon_value,
++                                    depress=label is not None and tool == name)
++            props.tool = name
++            # Preserve advanced native modes when merely showing them; an explicit
++            # touch shape choice starts from Replace if that mode has no quick choice.
++            props.mode = mode if mode in {'SET', 'ADD', 'SUB'} else 'SET'
++        operations = layout.row(align=True)
++        for text, value in IPAD_SELECTION_MODES:
++            props = operations.operator('view3d.ipad_selection_tool', text=text,
++                                        depress=label is not None and mode == value)
++            props.tool, props.mode = tool, value
++        if getattr(context.window_manager, "ipad_flythrough_active", False):
++            layout.operator('view3d.ipad_flythrough_toggle',
++                            text="Exit Flythrough to Select", icon='CAMERA_STEREO')
++        else:
++            layout.label(text="Drag to select · two fingers to orbit")
++        if context.mode == 'EDIT_MESH':
++            elements = layout.row(align=True)
++            for index, (text, value, icon) in enumerate((
++                    ("Vertex", 'VERT', 'VERTEXSEL'), ("Edge", 'EDGE', 'EDGESEL'),
++                    ("Face", 'FACE', 'FACESEL'))):
++                elements.operator('mesh.select_mode', text=text, icon=icon,
++                                  depress=context.tool_settings.mesh_select_mode[index]).type = value
++        layout.separator()
++        actions = layout.row(align=True)
++        for text, action in (("All", 'SELECT'), ("Clear", 'DESELECT'), ("Invert", 'INVERT')):
++            actions.operator(IPAD_SELECT_ALL[context.mode], text=text).action = action
++        # Keep the mode's complete native selection commands one tap away.
++        native_menu = 'VIEW3D_MT_select_' + context.mode.lower()
++        if hasattr(bpy.types, native_menu):
++            layout.menu(native_menu, text="More Selection Commands")
 +
 +
 +class VIEW3D_OT_ipad_flythrough_toggle(Operator):
@@ -3453,8 +3580,15 @@ new file mode 100644
 +    row.operator('ed.undo', text="Undo", icon='LOOP_BACK')
 +    row.operator('ed.redo', text="Redo", icon='LOOP_FORWARDS')
 +
-+    active = ToolSelectPanelHelper.tool_active_from_context(bpy.context)
 +    mode = bpy.context.mode
++    if mode in IPAD_SELECT_ALL:
++        _, selection_mode, shape = ipad_selection_state(bpy.context)
++        action = dict((value, text) for text, value in IPAD_SELECTION_MODES).get(selection_mode, "Custom")
++        row.popover(panel="VIEW3D_PT_ipad_selection",
++                    text=f"{shape} · {action}" if shape else "Selection",
++                    icon='RESTRICT_SELECT_OFF')
++
++    active = ToolSelectPanelHelper.tool_active_from_context(bpy.context)
 +    if (active and active.idname in {'builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.transform'}
 +            and (mode in {'OBJECT', 'POSE'} or mode.startswith('EDIT_'))
 +            and not getattr(bpy.context.window_manager, "ipad_flythrough_active", False)):
@@ -3480,6 +3614,8 @@ new file mode 100644
 +    WM_OT_ipad_tool_palette,
 +    VIEW3D_MT_ipad_tools,
 +    VIEW3D_MT_ipad_tool_settings,
++    VIEW3D_OT_ipad_selection_tool,
++    VIEW3D_PT_ipad_selection,
 +    VIEW3D_PT_ipad_controls,
 +    VIEW3D_OT_ipad_flythrough_toggle,
 +)
@@ -7370,7 +7506,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +      CTX_wm_area_set(C, area);
 +      CTX_wm_region_set(C, nullptr);
 +      const bToolRef *tool = WM_toolsystem_ref_from_context(C);
-+      if (!ghost::ios::direct_transform_tool(tool ? tool->idname : nullptr,
++      if (!ghost::ios::direct_edit_tool(tool ? tool->idname : nullptr,
 +                                             CTX_data_mode_string(C))) {
 +        continue;
 +      }
@@ -11506,7 +11642,7 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,94 @@
+@@ -0,0 +1,96 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -11523,15 +11659,17 @@ new file mode 100644
 +enum class PointerCaptureKind { None, Navigation, WorkspaceResize, ToolManipulation };
 +
 +/* Tool choice expresses editing intent. Keep ordinary finger navigation in
-+ * Select/paint modes, and leave flythrough/indirect input to their existing paths. */
-+inline bool direct_transform_tool(const char *tool, const char *mode)
++ * other tools/paint modes, and leave flythrough/indirect input to their existing paths. */
++inline bool direct_edit_tool(const char *tool, const char *mode)
 +{
 +  if (!tool || !mode || !(std::strcmp(mode, "OBJECT") == 0 ||
 +                         std::strcmp(mode, "POSE") == 0 ||
 +                         std::strncmp(mode, "EDIT_", 5) == 0)) {
 +    return false;
 +  }
-+  return std::strcmp(tool, "builtin.move") == 0 ||
++  return std::strcmp(tool, "builtin.select_box") == 0 ||
++         std::strcmp(tool, "builtin.select_lasso") == 0 ||
++         std::strcmp(tool, "builtin.move") == 0 ||
 +         std::strcmp(tool, "builtin.rotate") == 0 ||
 +         std::strcmp(tool, "builtin.scale") == 0 ||
 +         std::strcmp(tool, "builtin.transform") == 0;
@@ -13217,3 +13355,36 @@ diff --git a/source/blender/editors/transform/transform_ops.cc b/source/blender/
  #if defined(WITH_INPUT_NDOF) && 0
    /* Stable 2D mouse coords map to different 3D coords while the 3D mouse is active
     * in other words, 2D deltas are no longer good enough!
+diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blender/windowmanager/intern/wm_gesture_ops.cc
+--- a/source/blender/windowmanager/intern/wm_gesture_ops.cc
++++ b/source/blender/windowmanager/intern/wm_gesture_ops.cc
+@@ -195,6 +195,14 @@
+
+ wmOperatorStatus WM_gesture_box_modal(bContext *C, wmOperator *op, const wmEvent *event)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* UIKit interruptions release the captured pointer without applying a shape.
++   * This precedes modal-map dispatch and lasso's ordinary release handling. */
++  if (event->flag & WM_EVENT_IS_POINTER_CANCEL) {
++    gesture_modal_end(C, op);
++    return OPERATOR_CANCELLED;
++  }
++#endif
+   wmWindow *win = CTX_wm_window(C);
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   rcti *rect = static_cast<rcti *>(gesture->customdata);
+@@ -556,6 +564,14 @@
+
+ wmOperatorStatus WM_gesture_lasso_modal(bContext *C, wmOperator *op, const wmEvent *event)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* UIKit interruptions release the captured pointer without applying a shape.
++   * This precedes modal-map dispatch and lasso's ordinary release handling. */
++  if (event->flag & WM_EVENT_IS_POINTER_CANCEL) {
++    gesture_modal_end(C, op);
++    return OPERATOR_CANCELLED;
++  }
++#endif
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   const float factor = gesture->use_smooth ? RNA_float_get(op->ptr, "smooth_stroke_factor") : 0.0f;
+   const int radius = gesture->use_smooth ? RNA_int_get(op->ptr, "smooth_stroke_radius") : 0;

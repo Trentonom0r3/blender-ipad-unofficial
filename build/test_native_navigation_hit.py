@@ -65,19 +65,19 @@ int main() {
   capture.begin(Kind::Navigation);
   auto end = capture.finish(true);
   assert(end.release && !end.cancelled); // Preserve existing navigation behavior.
-  for (const char *tool : {"builtin.move", "builtin.rotate", "builtin.scale", "builtin.transform"}) {
+  for (const char *tool : {"builtin.select_box", "builtin.select_lasso", "builtin.move", "builtin.rotate", "builtin.scale", "builtin.transform"}) {
     for (const char *mode : {"OBJECT", "POSE", "EDIT_MESH", "EDIT_CURVE", "EDIT_ARMATURE"}) {
-      assert(nav::direct_transform_tool(tool, mode));
+      assert(nav::direct_edit_tool(tool, mode));
     }
     for (const char *mode : {"SCULPT", "PAINT_TEXTURE", "PAINT_VERTEX", "PAINT_WEIGHT", ""}) {
-      assert(!nav::direct_transform_tool(tool, mode));
+      assert(!nav::direct_edit_tool(tool, mode));
     }
   }
-  for (const char *tool : {"builtin.select_box", "builtin.cursor", "builtin.annotate", "addon.move", ""}) {
-    assert(!nav::direct_transform_tool(tool, "OBJECT"));
+  for (const char *tool : {"builtin.select_circle", "builtin.cursor", "builtin.annotate", "addon.move", ""}) {
+    assert(!nav::direct_edit_tool(tool, "OBJECT"));
   }
-  assert(!nav::direct_transform_tool(nullptr, "OBJECT"));
-  assert(!nav::direct_transform_tool("builtin.move", nullptr));
+  assert(!nav::direct_edit_tool(nullptr, "OBJECT"));
+  assert(!nav::direct_edit_tool("builtin.move", nullptr));
   // Narrow navigation/resize controls win over the editing canvas beneath them.
   // An explicit None region represents covered UI and blocks that canvas too.
   nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::Navigation},
