@@ -296,7 +296,7 @@ int main() {
 #include <utility>
 #define STREQ(a,b) (std::strcmp(a,b)==0)
 #define ELEM(a,b,c) ((a)==(b)||(a)==(c))
-constexpr int LEFTMOUSE=1, KM_PRESS_DRAG=2, EVT_NONE=0, WM_EVENT_IS_DIRECT_TOOL=4;
+constexpr int LEFTMOUSE=1, KM_PRESS_DRAG=2, EVENT_NONE=0, WM_EVENT_IS_DIRECT_TOOL=4;
 struct Event { int type=LEFTMOUSE,val=KM_PRESS_DRAG,flag=WM_EVENT_IS_DIRECT_TOOL,modifier=0,keymodifier=0; };
 struct Runtime { const char *keymap="Bevel"; };
 struct Tool { const char *idname="builtin.bevel"; Runtime *runtime; };

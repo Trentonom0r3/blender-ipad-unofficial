@@ -3318,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,677 @@
+@@ -0,0 +1,736 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3769,6 +3769,56 @@ new file mode 100644
 +        layout.label(text="Drag, lift to finish · two fingers to orbit")
 +
 +
++def ipad_camera_state(context):
++    space = context.space_data
++    if (not space or space.type != 'VIEW_3D'
++            or getattr(context.window_manager, "ipad_flythrough_active", False)):
++        return None
++    region = space.region_3d
++    return space, space.camera, bool(region and region.view_perspective == 'CAMERA')
++
++
++class VIEW3D_PT_ipad_camera(Panel):
++    bl_label = "Camera"
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++    bl_ui_units_x = 18
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_camera_state(context) is not None
++
++    def draw(self, context):
++        state = ipad_camera_state(context)
++        if state is None:
++            return
++        space, camera, in_camera = state
++        layout = self.layout
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        actions = layout.column(align=True)
++        actions.scale_y = 1.8
++        actions.operator('view3d.view_camera',
++                         text="Leave Camera View" if in_camera else "View Camera",
++                         icon='VIEW_CAMERA')
++        actions.operator('view3d.camera_to_view', text="Align Camera to View",
++                         icon='CON_CAMERASOLVER')
++        layout.separator()
++        target = layout.column(align=True)
++        target.scale_y = 1.6
++        target.prop(space, 'use_local_camera', text="Use Local Camera")
++        target.prop(space, 'camera', text="Local Camera" if space.use_local_camera else "Scene Camera")
++        if camera and camera.type == 'CAMERA':
++            settings = layout.column(align=True)
++            settings.scale_y = 1.6
++            settings.enabled = camera.data.is_editable
++            if camera.data.type == 'PERSP':
++                settings.prop(camera.data, 'lens', text="Lens")
++            elif camera.data.type == 'ORTHO':
++                settings.prop(camera.data, 'ortho_scale', text="Scale")
++            else:
++                layout.label(text="Panoramic camera")
++
++
 +def ipad_bevel_state(context):
 +    active = ToolSelectPanelHelper.tool_active_from_context(context)
 +    if (context.mode == 'EDIT_MESH' and active and active.idname == 'builtin.bevel'
@@ -3866,7 +3916,6 @@ new file mode 100644
 +        navigation.operator('view3d.view_selected', text="Frame Selection", icon='ZOOM_SELECTED')
 +        navigation.operator('view3d.view_all', text="Frame Scene", icon='HOME')
 +        camera = navigation.column(align=True)
-+        camera.enabled = context.scene.camera is not None
 +        camera.operator('view3d.view_camera', text="Camera View", icon='VIEW_CAMERA')
 +        navigation.operator('screen.screen_full_area', text="Restore Editors" if context.screen.show_fullscreen else "Expand Canvas", icon='FULLSCREEN_ENTER')
 +
@@ -3911,11 +3960,17 @@ new file mode 100644
 +        playback_box = layout.row(align=True)
 +        playback_box.scale_y = 1.6
 +        playback_box.prop(context.scene, 'frame_current', text="Frame")
-+        if context.scene.camera:
++        state = ipad_camera_state(context)
++        active_camera = state[1] if state else None
++        if active_camera and active_camera.type == 'CAMERA':
 +            camera = layout.column(align=True)
 +            camera.scale_y = 1.6
-+            camera.prop(context.scene.camera.data, 'lens', text="Camera Lens")
-+            camera.operator('view3d.camera_to_view', text="Align Camera to View", icon='CON_CAMERASOLVER')
++            camera.enabled = active_camera.data.is_editable
++            if active_camera.data.type == 'PERSP':
++                camera.prop(active_camera.data, 'lens', text="Camera Lens")
++            elif active_camera.data.type == 'ORTHO':
++                camera.prop(active_camera.data, 'ortho_scale', text="Camera Scale")
++            layout.operator('view3d.camera_to_view', text="Align Camera to View", icon='CON_CAMERASOLVER')
 +
 +
 +def draw_canvas_header(layout):
@@ -3958,6 +4013,9 @@ new file mode 100644
 +    if ipad_bevel_state(bpy.context) is not None:
 +        row.popover(panel="VIEW3D_PT_ipad_bevel", text="Bevel", icon='MOD_BEVEL')
 +
++    if ipad_camera_state(bpy.context) is not None:
++        row.popover(panel="VIEW3D_PT_ipad_camera", text="Camera", icon='VIEW_CAMERA')
++
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
 +    is_fly = getattr(wm, "ipad_flythrough_active", False)
@@ -3983,6 +4041,7 @@ new file mode 100644
 +    VIEW3D_OT_ipad_transform_numbers,
 +    VIEW3D_PT_ipad_transform,
 +    VIEW3D_PT_ipad_bevel,
++    VIEW3D_PT_ipad_camera,
 +    VIEW3D_PT_ipad_controls,
 +    VIEW3D_OT_ipad_flythrough_toggle,
 +)
@@ -6648,7 +6707,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +         * Preserve fallback selection for taps, hardware and modified drags. */
 +        if (event->type == LEFTMOUSE && event->val == KM_PRESS_DRAG &&
 +            (event->flag & WM_EVENT_IS_DIRECT_TOOL) && !event->modifier &&
-+            event->keymodifier == EVT_NONE && handler->keymap_tool &&
++            event->keymodifier == EVENT_NONE && handler->keymap_tool &&
 +            STREQ(handler->keymap_tool->idname, "builtin.bevel") &&
 +            handler->keymap_tool->runtime && ED_operator_editmesh(C) &&
 +            ELEM(handler->dynamic.keymap_fn,
