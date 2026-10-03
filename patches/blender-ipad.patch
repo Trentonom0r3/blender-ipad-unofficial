@@ -3318,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,637 @@
+@@ -0,0 +1,677 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3769,6 +3769,42 @@ new file mode 100644
 +        layout.label(text="Drag, lift to finish · two fingers to orbit")
 +
 +
++def ipad_bevel_state(context):
++    active = ToolSelectPanelHelper.tool_active_from_context(context)
++    if (context.mode == 'EDIT_MESH' and active and active.idname == 'builtin.bevel'
++            and not getattr(context.window_manager, "ipad_flythrough_active", False)):
++        return active.operator_properties('mesh.bevel')
++    return None
++
++
++class VIEW3D_PT_ipad_bevel(Panel):
++    bl_label = "Bevel"
++    bl_space_type = 'VIEW_3D'
++    bl_region_type = 'HEADER'
++    bl_ui_units_x = 18
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_bevel_state(context) is not None
++
++    def draw(self, context):
++        props = ipad_bevel_state(context)
++        if props is None:
++            return
++        layout = self.layout
++        layout.label(text="Drag outward, lift to finish")
++        column = layout.column(align=True)
++        column.scale_y = 1.6
++        column.prop(props, 'affect', text="Affect", expand=True)
++        column.prop(props, 'offset_type', text="Width Type")
++        column.prop(props, 'segments', text="Segments")
++        column.prop(props, 'profile_type', text="Profile Type")
++        if props.profile_type in {'SUPERELLIPSE', 'CUSTOM'}:
++            column.prop(props, 'profile', text="Profile Shape")
++        column.prop(props, 'clamp_overlap', text="Clamp Overlap")
++        column.prop(props, 'loop_slide', text="Loop Slide")
++
++
 +class VIEW3D_OT_ipad_flythrough_toggle(Operator):
 +    bl_idname = "view3d.ipad_flythrough_toggle"
 +    bl_label = "Flythrough Mode"
@@ -3919,6 +3955,9 @@ new file mode 100644
 +            and not getattr(bpy.context.window_manager, "ipad_flythrough_active", False)):
 +        row.label(text="Extrude · drag selection, lift to finish", icon='FACESEL')
 +
++    if ipad_bevel_state(bpy.context) is not None:
++        row.popover(panel="VIEW3D_PT_ipad_bevel", text="Bevel", icon='MOD_BEVEL')
++
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
 +    is_fly = getattr(wm, "ipad_flythrough_active", False)
@@ -3943,6 +3982,7 @@ new file mode 100644
 +    VIEW3D_OT_ipad_transform_axis,
 +    VIEW3D_OT_ipad_transform_numbers,
 +    VIEW3D_PT_ipad_transform,
++    VIEW3D_PT_ipad_bevel,
 +    VIEW3D_PT_ipad_controls,
 +    VIEW3D_OT_ipad_flythrough_toggle,
 +)
@@ -6599,7 +6639,34 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            wm_operator_free_for_fileselect(handler->op);
          }
        }
-@@ -3808,6 +4214,24 @@
+@@ -3469,6 +3875,26 @@
+         wmEventHandler_Keymap *handler = (wmEventHandler_Keymap *)handler_base;
+         wmEventHandler_KeymapResult km_result;
+         WM_event_get_keymaps_from_handler(wm, win, handler, &km_result);
++#ifdef WITH_APPLE_CROSSPLATFORM
++        /* An intentional Bevel canvas stroke uses the native active-tool map.
++         * Preserve fallback selection for taps, hardware and modified drags. */
++        if (event->type == LEFTMOUSE && event->val == KM_PRESS_DRAG &&
++            (event->flag & WM_EVENT_IS_DIRECT_TOOL) && !event->modifier &&
++            event->keymodifier == EVT_NONE && handler->keymap_tool &&
++            STREQ(handler->keymap_tool->idname, "builtin.bevel") &&
++            handler->keymap_tool->runtime && ED_operator_editmesh(C) &&
++            ELEM(handler->dynamic.keymap_fn,
++                 WM_event_get_keymap_from_toolsystem_with_gizmos,
++                 WM_event_get_keymap_from_toolsystem))
++        {
++          for (int i = 1; i < km_result.keymaps_len; i++) {
++            if (STREQ(km_result.keymaps[i]->idname, handler->keymap_tool->runtime->keymap)) {
++              std::swap(km_result.keymaps[0], km_result.keymaps[i]);
++              break;
++            }
++          }
++        }
++#endif
+         eHandlerActionFlag action_iter = WM_HANDLER_CONTINUE;
+         /* Compute in advance, as event may be freed on WM_HANDLER_BREAK. */
+         const bool event_is_timer = ISTIMER(event->type);
+@@ -3808,6 +4234,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -6624,7 +6691,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +4246,12 @@
+@@ -3822,6 +4266,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -6637,7 +6704,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4093,6 +4523,18 @@
+@@ -4093,6 +4543,18 @@
    return wm_event_do_region_handlers(C, event, region_hovered);
  }
 
@@ -6656,7 +6723,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  void wm_event_do_handlers(bContext *C)
  {
    wmWindowManager *wm = CTX_wm_manager(C);
-@@ -4227,6 +4669,20 @@
+@@ -4227,6 +4689,20 @@
          }
        }
 
@@ -6677,7 +6744,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4703,15 @@
+@@ -4247,6 +4723,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -6693,7 +6760,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -4328,6 +4793,14 @@
+@@ -4328,6 +4813,14 @@
        /* Un-link and free here, Blender-quit then frees all. */
        BLI_remlink(&win->runtime->event_queue, event);
        wm_event_free_last_handled(win, event);
@@ -6708,7 +6775,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      }
 
      /* Only add mouse-move when the event queue was read entirely. */
-@@ -5736,7 +6209,9 @@
+@@ -5736,7 +6229,9 @@
     * them for better performance. */
    if (event_last && event_last->type == MOUSEMOVE) {
      event_last->type = INBETWEEN_MOUSEMOVE;
@@ -6719,7 +6786,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    }
 
    wmEvent *event_new = wm_event_add_intern(win, event);
-@@ -5784,7 +6259,9 @@
+@@ -5784,7 +6279,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -6730,7 +6797,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -5990,6 +6467,10 @@
+@@ -5990,6 +6487,10 @@
 
        wm_stereo3d_mouse_offset_apply(win, event.xy);
        wm_tablet_data_from_ghost(&cd->tablet, &event.tablet);
@@ -6741,7 +6808,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        event.type = MOUSEMOVE;
        event.val = KM_NOTHING;
-@@ -6032,6 +6513,9 @@
+@@ -6032,6 +6533,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -6751,7 +6818,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6589,16 @@
+@@ -6105,6 +6609,16 @@
        }
        break;
      }
@@ -6768,7 +6835,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6625,12 @@
+@@ -6131,6 +6645,12 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -6781,7 +6848,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6643,8 @@
+@@ -6143,7 +6663,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -12049,7 +12116,7 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,126 @@
+@@ -0,0 +1,127 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -12080,7 +12147,8 @@ new file mode 100644
 +         std::strcmp(tool, "builtin.rotate") == 0 ||
 +         std::strcmp(tool, "builtin.scale") == 0 ||
 +         std::strcmp(tool, "builtin.transform") == 0 ||
-+         (std::strcmp(tool, "builtin.extrude_region") == 0 &&
++         ((std::strcmp(tool, "builtin.extrude_region") == 0 ||
++           std::strcmp(tool, "builtin.bevel") == 0) &&
 +          std::strcmp(mode, "EDIT_MESH") == 0);
 +}
 +
@@ -14079,7 +14147,7 @@ diff --git a/intern/ghost/intern/GHOST_EventCursor.hh b/intern/ghost/intern/GHOS
 diff --git a/source/blender/editors/include/ED_mesh.hh b/source/blender/editors/include/ED_mesh.hh
 --- a/source/blender/editors/include/ED_mesh.hh
 +++ b/source/blender/editors/include/ED_mesh.hh
-@@ -550,6 +550,18 @@
+@@ -550,6 +550,20 @@
   */
  void ED_mesh_split_faces(Mesh *mesh);
 
@@ -14093,6 +14161,8 @@ diff --git a/source/blender/editors/include/ED_mesh.hh b/source/blender/editors/
 +void *EDBM_touch_extrude_begin(bContext *C, ReportList *reports);
 +bool EDBM_touch_extrude_finish(bContext *C, void *transaction, bool cancelled);
 +void EDBM_touch_extrude_discard(void *transaction);
++/** Release direct Bevel storage without a saved context or restoring geometry. */
++void EDBM_touch_bevel_discard(wmOperator *op);
 +#endif
 +
  /* mesh backup */
@@ -14740,17 +14810,18 @@ diff --git a/source/blender/windowmanager/wm.hh b/source/blender/windowmanager/w
 diff --git a/source/blender/windowmanager/intern/wm.cc b/source/blender/windowmanager/intern/wm.cc
 --- a/source/blender/windowmanager/intern/wm.cc
 +++ b/source/blender/windowmanager/intern/wm.cc
-@@ -14,6 +14,9 @@
+@@ -14,6 +14,10 @@
  #define DNA_DEPRECATED_ALLOW
 
  #include <cstring>
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include <unordered_map>
++#  include "ED_mesh.hh"
 +#endif
 
  #include "DNA_windowmanager_types.h"
 
-@@ -256,8 +259,41 @@
+@@ -256,8 +260,42 @@
 
  #define MAX_OP_REGISTERED 32
 
@@ -14783,6 +14854,7 @@ diff --git a/source/blender/windowmanager/intern/wm.cc b/source/blender/windowma
  {
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  touch_operator_identities.erase(op);
++  EDBM_touch_bevel_discard(op);
 +#endif
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (op->type && (op->type->flag & OPTYPE_MACRO)) {
@@ -15857,3 +15929,969 @@ diff --git a/source/blender/editors/mesh/editmesh_undo.cc b/source/blender/edito
  void ED_mesh_undosys_type(UndoType *ut)
  {
    ut->name = "Edit Mesh";
+diff --git a/source/blender/editors/mesh/editmesh_bevel.cc b/source/blender/editors/mesh/editmesh_bevel.cc
+--- a/source/blender/editors/mesh/editmesh_bevel.cc
++++ b/source/blender/editors/mesh/editmesh_bevel.cc
+@@ -1,195 +1,457 @@
+ /* SPDX-FileCopyrightText: 2023 Blender Authors
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup edmesh
+  */
+
+ #include <fmt/format.h>
+
+ #include "MEM_guardedalloc.h"
+
+ #include "DNA_object_types.h"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "DNA_key_types.h"
++#  include "DNA_mesh_types.h"
++#  include "DNA_workspace_types.h"
++#  include "BKE_curveprofile.h"
++#  include "BKE_main.hh"
++#  include "BKE_mesh_types.hh"
++#  include "BLI_string.h"
++#  include "BLI_listbase.h"
++#  include "BKE_report.hh"
++#  include "ED_object.hh"
++#  include "WM_toolsystem.hh"
++#endif
+
+ #include "BLI_math_matrix.h"
+ #include "BLI_math_vector.h"
+ #include "BLI_string_utf8.h"
+
+ #include "BLT_translation.hh"
+
+ #include "BKE_context.hh"
+ #include "BKE_editmesh.hh"
+ #include "BKE_global.hh"
+ #include "BKE_layer.hh"
+ #include "BKE_screen.hh"
+ #include "BKE_unit.hh"
+
+ #include "RNA_access.hh"
+ #include "RNA_define.hh"
+ #include "RNA_prototypes.hh"
+
+ #include "WM_api.hh"
+ #include "WM_types.hh"
+
+ #include "UI_interface.hh"
+ #include "UI_interface_layout.hh"
+ #include "UI_resources.hh"
+
+ #include "ED_mesh.hh"
+ #include "ED_numinput.hh"
+ #include "ED_screen.hh"
+ #include "ED_space_api.hh"
+ #include "ED_transform.hh"
+ #include "ED_util.hh"
+ #include "ED_view3d.hh"
+
+ #include "mesh_intern.hh" /* own include */
+
+ using blender::Vector;
+
+ #define MVAL_PIXEL_MARGIN 5.0f
+
+ #define PROFILE_HARD_MIN 0.0f
+
+ #define SEGMENTS_HARD_MAX 1000
+
+ /* which value is mouse movement and numeric input controlling? */
+ #define OFFSET_VALUE 0
+ #define OFFSET_VALUE_PERCENT 1
+ #define PROFILE_VALUE 2
+ #define SEGMENTS_VALUE 3
+ #define NUM_VALUE_KINDS 4
+
+ static const char *value_rna_name[NUM_VALUE_KINDS] = {
+     "offset", "offset_pct", "profile", "segments"};
+ static const float value_clamp_min[NUM_VALUE_KINDS] = {0.0f, 0.0f, PROFILE_HARD_MIN, 1.0f};
+ static const float value_clamp_max[NUM_VALUE_KINDS] = {1e6, 100.0f, 1.0f, SEGMENTS_HARD_MAX};
+ static const float value_start[NUM_VALUE_KINDS] = {0.0f, 0.0f, 0.5f, 1.0f};
+ static const float value_scale_per_inch[NUM_VALUE_KINDS] = {0.0f, 100.0f, 1.0f, 4.0f};
+
+ struct BevelObjectStore {
+   /** Every object must have a valid #BMEditMesh. */
+   Object *ob;
+   BMBackup mesh_backup;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  uint32_t object_uid = 0, mesh_uid = 0, key_uid = 0;
++  const BMEditMesh *edit_identity = nullptr;
++  const BMesh *bm_identity = nullptr;
++  int shapenr = 0;
++#endif
+ };
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct TouchBevelCapture {
++  bool active = false;
++  uintptr_t main_address = 0;
++  uint32_t scene_uid = 0, screen_uid = 0;
++  const ScrArea *area_identity = nullptr;
++  const ARegion *region_identity = nullptr;
++  ARegionType *draw_type = nullptr;
++};
++#endif
+
+ struct BevelData {
+   float initial_length[NUM_VALUE_KINDS];
+   float scale[NUM_VALUE_KINDS];
+   NumInput num_input[NUM_VALUE_KINDS];
+   /** The current value when shift is pressed. Negative when shift not active. */
+   float shift_value[NUM_VALUE_KINDS];
+   float max_obj_scale;
+   bool is_modal;
+
+   Vector<BevelObjectStore> ob_store;
+
+   /* modal only */
+   int launch_event;
+   float mcenter[2];
+   void *draw_handle_pixel;
+   short value_mode; /* Which value does mouse movement and numeric input affect? */
+   float segments;   /* Segments as float so smooth mouse pan works in small increments */
+
+   CurveProfile *custom_profile;
+
+   bool use_automerge;
+   double automerge_threshold;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  TouchBevelCapture touch;
++#endif
+ };
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Native backups keep their BMesh address during preview. Resolve owners from
++ * the current Main before touching data; saved object/region pointers are only
++ * identity values, including during WM teardown with no original viewport. */
++static Mesh *touch_bevel_mesh(bContext *C, const BevelData *data,
++                              const BevelObjectStore &store)
++{
++  Main *bmain = C ? CTX_data_main(C) : nullptr;
++  if (!bmain || uintptr_t(bmain) != data->touch.main_address) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
++    if (mesh->id.session_uid != store.mesh_uid) {
++      continue;
++    }
++    BMEditMesh *em = mesh->runtime->edit_mesh.get();
++    if (em && em == store.edit_identity && em->bm && em->bm == store.bm_identity &&
++        em->bm->shapenr == store.shapenr &&
++        (mesh->key ? mesh->key->id.session_uid : 0) == store.key_uid)
++    {
++      return mesh;
++    }
++    return nullptr;
++  }
++  return nullptr;
++}
++
++static Object *touch_bevel_owner(bContext *C, const BevelData *data,
++                                const BevelObjectStore &store)
++{
++  Main *bmain = C ? CTX_data_main(C) : nullptr;
++  if (!bmain || uintptr_t(bmain) != data->touch.main_address) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (Object *, object, &bmain->objects) {
++    if (object->id.session_uid != store.object_uid || object->type != OB_MESH || !object->data) {
++      continue;
++    }
++    Mesh *mesh = static_cast<Mesh *>(object->data);
++    BMEditMesh *em = mesh->runtime->edit_mesh.get();
++    if (mesh->id.session_uid == store.mesh_uid && em && em == store.edit_identity &&
++        em->bm && em->bm == store.bm_identity && em->bm->shapenr == store.shapenr &&
++        (mesh->key ? mesh->key->id.session_uid : 0) == store.key_uid)
++    {
++      return object;
++    }
++    return nullptr;
++  }
++  return nullptr;
++}
++
++static ARegion *touch_bevel_region(bContext *C, const BevelData *data, ScrArea **r_area)
++{
++  *r_area = nullptr;
++  Main *bmain = C ? CTX_data_main(C) : nullptr;
++  if (!bmain || uintptr_t(bmain) != data->touch.main_address) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
++    if (screen->id.session_uid != data->touch.screen_uid) {
++      continue;
++    }
++    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++      if (area != data->touch.area_identity || area->spacetype != SPACE_VIEW3D) {
++        continue;
++      }
++      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++        if (region == data->touch.region_identity && region->regiontype == RGN_TYPE_WINDOW &&
++            region->runtime->type == data->touch.draw_type)
++        {
++          *r_area = area;
++          return region;
++        }
++      }
++    }
++  }
++  return nullptr;
++}
++
++static bool touch_bevel_context_valid(bContext *C, const BevelData *data)
++{
++  ScrArea *area;
++  ARegion *region = touch_bevel_region(C, data, &area);
++  Scene *scene = CTX_data_scene(C);
++  const bScreen *screen = CTX_wm_screen(C);
++  if (!region || CTX_wm_region(C) != region || CTX_wm_area(C) != area || !scene || !screen ||
++      screen->id.session_uid != data->touch.screen_uid ||
++      scene->id.session_uid != data->touch.scene_uid || !ED_operator_editmesh(C))
++  {
++    return false;
++  }
++  const bToolRef *tool = WM_toolsystem_ref_from_context(C);
++  if (!tool || !STREQ(tool->idname, "builtin.bevel") || !CTX_data_view_layer(C)) {
++    return false;
++  }
++  for (const BevelObjectStore &store : data->ob_store) {
++    Object *object = touch_bevel_owner(C, data, store);
++    if (!object || !BKE_view_layer_base_find(CTX_data_view_layer(C), object)) {
++      return false;
++    }
++  }
++  return true;
++}
++
++static bool touch_bevel_selection_unlocked(bContext *C, wmOperator *op)
++{
++  bool selected = false;
++  const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
++      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
++  for (Object *object : objects) {
++    BMEditMesh *em = BKE_editmesh_from_object(object);
++    if (!em || !em->bm) {
++      return false;
++    }
++    if (em->bm->totvertsel == 0) {
++      continue;
++    }
++    selected = true;
++    if (blender::ed::object::shape_key_report_if_locked(object, op->reports)) {
++      return false;
++    }
++  }
++  return selected;
++}
++
++static void touch_bevel_acquire(bContext *C, BevelData *data)
++{
++  data->touch.active = true;
++  data->touch.main_address = uintptr_t(CTX_data_main(C));
++  data->touch.scene_uid = CTX_data_scene(C)->id.session_uid;
++  data->touch.screen_uid = CTX_wm_screen(C)->id.session_uid;
++  data->touch.area_identity = CTX_wm_area(C);
++  data->touch.region_identity = CTX_wm_region(C);
++  data->touch.draw_type = CTX_wm_region(C)->runtime->type;
++  data->custom_profile = BKE_curveprofile_copy(data->custom_profile);
++  for (BevelObjectStore &store : data->ob_store) {
++    Mesh *mesh = static_cast<Mesh *>(store.ob->data);
++    BMEditMesh *em = BKE_editmesh_from_object(store.ob);
++    store.object_uid = store.ob->id.session_uid;
++    store.mesh_uid = mesh->id.session_uid;
++    store.key_uid = mesh->key ? mesh->key->id.session_uid : 0;
++    store.edit_identity = em;
++    store.bm_identity = em->bm;
++    store.shapenr = em->bm->shapenr;
++  }
++}
++
++static void touch_bevel_detach_draw(BevelData *data)
++{
++  /* Region types outlive editor instances. Resolve the registered type instead
++   * of dereferencing a saved region, also tolerating shutdown of the registry. */
++  const SpaceType *space = BKE_spacetype_from_id(SPACE_VIEW3D);
++  ARegionType *type = space ? BKE_regiontype_from_id(space, RGN_TYPE_WINDOW) : nullptr;
++  if (type && type == data->touch.draw_type && data->draw_handle_pixel) {
++    ED_region_draw_cb_exit(type, data->draw_handle_pixel);
++  }
++  data->draw_handle_pixel = nullptr;
++}
++
++static void touch_bevel_finish(bContext *C, wmOperator *op, const bool cancelled)
++{
++  auto *data = static_cast<BevelData *>(op->customdata);
++  ScrArea *area;
++  ARegion *region = touch_bevel_region(C, data, &area);
++  bool complete = true;
++  for (BevelObjectStore &store : data->ob_store) {
++    Mesh *mesh = touch_bevel_mesh(C, data, store);
++    if (mesh) {
++      BMEditMesh *em = mesh->runtime->edit_mesh.get();
++      if (cancelled) {
++        EDBM_redo_state_restore_and_free(&store.mesh_backup, em, true);
++        EDBMUpdate_Params params{};
++        params.calc_normals = true;
++        params.is_destructive = true;
++        EDBM_update(mesh, &params);
++      }
++      if ((em->selectmode & SCE_SELECT_FACE) == 0) {
++        EDBM_selectmode_flush(em);
++      }
++    }
++    else {
++      complete = false;
++    }
++    EDBM_redo_state_free(&store.mesh_backup);
++  }
++  if (cancelled && !complete) {
++    BKE_report(op->reports, RPT_WARNING,
++               "The mesh changed during Bevel; some preview geometry could not be restored");
++  }
++  touch_bevel_detach_draw(data);
++  BKE_curveprofile_free(data->custom_profile);
++  if (area) {
++    ED_area_status_text(area, nullptr);
++    ED_region_tag_redraw(region);
++  }
++  /* An invalid originating viewport cannot remain in the caller's context. */
++  const bScreen *screen = C ? CTX_wm_screen(C) : nullptr;
++  if (C && (!region || CTX_wm_area(C) != area || CTX_wm_region(C) != region ||
++            !screen || screen->id.session_uid != data->touch.screen_uid)) {
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++  }
++  G.moving = 0;
++  MEM_delete(data);
++  op->customdata = nullptr;
++}
++
++void EDBM_touch_bevel_discard(wmOperator *op)
++{
++  if (!op->customdata || !op->type || !STREQ(op->type->idname, "MESH_OT_bevel")) {
++    return;
++  }
++  auto *data = static_cast<BevelData *>(op->customdata);
++  if (!data->touch.active) {
++    return;
++  }
++  /* Context-free destruction releases owned storage; it never restores into
++   * old Object/Mesh pointers or accesses an already removed viewport. */
++  touch_bevel_detach_draw(data);
++  for (BevelObjectStore &store : data->ob_store) {
++    EDBM_redo_state_free(&store.mesh_backup);
++  }
++  BKE_curveprofile_free(data->custom_profile);
++  G.moving = 0;
++  MEM_delete(data);
++  op->customdata = nullptr;
++}
++#endif
+
+ enum {
+   BEV_MODAL_CANCEL = 1,
+   BEV_MODAL_CONFIRM,
+   BEV_MODAL_VALUE_OFFSET,
+   BEV_MODAL_VALUE_PROFILE,
+   BEV_MODAL_VALUE_SEGMENTS,
+   BEV_MODAL_SEGMENTS_UP,
+   BEV_MODAL_SEGMENTS_DOWN,
+   BEV_MODAL_OFFSET_MODE_CHANGE,
+   BEV_MODAL_CLAMP_OVERLAP_TOGGLE,
+   BEV_MODAL_AFFECT_CHANGE,
+   BEV_MODAL_HARDEN_NORMALS_TOGGLE,
+   BEV_MODAL_MARK_SEAM_TOGGLE,
+   BEV_MODAL_MARK_SHARP_TOGGLE,
+   BEV_MODAL_OUTER_MITER_CHANGE,
+   BEV_MODAL_INNER_MITER_CHANGE,
+   BEV_MODAL_PROFILE_TYPE_CHANGE,
+   BEV_MODAL_VERTEX_MESH_CHANGE,
+ };
+
+ static float get_bevel_offset(wmOperator *op)
+ {
+   if (RNA_enum_get(op->ptr, "offset_type") == BEVEL_AMT_PERCENT) {
+     return RNA_float_get(op->ptr, "offset_pct");
+   }
+   return RNA_float_get(op->ptr, "offset");
+ }
+
+ static void edbm_bevel_update_status_text(bContext *C, wmOperator *op)
+ {
+   Scene *sce = CTX_data_scene(C);
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
+
+   char offset_str[NUM_STR_REP_LEN];
+   if (RNA_enum_get(op->ptr, "offset_type") == BEVEL_AMT_PERCENT) {
+     SNPRINTF_UTF8(offset_str, "%.1f%%", RNA_float_get(op->ptr, "offset_pct"));
+   }
+   else {
+     double offset_val = double(RNA_float_get(op->ptr, "offset"));
+     BKE_unit_value_as_string_scaled(
+         offset_str, NUM_STR_REP_LEN, offset_val, 3, B_UNIT_LENGTH, sce->unit, true);
+   }
+
+   PropertyRNA *prop;
+   const char *mode_str, *omiter_str, *imiter_str, *vmesh_str, *profile_type_str, *affect_str;
+   prop = RNA_struct_find_property(op->ptr, "offset_type");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &mode_str);
+
+   /* Shown in area header. */
+
+   const std::string header_status = fmt::format("{}: {}, {}: {}, {}: {}",
+                                                 mode_str,
+                                                 offset_str,
+                                                 IFACE_("Segments"),
+                                                 RNA_int_get(op->ptr, "segments"),
+                                                 IFACE_("Profile Shape"),
+                                                 RNA_float_get(op->ptr, "profile"));
+
+   ED_area_status_text(CTX_wm_area(C), header_status.c_str());
+
+   /* Shown on Status Bar. */
+
+   prop = RNA_struct_find_property(op->ptr, "profile_type");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &profile_type_str);
+   prop = RNA_struct_find_property(op->ptr, "miter_outer");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &omiter_str);
+   prop = RNA_struct_find_property(op->ptr, "miter_inner");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &imiter_str);
+   prop = RNA_struct_find_property(op->ptr, "vmesh_method");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &vmesh_str);
+   prop = RNA_struct_find_property(op->ptr, "affect");
+   RNA_property_enum_name_gettexted(
+       C, op->ptr, prop, RNA_property_enum_get(op->ptr, prop), &affect_str);
+
+   WorkspaceStatus status(C);
+   status.opmodal(IFACE_("Confirm"), op->type, BEV_MODAL_CONFIRM);
+   status.opmodal(IFACE_("Cancel"), op->type, BEV_MODAL_CANCEL);
+   status.opmodal(IFACE_("Width Type"), op->type, BEV_MODAL_OFFSET_MODE_CHANGE);
+
+   status.opmodal(
+       IFACE_("Width"), op->type, BEV_MODAL_VALUE_OFFSET, opdata->value_mode == OFFSET_VALUE);
+   status.opmodal(IFACE_("Segments"),
+                  op->type,
+                  BEV_MODAL_VALUE_SEGMENTS,
+                  opdata->value_mode == SEGMENTS_VALUE);
+   status.opmodal(IFACE_("Profile Shape"),
+                  op->type,
+                  BEV_MODAL_VALUE_PROFILE,
+                  opdata->value_mode == PROFILE_VALUE);
+
+@@ -321,458 +583,503 @@
+   const int material_init = RNA_int_get(op->ptr, "material");
+   const bool loop_slide = RNA_boolean_get(op->ptr, "loop_slide");
+   const bool mark_seam = RNA_boolean_get(op->ptr, "mark_seam");
+   const bool mark_sharp = RNA_boolean_get(op->ptr, "mark_sharp");
+   const bool harden_normals = RNA_boolean_get(op->ptr, "harden_normals");
+   const int face_strength_mode = RNA_enum_get(op->ptr, "face_strength_mode");
+   const int miter_outer = RNA_enum_get(op->ptr, "miter_outer");
+   const int miter_inner = RNA_enum_get(op->ptr, "miter_inner");
+   const float spread = RNA_float_get(op->ptr, "spread");
+   const int vmesh_method = RNA_enum_get(op->ptr, "vmesh_method");
+
+   for (BevelObjectStore &ob_store : opdata->ob_store) {
+     Object *obedit = ob_store.ob;
+     BMEditMesh *em = BKE_editmesh_from_object(obedit);
+
+     /* revert to original mesh */
+     if (opdata->is_modal) {
+       EDBM_redo_state_restore(&ob_store.mesh_backup, em, false);
+     }
+
+     const int material = std::clamp(material_init, -1, obedit->totcol - 1);
+
+     EDBM_op_init(em,
+                  &bmop,
+                  op,
+                  "bevel geom=%hev offset=%f segments=%i affect=%i offset_type=%i "
+                  "profile_type=%i profile=%f clamp_overlap=%b material=%i loop_slide=%b "
+                  "mark_seam=%b mark_sharp=%b harden_normals=%b face_strength_mode=%i "
+                  "miter_outer=%i miter_inner=%i spread=%f custom_profile=%p "
+                  "vmesh_method=%i",
+                  BM_ELEM_SELECT,
+                  offset,
+                  segments,
+                  affect,
+                  offset_type,
+                  profile_type,
+                  profile,
+                  clamp_overlap,
+                  material,
+                  loop_slide,
+                  mark_seam,
+                  mark_sharp,
+                  harden_normals,
+                  face_strength_mode,
+                  miter_outer,
+                  miter_inner,
+                  spread,
+                  opdata->custom_profile,
+                  vmesh_method);
+
+     BMO_op_exec(em->bm, &bmop);
+
+     if (offset != 0.0f) {
+       /* Not essential, but we may have some loose geometry that
+        * won't get beveled and better not leave it selected. */
+       EDBM_flag_disable_all(em, BM_ELEM_SELECT);
+       BMO_slot_buffer_hflag_enable(
+           em->bm, bmop.slots_out, "faces.out", BM_FACE, BM_ELEM_SELECT, true);
+       if (affect == BEVEL_AFFECT_VERTICES) {
+         BMO_slot_buffer_hflag_enable(
+             em->bm, bmop.slots_out, "verts.out", BM_VERT, BM_ELEM_SELECT, true);
+         BMO_slot_buffer_hflag_enable(
+             em->bm, bmop.slots_out, "edges.out", BM_EDGE, BM_ELEM_SELECT, true);
+
+         if ((em->bm->selectmode & SCE_SELECT_VERTEX) == 0) {
+           BM_mesh_select_mode_flush_ex(em->bm, SCE_SELECT_VERTEX, BM_SELECT_LEN_FLUSH_RECALC_EDGE);
+         }
+       }
+     }
+
+     bool changed = false;
+
+     if (opdata->use_automerge) {
+       changed |= EDBM_automerge_connected(
+           obedit, false, BM_ELEM_SELECT, opdata->automerge_threshold);
+     }
+
+     changed |= EDBM_op_finish(em, &bmop, op, true);
+
+     /* no need to de-select existing geometry */
+     if (changed) {
+       EDBMUpdate_Params params{};
+       params.calc_looptris = true;
+       params.calc_normals = true;
+       params.is_destructive = true;
+       EDBM_update(static_cast<Mesh *>(obedit->data), &params);
+     }
+
+     changed_multi |= changed;
+   }
+   return changed_multi;
+ }
+
+ static void edbm_bevel_exit(bContext *C, wmOperator *op)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (opdata->touch.active) {
++    touch_bevel_finish(C, op, false);
++    return;
++  }
++#endif
+   ScrArea *area = CTX_wm_area(C);
+
+   if (area) {
+     ED_area_status_text(area, nullptr);
+   }
+
+   for (BevelObjectStore &ob_store : opdata->ob_store) {
+     BMEditMesh *em = BKE_editmesh_from_object(ob_store.ob);
+     /* Without this, faces surrounded by selected edges/verts will be unselected. */
+     if ((em->selectmode & SCE_SELECT_FACE) == 0) {
+       EDBM_selectmode_flush(em);
+     }
+   }
+
+   if (opdata->is_modal) {
+     ARegion *region = CTX_wm_region(C);
+     for (BevelObjectStore &ob_store : opdata->ob_store) {
+       EDBM_redo_state_free(&ob_store.mesh_backup);
+     }
+     ED_region_draw_cb_exit(region->runtime->type, opdata->draw_handle_pixel);
+     G.moving = 0;
+   }
+   MEM_delete(opdata);
+   op->customdata = nullptr;
+ }
+
+ static void edbm_bevel_cancel(bContext *C, wmOperator *op)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (opdata->touch.active) {
++    touch_bevel_finish(C, op, true);
++    return;
++  }
++#endif
+   if (opdata->is_modal) {
+     for (BevelObjectStore &ob_store : opdata->ob_store) {
+       Object *obedit = ob_store.ob;
+       BMEditMesh *em = BKE_editmesh_from_object(obedit);
+       EDBM_redo_state_restore_and_free(&ob_store.mesh_backup, em, true);
+
+       EDBMUpdate_Params params{};
+       params.calc_looptris = false;
+       params.calc_normals = true;
+       params.is_destructive = true;
+       EDBM_update(static_cast<Mesh *>(obedit->data), &params);
+     }
+   }
+
+   edbm_bevel_exit(C, op);
+
+   /* Need to force re-display or we may still view the modified result. */
+   ED_region_tag_redraw(CTX_wm_region(C));
+ }
+
+ /* bevel! yay!! */
+ static wmOperatorStatus edbm_bevel_exec(bContext *C, wmOperator *op)
+ {
+   if (!edbm_bevel_init(C, op, false)) {
+     return OPERATOR_CANCELLED;
+   }
+
+   if (!edbm_bevel_calc(op)) {
+     edbm_bevel_cancel(C, op);
+     return OPERATOR_CANCELLED;
+   }
+
+   edbm_bevel_exit(C, op);
+
+   return OPERATOR_FINISHED;
+ }
+
+ static void edbm_bevel_calc_initial_length(wmOperator *op, const wmEvent *event, bool mode_changed)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
+   const float mlen[2] = {
+       opdata->mcenter[0] - event->mval[0],
+       opdata->mcenter[1] - event->mval[1],
+   };
+   float len = len_v2(mlen);
+   int vmode = opdata->value_mode;
+   if (mode_changed || opdata->initial_length[vmode] == -1.0f) {
+     /* If current value is not default start value, adjust len so that
+      * the scaling and offset in edbm_bevel_mouse_set_value will
+      * start at current value */
+     float value = (vmode == SEGMENTS_VALUE) ? opdata->segments :
+                                               RNA_float_get(op->ptr, value_rna_name[vmode]);
+     float sc = opdata->scale[vmode];
+     float st = value_start[vmode];
+     if (value != value_start[vmode]) {
+       len = (st + sc * (len - MVAL_PIXEL_MARGIN) - value) / sc;
+     }
+   }
+   opdata->initial_length[opdata->value_mode] = len;
+ }
+
++static void edbm_bevel_mouse_set_value(wmOperator *op, const wmEvent *event);
++
+ static wmOperatorStatus edbm_bevel_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   RegionView3D *rv3d = CTX_wm_region_view3d(C);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const bool direct = (event->flag & WM_EVENT_IS_DIRECT_TOOL) != 0;
++  if (direct && (!ED_operator_editmesh(C) || !CTX_wm_region(C) ||
++                 !touch_bevel_selection_unlocked(C, op))) {
++    return OPERATOR_CANCELLED;
++  }
++#endif
+
+   if (!edbm_bevel_init(C, op, true)) {
+     return OPERATOR_CANCELLED;
+   }
+
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (direct) {
++    touch_bevel_acquire(C, opdata);
++  }
++#endif
+   opdata->launch_event = WM_userdef_event_type_from_keymap_type(event->type);
+
+   /* initialize mouse values */
+   float center_3d[3];
+   if (!blender::ed::transform::calculateTransformCenter(
+           C, V3D_AROUND_CENTER_MEDIAN, center_3d, opdata->mcenter))
+   {
+     /* in this case the tool will likely do nothing,
+      * ideally this will never happen and should be checked for above */
+     opdata->mcenter[0] = opdata->mcenter[1] = 0;
+   }
+
+   /* for OFFSET_VALUE only, the scale is the size of a pixel under the mouse in 3d space */
+   opdata->scale[OFFSET_VALUE] = rv3d ? ED_view3d_pixel_size(rv3d, center_3d) : 1.0f;
+   /* since we are affecting untransformed object but seeing in transformed space,
+    * compensate for that */
+   opdata->scale[OFFSET_VALUE] /= opdata->max_obj_scale;
+
+-  edbm_bevel_calc_initial_length(op, event, false);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (direct && event->val == KM_PRESS_DRAG) {
++    wmEvent contact = *event;
++    WM_event_drag_start_mval(event, CTX_wm_region(C), contact.mval);
++    edbm_bevel_calc_initial_length(op, &contact, false);
++    edbm_bevel_mouse_set_value(op, event);
++  }
++  else
++#endif
++  {
++    edbm_bevel_calc_initial_length(op, event, false);
++  }
+
+   edbm_bevel_update_status_text(C, op);
+
+   if (!edbm_bevel_calc(op)) {
+     edbm_bevel_cancel(C, op);
+     ED_workspace_status_text(C, nullptr);
+     return OPERATOR_CANCELLED;
+   }
+
+   WM_event_add_modal_handler(C, op);
+
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ static void edbm_bevel_mouse_set_value(wmOperator *op, const wmEvent *event)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
+   int vmode = opdata->value_mode;
+
+   const float mdiff[2] = {
+       opdata->mcenter[0] - event->mval[0],
+       opdata->mcenter[1] - event->mval[1],
+   };
+
+   float value = ((len_v2(mdiff) - MVAL_PIXEL_MARGIN) - opdata->initial_length[vmode]);
+
+   /* Scale according to value mode */
+   value = value_start[vmode] + value * opdata->scale[vmode];
+
+   /* Fake shift-transform... */
+   if (event->modifier & KM_SHIFT) {
+     if (opdata->shift_value[vmode] < 0.0f) {
+       opdata->shift_value[vmode] = (vmode == SEGMENTS_VALUE) ?
+                                        opdata->segments :
+                                        RNA_float_get(op->ptr, value_rna_name[vmode]);
+     }
+     value = (value - opdata->shift_value[vmode]) * 0.1f + opdata->shift_value[vmode];
+   }
+   else if (opdata->shift_value[vmode] >= 0.0f) {
+     opdata->shift_value[vmode] = -1.0f;
+   }
+
+   /* Clamp according to value mode, and store value back. */
+   CLAMP(value, value_clamp_min[vmode], value_clamp_max[vmode]);
+   if (vmode == SEGMENTS_VALUE) {
+     opdata->segments = value;
+     RNA_int_set(op->ptr, "segments", int(value + 0.5f));
+   }
+   else {
+     RNA_float_set(op->ptr, value_rna_name[vmode], value);
+   }
+ }
+
+ static void edbm_bevel_numinput_set_value(wmOperator *op)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
+
+   int vmode = opdata->value_mode;
+   float value = (vmode == SEGMENTS_VALUE) ? opdata->segments :
+                                             RNA_float_get(op->ptr, value_rna_name[vmode]);
+   applyNumInput(&opdata->num_input[vmode], &value);
+   CLAMP(value, value_clamp_min[vmode], value_clamp_max[vmode]);
+   if (vmode == SEGMENTS_VALUE) {
+     opdata->segments = value;
+     RNA_int_set(op->ptr, "segments", int(value));
+   }
+   else {
+     RNA_float_set(op->ptr, value_rna_name[vmode], value);
+   }
+ }
+
+ wmKeyMap *bevel_modal_keymap(wmKeyConfig *keyconf)
+ {
+   static const EnumPropertyItem modal_items[] = {
+       {BEV_MODAL_CANCEL, "CANCEL", 0, "Cancel", "Cancel bevel"},
+       {BEV_MODAL_CONFIRM, "CONFIRM", 0, "Confirm", "Confirm bevel"},
+       {BEV_MODAL_VALUE_OFFSET, "VALUE_OFFSET", 0, "Change Offset", "Value changes offset"},
+       {BEV_MODAL_VALUE_PROFILE, "VALUE_PROFILE", 0, "Change Profile", "Value changes profile"},
+       {BEV_MODAL_VALUE_SEGMENTS, "VALUE_SEGMENTS", 0, "Change Segments", "Value changes segments"},
+       {BEV_MODAL_SEGMENTS_UP, "SEGMENTS_UP", 0, "Increase Segments", "Increase segments"},
+       {BEV_MODAL_SEGMENTS_DOWN, "SEGMENTS_DOWN", 0, "Decrease Segments", "Decrease segments"},
+       {BEV_MODAL_OFFSET_MODE_CHANGE,
+        "OFFSET_MODE_CHANGE",
+        0,
+        "Change Offset Mode",
+        "Cycle through offset modes"},
+       {BEV_MODAL_CLAMP_OVERLAP_TOGGLE,
+        "CLAMP_OVERLAP_TOGGLE",
+        0,
+        "Toggle Clamp Overlap",
+        "Toggle clamp overlap flag"},
+       {BEV_MODAL_AFFECT_CHANGE,
+        "AFFECT_CHANGE",
+        0,
+        "Change Affect Type",
+        "Change which geometry type the operation affects, edges or vertices"},
+       {BEV_MODAL_HARDEN_NORMALS_TOGGLE,
+        "HARDEN_NORMALS_TOGGLE",
+        0,
+        "Toggle Harden Normals",
+        "Toggle harden normals flag"},
+       {BEV_MODAL_MARK_SEAM_TOGGLE,
+        "MARK_SEAM_TOGGLE",
+        0,
+        "Toggle Mark Seam",
+        "Toggle mark seam flag"},
+       {BEV_MODAL_MARK_SHARP_TOGGLE,
+        "MARK_SHARP_TOGGLE",
+        0,
+        "Toggle Mark Sharp",
+        "Toggle mark sharp flag"},
+       {BEV_MODAL_OUTER_MITER_CHANGE,
+        "OUTER_MITER_CHANGE",
+        0,
+        "Change Outer Miter",
+        "Cycle through outer miter kinds"},
+       {BEV_MODAL_INNER_MITER_CHANGE,
+        "INNER_MITER_CHANGE",
+        0,
+        "Change Inner Miter",
+        "Cycle through inner miter kinds"},
+       {BEV_MODAL_PROFILE_TYPE_CHANGE, "PROFILE_TYPE_CHANGE", 0, "Cycle through profile types", ""},
+       {BEV_MODAL_VERTEX_MESH_CHANGE,
+        "VERTEX_MESH_CHANGE",
+        0,
+        "Change Intersection Method",
+        "Cycle through intersection methods"},
+       {0, nullptr, 0, nullptr, nullptr},
+   };
+
+   wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "Bevel Modal Map");
+
+   /* This function is called for each space-type, only needs to add map once. */
+   if (keymap && keymap->modal_items) {
+     return nullptr;
+   }
+
+   keymap = WM_modalkeymap_ensure(keyconf, "Bevel Modal Map", modal_items);
+
+   WM_modalkeymap_assign(keymap, "MESH_OT_bevel");
+
+   return keymap;
+ }
+
+ static wmOperatorStatus edbm_bevel_modal(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   BevelData *opdata = static_cast<BevelData *>(op->customdata);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (opdata->touch.active && ((event->flag & WM_EVENT_IS_POINTER_CANCEL) ||
++                              !touch_bevel_context_valid(C, opdata))) {
++    edbm_bevel_cancel(C, op);
++    ED_workspace_status_text(C, nullptr);
++    return OPERATOR_CANCELLED;
++  }
++#endif
+   const bool has_numinput = hasNumInput(&opdata->num_input[opdata->value_mode]);
+   bool handled = false;
+   short etype = event->type;
+   short eval = event->val;
+
+   /* When activated from toolbar, need to convert left-mouse release to confirm. */
+   if (ELEM(etype, LEFTMOUSE, opdata->launch_event) && (eval == KM_RELEASE) &&
+       RNA_boolean_get(op->ptr, "release_confirm"))
+   {
+     etype = EVT_MODAL_MAP;
+     eval = BEV_MODAL_CONFIRM;
+   }
+   /* Modal numinput active, try to handle numeric inputs first... */
+   if (etype != EVT_MODAL_MAP && eval == KM_PRESS && has_numinput &&
+       handleNumInput(C, &opdata->num_input[opdata->value_mode], event))
+   {
+     edbm_bevel_numinput_set_value(op);
+     edbm_bevel_calc(op);
+     edbm_bevel_update_status_text(C, op);
+     return OPERATOR_RUNNING_MODAL;
+   }
+   if (etype == MOUSEMOVE) {
+     if (!has_numinput) {
+       edbm_bevel_mouse_set_value(op, event);
+       edbm_bevel_calc(op);
+       edbm_bevel_update_status_text(C, op);
+       handled = true;
+     }
+   }
+   else if (etype == MOUSEPAN) {
+     float delta = 0.02f * (event->xy[1] - event->prev_xy[1]);
+     if (opdata->segments >= 1 && opdata->segments + delta < 1) {
+       opdata->segments = 1;
+     }
+     else {
+       opdata->segments += delta;
+     }
+     RNA_int_set(op->ptr, "segments", int(opdata->segments));
+     edbm_bevel_calc(op);
+     edbm_bevel_update_status_text(C, op);
+     handled = true;
+   }
+   else if (etype == EVT_MODAL_MAP) {
+     switch (eval) {
+       case BEV_MODAL_CANCEL:
+         edbm_bevel_cancel(C, op);
+         ED_workspace_status_text(C, nullptr);
+         return OPERATOR_CANCELLED;
+
+       case BEV_MODAL_CONFIRM:
+         edbm_bevel_calc(op);
+         edbm_bevel_exit(C, op);
+         ED_workspace_status_text(C, nullptr);
+         return OPERATOR_FINISHED;
+
+       case BEV_MODAL_SEGMENTS_UP:
+         opdata->segments = opdata->segments + 1;
+         RNA_int_set(op->ptr, "segments", int(opdata->segments));
+         edbm_bevel_calc(op);
+         edbm_bevel_update_status_text(C, op);
+         handled = true;
+         break;
+
+       case BEV_MODAL_SEGMENTS_DOWN:
+         opdata->segments = max_ff(opdata->segments - 1, 1);
+         RNA_int_set(op->ptr, "segments", int(opdata->segments));
+         edbm_bevel_calc(op);
+         edbm_bevel_update_status_text(C, op);
+         handled = true;
+         break;
+
+       case BEV_MODAL_OFFSET_MODE_CHANGE: {
+         int type = RNA_enum_get(op->ptr, "offset_type");
+         type++;
+         if (type > BEVEL_AMT_PERCENT) {
+           type = BEVEL_AMT_OFFSET;
+         }
+         if (opdata->value_mode == OFFSET_VALUE && type == BEVEL_AMT_PERCENT) {
+           opdata->value_mode = OFFSET_VALUE_PERCENT;
+         }
+         else if (opdata->value_mode == OFFSET_VALUE_PERCENT && type != BEVEL_AMT_PERCENT) {
+           opdata->value_mode = OFFSET_VALUE;
+         }
+         RNA_enum_set(op->ptr, "offset_type", type);
+         if (opdata->initial_length[opdata->value_mode] == -1.0f) {
+           edbm_bevel_calc_initial_length(op, event, true);
+         }
+       }
+         /* Update offset accordingly to new offset_type. */
+         if (!has_numinput && ELEM(opdata->value_mode, OFFSET_VALUE, OFFSET_VALUE_PERCENT)) {
+           edbm_bevel_mouse_set_value(op, event);
+         }
+         edbm_bevel_calc(op);
+         edbm_bevel_update_status_text(C, op);
+         handled = true;
+         break;
