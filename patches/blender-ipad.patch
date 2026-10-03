@@ -3318,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,908 @@
+@@ -0,0 +1,922 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3985,24 +3985,38 @@ new file mode 100644
 +    active = ToolSelectPanelHelper.tool_active_from_context(context)
 +    active_id = active.idname if active else None
 +    combined = ipad_transform_state(context) if active_id == 'builtin.transform' else None
++    cls = ToolSelectPanelHelper._tool_class_from_space_type('VIEW_3D')
++    available = {tool.idname: tool for tool in cls._tools_flatten_with_dynamic(
++        cls.tools_from_context(context), context=context) if tool is not None}
 +    for text, name, icon in IPAD_EDITING_TOOLS:
++        definition = available.get(name)
++        icon_value = 0
++        if definition and definition.icon:
++            try:
++                icon_value = ToolSelectPanelHelper._icon_value_from_icon_handle(definition.icon)
++            except Exception:
++                pass
++        # Use the native Tools silhouettes; thin fallback Scale reads as blank
++        # in compact cells. The label remains if a tool icon cannot be loaded.
++        icon_args = {'icon_value': icon_value} if icon_value else {'icon': icon}
++        button_text = "" if compact and icon_value else text
 +        selected = (active_id in {'builtin.select_box', 'builtin.select_lasso'}
 +                    if name == 'builtin.select_box' else active_id == name)
 +        if combined and name in IPAD_TRANSFORM_TOOLS:
 +            selected = combined[1] == IPAD_TRANSFORM_TOOLS[name][0]
 +        if name == 'builtin.select_box' and active_id not in {'builtin.select_box', 'builtin.select_lasso'}:
 +            # Tool activation retains Blender's stored selection properties.
-+            layout.operator('wm.tool_set_by_id', text="" if compact else text,
-+                            icon=icon, depress=False).name = name
++            layout.operator('wm.tool_set_by_id', text=button_text,
++                            depress=False, **icon_args).name = name
 +        elif name == 'builtin.select_box':
 +            tool, mode, _ = ipad_selection_state(context)
 +            props = layout.operator('view3d.ipad_selection_tool',
-+                                    text="" if compact else text, icon=icon, depress=selected)
++                                    text=button_text, depress=selected, **icon_args)
 +            props.tool = tool
 +            props.mode = mode if mode in {'SET', 'ADD', 'SUB'} else 'SET'
 +        else:
-+            layout.operator('wm.tool_set_by_id', text="" if compact else text,
-+                            icon=icon, depress=selected).name = name
++            layout.operator('wm.tool_set_by_id', text=button_text,
++                            depress=selected, **icon_args).name = name
 +
 +
 +class VIEW3D_PT_ipad_editing_tools(Panel):

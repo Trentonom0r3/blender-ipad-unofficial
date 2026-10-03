@@ -77,3 +77,7 @@ Reproduce with `build/preview_editing_shelf.py -- --case before|move|mesh|narrow
 The scripts use factory startup, save screenshots only and exit without saving
 preferences or the startup scene. Native orientation/pivot/plane/snap details remain
 under More; narrow fallback keeps original header controls where the shelf cannot fit.
+
+The compact Scale fallback was too faint in the first visual review. The final
+move/mesh/narrow previews use native Tools icons, and retain text if an icon
+asset cannot load. The native iPad icon assets were checked in the older verified IPA.
