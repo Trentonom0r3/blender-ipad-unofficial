@@ -70,5 +70,7 @@ jobs:
         run: python3 -m unittest discover -s build -p test_touch_point_selection.py -v
       - name: Test direct-pinch navigation policy
         run: python3 -m unittest discover -s build -p test_touch_navigation.py -v
+      - name: Test editing shelf placement, occlusion and native UI cleanup
+        run: python3 -m unittest discover -s build -p test_editing_shelf.py -v
       - name: Validate patch against pinned upstream and check scripts
         run: python3 build/preflight.py

@@ -1,5 +1,15 @@
 # Project handoff — 2026-10-02
 
+## Visible editing shelf — source checkpoint, 2026-10-03
+
+The current coherent source adds an editor-local native UI shelf at the bottom of each exposed 3D WINDOW. Select/Move/Rotate/Scale and Undo/Redo are directly reachable. Select shows Box/Lasso, Replace/Add/Remove and Mesh Vertex/Edge/Face. Transform shows Free/X/Y/Z, Fine, Snap and Numbers without opening the previous popover; native orientation/pivot/plane/snap details remain under More. The caption shows actual native mode/tool/constraint/orientation/precision/snap state. This changes everyday presentation and access, not Blender's available modeling capabilities. Native operations/properties remain authoritative.
+
+Equal grid cells preserve 44-unit touch widths and heights; narrower viewports wrap precision controls. Tiny/short/rejected layouts retain the original header controls; all WINDOW regions must have a shelf before quad-view suppresses that shared fallback. The shelf is clipped to exposed canvas geometry around rails/panels/headers/splits and avoids navigation UI. Native WINDOW UI handlers precede gizmos/tool keymaps; padding cannot click through. GHOST direct-drag maps exclude successfully drawn shelf bounds, and shelf taps do not dismiss or rehost service panels. Failed native layout fits discard both UI-block generations without retaining pointers or unprotected hits.
+
+82 compiled host tests, 87-file pinned-source preflight, real host Blender 5.1.2 native transform/RNA/geometry validation and independent native-lifecycle/UX source reviews pass. Real host screenshots are in output/ui-preview/editing-shelf: before.png, move.png, mesh.png and narrow.png. They show the exact Python UILayout; the after shelf is rendered in a temporary host popup because stock Blender lacks the iOS WINDOW hook. Popup placement/outline and desktop panels differ. These are layout evidence, not iPad anchor/input/device acceptance. Patch SHA-256 `944b8aa4e304e49c40077a385e200af3c8d48068ea1e4898609a3a76b00de7ec`. This source needs its exact native build and downloaded IPA checks; latest verified IPA remains 37112191770 at 855f6bd. Do not rebuild that unchanged older source.
+
+Continue the full goal independently, prioritizing perceptible selecting/manipulating/constraining/precise entry/finish/Cancel/Undo. Preserve accepted Inspector, Pencil ring/squeeze/double-tap, native editors/splits, hardware and Files. Camera ownership requirements remain in TOUCH_CAMERA_NEXT but are deferred; import expansion remains deferred. Device acceptance for this shelf is still open; do not make packaging or source checks stand in for it.
+
 ## User correction — visible everyday interaction, 2026-10-03
 
 The user says the reported Extrude/Bevel/Camera operations were already possible and asks what actually feels different. Do not present existing Blender capabilities, input routing/cancellation fixes or settings shortcuts as a substantial new iPad experience. The latest verified IPA remains 37112191770 at 855f6bd; its underlying robustness changes are real, but the larger desktop-feel problem is still open. No new device acceptance follows from this feedback.

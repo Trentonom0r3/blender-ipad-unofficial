@@ -30,6 +30,10 @@ class Layout:
         self.records = records
     def row(self, **kwargs):
         return Layout(self.records)
+    def column(self, **kwargs):
+        return Layout(self.records)
+    def grid_flow(self, **kwargs):
+        return Layout(self.records)
     def operator(self, name, **kwargs):
         props = SimpleNamespace()
         self.records.append((name, props, kwargs))
@@ -98,10 +102,17 @@ with bpy.context.temp_override(area=area, region=region):
             records = []
             module.VIEW3D_PT_ipad_transform.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
             assert any(r[0] == 'prop' and r[1] == 'use_accurate' and r[2]['text'] == 'Fine Drag' for r in records)
+            shelf = []
+            module.draw_editing_shelf(Layout(shelf), bpy.context, width_units=28)
+            assert any(r[0] == 'label' and ' · Fine' in r[2]['text'] for r in shelf), shelf
+            assert any(r[0] == 'prop' and r[1] == 'use_accurate' and r[2]['text'] == 'Fine'
+                       for r in shelf), shelf
+            assert sum(r[0] == 'view3d.ipad_transform_axis' for r in shelf) == 4
+            assert any(r[0] == 'view3d.ipad_transform_numbers' for r in shelf)
             header = []
             module.draw_canvas_header(Layout(header))
-            assert any(r[0] == 'popover' and r[2]['panel'] == 'VIEW3D_PT_ipad_transform'
-                       and r[2]['text'].endswith(' · Fine') for r in header), header
+            assert not any(r[0] == 'popover' and r[2]['panel'] == 'VIEW3D_PT_ipad_transform'
+                           for r in header), header
             props.use_accurate = False
     checks.append('Native tool children, axis/plane RNA, Fine Drag RNA/UI, combined None recovery and transient values')
     # Different per-tool and global bases must resolve deliberately.

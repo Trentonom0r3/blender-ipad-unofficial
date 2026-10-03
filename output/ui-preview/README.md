@@ -55,3 +55,25 @@ successful core tool activation in those modes. Reproduce with
 `D:/Program Files/blender.exe --factory-startup --disable-autoexec --python build/preview_pencil_tools.py`.
 These previews do not include the new iOS GHOST events or C++ pie interaction changes.
 They are not evidence of Pencil input, iOS sizing, edge clamping or device usability.
+
+## Contextual editing shelf — 2026-10-03
+
+`editing-shelf/before.png` captures the prior actual 855f6bd header: Undo/Redo,
+Selection and Transform popovers consume much of its width. `move.png` shows the
+new source layout with direct Move/X/Fine/Snap/Numbers controls; `mesh.png` shows
+direct selection shape/operation/native element icons; `narrow.png` shows wrapped
+precision controls with equal touch-sized cells. All are real Blender 5.1.2 native
+UILayout screenshots, captured through Blender's screenshot operator in disposable
+processes. No generated concept or experimental tablet_dock_preview is used.
+
+The after shelf is presented using a temporary host popup. Stock host Blender
+does not contain the new iOS WINDOW draw/input hook. Therefore its popup border,
+position and desktop panels do not establish the shipped native anchor, occlusion,
+physical input, portrait comfort or device acceptance. Compiled policy checks cover
+landscape/portrait, scaling, split-local coordinates, navigation exclusion and canvas
+input coverage; source checks are also not device evidence.
+
+Reproduce with `build/preview_editing_shelf.py -- --case before|move|mesh|narrow`.
+The scripts use factory startup, save screenshots only and exit without saving
+preferences or the startup scene. Native orientation/pivot/plane/snap details remain
+under More; narrow fallback keeps original header controls where the shelf cannot fit.
