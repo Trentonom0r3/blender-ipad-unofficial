@@ -62,9 +62,14 @@ int main() {
     assert(!end.release && !end.cancelled);
     nav::set_navigation_regions(&main_window, {{10,20,50,60,Kind::WorkspaceResize}});
   }
-  capture.begin(Kind::Navigation);
-  auto end = capture.finish(true);
-  assert(end.release && !end.cancelled); // Preserve existing navigation behavior.
+  nav::PointerCapture::End end{};
+  for (bool interrupted : {false, true}) {
+    capture.begin(Kind::Navigation);
+    end = capture.finish(interrupted);
+    assert(end.release && end.cancelled == interrupted);
+    assert(capture.ended && !capture.active());
+    assert(!capture.finish(interrupted).release); // UIKit's later lift stays inert.
+  }
   for (const char *tool : {"builtin.select_box", "builtin.select_lasso", "builtin.move", "builtin.rotate", "builtin.scale", "builtin.transform"}) {
     for (const char *mode : {"OBJECT", "POSE", "EDIT_MESH", "EDIT_CURVE", "EDIT_ARMATURE"}) {
       assert(nav::direct_edit_tool(tool, mode));

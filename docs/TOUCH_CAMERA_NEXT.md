@@ -1,5 +1,11 @@
 # Next native camera interaction — pinned-source audit, 2026-10-03
 
+## Native navigation interruption candidate
+
+Current source maps interrupted Navigation capture releases to VIEW_CANCEL before confirmation/modal switching, giving native Move/Rotate/Zoom button drags Escape parity. One terminal release is retained; generic operator teardown remains non-restoring. The completed source has 80 host tests and 84-file preflight; native build/package status is in PROJECT_HANDOFF. Latest verified Bevel/Camera IPA is 37111045332 at b525e68, which predates this correction. No device acceptance is claimed.
+
+Native ViewOpsData retains raw viewport/depsgraph pointers. The native state_restore synchronizes the currently referenced camera and retains existing animation keys; mode switching establishes a new baseline. This small correction does not establish complete direct pan/pinch transactions, original-camera ownership, autokey rollback or whole-gesture Undo. Do not add restoration to the generic destruction callback.
+
 Prioritize actual touch/Pencil interaction while preserving accepted ring/mappings, Inspector, native editors, external input and Files. Camera header controls are implemented in the newer source candidate; exact native build/package status is in PROJECT_HANDOFF. No device acceptance or completed locked-camera gesture lifecycle is claimed. Import expansion remains deferred.
 
 Pinned Blender d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e:
