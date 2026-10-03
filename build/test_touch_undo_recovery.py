@@ -180,7 +180,7 @@ struct bScreen { ID id; AreaList areabase; };
 struct Scene { ID id; };
 struct wmWindow { wmWindow *next=nullptr; int winid=1; Scene *scene=nullptr; bScreen *screen=nullptr; ViewLayer *layer=nullptr; };
 struct WindowList { wmWindow *first=nullptr; };
-struct wmOperatorType { const char *idname="MESH_OT_extrude_context_move"; };
+struct wmOperatorType { const char *idname="MESH_OT_extrude_context_move"; const char *name="Extrude"; };
 struct wmOperator { wmOperator *next=nullptr; wmOperatorType *type=nullptr; };
 struct OperatorList { wmOperator *first=nullptr; };
 struct Runtime { OperatorList operators; UndoStack *undo_stack=nullptr; blender::bke::TouchUndoRecovery touch_undo_recovery; };
@@ -214,6 +214,8 @@ bool ED_operator_editmesh(bContext *C){return C->edit;}
 __OPERATOR_IDENTITIES__
 wmOperator *WM_operator_last_redo(bContext *C){return C->wm->runtime->operators.first;}
 int BLI_findindex(OperatorList *list,wmOperator *op){return list->first==op ? 0 : -1;}
+bool named_active=true;
+UndoStep *BKE_undosys_step_find_by_name(UndoStack *stack,const char *){return named_active ? stack->step_active : nullptr;}
 bool mesh_context=true;
 bool EDBM_touch_undo_context_matches(bContext *,const UndoStep *){return mesh_context;}
 bool other_modal=false;
@@ -273,7 +275,7 @@ int main(){
   auto prepare=[&](){
     main.wm.first=&wm; screen.areabase.first=&area; C.area=&area; C.region=&region;
     C.edit=true; tool.idname="builtin.extrude_region"; runtime.touch_undo_recovery={};
-    other_modal=false; mesh_context=true; runtime.operators.first=&accepted_op;
+    other_modal=false; named_active=true; mesh_context=true; runtime.operators.first=&accepted_op;
     stack.step_active=&accepted; wm.op_undo_depth=0; callback_mode=0;
     assert(ED_undo_touch_begin(&C,&event));
     assert(ED_undo_touch_pop(&C) && stack.step_active==&baseline);
@@ -304,7 +306,9 @@ int main(){
   const int modal_before=redos; assert(ED_undo_touch_recover(&C) && redos==modal_before);
   prepare(); runtime.touch_undo_recovery={}; stack.step_active=&accepted;
   other_modal=true; assert(!ED_undo_touch_begin(&C,&event) && stack.step_active==&accepted);
-  other_modal=false; mesh_context=false;
+  other_modal=false; named_active=false;
+  assert(!ED_undo_touch_begin(&C,&event) && stack.step_active==&accepted);
+  named_active=true; mesh_context=false;
   assert(!ED_undo_touch_begin(&C,&event) && stack.step_active==&accepted);
   mesh_context=true;
   // Mesh decode's implicit MemFile is checked before any Undo pop.

@@ -15219,7 +15219,7 @@ diff --git a/source/blender/editors/undo/ed_undo.cc b/source/blender/editors/und
  #include "ED_object.hh"
  #include "ED_outliner.hh"
  #include "ED_render.hh"
-@@ -59,6 +62,394 @@
+@@ -59,6 +62,397 @@
   *
   * Non-operator undo editor functions.
   * \{ */
@@ -15377,7 +15377,10 @@ diff --git a/source/blender/editors/undo/ed_undo.cc b/source/blender/editors/und
 +  }
 +  wmOperator *accepted_op = WM_operator_last_redo(C);
 +  if (!accepted_op || BLI_findindex(&wm->runtime->operators, accepted_op) == -1 ||
-+      !STREQ(accepted_op->type->idname, "MESH_OT_extrude_context_move")) {
++      !STREQ(accepted_op->type->idname, "MESH_OT_extrude_context_move") ||
++      !wm->runtime->undo_stack ||
++      BKE_undosys_step_find_by_name(wm->runtime->undo_stack, accepted_op->type->name) !=
++          wm->runtime->undo_stack->step_active) {
 +    return false;
 +  }
 +  TouchUndoRecovery receipt;
