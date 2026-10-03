@@ -1,5 +1,11 @@
 # Blender iPad development
 
+## Native navigation build and next gesture ownership — 2026-10-03
+
+Completed navigation interruption source `855f6bd5f0f871c4ab41bfe2098af35c0162e530` is in native [run 37112191770](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37112191770). Cloud preflight passed; last native observation was healthy source fetch. It has 80 host tests, 84-file pinned preflight and independent review, patch SHA-256 `09e2a9955fc6b4fc1467f352d1affc052c7f9cd165977734e3a01c2453a25290`. Inspect this run, fix actual native errors if any and verify the downloaded IPA before calling its cancellation change ready. Latest verified IPA remains Bevel/Camera run 37111045332 at b525e68. No device acceptance is established.
+
+Next actual-interaction target is one per-window direct pan/pinch navigation session, shared by simultaneous recognizers, with explicit phases/provenance and fixed originating viewport. TOUCH_CAMERA_NEXT records the exact transport/handoff audit and native original-camera/root-parent/autokey/MemFile-history requirements. Existing sample packets lack gesture terminal events, and camera-lock checks do not prove all transformed parent owners. Do not enable new locked-camera gesture admission or claim cancellation/one-step Undo from transport tests alone. Preserve accepted ring/mappings, Inspector, native editors, external input and Files; import expansion remains deferred. Continue independently near the next ordinary usage reset; do not spend the free reset credit without a user request. Earlier sections are historical.
+
 ## Native navigation interruption — source candidate; Bevel/Camera IPA verified, 2026-10-03
 
 Latest verified exact-source IPA is [run 37111045332](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37111045332) at `b525e68980de4eb63bfa6feb26cfbfc9cc1b386f`: cloud preflight, native Release, downloaded full archive, arm64 iPhoneOS bundle and entire packaged UI checks pass. It includes corrected Extrude, direct Edit Mesh Bevel with native settings/rollback, and viewport Camera view/align/Scene-or-Local selector/Lens/Scale controls. Bevel's first 7329776 build failed on EVT_NONE; the b525 source corrects it to EVENT_NONE. No device acceptance or visual preview is claimed. Exact artifact evidence is in PROJECT_HANDOFF.
