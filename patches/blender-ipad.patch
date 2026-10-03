@@ -3318,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1050 @@
+@@ -0,0 +1,1151 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3364,6 +3364,7 @@ new file mode 100644
 +    bl_idname = "wm.ipad_tool_palette"
 +    bl_label = "Pencil Tools"
 +    bl_description = "Open the radial tool palette for the 3D viewport"
++    touch_targets: bpy.props.BoolProperty(default=False, options={'SKIP_SAVE'})
 +
 +    @classmethod
 +    def poll(cls, context):
@@ -3375,7 +3376,10 @@ new file mode 100644
 +        if region is None:
 +            return {'CANCELLED'}
 +        with context.temp_override(area=area, region=region):
-+            bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', name='VIEW3D_MT_ipad_tools')
++            options = {'name': 'VIEW3D_MT_ipad_tools'}
++            if self.touch_targets:
++                options['ipad_touch_targets'] = True
++            bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', **options)
 +        return {'FINISHED'}
 +
 +
@@ -4161,6 +4165,84 @@ new file mode 100644
 +        ipad_editing_tool_buttons(column, context)
 +
 +
++def ipad_editing_shelf_expanded(context):
++    return getattr(context.window_manager, 'ipad_editing_shelf_expanded', False) is True
++
++
++def ipad_shelf_redraw(self, context):
++    for window in self.windows:
++        if window.screen:
++            for area in window.screen.areas:
++                if area.type == 'VIEW_3D':
++                    for region in area.regions:
++                        if region.type in {'WINDOW', 'HEADER'}:
++                            region.tag_redraw()
++
++
++class VIEW3D_OT_ipad_shelf_toggle(Operator):
++    bl_idname = 'view3d.ipad_shelf_toggle'
++    bl_label = 'Expand / Collapse Editing Controls'
++    bl_description = 'Show or hide the full native editing controls'
++    bl_options = {'INTERNAL'}
++    expanded: bpy.props.BoolProperty(default=False, options={'SKIP_SAVE'})
++
++    @classmethod
++    def poll(cls, context):
++        return context.area is not None and context.area.type == 'VIEW_3D'
++
++    def execute(self, context):
++        context.window_manager.ipad_editing_shelf_expanded = self.expanded
++        return {'FINISHED'}
++
++
++def draw_compact_editing_shelf(column, context, width, mode_name, title, state, active_id):
++    if state and state[2]:
++        operation, operator, slot = state[1:]
++        props = state[0].operator_properties(operator)
++        constraint = next((text for _, text, axes in IPAD_TRANSFORM_AXES
++                           if tuple(props.constraint_axis) == axes), 'Custom')
++        tool_name = operation.title() if active_id != 'builtin.transform' else 'Transform: ' + operation.title()
++        column.label(text=f'{mode_name} · {tool_name} · {constraint}')
++        detail = ipad_transform_orientation(context, slot).type.title()
++        if props.use_accurate: detail += ' · Fine'
++        if context.tool_settings.use_snap: detail += ' · Snap'
++        column.label(text=detail)
++    elif active_id in {'builtin.select_box', 'builtin.select_lasso'}:
++        _, mode, shape = ipad_selection_state(context)
++        action = dict((value, text) for text, value in IPAD_SELECTION_MODES).get(mode, 'Custom')
++        column.label(text=f'{mode_name} · Select · {shape}')
++        if context.mode == 'EDIT_MESH':
++            elements = '/'.join(name for name, enabled in zip(
++                ('Vertex', 'Edge', 'Face'), context.tool_settings.mesh_select_mode) if enabled)
++            action += ' · ' + elements
++        column.label(text=action)
++    else:
++        column.label(text=f'{mode_name} · {title}')
++    ring = ipad_context_ring_name(context)
++    panel = ('VIEW3D_PT_ipad_transform' if state and not state[2] else
++             'VIEW3D_PT_ipad_bevel' if ipad_bevel_state(context) else None)
++    has_context = bool(ring or panel)
++    narrow = width < 13.2
++    row = column.grid_flow(row_major=True, columns=(3 if has_context else 2) if narrow else (5 if has_context else 4),
++                           even_columns=True, even_rows=True, align=True)
++    row.scale_y = 2.2
++    row.operator('wm.ipad_tool_palette', text='Ring').touch_targets = True
++    if ring:
++        label = 'Select' if ring == 'VIEW3D_MT_ipad_selection_ring' else state[1].title()
++        props = row.operator('wm.call_menu_pie', text=label + '…')
++        props.name, props.ipad_touch_targets = ring, True
++    elif panel:
++        row.popover(panel=panel, text='Action' if state else 'Bevel')
++    if narrow:
++        row.operator('view3d.ipad_shelf_toggle', text='Expand').expanded = True
++        row = column.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True, align=True)
++        row.scale_y = 2.2
++    row.operator('ed.undo', text='Undo', icon='LOOP_BACK')
++    row.operator('ed.redo', text='Redo', icon='LOOP_FORWARDS')
++    if not narrow:
++        row.operator('view3d.ipad_shelf_toggle', text='Expand').expanded = True
++
++
 +def draw_editing_shelf(layout, context, width_units=None):
 +    """Shared by the shipped native WINDOW block and the host layout preview."""
 +    width = layout.ui_units_x if width_units is None else width_units
@@ -4183,7 +4265,7 @@ new file mode 100644
 +    elif state:
 +        title = f"{operation.title()} · {constraint}" if operation else "Transform"
 +        if active_id == 'builtin.transform':
-+            title = "Transform · " + title
++            title = "Transform · " + title if operator else "Transform · choose action"
 +        if operator:
 +            title += f" · {ipad_transform_orientation(context, slot).type.title()}"
 +            if props.use_accurate:
@@ -4192,14 +4274,17 @@ new file mode 100644
 +                title += " · Snap"
 +        panel = 'VIEW3D_PT_ipad_transform'
 +    else:
-+        title = (active_id or "Select").removeprefix('builtin.').replace('_', ' ').title()
++        title = (active_id or "No active tool").removeprefix('builtin.').replace('_', ' ').title()
 +        panel = ('VIEW3D_PT_ipad_bevel' if ipad_bevel_state(context) else
-+                 'VIEW3D_PT_ipad_selection')
++                 None)
 +    mode_name = {"OBJECT": "Object", "EDIT_MESH": "Mesh", "POSE": "Pose"}.get(
 +        context.mode, context.mode.removeprefix('EDIT_').replace('_', ' ').title())
++    if not ipad_editing_shelf_expanded(context):
++        draw_compact_editing_shelf(column, context, width, mode_name, title, state, active_id)
++        return
 +    column.label(text=f"{mode_name} · {title}")
 +    # Equal cells protect icon-only Undo/Redo/axis targets from native row shrink.
-+    tools = column.grid_flow(row_major=True, columns=4 if minimal else 7,
++    tools = column.grid_flow(row_major=True, columns=3 if minimal else 8 if wide else 4,
 +                             even_columns=True, even_rows=True, align=True)
 +    tools.scale_y = 2.2
 +    if minimal:
@@ -4209,7 +4294,11 @@ new file mode 100644
 +    tools.operator('ed.undo', text="", icon='LOOP_BACK')
 +    tools.operator('ed.redo', text="", icon='LOOP_FORWARDS')
 +    more_text = "More" if selection or state or ipad_bevel_state(context) else "Selection"
-+    tools.popover(panel=panel, text=more_text if wide else "", icon='PREFERENCES')
++    if panel:
++        tools.popover(panel=panel, text=more_text, icon='PREFERENCES')
++    else:
++        tools.operator('wm.search_menu', text='Search' if wide else '', icon='VIEWZOOM')
++    tools.operator('view3d.ipad_shelf_toggle', text='Collapse').expanded = False
 +
 +    count = (3 if minimal else (8 if wide and context.mode == 'EDIT_MESH' else 5)) if selection else (7 if wide and props else 4 if props else 1)
 +    controls = column.grid_flow(row_major=True, columns=count,
@@ -4248,8 +4337,8 @@ new file mode 100644
 +            numbers.operation, numbers.slot_index = operation, slot
 +            numbers.axis = next((axis for index, axis in enumerate('XYZ')
 +                                 if props.constraint_axis[index] and sum(props.constraint_axis) == 1), 'Z')
-+    else:
-+        controls.popover(panel=panel, text="Bevel Options" if ipad_bevel_state(context) else "Selection",
++    elif panel:
++        controls.popover(panel=panel, text="Bevel Options" if ipad_bevel_state(context) else "Choose transform action",
 +                         icon='TOOL_SETTINGS')
 +    direct = bool(props or ipad_bevel_state(context) or
 +                  (active_id == 'builtin.extrude_region' and context.mode == 'EDIT_MESH'))
@@ -4287,6 +4376,9 @@ new file mode 100644
 +    # Reversible editing stays reachable without opening a controls popover.
 +    row.operator_context = 'INVOKE_REGION_WIN'
 +    if not ipad_editing_shelf_visible(bpy.context):
++        row.operator('wm.ipad_tool_palette', text='Ring').touch_targets = True
++        if ipad_editing_shelf_expanded(bpy.context):
++            row.operator('view3d.ipad_shelf_toggle', text='Collapse').expanded = False
 +        row.operator('ed.undo', text="Undo", icon='LOOP_BACK')
 +        row.operator('ed.redo', text="Redo", icon='LOOP_FORWARDS')
 +
@@ -4342,6 +4434,7 @@ new file mode 100644
 +# binary_path: embedded Python's executable path is not a platform capability.
 +classes = (
 +    WM_OT_ipad_tool_palette,
++    VIEW3D_OT_ipad_shelf_toggle,
 +    VIEW3D_MT_ipad_tools,
 +    VIEW3D_MT_ipad_tool_settings,
 +    VIEW3D_MT_ipad_selection_ring,
@@ -4359,6 +4452,14 @@ new file mode 100644
 +    VIEW3D_PT_ipad_controls,
 +    VIEW3D_OT_ipad_flythrough_toggle,
 +)
++
++if not hasattr(bpy.types.WindowManager, 'ipad_editing_shelf_expanded'):
++    bpy.types.WindowManager.ipad_editing_shelf_expanded = bpy.props.BoolProperty(
++        name='Expanded Editing Controls', default=False, options={'SKIP_SAVE'},
++        description='Show the full editing shelf instead of compact finger controls',
++        update=ipad_shelf_redraw,
++    )
++
 +
 +if not hasattr(bpy.types.WindowManager, "ipad_flythrough_active"):
 +    bpy.types.WindowManager.ipad_flythrough_active = bpy.props.BoolProperty(
@@ -6332,7 +6433,7 @@ diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blende
  #include <cerrno>
  #include <cfloat>
  #include <cstddef>
-@@ -2220,15 +2221,20 @@
+@@ -2220,15 +2221,21 @@
    char idname[BKE_ST_MAXNAME];
    RNA_string_get(op->ptr, "name", idname);
 
@@ -6345,7 +6446,8 @@ diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blende
 +    anchored.xy[0] = RNA_int_get(op->ptr, "ipad_anchor_x");
 +    anchored.xy[1] = RNA_int_get(op->ptr, "ipad_anchor_y");
 +  }
-+  return UI_pie_menu_invoke(C, idname, &anchored);
++  return UI_pie_menu_invoke(C, idname, &anchored,
++                            ipad_ring && RNA_boolean_get(op->ptr, "ipad_touch_targets"));
  }
 
  static wmOperatorStatus wm_call_pie_menu_exec(bContext *C, wmOperator *op)
@@ -6358,10 +6460,12 @@ diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blende
  }
 
  static void WM_OT_call_menu_pie(wmOperatorType *ot)
-@@ -2252,6 +2258,13 @@
+@@ -2252,6 +2259,15 @@
        WM_menutype_idname_visit_for_search,
        /* Only a suggestion as menu items may be referenced from add-ons that have been disabled. */
        (PROP_STRING_SEARCH_SORT | PROP_STRING_SEARCH_SUGGESTION));
++  prop = RNA_def_boolean(ot->srna, "ipad_touch_targets", false, "", "");
++  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 +  prop = RNA_def_boolean(ot->srna, "ipad_anchor_override", false, "", "");
 +  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 +  prop = RNA_def_int(ot->srna, "ipad_anchor_x", 0, INT_MIN, INT_MAX, "", "", INT_MIN, INT_MAX);
@@ -6372,7 +6476,7 @@ diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blende
  }
 
  static wmOperatorStatus wm_call_panel_exec(bContext *C, wmOperator *op)
-@@ -4210,6 +4223,14 @@
+@@ -4210,6 +4226,14 @@
    WM_operatortype_append(WM_OT_window_fullscreen_toggle);
    WM_operatortype_append(WM_OT_quit_blender);
    WM_operatortype_append(WM_OT_open_mainfile);
@@ -7409,10 +7513,11 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
    UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NUMSELECT);
    UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-@@ -190,6 +205,213 @@
+@@ -190,7 +205,220 @@
    return pie->layout;
  }
 
+-wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event)
 +
 +namespace ipad_ring = blender::ui::ipad;
 +
@@ -7422,6 +7527,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  ipad_ring::RingContextIdentity context;
 +  ipad_ring::Rect viewport, window_rect;
 +  float unit;
++  bool touch_tools = false;
 +};
 +
 +static ipad_ring::Rect ui_ipad_ring_viewport(bContext *C);
@@ -7543,7 +7649,8 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  const auto viewport = ui_ipad_ring_data_valid(C, data) ? ui_ipad_ring_viewport(C) :
 +      ipad_ring::Rect{0, 1, 0, 1};
 +  const auto geometry = ipad_ring::tool_ring_layout(UI_UNIT_X, viewport,
-+      float(data.anchor[0]), float(data.anchor[1]), kind != ipad_ring::RingKind::Tools);
++      float(data.anchor[0]), float(data.anchor[1]),
++      kind != ipad_ring::RingKind::Tools || data.touch_tools);
 +  if (block->buttons.size() != geometry.buttons.size() || !geometry.fits) {
 +    /* No unexpected or overflowing button can receive input in Release either.
 +     * Return a valid block; ordinary popup finalization/teardown owns its free. */
@@ -7568,6 +7675,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +      if (ipad_ring::ring_kind(target) != ipad_ring::RingKind::None) {
 +        /* Deferred native callbacks own a copy of these values after popup free. */
 +        RNA_boolean_set(but->opptr, "ipad_anchor_override", true);
++        RNA_boolean_set(but->opptr, "ipad_touch_targets", data.touch_tools);
 +        RNA_int_set(but->opptr, "ipad_anchor_x", data.anchor[0]);
 +        RNA_int_set(but->opptr, "ipad_anchor_y", data.anchor[1]);
 +      }
@@ -7582,7 +7690,8 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  MEM_delete(static_cast<uiIPadRingData *>(arg));
 +}
 +
-+static wmOperatorStatus ui_ipad_ring_invoke(bContext *C, const char *idname, const wmEvent *event)
++static wmOperatorStatus ui_ipad_ring_invoke(bContext *C, const char *idname,
++                                            const wmEvent *event, const bool touch_targets)
 +{
 +  ScrArea *area = CTX_wm_area(C);
 +  ARegion *region = CTX_wm_region(C);
@@ -7598,7 +7707,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +    y = int((viewport.ymin + viewport.ymax) / 2);
 +  }
 +  if (!ipad_ring::tool_ring_layout(UI_UNIT_X, viewport, float(x), float(y),
-+      ipad_ring::ring_kind(idname) != ipad_ring::RingKind::Tools).fits)
++      (ipad_ring::ring_kind(idname) != ipad_ring::RingKind::Tools || touch_targets)).fits)
 +  {
 +    BKE_report(CTX_wm_reports(C), RPT_INFO, "Expand this viewport to show Pencil controls");
 +    return OPERATOR_CANCELLED;
@@ -7611,6 +7720,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  data->viewport = viewport;
 +  data->window_rect = ui_ipad_ring_window_rect(C);
 +  data->unit = UI_UNIT_X;
++  data->touch_tools = touch_targets;
 +  uiPopupBlockHandle *menu = ui_popup_block_create(
 +      C, nullptr, nullptr, nullptr, ui_ipad_ring_create, data, ui_ipad_ring_free, true);
 +  menu->popup = true;
@@ -7620,15 +7730,17 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  return OPERATOR_INTERFACE;
 +}
 +
- wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event)
++wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event,
++                                    const bool ipad_touch_targets)
  {
    uiPieMenu *pie;
-@@ -206,6 +428,9 @@
+   uiLayout *layout;
+@@ -206,6 +434,9 @@
      return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
    }
 
 +  if (ipad_ring::ring_kind(idname) != ipad_ring::RingKind::None) {
-+    return ui_ipad_ring_invoke(C, idname, event);
++    return ui_ipad_ring_invoke(C, idname, event, ipad_touch_targets);
 +  }
    pie = UI_pie_menu_begin(C, CTX_IFACE_(mt->translation_context, mt->label), ICON_NONE, event);
    layout = UI_pie_menu_layout(pie);
@@ -7636,7 +7748,20 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/blender/editors/interface/interface_handlers.cc
 --- a/source/blender/editors/interface/interface_handlers.cc
 +++ b/source/blender/editors/interface/interface_handlers.cc
-@@ -57,6 +57,9 @@
+@@ -44,42 +44,46 @@
+ #include "BKE_movieclip.h"
+ #include "BKE_paint.hh"
+ #include "BKE_paint_types.hh"
+ #include "BKE_report.hh"
+ #include "BKE_scene.hh"
+ #include "BKE_screen.hh"
+ #include "BKE_tracking.h"
+ #include "BKE_unit.hh"
+
+ #include "BLT_translation.hh"
+
+ #include "GHOST_C-api.h"
+
  #include "IMB_colormanagement.hh"
 
  #include "ED_screen.hh"
@@ -7646,7 +7771,10 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
  #include "ED_undo.hh"
 
  #include "UI_abstract_view.hh"
-@@ -67,6 +70,7 @@
+ #include "UI_interface.hh"
+ #include "UI_interface_c.hh"
+ #include "UI_string_search.hh"
+
  #include "BLF_api.hh"
 
  #include "interface_intern.hh"
@@ -7654,7 +7782,33 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
  #include "RNA_access.hh"
  #include "RNA_prototypes.hh"
-@@ -9071,6 +9075,13 @@
+
+ #include "CLG_log.h"
+
+ #include "WM_api.hh"
+ #include "WM_types.hh"
+ #include "wm_event_system.hh"
+
+ #ifdef WITH_INPUT_IME
+ #  include "wm_window.hh"
+ #endif
+
+ using blender::StringRef;
+
+@@ -9058,32 +9062,39 @@
+     /* Show a label for this button. */
+     bScreen *screen = WM_window_get_active_screen(data->window);
+     if ((BLI_time_now_seconds() - WM_tooltip_time_closed()) < 0.1) {
+       WM_tooltip_immediate_init(C, CTX_wm_window(C), data->area, region, ui_but_tooltip_init);
+       if (screen->tool_tip) {
+         screen->tool_tip->pass = 1;
+       }
+     }
+   }
+ }
+
+ static void button_activate_exit(
+     bContext *C, uiBut *but, uiHandleButtonData *data, const bool mousemove, const bool onfree)
  {
    wmWindow *win = data->window;
    uiBlock *block = but->block;
@@ -7668,7 +7822,33 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
    if (but->type == ButType::Grip) {
      WM_cursor_modal_restore(win);
-@@ -9105,7 +9116,9 @@
+   }
+
+   /* ensure we are in the exit state */
+   if (data->state != BUTTON_STATE_EXIT) {
+     button_activate_state(C, but, BUTTON_STATE_EXIT);
+   }
+
+   /* apply the button action or value */
+   if (!onfree) {
+     ui_apply_but(C, block, but, data, false);
+   }
+
+ #ifdef USE_DRAG_MULTINUM
+@@ -9092,33 +9103,35 @@
+       if (bt->flag & UI_BUT_DRAG_MULTI) {
+         bt->flag &= ~UI_BUT_DRAG_MULTI;
+
+         if (!data->cancel) {
+           ui_apply_but_autokey(C, bt.get());
+         }
+       }
+     }
+
+     ui_multibut_free(data, block);
+   }
+ #endif
+
    /* if this button is in a menu, this will set the button return
     * value to the button value and the menu return value to ok, the
     * menu return value will be picked up and the menu will close */
@@ -7679,7 +7859,33 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      if (!data->cancel || data->escapecancel) {
        uiPopupBlockHandle *menu;
 
-@@ -10784,10 +10797,25 @@
+       menu = block->handle;
+       menu->butretval = data->retval;
+       menu->menuretval = (data->cancel) ? UI_RETURN_CANCEL : UI_RETURN_OK;
+     }
+   }
+
+   if (!onfree && !data->cancel) {
+     /* autokey & undo push */
+     ui_apply_but_undo(but);
+     ui_apply_but_autokey(C, but);
+
+ #ifdef USE_ALLSELECT
+     {
+@@ -10771,36 +10784,51 @@
+                                 uiPopupBlockHandle *menu,
+                                 int level,
+                                 const bool is_parent_inside,
+                                 const bool is_parent_menu,
+                                 const bool is_floating)
+ {
+   uiBut *but;
+   ARegion *region = menu->region;
+   uiBlock *block = static_cast<uiBlock *>(region->runtime->uiblocks.first);
+
+   int retval = WM_UI_HANDLER_CONTINUE;
+
+   int mx = event->xy[0];
    int my = event->xy[1];
    ui_window_to_block(region, block, &mx, &my);
 
@@ -7706,10 +7912,93 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
    /* if there's an active modal button, don't check events or outside, except for search menu */
    but = ui_region_find_active_but(region);
-@@ -12051,6 +12079,17 @@
-     retval = ui_handle_view_item_event(C, event, but, region);
+
+ #ifdef USE_DRAG_POPUP
+
+ #  if defined(__APPLE__)
+   constexpr int PopupTitleHoverCursor = WM_CURSOR_HAND;
+   constexpr int PopupTitleDragCursor = WM_CURSOR_HAND_CLOSED;
+ #  else
+   constexpr int PopupTitleHoverCursor = WM_CURSOR_MOVE;
+   constexpr int PopupTitleDragCursor = WM_CURSOR_MOVE;
+ #  endif
+
+   wmWindow *win = CTX_wm_window(C);
+
+@@ -11984,37 +12012,55 @@
+ }
+
+ void UI_popup_menu_retval_set(const uiBlock *block, const int retval, const bool enable)
+ {
+   uiPopupBlockHandle *menu = block->handle;
+   if (menu) {
+     menu->menuretval = enable ? (menu->menuretval | retval) : (menu->menuretval & retval);
+   }
+ }
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name UI Event Handlers
+  * \{ */
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++static int ui_ipad_shelf_input_guard(bContext *C, ARegion *region, const wmEvent *event)
++{
++  if (!ED_ipad_editing_shelf_stale(C, region)) return -1;
++  const bool consume = (ISMOUSE(event->type) || ISMOUSE_GESTURE(event->type)) &&
++                       ED_ipad_editing_shelf_hit(C, event->xy);
++  ED_ipad_editing_shelf_invalidate(C, region);
++  /* Invalidation may free an active button and its modal handler. Nothing from
++   * that block or handler may be read after this boundary. Hardware keys pass. */
++  return consume ? WM_UI_HANDLER_BREAK : WM_UI_HANDLER_CONTINUE;
++}
++#endif
++
+ static int ui_region_handler(bContext *C, const wmEvent *event, void * /*userdata*/)
+ {
+   /* here we handle buttons at the region level, non-modal */
+   ARegion *region = CTX_wm_region(C);
+   int retval = WM_UI_HANDLER_CONTINUE;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int shelf_guard = ui_ipad_shelf_input_guard(C, region, event);
++  if (shelf_guard != -1) return shelf_guard;
++#endif
+
+   if (region == nullptr || BLI_listbase_is_empty(&region->runtime->uiblocks)) {
+     return retval;
    }
 
+   /* either handle events for already activated button or try to activate */
+   uiBut *but = ui_region_find_active_but(region);
+   uiBut *listbox = ui_list_find_mouse_over(region, event);
+
+   retval = ui_handler_panel_region(C, event, region, listbox ? listbox : but);
+
+   if (retval == WM_UI_HANDLER_CONTINUE && listbox) {
+     retval = ui_handle_list_event(C, event, region, listbox);
+
+     /* interactions with the listbox should disable tips */
+     if (retval == WM_UI_HANDLER_BREAK) {
+@@ -12037,32 +12083,43 @@
+     }
+   }
+
+   /* Re-enable tool-tips. */
+   if (event->type == MOUSEMOVE &&
+       (event->xy[0] != event->prev_xy[0] || event->xy[1] != event->prev_xy[1]))
+   {
+     ui_blocks_set_tooltips(region, true);
+   }
+
+   /* Always do this, to reliably update view and UI-list item highlighting, even if
+    * the mouse hovers a button nested in the item (it's an overlapping layout). */
+   ui_handle_viewlist_items_hover(event, region);
+   if (retval == WM_UI_HANDLER_CONTINUE) {
+     retval = ui_handle_view_item_event(C, event, but, region);
+   }
++
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  /* Padding/captions own pointer input too. Compute before delayed callbacks:
 +   * Undo can replace Main and invalidate the original region/context. */
@@ -7720,11 +8009,76 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 +    retval = WM_UI_HANDLER_BREAK;
 +  }
 +#endif
-+
+
    /* delayed apply callbacks */
    ui_apply_but_funcs_after(C);
 
-@@ -12282,7 +12321,13 @@
+   return retval;
+ }
+
+ static void ui_region_handler_remove(bContext *C, void * /*userdata*/)
+ {
+   ARegion *region = CTX_wm_region(C);
+   if (region == nullptr) {
+     return;
+   }
+
+   UI_blocklist_free(C, region);
+   bScreen *screen = CTX_wm_screen(C);
+@@ -12158,32 +12215,39 @@
+       /* Skip the icon on the left of it. */
+       safety += 16.0f * UI_SCALE_FAC;
+     }
+     right += safety;
+   }
+
+   return (event->mval[0] < int(left) || event->mval[0] > int(right));
+ }
+
+ /* handle buttons at the window level, modal, for example while
+  * number sliding, text editing, or when a menu block is open */
+ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void * /*userdata*/)
+ {
+   ARegion *region_popup = CTX_wm_region_popup(C);
+   ARegion *region = region_popup ? region_popup : CTX_wm_region(C);
+   int retval = WM_UI_HANDLER_CONTINUE;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!region_popup) {
++    const int shelf_guard = ui_ipad_shelf_input_guard(C, region, event);
++    if (shelf_guard != -1) return shelf_guard;
++  }
++#endif
+
+   uiBut *but = ui_region_find_active_but(region);
+
+   if (but) {
+     bScreen *screen = CTX_wm_screen(C);
+     uiBut *but_other;
+
+     /* handle activated button events */
+     uiHandleButtonData *data = but->active;
+
+     if ((data->state == BUTTON_STATE_MENU_OPEN) &&
+         /* Make sure this popup isn't dragging a button.
+          * can happen with popovers (see #67882). */
+         (ui_region_find_active_but(data->menu->region) == nullptr) &&
+         /* make sure mouse isn't inside another menu (see #43247) */
+         (ui_screen_region_find_mouse_over(screen, event) == nullptr) &&
+@@ -12269,33 +12333,39 @@
+   ARegion *region_popup = CTX_wm_region_popup(C);
+   CTX_wm_region_popup_set(C, menu->region);
+
+   if (event->type == EVT_DROP || event->val == KM_DBL_CLICK) {
+     /* EVT_DROP:
+      *   If we're handling drop event we'll want it to be handled by popup callee as well,
+      *   so it'll be possible to perform such operations as opening .blend files by dropping
+      *   them into blender, even if there's opened popup like splash screen (sergey).
+      * KM_DBL_CLICK:
+      *   Continue in case of double click so wm_handlers_do calls handler again with KM_PRESS
+      *   event. This is needed to ensure correct button handling for fast clicking (#47532).
+      */
+
      retval = WM_UI_HANDLER_CONTINUE;
    }
 
@@ -7739,6 +8093,19 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
    /* free if done, does not free handle itself */
    if (menu->menuretval) {
+     wmWindow *win = CTX_wm_window(C);
+     /* copy values, we have to free first (closes region) */
+     const uiPopupBlockHandle temp = *menu;
+     uiBlock *block = static_cast<uiBlock *>(menu->region->runtime->uiblocks.first);
+
+     /* set last pie event to allow chained pie spawning */
+     if (block->flag & UI_BLOCK_PIE_MENU) {
+       win->pie_event_type_last = block->pie_data.event_type;
+       reset_pie = true;
+     }
+
+     ui_popup_block_free(C, menu);
+     UI_popup_handlers_remove(&win->modalhandlers, menu);
 diff --git a/source/blender/editors/interface/interface.cc b/source/blender/editors/interface/interface.cc
 --- a/source/blender/editors/interface/interface.cc
 +++ b/source/blender/editors/interface/interface.cc
@@ -7751,7 +8118,7 @@ diff --git a/source/blender/editors/interface/interface.cc b/source/blender/edit
      ui_draw_menu_back(&style, block, &rect);
    }
    else if (block->panel) {
-@@ -3743,6 +3743,24 @@
+@@ -3743,6 +3743,42 @@
 
    MEM_delete(block);
  }
@@ -7770,6 +8137,24 @@ diff --git a/source/blender/editors/interface/interface.cc b/source/blender/edit
 +    }
 +    BLI_remlink(&region->runtime->uiblocks, item);
 +    UI_block_free(C, item);
++  }
++}
++bool UI_block_buttons_fit_rect(const uiBlock *block, const rcti &bounds)
++{
++  for (const std::unique_ptr<uiBut> &but : block->buttons) {
++    if (but->rect.xmin < bounds.xmin || but->rect.ymin < bounds.ymin ||
++        but->rect.xmax > bounds.xmax + 1 || but->rect.ymax > bounds.ymax + 1) {
++      return false;
++    }
++  }
++  return true;
++}
++
++void UI_block_discard_named_rebuild(const bContext *C, ARegion *region, const char *name)
++{
++  if (uiBlock *block = region->runtime->block_name_map.lookup_default(name, nullptr)) {
++    /* UI_block_free cancels only this block's active/semi-modal buttons. */
++    UI_block_discard_rebuild(C, region, block);
 +  }
 +}
 +#endif
@@ -8756,7 +9141,7 @@ diff --git a/source/blender/editors/space_view3d/view3d_navigate.cc b/source/ble
 diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel/BKE_screen.hh
 --- a/source/blender/blenkernel/BKE_screen.hh
 +++ b/source/blender/blenkernel/BKE_screen.hh
-@@ -456,6 +456,13 @@
+@@ -456,6 +456,19 @@
  namespace blender::bke {
 
  struct ARegionRuntime {
@@ -8766,6 +9151,12 @@ diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel
 +  /** Unobstructed tablet canvas bounds, relative to the native WINDOW region. */
 +  bool ipad_canvas = false;
 +  bool ipad_editing_shelf_visible = false;
++  /* Last presented bounds shield queued input until the next actual draw. */
++  bool ipad_editing_shelf_presented = false;
++  bool ipad_editing_shelf_expanded = false;
++  float ipad_editing_shelf_scale = 0.0f;
++  rcti ipad_editing_shelf_presented_rect = {};
++  rcti ipad_editing_shelf_window_rect = {};
 +  rcti ipad_canvas_rect = {};
    /** Callbacks for this region type. */
    struct ARegionType *type;
@@ -9564,7 +9955,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,55 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -9596,6 +9987,8 @@ new file mode 100644
 +/* Native WINDOW UI, resolved from the originating viewport on every draw/event. */
 +bool ED_ipad_editing_shelf_rect(bContext *C, const ARegion *region, rcti &rect);
 +bool ED_ipad_editing_shelf_hit(bContext *C, const int xy[2]);
++bool ED_ipad_editing_shelf_stale(bContext *C, ARegion *region);
++void ED_ipad_editing_shelf_invalidate(bContext *C, ARegion *region);
 +void ED_ipad_editing_shelf_draw(bContext *C, ARegion *region);
 +void ED_ipad_editing_canvas_parts(bContext *C, ARegion *region, std::vector<rcti> &rects);
 +void ED_ipad_panels_resize_regions(bContext *C, wmWindow *win, std::vector<rcti> &regions);
@@ -10005,7 +10398,7 @@ diff --git a/source/blender/editors/screen/ipad_workspace_panels.hh b/source/ble
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/ipad_workspace_panels.hh
-@@ -0,0 +1,986 @@
+@@ -0,0 +1,988 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + * Runtime-only iPad workspace geometry. No dependency on Blender DNA or editor types. */
 +#pragma once
@@ -10940,19 +11333,21 @@ new file mode 100644
 +
 +/* Editor-local editing shelf. Coordinates share the exposed canvas with the
 + * native panel compositor; no saved screen vertices or editor sizes change. */
-+inline Rect editing_shelf(const Rect &canvas, const Rect &navigation, const float scale)
++inline Rect editing_shelf(const Rect &canvas, const Rect &navigation, const float scale,
++                          const bool expanded = true)
 +{
 +  const int margin = std::max(1, int(12 * scale));
 +  const int padding = std::max(1, int(8 * scale));
-+  const int width = std::min(int(736 * scale), canvas.width() - 2 * margin);
++  const int width = std::min(int((expanded ? 736 : 336) * scale), canvas.width() - 2 * margin);
 +  if (width < int(208 * scale)) {
 +    return {};
 +  }
 +  const int inner_width = width - 2 * padding;
-+  /* 44-unit buttons, two caption lines, padding and native layout spacing.
-+   * Narrow layouts wrap precision controls without shrinking touch targets. */
-+  const int height = int((inner_width >= 560 * scale || inner_width < 308 * scale ?
-+                         152 : 200) * scale);
++  /* Python uses the same thresholds. Compact wraps history together; the
++   * optional full shelf includes an explicit Collapse cell without shrinking. */
++  const int height = int((expanded ? (inner_width >= 560 * scale ? 152 :
++                                      inner_width < 308 * scale ? 196 : 244) :
++                                    (inner_width >= 264 * scale ? 120 : 164)) * scale);
 +  if (canvas.height() < height + 2 * margin + int(80 * scale)) {
 +    return {};
 +  }
@@ -11149,7 +11544,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2363 @@
+@@ -0,0 +1,2413 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -11169,6 +11564,7 @@ new file mode 100644
 +#include "DNA_userdef_types.h"
 +#include "DNA_view3d_types.h"
 +#include "DNA_workspace_types.h"
++#include "DNA_windowmanager_types.h"
 +#include "BLI_listbase.h"
 +#include "BLI_rect.h"
 +#include "BLI_string.h"
@@ -12726,6 +13122,23 @@ new file mode 100644
 +}
 +
 +
++static bool editing_shelf_expanded(bContext *C)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm) return false;
++  PointerRNA pointer = RNA_id_pointer_create(&wm->id);
++  PropertyRNA *property = RNA_struct_find_property(&pointer, "ipad_editing_shelf_expanded");
++  /* Registration can be absent or replaced. Never retain this dynamic RNA. */
++  return property && RNA_property_type(property) == PROP_BOOLEAN &&
++         RNA_property_array_length(&pointer, property) == 0 &&
++         RNA_property_boolean_get(&pointer, property);
++}
++
++static bool editing_shelf_rect_equal(const rcti &a, const rcti &b)
++{
++  return a.xmin == b.xmin && a.xmax == b.xmax && a.ymin == b.ymin && a.ymax == b.ymax;
++}
++
 +bool ED_ipad_editing_shelf_rect(bContext *C, const ARegion *region, rcti &rect)
 +{
 +  rect = {};
@@ -12747,7 +13160,8 @@ new file mode 100644
 +  BLI_rcti_translate(&navigation, -region->winrct.xmin, -region->winrct.ymin);
 +  const Rect shelf = policy::editing_shelf(
 +      {canvas.xmin, canvas.ymin, canvas.xmax + 1, canvas.ymax + 1},
-+      {navigation.xmin, navigation.ymin, navigation.xmax + 1, navigation.ymax + 1}, UI_SCALE_FAC);
++      {navigation.xmin, navigation.ymin, navigation.xmax + 1, navigation.ymax + 1},
++      UI_SCALE_FAC, editing_shelf_expanded(C));
 +  if (shelf.empty()) {
 +    return false;
 +  }
@@ -12757,25 +13171,34 @@ new file mode 100644
 +
 +bool ED_ipad_editing_shelf_hit(bContext *C, const int xy[2])
 +{
-+  rcti rect;
-+  ARegion *region = CTX_wm_region(C);
-+  if (!region || !region->runtime->ipad_editing_shelf_visible ||
-+      !ED_ipad_editing_shelf_rect(C, region, rect)) {
-+    return false;
-+  }
-+  BLI_rcti_translate(&rect, region->winrct.xmin, region->winrct.ymin);
-+  return BLI_rcti_isect_pt_v(&rect, xy);
++  const ARegion *region = CTX_wm_region(C);
++  return region && region->runtime->ipad_editing_shelf_presented &&
++         BLI_rcti_isect_pt_v(&region->runtime->ipad_editing_shelf_presented_rect, xy);
 +}
 +
-+void ED_ipad_editing_canvas_parts(bContext *C, ARegion *region, std::vector<rcti> &rects)
++bool ED_ipad_editing_shelf_stale(bContext *C, ARegion *region)
++{
++  if (!region || !region->runtime->ipad_editing_shelf_presented) return false;
++  rcti desired;
++  if (!region->runtime->ipad_editing_shelf_visible ||
++      !ED_ipad_editing_shelf_rect(C, region, desired)) return true;
++  BLI_rcti_translate(&desired, region->winrct.xmin, region->winrct.ymin);
++  return region->runtime->ipad_editing_shelf_expanded != editing_shelf_expanded(C) ||
++         region->runtime->ipad_editing_shelf_scale != UI_SCALE_FAC ||
++         !editing_shelf_rect_equal(region->runtime->ipad_editing_shelf_window_rect, region->winrct) ||
++         !editing_shelf_rect_equal(region->runtime->ipad_editing_shelf_presented_rect, desired);
++}
++
++void ED_ipad_editing_canvas_parts(bContext * /*C*/, ARegion *region, std::vector<rcti> &rects)
 +{
 +  const rcti &r = region->runtime->ipad_canvas_rect;
-+  rcti shelf;
-+  const bool has_shelf = region->runtime->ipad_editing_shelf_visible &&
-+                         ED_ipad_editing_shelf_rect(C, region, shelf);
++  rcti shelf = region->runtime->ipad_editing_shelf_presented_rect, clipped;
++  BLI_rcti_translate(&shelf, -region->winrct.xmin, -region->winrct.ymin);
++  const bool has_shelf = region->runtime->ipad_editing_shelf_presented &&
++                        BLI_rcti_isect(&r, &shelf, &clipped);
 +  for (const Rect &part : policy::editing_canvas_parts(
 +           {r.xmin, r.ymin, r.xmax + 1, r.ymax + 1},
-+           has_shelf ? Rect{shelf.xmin, shelf.ymin, shelf.xmax + 1, shelf.ymax + 1} : Rect{}))
++           has_shelf ? Rect{clipped.xmin, clipped.ymin, clipped.xmax + 1, clipped.ymax + 1} : Rect{}))
 +  {
 +    rcti part_rect = to_rect(part);
 +    BLI_rcti_translate(&part_rect, region->winrct.xmin, region->winrct.ymin);
@@ -12800,10 +13223,20 @@ new file mode 100644
 +  }
 +}
 +
++void ED_ipad_editing_shelf_invalidate(bContext *C, ARegion *region)
++{
++  UI_block_discard_named_rebuild(C, region, "VIEW3D_HT_ipad_editing_shelf");
++  editing_shelf_visible_set(C, region, false);
++  /* Keep the last visible footprint protected until an actual redraw. */
++  ED_region_tag_redraw(region);
++}
++
 +void ED_ipad_editing_shelf_draw(bContext *C, ARegion *region)
 +{
 +  rcti rect;
 +  if (!ED_ipad_editing_shelf_rect(C, region, rect)) {
++    UI_block_discard_named_rebuild(C, region, "VIEW3D_HT_ipad_editing_shelf");
++    region->runtime->ipad_editing_shelf_presented = false;
 +    editing_shelf_visible_set(C, region, false);
 +    return;
 +  }
@@ -12826,8 +13259,13 @@ new file mode 100644
 +  const blender::int2 end = blender::ui::block_layout_resolve(block);
 +  /* Explicit bounds never clip native buttons. Reject an overflowing rebuild
 +   * and its predecessor rather than leave invisible or unprotected hit targets. */
-+  if (end.y < rect.ymin + pad) {
++  const rcti content{rect.xmin + pad, rect.xmax - pad,
++                     rect.ymin + pad, rect.ymax - pad};
++  /* Vertical layout resolve returns its starting x, not the rightmost button.
++   * Inspect resolved native button rectangles before accepting the footprint. */
++  if (end.y < rect.ymin + pad || !UI_block_buttons_fit_rect(block, content)) {
 +    UI_block_discard_rebuild(C, region, block);
++    region->runtime->ipad_editing_shelf_presented = false;
 +    editing_shelf_visible_set(C, region, false);
 +    return;
 +  }
@@ -12842,6 +13280,13 @@ new file mode 100644
 +  UI_draw_roundbox_4fv(&background, true, 12 * UI_SCALE_FAC, color);
 +  GPU_blend(GPU_BLEND_NONE);
 +  UI_block_draw(C, block);
++  region->runtime->ipad_editing_shelf_presented_rect = rect;
++  BLI_rcti_translate(&region->runtime->ipad_editing_shelf_presented_rect,
++                    region->winrct.xmin, region->winrct.ymin);
++  region->runtime->ipad_editing_shelf_window_rect = region->winrct;
++  region->runtime->ipad_editing_shelf_expanded = editing_shelf_expanded(C);
++  region->runtime->ipad_editing_shelf_scale = UI_SCALE_FAC;
++  region->runtime->ipad_editing_shelf_presented = true;
 +  editing_shelf_visible_set(C, region, true);
 +}
 +
@@ -18522,13 +18967,25 @@ diff --git a/source/blender/editors/space_view3d/space_view3d.cc b/source/blende
 diff --git a/source/blender/editors/include/UI_interface_c.hh b/source/blender/editors/include/UI_interface_c.hh
 --- a/source/blender/editors/include/UI_interface_c.hh
 +++ b/source/blender/editors/include/UI_interface_c.hh
-@@ -945,6 +945,10 @@
+@@ -815,7 +815,8 @@
+ /* Pie menus */
+ struct uiPieMenu;
+
+-wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event);
++wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event,
++                                    bool ipad_touch_targets = false);
+
+ uiPieMenu *UI_pie_menu_begin(bContext *C, const char *title, int icon, const wmEvent *event)
+     ATTR_NONNULL();
+@@ -945,6 +946,12 @@
   * Can be called with C==NULL.
   */
  void UI_block_free(const bContext *C, uiBlock *block);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +/* Discard a failed region-block rebuild and its predecessor without leaving hits. */
 +void UI_block_discard_rebuild(const bContext *C, ARegion *region, uiBlock *block);
++void UI_block_discard_named_rebuild(const bContext *C, ARegion *region, const char *name);
++bool UI_block_buttons_fit_rect(const uiBlock *block, const rcti &bounds);
 +#endif
 
  void UI_block_listen(const uiBlock *block, const wmRegionListenerParams *listener_params);

@@ -53,7 +53,9 @@ int main() {
     def test_rejected_rebuild_removes_only_its_new_and_previous_blocks(self):
         code = changed_source('source/blender/editors/interface/interface.cc')
         start = code.index('void UI_block_discard_rebuild(')
-        helper = code[start:code.index('\n#endif', start)]
+        helper = code[start:code.index('\nbool UI_block_buttons_fit_rect(', start)]
+        named = code.index('void UI_block_discard_named_rebuild(', start)
+        helper += code[named:code.index('\n#endif', named)]
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r'''
 #include <cassert>
 #include <map>

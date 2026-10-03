@@ -102,6 +102,7 @@ with bpy.context.temp_override(area=area, region=region):
             records = []
             module.VIEW3D_PT_ipad_transform.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
             assert any(r[0] == 'prop' and r[1] == 'use_accurate' and r[2]['text'] == 'Fine Drag' for r in records)
+            bpy.context.window_manager.ipad_editing_shelf_expanded = True
             shelf = []
             module.draw_editing_shelf(Layout(shelf), bpy.context, width_units=28)
             assert any(r[0] == 'label' and ' · Fine' in r[2]['text'] for r in shelf), shelf
