@@ -1,0 +1,54 @@
+{
+  "host": "5.1.2",
+  "case": "mesh",
+  "layout": "native grid preview",
+  "buttons": [
+    {
+      "operator": "wm.call_menu_pie",
+      "text": "Select \u00b7 Tools",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_selection_tool",
+      "text": "Box",
+      "active": true
+    },
+    {
+      "operator": "view3d.ipad_selection_tool",
+      "text": "Lasso",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_selection_tool",
+      "text": "Replace",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_selection_tool",
+      "text": "Add",
+      "active": true
+    },
+    {
+      "operator": "view3d.ipad_selection_tool",
+      "text": "Remove",
+      "active": false
+    },
+    {
+      "operator": "mesh.select_mode",
+      "text": "Vertex",
+      "active": false
+    },
+    {
+      "operator": "mesh.select_mode",
+      "text": "Edge",
+      "active": false
+    },
+    {
+      "operator": "mesh.select_mode",
+      "text": "Face",
+      "active": true
+    }
+  ],
+  "native_tool": "builtin.select_box",
+  "scope": "Real host native UILayout, icons, active states and exact menu contents in a grid. Target native ring anchoring, persistent refresh/input and iPad acceptance remain unverified."
+}

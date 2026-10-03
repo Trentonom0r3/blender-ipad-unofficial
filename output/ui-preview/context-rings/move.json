@@ -1,0 +1,53 @@
+{
+  "host": "5.1.2",
+  "case": "move",
+  "layout": "native grid preview",
+  "buttons": [
+    {
+      "operator": "wm.call_menu_pie",
+      "text": "Move \u00b7 Tools",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_transform_axis",
+      "text": "Free",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_transform_axis",
+      "text": "X",
+      "active": true
+    },
+    {
+      "operator": "view3d.ipad_transform_axis",
+      "text": "Y",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_transform_axis",
+      "text": "Z",
+      "active": false
+    },
+    {
+      "operator": "view3d.ipad_transform_option",
+      "text": "Fine",
+      "active": true
+    },
+    {
+      "operator": "view3d.ipad_transform_option",
+      "text": "Snap",
+      "active": true
+    },
+    {
+      "operator": "view3d.ipad_transform_numbers",
+      "text": "Numbers",
+      "active": false
+    },
+    {
+      "popover": "VIEW3D_PT_ipad_transform",
+      "text": "More"
+    }
+  ],
+  "native_tool": "builtin.move",
+  "scope": "Real host native UILayout, icons, active states and exact menu contents in a grid. Target native ring anchoring, persistent refresh/input and iPad acceptance remain unverified."
+}

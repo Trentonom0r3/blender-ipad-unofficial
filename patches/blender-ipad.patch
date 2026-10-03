@@ -3318,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,922 @@
+@@ -0,0 +1,1050 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3341,6 +3341,25 @@ new file mode 100644
 +)
 +
 +
++def ipad_palette_target(context, x, y):
++    views = [area for area in context.window.screen.areas if area.type == 'VIEW_3D']
++    if not views:
++        return None, None
++    def contains(item):
++        return item.x <= x < item.x + item.width and item.y <= y < item.y + item.height
++    # The event context resolves native floating editor/layer ownership. Prefer
++    # it over an overlapping background viewport before searching other views.
++    area = context.area if context.area in views and contains(context.area) else next(
++        (area for area in views if contains(area)), None)
++    if area is None:
++        area = context.area if context.area in views else max(views, key=lambda a: a.width * a.height)
++    windows = [r for r in area.regions if r.type == 'WINDOW' and r.width > 0 and r.height > 0]
++    region = next((r for r in windows if contains(r)), None)
++    if region is None:
++        region = context.region if context.area == area and context.region in windows else next(iter(windows), None)
++    return area, region
++
++
 +class WM_OT_ipad_tool_palette(Operator):
 +    bl_idname = "wm.ipad_tool_palette"
 +    bl_label = "Pencil Tools"
@@ -3352,13 +3371,7 @@ new file mode 100644
 +            area.type == 'VIEW_3D' for area in context.window.screen.areas)
 +
 +    def invoke(self, context, event):
-+        views = [area for area in context.window.screen.areas if area.type == 'VIEW_3D']
-+        area = next((area for area in views
-+                     if area.x <= event.mouse_x < area.x + area.width
-+                     and area.y <= event.mouse_y < area.y + area.height), None)
-+        if area is None:
-+            area = context.area if context.area in views else max(views, key=lambda a: a.width * a.height)
-+        region = next((r for r in area.regions if r.type == 'WINDOW'), None)
++        area, region = ipad_palette_target(context, event.mouse_x, event.mouse_y)
 +        if region is None:
 +            return {'CANCELLED'}
 +        with context.temp_override(area=area, region=region):
@@ -3374,8 +3387,8 @@ new file mode 100644
 +        return context.area is not None and context.area.type == 'VIEW_3D'
 +
 +    def draw(self, context):
-+        # Ten ordinary buttons. The iPad popup positions nine around a ring and
-+        # Settings at its center; desktop pie directions remain unchanged.
++        # Nine native tool buttons retain their familiar positions and empty center.
++        # The active editing tool opens its contextual controls when tapped again.
 +        layout = self.layout.column()
 +        layout.operator_context = 'INVOKE_REGION_WIN'
 +        cls = ToolSelectPanelHelper._tool_class_from_space_type('VIEW_3D')
@@ -3393,12 +3406,17 @@ new file mode 100644
 +                    icon_val = ToolSelectPanelHelper._icon_value_from_icon_handle(tool.icon)
 +                except Exception:
 +                    icon_val = 0
-+            if icon_val:
-+                slot.operator('wm.tool_set_by_id', text=label, icon_value=icon_val,
-+                              depress=active_id == name).name = name
++            selected = active_id == name or (name == 'builtin.select_box'
++                and active_id in {item[1] for item in IPAD_SELECTION_TOOLS})
++            ring = ipad_context_ring_name(context) if selected else None
++            icon_args = {'icon_value': icon_val} if icon_val else {'icon': fallback_icon}
++            if ring:
++                # Ellipsis announces that tapping the highlighted tool opens controls.
++                slot.operator('wm.call_menu_pie', text=label + "…", depress=True,
++                              **icon_args).name = ring
 +            else:
-+                slot.operator('wm.tool_set_by_id', text=label, icon=fallback_icon,
-+                              depress=active_id == name).name = name
++                slot.operator('wm.tool_set_by_id', text=label, depress=selected,
++                              **icon_args).name = name
 +
 +
 +# Selection operations stay native and retain their mode-specific semantics.
@@ -3872,6 +3890,113 @@ new file mode 100644
 +        return {'FINISHED'}
 +
 +
++def ipad_context_ring_name(context):
++    if not ipad_transform_context(context):
++        return None
++    active = ToolSelectPanelHelper.tool_active_from_context(context)
++    if active and active.idname in {item[1] for item in IPAD_SELECTION_TOOLS}:
++        return 'VIEW3D_MT_ipad_selection_ring'
++    state = ipad_transform_state(context)
++    return 'VIEW3D_MT_ipad_transform_ring' if state and state[2] else None
++
++
++class VIEW3D_OT_ipad_transform_option(Operator):
++    bl_idname = "view3d.ipad_transform_option"
++    bl_label = "Transform Drag Option"
++    bl_description = "Change a native drag setting without leaving the Pencil controls"
++
++    option: bpy.props.EnumProperty(items=(
++        ('FINE', "Fine", "Use native transform precision"),
++        ('SNAP', "Snap", "Use the scene's native snapping settings"),
++    ))
++    enabled: bpy.props.BoolProperty()
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_context_ring_name(context) == 'VIEW3D_MT_ipad_transform_ring'
++
++    def execute(self, context):
++        state = ipad_transform_state(context)
++        if not ipad_transform_context(context) or not state or not state[2]:
++            return {'CANCELLED'}
++        if self.option == 'FINE':
++            state[0].operator_properties(state[2]).use_accurate = self.enabled
++        else:
++            context.tool_settings.use_snap = self.enabled
++        context.area.tag_redraw()
++        return {'FINISHED'}
++
++
++def ipad_ring_tools_button(layout, text="Tools"):
++    layout.operator('wm.call_menu_pie', text=text, icon='BACK').name = 'VIEW3D_MT_ipad_tools'
++
++
++class VIEW3D_MT_ipad_selection_ring(Menu):
++    bl_label = "Pencil Selection"
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_context_ring_name(context) == cls.__name__
++
++    def draw(self, context):
++        layout = self.layout.column()
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        ipad_ring_tools_button(layout, "Select · Tools")
++        tool, mode, label = ipad_selection_state(context)
++        for text, name, _, icon in IPAD_SELECTION_TOOLS:
++            try:
++                icon_value = ToolSelectPanelHelper._icon_value_from_icon_handle(icon)
++            except Exception:
++                icon_value = 0
++            choice = layout.operator('view3d.ipad_selection_tool', text=text,
++                                     icon_value=icon_value, depress=tool == name)
++            choice.tool = name
++            choice.mode = mode if mode in {'SET', 'ADD', 'SUB'} else 'SET'
++        for text, action in IPAD_SELECTION_MODES:
++            choice = layout.operator('view3d.ipad_selection_tool', text=text,
++                                     depress=mode == action)
++            choice.tool, choice.mode = tool, action
++        if context.mode == 'EDIT_MESH':
++            for index, (text, value, icon) in enumerate((
++                    ("Vertex", 'VERT', 'VERTEXSEL'), ("Edge", 'EDGE', 'EDGESEL'),
++                    ("Face", 'FACE', 'FACESEL'))):
++                layout.operator('mesh.select_mode', text=text, icon=icon,
++                    depress=context.tool_settings.mesh_select_mode[index]).type = value
++        else:
++            for text, action in (("All", 'SELECT'), ("Clear", 'DESELECT'), ("Invert", 'INVERT')):
++                layout.operator(IPAD_SELECT_ALL[context.mode], text=text).action = action
++
++
++class VIEW3D_MT_ipad_transform_ring(Menu):
++    bl_label = "Pencil Transform"
++
++    @classmethod
++    def poll(cls, context):
++        return ipad_context_ring_name(context) == cls.__name__
++
++    def draw(self, context):
++        layout = self.layout.column()
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        active, operation, operator, slot = ipad_transform_state(context)
++        props = active.operator_properties(operator)
++        ipad_ring_tools_button(layout, operation.title() + " · Tools")
++        for value, text, axes in IPAD_TRANSFORM_AXES[:4]:
++            layout.operator('view3d.ipad_transform_axis', text=text,
++                depress=tuple(props.constraint_axis) == axes).axis = value
++        for text, option, enabled, icon in (
++                ("Fine", 'FINE', props.use_accurate, 'DRIVER_DISTANCE'),
++                ("Snap", 'SNAP', context.tool_settings.use_snap, 'SNAP_ON')):
++            choice = layout.operator('view3d.ipad_transform_option', text=text,
++                                     icon=icon, depress=enabled)
++            choice.option, choice.enabled = option, not enabled
++        numbers = layout.operator('view3d.ipad_transform_numbers', text="Numbers", icon='LINENUMBERS_ON')
++        numbers.operation, numbers.slot_index = operation, slot
++        axes = tuple(props.constraint_axis)
++        numbers.axis = next((axis for index, axis in enumerate('XYZ')
++                            if axes[index] and sum(axes) == 1), 'Z')
++        layout.popover(panel='VIEW3D_PT_ipad_transform', text="More", icon='PREFERENCES')
++
++
 +class VIEW3D_MT_ipad_tool_settings(Menu):
 +    bl_label = "Tool Settings"
 +
@@ -4219,6 +4344,9 @@ new file mode 100644
 +    WM_OT_ipad_tool_palette,
 +    VIEW3D_MT_ipad_tools,
 +    VIEW3D_MT_ipad_tool_settings,
++    VIEW3D_MT_ipad_selection_ring,
++    VIEW3D_MT_ipad_transform_ring,
++    VIEW3D_OT_ipad_transform_option,
 +    VIEW3D_OT_ipad_selection_tool,
 +    VIEW3D_PT_ipad_selection,
 +    VIEW3D_PT_ipad_editing_tools,
@@ -6196,7 +6324,55 @@ diff --git a/source/blender/windowmanager/wm_files.hh b/source/blender/windowman
 diff --git a/source/blender/windowmanager/intern/wm_operators.cc b/source/blender/windowmanager/intern/wm_operators.cc
 --- a/source/blender/windowmanager/intern/wm_operators.cc
 +++ b/source/blender/windowmanager/intern/wm_operators.cc
-@@ -4210,6 +4210,14 @@
+@@ -11,6 +11,7 @@
+
+ #include <algorithm>
+ #include <cctype>
++#include <climits>
+ #include <cerrno>
+ #include <cfloat>
+ #include <cstddef>
+@@ -2220,15 +2221,20 @@
+   char idname[BKE_ST_MAXNAME];
+   RNA_string_get(op->ptr, "name", idname);
+
+-  return UI_pie_menu_invoke(C, idname, event);
++  wmEvent anchored = *event;
++  const bool ipad_ring = STREQ(idname, "VIEW3D_MT_ipad_tools") ||
++      STREQ(idname, "VIEW3D_MT_ipad_selection_ring") ||
++      STREQ(idname, "VIEW3D_MT_ipad_transform_ring");
++  if (ipad_ring && RNA_boolean_get(op->ptr, "ipad_anchor_override")) {
++    anchored.xy[0] = RNA_int_get(op->ptr, "ipad_anchor_x");
++    anchored.xy[1] = RNA_int_get(op->ptr, "ipad_anchor_y");
++  }
++  return UI_pie_menu_invoke(C, idname, &anchored);
+ }
+
+ static wmOperatorStatus wm_call_pie_menu_exec(bContext *C, wmOperator *op)
+ {
+-  char idname[BKE_ST_MAXNAME];
+-  RNA_string_get(op->ptr, "name", idname);
+-
+-  return UI_pie_menu_invoke(C, idname, CTX_wm_window(C)->eventstate);
++  return wm_call_pie_menu_invoke(C, op, CTX_wm_window(C)->eventstate);
+ }
+
+ static void WM_OT_call_menu_pie(wmOperatorType *ot)
+@@ -2252,6 +2258,13 @@
+       WM_menutype_idname_visit_for_search,
+       /* Only a suggestion as menu items may be referenced from add-ons that have been disabled. */
+       (PROP_STRING_SEARCH_SORT | PROP_STRING_SEARCH_SUGGESTION));
++  prop = RNA_def_boolean(ot->srna, "ipad_anchor_override", false, "", "");
++  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
++  prop = RNA_def_int(ot->srna, "ipad_anchor_x", 0, INT_MIN, INT_MAX, "", "", INT_MIN, INT_MAX);
++  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
++  prop = RNA_def_int(ot->srna, "ipad_anchor_y", 0, INT_MIN, INT_MAX, "", "", INT_MIN, INT_MAX);
++  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
++
+ }
+
+ static wmOperatorStatus wm_call_panel_exec(bContext *C, wmOperator *op)
+@@ -4210,6 +4223,14 @@
    WM_operatortype_append(WM_OT_window_fullscreen_toggle);
    WM_operatortype_append(WM_OT_quit_blender);
    WM_operatortype_append(WM_OT_open_mainfile);
@@ -7147,19 +7323,29 @@ diff --git a/scripts/presets/keyconfig/keymap_data/blender_default.py b/scripts/
 diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blender/editors/interface/interface_intern.hh
 --- a/source/blender/editors/interface/interface_intern.hh
 +++ b/source/blender/editors/interface/interface_intern.hh
-@@ -165,6 +165,8 @@
+@@ -165,6 +165,11 @@
    UI_PIE_ANIMATION_FINISHED = (1 << 5),
    /** Pie gesture selection has been done, now wait for mouse motion to end. */
    UI_PIE_GESTURE_END_WAIT = (1 << 6),
 +  /** The iPad tool palette uses explicit taps, bounded hit testing and repeat-tap dismissal. */
 +  UI_PIE_IPAD_TOOLS = (1 << 7),
++  /** Contextual controls have an owned refresh payload and setting-only persistence. */
++  UI_PIE_IPAD_CONTEXT = (1 << 8),
++  UI_PIE_IPAD_SELECTION = (1 << 9),
  };
 
  #define PIE_CLICK_THRESHOLD_SQ 50.0f
+@@ -1746,3 +1751,6 @@
+                            PropertyRNA *dst_prop);
+
+ }  // namespace blender::interface::internal
++
++/* Validate owned iPad popup context before native button dispatch. */
++bool ui_ipad_ring_context_valid(bContext *C, const uiBlock *block);
 diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.cc b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 --- a/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 +++ b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
-@@ -8,15 +8,18 @@
+@@ -8,21 +8,30 @@
   * Pie Menu Region
   */
 
@@ -7167,10 +7353,15 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  #include <cstdarg>
  #include <cstdlib>
  #include <cstring>
++#include <string>
++#include <vector>
 
  #include "MEM_guardedalloc.h"
 
 +#include "DNA_screen_types.h"
++#include "DNA_object_types.h"
++#include "DNA_scene_types.h"
++#include "DNA_windowmanager_types.h"
  #include "DNA_userdef_types.h"
 
  #include "BLI_listbase.h"
@@ -7178,7 +7369,21 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  #include "BLI_string_utf8.h"
  #include "BLI_time.h"
  #include "BLI_utildefines.h"
-@@ -36,6 +39,7 @@
+
+ #include "BKE_context.hh"
+ #include "BKE_screen.hh"
++#include "BKE_report.hh"
+
+ #include "WM_api.hh"
+ #include "WM_types.hh"
+@@ -32,10 +41,14 @@
+ #include "RNA_prototypes.hh"
+
+ #include "UI_interface_layout.hh"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "ED_ipad_panels.hh"
++#endif
+
  #include "BLT_translation.hh"
 
  #include "interface_intern.hh"
@@ -7186,7 +7391,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  #include "interface_regions_intern.hh"
 
  using blender::StringRef;
-@@ -51,7 +55,7 @@
+@@ -51,7 +64,7 @@
    int mx, my;
  };
 
@@ -7195,63 +7400,238 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  {
    uiBlock *block;
    uiPieMenu *pie = static_cast<uiPieMenu *>(arg_pie);
-@@ -67,6 +71,42 @@
+@@ -67,6 +80,7 @@
    }
 
    blender::ui::block_layout_resolve(block);
 +
-+  if (block->pie_data.flags & UI_PIE_IPAD_TOOLS) {
-+    /* This menu supplies nine ordinary tool buttons plus central Settings. It
-+     * deliberately does not use or extend the desktop eight-direction pie enum. */
-+    block->flag &= ~UI_BLOCK_PIE_MENU;
-+    UI_block_flag_enable(block, UI_BLOCK_LOOP);
-+    UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-+    const blender::int2 window_size = WM_window_native_pixel_size(CTX_wm_window(C));
-+    blender::ui::ipad::Rect viewport = {0, float(window_size[0]), 0, float(window_size[1])};
-+    if (ScrArea *area = CTX_wm_area(C)) {
-+      if (ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW)) {
-+        viewport = {float(region->winrct.xmin), float(region->winrct.xmax),
-+                    float(region->winrct.ymin), float(region->winrct.ymax)};
-+      }
-+    }
-+    float x = float(pie->mx), y = float(pie->my);
-+    if (x < viewport.xmin || x > viewport.xmax || y < viewport.ymin || y > viewport.ymax) {
-+      x = (viewport.xmin + viewport.xmax) / 2;
-+      y = (viewport.ymin + viewport.ymax) / 2;
-+    }
-+    const auto geometry = blender::ui::ipad::tool_ring_layout(UI_UNIT_X, viewport, x, y);
-+    BLI_assert(block->buttons.size() == geometry.buttons.size());
-+    for (int i = 0; i < int(block->buttons.size()) && i < int(geometry.buttons.size()); ++i) {
-+      uiBut *but = block->buttons[i].get();
-+      const auto &rect = geometry.buttons[i];
-+      BLI_rctf_init(&but->rect, rect.xmin, rect.xmax, rect.ymin, rect.ymax);
-+      but->pie_dir = UI_RADIAL_NONE;
-+      but->emboss = blender::ui::EmbossType::Emboss;
-+      but->alignnr = 0;
-+      but->drawflag &= ~(UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_DOWN | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT);
-+    }
-+    /* Already in window coordinates; ordinary popup code clips/translates the
-+     * region and owns focus, dismissal, tool execution and lifetime. */
-+    UI_block_bounds_set_normal(block, int(0.2f * UI_UNIT_X));
-+    return block;
-+  }
 
    UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NUMSELECT);
    UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-@@ -206,7 +246,12 @@
+@@ -190,6 +204,213 @@
+   return pie->layout;
+ }
+
++
++namespace ipad_ring = blender::ui::ipad;
++
++struct uiIPadRingData {
++  std::string menu;
++  int anchor[2];
++  ipad_ring::RingContextIdentity context;
++  ipad_ring::Rect viewport, window_rect;
++  float unit;
++};
++
++static ipad_ring::Rect ui_ipad_ring_viewport(bContext *C);
++static ipad_ring::Rect ui_ipad_ring_window_rect(bContext *C)
++{
++  const rcti &r = CTX_wm_region(C)->winrct;
++  return {float(r.xmin), float(r.xmax + 1), float(r.ymin), float(r.ymax + 1)};
++}
++
++static ipad_ring::RingContextIdentity ui_ipad_ring_identity(bContext *C)
++{
++  wmWindow *window = CTX_wm_window(C);
++  bScreen *screen = WM_window_get_active_screen(window);
++  Object *object = CTX_data_active_object(C);
++  ID *data = object ? static_cast<ID *>(object->data) : nullptr;
++  Scene *scene = CTX_data_scene(C);
++  return {uintptr_t(CTX_data_main(C)), uintptr_t(window), uintptr_t(screen),
++          uintptr_t(CTX_wm_area(C)), uintptr_t(CTX_wm_region(C)), screen->id.session_uid,
++          scene ? scene->id.session_uid : 0, object ? object->id.session_uid : 0,
++          data ? data->session_uid : 0, object ? int(object->mode) : 0};
++}
++
++static bool ui_ipad_ring_data_valid(bContext *C, const uiIPadRingData &data)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  wmWindow *window = CTX_wm_window(C);
++  if (!wm || !window || uintptr_t(window) != data.context.window ||
++      BLI_findindex(&wm->windows, window) == -1 ||
++      uintptr_t(CTX_data_main(C)) != data.context.main)
++  {
++    return false;
++  }
++  bScreen *screen = WM_window_get_active_screen(window);
++  ScrArea *area = CTX_wm_area(C);
++  ARegion *region = CTX_wm_region(C);
++  if (!screen || uintptr_t(screen) != data.context.screen || !area ||
++      uintptr_t(area) != data.context.area || BLI_findindex(&screen->areabase, area) == -1 ||
++      !region || uintptr_t(region) != data.context.region ||
++      BLI_findindex(&area->regionbase, region) == -1 || region->regiontype != RGN_TYPE_WINDOW ||
++      !region->runtime->visible || area->spacetype != SPACE_VIEW3D)
++  {
++    return false;
++  }
++  MenuType *mt = WM_menutype_find(data.menu.c_str(), false);
++  /* Native popup refresh preserves the previous top edge. If view geometry or
++   * DPI changed, close before that stabilization can undo our bounded layout. */
++  return ipad_ring::ring_context_matches(data.context, ui_ipad_ring_identity(C)) &&
++         data.unit == UI_UNIT_X &&
++         ipad_ring::ring_viewport_matches(data.window_rect, ui_ipad_ring_window_rect(C)) &&
++         ipad_ring::ring_viewport_matches(data.viewport, ui_ipad_ring_viewport(C)) &&
++         mt && WM_menutype_poll(C, mt);
++}
++
++bool ui_ipad_ring_context_valid(bContext *C, const uiBlock *block)
++{
++  if (!(block->pie_data.flags & UI_PIE_IPAD_TOOLS)) {
++    return true;
++  }
++  const uiPopupBlockHandle *handle = block->handle;
++  if (!handle || !handle->can_refresh) {
++    return false;
++  }
++  const auto *data = static_cast<const uiIPadRingData *>(handle->popup_create_vars.arg);
++  return data && ui_ipad_ring_data_valid(C, *data);
++}
++
++static ipad_ring::Rect ui_ipad_ring_viewport(bContext *C)
++{
++  ARegion *region = CTX_wm_region(C);
++  rcti rect = region->winrct;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ScrArea *area = CTX_wm_area(C);
++  if (region->runtime->ipad_canvas) {
++    std::vector<rcti> parts;
++    ED_ipad_editing_canvas_parts(C, region, parts);
++    if (!parts.empty()) {
++      rect = *std::max_element(parts.begin(), parts.end(), [](const rcti &a, const rcti &b) {
++        return BLI_rcti_size_x(&a) * BLI_rcti_size_y(&a) <
++               BLI_rcti_size_x(&b) * BLI_rcti_size_y(&b);
++      });
++    }
++    const rcti &nav = area->runtime.ipad_navigation_rect;
++    rcti overlap;
++    if (BLI_rcti_isect(&rect, &nav, &overlap)) {
++      /* The navigation stack occupies the right corner. Choose the larger
++       * exposed rectangle on its left or below it, never cover its controls. */
++      rcti left = rect, below = rect;
++      left.xmax = overlap.xmin - 1;
++      below.ymax = overlap.ymin - 1;
++      const int left_area = std::max(0, BLI_rcti_size_x(&left)) * BLI_rcti_size_y(&left);
++      const int below_area = BLI_rcti_size_x(&below) * std::max(0, BLI_rcti_size_y(&below));
++      rect = left_area >= below_area ? left : below;
++    }
++  }
++#endif
++  return {float(rect.xmin), float(rect.xmax + 1), float(rect.ymin), float(rect.ymax + 1)};
++}
++
++static uiBlock *ui_ipad_ring_create(bContext *C, uiPopupBlockHandle *handle, void *arg)
++{
++  auto &data = *static_cast<uiIPadRingData *>(arg);
++  uiBlock *block = UI_block_begin(C, handle->region, "iPadToolRing", blender::ui::EmbossType::Emboss);
++  UI_block_flag_enable(block, UI_BLOCK_LOOP);
++  UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
++  block->pie_data.flags |= UI_PIE_IPAD_TOOLS;
++  const auto kind = ipad_ring::ring_kind(data.menu.c_str());
++  if (kind != ipad_ring::RingKind::Tools) {
++    block->pie_data.flags |= UI_PIE_IPAD_CONTEXT;
++    if (kind == ipad_ring::RingKind::Selection) {
++      block->pie_data.flags |= UI_PIE_IPAD_SELECTION;
++    }
++  }
++  uiLayout &layout = blender::ui::block_layout(block, blender::ui::LayoutDirection::Vertical,
++      blender::ui::LayoutType::Menu, 0, 0, int(4.4f * UI_UNIT_X), 0, 0, UI_style_get_dpi());
++  if (ui_ipad_ring_data_valid(C, data)) {
++    UI_menutype_draw(C, WM_menutype_find(data.menu.c_str(), false), &layout);
++  }
++  blender::ui::block_layout_resolve(block);
++  const auto viewport = ui_ipad_ring_data_valid(C, data) ? ui_ipad_ring_viewport(C) :
++      ipad_ring::Rect{0, 1, 0, 1};
++  const auto geometry = ipad_ring::tool_ring_layout(UI_UNIT_X, viewport,
++      float(data.anchor[0]), float(data.anchor[1]), kind != ipad_ring::RingKind::Tools);
++  if (block->buttons.size() != geometry.buttons.size() || !geometry.fits) {
++    /* No unexpected or overflowing button can receive input in Release either.
++     * Return a valid block; ordinary popup finalization/teardown owns its free. */
++    handle->menuretval = UI_RETURN_CANCEL;
++    for (const std::unique_ptr<uiBut> &but : block->buttons) {
++      but->flag |= UI_HIDDEN | UI_BUT_DISABLED;
++    }
++    UI_block_bounds_set_normal(block, 0);
++    return block;
++  }
++  for (int i = 0; i < int(block->buttons.size()); ++i) {
++    uiBut *but = block->buttons[i].get();
++    const auto &rect = geometry.buttons[i];
++    BLI_rctf_init(&but->rect, rect.xmin, rect.xmax, rect.ymin, rect.ymax);
++    but->pie_dir = UI_RADIAL_NONE;
++    but->emboss = blender::ui::EmbossType::Emboss;
++    but->alignnr = 0;
++    but->drawflag &= ~(UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_DOWN | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT);
++    if (but->optype && STREQ(but->optype->idname, "WM_OT_call_menu_pie") && but->opptr) {
++      char target[BKE_ST_MAXNAME];
++      RNA_string_get(but->opptr, "name", target);
++      if (ipad_ring::ring_kind(target) != ipad_ring::RingKind::None) {
++        /* Deferred native callbacks own a copy of these values after popup free. */
++        RNA_boolean_set(but->opptr, "ipad_anchor_override", true);
++        RNA_int_set(but->opptr, "ipad_anchor_x", data.anchor[0]);
++        RNA_int_set(but->opptr, "ipad_anchor_y", data.anchor[1]);
++      }
++    }
++  }
++  UI_block_bounds_set_normal(block, 0);
++  return block;
++}
++
++static void ui_ipad_ring_free(void *arg)
++{
++  MEM_delete(static_cast<uiIPadRingData *>(arg));
++}
++
++static wmOperatorStatus ui_ipad_ring_invoke(bContext *C, const char *idname, const wmEvent *event)
++{
++  ScrArea *area = CTX_wm_area(C);
++  ARegion *region = CTX_wm_region(C);
++  if (!area || area->spacetype != SPACE_VIEW3D || !region ||
++      region->regiontype != RGN_TYPE_WINDOW || !region->runtime->visible)
++  {
++    return OPERATOR_CANCELLED;
++  }
++  const auto viewport = ui_ipad_ring_viewport(C);
++  int x = event->xy[0], y = event->xy[1];
++  if (x < viewport.xmin || x >= viewport.xmax || y < viewport.ymin || y >= viewport.ymax) {
++    x = int((viewport.xmin + viewport.xmax) / 2);
++    y = int((viewport.ymin + viewport.ymax) / 2);
++  }
++  if (!ipad_ring::tool_ring_layout(UI_UNIT_X, viewport, float(x), float(y),
++      ipad_ring::ring_kind(idname) != ipad_ring::RingKind::Tools).fits)
++  {
++    BKE_report(CTX_wm_reports(C), RPT_INFO, "Expand this viewport to show Pencil controls");
++    return OPERATOR_CANCELLED;
++  }
++  auto *data = MEM_new<uiIPadRingData>(__func__);
++  data->menu = idname;
++  data->anchor[0] = x;
++  data->anchor[1] = y;
++  data->context = ui_ipad_ring_identity(C);
++  data->viewport = viewport;
++  data->window_rect = ui_ipad_ring_window_rect(C);
++  data->unit = UI_UNIT_X;
++  uiPopupBlockHandle *menu = ui_popup_block_create(
++      C, nullptr, nullptr, nullptr, ui_ipad_ring_create, data, ui_ipad_ring_free, true);
++  menu->popup = true;
++  menu->towardstime = BLI_time_now_seconds();
++  UI_popup_handlers_add(C, &CTX_wm_window(C)->modalhandlers, menu, WM_HANDLER_ACCEPT_DBL_CLICK);
++  WM_event_add_mousemove(CTX_wm_window(C));
++  return OPERATOR_INTERFACE;
++}
++
+ wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event)
+ {
+   uiPieMenu *pie;
+@@ -206,6 +427,9 @@
      return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
    }
 
--  pie = UI_pie_menu_begin(C, CTX_IFACE_(mt->translation_context, mt->label), ICON_NONE, event);
-+  const bool ipad_tools = STREQ(idname, "VIEW3D_MT_ipad_tools");
-+  pie = UI_pie_menu_begin(C, ipad_tools ? "" : CTX_IFACE_(mt->translation_context, mt->label),
-+                          ICON_NONE, event);
-+  if (ipad_tools) {
-+    pie->pie_block->pie_data.flags |= UI_PIE_IPAD_TOOLS;
++  if (ipad_ring::ring_kind(idname) != ipad_ring::RingKind::None) {
++    return ui_ipad_ring_invoke(C, idname, event);
 +  }
+   pie = UI_pie_menu_begin(C, CTX_IFACE_(mt->translation_context, mt->label), ICON_NONE, event);
    layout = UI_pie_menu_layout(pie);
 
-   UI_menutype_draw(C, mt, layout);
 diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/blender/editors/interface/interface_handlers.cc
 --- a/source/blender/editors/interface/interface_handlers.cc
 +++ b/source/blender/editors/interface/interface_handlers.cc
@@ -7265,7 +7645,40 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
  #include "ED_undo.hh"
 
  #include "UI_abstract_view.hh"
-@@ -10784,10 +10787,25 @@
+@@ -67,6 +70,7 @@
+ #include "BLF_api.hh"
+
+ #include "interface_intern.hh"
++#include "interface_ipad_tool_ring.hh"
+
+ #include "RNA_access.hh"
+ #include "RNA_prototypes.hh"
+@@ -9071,6 +9075,13 @@
+ {
+   wmWindow *win = data->window;
+   uiBlock *block = but->block;
++  /* ui_apply_but moves the operator into a deferred callback and clears optype.
++   * Classify while this button still owns it, retaining only the Boolean. */
++  const bool ipad_setting = (block->pie_data.flags & UI_PIE_IPAD_CONTEXT) &&
++      but->optype && blender::ui::ipad::ring_setting_stays_open(
++          (block->pie_data.flags & UI_PIE_IPAD_SELECTION) ?
++              blender::ui::ipad::RingKind::Selection : blender::ui::ipad::RingKind::Transform,
++          but->optype->idname);
+
+   if (but->type == ButType::Grip) {
+     WM_cursor_modal_restore(win);
+@@ -9105,7 +9116,9 @@
+   /* if this button is in a menu, this will set the button return
+    * value to the button value and the menu return value to ok, the
+    * menu return value will be picked up and the menu will close */
+-  if (block->handle && !(block->flag & UI_BLOCK_KEEP_OPEN)) {
++
++  if (block->handle && !(block->flag & UI_BLOCK_KEEP_OPEN) &&
++      (!ipad_setting || data->cancel || onfree)) {
+     if (!data->cancel || data->escapecancel) {
+       uiPopupBlockHandle *menu;
+
+@@ -10784,10 +10797,25 @@
    int my = event->xy[1];
    ui_window_to_block(region, block, &mx, &my);
 
@@ -7292,7 +7705,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
    /* if there's an active modal button, don't check events or outside, except for search menu */
    but = ui_region_find_active_but(region);
-@@ -12051,6 +12069,17 @@
+@@ -12051,6 +12079,17 @@
      retval = ui_handle_view_item_event(C, event, but, region);
    }
 
@@ -7310,6 +7723,21 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
    /* delayed apply callbacks */
    ui_apply_but_funcs_after(C);
 
+@@ -12282,7 +12321,13 @@
+     retval = WM_UI_HANDLER_CONTINUE;
+   }
+
+-  ui_handle_menus_recursive(C, event, menu, 0, false, false, true);
++  uiBlock *root_block = static_cast<uiBlock *>(menu->region->runtime->uiblocks.first);
++  if (root_block && !ui_ipad_ring_context_valid(C, root_block)) {
++    menu->menuretval = UI_RETURN_CANCEL;
++  }
++  if (!menu->menuretval) {
++    ui_handle_menus_recursive(C, event, menu, 0, false, false, true);
++  }
+
+   /* free if done, does not free handle itself */
+   if (menu->menuretval) {
 diff --git a/source/blender/editors/interface/interface.cc b/source/blender/editors/interface/interface.cc
 --- a/source/blender/editors/interface/interface.cc
 +++ b/source/blender/editors/interface/interface.cc
@@ -7351,7 +7779,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_tool_ring.hh b/sour
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_tool_ring.hh
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,128 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -7360,6 +7788,8 @@ new file mode 100644
 +#include <algorithm>
 +#include <array>
 +#include <cmath>
++#include <cstdint>
++#include <cstring>
 +
 +namespace blender::ui::ipad {
 +struct Rect {
@@ -7369,15 +7799,18 @@ new file mode 100644
 +  std::array<Rect, 9> buttons;
 +  bool grid = false;
 +  bool needs_scroll = false;
++  bool fits = true;
++  float anchor_x = 0, anchor_y = 0;
 +};
 +
-+inline ToolRingLayout tool_ring_layout(float unit, Rect viewport, float x, float y)
++inline ToolRingLayout tool_ring_layout(float unit, Rect viewport, float x, float y,
++                                       bool context_controls = false)
 +{
 +  ToolRingLayout result;
-+  const float width = 2.8f * unit;
-+  const float height = 1.3f * unit;
++  const float width = (context_controls ? 4.4f : 2.8f) * unit;
++  const float height = (context_controls ? 2.2f : 1.3f) * unit;
 +  const float gap = 0.25f * unit;
-+  const float radius = 4.6f * unit;
++  const float radius = (context_controls ? 7.4f : 4.6f) * unit;
 +  auto button = [&](int i, float cx, float cy) {
 +    result.buttons[i] = {cx - width / 2, cx + width / 2,
 +                         cy - height / 2, cy + height / 2};
@@ -7417,6 +7850,9 @@ new file mode 100644
 +  const float bottom = viewport.ymin + gap - extent.ymin;
 +  const float top = viewport.ymax - gap - extent.ymax;
 +  result.needs_scroll = bottom > top;
++  result.fits = left <= right && bottom <= top;
++  result.anchor_x = x = left <= right ? std::clamp(x, left, right) : left;
++  result.anchor_y = y = bottom <= top ? std::clamp(y, bottom, top) : top;
 +  x = left <= right ? std::clamp(x, left, right) : left;
 +  y = bottom <= top ? std::clamp(y, bottom, top) : top;
 +  for (Rect &rect : result.buttons) {
@@ -7426,6 +7862,50 @@ new file mode 100644
 +    rect.ymax += y;
 +  }
 +  return result;
++}
++
++inline bool ring_viewport_matches(const Rect &a, const Rect &b)
++{
++  return a.xmin == b.xmin && a.xmax == b.xmax && a.ymin == b.ymin && a.ymax == b.ymax;
++}
++
++enum class RingKind { None, Tools, Selection, Transform };
++inline RingKind ring_kind(const char *name)
++{
++  if (!name) return RingKind::None;
++  if (std::strcmp(name, "VIEW3D_MT_ipad_tools") == 0) return RingKind::Tools;
++  if (std::strcmp(name, "VIEW3D_MT_ipad_selection_ring") == 0) return RingKind::Selection;
++  if (std::strcmp(name, "VIEW3D_MT_ipad_transform_ring") == 0) return RingKind::Transform;
++  return RingKind::None;
++}
++
++inline bool ring_setting_stays_open(RingKind kind, const char *operator_id)
++{
++  if (!operator_id) return false;
++  if (kind == RingKind::Selection) {
++    return std::strcmp(operator_id, "VIEW3D_OT_ipad_selection_tool") == 0 ||
++           std::strcmp(operator_id, "MESH_OT_select_mode") == 0;
++  }
++  if (kind == RingKind::Transform) {
++    return std::strcmp(operator_id, "VIEW3D_OT_ipad_transform_axis") == 0 ||
++           std::strcmp(operator_id, "VIEW3D_OT_ipad_transform_option") == 0;
++  }
++  return false;
++}
++
++/* Values only: membership in the current native lists is checked before building
++ * a live receipt. No saved Object/ID/tool/property pointer is dereferenced. */
++struct RingContextIdentity {
++  uintptr_t main = 0, window = 0, screen = 0, area = 0, region = 0;
++  unsigned int screen_uid = 0, scene_uid = 0, object_uid = 0, data_uid = 0;
++  int mode = 0;
++};
++inline bool ring_context_matches(const RingContextIdentity &a, const RingContextIdentity &b)
++{
++  return a.main == b.main && a.window == b.window && a.screen == b.screen &&
++         a.area == b.area && a.region == b.region && a.screen_uid == b.screen_uid &&
++         a.scene_uid == b.scene_uid && a.object_uid == b.object_uid &&
++         a.data_uid == b.data_uid && a.mode == b.mode;
 +}
 +}  // namespace blender::ui::ipad
 diff --git a/intern/ghost/intern/GHOST_ProjectExportIOS.hh b/intern/ghost/intern/GHOST_ProjectExportIOS.hh

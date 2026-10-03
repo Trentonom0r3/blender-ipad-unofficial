@@ -65,26 +65,45 @@ with bpy.context.temp_override(area=area, region=region):
         records = []
         module.VIEW3D_MT_ipad_tools.draw(SimpleNamespace(layout=Layout(records)), bpy.context)
         assert len(records) == 9, len(records)
-        assert [r[1].name for r in records] == [tool[1] for tool in module.IPAD_RADIAL_TOOLS]
+        for item, tool_spec in zip(records, module.IPAD_RADIAL_TOOLS):
+            if item[0] == 'wm.call_menu_pie':
+                assert item[1].name == module.ipad_context_ring_name(bpy.context)
+                assert item[2]['depress'] and item[2]['text'].endswith('…')
+            else:
+                assert item[1].name == tool_spec[1]
         before_count = len(bpy.data.objects)
         enabled = []
-        for op, props, _, available in records:
+        for (op, props, _, available), tool_spec in zip(records, module.IPAD_RADIAL_TOOLS):
             if available:
-                assert bpy.ops.wm.tool_set_by_id(name=props.name) == {'FINISHED'}, props.name
-                assert module.ToolSelectPanelHelper.tool_active_from_context(bpy.context).idname == props.name
-                enabled.append(props.name)
+                target = tool_spec[1]
+                assert bpy.ops.wm.tool_set_by_id(name=target) == {'FINISHED'}, target
+                assert module.ToolSelectPanelHelper.tool_active_from_context(bpy.context).idname == target
+                enabled.append(target)
         assert len(bpy.data.objects) == before_count, 'Tool activation must not create objects'
         if mode == 'OBJECT':
             assert len(enabled) == 9, enabled
         results.append({'mode': bpy.context.mode, 'activated': enabled})
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.wm.tool_set_by_id(name='builtin.move')
-    records = []
-    module.draw_canvas_header(Layout(records))
-    assert [item[0] for item in records[:2]] == ['ed.undo', 'ed.redo'], records
-    assert records[2][0] == 'popover' and records[2][2]['panel'] == 'VIEW3D_PT_ipad_selection', records
-    assert records[3][0] == 'popover' and records[3][2]['panel'] == 'VIEW3D_PT_ipad_transform', records
-    assert records[4][0] == 'view3d.ipad_flythrough_toggle', records
+    # Stock host has no new native runtime flag. Exercise both presentation
+    # policy branches explicitly; this does not establish native shelf visibility.
+    native_visibility = module.ipad_editing_shelf_visible
+    try:
+        module.ipad_editing_shelf_visible = lambda context: False
+        records = []
+        module.draw_canvas_header(Layout(records))
+        assert [item[0] for item in records[:2]] == ['ed.undo', 'ed.redo'], records
+        panels = {r[2]['panel'] for r in records if r[0] == 'popover'}
+        assert {'VIEW3D_PT_ipad_selection','VIEW3D_PT_ipad_transform','VIEW3D_PT_ipad_camera'} <= panels
+        assert any(r[0] == 'view3d.ipad_flythrough_toggle' for r in records)
+        module.ipad_editing_shelf_visible = lambda context: True
+        records = []
+        module.draw_canvas_header(Layout(records))
+        assert not any(r[0] in {'ed.undo','ed.redo'} for r in records)
+        assert not any(r[0] == 'popover' and r[2]['panel'] in {
+            'VIEW3D_PT_ipad_selection','VIEW3D_PT_ipad_transform'} for r in records)
+    finally:
+        module.ipad_editing_shelf_visible = native_visibility
     for idname in ('undo', 'redo'):
         getattr(bpy.ops.ed, idname).get_rna_type()
     records = []
