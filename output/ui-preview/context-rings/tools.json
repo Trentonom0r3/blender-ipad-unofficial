@@ -1,0 +1,54 @@
+{
+  "host": "5.1.2",
+  "case": "tools",
+  "layout": "native grid preview",
+  "buttons": [
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Select",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Cursor",
+      "active": false
+    },
+    {
+      "operator": "wm.call_menu_pie",
+      "text": "Move\u2026",
+      "active": true
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Rotate",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Scale",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Transform",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Annotate",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Measure",
+      "active": false
+    },
+    {
+      "operator": "wm.tool_set_by_id",
+      "text": "Add Cube",
+      "active": false
+    }
+  ],
+  "native_tool": "builtin.move",
+  "scope": "Real host native UILayout, icons, active states and exact menu contents in a grid. Target native ring anchoring, persistent refresh/input and iPad acceptance remain unverified."
+}

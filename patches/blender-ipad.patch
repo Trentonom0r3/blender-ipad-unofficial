@@ -7345,7 +7345,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
 diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.cc b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 --- a/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 +++ b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
-@@ -8,21 +8,30 @@
+@@ -8,21 +8,31 @@
   * Pie Menu Region
   */
 
@@ -7361,6 +7361,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +#include "DNA_screen_types.h"
 +#include "DNA_object_types.h"
 +#include "DNA_scene_types.h"
++#include "DNA_space_types.h"
 +#include "DNA_windowmanager_types.h"
  #include "DNA_userdef_types.h"
 
@@ -7376,7 +7377,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
  #include "WM_api.hh"
  #include "WM_types.hh"
-@@ -32,10 +41,14 @@
+@@ -32,10 +42,14 @@
  #include "RNA_prototypes.hh"
 
  #include "UI_interface_layout.hh"
@@ -7391,7 +7392,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  #include "interface_regions_intern.hh"
 
  using blender::StringRef;
-@@ -51,7 +64,7 @@
+@@ -51,7 +65,7 @@
    int mx, my;
  };
 
@@ -7400,7 +7401,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  {
    uiBlock *block;
    uiPieMenu *pie = static_cast<uiPieMenu *>(arg_pie);
-@@ -67,6 +80,7 @@
+@@ -67,6 +81,7 @@
    }
 
    blender::ui::block_layout_resolve(block);
@@ -7408,7 +7409,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
    UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NUMSELECT);
    UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-@@ -190,6 +204,213 @@
+@@ -190,6 +205,213 @@
    return pie->layout;
  }
 
@@ -7622,7 +7623,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  wmOperatorStatus UI_pie_menu_invoke(bContext *C, const char *idname, const wmEvent *event)
  {
    uiPieMenu *pie;
-@@ -206,6 +427,9 @@
+@@ -206,6 +428,9 @@
      return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
    }
 
