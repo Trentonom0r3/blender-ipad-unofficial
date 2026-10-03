@@ -1745,7 +1745,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      for (int i = 0; i < event_info.num_events; i++) {
        UserInputEvent::EventTypes event_type = event_info.event_list[i];
        IOS_INPUT_LOG(@"%d-%@ %f,%f",
-@@ -458,13 +804,17 @@
+@@ -458,13 +804,18 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -1760,11 +1760,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                      event_info.location.x,
                                      event_info.location.y,
 -                                    tablet_data));
-+                                    event_tablet));
++                                    event_tablet,
++                                    event_info.direct_tool));
            break;
          case UserInputEvent::EventTypes::PAN_GESTURE:
            system->pushEvent(
-@@ -490,27 +840,66 @@
+@@ -490,27 +841,66 @@
                                        true,
                                        2));
            break;
@@ -1837,7 +1838,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                        event_info.location.x,
                                        event_info.location.y,
                                        event_info.distance,
-@@ -518,14 +907,24 @@
+@@ -518,14 +908,24 @@
                                        false,
                                        2));
            break;
@@ -1864,7 +1865,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,17 +938,41 @@
+@@ -539,17 +939,41 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -1913,7 +1914,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* Override touch methods to capture the UITouch object. */
-@@ -580,8 +1003,10 @@
+@@ -580,8 +1004,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
 
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -1926,7 +1927,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,23 +1029,58 @@
+@@ -604,23 +1030,58 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -1990,7 +1991,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Send events to indicate a 'click' on event end. */
    if (sender.state == UIGestureRecognizerStateEnded) {
-@@ -630,6 +1090,10 @@
+@@ -630,6 +1091,10 @@
    }
 
    [self generateUserInputEvents:event_info];
@@ -2001,7 +2002,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,12 +1141,193 @@
+@@ -677,12 +1142,193 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -2197,7 +2198,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
-@@ -690,6 +1335,21 @@
+@@ -690,6 +1336,21 @@
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
@@ -2219,7 +2220,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-@@ -722,8 +1382,109 @@
+@@ -722,8 +1383,109 @@
    [self generateUserInputEvents:event_info];
  }
 
@@ -2329,7 +2330,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Translation can be non-zero on begin event */
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -739,6 +1500,20 @@
+@@ -739,6 +1501,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -2350,7 +2351,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,67 +1529,145 @@
+@@ -754,67 +1530,145 @@
    }
  }
 
@@ -2532,7 +2533,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1683,69 @@
+@@ -830,25 +1684,69 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -2605,7 +2606,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1198,11 +2095,377 @@
+@@ -1198,11 +2096,377 @@
    }
  }
 
@@ -2983,7 +2984,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1298,7 +2561,12 @@
+@@ -1298,7 +2562,12 @@
 
  @interface GHOST_IOSViewController : UIViewController
 
@@ -2997,7 +2998,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2574,163 @@
+@@ -1306,22 +2575,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -3167,7 +3168,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +2774,12 @@
+@@ -1365,11 +2775,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -3181,7 +3182,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +2787,6 @@
+@@ -1377,7 +2788,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3189,7 +3190,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +2800,6 @@
+@@ -1391,7 +2801,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -3197,7 +3198,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +2808,6 @@
+@@ -1400,7 +2809,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -3205,7 +3206,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +2817,12 @@
+@@ -1410,8 +2818,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -3220,7 +3221,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +2835,14 @@
+@@ -1424,10 +2836,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -3236,7 +3237,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +2886,28 @@
+@@ -1471,14 +2887,28 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
@@ -3266,7 +3267,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +2928,9 @@
+@@ -1499,6 +2929,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -3276,7 +3277,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +3050,7 @@
+@@ -1618,7 +3051,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -3285,7 +3286,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3340,7 @@
+@@ -1908,6 +3341,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -3293,7 +3294,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3351,11 @@
+@@ -1918,6 +3352,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -3305,7 +3306,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
-@@ -1932,6 +3370,7 @@
+@@ -1932,6 +3371,7 @@
    GHOST_ASSERT(!request_to_make_active_,
                 "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
 
@@ -3317,7 +3318,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,633 @@
+@@ -0,0 +1,637 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -3913,6 +3914,10 @@ new file mode 100644
 +                text += " · Fine"
 +            row.popover(panel="VIEW3D_PT_ipad_transform", text=text,
 +                        icon='ORIENTATION_GIMBAL')
++
++    if (active and active.idname == 'builtin.extrude_region' and mode == 'EDIT_MESH'
++            and not getattr(bpy.context.window_manager, "ipad_flythrough_active", False)):
++        row.label(text="Extrude · drag selection, lift to finish", icon='FACESEL')
 +
 +    # Flythrough Mode toggle
 +    wm = bpy.context.window_manager
@@ -6065,7 +6070,16 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
 
  #ifdef WITH_INPUT_NDOF
    /**
-@@ -651,6 +659,10 @@
+@@ -644,6 +652,8 @@
+   int32_t y;
+   /** Associated tablet data. */
+   GHOST_TabletData tablet;
++  /** Captured direct-screen tool motion; ordinary pointers default to false. */
++  bool is_direct_tool;
+ } GHOST_TEventCursorData;
+
+ typedef struct {
+@@ -651,6 +661,10 @@
    GHOST_TButton button;
    /** Associated tablet data. */
    GHOST_TabletData tablet;
@@ -6076,7 +6090,7 @@ diff --git a/intern/ghost/GHOST_Types.h b/intern/ghost/GHOST_Types.h
  } GHOST_TEventButtonData;
 
  typedef enum {
-@@ -671,7 +683,9 @@
+@@ -671,7 +685,9 @@
    GHOST_kTrackpadEventRotate,
    GHOST_kTrackpadEventSwipe, /* Reserved, not used for now */
    GHOST_kTrackpadEventMagnify,
@@ -6623,7 +6637,26 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4227,6 +4657,20 @@
+@@ -4093,6 +4523,18 @@
+   return wm_event_do_region_handlers(C, event, region_hovered);
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++bool WM_event_touch_undo_safe(const wmWindow *win)
++{
++  LISTBASE_FOREACH (wmEventHandler *, handler, &win->modalhandlers) {
++    if (handler->type == WM_HANDLER_TYPE_OP) {
++      return false; /* Another operator may still own TransData/edit geometry. */
++    }
++  }
++  return true;
++}
++#endif
++
+ void wm_event_do_handlers(bContext *C)
+ {
+   wmWindowManager *wm = CTX_wm_manager(C);
+@@ -4227,6 +4669,20 @@
          }
        }
 
@@ -6644,7 +6677,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
 
-@@ -4247,6 +4691,15 @@
+@@ -4247,6 +4703,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -6660,7 +6693,33 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -5784,7 +6237,9 @@
+@@ -4328,6 +4793,14 @@
+       /* Un-link and free here, Blender-quit then frees all. */
+       BLI_remlink(&win->runtime->event_queue, event);
+       wm_event_free_last_handled(win, event);
++#ifdef WITH_APPLE_CROSSPLATFORM
++      /* Child, operator, gizmo and handled event are released before recovery.
++       * Return before another input can mutate history or use pre-decode pointers. */
++      if (ED_undo_touch_recover(C)) {
++        GPU_render_end();
++        return;
++      }
++#endif
+     }
+
+     /* Only add mouse-move when the event queue was read entirely. */
+@@ -5736,7 +6209,9 @@
+    * them for better performance. */
+   if (event_last && event_last->type == MOUSEMOVE) {
+     event_last->type = INBETWEEN_MOUSEMOVE;
+-    event_last->flag = (eWM_EventFlag)0;
++    /* A threshold-crossing captured move may become CLICK_DRAG before the last
++     * sample. Keep its ownership; all unrelated transient flags still clear. */
++    event_last->flag &= WM_EVENT_IS_DIRECT_TOOL;
+   }
+
+   wmEvent *event_new = wm_event_add_intern(win, event);
+@@ -5784,7 +6259,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -6671,7 +6730,18 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -6032,6 +6487,9 @@
+@@ -5990,6 +6467,10 @@
+
+       wm_stereo3d_mouse_offset_apply(win, event.xy);
+       wm_tablet_data_from_ghost(&cd->tablet, &event.tablet);
++      if (cd->is_direct_tool) {
++        /* CLICK_DRAG inherits motion provenance, not the initiating button. */
++        event.flag |= WM_EVENT_IS_DIRECT_TOOL;
++      }
+
+       event.type = MOUSEMOVE;
+       event.val = KM_NOTHING;
+@@ -6032,6 +6513,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -6681,7 +6751,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +6563,16 @@
+@@ -6105,6 +6589,16 @@
        }
        break;
      }
@@ -6698,7 +6768,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +6599,12 @@
+@@ -6131,6 +6625,12 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -6711,7 +6781,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +6617,8 @@
+@@ -6143,7 +6643,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -11979,7 +12049,7 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,124 @@
+@@ -0,0 +1,126 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -12009,7 +12079,9 @@ new file mode 100644
 +         std::strcmp(tool, "builtin.move") == 0 ||
 +         std::strcmp(tool, "builtin.rotate") == 0 ||
 +         std::strcmp(tool, "builtin.scale") == 0 ||
-+         std::strcmp(tool, "builtin.transform") == 0;
++         std::strcmp(tool, "builtin.transform") == 0 ||
++         (std::strcmp(tool, "builtin.extrude_region") == 0 &&
++          std::strcmp(mode, "EDIT_MESH") == 0);
 +}
 +
 +/* Recognizer-owned admission survives hardware-down/up until UIKit reset.
@@ -13989,3 +14061,1796 @@ diff --git a/source/blender/editors/transform/transform.hh b/source/blender/edit
  bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *event, int mode);
  /**
   * \see #initTransform which reads values from the operator.
+diff --git a/intern/ghost/intern/GHOST_EventCursor.hh b/intern/ghost/intern/GHOST_EventCursor.hh
+--- a/intern/ghost/intern/GHOST_EventCursor.hh
++++ b/intern/ghost/intern/GHOST_EventCursor.hh
+@@ -29,8 +29,9 @@
+                     GHOST_IWindow *window,
+                     int32_t x,
+                     int32_t y,
+-                    const GHOST_TabletData &tablet)
+-      : GHOST_Event(msec, type, window), cursor_event_data_({x, y, tablet})
++                    const GHOST_TabletData &tablet,
++                    bool is_direct_tool = false)
++      : GHOST_Event(msec, type, window), cursor_event_data_({x, y, tablet, is_direct_tool})
+   {
+     data_ = &cursor_event_data_;
+   }
+diff --git a/source/blender/editors/include/ED_mesh.hh b/source/blender/editors/include/ED_mesh.hh
+--- a/source/blender/editors/include/ED_mesh.hh
++++ b/source/blender/editors/include/ED_mesh.hh
+@@ -550,6 +550,18 @@
+  */
+ void ED_mesh_split_faces(Mesh *mesh);
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/** Opaque BMesh transaction for a captured direct Extrude Region tool stroke.
++ * Finish only after the native transform child has released its geometry pointers.
++ * Discard is context-free and never touches live geometry (operator destruction).
++ */
++struct UndoStep;
++bool EDBM_touch_undo_context_matches(bContext *C, const UndoStep *step);
++void *EDBM_touch_extrude_begin(bContext *C, ReportList *reports);
++bool EDBM_touch_extrude_finish(bContext *C, void *transaction, bool cancelled);
++void EDBM_touch_extrude_discard(void *transaction);
++#endif
++
+ /* mesh backup */
+ struct BMBackup {
+   BMesh *bmcopy;
+diff --git a/source/blender/editors/mesh/editmesh_extrude.cc b/source/blender/editors/mesh/editmesh_extrude.cc
+--- a/source/blender/editors/mesh/editmesh_extrude.cc
++++ b/source/blender/editors/mesh/editmesh_extrude.cc
+@@ -5,6 +5,18 @@
+ /** \file
+  * \ingroup edmesh
+  */
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "MEM_guardedalloc.h"
++#  include "DNA_key_types.h"
++#  include "DNA_mesh_types.h"
++#  include "DNA_workspace_types.h"
++#  include "BKE_main.hh"
++#  include "BKE_mesh_types.hh"
++#  include "BLI_string.h"
++#  include "ED_object.hh"
++#  include "WM_toolsystem.hh"
++#endif
+
+ #include "DNA_modifier_types.h"
+ #include "DNA_object_types.h"
+@@ -34,6 +46,112 @@
+ #include "mesh_intern.hh" /* own include */
+
+ using blender::Vector;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* The macro owns these independent native BMesh copies, never a saved context.
++ * Identity values are compared only after resolving a live Mesh from Main. */
++struct TouchExtrudeMesh {
++  uint32_t mesh_uid;
++  uint32_t key_uid;
++  const BMEditMesh *edit_identity;
++  const BMesh *bm_identity;
++  int shapenr;
++  BMBackup backup{};
++};
++
++struct TouchExtrudeTransaction {
++  Vector<TouchExtrudeMesh> meshes;
++};
++
++void EDBM_touch_extrude_discard(void *transaction)
++{
++  auto *data = static_cast<TouchExtrudeTransaction *>(transaction);
++  if (!data) {
++    return;
++  }
++  for (TouchExtrudeMesh &snapshot : data->meshes) {
++    EDBM_redo_state_free(&snapshot.backup);
++  }
++  MEM_delete(data);
++}
++
++void *EDBM_touch_extrude_begin(bContext *C, ReportList *reports)
++{
++  const bToolRef *tool = WM_toolsystem_ref_from_context(C);
++  if (!ED_operator_editmesh(C) || !tool || !STREQ(tool->idname, "builtin.extrude_region")) {
++    return nullptr;
++  }
++  auto *data = MEM_new<TouchExtrudeTransaction>(__func__);
++  const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
++      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
++  /* Validate every participating owner before copying or changing any geometry. */
++  for (Object *object : objects) {
++    Mesh *mesh = static_cast<Mesh *>(object->data);
++    BMEditMesh *em = BKE_editmesh_from_object(object);
++    if (!em || !em->bm) {
++      EDBM_touch_extrude_discard(data);
++      return nullptr;
++    }
++    if (em->bm->totvertsel == 0) {
++      continue;
++    }
++    if (blender::ed::object::shape_key_report_if_locked(object, reports)) {
++      EDBM_touch_extrude_discard(data);
++      return nullptr;
++    }
++    data->meshes.append({mesh->id.session_uid,
++                         mesh->key ? mesh->key->id.session_uid : 0,
++                         em, em->bm, em->bm->shapenr, {}});
++  }
++  if (data->meshes.is_empty()) {
++    EDBM_touch_extrude_discard(data);
++    return nullptr;
++  }
++  /* No event/callback yields between validation and acquisition of all copies. */
++  for (TouchExtrudeMesh &snapshot : data->meshes) {
++    snapshot.backup = EDBM_redo_state_store(const_cast<BMEditMesh *>(snapshot.edit_identity));
++  }
++  return data;
++}
++
++bool EDBM_touch_extrude_finish(bContext *C, void *transaction, const bool cancelled)
++{
++  auto *data = static_cast<TouchExtrudeTransaction *>(transaction);
++  if (!data) {
++    return true; /* A rejected snapshot did not make any provisional edit. */
++  }
++  bool complete = !cancelled || (C && CTX_data_main(C));
++  if (cancelled && complete) {
++    Main *bmain = CTX_data_main(C);
++    for (TouchExtrudeMesh &snapshot : data->meshes) {
++      Mesh *owner = nullptr;
++      LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
++        if (mesh->id.session_uid == snapshot.mesh_uid) {
++          owner = mesh;
++          break;
++        }
++      }
++      BMEditMesh *em = owner ? owner->runtime->edit_mesh.get() : nullptr;
++      /* A changed owner/key/edit representation is not our rollback target. */
++      if (!em || em != snapshot.edit_identity || em->bm != snapshot.bm_identity ||
++          em->bm->shapenr != snapshot.shapenr ||
++          (owner->key ? owner->key->id.session_uid : 0) != snapshot.key_uid)
++      {
++        complete = false;
++        continue;
++      }
++      EDBM_redo_state_restore_and_free(&snapshot.backup, em, false);
++      EDBMUpdate_Params params{};
++      params.calc_looptris = true;
++      params.calc_normals = true;
++      params.is_destructive = true;
++      EDBM_update(owner, &params);
++    }
++  }
++  EDBM_touch_extrude_discard(data);
++  return complete;
++}
++#endif
+
+ /* -------------------------------------------------------------------- */
+ /** \name Extrude Internal Utilities
+diff --git a/source/blender/windowmanager/intern/wm_operator_type.cc b/source/blender/windowmanager/intern/wm_operator_type.cc
+--- a/source/blender/windowmanager/intern/wm_operator_type.cc
++++ b/source/blender/windowmanager/intern/wm_operator_type.cc
+@@ -1,97 +1,102 @@
+ /* SPDX-FileCopyrightText: 2023 Blender Authors
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup wm
+  *
+  * Operator Registry.
+  */
+
+ #include "MEM_guardedalloc.h"
+
+ #include "CLG_log.h"
+
+ #include "DNA_screen_types.h"
+ #include "DNA_windowmanager_types.h"
+
+ #include "BLT_translation.hh"
+
+ #include "BLI_listbase.h"
+ #include "BLI_string.h"
+ #include "BLI_vector_set.hh"
+
+ #include "BKE_context.hh"
+ #include "BKE_idprop.hh"
+
+ #include "RNA_access.hh"
+ #include "RNA_define.hh"
+ #include "RNA_enum_types.hh"
+ #include "RNA_prototypes.hh"
+
+ #ifdef WITH_PYTHON
+ #  include "BPY_extern.hh"
++#endif
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "ED_mesh.hh"
++#  include "ED_undo.hh"
+ #endif
+
+ #include "WM_api.hh"
+ #include "WM_keymap.hh"
+ #include "WM_types.hh"
+
+ #include "wm.hh"
+ #include "wm_event_system.hh"
+
+ #define UNDOCUMENTED_OPERATOR_TIP N_("(undocumented operator)")
+
+ static void wm_operatortype_free_macro(wmOperatorType *ot);
+
+ /* -------------------------------------------------------------------- */
+ /** \name Operator Type Registry
+  * \{ */
+
+ using blender::StringRef;
+
+ static auto &get_operators_map()
+ {
+   struct OperatorNameGetter {
+     StringRef operator()(const wmOperatorType *value) const
+     {
+       return StringRef(value->idname);
+     }
+   };
+   static auto map = []() {
+     blender::CustomIDVectorSet<wmOperatorType *, OperatorNameGetter> map;
+     /* Reserve size is set based on blender default setup. */
+     map.reserve(2048);
+     return map;
+   }();
+   return map;
+ }
+
+ blender::Span<wmOperatorType *> WM_operatortypes_registered_get()
+ {
+   return get_operators_map();
+ }
+
+ /** Counter for operator-properties that should not be tagged with #OP_PROP_TAG_ADVANCED. */
+ static int ot_prop_basic_count = -1;
+
+ wmOperatorType *WM_operatortype_find(const char *idname, bool quiet)
+ {
+   if (idname[0]) {
+     /* Needed to support python style names without the `_OT_` syntax. */
+     char idname_bl[OP_MAX_TYPENAME];
+     WM_operator_bl_idname(idname_bl, idname);
+
+     if (wmOperatorType *const *ot = get_operators_map().lookup_key_ptr_as(StringRef(idname_bl))) {
+       return *ot;
+     }
+
+     if (!quiet) {
+       CLOG_INFO(WM_LOG_OPERATORS, "Search for unknown operator '%s', '%s'", idname_bl, idname);
+     }
+   }
+   else {
+     if (!quiet) {
+       CLOG_INFO(WM_LOG_OPERATORS, "Search for empty operator");
+     }
+   }
+@@ -235,313 +240,370 @@
+   if (ot_prop_basic_count == -1) {
+     /* Don't do anything if _begin was called before, but not _end. */
+     ot_prop_basic_count = RNA_struct_count_properties(ot->srna);
+   }
+ }
+
+ void WM_operatortype_props_advanced_end(wmOperatorType *ot)
+ {
+   PointerRNA struct_ptr;
+   int counter = 0;
+
+   if (ot_prop_basic_count == -1) {
+     /* WM_operatortype_props_advanced_begin was not called. Don't do anything. */
+     return;
+   }
+
+   WM_operator_properties_create_ptr(&struct_ptr, ot);
+
+   RNA_STRUCT_BEGIN (&struct_ptr, prop) {
+     counter++;
+     if (counter > ot_prop_basic_count) {
+       WM_operatortype_prop_tag(prop, OP_PROP_TAG_ADVANCED);
+     }
+   }
+   RNA_STRUCT_END;
+
+   ot_prop_basic_count = -1;
+ }
+
+ void WM_operatortype_last_properties_clear_all()
+ {
+   for (wmOperatorType *ot : get_operators_map()) {
+     if (ot->last_properties) {
+       IDP_FreeProperty(ot->last_properties);
+       ot->last_properties = nullptr;
+     }
+   }
+ }
+
+ void WM_operatortype_idname_visit_for_search(
+     const bContext * /*C*/,
+     PointerRNA * /*ptr*/,
+     PropertyRNA * /*prop*/,
+     const char * /*edit_text*/,
+     blender::FunctionRef<void(StringPropertySearchVisitParams)> visit_fn)
+ {
+   for (wmOperatorType *ot : get_operators_map()) {
+     char idname_py[OP_MAX_TYPENAME];
+     WM_operator_py_idname(idname_py, ot->idname);
+
+     StringPropertySearchVisitParams visit_params{};
+     visit_params.text = idname_py;
+     visit_params.info = ot->name;
+     visit_fn(visit_params);
+   }
+ }
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name Operator Macro Type
+  * \{ */
+
+ struct MacroData {
+-  wmOperatorStatus retval;
++  wmOperatorStatus retval = wmOperatorStatus(0);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  void *touch_extrude = nullptr;
++  blender::bke::TouchUndoRecovery touch_recovery;
++#endif
+ };
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++void wm_operator_macro_discard_touch(wmOperator *op)
++{
++  /* Called on unexpected operator destruction without a live editor context.
++   * Never restore geometry here: the native child may still own TransData. */
++  MacroData *md = static_cast<MacroData *>(op->customdata);
++  if (md) {
++    EDBM_touch_extrude_discard(md->touch_extrude);
++    MEM_delete(md);
++    op->customdata = nullptr;
++  }
++}
++#endif
++
+ static void wm_macro_start(wmOperator *op)
+ {
+   if (op->customdata == nullptr) {
+-    op->customdata = MEM_callocN<MacroData>("MacroData");
+-  }
+-}
+-
+-static wmOperatorStatus wm_macro_end(wmOperator *op, wmOperatorStatus retval)
++    op->customdata = MEM_new<MacroData>("MacroData");
++  }
++}
++
++static wmOperatorStatus wm_macro_end(bContext *C, wmOperator *op, wmOperatorStatus retval)
+ {
+   MacroData *md = static_cast<MacroData *>(op->customdata);
+-
+-  if (retval & (OPERATOR_CANCELLED | OPERATOR_INTERFACE)) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const bool touch_transaction = md &&
++      (md->touch_extrude || md->touch_recovery.phase != blender::bke::TouchUndoPhase::Empty);
++  if (touch_transaction && (retval & (OPERATOR_FINISHED | OPERATOR_CANCELLED | OPERATOR_INTERFACE))) {
++    const bool cancelled = retval & (OPERATOR_CANCELLED | OPERATOR_INTERFACE);
++    /* Native child modal/cancel callbacks have released TransData before this. */
++    const bool restored = EDBM_touch_extrude_finish(C, md->touch_extrude, cancelled);
++    md->touch_extrude = nullptr;
++    if (restored) {
++      ED_undo_touch_finish(C, md->touch_recovery, cancelled);
++    }
++    else if (cancelled) {
++      WM_global_report(RPT_WARNING, "Extrude cancellation stopped after its mesh owner changed");
++    }
++    md->touch_recovery = {};
++    if (cancelled) {
++      retval &= ~(OPERATOR_FINISHED | OPERATOR_INTERFACE);
++      retval |= OPERATOR_CANCELLED;
++    }
++  }
++#else
++  UNUSED_VARS(C);
++  constexpr bool touch_transaction = false;
++#endif
++
++  if (!touch_transaction && (retval & (OPERATOR_CANCELLED | OPERATOR_INTERFACE))) {
+     if (md && (md->retval & OPERATOR_FINISHED)) {
+       retval |= OPERATOR_FINISHED;
+       retval &= ~(OPERATOR_CANCELLED | OPERATOR_INTERFACE);
+     }
+   }
+
+   /* If modal is ending, free custom data. */
+   if (retval & (OPERATOR_FINISHED | OPERATOR_CANCELLED)) {
+     if (md) {
+-      MEM_freeN(md);
++      MEM_delete(md);
+       op->customdata = nullptr;
+     }
+   }
+
+   return retval;
+ }
+
+ /* Macro exec only runs exec calls. */
+ static wmOperatorStatus wm_macro_exec(bContext *C, wmOperator *op)
+ {
+   wmOperatorStatus retval = OPERATOR_FINISHED;
+   const int op_inherited_flag = op->flag & (OP_IS_REPEAT | OP_IS_REPEAT_LAST);
+
+   wm_macro_start(op);
+
+   LISTBASE_FOREACH (wmOperator *, opm, &op->macro) {
+     if (opm->type->exec == nullptr) {
+       CLOG_WARN(WM_LOG_OPERATORS, "'%s' can't exec macro", opm->type->idname);
+       continue;
+     }
+
+     opm->flag |= op_inherited_flag;
+     retval = opm->type->exec(C, opm);
+     opm->flag &= ~op_inherited_flag;
+
+     OPERATOR_RETVAL_CHECK(retval);
+
+     if (retval & OPERATOR_FINISHED) {
+       MacroData *md = static_cast<MacroData *>(op->customdata);
+       md->retval = OPERATOR_FINISHED; /* Keep in mind that at least one operator finished. */
+     }
+     else {
+       break; /* Operator didn't finish, end macro. */
+     }
+   }
+
+-  return wm_macro_end(op, retval);
++  return wm_macro_end(C, op, retval);
+ }
+
+ static wmOperatorStatus wm_macro_invoke_internal(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent *event,
+                                                  wmOperator *opm)
+ {
+   wmOperatorStatus retval = OPERATOR_FINISHED;
+   const int op_inherited_flag = op->flag & (OP_IS_REPEAT | OP_IS_REPEAT_LAST);
+
+   /* Start from operator received as argument. */
+   for (; opm; opm = opm->next) {
+
+     opm->flag |= op_inherited_flag;
+     if (opm->type->invoke) {
+       retval = opm->type->invoke(C, opm, event);
+     }
+     else if (opm->type->exec) {
+       retval = opm->type->exec(C, opm);
+     }
+     opm->flag &= ~op_inherited_flag;
+
+     OPERATOR_RETVAL_CHECK(retval);
+
+     BLI_movelisttolist(&op->reports->list, &opm->reports->list);
+
+     if (retval & OPERATOR_FINISHED) {
+       MacroData *md = static_cast<MacroData *>(op->customdata);
+       md->retval = OPERATOR_FINISHED; /* Keep in mind that at least one operator finished. */
+     }
+     else {
+       break; /* Operator didn't finish, end macro. */
+     }
+   }
+
+-  return wm_macro_end(op, retval);
++  return wm_macro_end(C, op, retval);
+ }
+
+ static wmOperatorStatus wm_macro_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wm_macro_start(op);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (event && (event->flag & WM_EVENT_IS_DIRECT_TOOL) &&
++      STREQ(op->type->idname, "MESH_OT_extrude_context_move"))
++  {
++    MacroData *md = static_cast<MacroData *>(op->customdata);
++    if (ED_undo_touch_claim(C, event, md->touch_recovery) ==
++        blender::bke::TouchUndoClaim::Rejected) {
++      return wm_macro_end(C, op, OPERATOR_CANCELLED);
++    }
++    md->touch_extrude = EDBM_touch_extrude_begin(C, op->reports);
++    if (!md->touch_extrude) {
++      return wm_macro_end(C, op, OPERATOR_CANCELLED);
++    }
++  }
++#endif
+   return wm_macro_invoke_internal(C, op, event, static_cast<wmOperator *>(op->macro.first));
+ }
+
+ static wmOperatorStatus wm_macro_modal(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wmOperator *opm = op->opm;
+   wmOperatorStatus retval = OPERATOR_FINISHED;
+
+   if (opm == nullptr) {
+     CLOG_ERROR(WM_LOG_OPERATORS, "macro error, calling nullptr modal()");
+   }
+   else {
+     retval = opm->type->modal(C, opm, event);
+     OPERATOR_RETVAL_CHECK(retval);
+
+     /* If we're halfway through using a tool and cancel it, clear the options, see: #37149. */
+     if (retval & OPERATOR_CANCELLED) {
+       WM_operator_properties_clear(opm->ptr);
+     }
+
+     /* If this one is done but it's not the last operator in the macro. */
+     if ((retval & OPERATOR_FINISHED) && opm->next) {
+       MacroData *md = static_cast<MacroData *>(op->customdata);
+
+       md->retval = OPERATOR_FINISHED; /* Keep in mind that at least one operator finished. */
+
+       retval = wm_macro_invoke_internal(C, op, event, opm->next);
+
+       /* If new operator is modal and also added its own handler. */
+       if (retval & OPERATOR_RUNNING_MODAL && op->opm != opm) {
+         wmWindow *win = CTX_wm_window(C);
+         wmEventHandler_Op *handler;
+
+         handler = static_cast<wmEventHandler_Op *>(
+             BLI_findptr(&win->modalhandlers, op, offsetof(wmEventHandler_Op, op)));
+         if (handler) {
+           BLI_remlink(&win->modalhandlers, handler);
+           wm_event_free_handler(&handler->head);
+         }
+
+         /* If operator is blocking, grab cursor.
+          * This may end up grabbing twice, but we don't care. */
+         if (op->opm->type->flag & OPTYPE_BLOCKING) {
+           int wrap = WM_CURSOR_WRAP_NONE;
+           const rcti *wrap_region = nullptr;
+
+           if ((op->opm->flag & OP_IS_MODAL_GRAB_CURSOR) ||
+               (op->opm->type->flag & OPTYPE_GRAB_CURSOR_XY))
+           {
+             wrap = WM_CURSOR_WRAP_XY;
+           }
+           else if (op->opm->type->flag & OPTYPE_GRAB_CURSOR_X) {
+             wrap = WM_CURSOR_WRAP_X;
+           }
+           else if (op->opm->type->flag & OPTYPE_GRAB_CURSOR_Y) {
+             wrap = WM_CURSOR_WRAP_Y;
+           }
+
+           if (wrap) {
+             ARegion *region = CTX_wm_region(C);
+             if (region) {
+               wrap_region = &region->winrct;
+             }
+           }
+
+           WM_cursor_grab_enable(win, eWM_CursorWrapAxis(wrap), wrap_region, false);
+         }
+       }
+     }
+   }
+
+-  return wm_macro_end(op, retval);
++  return wm_macro_end(C, op, retval);
+ }
+
+ static void wm_macro_cancel(bContext *C, wmOperator *op)
+ {
+   /* Call cancel on the current modal operator, if any. */
+   if (op->opm && op->opm->type->cancel) {
+     op->opm->type->cancel(C, op->opm);
+   }
+
+-  wm_macro_end(op, OPERATOR_CANCELLED);
++  wm_macro_end(C, op, OPERATOR_CANCELLED);
+ }
+
+ wmOperatorType *WM_operatortype_append_macro(const char *idname,
+                                              const char *name,
+                                              const char *description,
+                                              int flag)
+ {
+   wmOperatorType *ot;
+   const char *i18n_context;
+
+   if (WM_operatortype_find(idname, true)) {
+     CLOG_ERROR(WM_LOG_OPERATORS, "operator %s exists, cannot create macro", idname);
+     return nullptr;
+   }
+
+   ot = MEM_callocN<wmOperatorType>("operatortype");
+   ot->srna = RNA_def_struct_ptr(&BLENDER_RNA, "", &RNA_OperatorProperties);
+
+   ot->idname = idname;
+   ot->name = name;
+   ot->description = description;
+   ot->flag = OPTYPE_MACRO | flag;
+
+   ot->exec = wm_macro_exec;
+   ot->invoke = wm_macro_invoke;
+   ot->modal = wm_macro_modal;
+   ot->cancel = wm_macro_cancel;
+   ot->poll = nullptr;
+
+   /* XXX All ops should have a description but for now allow them not to. */
+   BLI_assert((ot->description == nullptr) || (ot->description[0]));
+
+   RNA_def_struct_ui_text(
+       ot->srna, ot->name, ot->description ? ot->description : UNDOCUMENTED_OPERATOR_TIP);
+   RNA_def_struct_identifier(&BLENDER_RNA, ot->srna, ot->idname);
+   /* Use i18n context from rna_ext.srna if possible (py operators). */
+   i18n_context = ot->rna_ext.srna ? RNA_struct_translation_context(ot->rna_ext.srna) :
+                                     BLT_I18NCONTEXT_OPERATOR_DEFAULT;
+   RNA_def_struct_translation_context(ot->srna, i18n_context);
+   ot->translation_context = i18n_context;
+
+   BLI_assert(WM_operator_bl_idname_is_valid(ot->idname));
+   get_operators_map().add_new(ot);
+
+   return ot;
+ }
+
+ void WM_operatortype_append_macro_ptr(void (*opfunc)(wmOperatorType *ot, void *userdata),
+                                       void *userdata)
+ {
+   wmOperatorType *ot;
+
+   ot = MEM_callocN<wmOperatorType>("operatortype");
+   ot->srna = RNA_def_struct_ptr(&BLENDER_RNA, "", &RNA_OperatorProperties);
+
+   ot->flag = OPTYPE_MACRO;
+   ot->exec = wm_macro_exec;
+   ot->invoke = wm_macro_invoke;
+   ot->modal = wm_macro_modal;
+   ot->cancel = wm_macro_cancel;
+   ot->poll = nullptr;
+
+   /* XXX All ops should have a description but for now allow them not to. */
+   BLI_assert((ot->description == nullptr) || (ot->description[0]));
+diff --git a/source/blender/windowmanager/wm.hh b/source/blender/windowmanager/wm.hh
+--- a/source/blender/windowmanager/wm.hh
++++ b/source/blender/windowmanager/wm.hh
+@@ -13,6 +13,10 @@
+ #include "BLI_math_vector_types.hh"
+
+ struct wmOperator;
++#ifdef WITH_APPLE_CROSSPLATFORM
++/** Release touch macro snapshots on context-free operator destruction. */
++void wm_operator_macro_discard_touch(wmOperator *op);
++#endif
+ struct wmTimer;
+ struct wmWindow;
+ struct wmWindowManager;
+diff --git a/source/blender/windowmanager/intern/wm.cc b/source/blender/windowmanager/intern/wm.cc
+--- a/source/blender/windowmanager/intern/wm.cc
++++ b/source/blender/windowmanager/intern/wm.cc
+@@ -14,6 +14,9 @@
+ #define DNA_DEPRECATED_ALLOW
+
+ #include <cstring>
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include <unordered_map>
++#endif
+
+ #include "DNA_windowmanager_types.h"
+
+@@ -256,8 +259,41 @@
+
+ #define MAX_OP_REGISTERED 32
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Leased registered operators only; removed on free before Python destructors.
++ * wmOperator also has serialized uses, so identity stays outside its DNA layout. */
++static std::unordered_map<const wmOperator *, uint64_t> touch_operator_identities;
++
++uint64_t WM_operator_touch_lifetime_id(const wmOperator *op)
++{
++  static uint64_t next_identity = 0;
++  auto found = touch_operator_identities.find(op);
++  if (found != touch_operator_identities.end()) {
++    return found->second;
++  }
++  const uint64_t identity = ++next_identity;
++  BLI_assert(identity != 0);
++  touch_operator_identities.emplace(op, identity);
++  return identity;
++}
++
++bool WM_operator_touch_lifetime_matches(const wmOperator *op, const uint64_t identity)
++{
++  const auto found = touch_operator_identities.find(op);
++  return found != touch_operator_identities.end() && found->second == identity;
++}
++#endif
++
+ void WM_operator_free(wmOperator *op)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  touch_operator_identities.erase(op);
++#endif
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (op->type && (op->type->flag & OPTYPE_MACRO)) {
++    wm_operator_macro_discard_touch(op);
++  }
++#endif
+
+ #ifdef WITH_PYTHON
+   if (op->py_instance) {
+diff --git a/source/blender/blenkernel/BKE_undo_system.hh b/source/blender/blenkernel/BKE_undo_system.hh
+--- a/source/blender/blenkernel/BKE_undo_system.hh
++++ b/source/blender/blenkernel/BKE_undo_system.hh
+@@ -48,6 +48,11 @@
+ UNDO_REF_ID_TYPE(PaintCurve);
+
+ struct UndoStack {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /** Runtime lifetime identity; never serialized or reused by a new stack. */
++  uint64_t ipad_lifetime_id;
++  uint64_t ipad_mutation_generation;
++#endif
+   ListBase steps;
+   UndoStep *step_active;
+   /**
+@@ -73,6 +78,10 @@
+
+ struct UndoStep {
+   UndoStep *next, *prev;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /** Distinguishes a live step from a later allocation at the same address. */
++  uint64_t ipad_lifetime_id;
++#endif
+   char name[64];
+   const UndoType *type;
+   /** Size in bytes of all data in step (not including the step). */
+diff --git a/source/blender/blenkernel/intern/undo_system.cc b/source/blender/blenkernel/intern/undo_system.cc
+--- a/source/blender/blenkernel/intern/undo_system.cc
++++ b/source/blender/blenkernel/intern/undo_system.cc
+@@ -2,16 +2,20 @@
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup bke
+  *
+  * Used by ED_undo.hh, internal implementation.
+  */
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include <atomic>
++#endif
+
+ #include <cstdio>
+ #include <cstring>
+
+ #include "CLG_log.h"
+
+ #include "BLI_listbase.h"
+ #include "BLI_string.h"
+@@ -262,46 +266,76 @@
+   if (expect_non_empty) {
+     BLI_assert(!BLI_listbase_is_empty(&ustack->steps));
+   }
+ }
+ #else
+ static void undosys_stack_validate(UndoStack * /*ustack*/, bool /*expect_non_empty*/) {}
+ #endif
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++static uint64_t undosys_touch_lifetime_id()
++{
++  /* Atomic uniqueness, not synchronization of Undo geometry or WM callbacks. */
++  static std::atomic<uint64_t> next{1};
++  const uint64_t identity = next.fetch_add(1, std::memory_order_relaxed);
++  BLI_assert(identity != 0);
++  return identity;
++}
++#endif
++
+ UndoStack *BKE_undosys_stack_create()
+ {
+   UndoStack *ustack = MEM_callocN<UndoStack>(__func__);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ustack->ipad_lifetime_id = undosys_touch_lifetime_id();
++#endif
+   return ustack;
+ }
+
+ void BKE_undosys_stack_destroy(UndoStack *ustack)
+ {
+   BKE_undosys_stack_clear(ustack);
+   MEM_freeN(ustack);
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Main-thread mutation epoch, advanced before callbacks, including failed edits.
++ * Allocation identity alone cannot detect an Undo/Redo round trip. */
++static void undosys_touch_mutation(UndoStack *ustack)
++{
++  ++ustack->ipad_mutation_generation;
++  BLI_assert(ustack->ipad_mutation_generation != 0);
++}
++#endif
++
+ void BKE_undosys_stack_clear(UndoStack *ustack)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   UNDO_NESTED_ASSERT(false);
+   CLOG_DEBUG(&LOG, "steps=%d", BLI_listbase_count(&ustack->steps));
+   for (UndoStep *us = static_cast<UndoStep *>(ustack->steps.last), *us_prev; us; us = us_prev) {
+     us_prev = us->prev;
+     undosys_step_free_and_unlink(ustack, us);
+   }
+   if (UndoStep *us = ustack->step_init) {
+     undosys_step_free_and_unlink(ustack, us);
+     ustack->step_init = nullptr;
+   }
+   BLI_listbase_clear(&ustack->steps);
+   ustack->step_active = nullptr;
+ }
+
+ void BKE_undosys_stack_clear_active(UndoStack *ustack)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   /* Remove active and all following undo-steps. */
+   UndoStep *us = ustack->step_active;
+
+   if (us) {
+     ustack->step_active = us->prev;
+     bool is_not_empty = ustack->step_active != nullptr;
+
+     while (ustack->steps.last != ustack->step_active) {
+@@ -402,16 +436,19 @@
+   if (ustack->step_init && (ustack->step_init->type == ut)) {
+     return ustack->step_init;
+   }
+   return BKE_undosys_stack_active_with_type(ustack, ut);
+ }
+
+ void BKE_undosys_stack_limit_steps_and_memory(UndoStack *ustack, int steps, size_t memory_limit)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   UNDO_NESTED_ASSERT(false);
+   if ((steps == -1) && (memory_limit == 0)) {
+     return;
+   }
+
+   CLOG_DEBUG(&LOG, "Limit steps=%d, memory_limit=%zu", steps, memory_limit);
+   UndoStep *us;
+   UndoStep *us_exclude = nullptr;
+@@ -470,29 +507,35 @@
+ /** \name Undo Step
+  * \{ */
+
+ UndoStep *BKE_undosys_step_push_init_with_type(UndoStack *ustack,
+                                                bContext *C,
+                                                const char *name,
+                                                const UndoType *ut)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   UNDO_NESTED_ASSERT(false);
+   if (ut->step_encode_init) {
+     undosys_stack_validate(ustack, false);
+
+     if (UndoStep *us = ustack->step_init) {
+       undosys_step_free_and_unlink(ustack, us);
+       ustack->step_init = nullptr;
+     }
+     if (ustack->step_active) {
+       undosys_stack_clear_all_last(ustack, ustack->step_active->next);
+     }
+
+     UndoStep *us = static_cast<UndoStep *>(MEM_callocN(ut->step_size, __func__));
++#ifdef WITH_APPLE_CROSSPLATFORM
++    us->ipad_lifetime_id = undosys_touch_lifetime_id();
++#endif
+     if (name != nullptr) {
+       STRNCPY(us->name, name);
+     }
+     us->type = ut;
+     ustack->step_init = us;
+     CLOG_DEBUG(&LOG, "addr=%p, name='%s', type='%s'", us, us->name, us->type->name);
+     ut->step_encode_init(C, us);
+     undosys_stack_validate(ustack, false);
+@@ -512,16 +555,19 @@
+   return BKE_undosys_step_push_init_with_type(ustack, C, name, ut);
+ }
+
+ eUndoPushReturn BKE_undosys_step_push_with_type(UndoStack *ustack,
+                                                 bContext *C,
+                                                 const char *name,
+                                                 const UndoType *ut)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   BLI_assert((ut->flags & UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE) == 0 || C != nullptr);
+
+   UNDO_NESTED_ASSERT(false);
+   undosys_stack_validate(ustack, false);
+   bool is_not_empty = ustack->step_active != nullptr;
+   eUndoPushReturn retval = UNDO_PUSH_RET_FAILURE;
+
+   /* Might not be final place for this to be called - probably only want to call it from some
+@@ -565,16 +611,22 @@
+   }
+ #endif
+
+   bool use_memfile_step = false;
+   {
+     UndoStep *us = ustack->step_init ?
+                        ustack->step_init :
+                        static_cast<UndoStep *>(MEM_callocN(ut->step_size, __func__));
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* An initialized step keeps its identity when encoded/pushed later. */
++    if (!ustack->step_init) {
++      us->ipad_lifetime_id = undosys_touch_lifetime_id();
++    }
++#endif
+     ustack->step_init = nullptr;
+     if (us->name[0] == '\0') {
+       STRNCPY(us->name, name);
+     }
+     us->type = ut;
+     /* True by default, code needs to explicitly set it to false if necessary. */
+     us->use_old_bmain_data = true;
+     /* Initialized, not added yet. */
+@@ -744,16 +796,19 @@
+ }
+
+ bool BKE_undosys_step_load_data_ex(UndoStack *ustack,
+                                    bContext *C,
+                                    UndoStep *us_target,
+                                    UndoStep *us_reference,
+                                    const bool use_skip)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   UNDO_NESTED_ASSERT(false);
+   if (us_target == nullptr) {
+     CLOG_ERROR(&LOG, "called with a nullptr target step");
+     return false;
+   }
+   undosys_stack_validate(ustack, true);
+
+   if (us_reference == nullptr) {
+@@ -937,22 +992,28 @@
+  *   to consider all steps part of one large group.
+  *
+  * - Calls to begin/end with no undo steps being pushed is supported and does nothing.
+  *
+  * \{ */
+
+ void BKE_undosys_stack_group_begin(UndoStack *ustack)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   BLI_assert(ustack->group_level >= 0);
+   ustack->group_level += 1;
+ }
+
+ void BKE_undosys_stack_group_end(UndoStack *ustack)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  undosys_touch_mutation(ustack);
++#endif
+   ustack->group_level -= 1;
+   BLI_assert(ustack->group_level >= 0);
+
+   if (ustack->group_level == 0) {
+     if (LIKELY(ustack->step_active != nullptr)) {
+       ustack->step_active->skip = false;
+     }
+   }
+diff --git a/source/blender/blenkernel/BKE_undo_touch.hh b/source/blender/blenkernel/BKE_undo_touch.hh
+new file mode 100644
+--- /dev/null
++++ b/source/blender/blenkernel/BKE_undo_touch.hh
+@@ -0,0 +1,59 @@
++/* SPDX-FileCopyrightText: 2026 Blender Authors
++ *
++ * SPDX-License-Identifier: GPL-2.0-or-later */
++#pragma once
++
++#include "BKE_undo_system.hh"
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Values only: never retain an UndoStep pointer across a native decode. */
++struct UndoTouchReceipt {
++  uint64_t stack_id = 0;
++  uint64_t generation = 0;
++  uint64_t accepted_id = 0;
++  uint64_t baseline_id = 0;
++};
++
++inline bool BKE_undosys_touch_capture(const UndoStack *stack, UndoTouchReceipt &receipt)
++{
++  receipt = {};
++  if (!stack || !stack->ipad_lifetime_id || stack->step_init || stack->group_level ||
++      !stack->step_active || stack->step_active->skip) {
++    return false;
++  }
++  receipt.stack_id = stack->ipad_lifetime_id;
++  receipt.generation = stack->ipad_mutation_generation;
++  receipt.accepted_id = stack->step_active->ipad_lifetime_id;
++  return receipt.accepted_id != 0;
++}
++
++inline bool BKE_undosys_touch_target(const UndoStack *stack, const UndoTouchReceipt &receipt)
++{
++  if (!stack || stack->ipad_lifetime_id != receipt.stack_id || stack->step_init ||
++      stack->group_level || !stack->step_active || stack->step_active->skip ||
++      stack->step_active->ipad_lifetime_id != receipt.baseline_id) {
++    return false;
++  }
++  const UndoStep *target = stack->step_active->next;
++  while (target && target->skip) {
++    target = target->next;
++  }
++  return target && target->ipad_lifetime_id == receipt.accepted_id;
++}
++
++inline bool BKE_undosys_touch_seal(const UndoStack *stack, UndoTouchReceipt &receipt)
++{
++  if (!stack || !stack->step_active) {
++    return false;
++  }
++  receipt.baseline_id = stack->step_active->ipad_lifetime_id;
++  receipt.generation = stack->ipad_mutation_generation;
++  return receipt.baseline_id != receipt.accepted_id && BKE_undosys_touch_target(stack, receipt);
++}
++
++inline bool BKE_undosys_touch_validate(const UndoStack *stack, const UndoTouchReceipt &receipt)
++{
++  return stack && stack->ipad_mutation_generation == receipt.generation &&
++         BKE_undosys_touch_target(stack, receipt);
++}
++#endif
+diff --git a/source/blender/blenkernel/BKE_wm_runtime.hh b/source/blender/blenkernel/BKE_wm_runtime.hh
+--- a/source/blender/blenkernel/BKE_wm_runtime.hh
++++ b/source/blender/blenkernel/BKE_wm_runtime.hh
+@@ -18,10 +18,29 @@
+ #endif
+
+ #include "BKE_report.hh"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "BKE_undo_touch.hh"
++#endif
+
+ #include "DNA_windowmanager_types.h"
+
+ namespace blender::bke {
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++enum class TouchUndoPhase { Empty, PendingInvoke, Ready };
++enum class TouchUndoClaim { None, Claimed, Rejected };
++struct TouchUndoRecovery {
++  UndoTouchReceipt undo;
++  uint32_t wm_uid = 0, scene_uid = 0, screen_uid = 0;
++  uint32_t active_object_uid = 0, mesh_uid = 0;
++  uintptr_t view_layer_address = 0;
++  int window_id = 0;
++  uintptr_t main_address = 0, window_address = 0, area_address = 0, region_address = 0;
++  uintptr_t event_address = 0;
++  uint64_t accepted_operator_id = 0;
++  TouchUndoPhase phase = TouchUndoPhase::Empty;
++};
++#endif
+
+ struct WindowManagerRuntime {
+   /** Separate active from drawable. */
+@@ -88,6 +107,9 @@
+
+   /** All undo history. */
+   UndoStack *undo_stack = nullptr;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  TouchUndoRecovery touch_undo_recovery;
++#endif
+
+   wmMsgBus *message_bus = nullptr;
+
+diff --git a/source/blender/editors/include/ED_undo.hh b/source/blender/editors/include/ED_undo.hh
+--- a/source/blender/editors/include/ED_undo.hh
++++ b/source/blender/editors/include/ED_undo.hh
+@@ -24,6 +24,21 @@
+ struct wmOperator;
+ struct wmOperatorType;
+ struct wmWindowManager;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct wmEvent;
++namespace blender::bke { struct TouchUndoRecovery; enum class TouchUndoClaim; }
++bool ED_undo_touch_begin(bContext *C, const wmEvent *event);
++bool ED_undo_touch_pop(bContext *C);
++bool ED_undo_touch_seal(bContext *C);
++blender::bke::TouchUndoClaim ED_undo_touch_claim(bContext *C, const wmEvent *event,
++                         blender::bke::TouchUndoRecovery &receipt);
++void ED_undo_touch_finish(bContext *C, const blender::bke::TouchUndoRecovery &receipt,
++                           bool cancelled);
++void ED_undo_touch_finalize_invoke(bContext *C);
++/* True means dispatch must return: callbacks or native decode may replace context. */
++bool ED_undo_touch_recover(bContext *C);
++#endif
+
+ /* undo.c */
+
+diff --git a/source/blender/editors/undo/ed_undo.cc b/source/blender/editors/undo/ed_undo.cc
+--- a/source/blender/editors/undo/ed_undo.cc
++++ b/source/blender/editors/undo/ed_undo.cc
+@@ -11,6 +11,8 @@
+ #include "CLG_log.h"
+
+ #include "DNA_object_types.h"
++#include "DNA_screen_types.h"
++#include "DNA_workspace_types.h"
+ #include "DNA_scene_types.h"
+
+ #include "BLI_listbase.h"
+@@ -33,6 +35,7 @@
+
+ #include "ED_asset.hh"
+ #include "ED_gpencil_legacy.hh"
++#include "ED_mesh.hh"
+ #include "ED_object.hh"
+ #include "ED_outliner.hh"
+ #include "ED_render.hh"
+@@ -59,6 +62,394 @@
+  *
+  * Non-operator undo editor functions.
+  * \{ */
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++using blender::bke::TouchUndoPhase;
++using blender::bke::TouchUndoRecovery;
++
++/* Resolve owner and every context member through live containers before using it.
++ * Stored addresses are comparison values only, never dereferenced. */
++static wmWindowManager *touch_undo_context(bContext *C, const TouchUndoRecovery &receipt,
++                                           const bool require_edit = true)
++{
++  Main *main = CTX_data_main(C);
++  if (!main || uintptr_t(main) != receipt.main_address) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (wmWindowManager *, wm, &main->wm) {
++    if (wm->id.session_uid != receipt.wm_uid || wm != CTX_wm_manager(C)) {
++      continue;
++    }
++    bool accepted_operator_live = false;
++    LISTBASE_FOREACH (wmOperator *, op, &wm->runtime->operators) {
++      if (WM_operator_touch_lifetime_matches(op, receipt.accepted_operator_id) &&
++          STREQ(op->type->idname, "MESH_OT_extrude_context_move")) {
++        accepted_operator_live = true;
++        break;
++      }
++    }
++    if (!accepted_operator_live) {
++      return nullptr;
++    }
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      if (win != CTX_wm_window(C) || win->winid != receipt.window_id ||
++          uintptr_t(win) != receipt.window_address ||
++          !win->scene || win->scene->id.session_uid != receipt.scene_uid) {
++        continue;
++      }
++      bScreen *screen = WM_window_get_active_screen(win);
++      if (!screen || screen->id.session_uid != receipt.screen_uid) {
++        return nullptr;
++      }
++      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++        if (uintptr_t(area) != receipt.area_address || area->spacetype != SPACE_VIEW3D) {
++          continue;
++        }
++        LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++          if (uintptr_t(region) == receipt.region_address && region->regiontype == RGN_TYPE_WINDOW) {
++            CTX_wm_window_set(C, win);
++            CTX_wm_area_set(C, area);
++            CTX_wm_region_set(C, region);
++            if (require_edit) {
++              if (!WM_event_touch_undo_safe(win)) {
++                return nullptr;
++              }
++              ViewLayer *view_layer = WM_window_get_active_view_layer(win);
++              Object *object = CTX_data_edit_object(C);
++              const bToolRef *tool = WM_toolsystem_ref_from_context(C);
++              if (uintptr_t(view_layer) != receipt.view_layer_address ||
++                  CTX_data_view_layer(C) != view_layer || !ED_operator_editmesh(C) ||
++                  !object || object->id.session_uid != receipt.active_object_uid ||
++                  !object->data || static_cast<ID *>(object->data)->session_uid != receipt.mesh_uid ||
++                  !tool || !STREQ(tool->idname, "builtin.extrude_region")) {
++                return nullptr;
++              }
++            }
++            return wm;
++          }
++        }
++      }
++    }
++  }
++  return nullptr;
++}
++
++static wmWindowManager *touch_undo_owner(bContext *C, const uint32_t uid)
++{
++  Main *main = CTX_data_main(C);
++  if (main) {
++    LISTBASE_FOREACH (wmWindowManager *, wm, &main->wm) {
++      if (wm->id.session_uid == uid) {
++        return wm;
++      }
++    }
++  }
++  return nullptr;
++}
++
++/* This edit-mode adjustment must not decode a different Main before invoke.
++ * Mesh steps may implicitly load their preceding MemFile, even without an
++ * explicit MemFile in the traversal. Check both paths before changing history. */
++static bool touch_undo_step_context_valid(bContext *C, const UndoStack *stack,
++                                            const UndoStep *step)
++{
++  if (!EDBM_touch_undo_context_matches(C, step)) {
++    return false;
++  }
++  for (const UndoStep *previous = step->prev; previous; previous = previous->prev) {
++    if (previous->type == BKE_UNDOSYS_TYPE_MEMFILE) {
++      return previous == stack->step_active_memfile;
++    }
++  }
++  return true;
++}
++
++static bool touch_undo_redo_valid(bContext *C, const UndoStack *stack,
++                                  const UndoTouchReceipt &receipt)
++{
++  if (!BKE_undosys_touch_validate(stack, receipt)) {
++    return false;
++  }
++  for (const UndoStep *step = stack->step_active; step; step = step->next) {
++    if (!touch_undo_step_context_valid(C, stack, step)) {
++      return false;
++    }
++    if (step->ipad_lifetime_id == receipt.accepted_id) {
++      return true;
++    }
++  }
++  return false;
++}
++
++static bool touch_undo_pop_valid(bContext *C, const UndoStack *stack, const UndoTouchReceipt &receipt)
++{
++  if (!stack || stack->ipad_lifetime_id != receipt.stack_id ||
++      stack->ipad_mutation_generation != receipt.generation || stack->step_init ||
++      stack->group_level || !stack->step_active || stack->step_active->skip ||
++      stack->step_active->ipad_lifetime_id != receipt.accepted_id) {
++    return false;
++  }
++  for (const UndoStep *step = stack->step_active; step; step = step->prev) {
++    if (!touch_undo_step_context_valid(C, stack, step)) {
++      return false;
++    }
++    if (step != stack->step_active && !step->skip) {
++      return true;
++    }
++  }
++  return false;
++}
++
++bool ED_undo_touch_begin(bContext *C, const wmEvent *event)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  wmWindow *win = CTX_wm_window(C);
++  Scene *scene = CTX_data_scene(C);
++  bScreen *screen = CTX_wm_screen(C);
++  ScrArea *area = CTX_wm_area(C);
++  ARegion *region = CTX_wm_region(C);
++  if (!wm || !win || !scene || !screen || !area || !region || !event || wm->op_undo_depth ||
++      wm->runtime->touch_undo_recovery.phase != TouchUndoPhase::Empty ||
++      WM_jobs_test(wm, scene, WM_JOB_TYPE_ANY) || !WM_event_touch_undo_safe(win) ||
++      !ED_operator_editmesh(C)) {
++    return false;
++  }
++  wmOperator *accepted_op = WM_operator_last_redo(C);
++  if (!accepted_op || BLI_findindex(&wm->runtime->operators, accepted_op) == -1 ||
++      !STREQ(accepted_op->type->idname, "MESH_OT_extrude_context_move")) {
++    return false;
++  }
++  TouchUndoRecovery receipt;
++  receipt.accepted_operator_id = WM_operator_touch_lifetime_id(accepted_op);
++  if (!BKE_undosys_touch_capture(wm->runtime->undo_stack, receipt.undo)) {
++    return false;
++  }
++  if (!touch_undo_pop_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    return false;
++  }
++  receipt.wm_uid = wm->id.session_uid;
++  receipt.scene_uid = scene->id.session_uid;
++  receipt.screen_uid = screen->id.session_uid;
++  Object *object = CTX_data_edit_object(C);
++  const bToolRef *tool = WM_toolsystem_ref_from_context(C);
++  if (!object || !object->data || !tool || !STREQ(tool->idname, "builtin.extrude_region")) {
++    return false;
++  }
++  receipt.active_object_uid = object->id.session_uid;
++  receipt.mesh_uid = static_cast<ID *>(object->data)->session_uid;
++  receipt.view_layer_address = uintptr_t(WM_window_get_active_view_layer(win));
++  receipt.window_id = win->winid;
++  receipt.main_address = uintptr_t(CTX_data_main(C));
++  receipt.window_address = uintptr_t(win);
++  receipt.area_address = uintptr_t(area);
++  receipt.region_address = uintptr_t(region);
++  receipt.event_address = uintptr_t(event);
++  receipt.phase = TouchUndoPhase::PendingInvoke;
++  wm->runtime->touch_undo_recovery = receipt;
++  return true;
++}
++
++bool ED_undo_touch_pop(bContext *C)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm || wm->runtime->touch_undo_recovery.phase != TouchUndoPhase::PendingInvoke) {
++    return false;
++  }
++  TouchUndoRecovery receipt = wm->runtime->touch_undo_recovery;
++  wm->runtime->touch_undo_recovery = {};
++  wm = touch_undo_context(C, receipt);
++  if (!wm || !touch_undo_pop_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++    return false;
++  }
++  WM_jobs_kill_all(wm);
++  wm = touch_undo_context(C, receipt);
++  if (!wm || !touch_undo_pop_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++    return false;
++  }
++  wm->op_undo_depth++;
++  BKE_callback_exec_id(CTX_data_main(C), &CTX_data_scene(C)->id, BKE_CB_EVT_UNDO_PRE);
++  wm = touch_undo_owner(C, receipt.wm_uid);
++  if (wm) {
++    wm->op_undo_depth--;
++  }
++  wm = touch_undo_context(C, receipt);
++  bool popped = false;
++  if (wm && touch_undo_pop_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    UndoStack *stack = wm->runtime->undo_stack;
++    /* Fresh target after PRE; never use a pointer saved before callbacks. */
++    popped = BKE_undosys_step_load_data_ex(stack, C, stack->step_active->prev, nullptr, true);
++    wm = touch_undo_context(C, receipt);
++    popped = popped && wm && BKE_undosys_touch_seal(wm->runtime->undo_stack, receipt.undo);
++  }
++  wm = touch_undo_context(C, receipt, false);
++  if (wm) {
++    wm->op_undo_depth++;
++    BKE_callback_exec_id(CTX_data_main(C), &CTX_data_scene(C)->id, BKE_CB_EVT_UNDO_POST);
++    wm = touch_undo_owner(C, receipt.wm_uid);
++    if (wm) {
++      wm->op_undo_depth--;
++    }
++  }
++  wm = touch_undo_context(C, receipt);
++  if (!popped || !wm || !BKE_undosys_touch_validate(wm->runtime->undo_stack, receipt.undo)) {
++    WM_global_report(RPT_WARNING, "Extrude adjustment stopped after an Undo callback changed its context");
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++    return false;
++  }
++  wm->runtime->touch_undo_recovery = receipt;
++  WM_event_add_notifier(C, NC_WINDOW, nullptr);
++  WM_event_add_notifier(C, NC_WM | ND_UNDO, nullptr);
++  return true;
++}
++
++bool ED_undo_touch_seal(bContext *C)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm || wm->runtime->touch_undo_recovery.phase != TouchUndoPhase::PendingInvoke) {
++    return false;
++  }
++  TouchUndoRecovery receipt = wm->runtime->touch_undo_recovery;
++  wm->runtime->touch_undo_recovery = {};
++  wm = touch_undo_context(C, receipt);
++  if (!wm || !BKE_undosys_touch_seal(wm->runtime->undo_stack, receipt.undo)) {
++    WM_global_report(RPT_WARNING, "Extrude adjustment stopped because its Undo state changed");
++    return false;
++  }
++  wm->runtime->touch_undo_recovery = receipt;
++  return true;
++}
++
++blender::bke::TouchUndoClaim ED_undo_touch_claim(bContext *C, const wmEvent *event, TouchUndoRecovery &receipt)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  using blender::bke::TouchUndoClaim;
++  if (!wm || wm->runtime->touch_undo_recovery.phase != TouchUndoPhase::PendingInvoke) {
++    return TouchUndoClaim::None;
++  }
++  if (wm->runtime->touch_undo_recovery.event_address != uintptr_t(event)) {
++    return TouchUndoClaim::Rejected;
++  }
++  const TouchUndoRecovery pending = wm->runtime->touch_undo_recovery;
++  wm = touch_undo_context(C, pending);
++  if (!wm || !touch_undo_redo_valid(C, wm->runtime->undo_stack, pending.undo)) {
++    return TouchUndoClaim::Rejected;
++  }
++  receipt = pending;
++  wm->runtime->touch_undo_recovery = {};
++  return TouchUndoClaim::Claimed;
++}
++
++void ED_undo_touch_finish(bContext *C, const TouchUndoRecovery &receipt, const bool cancelled)
++{
++  if (!cancelled || receipt.phase == TouchUndoPhase::Empty) {
++    return;
++  }
++  wmWindowManager *wm = touch_undo_owner(C, receipt.wm_uid);
++  if (wm && wm->runtime->touch_undo_recovery.phase == TouchUndoPhase::Empty) {
++    wm->runtime->touch_undo_recovery = receipt;
++    wm->runtime->touch_undo_recovery.phase = TouchUndoPhase::Ready;
++  }
++}
++
++void ED_undo_touch_finalize_invoke(bContext *C)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (wm && wm->runtime->touch_undo_recovery.phase == TouchUndoPhase::PendingInvoke) {
++    /* Gizmo invoke/poll may fail before the macro acquires the transaction. */
++    wm->runtime->touch_undo_recovery.phase = TouchUndoPhase::Ready;
++  }
++}
++
++bool ED_undo_touch_recover(bContext *C)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm || wm->runtime->touch_undo_recovery.phase != TouchUndoPhase::Ready) {
++    return false;
++  }
++  const TouchUndoRecovery receipt = wm->runtime->touch_undo_recovery;
++  wm->runtime->touch_undo_recovery = {}; /* Consume before any callback/decode. */
++  wm = touch_undo_context(C, receipt);
++  if (!wm || !touch_undo_redo_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    WM_global_report(RPT_WARNING, "Extrude adjustment recovery stopped after a scene or Undo change");
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++    return true;
++  }
++
++  /* Native pre semantics, with fresh owner resolution after callbacks. */
++  WM_jobs_kill_all(wm);
++  wm = touch_undo_context(C, receipt);
++  if (!wm || !touch_undo_redo_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    WM_global_report(RPT_WARNING, "Extrude adjustment recovery stopped after a scene or Undo change");
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++    return true;
++  }
++  if ((G.debug & G_DEBUG_IO) && CTX_data_main(C)->lock) {
++    BLO_main_validate_libraries(CTX_data_main(C), nullptr);
++  }
++  wm->op_undo_depth++;
++  BKE_callback_exec_id(CTX_data_main(C), &CTX_data_scene(C)->id, BKE_CB_EVT_REDO_PRE);
++  wm = touch_undo_owner(C, receipt.wm_uid);
++  if (wm) {
++    wm->op_undo_depth--;
++  }
++  wm = touch_undo_context(C, receipt);
++  bool restored = false;
++  uint64_t completed_generation = 0;
++  if (wm && touch_undo_redo_valid(C, wm->runtime->undo_stack, receipt.undo)) {
++    restored = BKE_undosys_step_redo(wm->runtime->undo_stack, C);
++    /* Resolve again; decode can rebuild edit owners or the entire Main. */
++    wm = touch_undo_owner(C, receipt.wm_uid);
++    const UndoStack *stack = wm ? wm->runtime->undo_stack : nullptr;
++    restored = restored && stack && stack->ipad_lifetime_id == receipt.undo.stack_id &&
++               stack->step_active &&
++               stack->step_active->ipad_lifetime_id == receipt.undo.accepted_id;
++    completed_generation = stack ? stack->ipad_mutation_generation : 0;
++  }
++
++  /* Pair PRE even on refusal, provided the original owner still exists. */
++  wm = touch_undo_context(C, receipt, false);
++  if (wm && CTX_data_scene(C)) {
++    wm->op_undo_depth++;
++    BKE_callback_exec_id(CTX_data_main(C), &CTX_data_scene(C)->id, BKE_CB_EVT_REDO_POST);
++    wm = touch_undo_owner(C, receipt.wm_uid);
++    if (wm) {
++      wm->op_undo_depth--;
++    }
++  }
++  wm = touch_undo_owner(C, receipt.wm_uid);
++  const UndoStack *completed = wm ? wm->runtime->undo_stack : nullptr;
++  restored = restored && completed && completed->ipad_lifetime_id == receipt.undo.stack_id &&
++             completed->ipad_mutation_generation == completed_generation &&
++             completed->step_active &&
++             completed->step_active->ipad_lifetime_id == receipt.undo.accepted_id;
++  /* No saved context/operator/gizmo pointer is used after either callback. */
++  wm = touch_undo_context(C, receipt, false);
++  if (wm) {
++    WM_event_add_notifier(C, NC_WINDOW, nullptr);
++    WM_event_add_notifier(C, NC_WM | ND_UNDO, nullptr);
++    WM_toolsystem_refresh_active(C);
++    WM_toolsystem_refresh_screen_all(CTX_data_main(C));
++    blender::ed::asset::list::storage_tag_main_data_dirty();
++  }
++  else {
++    /* A callback may have deleted the originating area/region. Do not leave
++     * stale spatial context for the dispatcher which will return immediately. */
++    CTX_wm_region_set(C, nullptr);
++    CTX_wm_area_set(C, nullptr);
++  }
++  if (!restored) {
++    WM_global_report(RPT_WARNING, "Extrude adjustment could not restore its accepted Undo state");
++  }
++  return true;
++}
++#endif
+
+ bool ED_undo_is_state_valid(bContext *C)
+ {
+diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc b/source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc
+--- a/source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc
++++ b/source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc
+@@ -410,6 +410,39 @@
+   return (gz->state & WM_GIZMO_STATE_MODAL);
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Undo callbacks may delete/rebind gizmos. Resolve through the current map;
++ * allocation and binding IDs also reject same-address replacements. */
++static wmGizmo *touch_extrude_live_gizmo(bContext *C, const wmGizmoMap *expected_map,
++                                         const uint64_t gizmo_id, const int part,
++                                         const uint64_t binding_id, wmGizmoOpElem **r_binding)
++{
++  ARegion *region = CTX_wm_region(C);
++  wmGizmoMap *map = region ? region->runtime->gizmo_map : nullptr;
++  if (!map || map != expected_map) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (wmGizmoGroup *, group, &map->groups) {
++    if (group->tag_remove) {
++      continue;
++    }
++    LISTBASE_FOREACH (wmGizmo *, live, &group->gizmos) {
++      if (live->ipad_lifetime_id != gizmo_id || live->highlight_part != part) {
++        continue;
++      }
++      wmGizmoOpElem *binding = WM_gizmo_operator_get(live, part);
++      if (!binding || binding->ipad_binding_id != binding_id || !binding->is_redo ||
++          !binding->type || !STREQ(binding->type->idname, "MESH_OT_extrude_context_move")) {
++        return nullptr;
++      }
++      *r_binding = binding;
++      return live;
++    }
++  }
++  return nullptr;
++}
++#endif
++
+ static bool gizmo_tweak_start_and_finish(
+     bContext *C, wmGizmoMap *gzmap, wmGizmo *gz, const wmEvent *event, bool *r_is_modal)
+ {
+@@ -419,6 +452,18 @@
+   }
+   if (gzop && gzop->type) {
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++    const bool touch_extrude_redo = gzop->is_redo && event &&
++        (event->flag & WM_EVENT_IS_DIRECT_TOOL) &&
++        STREQ(gzop->type->idname, "MESH_OT_extrude_context_move");
++    const uint64_t touch_gizmo_id = gz->ipad_lifetime_id;
++    const uint64_t touch_binding_id = gzop->ipad_binding_id;
++    const int touch_part = gz->highlight_part;
++    if (touch_extrude_redo && !ED_undo_touch_begin(C, event)) {
++      WM_global_report(RPT_WARNING, "Extrude handle cannot adjust the current Undo context");
++      return true; /* Consume before Undo pop; never fall through into another edit. */
++    }
++#endif
+     /* Undo/Redo. */
+     if (gzop->is_redo) {
+       wmWindowManager *wm = CTX_wm_manager(C);
+@@ -430,7 +475,30 @@
+ #endif
+
+       WM_operator_free_all_after(wm, op);
+-      ED_undo_pop_op(C, op);
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (touch_extrude_redo) {
++        if (!ED_undo_touch_pop(C)) {
++          return true;
++        }
++      }
++      else
++#endif
++      {
++        ED_undo_pop_op(C, op);
++      }
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (touch_extrude_redo) {
++        if (!ED_undo_touch_seal(C)) {
++          return true;
++        }
++        gz = touch_extrude_live_gizmo(C, gzmap, touch_gizmo_id, touch_part,
++                                      touch_binding_id, &gzop);
++        if (!gz) {
++          ED_undo_touch_finalize_invoke(C);
++          return true;
++        }
++      }
++#endif
+     }
+
+     /* XXX temporary workaround for modal gizmo operator
+@@ -449,6 +517,11 @@
+       /* Allow for 'button' gizmos, single click to run an action. */
+       WM_gizmo_operator_invoke(C, gz, gzop, event);
+     }
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (touch_extrude_redo) {
++      ED_undo_touch_finalize_invoke(C);
++    }
++#endif
+     return true;
+   }
+   return false;
+diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanager/WM_api.hh
+--- a/source/blender/windowmanager/WM_api.hh
++++ b/source/blender/windowmanager/WM_api.hh
+@@ -956,6 +956,11 @@
+
+ /* Operator API. */
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++bool WM_event_touch_undo_safe(const wmWindow *win);
++uint64_t WM_operator_touch_lifetime_id(const wmOperator *op);
++bool WM_operator_touch_lifetime_matches(const wmOperator *op, uint64_t identity);
++#endif
+ void WM_operator_free(wmOperator *op);
+ void WM_operator_free_all_after(wmWindowManager *wm, wmOperator *op);
+ /**
+diff --git a/source/blender/windowmanager/gizmo/WM_gizmo_types.hh b/source/blender/windowmanager/gizmo/WM_gizmo_types.hh
+--- a/source/blender/windowmanager/gizmo/WM_gizmo_types.hh
++++ b/source/blender/windowmanager/gizmo/WM_gizmo_types.hh
+@@ -202,6 +202,9 @@
+ #include "wm_gizmo_fn.hh"
+
+ struct wmGizmoOpElem {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  uint64_t ipad_binding_id = 0;
++#endif
+   wmOperatorType *type = nullptr;
+   /** Operator properties if gizmo spawns and controls an operator,
+    * or owner pointer if gizmo spawns and controls a property. */
+@@ -213,6 +216,9 @@
+ /** Gizmos are set per region by registering them on gizmo-maps. */
+ struct wmGizmo {
+   wmGizmo *next, *prev;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  uint64_t ipad_lifetime_id = 0;
++#endif
+
+   /** While we don't have a real type, use this to put type-like vars. */
+   const wmGizmoType *type;
+diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo.cc b/source/blender/windowmanager/gizmo/intern/wm_gizmo.cc
+--- a/source/blender/windowmanager/gizmo/intern/wm_gizmo.cc
++++ b/source/blender/windowmanager/gizmo/intern/wm_gizmo.cc
+@@ -38,6 +38,16 @@
+ #include "wm_gizmo_wmapi.hh"
+
+ using blender::StringRef;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static uint64_t wm_gizmo_touch_lifetime_id()
++{
++  static uint64_t next_identity = 0;
++  const uint64_t identity = ++next_identity;
++  BLI_assert(identity != 0);
++  return identity;
++}
++#endif
+
+ static void wm_gizmo_register(wmGizmoGroup *gzgroup, wmGizmo *gz);
+
+@@ -54,6 +64,9 @@
+    * proper C++ virtual inheritance at some point. */
+   wmGizmo *gz = static_cast<wmGizmo *>(MEM_callocN(gzt->struct_size, __func__));
+   new (gz) wmGizmo();
++#ifdef WITH_APPLE_CROSSPLATFORM
++  gz->ipad_lifetime_id = wm_gizmo_touch_lifetime_id();
++#endif
+   gz->type = gzt;
+
+   /* Initialize properties, either copy or create. */
+@@ -211,6 +224,9 @@
+   }
+   wmGizmoOpElem &gzop = gz->op_data[part_index];
+   gzop.type = ot;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  gzop.ipad_binding_id = wm_gizmo_touch_lifetime_id();
++#endif
+
+   if (gzop.ptr.data) {
+     WM_operator_properties_free(&gzop.ptr);
+diff --git a/source/blender/editors/mesh/editmesh_undo.cc b/source/blender/editors/mesh/editmesh_undo.cc
+--- a/source/blender/editors/mesh/editmesh_undo.cc
++++ b/source/blender/editors/mesh/editmesh_undo.cc
+@@ -1169,6 +1169,52 @@
+   }
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++bool EDBM_touch_undo_context_matches(bContext *C, const UndoStep *step)
++{
++  if (!step || !step->type || step->type->step_decode != mesh_undosys_step_decode) {
++    return false;
++  }
++  const auto *mesh_step = reinterpret_cast<const MeshUndoStep *>(step);
++  if (!mesh_step->elems || !mesh_step->elems_len || !mesh_step->elems[0].data.mesh) {
++    return false;
++  }
++  Main *main = CTX_data_main(C);
++  Scene *scene = CTX_data_scene(C);
++  Object *object = CTX_data_edit_object(C);
++  if (!main || !scene || !object || !object->data) {
++    return false;
++  }
++  /* Encoded refs have null/old ptr values. Use the native name/library resolver. */
++  const UndoRefID_Scene &scene_ref = mesh_step->scene_ref;
++  ID *resolved_scene = BKE_libblock_find_name_and_library_filepath(
++      main, GS(scene_ref.name), scene_ref.name + 2,
++      scene_ref.library_filepath_abs[0] ? scene_ref.library_filepath_abs : nullptr);
++  if (resolved_scene != &scene->id) {
++    return false;
++  }
++  ViewLayer *view_layer = CTX_data_view_layer(C);
++  BKE_view_layer_synced_ensure(scene, view_layer);
++  for (uint i = 0; i < mesh_step->elems_len; i++) {
++    const MeshUndoStep_Elem &elem = mesh_step->elems[i];
++    const UndoRefID_Object &reference = elem.obedit_ref;
++    ID *resolved = BKE_libblock_find_name_and_library_filepath(
++        main, GS(reference.name), reference.name + 2,
++        reference.library_filepath_abs[0] ? reference.library_filepath_abs : nullptr);
++    if (!resolved) {
++      return false;
++    }
++    Object *owner = reinterpret_cast<Object *>(resolved);
++    if (owner->type != OB_MESH || !owner->data || !elem.data.mesh ||
++        (i == 0 && owner != object) || !BKE_view_layer_base_find(view_layer, owner) ||
++        elem.data.mesh->id.session_uid != static_cast<ID *>(owner->data)->session_uid) {
++      return false;
++    }
++  }
++  return true;
++}
++#endif
++
+ void ED_mesh_undosys_type(UndoType *ut)
+ {
+   ut->name = "Edit Mesh";

@@ -58,6 +58,10 @@ jobs:
         run: python3 -m unittest discover -s build -p test_transform_tool_properties.py -v
       - name: Test fine drag gain and independent keyboard precision
         run: python3 -m unittest discover -s build -p test_fine_drag_lifecycle.py -v
+      - name: Test direct Extrude mesh rollback and batched motion ownership
+        run: python3 -m unittest discover -s build -p test_touch_extrude.py -v
+      - name: Test accepted Extrude recovery
+        run: python3 -m unittest discover -s build -p test_touch_undo_recovery.py -v
       - name: Test direct point selection and external modifier parity
         run: python3 -m unittest discover -s build -p test_touch_point_selection.py -v
       - name: Test direct-pinch navigation policy
