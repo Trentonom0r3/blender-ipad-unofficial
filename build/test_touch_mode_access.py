@@ -3,10 +3,13 @@
 Native lists/fonts/operators are modeled; target UIKit/modal/device proof is separate.
 """
 import unittest
+from pathlib import Path
 import test_ipad_panels
 from test_tool_ring import ring_source
 from test_touch_extrude import changed_source
 from test_compact_shelf import function
+
+FONT_TYPES=(Path(__file__).parent/'fixtures/pinned_ui_font_style.hh').read_text(encoding='utf-8')
 
 POLICY=ring_source().replace('#pragma once','')
 NATIVE=changed_source('source/blender/editors/interface/regions/interface_region_menu_pie.cc')
@@ -181,9 +184,10 @@ template<class T>struct Vector:std::vector<T>{bool is_empty()const{return this->
 struct uiBlock{Vector<std::unique_ptr<uiBut>> buttons;};
 struct Object{int mode=1;};struct bContext{Object *object;};
 struct uiPopupBlockHandle{int menuretval=0;};constexpr int UI_RETURN_CANCEL=1;
-struct Data{int anchor[2]={100,100};};struct Style{int widget=0;}style;
-Style *UI_style_get_dpi(){return &style;}
-int UI_fontstyle_string_width(int *,const char *str){return int(std::strlen(str))*8;}
+PINNED_FONT_TYPES
+struct Data{int anchor[2]={100,100};};uiStyle style{};
+const uiStyle *UI_style_get_dpi(){return &style;}
+int UI_fontstyle_string_width(const uiFontStyle *,const char *str){return int(std::strlen(str))*8;}
 void BLI_rctf_init(ipad_ring::Rect *r,float a,float b,float c,float d){*r={a,b,c,d};}
 Object *CTX_data_active_object(bContext *C){return C->object;}
 bContext *CTX_wm_reports(bContext *C){return C;}
@@ -201,7 +205,7 @@ int main(){wmOperatorType ot;PointerRNA modes[3]{{0},{1},{2}};uiBlock block;
  for(auto &b:block.buttons)assert((b->flag&(UI_HIDDEN|UI_BUT_DISABLED))==(UI_HIDDEN|UI_BUT_DISABLED));
  block.buttons[0]->opptr=&modes[0];handle.menuretval=0;layout(&C,&block,&handle,data,{0,400,0,50});assert(handle.menuretval==UI_RETURN_CANCEL);
 }
-""".replace('FRAGMENT',fragment))
+""".replace('FRAGMENT',fragment).replace('PINNED_FONT_TYPES',FONT_TYPES))
 
  def test_native_header_allocation_and_target_height_share_one_predicate(self):
   source=changed_source('source/blender/editors/screen/area.cc')
