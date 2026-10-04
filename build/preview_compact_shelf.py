@@ -13,7 +13,7 @@ import bpy
 
 repo=Path(__file__).resolve().parents[1]
 case=sys.argv[sys.argv.index('--case')+1] if '--case' in sys.argv else 'move'
-output=repo/'output/ui-preview/compact-shelf'
+output=Path(sys.argv[sys.argv.index('--output')+1]) if '--output' in sys.argv else repo/'output/ui-preview/compact-shelf'
 output.mkdir(parents=True,exist_ok=True)
 path='scripts/startup/bl_ui/space_view3d_ipad.py'
 patch=(subprocess.check_output(['git','show','d64e64c:patches/blender-ipad.patch'],cwd=repo).decode()
@@ -43,7 +43,7 @@ class NativeLayout:
 bpy.context.preferences.view.show_splash=False
 area=next(a for a in bpy.context.window.screen.areas if a.type=='VIEW_3D')
 region=next(r for r in area.regions if r.type=='WINDOW')
-width=720 if case in {'before','expanded'} else 192 if case in {'narrow','expanded-narrow'} else 320
+width=720 if case in {'before','expanded'} else 192 if case in {'narrow','narrow-mixed','expanded-narrow'} else 320
 class WM_OT_compact_shelf_preview(bpy.types.Operator):
     bl_idname='wm.compact_shelf_preview'
     bl_label='Editing Controls Â· Host Layout Preview'
@@ -62,9 +62,10 @@ def tick():
                 active.operator_properties('transform.translate').constraint_axis=(True,False,False)
                 active.operator_properties('transform.translate').use_accurate=True
                 bpy.context.tool_settings.use_snap=True
-                if case in {'mesh','narrow','expanded-narrow'}:
+                if case in {'mesh','narrow','narrow-mixed','expanded-narrow'}:
                     bpy.ops.object.mode_set(mode='EDIT')
                     bpy.ops.view3d.ipad_selection_tool(tool='builtin.select_box',mode='ADD')
+                if case=='narrow-mixed':bpy.context.tool_settings.mesh_select_mode=(True,True,True)
                 if case=='unsupported':bpy.ops.wm.tool_set_by_id(name='builtin.cursor')
                 if case in {'expanded','expanded-narrow'}:bpy.ops.view3d.ipad_shelf_toggle(expanded=True)
             area.tag_redraw()

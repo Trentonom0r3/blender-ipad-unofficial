@@ -48,7 +48,9 @@ def draw(width,expanded=False):
 
 def checks(tool,width,ring=None,panel=None):
     records,grids=draw(width)
-    buttons=[r for r in records if r[0]!='label']
+    mode_controls=[r for r in records if r[0]=='wm.call_menu_pie' and getattr(r[1], 'name', None)=='VIEW3D_MT_ipad_modes']
+    assert len(mode_controls)==1 and mode_controls[0][1].ipad_touch_targets
+    buttons=[r for r in records if r[0]!='label' and r not in mode_controls]
     assert buttons[0][0]=='wm.ipad_tool_palette' and buttons[0][1].touch_targets
     has_context=bool(ring or panel)
     assert len(buttons)==(5 if has_context else 4)
@@ -92,7 +94,7 @@ with bpy.context.temp_override(area=area,region=region):
                     caption=' '.join(r[2]['text'] for r in records if r[0]=='label')
                     expected={'SET':'Replace','ADD':'Add','SUB':'Remove','AND':'Custom'}[action]
                     assert expected in caption,(action,caption)
-                    if mode=='EDIT':assert 'Vertex' in caption
+                    if mode=='EDIT':assert ('V' if width<13.2 else 'Vertex') in caption
         for tool,operator in (('builtin.move','transform.translate'),('builtin.rotate','transform.rotate'),('builtin.scale','transform.resize')):
             bpy.ops.wm.tool_set_by_id(name=tool)
             active=module.ToolSelectPanelHelper.tool_active_from_context(bpy.context)
@@ -118,6 +120,17 @@ with bpy.context.temp_override(area=area,region=region):
         for tool in ('builtin.cursor','builtin.annotate','builtin.measure'):
             bpy.ops.wm.tool_set_by_id(name=tool)
             for width in (9.6,16.):checks(tool,width)
+    for paint_mode in ('SCULPT','VERTEX_PAINT','WEIGHT_PAINT','TEXTURE_PAINT'):
+        bpy.ops.object.mode_set(mode=paint_mode)
+        assert module.VIEW3D_MT_ipad_modes.poll(bpy.context)
+        assert not module.VIEW3D_HT_ipad_editing_shelf.poll(bpy.context)
+        records=[]
+        original=module.ipad_editing_shelf_visible
+        module.ipad_editing_shelf_visible=lambda context:False
+        module.draw_canvas_header(Layout(records,[]))
+        module.ipad_editing_shelf_visible=original
+        assert any(r[0]=='wm.call_menu_pie' and getattr(r[1],'name',None)=='VIEW3D_MT_ipad_modes' for r in records)
+        bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.wm.tool_set_by_id(name='builtin.move')
     # Stock host lacks the target Region receipt; real quad-view visibility adapter checks Python fallback.
@@ -134,7 +147,7 @@ with bpy.context.temp_override(area=area,region=region):
     module.ipad_editing_shelf_visible=old
     bpy.ops.view3d.ipad_shelf_toggle(expanded=False)
 
-output=repo/'output/ui-preview/compact-shelf-validation.json'
+output=repo/'output/ui-preview/mode-access/compact-validation.json'
 output.parent.mkdir(parents=True,exist_ok=True)
 output.write_text(json.dumps({'host':bpy.app.version_string,'checks':results,
  'canonical_patch_sha256':hashlib.sha256(patch.encode()).hexdigest(),

@@ -28,13 +28,13 @@ int main() {
   const float inner=shelf.width()/scale-16;
   const int cells=expanded?(inner<308?3:inner>=560?8:4):(inner<264?3:5);
   assert(inner/cells>=44);
-  assert(shelf.height()<=int((expanded?244:164)*scale));
+  assert(shelf.height()<=int((expanded?268:164)*scale));
   assert(shelf.ymax+int(80*scale)<=canvas.ymax);
  }
  const auto compact=p::editing_shelf({0,0,1024,834},{},1,false);
  const auto expanded=p::editing_shelf({0,0,1024,834},{},1,true);
  assert(compact.width()==336&&compact.height()==120);
- assert(expanded.width()==736&&expanded.height()==152);
+ assert(expanded.width()==736&&expanded.height()==176);
  assert(p::editing_shelf({0,0,220,700},{},1,false).empty());
  // A compact bar can fit where the full layout cannot, retaining the native fallback otherwise.
  assert(!p::editing_shelf({0,0,340,230},{},1,false).empty());
@@ -62,6 +62,7 @@ int main() {
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r"""
 #define WITH_APPLE_CROSSPLATFORM
 #include <cassert>
+#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -81,6 +82,7 @@ struct Map {
  void remove_as(std::string k){values.erase(k);}
 };
 struct Runtime {
+ uint64_t ipad_editing_shelf_context[13]={};
  Map block_name_map;std::vector<uiBlock*> uiblocks;
  bool ipad_editing_shelf_presented=true,ipad_editing_shelf_visible=true,ipad_editing_shelf_expanded=false;
  float ipad_editing_shelf_scale=1;
@@ -103,6 +105,7 @@ bool RNA_property_boolean_get(PointerRNA *,PropertyRNA *p){return p->value;}
 void BLI_rcti_translate(rcti *r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 bool BLI_rcti_isect_pt_v(const rcti *r,const int p[2]){return p[0]>=r->xmin&&p[0]<=r->xmax&&p[1]>=r->ymin&&p[1]<=r->ymax;}
 bool ED_ipad_editing_shelf_rect(bContext *C,const ARegion *,rcti &r){r=C->desired;return C->fits;}
+bool UI_ipad_context_matches(bContext *,const uint64_t *){return true;}
 void editing_shelf_visible_set(bContext *,ARegion *r,bool value){r->runtime->ipad_editing_shelf_visible=value;}
 void ED_region_tag_redraw(ARegion *){++redraws;}
 bool BLI_listbase_is_empty(std::vector<uiBlock*> *items){return items->empty();}

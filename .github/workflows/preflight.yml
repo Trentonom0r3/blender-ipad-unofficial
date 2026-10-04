@@ -76,5 +76,7 @@ jobs:
         run: python3 -m unittest discover -s build -p test_editing_shelf.py -v
       - name: Test compact shelf queued-input receipts and native admission
         run: python3 -m unittest discover -s build -p test_compact_shelf.py -v
+      - name: Test touch Mode native geometry and deferred owner receipts
+        run: python3 -m unittest discover -s build -p test_touch_mode_access.py -v
       - name: Validate patch against pinned upstream and check scripts
         run: python3 build/preflight.py

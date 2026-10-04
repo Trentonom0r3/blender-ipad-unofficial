@@ -59,6 +59,13 @@ with zipfile.ZipFile(ipa) as archive:
                    'The complete folder was copied. Which .blend should Link or Append use?',
                    'Retry Files','Open Local Copy'):
         assert marker.encode() in binary or marker.encode('utf-16le') in binary,marker
+    has_modes='class VIEW3D_MT_ipad_modes' in expected
+    if has_modes:
+        for marker in ('class VIEW3D_MT_ipad_modes','def ipad_mode_button','def ipad_mode_item',
+                       "self.layout.operator_enum('object.mode_set', 'mode')"):
+            assert marker in actual,marker
+        for marker in ('VIEW3D_MT_ipad_modes','Expand this viewport to show modes'):
+            assert marker.encode() in binary,marker
     topbar,=[n for n in names if n.endswith('/bl_ui/space_topbar.py')]
     menu=archive.read(topbar);assert b'wm.link' in menu and b'wm.append' in menu
     for asset in ('ops.generic.select_box','ops.transform.translate','ops.transform.rotate','ops.transform.resize'):
@@ -73,6 +80,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'entire_packaged_interaction_ui_matches_exact_source':True,
     'compact_controls_and_native_finger_option_markers':True,
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
+    'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'device_acceptance':False}
 (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (folder/'artifact-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')

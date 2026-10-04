@@ -92,8 +92,10 @@ with bpy.context.temp_override(area=area, region=region):
         module.ipad_editing_shelf_visible = lambda context: False
         records = []
         module.draw_canvas_header(Layout(records))
-        assert [item[0] for item in records[:3]] == ['wm.ipad_tool_palette', 'ed.undo', 'ed.redo'], records
-        assert records[0][1].touch_targets is True
+        assert records[0][0]=='wm.call_menu_pie' and records[0][1].name=='VIEW3D_MT_ipad_modes'
+        assert [item[0] for item in records[1:4]] == ['wm.ipad_tool_palette', 'ed.undo', 'ed.redo'], records
+        assert records[0][1].ipad_touch_targets is True
+        assert records[1][1].touch_targets is True
         panels = {r[2]['panel'] for r in records if r[0] == 'popover'}
         assert {'VIEW3D_PT_ipad_selection','VIEW3D_PT_ipad_transform','VIEW3D_PT_ipad_camera'} <= panels
         assert any(r[0] == 'view3d.ipad_flythrough_toggle' for r in records)
