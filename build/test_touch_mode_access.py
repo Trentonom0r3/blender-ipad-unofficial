@@ -181,7 +181,7 @@ template<class T>struct Vector:std::vector<T>{bool is_empty()const{return this->
 struct uiBlock{Vector<std::unique_ptr<uiBut>> buttons;};
 struct Object{int mode=1;};struct bContext{Object *object;};
 struct uiPopupBlockHandle{int menuretval=0;};constexpr int UI_RETURN_CANCEL=1;
-struct Data{int anchor[2]={100,100};};struct Style{int widgetlabel=0;}style;
+struct Data{int anchor[2]={100,100};};struct Style{int widget=0;}style;
 Style *UI_style_get_dpi(){return &style;}
 int UI_fontstyle_string_width(int *,const char *str){return int(std::strlen(str))*8;}
 void BLI_rctf_init(ipad_ring::Rect *r,float a,float b,float c,float d){*r={a,b,c,d};}

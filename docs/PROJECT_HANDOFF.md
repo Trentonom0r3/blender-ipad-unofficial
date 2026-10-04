@@ -1,5 +1,17 @@
 # Project handoff — 2026-10-03
 
+## Touch Mode native font correction — 2026-10-04
+
+Exact-source run37168831561 at1cbdb85 passed cloud preflight but failed native Release: UI_style_get_dpi()->widgetlabel does not exist in pinned5.0 uiStyle. The source now uses the native widget font style, matching existing pinned label measurement. The source-executing geometry/layout harness also models the real widget member. Its six tests,87-file pinned-source preflight and diff check pass. Previous94 host tests and five previews remain parent-source evidence; the packaged interaction Python is unchanged by this C++ correction. Canonical patch SHA256 e00720f09a3ccea5a06b2124344e8c300b23cab619d280972df144968de5ac65.
+
+Build this corrected source once, inspect actual native errors and verify downloaded IPA before calling Mode ready. Latest verified IPA remains compact-only run37163440151 at3ff7242; there is no Mode package or device acceptance. Preserve all prior interaction contracts and continue the full goal independently. The next bounded UX recommendation is a transient admitted-stroke apply/cancel cue; no cue source or completed native lifetime audit exists yet. Earlier pending/source entries below are historical.
+
+## Touch Mode native build in progress — 2026-10-04
+
+Completed source `1cbdb857771c362825e7b25078c601dd41ae7bb1` is pushed and building once in [run 37168831561](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37168831561). Cloud preflight passed, including all six new source-executing Mode tests and the pinned patch check; the native job reached Configure. Final five stock-host previews and native property/routing checks match canonical patch `6c2232494df2788057b1b653b67022b6bd121d8547d9b2cfa5c02fae3e868287`. Git was clean after the source commit.
+
+Inspect this exact run before any replacement. Fix actual native failures if present; on success download and run build/verify_compact_ipa.py against the full source SHA before calling Mode packaged. Last verified IPA remains compact-only 37163440151 at 3ff7242. There is no Mode IPA or device acceptance yet. Keep the full goal active, preserve the accepted Pencil/Inspector/native editor/hardware/Files contracts, and continue actual interaction independently. Earlier source-next wording below is historical.
+
 ## Touch Mode access — completed source, 2026-10-04
 
 The current production candidate adds a 44-unit Mode control beside the compact status labels, keeping compact 336-wide/120-or-164-high bounds and the existing Ring/context/Undo/Redo/Expand rows. Narrow mixed Mesh selection uses V/E/F in the caption; full native Selection labels and advanced access remain. Expanded controls reserve the taller Mode band with 176/220/268 caps. Native dynamic mode names/icons are built by operator_enum in a separate owned variable-count chooser; measured label widths decide one/two columns, current native Object mode is marked, and rejected-fit choices close with the native header fallback retained. Selecting a mode closes before execution. This is an access/presentation increment to existing Blender modes, not a new modeling capability.

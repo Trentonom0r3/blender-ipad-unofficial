@@ -1,5 +1,11 @@
 # Finger access after contextual Pencil controls
 
+## Touch Mode native font correction — 2026-10-04
+
+Exact-source run37168831561 at1cbdb85 passed cloud preflight but failed native Release: UI_style_get_dpi()->widgetlabel does not exist in pinned5.0 uiStyle. The source now uses the native widget font style, matching existing pinned label measurement. The source-executing geometry/layout harness also models the real widget member. Its six tests,87-file pinned-source preflight and diff check pass. Previous94 host tests and five previews remain parent-source evidence; the packaged interaction Python is unchanged by this C++ correction. Canonical patch SHA256 e00720f09a3ccea5a06b2124344e8c300b23cab619d280972df144968de5ac65.
+
+Build this corrected source once, inspect actual native errors and verify downloaded IPA before calling Mode ready. Latest verified IPA remains compact-only run37163440151 at3ff7242; there is no Mode package or device acceptance. Preserve all prior interaction contracts and continue the full goal independently. The next bounded UX recommendation is a transient admitted-stroke apply/cancel cue; no cue source or completed native lifetime audit exists yet. Earlier pending/source entries below are historical.
+
 ## Touch Mode access — completed source, 2026-10-04
 
 The current production candidate adds a 44-unit Mode control beside the compact status labels, keeping compact 336-wide/120-or-164-high bounds and the existing Ring/context/Undo/Redo/Expand rows. Narrow mixed Mesh selection uses V/E/F in the caption; full native Selection labels and advanced access remain. Expanded controls reserve the taller Mode band with 176/220/268 caps. Native dynamic mode names/icons are built by operator_enum in a separate owned variable-count chooser; measured label widths decide one/two columns, current native Object mode is marked, and rejected-fit choices close with the native header fallback retained. Selecting a mode closes before execution. This is an access/presentation increment to existing Blender modes, not a new modeling capability.

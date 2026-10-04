@@ -7851,7 +7851,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +    for (const std::unique_ptr<uiBut> &but : block->buttons) {
 +      valid &= but->optype && STREQ(but->optype->idname, "OBJECT_OT_mode_set") && but->opptr;
 +      label_width = std::max(label_width, float(UI_fontstyle_string_width(
-+          &UI_style_get_dpi()->widgetlabel, but->str.c_str())));
++          &UI_style_get_dpi()->widget, but->str.c_str())));
 +    }
 +    const auto geometry = ipad_ring::mode_menu_layout(UI_UNIT_X, viewport,
 +        float(data.anchor[0]), float(data.anchor[1]), int(block->buttons.size()), label_width);
