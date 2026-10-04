@@ -1,0 +1,162 @@
+{
+  "host": "5.1.2",
+  "scope": "Actual stock-host native operator admission and observed state. No shipping iPad Mode UI, target callback receipts, automatic modal Undo or device input acceptance.",
+  "records": [
+    {
+      "case": "editable mesh",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "EDIT",
+      "observed_context_mode": "EDIT_MESH",
+      "observed_type": "MESH"
+    },
+    {
+      "case": "editable mesh",
+      "requested": "OBJECT",
+      "poll": true,
+      "before": "EDIT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "MESH"
+    },
+    {
+      "case": "mesh with local hide_set flag",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "EDIT",
+      "observed_context_mode": "EDIT_MESH",
+      "observed_type": "MESH"
+    },
+    {
+      "case": "mesh disabled in viewport",
+      "requested": "EDIT",
+      "poll": false,
+      "before": "OBJECT",
+      "status": {
+        "error": "Operator bpy.ops.object.mode_set.poll() Cannot edit hidden object"
+      },
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "MESH"
+    },
+    {
+      "case": "no active object",
+      "requested": "EDIT",
+      "poll": false,
+      "before": null,
+      "status": {
+        "error": "Operator bpy.ops.object.mode_set.poll() Context missing active object"
+      },
+      "observed_mode": null,
+      "observed_context_mode": "OBJECT",
+      "observed_type": null
+    },
+    {
+      "case": "local object with linked mesh data",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": {
+        "error": "Error: The 'Cube' mesh data-block is linked and not editable. Use \"Make Local\" to make it editable.\n"
+      },
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "MESH"
+    },
+    {
+      "case": "incompatible Light Edit request",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": {
+        "error": "Converting py args to operator properties: enum \"EDIT\" not found in ('OBJECT')"
+      },
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "LIGHT"
+    },
+    {
+      "case": "editable armature",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "EDIT",
+      "observed_context_mode": "EDIT_ARMATURE",
+      "observed_type": "ARMATURE"
+    },
+    {
+      "case": "editable armature",
+      "requested": "OBJECT",
+      "poll": true,
+      "before": "EDIT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "ARMATURE"
+    },
+    {
+      "case": "editable armature",
+      "requested": "POSE",
+      "poll": true,
+      "before": "OBJECT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "POSE",
+      "observed_context_mode": "POSE",
+      "observed_type": "ARMATURE"
+    },
+    {
+      "case": "editable armature",
+      "requested": "OBJECT",
+      "poll": true,
+      "before": "POSE",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "ARMATURE"
+    },
+    {
+      "case": "editable legacy curve",
+      "requested": "EDIT",
+      "poll": true,
+      "before": "OBJECT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "EDIT",
+      "observed_context_mode": "EDIT_CURVE",
+      "observed_type": "CURVE"
+    },
+    {
+      "case": "editable legacy curve",
+      "requested": "OBJECT",
+      "poll": true,
+      "before": "EDIT",
+      "status": [
+        "FINISHED"
+      ],
+      "observed_mode": "OBJECT",
+      "observed_context_mode": "OBJECT",
+      "observed_type": "CURVE"
+    }
+  ]
+}
