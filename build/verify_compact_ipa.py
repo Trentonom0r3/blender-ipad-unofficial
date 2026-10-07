@@ -7,10 +7,13 @@ from pathlib import Path
 import hashlib
 import json
 import plistlib
+import re
+import tempfile
 import struct
 import subprocess
 import sys
 import zipfile
+from preflight import get_source
 
 run_id,revision,directory=sys.argv[1:]
 repo=Path(__file__).resolve().parents[1]
@@ -29,6 +32,19 @@ assert worktree.replace(b'\r\n',b'\n')==patch
 path='scripts/startup/bl_ui/space_view3d_ipad.py'
 section=patch.decode('utf-8').split(f'diff --git a/{path} b/{path}\n',1)[1].split('diff --git ',1)[0]
 expected=''.join(line[1:] for line in section.splitlines(True) if line.startswith('+') and not line.startswith('+++'))
+toolbar_path='scripts/startup/bl_ui/space_view3d_toolbar.py'
+toolbar_expected=None
+toolbar_marker=f'diff --git a/{toolbar_path} b/{toolbar_path}\n'
+if toolbar_marker.encode() in patch:
+    workflow=execute(['git','show',revision+':.github/workflows/build-ipa.yml']).decode('utf-8')
+    pin=re.search(r'^  BLENDER_COMMIT: ([0-9a-f]{40})\s*$',workflow,re.MULTILINE).group(1)
+    section=toolbar_marker+patch.decode('utf-8').split(toolbar_marker,1)[1].split('diff --git ',1)[0]
+    with tempfile.TemporaryDirectory(prefix='ipad-exact-toolbar-') as directory:
+        staged=Path(directory)/toolbar_path
+        staged.parent.mkdir(parents=True,exist_ok=True)
+        staged.write_bytes(get_source(pin,toolbar_path,repo/'.cache/preflight',False))
+        subprocess.run(['git','apply','-'],input=section.encode('utf-8'),cwd=directory,check=True)
+        toolbar_expected=staged.read_text(encoding='utf-8')
 with zipfile.ZipFile(ipa) as archive:
     assert archive.testzip() is None,'Full IPA CRC failure'
     names=archive.namelist();root='Payload/Blender.app/'
@@ -81,6 +97,12 @@ with zipfile.ZipFile(ipa) as archive:
                        'ipad_pencil_header_supported','ipad_editing_shelf_enabled'):
             assert marker.encode() in binary,marker
         assert any(n.endswith('/datafiles/fonts/Inter.woff2') for n in names)
+    if toolbar_expected is not None:
+        toolbar,=[n for n in names if n.endswith('/'+toolbar_path)]
+        toolbar_actual=archive.read(toolbar).decode('utf-8').replace('\r\n','\n')
+        assert toolbar_actual==toolbar_expected,'Entire packaged toolbar differs from exact source'
+        color=toolbar_actual.split('class VIEW3D_PT_tools_brush_color(',1)[1].split('\n\nclass ',1)[0]
+        assert color.count('if settings is None or settings.brush is None:')==2
     topbar,=[n for n in names if n.endswith('/bl_ui/space_topbar.py')]
     menu=archive.read(topbar);assert b'wm.link' in menu and b'wm.append' in menu
     for asset in ('ops.generic.select_box','ops.transform.translate','ops.transform.rotate','ops.transform.resize'):
@@ -97,6 +119,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
+    'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'device_acceptance':False}
 (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (folder/'artifact-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')

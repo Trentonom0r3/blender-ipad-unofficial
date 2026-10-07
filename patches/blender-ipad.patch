@@ -462,26 +462,7 @@ diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makes
    ot = WM_operatortype_find(opname, false); /* print error next */
    if (!ot || !ot->srna) {
      RNA_warning("%s '%s'", ot ? "operator missing srna" : "unknown operator", opname);
-@@ -1406,80 +1417,85 @@
-               "or a checkbox when disabled "
-               "(the default is -1 which uses toggle only when an icon is displayed)",
-               -1,
-               1);
-   RNA_def_boolean(func, "icon_only", false, "", "Draw only icons in buttons, no text");
-   RNA_def_boolean(func, "event", false, "", "Use button to input key events");
-   RNA_def_boolean(
-       func, "full_event", false, "", "Use button to input full events including modifiers");
-   RNA_def_boolean(func,
-                   "emboss",
-                   true,
-                   "",
-                   "Draw the button itself, not just the icon/text. When false, corresponds to the "
-                   "'NONE_OR_STATUS' layout emboss type.");
-   RNA_def_int(func,
-               "index",
-               /* RNA_NO_INDEX == -1 */
-               -1,
-               -2,
+@@ -1425,80 +1436,85 @@
                INT_MAX,
                "",
                "The index of this button, when set a single member of an array can be accessed, "
@@ -503,11 +484,6 @@ diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makes
    api_ui_item_rna_common(func);
    api_ui_item_common(func);
    RNA_def_boolean(func, "icon_only", false, "", "Draw only icons in tabs, no text");
-+  RNA_def_boolean(func,
-+                  "use_tab_style",
-+                  true,
-+                  "",
-+                  "Draw area-aligned tabs; disable for ordinary selection buttons in popovers");
    parm = RNA_def_string(func, "panel", nullptr, 0, "", "Identifier of the panel");
    RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
@@ -527,6 +503,11 @@ diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makes
    parm = RNA_def_string(
        func, "property_highlight", nullptr, 0, "", "Identifier of highlight property in data");
    RNA_def_boolean(func, "icon_only", false, "", "Draw only icons in tabs, no text");
++  RNA_def_boolean(func,
++                  "use_tab_style",
++                  true,
++                  "",
++                  "Draw area-aligned tabs; disable for ordinary selection buttons in popovers");
 
    func = RNA_def_function(srna, "prop_enum", "rna_uiItemEnumR_string");
    api_ui_item_rna_common(func);
@@ -548,6 +529,25 @@ diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makes
 
    func = RNA_def_function(srna, "prop_decorator", "rna_uiLayoutDecorator");
    api_ui_item_rna_common(func);
+   RNA_def_int(func,
+               "index",
+               /* RNA_NO_INDEX == -1 */
+               -1,
+               -2,
+               INT_MAX,
+               "",
+               "The index of this button, when set a single member of an array can be accessed, "
+               "when set to -1 all array members are used",
+               -2,
+               INT_MAX);
+
+   for (int is_menu_hold = 0; is_menu_hold < 2; is_menu_hold++) {
+     func = (is_menu_hold) ? RNA_def_function(srna, "operator_menu_hold", "rna_uiItemOMenuHold") :
+                             RNA_def_function(srna, "operator", "rna_uiItemO");
+     api_ui_item_op_common(func);
+     RNA_def_boolean(func, "emboss", true, "", "Draw the button itself, not just the icon/text");
+     RNA_def_boolean(func, "depress", false, "", "Draw pressed in");
+     parm = RNA_def_property(func, "icon_value", PROP_INT, PROP_UNSIGNED);
 diff --git a/source/blender/editors/interface/interface_layout.cc b/source/blender/editors/interface/interface_layout.cc
 --- a/source/blender/editors/interface/interface_layout.cc
 +++ b/source/blender/editors/interface/interface_layout.cc
@@ -6986,7 +6986,44 @@ diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_
 diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/screen/area.cc
 --- a/source/blender/editors/screen/area.cc
 +++ b/source/blender/editors/screen/area.cc
-@@ -38,6 +38,7 @@
+@@ -1,101 +1,113 @@
+ /* SPDX-FileCopyrightText: 2008 Blender Authors
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup edscr
+  */
+
+ #include <algorithm>
+ #include <cstdio>
+ #include <cstring>
+
+ #include "MEM_guardedalloc.h"
+
+ #include "DNA_userdef_types.h"
+
+ #include "BLI_linklist.h"
+ #include "BLI_listbase.h"
+ #include "BLI_math_vector.h"
+ #include "BLI_rand.hh"
+ #include "BLI_string.h"
+ #include "BLI_string_utf8.h"
+ #include "BLI_string_utils.hh"
+ #include "BLI_utildefines.h"
+
+ #include "BKE_context.hh"
+ #include "BKE_global.hh"
+ #include "BKE_screen.hh"
+ #include "BKE_workspace.hh"
+
+ #include "RNA_access.hh"
+
+ #include "WM_api.hh"
+ #include "WM_message.hh"
+ #include "WM_toolsystem.hh"
+ #include "WM_types.hh"
+
  #include "ED_asset_shelf.hh"
  #include "ED_buttons.hh"
  #include "ED_screen.hh"
@@ -6994,7 +7031,11 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
  #include "ED_screen_types.hh"
  #include "ED_space_api.hh"
  #include "ED_time_scrub_ui.hh"
-@@ -49,6 +50,9 @@
+
+ #include "GPU_framebuffer.hh"
+ #include "GPU_immediate.hh"
+ #include "GPU_immediate_util.hh"
+ #include "GPU_matrix.hh"
  #include "GPU_state.hh"
 
  #include "BLF_api.hh"
@@ -7004,7 +7045,10 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
  #include "IMB_metadata.hh"
 
-@@ -59,6 +63,14 @@
+ #include "UI_interface.hh"
+ #include "UI_interface_icons.hh"
+ #include "UI_interface_layout.hh"
+ #include "UI_resources.hh"
  #include "UI_view2d.hh"
 
  #include "screen_intern.hh"
@@ -7019,7 +7063,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
  /* general area and region code */
 
-@@ -141,8 +153,26 @@
+ static void region_draw_gradient(const ARegion *region)
+ {
+   if (region->v2d.cur.xmax >= region->v2d.tot.xmax) {
+     /* No overflow. */
+     return;
+   }
+
+   float opaque[4];
+   UI_GetThemeColor4fv(TH_HEADER, opaque);
+   float transparent[4];
+   UI_GetThemeColor3fv(TH_HEADER, transparent);
+   transparent[3] = 0.0f;
+
+   rctf rect{};
+   rect.xmax = BLI_rcti_size_x(&region->winrct) + 1;
+   rect.xmin = rect.xmax - (25.0f * UI_SCALE_FAC);
+   rect.ymin = 0.0f;
+   rect.ymax = BLI_rcti_size_y(&region->winrct) + 1;
+   UI_draw_roundbox_4fv_ex(&rect, opaque, transparent, 0.0f, nullptr, 0.0f, 0.0f);
+ }
+
+ void ED_region_pixelspace(const ARegion *region)
+ {
+   wmOrtho2_region_pixelspace(region);
+   GPU_matrix_identity_set();
+ }
+
+ void ED_region_do_listen(wmRegionListenerParams *params)
+ {
+   ARegion *region = params->region;
+   const wmNotifier *notifier = params->notifier;
+
+   /* generic notes first */
+   switch (notifier->category) {
+     case NC_WM:
+       if (notifier->data == ND_FILEREAD) {
+         ED_region_tag_redraw(region);
+@@ -104,91 +116,110 @@
+     case NC_WINDOW:
+       ED_region_tag_redraw(region);
+       break;
+   }
+
+   if (region->runtime->type && region->runtime->type->listener) {
+     region->runtime->type->listener(params);
+   }
+
+   LISTBASE_FOREACH (uiBlock *, block, &region->runtime->uiblocks) {
+     UI_block_listen(block, params);
+   }
+
+   LISTBASE_FOREACH (uiList *, list, &region->ui_lists) {
+     if (list->type && list->type->listener) {
+       list->type->listener(list, params);
+     }
+   }
+ }
+
+ void ED_area_do_listen(wmSpaceTypeListenerParams *params)
+ {
+   /* no generic notes? */
+   if (params->area->type && params->area->type->listener) {
+     params->area->type->listener(params);
+   }
+ }
+
+ void ED_area_do_refresh(bContext *C, ScrArea *area)
+ {
+   /* no generic notes? */
+   if (area->type && area->type->refresh) {
+     area->type->refresh(C, area);
+   }
+   area->do_refresh = false;
+ }
+
  /**
   * \brief Corner widget use for quitting full-screen.
   */
@@ -7048,7 +7166,9 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    UI_icon_draw_ex(x2 - U.widget_unit,
                    y2 - U.widget_unit,
                    ICON_FULLSCREEN_EXIT,
-@@ -152,6 +182,7 @@
+                   UI_INV_SCALE_FAC,
+                   min_ff(alpha, 0.75f),
+                   0.0f,
                    nullptr,
                    false,
                    UI_NO_ICON_OVERLAY_TEXT);
@@ -7056,7 +7176,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
  }
 
  /**
-@@ -301,12 +332,21 @@
+  * \brief Corner widgets use for dragging and splitting the view.
+  */
+ static void area_draw_azone(ScrArea *area, ARegion *region, AZone *az)
+ {
+   if (region->regiontype != RGN_TYPE_HEADER || !(U.uiflag & USER_AREA_CORNER_HANDLE)) {
+     return;
+   }
+
+   if (az->x1 < area->totrct.xmin + 1) {
+     if ((region->alignment == RGN_ALIGN_TOP && az->y2 > area->totrct.ymax - 1) ||
+         (region->alignment == RGN_ALIGN_BOTTOM && az->y1 < area->totrct.ymin + 1))
+     {
+       UI_icon_draw_alpha(
+           float(az->x1) + UI_SCALE_FAC, float(az->y1) + (6.0f * UI_SCALE_FAC), ICON_GRIP_V, 0.4f);
+     }
+   }
+ }
+
+ /**
+  * \brief Edge widgets to show hidden panels such as the toolbar and headers.
+  */
+ static void draw_azone_arrow(float x1, float y1, float x2, float y2, AZEdge edge)
+ {
+   const float size = 0.2f * U.widget_unit;
+   const float l = 1.0f;  /* arrow length */
+   const float s = 0.25f; /* arrow thickness */
+   const float hl = l / 2.0f;
+   const float points[6][2] = {
+       {0, -hl}, {l, hl}, {l - s, hl + s}, {0, s + s - hl}, {s - l, hl + s}, {-l, hl}};
+   const float center[2] = {(x1 + x2) / 2, (y1 + y2) / 2};
+
+   int axis;
+   int sign;
+   switch (edge) {
+     case AE_BOTTOM_TO_TOPLEFT:
+       axis = 0;
+       sign = 1;
+@@ -264,86 +295,95 @@
+   UI_draw_roundbox_aa(&rect, true, 4.0f, color);
+
+   draw_azone_arrow(float(az->x1), float(az->y1), float(az->x2), float(az->y2), az->edge);
+ }
+
+ static void area_azone_tag_update(ScrArea *area)
+ {
+   area->flag |= AREA_FLAG_ACTIONZONES_UPDATE;
+ }
+
+ static void region_draw_azones(ScrArea *area, ARegion *region)
+ {
+   if (!area) {
+     return;
+   }
+
+   GPU_line_width(1.0f);
+   GPU_blend(GPU_BLEND_ALPHA);
+
+   GPU_matrix_push();
+   GPU_matrix_translate_2f(-region->winrct.xmin, -region->winrct.ymin);
+
+   LISTBASE_FOREACH (AZone *, az, &area->actionzones) {
+     /* test if action zone is over this region */
+     rcti azrct;
+     BLI_rcti_init(&azrct, az->x1, az->x2, az->y1, az->y2);
+
+     if (BLI_rcti_isect(&region->runtime->drawrct, &azrct, nullptr)) {
+       if (az->type == AZONE_AREA) {
+         area_draw_azone(area, region, az);
+       }
+       else if (az->type == AZONE_REGION) {
+         if (az->region && !(az->region->flag & RGN_FLAG_POLL_FAILED)) {
+           /* only display tab or icons when the region is hidden */
+           if (az->region->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL)) {
+             region_draw_azone_tab_arrow(area, region, az);
+           }
          }
        }
        else if (az->type == AZONE_FULLSCREEN) {
@@ -7080,7 +7274,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
        area_azone_tag_update(area);
      }
    }
-@@ -515,6 +555,10 @@
+
+   GPU_matrix_pop();
+
+   GPU_blend(GPU_BLEND_NONE);
+ }
+
+ static void region_draw_status_text(ScrArea * /*area*/, ARegion *region)
+ {
+   float header_color[4];
+   UI_GetThemeColor4fv(TH_HEADER, header_color);
+
+   /* Clear the region from the buffer. */
+   GPU_clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+
+   /* Fill with header color when the region is not overlapped. */
+   if (!region->overlap) {
+     const rctf rect = {0.0f, float(region->winx), 0.0f, float(region->winy)};
+     UI_draw_roundbox_3fv_alpha(&rect, true, 0.0f, header_color, 1.0f);
+   }
+
+   const int fontid = BLF_set_default();
+   float x = 12.0f * UI_SCALE_FAC;
+   const float y = 0.4f * UI_UNIT_Y;
+   const float width = BLF_width(fontid, region->runtime->headerstr, BLF_DRAW_STR_DUMMY_MAX);
+   GPU_blend(GPU_BLEND_ALPHA);
+
+   /* Draw a background behind the text for extra contrast. */
+   if (region->overlap) {
+     /* Center the text horizontally. */
+     x = (region->winx - width) / 2.0f;
+     const float pad = 5.0f * UI_SCALE_FAC;
+     const float x1 = x - pad;
+     const float x2 = x + width + pad;
+     const float y1 = 3.0f * UI_SCALE_FAC;
+     const float y2 = region->winy - (4.0f * UI_SCALE_FAC);
+     /* Ensure header_color is not too transparent. */
+     header_color[3] = std::max(header_color[3], 0.6f);
+@@ -478,80 +518,84 @@
+ void ED_region_do_draw(bContext *C, ARegion *region)
+ {
+   using namespace blender;
+   wmWindow *win = CTX_wm_window(C);
+   ScrArea *area = CTX_wm_area(C);
+   ARegionType *at = region->runtime->type;
+
+   /* see BKE_spacedata_draw_locks() */
+   if (at->do_lock) {
+     return;
+   }
+
+   region->runtime->do_draw |= RGN_DRAWING;
+
+   /* Set viewport, scissor, ortho and region->runtime->drawrct. */
+   wmPartialViewport(&region->runtime->drawrct, &region->winrct, &region->runtime->drawrct);
+
+   wmOrtho2_region_pixelspace(region);
+
+   UI_SetTheme(area ? area->spacetype : 0, at->regionid);
+
+   if (area && area_is_pseudo_minimized(area)) {
+     UI_ThemeClearColor(TH_EDITOR_BORDER);
+     return;
+   }
+   /* optional header info instead? */
+   if (region->runtime->headerstr) {
+     region_draw_status_text(area, region);
+   }
+   else if (at->draw) {
+     at->draw(C, region);
+   }
+
+   /* XXX test: add convention to end regions always in pixel space,
+    * for drawing of borders/gestures etc */
+   ED_region_pixelspace(region);
+
    /* Remove sRGB override by rebinding the framebuffer. */
    GPUFrameBuffer *fb = GPU_framebuffer_active_get();
    GPU_framebuffer_bind(fb);
@@ -7091,7 +7359,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
    ED_region_draw_cb_draw(C, region, REGION_DRAW_POST_PIXEL);
 
-@@ -1035,6 +1079,11 @@
+   region_draw_azones(area, region);
+
+   /* for debugging unneeded area redraws and partial redraw */
+   if (G.debug_value == 888) {
+     GPU_blend(GPU_BLEND_ALPHA);
+     GPUVertFormat *format = immVertexFormat();
+     uint pos = GPU_vertformat_attr_add(format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+     RandomNumberGenerator rng = RandomNumberGenerator::from_random_seed();
+     immUniformColor4f(rng.get_float(), rng.get_float(), rng.get_float(), 0.1f);
+     immRectf(pos,
+              region->runtime->drawrct.xmin - region->winrct.xmin,
+              region->runtime->drawrct.ymin - region->winrct.ymin,
+              region->runtime->drawrct.xmax - region->winrct.xmin,
+              region->runtime->drawrct.ymax - region->winrct.ymin);
+     immUnbindProgram();
+     GPU_blend(GPU_BLEND_NONE);
+   }
+
+   region->runtime->drawrct = rcti{};
+
+   UI_blocklist_free_inactive(C, region);
+
+   if (area) {
+     const bScreen *screen = WM_window_get_active_screen(win);
+
+     /* Only region gradient for Top Bar. */
+     if ((screen->state != SCREENFULL) && area->spacetype == SPACE_TOPBAR &&
+         region->regiontype == RGN_TYPE_HEADER)
+     {
+       region_draw_gradient(region);
+     }
+     else if ((region->regiontype == RGN_TYPE_WINDOW) && (region->alignment == RGN_ALIGN_QSPLIT)) {
+
+       /* draw separating lines between the quad views */
+
+       float color[4] = {0.0f, 0.0f, 0.0f, 0.8f};
+@@ -998,80 +1042,85 @@
+       int icon = 0;
+ #else
+       int icon = UI_icon_from_event_type(kmi->type, kmi->val);
+ #endif
+       if (kmi->shift == KM_MOD_HELD) {
+         ed_workspace_status_item(workspace_, {}, ICON_EVENT_SHIFT, 0.0f, inverted);
+       }
+       if (kmi->ctrl == KM_MOD_HELD) {
+         ed_workspace_status_item(workspace_, {}, ICON_EVENT_CTRL, 0.0f, inverted);
+       }
+       if (kmi->alt == KM_MOD_HELD) {
+         ed_workspace_status_item(workspace_, {}, ICON_EVENT_ALT, 0.0f, inverted);
+       }
+       if (kmi->oskey == KM_MOD_HELD) {
+         ed_workspace_status_item(workspace_, {}, ICON_EVENT_OS, 0.0f, inverted);
+       }
+       if (!ELEM(kmi->hyper, KM_NOTHING, KM_ANY)) {
+         ed_workspace_status_item(workspace_, {}, ICON_EVENT_HYPER, 0.0f, inverted);
+       }
+       ed_workspace_status_icon_item(workspace_, icon, inverted);
+       ed_workspace_status_text_item(workspace_, std::move(text));
+     }
+   }
+ }
+
+ void ED_workspace_status_text(bContext *C, const char *str)
+ {
+   WorkspaceStatus status(C);
+   status.item(str ? str : "", ICON_NONE);
+ }
+
+ /** \} */
+
+ /* ************************************************************ */
+
+ static void area_azone_init(const wmWindow *win, const bScreen *screen, ScrArea *area)
+ {
    /* reinitialize entirely, regions and full-screen add azones too */
    BLI_freelistN(&area->actionzones);
 
@@ -7103,7 +7445,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    if (screen->state != SCREENNORMAL) {
      return;
    }
-@@ -1125,8 +1174,16 @@
+
+   if (U.app_flag & USER_APP_LOCK_CORNER_SPLIT) {
+     return;
+   }
+
+   if (ED_area_is_global(area)) {
+     return;
+   }
+
+   if (screen->temp) {
+     return;
+   }
+
+   /* Use a taller zone on the left side, the height of
+    * the header, to make them easier to hit. The others
+    * on the right are shorter to not interfere with
+    * scroll bars. */
+
+   const float coords[4][4] = {
+       /* Bottom-left. */
+       {area->totrct.xmin - U.pixelsize,
+        area->totrct.ymin - U.pixelsize,
+        area->totrct.xmin + UI_HEADER_OFFSET,
+        float(area->totrct.ymin + ED_area_headersize())},
+       /* Bottom-right. */
+       {area->totrct.xmax - UI_AZONESPOTW,
+        area->totrct.ymin - U.pixelsize,
+        area->totrct.xmax + U.pixelsize,
+        area->totrct.ymin + UI_AZONESPOTH},
+       /* Top-left. */
+       {area->totrct.xmin - U.pixelsize,
+        float(area->totrct.ymax - ED_area_headersize()),
+        area->totrct.xmin + UI_HEADER_OFFSET,
+        area->totrct.ymax + U.pixelsize},
+       /* Top-right. */
+       {area->totrct.xmax - UI_AZONESPOTW,
+        area->totrct.ymax - UI_AZONESPOTH,
+@@ -1088,82 +1137,90 @@
+     {
+       continue;
+     }
+ #else
+     (void)win;
+ #endif
+
+     /* set area action zones */
+     AZone *az = MEM_callocN<AZone>("actionzone");
+     BLI_addtail(&(area->actionzones), az);
+     az->type = AZONE_AREA;
+     az->x1 = coords[i][0];
+     az->y1 = coords[i][1];
+     az->x2 = coords[i][2];
+     az->y2 = coords[i][3];
+     BLI_rcti_init(&az->rect, az->x1, az->x2, az->y1, az->y2);
+   }
+ }
+
+ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
+ {
+   if (ED_area_is_global(area) || !ELEM(region->regiontype, RGN_TYPE_WINDOW, RGN_TYPE_PREVIEW)) {
+     return;
+   }
+
+   AZone *az = MEM_callocN<AZone>("fullscreen action zone");
+   BLI_addtail(&(area->actionzones), az);
+   az->type = AZONE_FULLSCREEN;
+   az->region = region;
+   az->alpha = 0.0f;
+
+   if (U.uiflag2 & USER_REGION_OVERLAP) {
+     const rcti *rect_visible = ED_region_visible_rect(region);
+     az->x2 = region->winrct.xmin + rect_visible->xmax;
+     az->y2 = region->winrct.ymin + rect_visible->ymax;
+   }
+   else {
      az->x2 = region->winrct.xmax;
      az->y2 = region->winrct.ymax;
    }
@@ -7120,7 +7536,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
    BLI_rcti_init(&az->rect, az->x1, az->x2, az->y1, az->y2);
  }
-@@ -1361,6 +1418,13 @@
+
+ /**
+  * Return true if the background color alpha is close to fully transparent. That is, a value of
+  * less than 50 on a [0-255] scale (rather arbitrary threshold). Assumes the region uses #TH_BACK
+  * for its background.
+  */
+ static bool region_background_is_transparent(const ScrArea *area, const ARegion *region)
+ {
+   /* Ensure the right theme is active, may not be the case on startup, for example. */
+   bThemeState theme_state;
+   UI_Theme_Store(&theme_state);
+   UI_SetTheme(area->spacetype, region->regiontype);
+
+   uchar back[4];
+   UI_GetThemeColor4ubv(TH_BACK, back);
+
+   UI_Theme_Restore(&theme_state);
+
+   return back[3] < 50;
+ }
+
+ static void region_azone_edge(const ScrArea *area, AZone *az, const ARegion *region)
+ {
+   /* Narrow regions like headers need a smaller hit-space that
+    * does not interfere with content. */
+   const bool is_narrow = RGN_TYPE_IS_HEADER_ANY(region->regiontype);
+   const bool transparent = !is_narrow && region->overlap &&
+                            region_background_is_transparent(area, region);
+
+   /* Only scale the padding inside the region, not outside. */
+   const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
+                        (BLI_rcti_size_y(&region->v2d.mask) + 1);
+
+   /* Different padding inside and outside the region. */
+   const int pad_out = (is_narrow ? 2.0f : 3.0f) * UI_SCALE_FAC;
+   const int pad_in = (is_narrow ? 1.0f : (transparent ? 8.0f : 4.0f)) * UI_SCALE_FAC / aspect;
+
+@@ -1324,80 +1381,87 @@
+   /* No need to specify rect for scrollbar az. For intersection we'll test against the area around
+    * the region's scroller instead, in `area_actionzone_get_rect`. */
+ }
+
+ static void region_azones_scrollbars_init(ScrArea *area, ARegion *region)
+ {
+   const View2D *v2d = &region->v2d;
+
+   if (v2d->scroll & V2D_SCROLL_VERTICAL) {
+     region_azone_scrollbar_init(area, region, AZ_SCROLL_VERT);
+   }
+   if (v2d->scroll & V2D_SCROLL_HORIZONTAL) {
+     region_azone_scrollbar_init(area, region, AZ_SCROLL_HOR);
+   }
+ }
+
+ /* *************************************************************** */
+ static void region_azones_add_edge(ScrArea *area,
+                                    ARegion *region,
+                                    const int alignment,
+                                    const bool is_fullscreen)
+ {
+
+   /* edge code (t b l r) is along which area edge azone will be drawn */
+   if (alignment == RGN_ALIGN_TOP) {
+     region_azone_edge_init(area, region, AE_BOTTOM_TO_TOPLEFT, is_fullscreen);
+   }
+   else if (alignment == RGN_ALIGN_BOTTOM) {
+     region_azone_edge_init(area, region, AE_TOP_TO_BOTTOMRIGHT, is_fullscreen);
+   }
+   else if (alignment == RGN_ALIGN_RIGHT) {
+     region_azone_edge_init(area, region, AE_LEFT_TO_TOPRIGHT, is_fullscreen);
+   }
+   else if (alignment == RGN_ALIGN_LEFT) {
+     region_azone_edge_init(area, region, AE_RIGHT_TO_TOPLEFT, is_fullscreen);
+   }
+ }
 
  static void region_azones_add(const bScreen *screen, ScrArea *area, ARegion *region)
  {
@@ -7134,7 +7624,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    const bool is_fullscreen = screen->state == SCREENFULL;
 
    /* Only display tab or icons when the header region is hidden
-@@ -1539,6 +1603,17 @@
+    * (not the tool header - they overlap). */
+   if (region->regiontype == RGN_TYPE_TOOL_HEADER) {
+     return;
+   }
+
+   region_azones_add_edge(area, region, RGN_ALIGN_ENUM_FROM_MASK(region->alignment), is_fullscreen);
+
+   /* For a split region also continue the azone edge from the next region if this region is aligned
+    * with the next */
+   if ((region->alignment & RGN_SPLIT_PREV) && region->prev) {
+     region_azones_add_edge(
+         area, region, RGN_ALIGN_ENUM_FROM_MASK(region->prev->alignment), is_fullscreen);
+   }
+
+   if (is_fullscreen) {
+     fullscreen_azone_init(area, region);
+   }
+
+   region_azones_scrollbars_init(area, region);
+ }
+
+ /* dir is direction to check, not the splitting edge direction! */
+ static int rct_fits(const rcti *rect, const eScreenAxis dir_axis, int size)
+ {
+   if (dir_axis == SCREEN_AXIS_H) {
+     return BLI_rcti_size_x(rect) + 1 - size;
+   }
+   /* Vertical. */
+   return BLI_rcti_size_y(rect) + 1 - size;
+ }
+
+ /* *************************************************************** */
+
+ /* region should be overlapping */
+ /* function checks if some overlapping region was defined before - on same place */
+ static void region_overlap_fix(ScrArea *area, ARegion *region)
+ {
+@@ -1502,123 +1566,140 @@
+                RGN_TYPE_TOOL_PROPS,
+                RGN_TYPE_FOOTER,
+                RGN_TYPE_TOOL_HEADER,
+                RGN_TYPE_ASSET_SHELF,
+                RGN_TYPE_ASSET_SHELF_HEADER))
+       {
+         return true;
+       }
+     }
+     else if (spacetype == SPACE_IMAGE) {
+       if (ELEM(regiontype,
+                RGN_TYPE_TOOLS,
+                RGN_TYPE_UI,
+                RGN_TYPE_TOOL_PROPS,
+                RGN_TYPE_FOOTER,
+                RGN_TYPE_TOOL_HEADER,
+                RGN_TYPE_ASSET_SHELF,
+                RGN_TYPE_ASSET_SHELF_HEADER))
+       {
+         return true;
+       }
+     }
+   }
+
+   return false;
+ }
+
+ static void region_rect_recursive(
+     ScrArea *area, ARegion *region, rcti *remainder, rcti *overlap_remainder, int quad)
+ {
+   using namespace blender::ed;
+   rcti *remainder_prev = remainder;
+
+   if (region == nullptr) {
+     return;
+   }
+
    int prev_winx = region->winx;
    int prev_winy = region->winy;
 
@@ -7152,7 +7716,43 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    /* no returns in function, winrct gets set in the end again */
    BLI_rcti_init(&region->winrct, 0, 0, 0, 0);
 
-@@ -1582,6 +1657,12 @@
+   /* for test; allow split of previously defined region */
+   if (region->alignment & RGN_SPLIT_PREV) {
+     if (region->prev) {
+       remainder = &region->prev->winrct;
+     }
+   }
+
+   int alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
+
+   /* set here, assuming userpref switching forces to call this again */
+   region->overlap = ED_region_is_overlap(area->spacetype, region->regiontype);
+
+   /* clear state flags first */
+   region->flag &= ~(RGN_FLAG_TOO_SMALL | RGN_FLAG_SIZE_CLAMP_X | RGN_FLAG_SIZE_CLAMP_Y);
+   /* user errors */
+   if ((region->next == nullptr) && !ELEM(alignment, RGN_ALIGN_QSPLIT, RGN_ALIGN_FLOAT)) {
+     alignment = RGN_ALIGN_NONE;
+   }
+
+   /* If both the #ARegion.sizex/y and the #ARegionType.prefsizex/y are 0, the region is tagged as
+    * too small, even before the layout for dynamically sized regions is created.
+    * #wm_draw_window_offscreen() allows the layout to be created despite the #RGN_FLAG_TOO_SMALL
+    * flag being set. But there may still be regions that don't have a separate #ARegionType.layout
+    * callback. For those, set a default #ARegionType.prefsizex/y so they can become visible. */
+   if ((region->flag & RGN_FLAG_DYNAMIC_SIZE) && !(region->runtime->type->layout)) {
+     if ((region->sizex == 0) && (region->runtime->type->prefsizex == 0)) {
+       region->runtime->type->prefsizex = AREAMINX;
+     }
+     if ((region->sizey == 0) && (region->runtime->type->prefsizey == 0)) {
+       region->runtime->type->prefsizey = HEADERY;
+     }
+   }
+
+   /* `prefsizex/y`, taking into account DPI. */
+   int prefsizex = UI_SCALE_FAC *
+                   ((region->sizex > 1) ? region->sizex + 0.5f : region->runtime->type->prefsizex);
+   int prefsizey;
 
    if (region->regiontype == RGN_TYPE_HEADER) {
      prefsizey = ED_area_headersize();
@@ -7165,7 +7765,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    }
    else if (region->regiontype == RGN_TYPE_TOOL_HEADER) {
      prefsizey = ED_area_headersize();
-@@ -1869,6 +1950,28 @@
+   }
+   else if (region->regiontype == RGN_TYPE_FOOTER) {
+     prefsizey = ED_area_footersize();
+   }
+   else if (region->regiontype == RGN_TYPE_ASSET_SHELF) {
+     prefsizey = region->sizey > 1 ? (UI_SCALE_FAC * (region->sizey + 0.5f)) :
+                                     asset::shelf::region_prefsizey();
+   }
+   else if (region->regiontype == RGN_TYPE_ASSET_SHELF_HEADER) {
+     prefsizey = asset::shelf::header_region_size();
+   }
+   else if (ED_area_is_global(area)) {
+     prefsizey = ED_region_global_size_y();
+   }
+   else {
+     prefsizey = UI_SCALE_FAC *
+                 (region->sizey > 1 ? region->sizey + 0.5f : region->runtime->type->prefsizey);
+   }
+
+   if (region->flag & (RGN_FLAG_POLL_FAILED | RGN_FLAG_HIDDEN)) {
+     /* hidden is user flag */
+   }
+   else if (alignment == RGN_ALIGN_FLOAT) {
+     /**
+      * \note Currently this window type is only used for #RGN_TYPE_HUD,
+      * We expect the panel to resize itself to be larger.
+      *
+      * This aligns to the lower left of the area.
+      */
+     const int size_min[2] = {UI_UNIT_X, UI_UNIT_Y};
+     rcti overlap_remainder_margin = *overlap_remainder;
+
+     BLI_rcti_resize(&overlap_remainder_margin,
+                     max_ii(0, BLI_rcti_size_x(overlap_remainder) - UI_UNIT_X / 2),
+                     max_ii(0, BLI_rcti_size_y(overlap_remainder) - UI_UNIT_Y / 2));
+     region->winrct.xmin = overlap_remainder_margin.xmin + region->runtime->offset_x;
+     region->winrct.ymin = overlap_remainder_margin.ymin + region->runtime->offset_y;
+@@ -1832,140 +1913,174 @@
+
+     /* Size on one axis is now 0, the other axis may still be invalid (negative) though. */
+     BLI_rcti_sanitize(&region->winrct);
+   }
+
+   /* restore prev-split exception */
+   if (region->alignment & RGN_SPLIT_PREV) {
+     if (region->prev) {
+       remainder = remainder_prev;
+       region->prev->winx = BLI_rcti_size_x(&region->prev->winrct) + 1;
+       region->prev->winy = BLI_rcti_size_y(&region->prev->winrct) + 1;
+     }
+   }
+
+   /* After non-overlapping region, all following overlapping regions
+    * fit within the remaining space again. */
+   if (!region->overlap) {
+     *overlap_remainder = *remainder;
+   }
+
+   BLI_assert(BLI_rcti_is_valid(&region->winrct));
+
+   region_rect_recursive(area, region->next, remainder, overlap_remainder, quad);
+
+   /* Tag for redraw if size changes. */
+   if (region->winx != prev_winx || region->winy != prev_winy) {
+     /* 3D View needs a full rebuild in case a progressive render runs. Rest can live with
+      * no-rebuild (e.g. Outliner) */
+     if (area->spacetype == SPACE_VIEW3D) {
+       ED_region_tag_redraw(region);
+     }
+     else {
+       ED_region_tag_redraw_no_rebuild(region);
+     }
+   }
+
+   /* Clear, initialize on demand. */
    region->runtime->visible_rect = rcti{};
  }
 
@@ -7194,7 +7868,43 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
  static void area_calc_totrct(const bScreen *screen, ScrArea *area, const rcti *window_rect)
  {
    /* Padding around each area, except at window edges. */
-@@ -1912,6 +2015,12 @@
+   const short px = short(std::max(float(U.border_width) * UI_SCALE_FAC, UI_SCALE_FAC));
+
+   /* Padding at window edges. Cannot be less than border width. */
+   const short px_edge = short(std::min(UI_SCALE_FAC * 2.0f, float(U.border_width) * UI_SCALE_FAC));
+
+   area->totrct.xmin = area->v1->vec.x;
+   area->totrct.xmax = area->v4->vec.x;
+   area->totrct.ymin = area->v1->vec.y;
+   area->totrct.ymax = area->v2->vec.y;
+
+   /* Scale down totrct by the border size on all sides not at window edges. */
+   if (!ED_area_is_global(area) && screen->state != SCREENFULL && !(screen->temp) &&
+       !BLI_listbase_is_single(&screen->areabase))
+   {
+     area->totrct.xmin += (area->totrct.xmin > window_rect->xmin) ? px : px_edge;
+     area->totrct.xmax -= (area->totrct.xmax < (window_rect->xmax - 1)) ? px : px_edge;
+     area->totrct.ymin += (area->totrct.ymin > window_rect->ymin) ? px : px_edge;
+
+     if (area->totrct.ymax < (window_rect->ymax - 1)) {
+       area->totrct.ymax -= px;
+     }
+     else if (!BLI_listbase_is_single(&screen->areabase) || screen->state == SCREENMAXIMIZED) {
+       /* Small gap below Top Bar. */
+       area->totrct.ymax -= U.pixelsize;
+     }
+     else {
+       area->totrct.ymax -= px_edge;
+     }
+   }
+   /* Although the following asserts are correct they lead to a very unstable Blender.
+    * And the asserts would fail even in 2.7x
+    * (they were added in 2.8x as part of the top-bar commit).
+    * For more details see #54864. */
+ #if 0
+   BLI_assert(area->totrct.xmin >= 0);
+   BLI_assert(area->totrct.xmax >= 0);
+   BLI_assert(area->totrct.ymin >= 0);
    BLI_assert(area->totrct.ymax >= 0);
  #endif
 
@@ -7207,7 +7917,17 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    /* for speedup */
    area->winx = BLI_rcti_size_x(&area->totrct) + 1;
    area->winy = BLI_rcti_size_y(&area->totrct) + 1;
-@@ -1929,6 +2038,12 @@
+ }
+
+ /**
+  * Update the `ARegion::visible` flag.
+  */
+ static void region_evaulate_visibility(ARegion *region)
+ {
+   bool hidden = (region->flag & (RGN_FLAG_POLL_FAILED | RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL)) !=
+                 0;
+
+   if ((region->alignment & (RGN_SPLIT_PREV | RGN_ALIGN_HIDE_WITH_PREV)) && region->prev) {
      hidden = hidden || (region->prev->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL));
    }
 
@@ -7220,7 +7940,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    region->runtime->visible = !hidden;
  }
 
-@@ -2054,10 +2169,7 @@
+ /**
+  * \param region: Region, may be nullptr when adding handlers for \a area.
+  */
+ static void ed_default_handlers(
+     wmWindowManager *wm, ScrArea *area, ARegion *region, ListBase *handlers, int flag)
+ {
+   BLI_assert(region ? (&region->runtime->handlers == handlers) : (&area->handlers == handlers));
+
+   /* NOTE: add-handler checks if it already exists. */
+
+   /* XXX: it would be good to have bound-box checks for some of these. */
+   if (flag & ED_KEYMAP_UI) {
+     wmKeyMap *keymap = WM_keymap_ensure(
+         wm->runtime->defaultconf, "User Interface", SPACE_EMPTY, RGN_TYPE_WINDOW);
+     WM_event_add_keymap_handler(handlers, keymap);
+
+     ListBase *dropboxes = WM_dropboxmap_find("User Interface", SPACE_EMPTY, RGN_TYPE_WINDOW);
+     WM_event_add_dropbox_handler(handlers, dropboxes);
+
+     /* user interface widgets */
+     UI_region_handlers_add(handlers);
+   }
+   if (flag & ED_KEYMAP_GIZMO) {
+     BLI_assert(region && ELEM(region->runtime->type->regionid, RGN_TYPE_WINDOW, RGN_TYPE_PREVIEW));
+     if (region) {
+       /* Anything else is confusing, only allow this. */
+       BLI_assert(&region->runtime->handlers == handlers);
+       if (region->runtime->gizmo_map == nullptr) {
+         wmGizmoMapType_Params params{};
+         params.spaceid = area->spacetype;
+         params.regionid = region->runtime->type->regionid;
+         region->runtime->gizmo_map = WM_gizmomap_new_from_type(&params);
+       }
+       WM_gizmomap_add_handlers(region, region->runtime->gizmo_map);
+     }
+   }
+   if (flag & ED_KEYMAP_VIEW2D) {
+@@ -2017,84 +2132,81 @@
+     wmKeyMap *keymap = WM_keymap_ensure(
+         wm->runtime->defaultconf, "Region Context Menu", SPACE_EMPTY, RGN_TYPE_WINDOW);
+     WM_event_add_keymap_handler(handlers, keymap);
+   }
+   if (flag & ED_KEYMAP_NAVBAR) {
+     /* standard keymap for Navigation bar regions */
+     wmKeyMap *keymap = WM_keymap_ensure(
+         wm->runtime->defaultconf, "Region Context Menu", SPACE_EMPTY, RGN_TYPE_WINDOW);
+     WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
+   }
+   if (flag & ED_KEYMAP_ASSET_SHELF) {
+     /* standard keymap for asset shelf regions */
+     wmKeyMap *keymap = WM_keymap_ensure(
+         wm->runtime->defaultconf, "Asset Shelf", SPACE_EMPTY, RGN_TYPE_WINDOW);
+     WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
+   }
+
+   /* Keep last because of LMB/RMB handling, see: #57527. */
+   if (flag & ED_KEYMAP_GPENCIL) {
+     /* grease pencil */
+     {
+       wmKeyMap *keymap = WM_keymap_ensure(
+           wm->runtime->defaultconf, "Grease Pencil", SPACE_EMPTY, RGN_TYPE_WINDOW);
+       WM_event_add_keymap_handler(handlers, keymap);
+     }
+   }
+ }
+
+ void ED_area_update_region_sizes(wmWindowManager *wm, wmWindow *win, ScrArea *area)
+ {
+   if (!(area->flag & AREA_FLAG_REGION_SIZE_UPDATE)) {
+     return;
+   }
+   const bScreen *screen = WM_window_get_active_screen(win);
+
+   rcti window_rect;
+   WM_window_screen_rect_calc(win, &window_rect);
    area_calc_totrct(screen, area, &window_rect);
 
    /* region rect sizes */
@@ -7232,7 +8026,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 
    /* Dynamically sized regions may have changed region sizes, so we have to force azone update. */
    area_azone_init(win, screen, area);
-@@ -2159,10 +2271,7 @@
+
+   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+     if (region->flag & RGN_FLAG_POLL_FAILED) {
+       continue;
+     }
+     region_evaulate_visibility(region);
+
+     /* region size may have changed, init does necessary adjustments */
+     if (region->runtime->type->init) {
+       region->runtime->type->init(wm, region);
+     }
+
+     /* Some AZones use View2D data which is only updated in region init, so call that first! */
+     region_azones_add(screen, area, region);
+   }
+   ED_area_azones_update(area, win->eventstate->xy);
+
+   area->flag &= ~AREA_FLAG_REGION_SIZE_UPDATE;
+ }
+
+ bool ED_area_has_shared_border(ScrArea *a, ScrArea *b)
+ {
+   return area_getorientation(a, b) != -1;
+ }
+
+ /**
+  * Setup a known space type in the event a file with an unknown space-type is loaded.
+  */
+ static void area_init_type_fallback(ScrArea *area, eSpace_Type space_type)
+ {
+   BLI_assert(area->type == nullptr);
+   area->spacetype = space_type;
+   area->type = BKE_spacetype_from_id(area->spacetype);
+
+   SpaceLink *sl = nullptr;
+   LISTBASE_FOREACH (SpaceLink *, sl_iter, &area->spacedata) {
+     if (sl_iter->spacetype == space_type) {
+@@ -2122,84 +2234,81 @@
+ void ED_area_and_region_types_init(ScrArea *area)
+ {
+   area->type = BKE_spacetype_from_id(area->spacetype);
+
+   if (area->type == nullptr) {
+     area_init_type_fallback(area, SPACE_VIEW3D);
+     BLI_assert(area->type != nullptr);
+   }
+
+   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+     region->runtime->type = BKE_regiontype_from_id(area->type, region->regiontype);
+     /* Invalid region types may be stored in files (e.g. for new files), but they should be handled
+      * on file read already, see #BKE_screen_area_blend_read_lib(). */
+     BLI_assert_msg(region->runtime->type != nullptr, "Region type not valid for this space type");
+   }
+ }
+
+ void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area)
+ {
+   wmWindowManager *wm = CTX_wm_manager(C);
+   WorkSpace *workspace = WM_window_get_active_workspace(win);
+   const bScreen *screen = BKE_workspace_active_screen_get(win->workspace_hook);
+   const Scene *scene = WM_window_get_active_scene(win);
+   ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+
+   if (ED_area_is_global(area) && (area->global->flag & GLOBAL_AREA_IS_HIDDEN)) {
+     return;
+   }
+
+   rcti window_rect;
+   WM_window_screen_rect_calc(win, &window_rect);
+
+   ED_area_and_region_types_init(area);
+
+   /* area sizes */
+   area_calc_totrct(screen, area, &window_rect);
+
    area_regions_poll(C, screen, area);
 
    /* region rect sizes */
@@ -7244,7 +8112,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    area->flag &= ~AREA_FLAG_REGION_SIZE_UPDATE;
 
    /* default area handlers */
-@@ -2356,6 +2465,11 @@
+   ed_default_handlers(wm, area, nullptr, &area->handlers, area->type->keymapflag);
+   /* checks spacedata, adds own handlers */
+   if (area->type->init) {
+     area->type->init(wm, area);
+   }
+
+   /* clear all azones, add the area triangle widgets */
+   area_azone_init(win, screen, area);
+
+   /* region windows, default and own handlers */
+   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+     region_evaulate_visibility(region);
+
+     if (region->runtime->visible) {
+       /* default region handlers */
+       ed_default_handlers(
+           wm, area, region, &region->runtime->handlers, region->runtime->type->keymapflag);
+       /* own handlers */
+       if (region->runtime->type->init) {
+         region->runtime->type->init(wm, region);
+       }
+     }
+     else {
+       /* prevent uiblocks to run */
+       UI_blocklist_free(nullptr, region);
+     }
+
+     /* Some AZones use View2D data which is only updated in region init, so call that first! */
+     region_azones_add(screen, area, region);
+   }
+
+   /* Avoid re-initializing tools while resizing areas & regions. */
+   if ((G.moving & G_TRANSFORM_WM) == 0) {
+     if ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK) {
+       if (WM_toolsystem_refresh_screen_area(workspace, scene, view_layer, area) ||
+           /* When the tool is null it may not be initialized.
+            * This happens when switching to a new area, see: #126990.
+@@ -2319,80 +2428,85 @@
+       region->runtime->type->cursor(win, area, region);
+       return;
+     }
+   }
+
+   if (WM_cursor_set_from_tool(win, area, region)) {
+     return;
+   }
+
+   WM_cursor_set(win, WM_CURSOR_DEFAULT);
+ }
+
+ void ED_region_visibility_change_update_ex(
+     bContext *C, ScrArea *area, ARegion *region, bool is_hidden, bool do_init)
+ {
+   if (is_hidden) {
+     WM_event_remove_handlers(C, &region->runtime->handlers);
+     /* Needed to close any open pop-overs which would otherwise remain open,
+      * crashing on attempting to refresh. See: #93410.
+      *
+      * When #ED_area_init frees buttons via #UI_blocklist_free a nullptr context
+      * is passed, causing the free not to remove menus or their handlers. */
+     UI_region_free_active_but_all(C, region);
+   }
+
+   if (do_init) {
+     ED_area_init(C, CTX_wm_window(C), area);
+     ED_area_tag_redraw(area);
+   }
+ }
+
+ void ED_region_visibility_change_update(bContext *C, ScrArea *area, ARegion *region)
+ {
+   const bool is_hidden = region->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_POLL_FAILED);
+   const bool do_init = true;
+   ED_region_visibility_change_update_ex(C, area, region, is_hidden, do_init);
+ }
 
  void region_toggle_hidden(bContext *C, ARegion *region, const bool do_fade)
  {
@@ -7256,7 +8198,185 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    ScrArea *area = CTX_wm_area(C);
 
    region->flag ^= RGN_FLAG_HIDDEN;
-@@ -3802,7 +3916,11 @@
+
+   if (do_fade && region->overlap && !(U.uiflag & USER_REDUCE_MOTION)) {
+     /* starts a timer, and in end calls the stuff below itself (region_sblend_invoke()) */
+     ED_region_visibility_change_update_animated(C, area, region);
+   }
+   else {
+     ED_region_visibility_change_update(C, area, region);
+   }
+ }
+
+ void ED_region_toggle_hidden(bContext *C, ARegion *region)
+ {
+   region_toggle_hidden(C, region, true);
+ }
+
+ void ED_area_data_copy(ScrArea *area_dst, ScrArea *area_src, const bool do_free)
+ {
+   const char spacetype = area_dst->spacetype;
+   const short flag_copy = HEADER_NO_PULLDOWN;
+
+   area_dst->spacetype = area_src->spacetype;
+   area_dst->type = area_src->type;
+
+   area_dst->flag = (area_dst->flag & ~flag_copy) | (area_src->flag & flag_copy);
+
+   /* area */
+   if (do_free) {
+     BKE_spacedata_freelist(&area_dst->spacedata);
+   }
+   BKE_spacedata_copylist(&area_dst->spacedata, &area_src->spacedata);
+
+   /* NOTE: SPACE_EMPTY is possible on new screens. */
+
+   /* regions */
+   if (do_free) {
+     SpaceType *st = BKE_spacetype_from_id(spacetype);
+     LISTBASE_FOREACH (ARegion *, region, &area_dst->regionbase) {
+@@ -3150,80 +3264,103 @@
+ static bool panel_add_check(const bContext *C,
+                             const WorkSpace *workspace,
+                             const char *contexts[],
+                             const char *category_override,
+                             PanelType *panel_type)
+ {
+   /* Only add top level panels. */
+   if (panel_type->parent) {
+     return false;
+   }
+   /* Check the category override first. */
+   if (category_override) {
+     if (!STREQ(panel_type->category, category_override)) {
+       return false;
+     }
+   }
+
+   /* Verify context. */
+   if (contexts != nullptr && panel_type->context[0]) {
+     if (!streq_array_any(panel_type->context, contexts)) {
+       return false;
+     }
+   }
+
+   /* If we're tagged, only use compatible. */
+   if (panel_type->owner_id[0]) {
+     if (!BKE_workspace_owner_id_check(workspace, panel_type->owner_id)) {
+       return false;
+     }
+   }
+
+   if (LIKELY(panel_type->draw)) {
+     if (panel_type->poll && !panel_type->poll(C, panel_type)) {
+       return false;
+     }
+   }
+
+   return true;
+ }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++bool ED_ipad_panel_category_poll(const bContext *C, PanelType *panel_type)
++{
++  const ScrArea *area = CTX_wm_area(C);
++  if (!area) {
++    return false;
++  }
++  const char *contexts[4] = {nullptr};
++  const char **panel_contexts = nullptr;
++  if (area->spacetype == SPACE_VIEW3D) {
++    ED_ipad_view3d_panel_contexts(C, contexts);
++    panel_contexts = contexts;
++  }
++  else if (area->spacetype == SPACE_IMAGE) {
++    ED_ipad_image_panel_contexts(C, contexts);
++    panel_contexts = contexts;
++  }
++  /* Discover all categories, but only from roots admitted by the native layout.
++   * Children may assume their parent has already validated paint/brush context. */
++  return panel_add_check(C, CTX_wm_workspace(C), panel_contexts, nullptr, panel_type);
++}
++#endif
++
+ static bool region_uses_category_tabs(const ScrArea *area, const ARegion *region)
+ {
+   /* XXX, should use some better check? */
+   /* For now also has hardcoded check for clip editor until it supports actual toolbar. */
+   return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK) ||
+          (region->regiontype == RGN_TYPE_TOOLS && area->spacetype == SPACE_CLIP);
+ }
+
+ static const char *region_panels_collect_categories(ARegion *region,
+                                                     LinkNode *panel_types_stack,
+                                                     bool *use_category_tabs)
+ {
+   UI_panel_category_clear_all(region);
+
+   /* gather unique categories */
+   for (LinkNode *pt_link = panel_types_stack; pt_link; pt_link = pt_link->next) {
+     PanelType *pt = static_cast<PanelType *>(pt_link->link);
+     if (pt->category[0]) {
+       if (!UI_panel_category_find(region, pt->category)) {
+         UI_panel_category_add(region, pt->category);
+       }
+     }
+   }
+
+   if (UI_panel_category_is_visible(region)) {
+     return UI_panel_category_active_get(region, true);
+   }
+
+   *use_category_tabs = false;
+   return nullptr;
+ }
+
+ static int panel_draw_width_from_max_width_get(const ARegion *region,
+                                                const PanelType *panel_type,
+                                                const int max_width)
+ {
+   /* With a background, we want some extra padding. */
+   return UI_panel_should_show_background(region, panel_type) ?
+              max_width - UI_PANEL_MARGIN_X * 2.0f :
+              max_width;
+@@ -3765,81 +3902,85 @@
+     }
+   }
+
+   /* Run property search for instanced panels (created in the layout calls of previous panels). */
+   if (!has_result && has_instanced_panel) {
+     LISTBASE_FOREACH (Panel *, panel, &region->panels) {
+       /* Note that these checks are duplicated from #ED_region_panels_layout_ex. */
+       if (panel->type == nullptr || !(panel->type->flag & PANEL_TYPE_INSTANCED)) {
+         continue;
+       }
+       if (use_category_tabs) {
+         if (panel->type->category[0] && !STREQ(category, panel->type->category)) {
+           continue;
+         }
+       }
+
+       has_result = panel_property_search(C, region, style, panel, panel->type, search_filter);
+       if (has_result) {
+         break;
+       }
+     }
+   }
+
+   /* Free the panels and blocks, as they are only used for search. */
+   UI_blocklist_free(C, region);
+   UI_panels_free_instanced(C, region);
+   BKE_area_region_panels_free(&region->panels);
+
+   return has_result;
+ }
+
+ void ED_region_header_layout(const bContext *C, ARegion *region)
+ {
+   const uiStyle *style = UI_style_get_dpi();
+   bool region_layout_based = region->flag & RGN_FLAG_DYNAMIC_SIZE;
+   const ScrArea *area = CTX_wm_area(C);
+   const bool is_global = area && ELEM(area->spacetype, SPACE_TOPBAR, SPACE_STATUSBAR);
    const int offset = is_global ? 4.0f * UI_SCALE_FAC : int(UI_HEADER_OFFSET);
 
    /* Height of buttons and scaling needed to achieve it. */
@@ -7269,7 +8389,81 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    const float buttony_scale = buttony / float(UI_UNIT_Y);
 
    /* Vertically center buttons. */
-@@ -4239,6 +4357,14 @@
+   blender::int2 co = {offset, buttony + (region->winy - buttony) / 2};
+   int maxco = co.x;
+
+   /* set view2d view matrix for scrolling (without scrollers) */
+   UI_view2d_view_ortho(&region->v2d);
+
+   /* draw all headers types */
+   LISTBASE_FOREACH (HeaderType *, ht, &region->runtime->type->headertypes) {
+     if (ht->poll && !ht->poll(C, ht)) {
+       continue;
+     }
+
+     uiBlock *block = UI_block_begin(C, region, ht->idname, blender::ui::EmbossType::Emboss);
+     uiLayout &layout = blender::ui::block_layout(block,
+                                                  blender::ui::LayoutDirection::Horizontal,
+                                                  blender::ui::LayoutType::Header,
+                                                  co.x,
+                                                  co.y,
+                                                  buttony,
+                                                  1,
+                                                  0,
+                                                  style);
+
+     if (buttony_scale != 1.0f) {
+       layout.scale_y_set(buttony_scale);
+     }
+
+     Header header = {nullptr};
+     if (ht->draw) {
+       header.type = ht;
+       header.layout = &layout;
+       ht->draw(C, &header);
+       if (ht->next) {
+         layout.separator();
+       }
+
+       /* for view2d */
+@@ -4202,80 +4343,88 @@
+     /* the fine resolution level */
+     for (int i = 0; i < count_fine; i++) {
+       immAttr3fv(color, theme_color);
+       immVertex2f(pos, x1, y1 * (1.0f - fac) + y2 * fac);
+       immAttr3fv(color, theme_color);
+       immVertex2f(pos, x2, y1 * (1.0f - fac) + y2 * fac);
+       immAttr3fv(color, theme_color);
+       immVertex2f(pos, x1 * (1.0f - fac) + x2 * fac, y1);
+       immAttr3fv(color, theme_color);
+       immVertex2f(pos, x1 * (1.0f - fac) + x2 * fac, y2);
+       fac += gridstep;
+     }
+
+     if (count_large > 0) {
+       UI_GetThemeColor3fv(TH_GRID, theme_color);
+       fac = 0.0f;
+
+       /* the large resolution level */
+       for (int i = 0; i < count_large; i++) {
+         immAttr3fv(color, theme_color);
+         immVertex2f(pos, x1, y1 * (1.0f - fac) + y2 * fac);
+         immAttr3fv(color, theme_color);
+         immVertex2f(pos, x2, y1 * (1.0f - fac) + y2 * fac);
+         immAttr3fv(color, theme_color);
+         immVertex2f(pos, x1 * (1.0f - fac) + x2 * fac, y1);
+         immAttr3fv(color, theme_color);
+         immVertex2f(pos, x1 * (1.0f - fac) + x2 * fac, y2);
+         fac += 4.0f * gridstep;
+       }
+     }
+
+     immEnd();
+     immUnbindProgram();
+   }
+ }
+
+ /* If the area has overlapping regions, it returns visible rect for Region *region */
  /* rect gets returned in local region coordinates */
  static void region_visible_rect_calc(ARegion *region, rcti *rect)
  {
@@ -7284,6 +8478,43 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
    ARegion *region_iter = region;
 
    /* allow function to be called without area */
+   while (region_iter->prev) {
+     region_iter = region_iter->prev;
+   }
+
+   *rect = region->winrct;
+
+   /* check if a region overlaps with the current one */
+   for (; region_iter; region_iter = region_iter->next) {
+     if (region != region_iter && region_iter->overlap) {
+       if (BLI_rcti_isect(rect, &region_iter->winrct, nullptr)) {
+         int alignment = RGN_ALIGN_ENUM_FROM_MASK(region_iter->alignment);
+
+         if (ELEM(alignment, RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT)) {
+           /* Overlap left, also check 1 pixel offset (2 regions on one side). */
+           if (abs(rect->xmin - region_iter->winrct.xmin) < 2) {
+             rect->xmin = region_iter->winrct.xmax;
+           }
+
+           /* Overlap right. */
+           if (abs(rect->xmax - region_iter->winrct.xmax) < 2) {
+             rect->xmax = region_iter->winrct.xmin;
+           }
+         }
+         else if (ELEM(alignment, RGN_ALIGN_TOP, RGN_ALIGN_BOTTOM)) {
+           /* Same logic as above for vertical regions. */
+           if (abs(rect->ymin - region_iter->winrct.ymin) < 2) {
+             rect->ymin = region_iter->winrct.ymax;
+           }
+           if (abs(rect->ymax - region_iter->winrct.ymax) < 2) {
+             rect->ymax = region_iter->winrct.ymin;
+           }
+         }
+         else if (alignment == RGN_ALIGN_FLOAT) {
+           /* Skip floating. */
+         }
+         else {
+           BLI_assert_msg(0, "Region overlap with unknown alignment");
 diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editors/screen/screen_ops.cc
 --- a/source/blender/editors/screen/screen_ops.cc
 +++ b/source/blender/editors/screen/screen_ops.cc
@@ -23037,7 +24268,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,60 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -23053,8 +24284,13 @@ new file mode 100644
 +struct wmEvent;
 +struct wmOperatorType;
 +struct uiLayout;
++struct PanelType;
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
++/* Same root admission and editor contexts used by native sidebar layout. */
++bool ED_ipad_panel_category_poll(const bContext *C, PanelType *panel_type);
++void ED_ipad_view3d_panel_contexts(const bContext *C, const char *contexts[4]);
++void ED_ipad_image_panel_contexts(const bContext *C, const char *contexts[3]);
 +bool ED_ipad_panels_enabled(const bScreen *screen);
 +void ED_ipad_panels_prepare(bContext *C, wmWindow *win);
 +bool ED_ipad_panels_main_region_layout(const wmWindow *win, ScrArea *area);
@@ -25075,7 +26311,7 @@ new file mode 100644
 +  ARegion *previous_region = CTX_wm_region(C);
 +  CTX_wm_area_set(C, model.main);
 +  ARegion *sidebar = BKE_area_find_region_type(model.main, RGN_TYPE_UI);
-+  if (sidebar && !sidebar->runtime->type) {
++  if (sidebar && !(sidebar->flag & RGN_FLAG_POLL_FAILED) && !sidebar->runtime->type) {
 +    /* File load precedes region type initialization. Preserve a saved category
 +     * until Blender can poll its native panels during the first layout. */
 +    const std::string category = screen->ipad_panel_active[0] == -1 ?
@@ -25084,11 +26320,11 @@ new file mode 100644
 +                          category.empty() ? "Sidebar" : category,
 +                          model.main, RGN_TYPE_UI, category});
 +  }
-+  if (sidebar && sidebar->runtime->type) {
++  if (sidebar && !(sidebar->flag & RGN_FLAG_POLL_FAILED) && sidebar->runtime->type) {
 +    CTX_wm_region_set(C, sidebar);
 +    std::vector<std::string> categories;
 +    LISTBASE_FOREACH (PanelType *, pt, &sidebar->runtime->type->paneltypes) {
-+      if (!pt->category[0] || (pt->poll && !pt->poll(C, pt))) {
++      if (!pt->category[0] || !ED_ipad_panel_category_poll(C, pt)) {
 +        continue;
 +      }
 +      if (std::find(categories.begin(), categories.end(), pt->category) == categories.end()) {
@@ -32663,7 +33899,443 @@ diff --git a/source/blender/editors/mesh/editmesh_bevel.cc b/source/blender/edit
 diff --git a/source/blender/editors/space_view3d/space_view3d.cc b/source/blender/editors/space_view3d/space_view3d.cc
 --- a/source/blender/editors/space_view3d/space_view3d.cc
 +++ b/source/blender/editors/space_view3d/space_view3d.cc
-@@ -1633,6 +1633,10 @@
+@@ -12,80 +12,81 @@
+ #include <cstring>
+
+ #include "DNA_collection_types.h"
+ #include "DNA_defaults.h"
+ #include "DNA_gpencil_legacy_types.h"
+ #include "DNA_lightprobe_types.h"
+ #include "DNA_object_types.h"
+ #include "DNA_scene_types.h"
+ #include "DNA_view3d_types.h"
+
+ #include "MEM_guardedalloc.h"
+
+ #include "BLI_listbase.h"
+ #include "BLI_math_matrix.h"
+ #include "BLI_math_vector.h"
+ #include "BLI_string_utf8.h"
+ #include "BLI_utildefines.h"
+
+ #include "BKE_asset.hh"
+ #include "BKE_context.hh"
+ #include "BKE_global.hh"
+ #include "BKE_gpencil_legacy.h"
+ #include "BKE_idprop.hh"
+ #include "BKE_layer.hh"
+ #include "BKE_lib_id.hh"
+ #include "BKE_lib_query.hh"
+ #include "BKE_lib_remap.hh"
+ #include "BKE_library.hh"
+ #include "BKE_main.hh"
+ #include "BKE_object.hh"
+ #include "BKE_scene.hh"
+ #include "BKE_screen.hh"
+ #include "BKE_viewer_path.hh"
+
+ #include "ED_asset_shelf.hh"
+ #include "ED_geometry.hh"
+ #include "ED_info.hh"
+ #include "ED_object.hh"
+ #include "ED_outliner.hh"
+ #include "ED_render.hh"
++#include "ED_ipad_panels.hh"
+ #include "ED_screen.hh"
+ #include "ED_space_api.hh"
+ #include "ED_transform.hh"
+ #include "ED_undo.hh"
+
+ #include "GPU_matrix.hh"
+
+ #include "DRW_engine.hh"
+
+ #include "WM_api.hh"
+ #include "WM_message.hh"
+ #include "WM_toolsystem.hh"
+ #include "WM_types.hh"
+
+ #include "RNA_access.hh"
+
+ #include "UI_interface.hh"
+
+ #include "BLO_read_write.hh"
+
+ #ifdef WITH_PYTHON
+ #  include "BPY_extern.hh"
+ #endif
+
+ #include "DEG_depsgraph.hh"
+ #include "DEG_depsgraph_build.hh"
+
+ #include "view3d_intern.hh" /* own include */
+ #include "view3d_navigate.hh"
+
+ /* ******************** manage regions ********************* */
+
+ bool ED_view3d_area_user_region(const ScrArea *area, const View3D *v3d, ARegion **r_region)
+ {
+   RegionView3D *rv3d = nullptr;
+   ARegion *region_unlock_user = nullptr;
+   ARegion *region_unlock = nullptr;
+   const ListBase *region_list = (v3d == area->spacedata.first) ? &area->regionbase :
+                                                                  &v3d->regionbase;
+
+@@ -1103,193 +1104,207 @@
+ #endif
+ }
+
+ static void view3d_header_region_message_subscribe(const wmRegionMessageSubscribeParams *params)
+ {
+   wmMsgBus *mbus = params->message_bus;
+   ARegion *region = params->region;
+
+   wmMsgParams_RNA msg_key_params{};
+
+   /* Only subscribe to types. */
+   StructRNA *type_array[] = {
+       &RNA_View3DShading,
+   };
+
+   wmMsgSubscribeValue msg_sub_value_region_tag_redraw{};
+   msg_sub_value_region_tag_redraw.owner = region;
+   msg_sub_value_region_tag_redraw.user_data = region;
+   msg_sub_value_region_tag_redraw.notify = ED_region_do_msg_notify_tag_redraw;
+
+   for (int i = 0; i < ARRAY_SIZE(type_array); i++) {
+     msg_key_params.ptr.type = type_array[i];
+     WM_msg_subscribe_rna_params(mbus, &msg_key_params, &msg_sub_value_region_tag_redraw, __func__);
+   }
+ }
+
+ /* add handlers, stuff you only do once or on area/region changes */
+ static void view3d_buttons_region_init(wmWindowManager *wm, ARegion *region)
+ {
+   wmKeyMap *keymap;
+
+   ED_region_panels_init(wm, region);
+
+   region->flag |= RGN_FLAG_INDICATE_OVERFLOW;
+
+   keymap = WM_keymap_ensure(
+       wm->runtime->defaultconf, "3D View Generic", SPACE_VIEW3D, RGN_TYPE_WINDOW);
+   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
+ }
+
++static void view3d_buttons_region_contexts(const bContext *C, const char *contexts_base[4])
++{
++  const enum eContextObjectMode mode = CTX_data_mode_enum(C);
++
++  for (int i = 0; i < 4; i++) { contexts_base[i] = nullptr; }
++  contexts_base[0] = CTX_data_mode_string(C);
++
++  const char **contexts = &contexts_base[1];
++
++  switch (mode) {
++    case CTX_MODE_EDIT_MESH:
++      ARRAY_SET_ITEMS(contexts, ".mesh_edit");
++      break;
++    case CTX_MODE_EDIT_CURVE:
++      ARRAY_SET_ITEMS(contexts, ".curve_edit");
++      break;
++    case CTX_MODE_EDIT_CURVES:
++      ARRAY_SET_ITEMS(contexts, ".curves_edit");
++      break;
++    case CTX_MODE_EDIT_SURFACE:
++      ARRAY_SET_ITEMS(contexts, ".curve_edit");
++      break;
++    case CTX_MODE_EDIT_TEXT:
++      ARRAY_SET_ITEMS(contexts, ".text_edit");
++      break;
++    case CTX_MODE_EDIT_ARMATURE:
++      ARRAY_SET_ITEMS(contexts, ".armature_edit");
++      break;
++    case CTX_MODE_EDIT_METABALL:
++      ARRAY_SET_ITEMS(contexts, ".mball_edit");
++      break;
++    case CTX_MODE_EDIT_LATTICE:
++      ARRAY_SET_ITEMS(contexts, ".lattice_edit");
++      break;
++    case CTX_MODE_EDIT_GREASE_PENCIL:
++      ARRAY_SET_ITEMS(contexts, ".grease_pencil_edit");
++      break;
++    case CTX_MODE_PAINT_GREASE_PENCIL:
++      ARRAY_SET_ITEMS(contexts, ".grease_pencil_paint");
++      break;
++    case CTX_MODE_SCULPT_GREASE_PENCIL:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".grease_pencil_sculpt");
++      break;
++    case CTX_MODE_WEIGHT_GREASE_PENCIL:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
++      break;
++    case CTX_MODE_VERTEX_GREASE_PENCIL:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
++      break;
++    case CTX_MODE_EDIT_POINTCLOUD:
++      ARRAY_SET_ITEMS(contexts, ".pointcloud_edit");
++      break;
++    case CTX_MODE_POSE:
++      ARRAY_SET_ITEMS(contexts, ".posemode");
++      break;
++    case CTX_MODE_SCULPT:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".sculpt_mode");
++      break;
++    case CTX_MODE_PAINT_WEIGHT:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".weightpaint");
++      break;
++    case CTX_MODE_PAINT_VERTEX:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".vertexpaint");
++      break;
++    case CTX_MODE_PAINT_TEXTURE:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".imagepaint");
++      break;
++    case CTX_MODE_PARTICLE:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".particlemode");
++      break;
++    case CTX_MODE_OBJECT:
++      ARRAY_SET_ITEMS(contexts, ".objectmode");
++      break;
++    case CTX_MODE_PAINT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
++      break;
++    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
++      break;
++    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
++      break;
++    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
++      break;
++    case CTX_MODE_SCULPT_CURVES:
++      ARRAY_SET_ITEMS(contexts, ".paint_common", ".curves_sculpt");
++      break;
++    default:
++      break;
++  }
++
++  switch (mode) {
++    case CTX_MODE_PAINT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
++      break;
++    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
++      break;
++    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
++      break;
++    case CTX_MODE_EDIT_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_edit");
++      break;
++    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
++      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
++      break;
++    default:
++      break;
++  }
++
++}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++void ED_ipad_view3d_panel_contexts(const bContext *C, const char *contexts[4])
++{
++  view3d_buttons_region_contexts(C, contexts);
++}
++#endif
++
+ void ED_view3d_buttons_region_layout_ex(const bContext *C,
+                                         ARegion *region,
+                                         const char *category_override)
+ {
+-  const enum eContextObjectMode mode = CTX_data_mode_enum(C);
+-
+-  const char *contexts_base[4] = {nullptr};
+-  contexts_base[0] = CTX_data_mode_string(C);
+-
+-  const char **contexts = &contexts_base[1];
+-
+-  switch (mode) {
+-    case CTX_MODE_EDIT_MESH:
+-      ARRAY_SET_ITEMS(contexts, ".mesh_edit");
+-      break;
+-    case CTX_MODE_EDIT_CURVE:
+-      ARRAY_SET_ITEMS(contexts, ".curve_edit");
+-      break;
+-    case CTX_MODE_EDIT_CURVES:
+-      ARRAY_SET_ITEMS(contexts, ".curves_edit");
+-      break;
+-    case CTX_MODE_EDIT_SURFACE:
+-      ARRAY_SET_ITEMS(contexts, ".curve_edit");
+-      break;
+-    case CTX_MODE_EDIT_TEXT:
+-      ARRAY_SET_ITEMS(contexts, ".text_edit");
+-      break;
+-    case CTX_MODE_EDIT_ARMATURE:
+-      ARRAY_SET_ITEMS(contexts, ".armature_edit");
+-      break;
+-    case CTX_MODE_EDIT_METABALL:
+-      ARRAY_SET_ITEMS(contexts, ".mball_edit");
+-      break;
+-    case CTX_MODE_EDIT_LATTICE:
+-      ARRAY_SET_ITEMS(contexts, ".lattice_edit");
+-      break;
+-    case CTX_MODE_EDIT_GREASE_PENCIL:
+-      ARRAY_SET_ITEMS(contexts, ".grease_pencil_edit");
+-      break;
+-    case CTX_MODE_PAINT_GREASE_PENCIL:
+-      ARRAY_SET_ITEMS(contexts, ".grease_pencil_paint");
+-      break;
+-    case CTX_MODE_SCULPT_GREASE_PENCIL:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".grease_pencil_sculpt");
+-      break;
+-    case CTX_MODE_WEIGHT_GREASE_PENCIL:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
+-      break;
+-    case CTX_MODE_VERTEX_GREASE_PENCIL:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
+-      break;
+-    case CTX_MODE_EDIT_POINTCLOUD:
+-      ARRAY_SET_ITEMS(contexts, ".pointcloud_edit");
+-      break;
+-    case CTX_MODE_POSE:
+-      ARRAY_SET_ITEMS(contexts, ".posemode");
+-      break;
+-    case CTX_MODE_SCULPT:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".sculpt_mode");
+-      break;
+-    case CTX_MODE_PAINT_WEIGHT:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".weightpaint");
+-      break;
+-    case CTX_MODE_PAINT_VERTEX:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".vertexpaint");
+-      break;
+-    case CTX_MODE_PAINT_TEXTURE:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".imagepaint");
+-      break;
+-    case CTX_MODE_PARTICLE:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".particlemode");
+-      break;
+-    case CTX_MODE_OBJECT:
+-      ARRAY_SET_ITEMS(contexts, ".objectmode");
+-      break;
+-    case CTX_MODE_PAINT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
+-      break;
+-    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
+-      break;
+-    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
+-      break;
+-    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
+-      break;
+-    case CTX_MODE_SCULPT_CURVES:
+-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".curves_sculpt");
+-      break;
+-    default:
+-      break;
+-  }
+-
+-  switch (mode) {
+-    case CTX_MODE_PAINT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
+-      break;
+-    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
+-      break;
+-    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
+-      break;
+-    case CTX_MODE_EDIT_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_edit");
+-      break;
+-    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
+-      ARRAY_SET_ITEMS(contexts, ".greasepencil_vertex");
+-      break;
+-    default:
+-      break;
+-  }
++  const char *contexts_base[4];
++  view3d_buttons_region_contexts(C, contexts_base);
+
+   ListBase *paneltypes = &region->runtime->type->paneltypes;
+
+   /* Allow drawing 3D view toolbar from non 3D view space type. */
+   if (category_override != nullptr) {
+     SpaceType *st = BKE_spacetype_from_id(SPACE_VIEW3D);
+     ARegionType *art = BKE_regiontype_from_id(st, RGN_TYPE_UI);
+     paneltypes = &art->paneltypes;
+   }
+
+   ED_region_panels_layout_ex(C,
+                              region,
+                              paneltypes,
+                              blender::wm::OpCallContext::InvokeRegionWin,
+                              contexts_base,
+                              category_override);
+ }
+
+ static void view3d_buttons_region_layout(const bContext *C, ARegion *region)
+ {
+   ED_view3d_buttons_region_layout_ex(C, region, nullptr);
+ }
+
+ static void view3d_buttons_region_listener(const wmRegionListenerParams *params)
+ {
+   ARegion *region = params->region;
+   const wmNotifier *wmn = params->notifier;
+
+   /* context changes */
+   switch (wmn->category) {
+     case NC_ANIMATION:
+       switch (wmn->data) {
+         case ND_KEYFRAME_PROP:
+         case ND_NLA_ACTCHANGE:
+           ED_region_tag_redraw(region);
+           break;
+         case ND_NLA:
+         case ND_KEYFRAME:
+           if (ELEM(wmn->action, NA_EDITED, NA_ADDED, NA_REMOVED)) {
+             ED_region_tag_redraw(region);
+@@ -1596,80 +1611,84 @@
+   if (v3d->localvd) {
+     BLO_write_struct(writer, View3D, v3d->localvd);
+   }
+
+   BKE_screen_view3d_shading_blend_write(writer, &v3d->shading);
+
+   BKE_viewer_path_blend_write(writer, &v3d->viewer_path);
+ }
+
+ void ED_spacetype_view3d()
+ {
+   using namespace blender::ed;
+   std::unique_ptr<SpaceType> st = std::make_unique<SpaceType>();
+   ARegionType *art;
+
+   st->spaceid = SPACE_VIEW3D;
+   STRNCPY_UTF8(st->name, "View3D");
+
+   st->create = view3d_create;
+   st->free = view3d_free;
+   st->init = view3d_init;
+   st->exit = view3d_exit;
+   st->listener = space_view3d_listener;
+   st->refresh = space_view3d_refresh;
+   st->duplicate = view3d_duplicate;
+   st->operatortypes = view3d_operatortypes;
+   st->keymap = view3d_keymap;
+   st->dropboxes = view3d_dropboxes;
+   st->gizmos = view3d_widgets;
+   st->context = view3d_context;
+   st->id_remap = view3d_id_remap;
+   st->foreach_id = view3d_foreach_id;
+   st->blend_read_data = view3d_space_blend_read_data;
+   st->blend_read_after_liblink = nullptr;
+   st->blend_write = view3d_space_blend_write;
+
+   /* regions: main window */
    art = MEM_callocN<ARegionType>("spacetype view3d main region");
    art->regionid = RGN_TYPE_WINDOW;
    art->keymapflag = ED_KEYMAP_GIZMO | ED_KEYMAP_TOOL | ED_KEYMAP_GPENCIL;
@@ -32674,6 +34346,43 @@ diff --git a/source/blender/editors/space_view3d/space_view3d.cc b/source/blende
    art->draw = view3d_main_region_draw;
    art->init = view3d_main_region_init;
    art->exit = view3d_main_region_exit;
+   art->free = view3d_main_region_free;
+   art->duplicate = view3d_main_region_duplicate;
+   art->listener = view3d_main_region_listener;
+   art->message_subscribe = view3d_main_region_message_subscribe;
+   art->cursor = view3d_main_region_cursor;
+   art->lock = REGION_DRAW_LOCK_ALL;
+   BLI_addhead(&st->regiontypes, art);
+
+   /* regions: list-view/buttons */
+   art = MEM_callocN<ARegionType>("spacetype view3d buttons region");
+   art->regionid = RGN_TYPE_UI;
+   art->prefsizex = UI_SIDEBAR_PANEL_WIDTH;
+   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
+   art->listener = view3d_buttons_region_listener;
+   art->message_subscribe = ED_area_do_mgs_subscribe_for_tool_ui;
+   art->init = view3d_buttons_region_init;
+   art->snap_size = ED_region_generic_panel_region_snap_size;
+   art->layout = view3d_buttons_region_layout;
+   art->draw = ED_region_panels_draw;
+   BLI_addhead(&st->regiontypes, art);
+
+   view3d_buttons_register(art);
+
+   /* regions: tool(bar) */
+   art = MEM_callocN<ARegionType>("spacetype view3d tools region");
+   art->regionid = RGN_TYPE_TOOLS;
+   art->prefsizex = int(UI_TOOLBAR_WIDTH);
+   art->prefsizey = 50; /* XXX */
+   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
+   art->listener = view3d_buttons_region_listener;
+   art->message_subscribe = ED_region_generic_tools_region_message_subscribe;
+   art->snap_size = ED_region_generic_tools_region_snap_size;
+   art->init = view3d_tools_region_init;
+   art->draw = view3d_tools_region_draw;
+   BLI_addhead(&st->regiontypes, art);
+
+   /* regions: tool header */
 diff --git a/source/blender/editors/include/UI_interface_c.hh b/source/blender/editors/include/UI_interface_c.hh
 --- a/source/blender/editors/include/UI_interface_c.hh
 +++ b/source/blender/editors/include/UI_interface_c.hh
@@ -35390,3 +37099,308 @@ diff --git a/source/blender/python/intern/bpy_operator_wrap.cc b/source/blender/
 
    const char *idname_py;
    char idname[OP_MAX_TYPENAME];
+diff --git a/scripts/startup/bl_ui/space_view3d_toolbar.py b/scripts/startup/bl_ui/space_view3d_toolbar.py
+--- a/scripts/startup/bl_ui/space_view3d_toolbar.py
++++ b/scripts/startup/bl_ui/space_view3d_toolbar.py
+@@ -343,97 +343,101 @@
+         brush_settings(layout.column(), context, brush, popover=self.is_popover)
+
+
+ class VIEW3D_PT_tools_brush_settings_advanced(Panel, View3DPaintBrushPanel):
+     bl_context = ".paint_common"
+     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
+     bl_label = "Advanced"
+     bl_options = {'DEFAULT_CLOSED'}
+     bl_ui_units_x = 14
+
+     @classmethod
+     def poll(cls, context):
+         mode = cls.get_brush_mode(context)
+         if mode == 'SCULPT_GREASE_PENCIL':
+             settings = cls.paint_settings(context)
+             tool = settings.brush.gpencil_sculpt_brush_type
+             return tool in {'SMOOTH', 'RANDOMIZE'}
+
+         return mode is not None and mode != 'SCULPT_CURVES'
+
+     def draw(self, context):
+         layout = self.layout
+
+         layout.use_property_split = True
+         layout.use_property_decorate = False  # No animation.
+
+         settings = UnifiedPaintPanel.paint_settings(context)
+         brush = settings.brush
+
+         brush_settings_advanced(layout.column(), context, settings, brush, self.is_popover)
+
+
+ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
+     bl_context = ".paint_common"  # dot on purpose (access from topbar)
+     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
+     bl_label = "Color Picker"
+
+     @classmethod
+     def poll(cls, context):
+         settings = cls.paint_settings(context)
++        if settings is None or settings.brush is None:
++            return False
+         brush = settings.brush
+
+         if context.image_paint_object:
+             capabilities = brush.image_paint_capabilities
+             return capabilities.has_color
+         elif context.vertex_paint_object:
+             capabilities = brush.vertex_paint_capabilities
+             return capabilities.has_color
+         elif context.sculpt_object:
+             capabilities = brush.sculpt_capabilities
+             return capabilities.has_color
+
+         return False
+
+     def draw(self, context):
+         layout = self.layout
+         settings = self.paint_settings(context)
++        if settings is None or settings.brush is None:
++            return
+         brush = settings.brush
+
+         draw_color_settings(context, layout, brush, color_type=not context.vertex_paint_object)
+
+
+ class VIEW3D_PT_tools_brush_swatches(Panel, View3DPaintPanel, ColorPalettePanel):
+     bl_context = ".paint_common"
+     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
+     bl_label = "Color Palette"
+     bl_options = {'DEFAULT_CLOSED'}
+
+
+ class VIEW3D_PT_tools_brush_clone(Panel, View3DPaintPanel, ClonePanel):
+     bl_context = ".paint_common"
+     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
+     bl_label = "Clone from Paint Slot"
+     bl_options = {'DEFAULT_CLOSED'}
+
+
+ class VIEW3D_MT_tools_projectpaint_uvlayer(Menu):
+     bl_label = "Clone Layer"
+
+     def draw(self, context):
+         layout = self.layout
+
+         for i, uv_layer in enumerate(context.active_object.data.uv_layers):
+             props = layout.operator("wm.context_set_int", text=uv_layer.name, translate=False)
+             props.data_path = "active_object.data.uv_layers.active_index"
+             props.value = i
+
+
+ class SelectPaintSlotHelper:
+     bl_space_type = 'VIEW_3D'
+     bl_region_type = 'HEADER'
+
+     canvas_source_attr_name = "canvas_source"
+     canvas_image_attr_name = "canvas_image"
+
+     def draw(self, context):
+         layout = self.layout
+diff --git a/source/blender/editors/space_image/space_image.cc b/source/blender/editors/space_image/space_image.cc
+--- a/source/blender/editors/space_image/space_image.cc
++++ b/source/blender/editors/space_image/space_image.cc
+@@ -3,78 +3,79 @@
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup spimage
+  */
+
+ #include "DNA_defaults.h"
+ #include "DNA_gpencil_legacy_types.h"
+ #include "DNA_image_types.h"
+ #include "DNA_mask_types.h"
+ #include "DNA_object_types.h"
+ #include "DNA_scene_types.h"
+
+ #include "MEM_guardedalloc.h"
+
+ #include "BLI_listbase.h"
+ #include "BLI_string_utf8.h"
+ #include "BLI_threads.h"
+
+ #include "BKE_colortools.hh"
+ #include "BKE_context.hh"
+ #include "BKE_image.hh"
+ #include "BKE_layer.hh"
+ #include "BKE_lib_query.hh"
+ #include "BKE_lib_remap.hh"
+ #include "BKE_scene.hh"
+ #include "BKE_screen.hh"
+
+ #include "RNA_access.hh"
+ #include "RNA_define.hh"
+ #include "RNA_enum_types.hh"
+
+ #include "IMB_imbuf_types.hh"
+
+ #include "ED_asset_shelf.hh"
+ #include "ED_image.hh"
+ #include "ED_mask.hh"
+ #include "ED_node.hh"
+ #include "ED_render.hh"
++#include "ED_ipad_panels.hh"
+ #include "ED_screen.hh"
+ #include "ED_space_api.hh"
+ #include "ED_transform.hh"
+ #include "ED_util.hh"
+ #include "ED_uvedit.hh"
+
+ #include "WM_api.hh"
+ #include "WM_types.hh"
+
+ #include "UI_interface.hh"
+ #include "UI_view2d.hh"
+
+ #include "BLO_read_write.hh"
+
+ #include "DRW_engine.hh"
+
+ #include "image_intern.hh"
+
+ /**************************** common state *****************************/
+
+ static void image_scopes_tag_refresh(ScrArea *area)
+ {
+   SpaceImage *sima = (SpaceImage *)area->spacedata.first;
+
+   /* only while histogram is visible */
+   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
+     if (region->regiontype == RGN_TYPE_TOOL_PROPS && region->flag & RGN_FLAG_HIDDEN) {
+       return;
+     }
+   }
+
+   sima->scopes.ok = 0;
+ }
+
+ static void image_user_refresh_scene(const bContext *C, SpaceImage *sima)
+ {
+   /* Update scene image user for acquiring render results. */
+   sima->iuser.scene = CTX_data_scene(C);
+
+@@ -810,100 +811,114 @@
+     case NC_MASK:
+       if (ELEM(wmn->data, ND_DATA, ND_SELECT)) {
+         WM_gizmomap_tag_refresh(region->runtime->gizmo_map);
+       }
+       break;
+     case NC_MATERIAL:
+       if (wmn->data == ND_SHADING_LINKS) {
+         SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+
+         if (sima->iuser.scene &&
+             (sima->iuser.scene->toolsettings->uv_flag & UV_FLAG_SHOW_SAME_IMAGE))
+         {
+           ED_region_tag_redraw(region);
+         }
+       }
+       break;
+     case NC_SCREEN:
+       if (ELEM(wmn->data, ND_LAYER)) {
+         ED_region_tag_redraw(region);
+       }
+       break;
+   }
+ }
+
+ /* *********************** buttons region ************************ */
+
+ /* add handlers, stuff you only do once or on area/region changes */
+ static void image_buttons_region_init(wmWindowManager *wm, ARegion *region)
+ {
+   wmKeyMap *keymap;
+
+   region->v2d.scroll = V2D_SCROLL_RIGHT | V2D_SCROLL_VERTICAL_HIDE;
+   ED_region_panels_init(wm, region);
+
+   keymap = WM_keymap_ensure(
+       wm->runtime->defaultconf, "Image Generic", SPACE_IMAGE, RGN_TYPE_WINDOW);
+   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
+ }
+
+-static void image_buttons_region_layout(const bContext *C, ARegion *region)
++static void image_buttons_region_contexts(const bContext *C, const char *contexts_base[3])
+ {
+   const enum eContextObjectMode mode = CTX_data_mode_enum(C);
+-  const char *contexts_base[3] = {nullptr};
++  for (int i = 0; i < 3; i++) { contexts_base[i] = nullptr; }
+
+   const char **contexts = contexts_base;
+
+   SpaceImage *sima = CTX_wm_space_image(C);
+   switch (sima->mode) {
+     case SI_MODE_VIEW:
+       break;
+     case SI_MODE_PAINT:
+       ARRAY_SET_ITEMS(contexts, ".paint_common_2d", ".imagepaint_2d");
+       break;
+     case SI_MODE_MASK:
+       break;
+     case SI_MODE_UV:
+       if (mode == CTX_MODE_EDIT_MESH) {
+         ARRAY_SET_ITEMS(contexts, ".uv_sculpt");
+       }
+       break;
+   }
++
++}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++void ED_ipad_image_panel_contexts(const bContext *C, const char *contexts[3])
++{
++  image_buttons_region_contexts(C, contexts);
++}
++#endif
++
++static void image_buttons_region_layout(const bContext *C, ARegion *region)
++{
++  const char *contexts_base[3];
++  image_buttons_region_contexts(C, contexts_base);
+
+   ED_region_panels_layout_ex(C,
+                              region,
+                              &region->runtime->type->paneltypes,
+                              blender::wm::OpCallContext::InvokeRegionWin,
+                              contexts_base,
+                              nullptr);
+ }
+
+ static void image_buttons_region_draw(const bContext *C, ARegion *region)
+ {
+   SpaceImage *sima = CTX_wm_space_image(C);
+   Scene *scene = CTX_data_scene(C);
+   void *lock;
+   /* TODO(lukas): Support tiles in scopes? */
+   ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, 0);
+   /* XXX performance regression if name of scopes category changes! */
+   PanelCategoryStack *category = UI_panel_category_active_find(region, "Scopes");
+
+   /* only update scopes if scope category is active */
+   if (category) {
+     if (ibuf) {
+       if (!sima->scopes.ok) {
+         BKE_histogram_update_sample_line(
+             &sima->sample_line_hist, ibuf, &scene->view_settings, &scene->display_settings);
+       }
+       if (sima->image->flag & IMA_VIEW_AS_RENDER) {
+         ED_space_image_scopes_update(C, sima, ibuf, true);
+       }
+       else {
+         ED_space_image_scopes_update(C, sima, ibuf, false);
+       }
+     }
+   }
+   ED_space_image_release_buffer(sima, ibuf, lock);
+
+   /* Layout handles details. */
+   ED_region_panels_draw(C, region);
+ }

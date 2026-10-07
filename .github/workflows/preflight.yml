@@ -26,6 +26,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Test generated UI RNA registration calls
+        run: python3 -m unittest discover -s build -p test_ui_rna_registration.py -v
+      - name: Test native sidebar root and mode admission
+        run: python3 -m unittest discover -s build -p test_panel_category_admission.py -v
+      - name: Test paint context loss in Color Picker
+        run: python3 -m unittest discover -s build -p test_brush_color_context.py -v
       - name: Test preflight checker
         run: python3 -m unittest discover -s build -p test_preflight.py -v
       - name: Test portable writer path restoration with host compiler
