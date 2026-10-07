@@ -5,6 +5,7 @@ Only package/source evidence; physical input and device comfort remain unverifie
 """
 from pathlib import Path
 import hashlib
+import ast
 import json
 import plistlib
 import re
@@ -35,9 +36,9 @@ expected=''.join(line[1:] for line in section.splitlines(True) if line.startswit
 toolbar_path='scripts/startup/bl_ui/space_view3d_toolbar.py'
 toolbar_expected=None
 toolbar_marker=f'diff --git a/{toolbar_path} b/{toolbar_path}\n'
+workflow=execute(['git','show',revision+':.github/workflows/build-ipa.yml']).decode('utf-8')
+pin=re.search(r'^  BLENDER_COMMIT: ([0-9a-f]{40})\s*$',workflow,re.MULTILINE).group(1)
 if toolbar_marker.encode() in patch:
-    workflow=execute(['git','show',revision+':.github/workflows/build-ipa.yml']).decode('utf-8')
-    pin=re.search(r'^  BLENDER_COMMIT: ([0-9a-f]{40})\s*$',workflow,re.MULTILINE).group(1)
     section=toolbar_marker+patch.decode('utf-8').split(toolbar_marker,1)[1].split('diff --git ',1)[0]
     with tempfile.TemporaryDirectory(prefix='ipad-exact-toolbar-') as directory:
         staged=Path(directory)/toolbar_path
@@ -105,6 +106,19 @@ with zipfile.ZipFile(ipa) as archive:
         assert color.count('if settings is None or settings.brush is None:')==2
     topbar,=[n for n in names if n.endswith('/bl_ui/space_topbar.py')]
     menu=archive.read(topbar);assert b'wm.link' in menu and b'wm.append' in menu
+    native_toolbar_path='scripts/startup/bl_ui/space_toolsystem_toolbar.py'
+    assert f'diff --git a/{native_toolbar_path} b/{native_toolbar_path}\n'.encode() not in patch
+    native_toolbar,=[n for n in names if n.endswith('/'+native_toolbar_path)]
+    native_toolbar_text=archive.read(native_toolbar).decode('utf-8').replace('\r\n','\n')
+    native_toolbar_pin=get_source(pin,native_toolbar_path,repo/'.cache/preflight',False).decode('utf-8').replace('\r\n','\n')
+    assert native_toolbar_text==native_toolbar_pin,'Native tool definitions differ from exact pinned source'
+    native_icons={k.value.value for node in ast.walk(ast.parse(native_toolbar_text))
+                  if isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id=='dict'
+                  for k in node.keywords if k.arg=='icon' and isinstance(k.value,ast.Constant)
+                  and isinstance(k.value.value,str) and '.' in k.value.value}
+    assert len(native_icons)>100,'Native icon inventory extraction was incomplete'
+    for asset in sorted(native_icons):
+        assert any(n.endswith('/datafiles/icons/'+asset+'.dat') for n in names),asset
     for asset in ('ops.generic.select_box','ops.transform.translate','ops.transform.rotate','ops.transform.resize'):
         assert any(n.endswith('/datafiles/icons/'+asset+'.dat') for n in names),asset
 report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().st_size,
@@ -120,6 +134,8 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
+    'native_tool_definitions_match_exact_pin':True,
+    'native_tool_icon_files_checked':len(native_icons),
     'device_acceptance':False}
 (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (folder/'artifact-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')

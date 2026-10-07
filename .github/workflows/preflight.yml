@@ -32,6 +32,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_panel_category_admission.py -v
       - name: Test paint context loss in Color Picker
         run: python3 -m unittest discover -s build -p test_brush_color_context.py -v
+      - name: Test connected iPad keyboard text ownership
+        run: python3 -m unittest discover -s build -p test_ios_keyboard_text.py -v
       - name: Test preflight checker
         run: python3 -m unittest discover -s build -p test_preflight.py -v
       - name: Test portable writer path restoration with host compiler

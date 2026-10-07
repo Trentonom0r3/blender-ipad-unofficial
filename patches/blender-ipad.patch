@@ -2487,7 +2487,7 @@ diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
-@@ -1,891 +1,1949 @@
+@@ -1,891 +1,1952 @@
  /* SPDX-FileCopyrightText: 2025 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -2518,6 +2518,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +#import <UIKit/UIGestureRecognizerSubclass.h>
  #import <UIKit/UIPencilInteraction.h>
 
++#include <string>
  #include <unordered_map>
 
 +/* Debug input logging — disabled for release. Uncomment to re-enable NSLog spam
@@ -2990,9 +2991,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Keyboard handling. */
    UITextField *text_field;
-   NSString *original_text;
+-  NSString *original_text;
++  std::string original_text;
    bool onscreen_keyboard_active;
-   const char *text_field_string;
+-  const char *text_field_string;
++  std::string text_field_string;
++  bool text_field_string_valid;
    GHOST_KeyboardProperties current_keyboard_properties;
    bool external_keyboard_connected;
 +  bool native_chrome_hovered;
@@ -3099,9 +3103,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system = sys;
    window = win;
    text_field = nil;
-   original_text = nil;
+-  original_text = nil;
++  original_text.clear();
    onscreen_keyboard_active = false;
-   text_field_string = nullptr;
+-  text_field_string = nullptr;
++  text_field_string.clear();
++  text_field_string_valid = false;
    current_pencil_touch = nil;
    tablet_data = GHOST_TABLET_DATA_NONE;
    toolbar_enabled = true;
@@ -4503,7 +4510,197 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                             target:nil
                             action:@selector(handleDoneButton)];
 
-@@ -1161,85 +2219,451 @@
+@@ -966,182 +2027,184 @@
+                                            GHOST_kEventKeyDown,
+                                            window,
+                                            GHOST_kKeyTextEdit,
+                                            false,
+                                            nullptr));
+     }
+   }
+ }
+
+ - (void)handleKeyboardEditBegin:(UITextField *)text_field
+ {
+   @synchronized(self) {
+     IOS_INPUT_LOG(@"Keyboard Edit begin detected %@", text_field.text);
+   }
+ }
+
+ - (void)handleKeyboardEditEnd:(UITextField *)text_field
+ {
+   @synchronized(self) {
+     /*
+      This can get called when the keyboard is minimised
+      so send a return keypress to emulate effective end
+      of editing. Otherwise Blender's focus will remain
+      on the text field.
+      */
+     IOS_INPUT_LOG(@"Keyboard Edit end detected %@", text_field.text);
+     [self generateKeyboardReturnEvent];
+   }
+ }
+
+ - (void)handleDoneButton
+ {
+   IOS_INPUT_LOG(@"Keyboard Done button press detected %@", text_field.text);
+   [self generateKeyboardReturnEvent];
+ }
+
+ - (void)handleCancelButton
+ {
+   IOS_INPUT_LOG(@"Keyboard Cancel button press detected %@", text_field.text);
+   /* Restore the original text and return */
+-  text_field.text = original_text;
++  text_field.text = [NSString stringWithUTF8String:original_text.c_str()];
+   [self generateKeyboardReturnEvent];
+ }
+
+ /*
+  * Add a text field so we can handle input from a popup keyboard and
+  * attach it to our root window.
+  */
+ - (void)initUITextField
+ {
+   /* Initialise it if we have not already done so. */
+   if (!text_field) {
+     text_field = [[UITextField alloc] init];
+
+     text_field.contentScaleFactor = window->getWindowScaleFactor();
+
+     if (toolbar_enabled) {
+       [self initToolbar];
+       text_field.inputAccessoryView = toolbar;
+     }
+
+     [window->rootWindow addSubview:text_field];
+
+     /* Add a handler for when 'return' is pressed on keyboard. */
+     [text_field addTarget:self
+                    action:@selector(handleKeyboardReturn:)
+          forControlEvents:UIControlEventEditingDidEndOnExit];
+
+     /* Add a handler for when the text field changes. */
+     [text_field addTarget:self
+                    action:@selector(handleKeyboardEditChange:)
+          forControlEvents:UIControlEventEditingChanged];
+
+     /* Add a handler for when user edits a text field. */
+     [text_field addTarget:self
+                    action:@selector(handleKeyboardEditBegin:)
+          forControlEvents:UIControlEventEditingDidBegin];
+
+     /* Add a handler for when user finishes editing a text field. */
+     [text_field addTarget:self
+                    action:@selector(handleKeyboardEditEnd:)
+          forControlEvents:UIControlEventEditingDidEnd];
+   }
+ }
+
+ - (void)convertWindowCoordToDisplayCoordWithWindow:(int)windowX
+                                            windowY:(int)windowY
+                                           displayX:(double *)displayX
+                                           displayY:(double *)displayY
+                                              flipY:(BOOL)flipY
+ {
+   float pixelScale = window->getWindowScaleFactor();
+   CGSize logicalWindowSize = window->getLogicalWindowSize();
+
+   *displayX = (double)windowX / pixelScale;
+   *displayY = (double)windowY / pixelScale;
+
+   if (flipY) {
+     *displayY = logicalWindowSize.height - *displayY;
+   }
+ }
+
+ - (UITextField *)getUITextField
+ {
+   return text_field;
+ }
+
+ - (void)setupKeyboard:(const GHOST_KeyboardProperties &)keyboard_properties
+ {
+   /* Initialise it if we have not already done so */
+   if (!text_field) {
+     [self initUITextField];
+   }
++
++  /* A new input session must not inherit the last software result. */
++  text_field_string.clear();
++  text_field_string_valid = false;
+
+   /* Save this set of keyboard properties */
+   current_keyboard_properties = keyboard_properties;
+
+   /* Convert the text box coords to display coords */
+   CGRect displayRect;
+   [self convertWindowCoordToDisplayCoordWithWindow:keyboard_properties.text_box_origin[0]
+                                            windowY:keyboard_properties.text_box_origin[1]
+                                           displayX:&displayRect.origin.x
+                                           displayY:&displayRect.origin.y
+                                              flipY:true];
+
+   [self convertWindowCoordToDisplayCoordWithWindow:keyboard_properties.text_box_size[0]
+                                            windowY:keyboard_properties.text_box_size[1]
+                                           displayX:&displayRect.size.width
+                                           displayY:&displayRect.size.height
+                                              flipY:false];
+
+   /* Where to display the text on-screen. */
+   text_field.frame = displayRect;
+
+   /* Initialise text with existing string. */
+   text_field.text = keyboard_properties.text_string ?
+                         [NSString stringWithUTF8String:keyboard_properties.text_string] :
+                         @"";
+-  /* Take a copy of the string so we can restore it if neccessary */
+-  original_text = keyboard_properties.text_string ?
+-                      [NSString stringWithUTF8String:keyboard_properties.text_string] :
+-                      @"";
++  /* Own the Cancel value beyond UIKit/autorelease storage. */
++  original_text = keyboard_properties.text_string ? keyboard_properties.text_string : "";
+
+   /* Set keyboard type and text alignment.
+    * NOTE - the keyboard type is only honoured if using an Apple
+    * pencil or if the keyboard is floating.
+    * Otherwise it will just be the default full screen type. */
+   switch (keyboard_properties.keyboard_type) {
+     case GHOST_KeyboardProperties::ascii_keyboard_type: {
+       text_field.keyboardType = UIKeyboardTypeASCIICapable;
+       text_field.textAlignment = NSTextAlignmentLeft;
+       break;
+     }
+     case GHOST_KeyboardProperties::decimal_numpad_keyboard_type: {
+       text_field.keyboardType = UIKeyboardTypeDecimalPad;
+       text_field.textAlignment = NSTextAlignmentCenter;
+       break;
+     }
+     case GHOST_KeyboardProperties::numpad_keyboard_type: {
+       text_field.keyboardType = UIKeyboardTypeNumberPad;
+       text_field.textAlignment = NSTextAlignmentCenter;
+       break;
+     }
+     default: {
+       /* What's the sensible baviour here? Default? Assert? */
+       text_field.keyboardType = UIKeyboardTypeDefault;
+       text_field.textAlignment = NSTextAlignmentLeft;
+     }
+   }
+   /* Reset keyboard type to default if not using Apple Pencil
+    * or it's not floating. (Need to add floating detection.) */
+   if (!last_tap_with_pencil) {
+     // text_field.keyboardType = UIKeyboardTypeDefault;
+   }
+
+   /* Set light/dark mode or adopt system default. */
+   text_field.keyboardAppearance = UIKeyboardAppearanceDefault;
+
+   /* This seems sensible given Blender's typical behaviour. */
+   text_field.autocorrectionType = UITextAutocorrectionTypeNo;
+   text_field.spellCheckingType = UITextSpellCheckingTypeNo;
+
+@@ -1161,381 +2224,923 @@
        [text_field selectAll:nil];
        break;
      }
@@ -4942,7 +5139,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      if (!onscreen_keyboard_active) {
        text_field.userInteractionEnabled = YES;
        if (![text_field becomeFirstResponder]) {
++        text_field.userInteractionEnabled = NO;
++        text_field.text = nil;
          GHOST_ASSERT(FALSE, "GHOST_SystemIOS::popupOnScreenKeyboard Failed to display keyboard");
++        return GHOST_kFailure;
        }
        onscreen_keyboard_active = true;
      }
@@ -4955,7 +5155,26 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Lock access around keyboard handling events. */
    @synchronized(self) {
      IOS_INPUT_LOG(@"Keyboard hide request received %@", text_field.text);
-@@ -1261,281 +2685,450 @@
+
+     if (onscreen_keyboard_active) {
+       /*
+        This must come first so that any of the keyboard event handlers that get
+        triggered in response to shutting down the keyboard don't do anything
+        (like generating events back to Blender)
+        */
+       onscreen_keyboard_active = false;
++
++      /* Copy the final bytes while UIKit still owns the text, including valid empty input. */
++      const char *input = [[text_field text] UTF8String];
++      text_field_string_valid = input != nullptr;
++      text_field_string = input ? input : "";
+
+       /* Shut down the keyboard. */
+       [text_field resignFirstResponder];
+       /*
+        IOS_FIXME - Note: This may cause the console to display the warning message:
+        "-[UIApplication _touchesEvent] will no longer work as expected. Please stop using it."
+        But since this is being generated by Apple OS code there's nothing obvious to fix it right
         now.
         */
 
@@ -4967,14 +5186,16 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
         */
        text_field.userInteractionEnabled = NO;
 
-       /* Save the input to a c-string */
-       text_field_string = [[text_field text] UTF8String];
-
+-      /* Save the input to a c-string */
+-      text_field_string = [[text_field text] UTF8String];
+-
        /* Delete the text field copy of the string */
        text_field.text = nil;
      }
    }
-   IOS_INPUT_LOG(@"Text field value was %s", text_field_string);
+-  IOS_INPUT_LOG(@"Text field value was %s", text_field_string);
++  IOS_INPUT_LOG(@"Text field value was %s",
++                text_field_string_valid ? text_field_string.c_str() : "(no software input)");
    return GHOST_kSuccess;
  }
 
@@ -4983,13 +5204,21 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Lock access around keyboard handling events */
    @synchronized(self) {
 
-     /* Update text string if one exists */
-     if (text_field.text && ![text_field.text isEqualToString:@""]) {
-       /* Save the input to a c-string */
-       text_field_string = [[text_field text] UTF8String];
-     }
-   }
-   return text_field_string;
+-    /* Update text string if one exists */
+-    if (text_field.text && ![text_field.text isEqualToString:@""]) {
+-      /* Save the input to a c-string */
+-      text_field_string = [[text_field text] UTF8String];
+-    }
+-  }
+-  return text_field_string;
++    /* Empty text is a valid edit; nullptr means there is no software result. */
++    if (text_field.text) {
++      const char *input = [[text_field text] UTF8String];
++      text_field_string_valid = input != nullptr;
++      text_field_string = input ? input : "";
++    }
++    return text_field_string_valid ? text_field_string.c_str() : nullptr;
++  }
  }
 
  @end
@@ -5421,7 +5650,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    if (deferred_swap_buffers_count) {
 
      /* These two messages should be made asserts when we've fixed all the issues. */
-@@ -1581,81 +3174,81 @@
+@@ -1581,81 +3186,81 @@
      window_title_ = nullptr;
    }
    window_title_ = (char *)malloc(strlen(title) + 1);
@@ -5504,7 +5733,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
     * TODO: Support coordinate mapping for sized windows. */
    outX = inX;
    outY = inY;
-@@ -1871,98 +3464,105 @@
+@@ -1871,98 +3476,105 @@
  }
 
  /* Indicate that we want this window to be the next active one. */
@@ -14211,7 +14440,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
 diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.cc b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 --- a/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 +++ b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
-@@ -1,109 +1,132 @@
+@@ -1,109 +1,134 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -14249,6 +14478,8 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +#include "BKE_layer.hh"
  #include "BKE_screen.hh"
 +#include "BKE_report.hh"
++
++#include "ED_screen.hh"
 
  #include "WM_api.hh"
  #include "WM_types.hh"
@@ -14345,7 +14576,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
    /* if pie is spawned by a left click, release or click event,
     * it is always assumed to be click style */
-@@ -153,96 +176,953 @@
+@@ -153,96 +178,953 @@
      if (icon) {
        SNPRINTF_UTF8(titlestr, " %s", title);
        w = ui_pie_menu_title_width(titlestr, icon);
@@ -17090,6 +17321,178 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      case ButType::SearchMenu:
        if (!has_required_data) {
          break;
+@@ -3644,81 +3850,81 @@
+   keyboard_properties.text_box_origin[1] = text_box.b_;
+   keyboard_properties.text_box_size[0] = text_box.getWidth();
+   keyboard_properties.text_box_size[1] = text_box.getHeight();
+   keyboard_properties.tip_text = but->tip.data();
+   keyboard_properties.text_string = text_edit.edit_string;
+
+   GHOST_popupOnScreenKeyboard(static_cast<GHOST_WindowHandle>(win->ghostwin), keyboard_properties);
+ #endif
+
+   WM_cursor_modal_set(win, WM_CURSOR_TEXT_EDIT);
+
+   /* Temporarily turn off window auto-focus on platforms that support it. */
+   GHOST_SetAutoFocus(false);
+
+ #ifdef WITH_INPUT_IME
+   if (!is_num_but) {
+     ui_textedit_ime_begin(win, but);
+   }
+ #endif
+ }
+
+ static void ui_textedit_end(bContext *C, uiBut *but, uiHandleButtonData *data)
+ {
+   uiTextEdit &text_edit = data->text_edit;
+   wmWindow *win = data->window;
+
+   ED_workspace_status_text(C, nullptr);
+
+ #if (WITH_APPLE_CROSSPLATFORM)
+   /* Hide keyboard and retrieve keyboard text */
+   GHOST_hideOnScreenKeyboard(static_cast<GHOST_WindowHandle>(win->ghostwin));
+   const char *keyboard_string = GHOST_getKeyboardInput(
+       static_cast<GHOST_WindowHandle>(win->ghostwin));
+
+   /*
+    * IOS_FIXME:
+    * This doesn't seem ideal but dynamically generating keyboard events to modify the
+    * text is tricky on iOS since you also need to take into account cuts, pastes and
+    * any other editing you can do with an iOS keyboard
+    */
+-  if (but) {
++  if (but && keyboard_string) {
+     ui_textedit_string_set(but, but->active->text_edit, keyboard_string);
+   }
+ #endif
+
+   if (but) {
+     if (UI_but_is_utf8(but)) {
+       const int strip = BLI_str_utf8_invalid_strip(but->editstr, strlen(but->editstr));
+       /* Strip non-UTF8 characters unless buttons support this.
+        * This should never happen as all text input should be valid UTF8,
+        * there is a small chance existing data contains invalid sequences.
+        * This could check could be made into an assertion if `but->editstr`
+        * is valid UTF8 when #ui_textedit_begin assigns the string. */
+       if (strip) {
+         CLOG_INFO_NOCHECK(&LOG, "%s: invalid utf8 - stripped chars %d", __func__, strip);
+       }
+     }
+
+     if (data->searchbox) {
+       if (data->cancel == false) {
+         BLI_assert(but->type == ButType::SearchMenu);
+         uiButSearch *but_search = (uiButSearch *)but;
+
+         if ((ui_searchbox_apply(but, data->searchbox) == false) &&
+             (ui_searchbox_find_index(data->searchbox, but->editstr) == -1) &&
+             !but_search->results_are_suggestions)
+         {
+
+           if (but->flag & UI_BUT_VALUE_CLEAR) {
+             /* It is valid for _VALUE_CLEAR flavor to have no active element
+              * (it's a valid way to unlink). */
+             but->editstr[0] = '\0';
+           }
+           data->cancel = true;
+
+           /* ensure menu (popup) too is closed! */
+           data->escapecancel = true;
+
+           WM_global_reportf(RPT_ERROR, "Failed to find '%s'", but->editstr);
+           WM_report_banner_show(CTX_wm_manager(C), win);
+         }
+@@ -4110,85 +4316,85 @@
+           }
+           else {
+             ui_textedit_next_but(block, but, data);
+           }
+           button_activate_state(C, but, BUTTON_STATE_EXIT);
+         }
+         retval = WM_UI_HANDLER_BREAK;
+         break;
+       case EVT_ZKEY: {
+         /* Ctrl-Z or Ctrl-Shift-Z: Undo/Redo (allowing for OS-Key on Apple). */
+
+         const bool is_redo = (event->modifier & KM_SHIFT);
+         if (
+ #if defined(__APPLE__)
+             ((event->modifier & KM_OSKEY) && ((event->modifier & (KM_ALT | KM_CTRL)) == 0)) ||
+ #endif
+             ((event->modifier & KM_CTRL) && ((event->modifier & (KM_ALT | KM_OSKEY)) == 0)))
+         {
+           int undo_pos;
+           const char *undo_str = ui_textedit_undo(
+               text_edit.undo_stack_text, is_redo ? 1 : -1, &undo_pos);
+           if (undo_str != nullptr) {
+             ui_textedit_string_set(but, text_edit, undo_str);
+
+             /* Set the cursor & clear selection. */
+             but->pos = undo_pos;
+             but->selsta = but->pos;
+             but->selend = but->pos;
+             changed = true;
+           }
+           retval = WM_UI_HANDLER_BREAK;
+           skip_undo_push = true;
+         }
+         break;
+       }
+ #if (WITH_APPLE_CROSSPLATFORM)
+       case EVT_TEXTEDIT: {
+         if (but) {
+           const char *keyboard_string = GHOST_getKeyboardInput(
+               static_cast<GHOST_WindowHandle>(win->ghostwin));
+-          if (but->active->text_edit.edit_string) {
++          if (keyboard_string && but->active->text_edit.edit_string) {
+             ui_textedit_string_set(but, but->active->text_edit, keyboard_string);
++            changed = true;
++            update = true;
+           }
+-          changed = true;
+-          update = true;
+         }
+         break;
+       }
+ #endif
+       default: {
+         break;
+       }
+     }
+
+     if ((event->utf8_buf[0]) && (retval == WM_UI_HANDLER_CONTINUE)
+ #ifdef WITH_INPUT_IME
+         && !is_ime_composing && !WM_event_is_ime_switch(event)
+ #endif
+     )
+     {
+       char utf8_buf_override[2] = {'\0', '\0'};
+       const char *utf8_buf = event->utf8_buf;
+
+       /* Exception that's useful for number buttons, some keyboard
+        * numpads have a comma instead of a period. */
+       if (ELEM(but->type, ButType::Num, ButType::NumSlider)) { /* Could use `data->min`. */
+         if ((event->type == EVT_PADPERIOD) && (utf8_buf[0] == ',')) {
+           utf8_buf_override[0] = '.';
+           utf8_buf = utf8_buf_override;
+         }
+       }
+
+       if (utf8_buf[0]) {
+         const int utf8_buf_len = BLI_str_utf8_size_or_error(utf8_buf);
+         BLI_assert(utf8_buf_len != -1);
+         changed = ui_textedit_insert_buf(but, text_edit, utf8_buf, utf8_buf_len);
+       }
+
+       retval = WM_UI_HANDLER_BREAK;
+     }
+     /* textbutton with this flag: do live update (e.g. for search buttons) */
+     if (but->flag & UI_BUT_TEXTEDIT_UPDATE) {
+       update = true;
+     }
+   }
 @@ -8852,80 +9058,81 @@
      ui_numedit_end(but, data);
 
