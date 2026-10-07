@@ -20,6 +20,10 @@ namespace['View3DPaintPanel']=namespace['UnifiedPaintPanel']
 namespace['draw_color_settings']=lambda *args,**kwargs: None
 exec(COLOR,namespace)
 color=namespace['VIEW3D_PT_tools_brush_color']
+pinned_toolbar=(repo/'.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/startup/bl_ui/space_view3d_toolbar.py').read_text(encoding='utf-8')
+original_class='class VIEW3D_PT_tools_brush_color('+pinned_toolbar.split('class VIEW3D_PT_tools_brush_color(',1)[1].split('\n\nclass ',1)[0]
+exec(original_class,namespace)
+original_color=namespace['VIEW3D_PT_tools_brush_color']
 checks=[]
 
 def viewport():
@@ -31,6 +35,13 @@ area,region=viewport()
 with bpy.context.temp_override(area=area,region=region):
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.wm.tool_set_by_id(name='builtin.move')
+    try:
+        original_color.poll(bpy.context)
+    except AttributeError as error:
+        assert str(error)=="'NoneType' object has no attribute 'brush'"
+        checks.append({'context':'Object/Move before guard','original_poll_error':str(error)})
+    else:
+        raise AssertionError('Original pinned Color poll did not reproduce the reported traceback')
     assert color.poll(bpy.context) is False
     checks.append({'context':'Object/Move','poll':False})
     bpy.ops.object.mode_set(mode='SCULPT')

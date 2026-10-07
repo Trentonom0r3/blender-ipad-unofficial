@@ -3,6 +3,10 @@
   "host_blender": "5.1.2",
   "checks": [
     {
+      "context": "Object/Move before guard",
+      "original_poll_error": "'NoneType' object has no attribute 'brush'"
+    },
+    {
       "context": "Object/Move",
       "poll": false
     },

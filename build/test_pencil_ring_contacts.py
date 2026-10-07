@@ -16,6 +16,55 @@ class PencilRingContactTests(unittest.TestCase):
     def run_cpp(self,code):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(POLICY+BROWSE+GHOST+'\n'+code)
 
+    def test_actual_contact_start_uses_pinned_mutable_coordinate_contract(self):
+        ios=changed_source('intern/ghost/intern/GHOST_WindowIOS.mm')
+        helper=function(ios,'static ghost::ios::PencilRingContact ios_ring_contact_at_start(')
+        # Objective-C enumeration, location selector and type getter are the
+        # translated UIKit boundaries. The actual named-value call and native scale
+        # signature/body compile and execute unchanged as C++.
+        helper=helper.replace('for (UITouch *touch in touches)',
+                              'for (UITouch *touch : *touches)')
+        helper=helper.replace('[touch locationInView:owner_view]',
+                              'touch->locationInView(owner_view)')
+        helper=helper.replace('touch.type','touch->type')
+        contract=(Path(__file__).parent/'fixtures/pinned_ios_coordinate_contract.cc').read_text(encoding='utf-8')
+        signature,scale=contract.split('CGPoint GHOST_WindowIOS::',1)
+        signature=signature[signature.index('  CGPoint scalePointToWindow'):]
+        scale='CGPoint GHOST_WindowIOS::'+scale
+        self.run_cpp(r"""
+#include <cassert>
+struct CGPoint {double x,y;};
+struct UIView {};
+enum {UITouchTypeDirect,UITouchTypePencil,UITouchTypeIndirect};
+struct UITouch {int type;CGPoint location;CGPoint locationInView(UIView *){return location;}};
+template<class T>struct NSSet:std::vector<T>{using std::vector<T>::vector;};
+struct GHOST_WindowIOS {
+ UIView *view;float factor=2;int view_reads=0;
+ UIView *getView(){++view_reads;return view;}
+ float getWindowScaleFactor(){return factor;}
+SIGNATURE
+};
+SCALE
+HELPER
+int main(){
+ UIView owner,foreign;GHOST_WindowIOS window{&owner};
+ UITouch indirect{UITouchTypeIndirect,{37.9,50.5}},pencil{UITouchTypePencil,{37.9,50.5}};
+ NSSet<UITouch *> touches{&indirect,&pencil};
+ auto absent=ios_ring_contact_at_start(nullptr,nullptr,nullptr);assert(!absent.lifetime);
+ assert(ghost::ios::publish_pencil_ring(&window,{8,1,{40,40,400,400},true}));
+ auto captured=ios_ring_contact_at_start(&window,&owner,&touches);
+ assert(captured.lifetime==8&&captured.serial&&captured.origin_x==75&&captured.origin_y==101);
+ assert(pencil.location.x==37.9&&pencil.location.y==50.5);
+ auto stale=ios_ring_contact_at_start(&window,&foreign,&touches);assert(!stale.lifetime);
+ ghost::ios::pencil_ring_contact_enabled(&window,8,false);int reads=window.view_reads;
+ auto disabled=ios_ring_contact_at_start(&window,&owner,&touches);
+ assert(!disabled.lifetime&&window.view_reads==reads);
+ ghost::ios::pencil_ring_contact_enabled(&window,8,true);
+ pencil.type=UITouchTypeDirect;auto direct=ios_ring_contact_at_start(&window,&owner,&touches);
+ assert(direct.serial!=captured.serial&&direct.origin_x==75&&direct.origin_y==101);
+}
+""".replace('SIGNATURE',signature).replace('SCALE',scale).replace('HELPER',helper))
+
     def test_origin_and_contact_nonce_survive_retirement_and_never_retarget(self):
         self.run_cpp(r'''
 #include <cassert>
