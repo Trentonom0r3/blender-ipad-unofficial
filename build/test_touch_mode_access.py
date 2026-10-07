@@ -121,36 +121,51 @@ int main(){
 
  def test_popup_receipt_survives_destruction_and_rejected_actions_free_properties(self):
   handlers=changed_source('source/blender/editors/interface/interface_handlers.cc')
-  capture=handlers[handlers.index('    if ((block->pie_data.flags & UI_PIE_IPAD_MODE)'):handlers.index('  after->rnapoin = but->rnapoin;')]
+  capture=handlers[handlers.index('    if ((block->pie_data.flags & UI_PIE_IPAD_TOOLS)'):handlers.index('  after->rnapoin = but->rnapoin;')]
   capture=capture.rsplit('\n  }',1)[0]
-  action=handlers[handlers.index('    bool ipad_mode_allowed ='):handlers.index('    if (after.rnapoin.data)')]
-  popup=function(NATIVE,'bool ui_ipad_mode_action_capture(')
+  action=handlers[handlers.index('    bool ipad_ring_allowed ='):handlers.index('    if (after.rnapoin.data && allowed())')]
+  header=changed_source('source/blender/editors/interface/interface_intern.hh')
+  begin=header.index('class uiIPadActionOriginScope {')
+  scope=header[begin:header.index('\n};',begin)+3]
+  popup='static thread_local ipad_ring::ActionOrigin ui_ipad_scoped_action_origin;\n'+scope+'\n'+'\n'.join(function(NATIVE,s) for s in (
+   'uiIPadActionOriginScope::uiIPadActionOriginScope(',
+   'uiIPadActionOriginScope::~uiIPadActionOriginScope(',
+   'std::string ui_ipad_ring_tool_identity(',
+   'bool ui_ipad_action_origin_valid(',
+   'bool ui_ipad_ring_action_capture('))
   self.run_cpp(WORLD+IDENTITY+r'''
 #define WITH_APPLE_CROSSPLATFORM
 #define STREQ(a,b) (std::strcmp(a,b)==0)
-constexpr int UI_PIE_IPAD_MODE=1024,NC_SPACE=1,ND_SPACE_VIEW3D=2;
+constexpr int UI_PIE_IPAD_TOOLS=256,UI_PIE_IPAD_MODE=1024,NC_SPACE=1,ND_SPACE_VIEW3D=2;
+struct bToolRef{std::string idname;};bToolRef live_tool{"builtin.move"};bool has_tool=true;int tool_lookups=0;
+bToolRef *WM_toolsystem_ref_from_context(const bContext *){++tool_lookups;return has_tool?&live_tool:nullptr;}
 struct PointerRNA{int value=0;};struct wmOperatorType{const char *idname="OBJECT_OT_mode_set";};
-struct uiIPadRingData{ipad_ring::RingContextIdentity context;};
+struct uiIPadRingData{ipad_ring::RingContextIdentity context;uint64_t lifetime=1;std::string tool_identity="builtin.move";bool input_suspended=false;};
 struct uiPopupBlockHandle{struct{void *arg=nullptr;}popup_create_vars;};
 struct uiBlock{struct{int flags=UI_PIE_IPAD_MODE;}pie_data;uiPopupBlockHandle *handle;};
 struct uiBut{wmOperatorType *optype=nullptr;int opcontext=1;PointerRNA *opptr=nullptr;};
-struct After{bool ipad_mode_guarded=false;uint64_t ipad_mode_context[13]={};wmOperatorType *optype=nullptr;int opcontext=0;PointerRNA *opptr=nullptr;std::string drawstr;};
+struct uiIPadOperatorReceipt{wmOperatorType *type=nullptr;};
+struct After{bool ipad_ring_guarded=false;uint64_t ipad_ring_context[13]={};std::string ipad_ring_tool;uint64_t ipad_ring_lifetime=0;std::string ipad_ring_selection_target;wmOperatorType *optype=nullptr;int opcontext=0;PointerRNA *opptr=nullptr;std::string drawstr;ipad_ring::ActionOrigin ipad_action_origin{};uiIPadOperatorReceipt ipad_operator{};};
+wmOperatorType *ui_ipad_operator_resolve(const uiIPadOperatorReceipt &receipt){return receipt.type;}
 namespace blender::wm{using OpCallContext=int;}
 bool safe=true;int calls=0,frees=0,notifiers=0,safety_checks=0;
 bool WM_event_ipad_mode_safe(bContext *){++safety_checks;return safe;}
 bool ui_ipad_ring_context_valid(bContext *C,const uiBlock *b){auto *p=static_cast<uiIPadRingData*>(b->handle->popup_create_vars.arg);return p&&UI_ipad_context_matches(C,ipad_ring::context_values(p->context).data());}
+bool ui_ipad_ring_waits_for_draw(const uiBlock *b){auto *p=static_cast<uiIPadRingData*>(b->handle->popup_create_vars.arg);return !p||p->input_suspended;}
+std::string ui_ipad_ring_selection_target(bContext *,const uiBut *){return {};}
+void ui_ipad_ring_selection_rebase(bContext *,const uint64_t *,const std::string &,const std::string &,uint64_t){}
 POPUP
-void transfer(bContext *C,uiBlock *block,uiBut *but,After *after){CAPTURE}
+void transfer(bContext *C,uiBlock *block,uiBut *but,After *after){after->ipad_operator.type=but->optype;CAPTURE}
 void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,wmOperatorType *,int,PointerRNA *,void *,std::string){++calls;C->object->mode=1;}
 void WM_main_add_notifier(int,void *){++notifiers;}
 void WM_operator_properties_free(PointerRNA *){++frees;}
-void dispatch(bContext *C,After after){PointerRNA opptr;ACTION}
+void dispatch(bContext *C,After after){const auto allowed=[&](){return ui_ipad_action_origin_valid(C,after.ipad_action_origin);};PointerRNA opptr;ACTION}
 int main(){
  Fixture f;wmOperatorType ot;PointerRNA props{3};
- auto queue=[&](){
-  auto *payload=new uiIPadRingData{ui_ipad_ring_identity(&f.C)};
-  uiPopupBlockHandle handle{{payload}};uiBlock block{{UI_PIE_IPAD_MODE},&handle};uiBut but{&ot,1,&props};After after;
-  transfer(&f.C,&block,&but,&after);assert(after.ipad_mode_guarded&&after.opptr==&props&&!but.opptr&&!but.optype);
+ auto queue=[&](int flags=UI_PIE_IPAD_TOOLS|UI_PIE_IPAD_MODE){
+  auto *payload=new uiIPadRingData{ui_ipad_ring_identity(&f.C),1,has_tool?live_tool.idname:std::string{}};
+  uiPopupBlockHandle handle{{payload}};uiBlock block{{flags},&handle};uiBut but{&ot,1,&props};After after;
+  transfer(&f.C,&block,&but,&after);assert(after.ipad_ring_guarded&&after.ipad_ring_tool==live_tool.idname&&after.opptr==&props&&!but.opptr&&!but.optype);
   delete payload;handle.popup_create_vars.arg=nullptr;return after;
  };
  auto valid=queue();dispatch(&f.C,valid);assert(calls==1&&frees==1&&notifiers==1&&safety_checks==1);f.object.mode=0;
@@ -159,6 +174,22 @@ int main(){
  auto removed=queue();f.area.regionbase.first=nullptr;dispatch(&f.C,removed);assert(calls==1&&frees==4&&safety_checks==2);f.area.regionbase.first=&f.region;
  auto changed_layer=queue();ViewLayer other{nullptr,&f.object};f.layer.next=&other;f.C.layer=&other;f.window.layer=&other;dispatch(&f.C,changed_layer);assert(calls==1&&frees==5&&safety_checks==2);
  After unguarded;unguarded.optype=&ot;unguarded.opptr=&props;dispatch(&f.C,unguarded);assert(calls==2&&frees==6&&notifiers==1);
+ f.C.layer=&f.layer;f.window.layer=&f.layer;f.object.mode=0;
+ // A same-mode tool change is absent from context13, but rejects the queued action.
+ auto changed_tool=queue(UI_PIE_IPAD_TOOLS);live_tool.idname="builtin.rotate";
+ int old_calls=calls,old_checks=safety_checks;
+ dispatch(&f.C,changed_tool);assert(calls==old_calls&&frees==7&&safety_checks==old_checks);live_tool.idname="builtin.move";
+ // All named owned ring operators use the receipt, not just mode_set.
+ for(const char *id:{"WM_OT_tool_set_by_id","VIEW3D_OT_ipad_native_tool","VIEW3D_OT_ipad_transform_axis","MESH_OT_select_mode","ED_OT_undo","ED_OT_redo","WM_OT_context_set_id","WM_OT_call_menu_pie"}){
+  ot.idname=id;auto queued=queue(UI_PIE_IPAD_TOOLS);old_calls=calls;dispatch(&f.C,queued);assert(calls==old_calls+1);f.object.mode=0;
+ }
+ // Invalid live owners short-circuit before any native tool lookup.
+ auto lost=queue(UI_PIE_IPAD_TOOLS);int old_lookups=tool_lookups;f.area.regionbase.first=nullptr;
+ old_calls=calls;dispatch(&f.C,lost);assert(calls==old_calls&&tool_lookups==old_lookups);f.area.regionbase.first=&f.region;
+ // No active tool is a valid scalar empty identity; a newly bound tool invalidates it.
+ live_tool.idname.clear();has_tool=false;auto empty=queue(UI_PIE_IPAD_TOOLS);has_tool=true;live_tool.idname="builtin.select_box";old_calls=calls;
+ dispatch(&f.C,empty);assert(calls==old_calls);
+ assert(frees==17);
 }
 '''.replace('POPUP',popup).replace('CAPTURE',capture).replace('ACTION',action))
 

@@ -66,6 +66,21 @@ with zipfile.ZipFile(ipa) as archive:
             assert marker in actual,marker
         for marker in ('VIEW3D_MT_ipad_modes','Expand this viewport to show modes'):
             assert marker.encode() in binary,marker
+    has_base = "options = {'name': 'VIEW3D_MT_ipad_base_ring'}" in expected
+    if has_base:
+        for marker in ('class VIEW3D_MT_ipad_base_ring','class VIEW3D_MT_ipad_tool_inventory',
+                       'class VIEW3D_OT_ipad_native_tool','class VIEW3D_OT_ipad_native_controls',
+                       'class VIEW3D_OT_ipad_shelf_visibility','ipad_editing_shelf_enabled',
+                       'def draw_canvas_header(layout, context)', 'return compact'):
+            assert marker in actual,marker
+        header,=[n for n in names if n.endswith('/bl_ui/space_view3d.py')]
+        header_text=archive.read(header).decode('utf-8').replace('\r\n','\n')
+        assert 'if draw_canvas_header(layout, context):\n            return' in header_text
+        for marker in ('VIEW3D_MT_ipad_base_ring','VIEW3D_MT_ipad_tool_inventory',
+                       'VIEW3D_OT_ipad_native_controls','VIEW3D_OT_ipad_transform_numbers',
+                       'ipad_pencil_header_supported','ipad_editing_shelf_enabled'):
+            assert marker.encode() in binary,marker
+        assert any(n.endswith('/datafiles/fonts/Inter.woff2') for n in names)
     topbar,=[n for n in names if n.endswith('/bl_ui/space_topbar.py')]
     menu=archive.read(topbar);assert b'wm.link' in menu and b'wm.append' in menu
     for asset in ('ops.generic.select_box','ops.transform.translate','ops.transform.rotate','ops.transform.resize'):
@@ -81,6 +96,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'compact_controls_and_native_finger_option_markers':True,
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
+    'base_ring_and_native_header_return_markers':has_base,
     'device_acceptance':False}
 (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (folder/'artifact-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')

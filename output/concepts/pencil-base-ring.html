@@ -1,0 +1,152 @@
+<div id="pencil-base-ring-concept" aria-label="Pencil-first Blender radial navigation concept">
+  <style>
+    #pencil-base-ring-concept { --bp-canvas:light-dark(#3b3d40,#303235); --bp-button:light-dark(#eceeef,#45484b); --bp-text:light-dark(#202428,#f4f4f4); --bp-line:light-dark(#b3b8bf,#565b60); --bp-selected:light-dark(#4678b9,#477abf); --bp-selected-text:#fff; --bp-grid:light-dark(#656a70,#45494e); --bp-object:#cf9449; font-family:Arial,Helvetica,sans-serif; }
+    #pencil-base-ring-concept .bp-preview { position:relative; max-width:680px; margin:0 auto; color:var(--bp-text); background:var(--bp-canvas); border-radius:12px; overflow:hidden; }
+    #pencil-base-ring-concept .bp-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid var(--bp-line); }
+    #pencil-base-ring-concept .bp-title { font-size:14px; font-weight:400; }
+    #pencil-base-ring-concept .bp-squeeze { border:1px solid var(--bp-line); border-radius:8px; padding:9px 12px; color:var(--bp-text); background:var(--bp-button); font-family:inherit; font-size:13px; display:flex; gap:8px; align-items:center; }
+    #pencil-base-ring-concept .bp-stage { position:relative; height:470px; }
+    #pencil-base-ring-concept .bp-scene { position:absolute; width:100%; height:100%; color:var(--bp-grid); }
+    #pencil-base-ring-concept .bp-crumb { position:absolute; top:14px; left:18px; display:flex; gap:8px; align-items:center; z-index:2; font-size:14px; }
+    #pencil-base-ring-concept .bp-back { border:0; background:transparent; color:var(--bp-text); display:flex; gap:5px; align-items:center; padding:8px 0; font:inherit; }
+    #pencil-base-ring-concept .bp-ring { position:absolute; inset:0; }
+    #pencil-base-ring-concept .bp-choice { position:absolute; transform:translate(-50%,-50%); min-height:58px; border:0; border-radius:7px; padding:7px 5px; background:var(--bp-button); color:var(--bp-text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-family:inherit; font-weight:400; line-height:1.1; text-align:center; overflow-wrap:normal; white-space:normal; }
+    #pencil-base-ring-concept .bp-choice[aria-pressed="true"] { background:var(--bp-selected); color:var(--bp-selected-text); }
+    #pencil-base-ring-concept .bp-choice:hover { filter:brightness(1.1); }
+    #pencil-base-ring-concept .bp-choice svg { width:20px; height:20px; flex-shrink:0; }
+    #pencil-base-ring-concept .bp-choice span { max-width:100%; }
+    #pencil-base-ring-concept .bp-slot { position:absolute; transform:translate(-50%,-50%); height:58px; border:1px dashed var(--bp-line); border-radius:7px; opacity:.48; }
+    #pencil-base-ring-concept .bp-footer { padding:12px 18px; border-top:1px solid var(--bp-line); min-height:44px; font-size:13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    #pencil-base-ring-concept .bp-note { max-width:680px; margin:9px auto 0; font-size:12px; color:light-dark(#4b5055,#b5bac1); }
+    #pencil-base-ring-concept .bp-numeric { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:8px; align-items:center; padding:12px; background:var(--bp-button); color:var(--bp-text); border-radius:8px; z-index:3; }
+    #pencil-base-ring-concept .bp-numeric input { width:85px; border:1px solid var(--bp-line); border-radius:4px; padding:8px; font-family:inherit; font-size:16px; color:var(--bp-text); background:var(--bp-canvas); }
+    #pencil-base-ring-concept .bp-numeric button { color:var(--bp-text); background:var(--bp-canvas); border:0; border-radius:4px; padding:9px; font-family:inherit; }
+    #pencil-base-ring-concept [hidden] { display:none !important; }
+    @media(max-width:380px) { #pencil-base-ring-concept .bp-top { padding:12px; gap:8px; } #pencil-base-ring-concept .bp-title { font-size:12px; } #pencil-base-ring-concept .bp-squeeze { padding:9px; font-size:12px; } #pencil-base-ring-concept .bp-choice { min-height:44px; padding:3px; gap:1px; line-height:1.05; } #pencil-base-ring-concept .bp-choice svg { width:12px; height:12px; } }
+  </style>
+  <div class="bp-preview" aria-label="Base manipulation ring example">
+    <div class="bp-top">
+      <span class="bp-title">Blender iPad · Pencil concept</span>
+      <button type="button" class="bp-squeeze cursor-interaction" aria-label="Simulate Pencil squeeze to close or reopen the base ring"><i data-lucide="pencil" aria-hidden="true"></i><span>Pencil squeeze</span></button>
+    </div>
+    <div class="bp-stage">
+      <svg class="bp-scene" viewBox="0 0 680 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative Blender canvas with selected cube; ring center remains empty">
+        <g stroke="currentColor" stroke-width="1" fill="none" opacity=".65">
+          <path d="M0 360L340 190L680 360 M0 410L340 190L680 410 M0 460L340 190L680 460 M0 310L340 190L680 310 M0 260L340 190L680 260 M0 210L340 190L680 210"/>
+          <path d="M90 470L340 190L590 470 M200 470L340 190L480 470 M285 470L340 190L395 470 M0 425H680 M0 380H680 M0 340H680 M0 305H680 M0 277H680 M0 252H680 M0 232H680 M0 215H680"/>
+        </g>
+        <g stroke="var(--bp-object)" stroke-width="2" fill="var(--bp-canvas)">
+          <path d="M302 221L357 211L379 240L325 253Z"/><path d="M302 221L325 253L325 301L302 269Z"/><path d="M325 253L379 240L379 288L325 301Z"/>
+        </g>
+      </svg>
+      <div class="bp-crumb"><button type="button" class="bp-back cursor-interaction" hidden><i data-lucide="chevron-left" aria-hidden="true"></i><span>Base</span></button><span class="bp-page">Base manipulation</span></div>
+      <div class="bp-ring" aria-label="Nine available radial slots"></div>
+      <form class="bp-numeric" hidden><label for="bp-number">Value</label><input id="bp-number" type="number" inputmode="decimal" value="1" step="0.1"><button type="submit" class="cursor-interaction">Apply</button></form>
+    </div>
+    <div class="bp-footer"><span class="bp-context" aria-live="polite">Edit Mesh · Select Box · Replace</span><span class="bp-result" aria-live="polite">5 of 9 base slots</span></div>
+  </div>
+  <div class="bp-note">Concept only · placement and additional categories remain open</div>
+  <script>
+    (() => {
+      const root=document.getElementById('pencil-base-ring-concept');
+      const ring=root.querySelector('.bp-ring');
+      const stage=root.querySelector('.bp-stage');
+      const crumb=root.querySelector('.bp-page');
+      const back=root.querySelector('.bp-back');
+      const result=root.querySelector('.bp-result');
+      const context=root.querySelector('.bp-context');
+      const numeric=root.querySelector('.bp-numeric');
+      const defaults={page:'base',open:true,mode:'Edit Mesh',tool:'Select Box',axis:'Free',fine:false,snap:false,selection:'Replace',shape:'Box',element:'Face',showSlots:true};
+      const stored=window.openai?.widgetState?.privateContent;
+      const state={...defaults,...(stored?.conceptVersion===1?stored:{}),conceptVersion:1};
+      const sizes={diameter:420};
+      const validPages=['base','mode','tools','select','move','layout','orientation','pivot','more-tools'];
+      if(!validPages.includes(state.page))state.page='base';
+      const entry=(label,icon,act,pressed=false,slot)=>({label,icon,act,pressed,slot});
+      const page=(name)=>{state.page=name;numeric.hidden=true;result.textContent='';render();save();};
+      function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{workflow:'Pencil-first base manipulation ring',ring:state.page,activeTool:state.tool},privateContent:{...state}}).catch(()=>{});}
+      function choose(message,fn){if(fn)fn();result.textContent=message;render();save();}
+      function options(){
+        if(state.page==='base')return[
+          entry('Layout / Mode','panels-top-left',()=>page('mode'),false,0),
+          entry('Tools','wrench',()=>page('tools'),false,2),
+          entry('Select','mouse-pointer-2',()=>page('select'),false,4),
+          entry('Redo','redo-2',()=>choose('Redo applied'),false,5),
+          entry('Undo','undo-2',()=>choose('Undo applied'),false,7)
+        ];
+        if(state.page==='mode')return[
+          ...[['Object','box'],['Edit Mesh','square-dashed'],['Sculpt','brush'],['Vertex Paint','paintbrush'],['Weight Paint','weight'],['Texture Paint','palette']].map(([label,icon])=>entry(label,icon,()=>choose(label,()=>state.mode=label),state.mode===label)),
+          entry('Layout','panels-top-left',()=>page('layout')),
+          entry('Workspace','layout-dashboard',()=>choose('Workspace choices would replace this ring'))
+        ];
+        if(state.page==='tools')return[
+          entry('Select','mouse-pointer-2',()=>page('select')),
+          entry('Cursor','crosshair',()=>choose('Cursor active',()=>state.tool='Cursor')),
+          entry('Move','move',()=>{state.tool='Move';page('move');}),
+          entry('Rotate','rotate-cw',()=>{state.tool='Rotate';page('move');}),
+          entry('Scale','scaling',()=>{state.tool='Scale';page('move');}),
+          entry('Transform','move-3d',()=>{state.tool='Transform';page('move');}),
+          entry('Annotate','pencil-line',()=>choose('Annotate active',()=>state.tool='Annotate')),
+          entry('Measure','ruler',()=>choose('Measure active',()=>state.tool='Measure')),
+          entry('Add','box',()=>page('more-tools'))
+        ];
+        if(state.page==='select')return[
+          ...[['Box','square-dashed'],['Lasso','lasso']].map(([label,icon])=>entry(label,icon,()=>choose(label,()=>{state.shape=label;state.tool='Select '+label;}),state.shape===label)),
+          ...[['Replace','square'],['Add','square-plus'],['Remove','square-minus']].map(([label,icon])=>entry(label,icon,()=>choose(label,()=>state.selection=label),state.selection===label)),
+          ...[['Vertex','dot'],['Edge','slash'],['Face','square']].map(([label,icon])=>entry(label,icon,()=>choose(label,()=>state.element=label),state.element===label)),
+          entry('More','ellipsis',()=>choose('More selection options would replace this ring'))
+        ];
+        if(state.page==='move')return[
+          ...[['Free','move'],['X','move-horizontal'],['Y','move-vertical'],['Z','arrow-up']].map(([label,icon])=>entry(label,icon,()=>choose(label,()=>state.axis=label),state.axis===label)),
+          entry('Fine','focus',()=>choose(state.fine?'Fine off':'Fine on',()=>state.fine=!state.fine),state.fine),
+          entry('Snap','magnet',()=>choose(state.snap?'Snap off':'Snap on',()=>state.snap=!state.snap),state.snap),
+          entry('Numbers','hash',()=>{numeric.hidden=!numeric.hidden;result.textContent='Pencil or on-screen number entry';}),
+          entry('Orientation','compass',()=>page('orientation')),
+          entry('Pivot','crosshair',()=>page('pivot'))
+        ];
+        if(state.page==='orientation')return['Global','Local','Normal','View','Cursor'].map(label=>entry(label,'compass',()=>{result.textContent=label+' orientation';state.page='move';render();save();}));
+        if(state.page==='pivot')return['Median','Cursor','Individual','Active','Bounds'].map(label=>entry(label,'crosshair',()=>{result.textContent=label+' pivot';state.page='move';render();save();}));
+        if(state.page==='layout')return[
+          entry('Split Side','columns-2',()=>choose('Horizontal workspace split')),
+          entry('Split Stack','rows-2',()=>choose('Vertical workspace split')),
+          entry('Resize','maximize',()=>choose('Pencil resize workflow')),
+          entry('Lock Panels','lock-keyhole',()=>choose('Panel lock toggled'))
+        ];
+        return ['Cube','Sphere','Cylinder','Plane'].map(label=>entry(label,'box',()=>choose('Add '+label)));
+      }
+      function render(){
+        ring.replaceChildren();ring.hidden=!state.open;
+        if(!state.open)numeric.hidden=true;
+        back.hidden=!state.open||state.page==='base';
+        crumb.textContent=!state.open?'Canvas':({base:'Base manipulation',mode:'Layout / Mode',tools:'Tools',select:'Select',move:state.tool,layout:'Layout',orientation:'Orientation',pivot:'Pivot','more-tools':'Add'}[state.page]);
+        context.textContent=state.mode+' · '+state.tool+(state.tool.startsWith('Select')?' · '+state.selection+' · '+state.element:'')+(['Move','Rotate','Scale','Transform'].includes(state.tool)?' · '+state.axis+(state.fine?' · Fine':'')+(state.snap?' · Snap':''):'');
+        if(!state.open)return;
+        const width=Math.min(stage.clientWidth,sizes.diameter+42);
+        const buttonWidth=Math.min(104,(width-36)/4.05);
+        const radius=Math.min(170,(width-buttonWidth-8)/2);
+        const centerX=stage.clientWidth/2,centerY=stage.clientHeight/2+10;
+        const fontSize=stage.clientWidth<340?11.5:stage.clientWidth<380?12:14;
+        const position=(element,slot)=>{const angle=(-90+slot*40)*Math.PI/180;element.style.left=(centerX+radius*Math.cos(angle))+'px';element.style.top=(centerY+radius*Math.sin(angle))+'px';element.style.width=buttonWidth+'px';};
+        const items=options();const used=new Set();
+        items.forEach((item,index)=>{
+          const slot=item.slot===undefined?index:item.slot;used.add(slot);
+          const button=document.createElement('button');button.type='button';button.className='bp-choice cursor-interaction';button.style.fontSize=fontSize+'px';
+          button.setAttribute('aria-label',item.label);button.setAttribute('aria-pressed',String(item.pressed));
+          const icon=document.createElement('i');icon.setAttribute('data-lucide',item.icon);icon.setAttribute('aria-hidden','true');
+          const label=document.createElement('span');label.textContent=item.label;button.append(icon,label);button.addEventListener('click',item.act);position(button,slot);ring.append(button);
+        });
+        if(state.page==='base'&&state.showSlots){for(let slot=0;slot<9;slot++){if(used.has(slot))continue;const empty=document.createElement('div');empty.className='bp-slot';empty.setAttribute('role','img');empty.setAttribute('aria-label','Unassigned future base slot');position(empty,slot);ring.append(empty);}}
+        if(state.page==='base'&&!result.textContent)result.textContent='5 of 9 base slots';
+        if(globalThis.lucide)lucide.createIcons({attrs:{width:20,height:20}});
+        for(const button of ring.querySelectorAll('button')){const label=button.querySelector('span');let size=fontSize;while(label.scrollWidth>label.clientWidth+1&&size>11){size=Math.max(11,size-.5);button.style.fontSize=size+'px';}}
+      }
+      root.querySelector('.bp-squeeze').addEventListener('click',()=>{state.open=!state.open;if(state.open)state.page='base';result.textContent=state.open?'5 of 9 base slots':'Ring closed · draw on canvas';render();save();});
+      back.addEventListener('click',()=>page('base'));
+      numeric.addEventListener('submit',event=>{event.preventDefault();result.textContent='Value '+numeric.querySelector('input').value+' applied';numeric.hidden=true;save();});
+      new ResizeObserver(render).observe(stage);
+      window.addEventListener('openai:set_globals',event=>{const stored=event.detail?.globals?.widgetState?.privateContent;if(stored?.conceptVersion===1){Object.assign(state,stored);if(!validPages.includes(state.page))state.page='base';render();}});
+      render();
+      if(globalThis.Tweak){const tweak=new Tweak({container:root.querySelector('.bp-preview'),onChange:render});tweak.addSlider(sizes,'diameter',{label:'Ring size',min:350,max:470,step:10,unit:'px'});tweak.addToggle(state,'showSlots',{label:'Show unused base slots'});}
+    })();
+  </script>
+</div>

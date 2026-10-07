@@ -9,7 +9,14 @@ from test_touch_extrude import changed_source
 
 def function(source, signature):
     start = source.index(signature)
-    return source[start:source.index('\n}', start) + 2]
+    # Wider native diff context can include a forward declaration. Do not
+    # compile that declaration plus unrelated structs as the function body.
+    while True:
+        body = source.index('{', start)
+        semicolon = source.find(';', start, body)
+        if semicolon == -1:
+            return source[start:source.index('\n}', body) + 2]
+        start = source.index(signature, start + len(signature))
 
 
 class CompactShelfTests(unittest.TestCase):
@@ -47,7 +54,8 @@ int main() {
         handlers = changed_source('source/blender/editors/interface/interface_handlers.cc')
         interface = changed_source('source/blender/editors/interface/interface.cc')
         helpers = '\n'.join(function(screen, signature) for signature in (
-            'static bool editing_shelf_expanded(', 'static bool editing_shelf_rect_equal(',
+            'static bool editing_shelf_preference(', 'static bool editing_shelf_expanded(',
+            'static bool editing_shelf_enabled(', 'static bool editing_shelf_rect_equal(',
             'bool ED_ipad_editing_shelf_hit(', 'bool ED_ipad_editing_shelf_stale(',
             'void ED_ipad_editing_shelf_invalidate('))
         helpers += '\n' + function(handlers, 'static int ui_ipad_shelf_input_guard(')
@@ -56,9 +64,14 @@ int main() {
             'void UI_block_discard_rebuild(', 'void UI_block_discard_named_rebuild(')) + '\n' + helpers
         prefixes=[]
         for signature in ('static int ui_region_handler(', 'static int ui_handler_region_menu('):
-            start=handlers.index(signature)
-            end=handlers.index('  uiBut *but = ui_region_find_active_but(region);',start)
-            prefixes.append(handlers[start:end] + '  (void)retval; ++lookups; return 99;\n}')
+            handler=function(handlers,signature)
+            end=handler.index('  uiBut *but = ui_region_find_active_but(region);')
+            prefix=handler[:end]
+            # This fixture isolates shelf ownership; owned popup draw gates are
+            # executed separately in test_pencil_ring_native.py.
+            if '  uiBlock *ipad_root =' in prefix:
+                prefix=prefix[:prefix.index('  uiBlock *ipad_root =')]
+            prefixes.append(prefix + '  (void)retval; ++lookups; return 99;\n}')
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(r"""
 #define WITH_APPLE_CROSSPLATFORM
 #include <cassert>
@@ -73,7 +86,7 @@ constexpr int LEFTMOUSE=1,MOUSEMOVE=2,GESTURE=3,KEYBOARD=4;
 #define ISMOUSE_GESTURE(t) ((t)==GESTURE)
 struct rcti {int xmin=0,xmax=0,ymin=0,ymax=0;};
 struct PropertyRNA {int type=PROP_BOOLEAN,length=0;bool value=false;};
-struct wmWindowManager {int id=0;PropertyRNA *property=nullptr;};
+struct wmWindowManager {int id=0;PropertyRNA *property=nullptr;PropertyRNA enabled{PROP_BOOLEAN,0,true};};
 struct PointerRNA {wmWindowManager *wm;};
 struct uiBlock {std::string name;uiBlock *oldblock=nullptr;bool active=false,freed=false;};
 struct Map {
@@ -98,13 +111,14 @@ wmWindowManager *CTX_wm_manager(bContext *C){return C->wm;}
 ARegion *CTX_wm_region(bContext *C){return C->region;}
 ARegion *CTX_wm_region_popup(bContext *C){return C->popup;}
 PointerRNA RNA_id_pointer_create(int *id){return {reinterpret_cast<wmWindowManager*>(id)};}
-PropertyRNA *RNA_struct_find_property(PointerRNA *p,const char *key){assert(std::string(key)=="ipad_editing_shelf_expanded");return p->wm->property;}
+PropertyRNA *RNA_struct_find_property(PointerRNA *p,const char *key){if(std::string(key)=="ipad_editing_shelf_enabled")return &p->wm->enabled;assert(std::string(key)=="ipad_editing_shelf_expanded");return p->wm->property;}
 int RNA_property_type(PropertyRNA *p){return p->type;}
 int RNA_property_array_length(PointerRNA *,PropertyRNA *p){return p->length;}
 bool RNA_property_boolean_get(PointerRNA *,PropertyRNA *p){return p->value;}
 void BLI_rcti_translate(rcti *r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 bool BLI_rcti_isect_pt_v(const rcti *r,const int p[2]){return p[0]>=r->xmin&&p[0]<=r->xmax&&p[1]>=r->ymin&&p[1]<=r->ymax;}
-bool ED_ipad_editing_shelf_rect(bContext *C,const ARegion *,rcti &r){r=C->desired;return C->fits;}
+static bool editing_shelf_enabled(bContext *);
+bool ED_ipad_editing_shelf_rect(bContext *C,const ARegion *,rcti &r){r=C->desired;return C->fits&&editing_shelf_enabled(C);}
 bool UI_ipad_context_matches(bContext *,const uint64_t *){return true;}
 void editing_shelf_visible_set(bContext *,ARegion *r,bool value){r->runtime->ipad_editing_shelf_visible=value;}
 void ED_region_tag_redraw(ARegion *){++redraws;}
@@ -124,8 +138,8 @@ int main(){
  const wmEvent old_tap{LEFTMOUSE,{120,220}},outside{LEFTMOUSE,{600,600}},gesture{GESTURE,{120,220}},key{KEYBOARD,{120,220}};
  assert(!ED_ipad_editing_shelf_stale(&C,&region));assert(ui_ipad_shelf_input_guard(&C,&region,&old_tap)==-1);
  assert(ui_region_handler(&C,&old_tap,nullptr)==0); // Empty, current block list.
- for(int change=0;change<6;++change){
-  runtime=Runtime{};region.winrct=runtime.ipad_editing_shelf_window_rect;scale=1;C.fits=true;C.desired={12,347,12,131};replacement.value=false;
+ for(int change=0;change<7;++change){
+  runtime=Runtime{};region.winrct=runtime.ipad_editing_shelf_window_rect;scale=1;C.fits=true;C.desired={12,347,12,131};replacement.value=false;wm.enabled.value=true;
   uiBlock old{"VIEW3D_HT_ipad_editing_shelf",nullptr,true},fresh{"VIEW3D_HT_ipad_editing_shelf",&old,true},other{"other",nullptr,true};
   runtime.uiblocks={&fresh,&old,&other};runtime.block_name_map.values={{fresh.name,&fresh},{other.name,&other}};
   if(change==0)replacement.value=true;
@@ -134,6 +148,7 @@ int main(){
   if(change==3)C.desired.xmax+=100;
   if(change==4)C.fits=false;
   if(change==5)runtime.ipad_editing_shelf_visible=false;
+  if(change==6)wm.enabled.value=false; // Disabled between draw and queued input.
   assert(ED_ipad_editing_shelf_stale(&C,&region));
   const int before_lookup=lookups,before_free=frees,before_cancel=cancels;
   // Either native dispatch route must return without dereferencing retired controls.

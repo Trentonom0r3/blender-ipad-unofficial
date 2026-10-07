@@ -1,0 +1,84 @@
+test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind (test_pencil_rna_constructors.PencilRNAConstructorTests.test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind) ... C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-vj9jxa8l\test.cc:1601:52: error: no matching function for call to 'UI_ipad_rna_prepare'
+ 1601 |   field=reinterpret_cast<PropertyRNA *>(1);assert(!UI_ipad_rna_prepare(&block,&ptr,&field));
+      |                                                    ^~~~~~~~~~~~~~~~~~~
+C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-vj9jxa8l\test.cc:1359:6: note: candidate function not viable: requires 4 arguments, but 3 were provided
+ 1359 | bool UI_ipad_rna_prepare(uiBlock *block, PointerRNA *ptr, PropertyRNA **prop, const char *name)
+      |      ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+ERROR
+test_orientation_slots_and_complete_native_snap_options_use_literal_paths (test_pencil_rna_constructors.PencilRNAConstructorTests.test_orientation_slots_and_complete_native_snap_options_use_literal_paths) ... ok
+test_pending_constructor_scope_handoff_refresh_and_retired_bootstrap (test_pencil_rna_constructors.PencilRNAConstructorTests.test_pending_constructor_scope_handoff_refresh_and_retired_bootstrap) ... ok
+test_real_python_layout_and_button_entrypoints_prepare_before_metadata (test_pencil_rna_constructors.PencilRNAConstructorTests.test_real_python_layout_and_button_entrypoints_prepare_before_metadata) ... ok
+test_scene_fixed_profiles_refuse_unproved_metadata_and_repair_ancestors (test_pencil_rna_constructors.PencilRNAConstructorTests.test_scene_fixed_profiles_refuse_unproved_metadata_and_repair_ancestors) ... C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-7h91h7o_\test.cc:1594:51: error: no matching function for call to 'UI_ipad_rna_prepare'
+ 1594 |  field=reinterpret_cast<PropertyRNA *>(1);assert(!UI_ipad_rna_prepare(&block,&ptr,&field));
+      |                                                   ^~~~~~~~~~~~~~~~~~~
+C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-7h91h7o_\test.cc:1359:6: note: candidate function not viable: requires 4 arguments, but 3 were provided
+ 1359 | bool UI_ipad_rna_prepare(uiBlock *block, PointerRNA *ptr, PropertyRNA **prop, const char *name)
+      |      ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-7h91h7o_\test.cc:1602:9: error: no matching function for call to 'UI_ipad_rna_prepare'
+ 1602 |  assert(UI_ipad_rna_prepare(&block,nullptr,nullptr));
+      |         ^~~~~~~~~~~~~~~~~~~
+C:\Users\tjerf\AppData\Local\Temp\ipad-workspace-test-7h91h7o_\test.cc:1359:6: note: candidate function not viable: requires 4 arguments, but 3 were provided
+ 1359 | bool UI_ipad_rna_prepare(uiBlock *block, PointerRNA *ptr, PropertyRNA **prop, const char *name)
+      |      ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.
+ERROR
+
+======================================================================
+ERROR: test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind (test_pencil_rna_constructors.PencilRNAConstructorTests.test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_pencil_rna_constructors.py", line 114, in test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind
+            self.run_source(r'''
+            ~~~~~~~~~~~~~~~^^^^^
+    int main(){
+    ^^^^^^^^^^^
+    ...<16 lines>...
+    }
+    ^
+    ''')
+    ^^^^
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_pencil_rna_constructors.py", line 64, in run_source
+    test_ipad_panels.IPadWorkspacePanelsTests()._run_source(code)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_ipad_panels.py", line 37, in _run_source
+    subprocess.run([compiler, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-pedantic',
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    str(test), '-o', str(binary)], cwd=work, check=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tjerf\anaconda3\Lib\subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Program Files\\LLVM\\bin\\clang++.exe', '-std=c++17', '-Wall', '-Wextra', '-Werror', '-pedantic', 'C:\\Users\\tjerf\\AppData\\Local\\Temp\\ipad-workspace-test-vj9jxa8l\\test.cc', '-o', 'C:\\Users\\tjerf\\AppData\\Local\\Temp\\ipad-workspace-test-vj9jxa8l\\tests.exe']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_scene_fixed_profiles_refuse_unproved_metadata_and_repair_ancestors (test_pencil_rna_constructors.PencilRNAConstructorTests.test_scene_fixed_profiles_refuse_unproved_metadata_and_repair_ancestors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_pencil_rna_constructors.py", line 67, in test_scene_fixed_profiles_refuse_unproved_metadata_and_repair_ancestors
+            self.run_source(r'''
+            ~~~~~~~~~~~~~~~^^^^^
+    int main(){Fixture f;ToolSettings settings;uiBlock block;block.ipad_action_origin=origin();block.evil_C=&f.C;
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+    }
+    ^
+    ''')
+    ^^^^
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_pencil_rna_constructors.py", line 64, in run_source
+    test_ipad_panels.IPadWorkspacePanelsTests()._run_source(code)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\test_ipad_panels.py", line 37, in _run_source
+    subprocess.run([compiler, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-pedantic',
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    str(test), '-o', str(binary)], cwd=work, check=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tjerf\anaconda3\Lib\subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Program Files\\LLVM\\bin\\clang++.exe', '-std=c++17', '-Wall', '-Wextra', '-Werror', '-pedantic', 'C:\\Users\\tjerf\\AppData\\Local\\Temp\\ipad-workspace-test-7h91h7o_\\test.cc', '-o', 'C:\\Users\\tjerf\\AppData\\Local\\Temp\\ipad-workspace-test-7h91h7o_\\tests.exe']' returned non-zero exit status 1.
+
+----------------------------------------------------------------------
+Ran 5 tests in 5.936s
+
+FAILED (errors=2)

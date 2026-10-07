@@ -78,5 +78,51 @@ jobs:
         run: python3 -m unittest discover -s build -p test_compact_shelf.py -v
       - name: Test touch Mode native geometry and deferred owner receipts
         run: python3 -m unittest discover -s build -p test_touch_mode_access.py -v
+      - name: Test admitted native Transform stroke feedback and bounded drawing
+        run: python3 -m unittest discover -s build -p test_touch_stroke_cue.py -v
+      - name: Test owned Pencil ring browsing and presented input receipts
+        run: python3 -m unittest discover -s build -p test_pencil_ring_foundation.py -v
+      - name: Test native Pencil page owners, draw gates and selection receipts
+        run: python3 -m unittest discover -s build -p test_pencil_ring_native.py -v
+      - name: Test rotating page geometry and shared native menu anchoring
+        run: python3 -m unittest discover -s build -p test_pencil_ring_pages.py -v
+      - name: Test Pencil barrel reset provenance and queued native cleanup
+        run: python3 -m unittest discover -s build -p test_pencil_barrel_reset.py -v
+      - name: Test Pencil ring contact and native popup dispatch
+        run: python3 -m unittest discover -s build -p test_pencil_ring_contacts.py -v
+      - name: Test native copyable Pencil action origin values
+        run: python3 -m unittest discover -s build -p test_pencil_action_origin.py -v
+      - name: Test Pencil-only hover-roll packets and native navigation receipts
+        run: python3 -m unittest discover -s build -p test_pencil_ring_roll.py -v
+      - name: Test native Pencil interaction owner proof and context-free disposal
+        run: python3 -m unittest discover -s build -p test_pencil_callback_disposal.py -v
+      - name: Test native tool icon styling for guarded Pencil inventory
+        run: python3 -m unittest discover -s build -p test_pencil_native_tool_style.py -v
+      - name: Test full native Pencil labels and refused-fit draw receipts
+        run: python3 -m unittest discover -s build -p test_pencil_ring_labels.py -v
+      - name: Test registered Pencil popup ownership and deferred cleanup
+        run: python3 -m unittest discover -s build -p test_pencil_popup_ownership.py -v
+      - name: Test immediate Pencil callback button lifetimes
+        run: python3 -m unittest discover -s build -p test_pencil_button_lease.py -v
+      - name: Test owned native Snap self-callback admission and outer-frame refusal
+        run: python3 -m unittest discover -s build -p test_pencil_self_callback.py -v
+      - name: Test explicit Pencil native-controls fallback and cascade close
+        run: python3 -m unittest discover -s build -p test_pencil_native_fallback.py -v
+      - name: Test Base entry and reversible native header/shelf admission
+        run: python3 -m unittest discover -s build -p test_pencil_base_entry.py -v
+      - name: Test fresh registered Pencil operator lifetime and Python wrapper identity
+        run: python3 -m unittest discover -s build -p test_pencil_operator_lifetime.py -v
+      - name: Test fresh native Pencil RNA roots and typed tool subgroups
+        run: python3 -m unittest discover -s build -p test_pencil_rna_owner.py -v
+      - name: Test connected Pencil constructors and explicit pending property handoff
+        run: python3 -m unittest discover -s build -p test_pencil_rna_constructors.py -v
+      - name: Test Pencil enum parent leases and failed-draw retirement
+        run: python3 -m unittest discover -s build -p test_pencil_parent_properties.py -v
+      - name: Test bounded pending Numbers property consumers and disposal
+        run: python3 -m unittest discover -s build -p test_pencil_numbers.py -v
+      - name: Test native Numbers arithmetic and finite array paste
+        run: python3 -m unittest discover -s build -p test_pencil_numbers_expression.py -v
+      - name: Test pending Numbers native unregister and terminal ownership
+        run: python3 -m unittest discover -s build -p test_pencil_numbers_lifecycle.py -v
       - name: Validate patch against pinned upstream and check scripts
         run: python3 build/preflight.py
