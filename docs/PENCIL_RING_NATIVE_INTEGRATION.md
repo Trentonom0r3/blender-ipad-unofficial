@@ -1,5 +1,11 @@
 # Native Pencil ring integration checkpoint — 2026-10-04
 
+## Color fixture correction and actual host file-write check - 2026-10-07
+
+Run 37625458964 at a3ad4f7147c377df64aeca4c0f945d55dad9a9b8 stopped in cloud preflight; iOS compilation was skipped. The generated-call and native sidebar tests passed. The Color test extraction accidentally included the next class after blank context lines were normalized in the unified diff. It now stops at the next class independently of blank-line encoding. The final normalized patch passes all197 host tests again and remains unchanged at canonical LF SHA256 f41f6226ca498dd38661f5ce8545bcb41e0a9dffa624d23d896e983ec86736f4. No production admission was relaxed. Failure log: .cache/ring-panel-cloud-failure-37625458964.log.
+
+Actual stock Blender5.1.2 checks also pass for patched Color poll with real Object/Move, Sculpt/non-brush Move, native File Browser and reopened-project contexts. Native Save, Save As and Save Copy wrote disposable files; reopening verified the respective transform values, and Save Copy preserved the active path. This is host evidence with exact pinned paint selector and patched Color class, **not** the user's older files, target UIKit/sidebar draw or iOS provider Open/Save. Reproducible runner: build/validate_brush_project_regression.py; report: output/ui-preview/pencil-ring-foundation/brush-project-host-checks.json. Next commit/push the fixture correction and build that exact revision once; no ring IPA exists yet. Full Pencil-first goal remains unfinished.
+
 ## Native API build correction and reported paint-panel regression - 2026-10-07
 
 Run 37596936984 at 715951d passed cloud preflight/Configure but failed native Release: generated RNA calls had one extra argument for prop_with_popover and one missing argument for prop_tabs_enum. The accepted default-true use_tab_style declaration was registered on the wrong API. It now belongs only to prop_tabs_enum, preserving FUNC_USE_CONTEXT there, both actual helper signatures, Inspector's False caller and the existing owned-property gates. The full failure log remains .cache/ring-native-failure-37596936984.log.

@@ -1,0 +1,45 @@
+{
+  "source_patch_sha256": "f41f6226ca498dd38661f5ce8545bcb41e0a9dffa624d23d896e983ec86736f4",
+  "host_blender": "5.1.2",
+  "checks": [
+    {
+      "context": "Object/Move",
+      "poll": false
+    },
+    {
+      "context": "Sculpt/non-brush Move",
+      "poll": false
+    },
+    {
+      "context": "native File Browser",
+      "poll": false
+    },
+    {
+      "action": "Save and reopen",
+      "written": true,
+      "reopened_transform": 2.5
+    },
+    {
+      "action": "Save As and reopen",
+      "written": true,
+      "reopened_transform": 3.75
+    },
+    {
+      "action": "Save Copy and reopen",
+      "written": true,
+      "active_path_preserved": true,
+      "reopened_transform": 5.0
+    },
+    {
+      "context": "reopened project/native viewport",
+      "poll": false
+    }
+  ],
+  "evidence_scope": "actual stock-host contexts and native file writes; exact pinned paint selector and patched Color class",
+  "limitations": [
+    "not the user's older files",
+    "not target iPad UIKit/sidebar draw",
+    "not iOS provider Open/Save"
+  ],
+  "device_acceptance": false
+}

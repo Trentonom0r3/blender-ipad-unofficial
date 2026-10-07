@@ -11,7 +11,7 @@ from test_touch_extrude import changed_source
 
 PAINT = (Path(__file__).parent / 'fixtures/pinned_paint_selector.py').read_text(encoding='utf-8')
 TOOLBAR = changed_source('scripts/startup/bl_ui/space_view3d_toolbar.py')
-COLOR = TOOLBAR.split('class VIEW3D_PT_tools_brush_color(',1)[1].split('\n\nclass ',1)[0]
+COLOR = TOOLBAR.split('class VIEW3D_PT_tools_brush_color(',1)[1].split('\nclass ',1)[0]
 COLOR = 'class VIEW3D_PT_tools_brush_color(' + COLOR
 
 def setup():
