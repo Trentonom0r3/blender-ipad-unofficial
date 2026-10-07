@@ -120,6 +120,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_popup_integration.py -v
       - name: Pencil viewport view actions
         run: python3 -m unittest discover -s build -p test_pencil_view_actions.py -v
+      - name: Ring redraw continuity and final native inventory
+        run: python3 -m unittest discover -s build -p test_pencil_refresh_continuity.py -v
       - name: Test Base entry and reversible native header/shelf admission
         run: python3 -m unittest discover -s build -p test_pencil_base_entry.py -v
       - name: Test fresh registered Pencil operator lifetime and Python wrapper identity

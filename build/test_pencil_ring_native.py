@@ -58,20 +58,23 @@ int BLI_rcti_size_x(const rcti *r){return r->xmax-r->xmin;}
 int BLI_rcti_size_y(const rcti *r){return r->ymax-r->ymin;}
 struct ARegion{rcti winrct;};
 struct uiIPadRingDrawItem{int index;rcti rect;};
-struct uiPopupBlockHandle{bool can_refresh=true;struct{void *arg=nullptr;uiBlock *(*handle_create_func)(bContext *,uiPopupBlockHandle *,void *)=nullptr;}popup_create_vars;int menuretval=0;};
+struct uiPopupBlockHandle{void *region=nullptr;bool can_refresh=true;struct{void *arg=nullptr;uiBlock *(*handle_create_func)(bContext *,uiPopupBlockHandle *,void *)=nullptr;}popup_create_vars;int menuretval=0;};
 struct uiBut{int flag=0;bool ipad_ring_label_fit=true;};
 struct uiBlock{struct{int flags=UI_PIE_IPAD_TOOLS;}pie_data;uiPopupBlockHandle *handle=nullptr;uint64_t ipad_ring_lifetime=1,ipad_ring_generation=1;std::vector<uiBut *> buttons;};
 struct uiIPadRingData{
  std::string menu="VIEW3D_MT_ipad_tool_inventory";
  uint64_t lifetime=1,generation=1,presented_generation=0,contact_serial=0,roll_serial=0,roll_generation=0;int visible_count=9,inventory_count=43;
  ipad_ring::Rect viewport{40,900,50,700};float unit=20;int window_height=768;
+ uint64_t refused_generation=0;bool navigation_rebuild=false;std::string inventory_key="native43";std::vector<bool> refresh_taps=std::vector<bool>(43,true);
  bool input_suspended=true;void *ghost_window=reinterpret_cast<void *>(uint64_t(71));ipad_ring::RingBrowseState browse;
 };
 [[maybe_unused]] static uiBlock *ui_ipad_ring_create(bContext *,uiPopupBlockHandle *,void *){return nullptr;}
 bool ui_ipad_ring_child_open(const uiBlock *){return false;}
+static void ui_ipad_ring_inventory_capture(const uiBlock*,uiIPadRingData&){}
+void ED_region_tag_refresh_ui(void*){}
 HELPER
 int main(){
- uiIPadRingData data;data.browse.open(1);uiPopupBlockHandle handle{true,{&data,ui_ipad_ring_create}};
+ uiIPadRingData data;data.browse.open(1);uiPopupBlockHandle handle{nullptr,true,{&data,ui_ipad_ring_create}};
  uiBlock block;block.handle=&handle;ARegion region{{300,700,150,600}};
  const auto page=ipad_ring::ring_page_layout(20,data.viewport,500,375,43,0);
  auto local=[&](ipad_ring::Rect r){return rcti{int(std::round(r.xmin))-region.winrct.xmin,int(std::round(r.xmax))-region.winrct.xmin,int(std::round(r.ymin))-region.winrct.ymin,int(std::round(r.ymax))-region.winrct.ymin};};
@@ -79,56 +82,41 @@ int main(){
  for(int i=0;i<9;++i)items.push_back({page.indices[i],local(page.buttons[i])});
  auto bounds=local(page.footprint);auto present=[&](){ui_ipad_ring_draw_presented(&block,&region,bounds,items);};
  uiBut label_button;block.buttons.push_back(&label_button);
+ auto next=[&](){++data.generation;data.browse.desired_generation=data.generation;block.ipad_ring_generation=data.generation;};
  label_button.ipad_ring_label_fit=false;present();assert(data.input_suspended&&!data.browse.ready()&&handle.menuretval==UI_RETURN_CANCEL);
  assert(!ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime);
- label_button.flag=UI_HIDDEN;handle.menuretval=0;present();assert(!data.input_suspended&&!handle.menuretval);
+ label_button.flag=UI_HIDDEN;handle.menuretval=0;present();assert(data.input_suspended);next();present();assert(!data.input_suspended);
  label_button.flag=0;label_button.ipad_ring_label_fit=true;
  auto missing=items.back();items.pop_back();present();assert(data.input_suspended&&!data.browse.ready());items.push_back(missing);
- int old=items[0].rect.xmin;items[0].rect.xmin=-1;present();assert(data.input_suspended);items[0].rect.xmin=old;
- old=items[0].index;items[0].index=43;present();assert(data.input_suspended);items[0].index=old;
- data.viewport.xmin=page.footprint.xmin+1;present();assert(data.input_suspended);data.viewport.xmin=40;
- present();assert(!data.input_suspended&&data.browse.ready()&&data.presented_generation==1);
- auto receipt=ghost::ios::pencil_ring_presentation(data.ghost_window);
- assert(receipt.lifetime==1&&receipt.generation==1&&receipt.bounds.xmin==int(page.footprint.xmin));
+ next();present();assert(data.browse.ready());
+ int old=items[0].rect.xmin;items[0].rect.xmin=-1;present();assert(data.input_suspended);items[0].rect.xmin=old;next();present();
+ old=items[0].index;items[0].index=43;present();assert(data.input_suspended);items[0].index=old;next();present();
+ data.viewport.xmin=page.footprint.xmin+1;present();assert(data.input_suspended);data.viewport.xmin=40;next();present();
+ assert(!data.input_suspended&&data.browse.ready());auto receipt=ghost::ios::pencil_ring_presentation(data.ghost_window);
+ assert(receipt.lifetime==1&&receipt.generation==data.generation&&receipt.bounds.xmin==int(page.footprint.xmin));
  assert(receipt.bounds.ymin==768-int(page.footprint.ymax)&&receipt.bounds.ymax==768-int(page.footprint.ymin)-1);
- assert(data.browse.presented[0].identity==data.menu+":0");
- assert(data.browse.presented[0].bounds.xmin==std::round(page.buttons[0].xmin));
- // Early owned draw refusal uses this same zero-draw route, before a region
- // exists. It must revoke native/GHOST admission without dereferencing it.
+ assert(data.browse.presented[0].identity==data.menu+":0");assert(data.browse.presented[0].bounds.xmin==std::round(page.buttons[0].xmin));
  data.browse.contact=true;data.browse.contact_valid=true;data.contact_serial=9;
- data.browse.roll_seeded=true;data.roll_serial=10;data.roll_generation=1;
+ data.browse.roll_seeded=true;data.roll_serial=10;data.roll_generation=data.generation;
  ui_ipad_ring_draw_presented(&block,nullptr,{},{});
- assert(data.input_suspended&&!data.browse.ready()&&!data.browse.contact_valid);
- assert(!data.contact_serial&&!data.roll_serial&&!data.roll_generation);
+ assert(data.input_suspended&&!data.browse.ready()&&!data.browse.contact_valid&&!data.contact_serial&&!data.roll_serial&&!data.roll_generation);
  assert(!ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime);
- present();assert(!data.input_suspended&&data.browse.ready());
- // Failed actual redraws revoke already-admitted native and UIKit input.
- data.roll_serial=19;data.roll_generation=1;data.browse.roll_seeded=true;
- items.pop_back();present();assert(data.input_suspended&&!data.browse.ready());
- assert(!data.roll_serial&&!data.roll_generation&&!data.browse.roll_seeded);
- assert(!ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime);items.push_back(missing);present();
- assert(!data.input_suspended&&data.browse.ready());
- old=items[0].rect.xmin;items[0].rect.xmin=-1;present();assert(data.input_suspended&&!data.browse.ready());
- assert(!ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime);items[0].rect.xmin=old;present();
- // Same-generation changed resolved bounds cannot partially commit native items
- // while the GHOST registry refuses its different footprint.
- const auto native_before=data.browse.presented[0].bounds;auto original_bounds=bounds;
- ++bounds.xmin;++bounds.xmax;for(auto &item:items){++item.rect.xmin;++item.rect.xmax;}
- present();assert(data.input_suspended&&!data.browse.ready());
- assert(data.browse.presented[0].bounds.xmin==native_before.xmin);
+ present();assert(data.input_suspended);next();present();assert(data.browse.ready());
+ auto original_bounds=bounds;++bounds.xmin;++bounds.xmax;for(auto &item:items){++item.rect.xmin;++item.rect.xmax;}
+ present();assert(data.input_suspended&&!data.browse.ready()&&data.browse.presented.empty());
  assert(!ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime);
- bounds=original_bounds;for(auto &item:items){--item.rect.xmin;--item.rect.xmax;}present();
+ bounds=original_bounds;for(auto &item:items){--item.rect.xmin;--item.rect.xmax;}present();assert(data.input_suspended);next();present();
  // Cached redraw preserves the receipt; a stale block never advances it.
- present();assert(data.browse.ready());data.generation=2;data.browse.desired_generation=2;data.input_suspended=true;
- present();assert(data.input_suspended&&ghost::ios::pencil_ring_presentation(data.ghost_window).generation==1);
- block.ipad_ring_generation=2;present();assert(!data.input_suspended&&data.browse.ready());
- // A replacement owner's capture cannot be overwritten by an old redraw/free.
+ present();assert(data.browse.ready());++data.generation;data.browse.desired_generation=data.generation;data.input_suspended=true;
+ present();assert(data.input_suspended&&ghost::ios::pencil_ring_presentation(data.ghost_window).generation==data.generation-1);
+ block.ipad_ring_generation=data.generation;present();assert(!data.input_suspended&&data.browse.ready());
  assert(ghost::ios::publish_pencil_ring(data.ghost_window,{2,1,{30,40,70,80}}));
  data.input_suspended=true;present();assert(data.input_suspended);
  ghost::ios::retire_pencil_ring(data.ghost_window,1);assert(ghost::ios::pencil_ring_presentation(data.ghost_window).lifetime==2);
  block.ipad_ring_lifetime=2;present();assert(data.input_suspended);
  block.ipad_ring_lifetime=1;handle.popup_create_vars.handle_create_func=nullptr;present();assert(data.input_suspended);
  handle.popup_create_vars.handle_create_func=ui_ipad_ring_create;handle.popup_create_vars.arg=nullptr;present();assert(data.input_suspended);
+
 }
 '''.replace('HELPER',helper))
 

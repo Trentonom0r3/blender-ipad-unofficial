@@ -89,6 +89,18 @@ with zipfile.ZipFile(ipa) as archive:
     has_contact_only_browsing = b'+  /* Ring browsing is contact-only.' in patch
     has_current_tool_shortcut = 'def ipad_active_tool_options_button(layout, context):' in expected
     has_view_category = 'class VIEW3D_MT_ipad_view_ring' in expected
+    has_compact_next_drag = 'bl_label = "Next drag"' in expected
+    if has_compact_next_drag:
+        panel = next(n for n in ast.parse(actual).body if isinstance(n,ast.ClassDef) and n.name=='VIEW3D_PT_ipad_transform')
+        panel_source = ast.get_source_segment(actual,panel)
+        assert 'bl_ui_units_x = 14' in panel_source
+        assert 'ipad_transform_numbers' not in panel_source
+        assert 'ipad_active_tool_options_button' not in actual
+        assert "ring == 'NEXT_DRAG'" in actual
+        assert b'+  uint64_t refused_generation = 0;' in patch
+        assert b'+  ui_ipad_ring_inventory_capture(block, *data);' in patch
+        assert b'+    radius = 4.9f * unit;' in patch
+
     if has_view_category:
         assert "layout.ipad_view_navigation_mask()" in actual
         assert "layout.operator_context = 'EXEC_REGION_WIN'" in actual
@@ -166,6 +178,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
+    'compact_base_next_drag_and_final_draw_continuity':has_compact_next_drag,
     'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,

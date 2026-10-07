@@ -5978,7 +5978,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1518 @@
+@@ -0,0 +1,1493 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -6148,9 +6148,14 @@ new file mode 100644
 +        label = home_labels.get(tool.idname, tool.label) if context.mode in {'OBJECT', 'EDIT_MESH'} else tool.label
 +        selected = active_id == tool.idname
 +        ring = ipad_context_ring_name(context) if selected else None
-+        ring = {'VIEW3D_MT_ipad_selection_ring': 'VIEW3D_MT_ipad_selection_options',
-+                'VIEW3D_MT_ipad_transform_ring': 'VIEW3D_MT_ipad_transform_options'}.get(ring, ring)
-+        if ring:
++        ring = {'VIEW3D_MT_ipad_selection_ring': 'VIEW3D_MT_ipad_selection_options'}.get(ring, ring)
++        if (selected and tool.idname in {*IPAD_TRANSFORM_TOOLS, 'builtin.transform'}
++                and VIEW3D_PT_ipad_transform.poll(context)):
++            ring = 'NEXT_DRAG'
++        if ring == 'NEXT_DRAG':
++            layout.popover(panel='VIEW3D_PT_ipad_transform', text=label + '…',
++                           **ipad_native_tool_icon(tool))
++        elif ring:
 +            layout.operator('wm.call_menu_pie', text=label + '…',
 +                            depress=True, **ipad_native_tool_icon(tool)).name = ring
 +        else:
@@ -6181,26 +6186,6 @@ new file mode 100644
 +    layout.operator('wm.call_menu_pie', text='Base', icon='BACK').name = 'VIEW3D_MT_ipad_base_ring'
 +
 +
-+def ipad_active_tool_options_button(layout, context):
-+    # Base exposes the current tool's existing controls without another trip
-+    # through Tools. Copy the ID before dynamic inventory callbacks, then recheck.
-+    active = ToolSelectPanelHelper.tool_active_from_context(context)
-+    active_id = active.idname if active else ''
-+    labels = {name: label for label, name, _ in IPAD_RADIAL_TOOLS
-+              if name in {*IPAD_TRANSFORM_TOOLS, 'builtin.transform'}}
-+    if active_id not in labels or ipad_context_ring_name(context) != 'VIEW3D_MT_ipad_transform_ring':
-+        return False
-+    tool = next((tool for tool in ipad_native_tool_inventory(context)
-+                 if tool.idname == active_id), None)
-+    current = ToolSelectPanelHelper.tool_active_from_context(context)
-+    if (tool is None or current is None or current.idname != active_id
-+            or ipad_context_ring_name(context) != 'VIEW3D_MT_ipad_transform_ring'):
-+        return False
-+    layout.operator('wm.call_menu_pie', text=labels[active_id] + ' Options',
-+                    depress=True, **ipad_native_tool_icon(tool)).name = 'VIEW3D_MT_ipad_transform_options'
-+    return True
-+
-+
 +class VIEW3D_MT_ipad_base_ring(Menu):
 +    bl_label = 'Pencil Manipulation'
 +
@@ -6221,10 +6206,7 @@ new file mode 100644
 +        selection.enabled = context.mode in IPAD_SELECT_ALL
 +        selection.operator('wm.call_menu_pie', text='Select', icon='RESTRICT_SELECT_OFF').name = (
 +            'VIEW3D_MT_ipad_selection_options')
-+        # Permanent categories precede the optional current-tool shortcut so
-+        # adding/removing that shortcut never moves View or the first five.
 +        layout.operator('wm.call_menu_pie', text='View', icon='VIEW3D').name = 'VIEW3D_MT_ipad_view_ring'
-+        ipad_active_tool_options_button(layout, context)
 +
 +
 +class VIEW3D_MT_ipad_view_ring(Menu):
@@ -6662,10 +6644,10 @@ new file mode 100644
 +
 +
 +class VIEW3D_PT_ipad_transform(Panel):
-+    bl_label = "Transform"
++    bl_label = "Next drag"
 +    bl_space_type = 'VIEW_3D'
 +    bl_region_type = 'HEADER'
-+    bl_ui_units_x = 20
++    bl_ui_units_x = 14
 +
 +    @classmethod
 +    def poll(cls, context):
@@ -6674,7 +6656,7 @@ new file mode 100644
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.operator_context = 'INVOKE_REGION_WIN'
-+        layout.scale_y = 2.2
++        layout.scale_y = 1.25
 +        ipad_native_controls_button(layout)
 +        state = ipad_transform_state(context)
 +        if state is None:
@@ -6687,7 +6669,7 @@ new file mode 100644
 +            layout.label(text="Choose Move, Rotate or Scale for canvas drags")
 +            return
 +        axes = tuple(active.operator_properties(operator).constraint_axis)
-+        layout.label(text=f"{operation.title()} drag constraint")
++        layout.label(text=f"{operation.title()} · next drag")
 +        for choices in (IPAD_TRANSFORM_AXES[:4], IPAD_TRANSFORM_AXES[4:]):
 +            if operation == 'ROTATE' and choices == IPAD_TRANSFORM_AXES[4:]:
 +                continue
@@ -6701,14 +6683,7 @@ new file mode 100644
 +        snap.prop(context.tool_settings, 'use_snap', text="Snap", toggle=True, icon='SNAP_ON')
 +        snap.popover(panel='VIEW3D_PT_snapping', text="Snap Options")
 +        layout.separator()
-+        numbers = layout.operator('view3d.ipad_transform_numbers', text=f"{operation.title()} by Numbers",
-+                                  icon='LINENUMBERS_ON')
-+        numbers.operation, numbers.slot_index = operation, slot_index
-+        numbers.axis = next((axis for index, axis in enumerate('XYZ')
-+                             if axes[index] and sum(axes) == 1), 'Z')
-+        # Whole vectors/factors use every basis axis, independently of drag constraints.
-+        layout.label(text="Numbers use all axes of this orientation")
-+        layout.label(text="Drag, lift to finish · two fingers to orbit")
++        layout.label(text="Adjust the last edit in the bottom-left panel")
 +
 +
 +def ipad_camera_state(context):
@@ -14525,7 +14500,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
 diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.cc b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 --- a/source/blender/editors/interface/regions/interface_region_menu_pie.cc
 +++ b/source/blender/editors/interface/regions/interface_region_menu_pie.cc
-@@ -1,109 +1,134 @@
+@@ -1,109 +1,135 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -14560,6 +14535,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
  #include "BLI_utildefines.h"
 
  #include "BKE_context.hh"
++#include "BKE_idprop.hh"
 +#include "BKE_layer.hh"
  #include "BKE_screen.hh"
 +#include "BKE_report.hh"
@@ -14661,7 +14637,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
    /* if pie is spawned by a left click, release or click event,
     * it is always assumed to be click style */
-@@ -153,96 +178,917 @@
+@@ -153,96 +179,1053 @@
      if (icon) {
        SNPRINTF_UTF8(titlestr, " %s", title);
        w = ui_pie_menu_title_width(titlestr, icon);
@@ -14723,6 +14699,10 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  void *ghost_window = nullptr;
 +  int window_height = 0;
 +  int inventory_count = 0;
++  uint64_t refused_generation = 0;
++  std::string inventory_key;
++  std::vector<bool> refresh_taps;
++  bool navigation_rebuild = false;
 +  uint64_t contact_serial = 0, contact_generation = 0, roll_serial = 0, roll_generation = 0;
 +};
 +
@@ -14984,6 +14964,8 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  data->input_suspended = false;
 +}
 +
++static void ui_ipad_ring_inventory_capture(const uiBlock *block, uiIPadRingData &data);
++
 +void ui_ipad_ring_draw_presented(const uiBlock *block, const ARegion *region,
 +                                const rcti &local_bounds,
 +                                const std::vector<uiIPadRingDrawItem> &drawn)
@@ -14997,8 +14979,14 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +      block->ipad_ring_lifetime != data->lifetime ||
 +      block->ipad_ring_generation != data->generation) return;
 +  data->input_suspended = true;
++  if (data->generation <= data->refused_generation) return;
 +  const auto refuse = [&]() {
++    data->refused_generation = data->generation;
++    ED_region_tag_refresh_ui(handle->region);
 +    data->browse.presented_generation = 0;
++    data->browse.continuity_first = 0;
++    data->browse.inventory_key.clear();
++    data->browse.presented.clear();
 +    data->browse.contact_valid = false;
 +    data->browse.contact = false;
 +    data->contact_serial = 0;
@@ -15026,6 +15014,9 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +   * after native popup clipping, translation and projection, not desired layout. */
 +  if (bounds.xmin < data->viewport.xmin || bounds.xmax > data->viewport.xmax ||
 +      bounds.ymin < data->viewport.ymin || bounds.ymax > data->viewport.ymax) { refuse(); return; }
++  /* Native end/poll and old active-button migration have now completed.
++   * Snapshot the final actual buttons, never the creator's provisional ones. */
++  ui_ipad_ring_inventory_capture(block, *data);
 +  std::vector<ipad_ring::RingPresentedItem> items;
 +  for (const auto &item : drawn) {
 +    if (item.index < 0 || item.index >= data->inventory_count ||
@@ -15034,13 +15025,15 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +        item.rect.ymax > BLI_rcti_size_y(&region->winrct) + 1) { refuse(); return; }
 +    items.push_back({{item.rect.xmin + dx, item.rect.xmax + dx,
 +                      item.rect.ymin + dy, item.rect.ymax + dy},
-+                     data->menu + ":" + std::to_string(item.index)});
++                     data->menu + ":" + std::to_string(item.index),
++                     item.index < int(data->refresh_taps.size()) && data->refresh_taps[item.index]});
 +  }
 +  const float cx = (bounds.xmin + bounds.xmax) * 0.5f;
 +  const float cy = (bounds.ymin + bounds.ymax) * 0.5f;
 +  auto candidate = data->browse;
 +  if (!candidate.publish(data->lifetime, data->generation, std::move(items),
-+                            data->inventory_count, bounds, cx, cy, data->unit)) { refuse(); return; }
++                            data->inventory_count, bounds, cx, cy, data->unit,
++                            data->inventory_key, data->navigation_rebuild)) { refuse(); return; }
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  const ghost::ios::NavigationRect capture{int(bounds.xmin),
 +      data->window_height - int(bounds.ymax), int(bounds.xmax) - 1,
@@ -15093,9 +15086,9 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +      packet.lifetime != data->lifetime || !packet.contact || ui_ipad_ring_child_open(block)) return true;
 +  ipad_ring::RingInputOutcome result;
 +  if (packet.phase == GHOST_kPencilRingBegin) {
-+    if (ui_ipad_ring_waits_for_draw(block) || packet.generation != data->presented_generation ||
++    if (ui_ipad_ring_waits_for_draw(block) || !data->browse.can_begin(packet.generation) ||
 +        data->browse.contact) return true;
-+    result = data->browse.press(packet.lifetime, event->xy[0], event->xy[1]);
++    result = data->browse.press(packet.lifetime, event->xy[0], event->xy[1], packet.generation);
 +    if (!data->browse.contact) return true;
 +    data->contact_serial = packet.contact; data->contact_generation = packet.generation;
 +    data->roll_serial = 0;
@@ -15280,6 +15273,107 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +}
 +#endif
 +
++/* Values copied while the new native block owns all property groups. No RNA
++ * getters, Python or callback is executed. Opaque callback identities can keep
++ * navigation stable, but never authorize a cross-refresh tap. */
++static void ui_ipad_ring_key_value(std::string &key, const void *value, const size_t bytes)
++{
++  key += std::to_string(bytes) + ":";
++  if (bytes) key.append(static_cast<const char *>(value), bytes);
++}
++
++static bool ui_ipad_ring_property_key(const IDProperty *property, std::string &key,
++                                       int &budget, const int depth = 0)
++{
++  if (!property || --budget < 0 || depth > 8 || key.size() > 1048576) return false;
++  const char *end = static_cast<const char *>(memchr(property->name, '\0', sizeof(property->name)));
++  if (!end) return false;
++  ui_ipad_ring_key_value(key, property->name, size_t(end - property->name));
++  ui_ipad_ring_key_value(key, &property->type, sizeof(property->type));
++  ui_ipad_ring_key_value(key, &property->subtype, sizeof(property->subtype));
++  ui_ipad_ring_key_value(key, &property->flag, sizeof(property->flag));
++  if (property->type == IDP_GROUP) {
++    LISTBASE_FOREACH (const IDProperty *, child, &property->data.group) {
++      if (!ui_ipad_ring_property_key(child, key, budget, depth + 1)) return false;
++    }
++    key += ";";
++    return true;
++  }
++  if (ELEM(property->type, IDP_INT, IDP_BOOLEAN, IDP_FLOAT)) {
++    ui_ipad_ring_key_value(key, &property->data.val, sizeof(property->data.val));
++    return true;
++  }
++  if (property->type == IDP_DOUBLE) {
++    ui_ipad_ring_key_value(key, &property->data.val, sizeof(double));
++    return true;
++  }
++  if (property->len < 0 || property->len > property->totallen || property->len > 65536)
++    return false;
++  if (property->type == IDP_STRING) {
++    if (property->len && !property->data.pointer) return false;
++    ui_ipad_ring_key_value(key, property->data.pointer, size_t(property->len));
++    return true;
++  }
++  if (property->type == IDP_ARRAY) {
++    const int stride = ELEM(property->subtype, IDP_INT, IDP_FLOAT) ? sizeof(int) :
++                       property->subtype == IDP_DOUBLE ? sizeof(double) : 0;
++    if (!stride || (property->len && !property->data.pointer)) return false;
++    ui_ipad_ring_key_value(key, property->data.pointer, size_t(property->len) * stride);
++    return true;
++  }
++  /* ID pointers, IDP arrays of mutable groups and unknown types are unproved. */
++  return false;
++}
++
++static void ui_ipad_ring_inventory_capture(const uiBlock *block, uiIPadRingData &data)
++{
++  std::string key = data.menu;
++  std::vector<bool> taps;
++  int budget = 16384;
++  for (const auto &owned : block->buttons) {
++    const uiBut *button = owned.get();
++    const auto append = [&](const auto &value) {
++      ui_ipad_ring_key_value(key, &value, sizeof(value));
++    };
++    append(button->type); append(button->icon); append(button->iconadd);
++    const int state = button->flag & (UI_BUT_DISABLED | UI_SELECT_DRAW);
++    append(state); append(button->operator_never_call); append(button->opcontext);
++    ui_ipad_ring_key_value(key, button->str.data(), button->str.size());
++    /* Active/hover/hidden flags are deliberately excluded: feedback and
++     * overflow paging must not themselves change the navigation inventory. */
++    append(button->func); append(button->func_arg1); append(button->func_arg2);
++    append(button->funcN); append(button->func_argN);
++    append(button->block_create_func); append(button->menu_create_func);
++    append(button->poin); append(button->rnaprop); append(button->context);
++    const bool opaque = button->func || button->funcN || button->apply_func ||
++        button->block_create_func || button->menu_create_func || button->rnaprop ||
++        button->poin || button->context;
++    if (button->apply_func || button->pushed_state_func) { data.inventory_key.clear(); data.refresh_taps.clear(); return; }
++    wmOperatorType *type = nullptr;
++    if (button->optype) {
++      /* Compare saved numeric addresses before reading registered metadata. */
++      for (wmOperatorType *candidate : WM_operatortypes_registered_get()) {
++        if (candidate == button->optype) { type = candidate; break; }
++      }
++      if (!type || !type->ipad_lifetime_id || !type->idname || !type->srna ||
++          (button->opptr && button->opptr->type != type->srna)) {
++        data.inventory_key.clear(); data.refresh_taps.clear(); return;
++      }
++      append(type->ipad_lifetime_id); append(type->srna);
++      ui_ipad_ring_key_value(key, type->idname, strlen(type->idname));
++      if (button->opptr && button->opptr->data &&
++          !ui_ipad_ring_property_key(static_cast<const IDProperty *>(button->opptr->data),
++                                     key, budget)) {
++        data.inventory_key.clear(); data.refresh_taps.clear(); return;
++      }
++    }
++    else { const uint64_t absent = 0; append(absent); }
++    taps.push_back(type && button->type == ButType::But && !opaque && !button->operator_never_call);
++  }
++  data.inventory_key = std::move(key);
++  data.refresh_taps = std::move(taps);
++}
++
 +static uiBlock *ui_ipad_ring_create(bContext *C, uiPopupBlockHandle *handle, void *arg)
 +{
 +  /* Root provenance is populated by this creator, after the generic refresh
@@ -15290,13 +15384,13 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  }
 +  auto &data = *static_cast<uiIPadRingData *>(arg);
 +  const bool navigation_rebuild = data.browse.desired_generation > data.generation;
++  data.navigation_rebuild = navigation_rebuild;
 +  data.input_suspended = true;
 +  if (data.generation == UINT64_MAX) handle->menuretval = UI_RETURN_CANCEL;
 +  else ++data.generation;
 +  if (ipad_ring::ring_uses_pages(ipad_ring::ring_kind(data.menu.c_str()))) {
 +    data.generation = std::max(data.generation, data.browse.desired_generation);
 +    data.browse.desired_generation = data.generation;
-+    if (data.browse.contact && !data.browse.rotating) data.browse.contact_valid = false;
 +    /* Native refresh retains the old block for button-state migration. Cancel
 +     * its active/semi-modal states, but leave the block owned by that refresh. */
 +    if (navigation_rebuild)
@@ -15351,11 +15445,37 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +      return block;
 +    }
 +    data.visible_count = int(geometry.indices.size());
++    /* The active tool's native popover retains the tool ring's selected cue.
++     * Compare against a fresh registered panel before using a saved identity. */
++    PanelType *next_drag_panel = kind == ipad_ring::RingKind::Inventory ?
++        WM_paneltype_find("VIEW3D_PT_ipad_transform", true) : nullptr;
++
++    /* All category links carry the same origin even while off-page. Changing
++     * their properties only when visible would break continuity at each page. */
++    wmOperatorType *menu_type = WM_operatortype_find("WM_OT_call_menu_pie", true);
++    for (const auto &button : block->buttons) {
++      uiBut *but = button.get();
++      if (menu_type && but->optype == menu_type && but->opptr &&
++          but->opptr->type == menu_type->srna) {
++        char target[BKE_ST_MAXNAME]; RNA_string_get(but->opptr, "name", target);
++        if (UI_ipad_ring_menu(target)) {
++          RNA_boolean_set(but->opptr, "ipad_anchor_override", true);
++          RNA_boolean_set(but->opptr, "ipad_touch_targets", data.touch_tools);
++          RNA_int_set(but->opptr, "ipad_anchor_x", int(geometry.center_x));
++          RNA_int_set(but->opptr, "ipad_anchor_y", int(geometry.center_y));
++        }
++      }
++    }
 +    for (const std::unique_ptr<uiBut> &but : block->buttons) but->flag |= UI_HIDDEN;
 +    for (int i = 0; i < data.visible_count; ++i) {
 +      uiBut *but = block->buttons[geometry.indices[i]].get();
 +      const auto &rect = geometry.buttons[i];
 +      but->flag &= ~UI_HIDDEN;
++      if (next_drag_panel && UI_but_paneltype_get(but) == next_drag_panel &&
++          (data.tool_identity == "builtin.move" || data.tool_identity == "builtin.rotate" ||
++           data.tool_identity == "builtin.scale" || data.tool_identity == "builtin.transform"))
++        but->flag |= UI_SELECT_DRAW;
++
 +      BLI_rctf_init(&but->rect, rect.xmin, rect.xmax, rect.ymin, rect.ymax);
 +      but->pie_dir = UI_RADIAL_NONE;
 +      but->emboss = blender::ui::EmbossType::Emboss;
@@ -15366,15 +15486,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +        but->flag &= ~(UI_SELECT_DRAW | UI_BUT_UNDO);
 +        if (object && RNA_enum_get(but->opptr, "mode") == int(object->mode)) but->flag |= UI_SELECT_DRAW;
 +      }
-+      if (but->optype && STREQ(but->optype->idname, "WM_OT_call_menu_pie") && but->opptr) {
-+        char target[BKE_ST_MAXNAME];RNA_string_get(but->opptr, "name", target);
-+        if (UI_ipad_ring_menu(target)) {
-+          RNA_boolean_set(but->opptr, "ipad_anchor_override", true);
-+          RNA_boolean_set(but->opptr, "ipad_touch_targets", data.touch_tools);
-+          RNA_int_set(but->opptr, "ipad_anchor_x", int(geometry.center_x));
-+          RNA_int_set(but->opptr, "ipad_anchor_y", int(geometry.center_y));
-+        }
-+      }
++
 +    }
 +    UI_block_bounds_set_explicit(block, int(std::floor(geometry.footprint.xmin)),
 +        int(std::floor(geometry.footprint.ymin)), int(std::ceil(geometry.footprint.xmax)),
@@ -22778,7 +22890,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_tool_ring.hh b/sour
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_tool_ring.hh
-@@ -0,0 +1,415 @@
+@@ -0,0 +1,419 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -22998,11 +23110,11 @@ new file mode 100644
 +  bool fits = false, grid = false;
 +};
 +
-+/* Every category uses one full-nine footprint, including unused positions. A
-+ * category switch or fractional browsing phase must not move the canvas origin. */
++/* Clamp every category using the full Tools footprint so category switches
++ * keep their origin. Base itself presents/captures only its smaller footprint. */
 +inline RingPageLayout ring_page_layout(float unit, Rect viewport, float x, float y,
 +                                       int total, float phase, bool touch = false,
-+                                       bool fixed_slots = false)
++                                       bool compact_base = false)
 +{
 +  RingPageLayout result;
 +  if (!std::isfinite(unit) || unit <= 0 || total < 1 || total > 4096 ||
@@ -23011,7 +23123,9 @@ new file mode 100644
 +      !std::isfinite(viewport.ymin) || !std::isfinite(viewport.ymax)) return result;
 +  const float width = 4.5f * unit;
 +  const float height = (touch ? 2.2f : 1.7f) * unit;
-+  const float radius = (touch ? 7.4f : 7.15f) * unit, gap = .25f * unit;
++  if (compact_base && total > 9) return result;
++  float radius = (touch ? 7.4f : 7.15f) * unit;
++  const float gap = .25f * unit;
 +  float extent_x = 2 * radius + width, extent_y = 2 * radius + height;
 +  const float available_x = viewport.xmax - viewport.xmin - 2 * gap;
 +  const float available_y = viewport.ymax - viewport.ymin - 2 * gap;
@@ -23029,13 +23143,15 @@ new file mode 100644
 +                                  viewport.xmax - gap - extent_x / 2);
 +  result.center_y = y = std::clamp(y, viewport.ymin + gap + extent_y / 2,
 +                                  viewport.ymax - gap - extent_y / 2);
++  if (compact_base && total <= 6 && !result.grid) {
++    radius = 4.9f * unit;
++    extent_x = 2 * radius + width;
++    extent_y = 2 * radius + height;
++  }
 +  result.footprint = {x - extent_x / 2, x + extent_x / 2,
 +                      y - extent_y / 2, y + extent_y / 2};
 +  const int visible = std::min(total, 9);
-+  /* Base reserves nine stable positions. Context-only choices can disappear
-+   * without moving Undo/Redo/Tools; unused positions and the center stay empty. */
-+  if (fixed_slots && total > 9) return result;
-+  const int angular_slots = fixed_slots ? 9 : visible;
++  const int angular_slots = visible;
 +  phase = total > 9 ? std::remainder(phase, float(total)) : 0;
 +  const int first = int(std::floor(phase));
 +  const float fraction = phase - std::floor(phase);
@@ -36008,7 +36124,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_ring_browse.hh b/so
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_ring_browse.hh
-@@ -0,0 +1,180 @@
+@@ -0,0 +1,222 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -36029,6 +36145,7 @@ new file mode 100644
 +struct RingPresentedItem {
 +  Rect bounds{};
 +  std::string identity;
++  bool refresh_tap_safe = false;
 +};
 +enum class RingInputResult { Pass, Shield, Tap, Close, Rebuild };
 +struct RingInputOutcome {
@@ -36037,6 +36154,10 @@ new file mode 100644
 +};
 +struct RingBrowseState {
 +  uint64_t lifetime = 0, desired_generation = 1, presented_generation = 0;
++  /* Earliest contiguous generation with identical actual presented values.
++   * This admits delayed UIKit Begin, never arbitrary old generations. */
++  uint64_t continuity_first = 0;
++  std::string inventory_key;
 +  std::vector<RingPresentedItem> presented;
 +  Rect footprint{};
 +  float center_x = 0, center_y = 0, unit = 20, phase = 0;
@@ -36052,7 +36173,8 @@ new file mode 100644
 +  void open(uint64_t id) { *this = RingBrowseState{}; lifetime = id; }
 +  void retire() { lifetime = 0; presented.clear(); contact_valid = false; roll_seeded = false; }
 +  bool publish(uint64_t id, uint64_t generation, std::vector<RingPresentedItem> items,
-+               int total, Rect bounds, float cx, float cy, float pixel_unit)
++               int total, Rect bounds, float cx, float cy, float pixel_unit,
++               std::string key = {}, bool navigation_rebuild = false)
 +  {
 +    if (!id || id != lifetime || generation != desired_generation || total < 1 ||
 +        total > 4096 || items.empty() || items.size() > ring_visible_limit ||
@@ -36077,13 +36199,43 @@ new file mode 100644
 +            (a.xmin < b.xmax && b.xmin < a.xmax && a.ymin < b.ymax && b.ymin < a.ymax))
 +          return false;
 +      }
-+    if (contact && !rotating && generation != press_generation) contact_valid = false;
++    const bool same_frame = !key.empty() && key == inventory_key &&
++        total == inventory_count && ring_viewport_matches(bounds, footprint) &&
++        cx == center_x && cy == center_y && pixel_unit == unit;
++    bool same_items = same_frame && items.size() == presented.size();
++    if (same_items) for (size_t i = 0; i < items.size(); ++i) {
++      same_items &= items[i].identity == presented[i].identity &&
++                    ring_viewport_matches(items[i].bounds, presented[i].bounds) &&
++                    items[i].refresh_tap_safe == presented[i].refresh_tap_safe;
++    }
++    if (!same_items) continuity_first = generation;
++    if (contact && generation != press_generation) {
++      if (!same_items && !(rotating && navigation_rebuild && same_frame)) contact_valid = false;
++      /* Only pure operator buttons with copied argument values may preserve
++       * an explicit tap across an identical presentation. Opaque callbacks
++       * retain strict original-generation admission. */
++      if (contact_valid && !rotating && same_items) {
++        const auto *pressed = hit_identity(press_identity);
++        if (pressed && pressed->refresh_tap_safe) press_generation = generation;
++      }
++    }
++    inventory_key = std::move(key);
 +    presented = std::move(items);
 +    inventory_count = total;
 +    footprint = bounds;
 +    center_x = cx; center_y = cy; unit = pixel_unit;
 +    presented_generation = generation;
 +    return true;
++  }
++  bool can_begin(uint64_t generation) const
++  {
++    return ready() && generation && generation >= continuity_first &&
++           generation <= presented_generation;
++  }
++  const RingPresentedItem *hit_identity(const std::string &identity) const
++  {
++    for (const auto &item : presented) if (item.identity == identity) return &item;
++    return nullptr;
 +  }
 +  static bool contains(const Rect &r, float x, float y)
 +  {
@@ -36100,16 +36252,19 @@ new file mode 100644
 +    const int value = int(std::floor(phase)) % inventory_count;
 +    return value < 0 ? value + inventory_count : value;
 +  }
-+  RingInputOutcome press(uint64_t id, float x, float y)
++  RingInputOutcome press(uint64_t id, float x, float y, uint64_t generation = 0)
 +  {
 +    if (!id || id != lifetime || contact || !ready() || !std::isfinite(x) || !std::isfinite(y))
 +      return {};
++    generation = generation ? generation : presented_generation;
++    if (!can_begin(generation)) return {};
 +    contact = contact_valid = true; rotating = false; roll_seeded = false;
 +    accumulated_angle = 0;
 +    previous_angle = std::atan2(x - center_x, y - center_y);
 +    press_radius = std::hypot(x - center_x, y - center_y);
-+    press_generation = presented_generation;
 +    const auto *item = hit(x, y);
++    press_generation = generation;
++    if (item && item->refresh_tap_safe) press_generation = presented_generation;
 +    press_identity = item ? item->identity : std::string{};
 +    return {RingInputResult::Shield, {}};
 +  }
@@ -36117,6 +36272,9 @@ new file mode 100644
 +  {
 +    if (!id || id != lifetime || !contact || !contact_valid ||
 +        !std::isfinite(x) || !std::isfinite(y)) return {};
++    /* A new root may be awaiting actual draw/publication. Until its values
++     * are proved, pre-threshold input cannot start browsing the new page. */
++    if (!rotating && !ready()) return {};
 +    const float radius = std::hypot(x - center_x, y - center_y);
 +    if (radius < 2 * unit) { contact_valid = false; return {}; }
 +    const float angle = std::atan2(x - center_x, y - center_y);

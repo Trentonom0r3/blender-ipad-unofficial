@@ -38,14 +38,17 @@ for menu_name in ('VIEW3D_MT_ipad_tools', 'VIEW3D_MT_ipad_base_ring',
     assert bpy.types.Menu.bl_rna_get_subclass_py(menu_name) is getattr(module, menu_name)
 
 class Recorder:
-    def __init__(self): self.operators, self.popovers = [], []
+    def __init__(self): self.operators, self.popovers, self.entries = [], [], []
     def column(self, **kwargs): return self
     def row(self, **kwargs): return self
     def operator(self, idname, **kwargs):
         props=types.SimpleNamespace()
         self.operators.append((idname, kwargs, props))
+        self.entries.append((idname, kwargs, props))
         return props
-    def popover(self, **kwargs): self.popovers.append(kwargs)
+    def popover(self, **kwargs):
+        self.popovers.append(kwargs)
+        self.entries.append(("popover",kwargs,None))
 
 def draw(menu_name):
     recorder=Recorder()
@@ -73,12 +76,11 @@ with bpy.context.temp_override(area=area, region=region):
         assert all(tool.label and tool.icon for tool in candidate)
         brush = module.VIEW3D_PT_ipad_brush_access.poll(bpy.context)
         drawn = draw('VIEW3D_MT_ipad_tool_inventory')
-        assert len(drawn.operators) == len(ids) + 3
+        assert len(drawn.entries) == len(ids) + 3 + bool(brush)
         assert drawn.operators[-3][0] == 'view3d.ipad_native_controls'
         assert drawn.operators[-2][0] == 'view3d.ipad_flythrough_toggle'
         assert drawn.operators[-1][2].name == 'VIEW3D_MT_ipad_base_ring'
-        assert bool(drawn.popovers) == bool(brush)
-        if brush: assert drawn.popovers[0]['panel'] == 'VIEW3D_PT_ipad_brush_access'
+        assert any(p['panel']=='VIEW3D_PT_ipad_brush_access' for p in drawn.popovers) == bool(brush)
         routes.append({'mode': bpy.context.mode, 'tool_buttons': len(ids), 'navigation_buttons': 3,
                        'brush_asset_popover': bool(drawn.popovers)})
         records.append({'mode': bpy.context.mode, 'count': len(ids), 'native_tool_ids': ids,
@@ -109,17 +111,15 @@ with bpy.context.temp_override(area=area, region=region):
     assert not module.VIEW3D_MT_ipad_selection_ring.poll(bpy.context)
     assert module.VIEW3D_MT_ipad_transform_options.poll(bpy.context)
     drawn = draw('VIEW3D_MT_ipad_tool_inventory')
-    assert [kwargs['text'].removesuffix('…') for _, kwargs, _ in drawn.operators[:9]] == [label for label, _, _ in module.IPAD_RADIAL_TOOLS]
-    assert drawn.operators[2][2].name == 'VIEW3D_MT_ipad_transform_options'
+    assert [kwargs['text'].removesuffix('…') for _, kwargs, _ in drawn.entries[:9]] == [label for label, _, _ in module.IPAD_RADIAL_TOOLS]
+    assert drawn.entries[2][0]=='popover' and drawn.entries[2][1]['panel']=='VIEW3D_PT_ipad_transform'
     selection = draw('VIEW3D_MT_ipad_selection_options')
     assert selection.operators[0][2].name == 'VIEW3D_MT_ipad_tool_inventory'
     transform = draw('VIEW3D_MT_ipad_transform_options')
     assert transform.operators[0][2].name == 'VIEW3D_MT_ipad_tool_inventory'
     base = draw('VIEW3D_MT_ipad_base_ring')
-    assert len(base.operators) == 7
+    assert len(base.operators) == 6
     assert base.operators[5][2].name == 'VIEW3D_MT_ipad_view_ring'
-    assert base.operators[6][1]['text'] == 'Move Options'
-    assert base.operators[6][2].name == 'VIEW3D_MT_ipad_transform_options'
     assert [base.operators[i][2].name for i in (0,1,4)] == [
         'VIEW3D_MT_ipad_layout_mode_ring', 'VIEW3D_MT_ipad_tool_inventory', 'VIEW3D_MT_ipad_selection_options']
     assert [base.operators[i][0] for i in (2,3)] == ['ed.undo','ed.redo']
@@ -137,14 +137,12 @@ with bpy.context.temp_override(area=area, region=region):
                 if action is not None: active.gizmo_group_properties('VIEW3D_GGT_xform_gizmo').drag_action=action
                 buttons=draw('VIEW3D_MT_ipad_base_ring').operators
                 assert [b[1]['text'] for b in buttons[:5]]==['Layout / Mode','Tools','Undo','Redo','Select']
-                if action=='NONE':
-                    assert len(buttons)==6
-                else:
-                    assert len(buttons)==7 and buttons[6][1]['text']==label+' Options'
-                    native=next(t for t in module.ipad_native_tool_inventory(bpy.context) if t.idname==name)
-                    assert {k:v for k,v in buttons[6][1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
-                    assert buttons[6][1]['depress'] and buttons[6][2].name=='VIEW3D_MT_ipad_transform_options'
-                    assert module.VIEW3D_MT_ipad_transform_options.poll(bpy.context)
+                assert len(buttons)==6
+                tools=draw('VIEW3D_MT_ipad_tool_inventory')
+                entry=next(e for e in tools.entries if e[1].get('text','').removesuffix('…')==label)
+                native=next(t for t in module.ipad_native_tool_inventory(bpy.context) if t.idname==name)
+                assert {k:v for k,v in entry[1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
+                assert entry[0]=='popover' and entry[1]['panel']=='VIEW3D_PT_ipad_transform'
                 shortcuts.append({'mode':bpy.context.mode,'tool':name,'child_action':action,'base_slots':len(buttons)})
         for name in ('builtin.select_box','builtin.cursor'):
             bpy.ops.wm.tool_set_by_id(name=name)
@@ -165,7 +163,7 @@ report={
     'candidate_python_sha256': hashlib.sha256(source.encode()).hexdigest(),
     'contexts': records, 'menu_routes': routes,
     'registered_base_selection_transform_inventory_routes': 'passed',
-    'current_tool_shortcuts': shortcuts,
+    'compact_base_and_selected_tool_next_drag': shortcuts,
     'guarded_native_activation_and_refusals': 'passed',
     'registered_native_controls_visibility_action': 'passed; current header restored with tool/mode/workspace/object transform preserved; no popup/target claim',
     'native_popup_modal_and_device_evidence': False}

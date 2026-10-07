@@ -36,7 +36,7 @@ std::vector<RingPresentedItem> items(int first=0) {
   return result;
 }
 bool present(RingBrowseState &s) {
-  return s.publish(s.lifetime,s.desired_generation,items(s.first_item()),43,{0,1000,0,800},500,400,20);
+  return s.publish(s.lifetime,s.desired_generation,items(s.first_item()),43,{0,1000,0,800},500,400,20,"complete-native43",s.rotating);
 }
 void open(RingBrowseState &s,uint64_t id=19) { s.open(id); assert(present(s)); }
 int main(int argc,char **argv) {

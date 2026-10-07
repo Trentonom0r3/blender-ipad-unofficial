@@ -56,42 +56,40 @@ int main(){
 }
 ''')
 
-    def test_base_slots_stay_fixed_when_current_tool_choice_appears_or_disappears(self):
+    def test_compact_balanced_base_preserves_category_origin_and_targets(self):
         self.run_cpp(r'''
 #include <cassert>
 using namespace blender::ui::ipad;
-bool equal(Rect a,Rect b){return a.xmin==b.xmin&&a.xmax==b.xmax&&a.ymin==b.ymin&&a.ymax==b.ymax;}
 bool overlaps(Rect a,Rect b){return a.xmin<b.xmax&&b.xmin<a.xmax&&a.ymin<b.ymax&&b.ymin<a.ymax;}
 int main(){
  for(float unit:{20.f,30.f,40.f})for(bool touch:{false,true})
- for(Rect v:{Rect{0,1000,0,800},Rect{30,360,20,900},Rect{50,240,60,760}}){
-  Rect view{v.xmin*unit/20,v.xmax*unit/20,v.ymin*unit/20,v.ymax*unit/20};
+ for(Rect logical:{Rect{0,1000,0,800},Rect{30,360,20,900},Rect{50,240,60,760}}){
+  Rect view{logical.xmin*unit/20,logical.xmax*unit/20,logical.ymin*unit/20,logical.ymax*unit/20};
   for(float x:{view.xmin,view.xmax})for(float y:{view.ymin,view.ymax}){
-   auto all=ring_page_layout(unit,view,x,y,9,0,touch,true);assert(all.fits);
-   auto tools=ring_page_layout(unit,view,x,y,9,0,touch);assert(tools.fits);
-   for(int total:{1,5,6,9}){
+   auto tools=ring_page_layout(unit,view,x,y,43,0,touch);assert(tools.fits);
+   auto base=ring_page_layout(unit,view,x,y,6,0,touch,true);assert(base.fits&&base.buttons.size()==6);
+   assert(base.center_x==tools.center_x&&base.center_y==tools.center_y);
+   if(!base.grid){assert(base.footprint.xmax-base.footprint.xmin<tools.footprint.xmax-tools.footprint.xmin);
+    assert(base.footprint.ymax-base.footprint.ymin<tools.footprint.ymax-tools.footprint.ymin);}
+   for(int total:{1,5,6,7,8,9}){
     auto page=ring_page_layout(unit,view,x,y,total,7,touch,true);assert(page.fits);
-    assert(page.buttons.size()==size_t(total)&&equal(page.footprint,all.footprint));
-    for(int i=0;i<total;++i){
-     assert(equal(page.buttons[i],all.buttons[i])&&equal(page.buttons[i],tools.buttons[i]));
-     assert(page.indices[i]==i);
-     if(!page.grid){auto b=page.buttons[i];assert(page.center_x<b.xmin||page.center_x>b.xmax||page.center_y<b.ymin||page.center_y>b.ymax);}
-     for(int j=i+1;j<total;++j)assert(!overlaps(page.buttons[i],page.buttons[j]));
+    assert(page.center_x==tools.center_x&&page.center_y==tools.center_y);
+    for(int i=0;i<total;++i){auto b=page.buttons[i];assert(page.indices[i]==i);
+     assert(b.xmin>=page.footprint.xmin&&b.xmax<=page.footprint.xmax&&b.ymin>=page.footprint.ymin&&b.ymax<=page.footprint.ymax);
+     if(!page.grid)assert(page.center_x<b.xmin||page.center_x>b.xmax||page.center_y<b.ymin||page.center_y>b.ymax);
+     for(int j=i+1;j<total;++j)assert(!overlaps(b,page.buttons[j]));
     }
    }
    assert(!ring_page_layout(unit,view,x,y,10,0,touch,true).fits);
-   assert(ring_page_layout(unit,view,x,y,43,0,touch).fits);
   }
  }
- // Other short categories retain their original even spacing.
- auto legacy=ring_page_layout(20,{0,1000,0,800},500,400,5,0);
- auto fixed=ring_page_layout(20,{0,1000,0,800},500,400,5,0,false,true);
- assert(!equal(legacy.buttons[1],fixed.buttons[1]));
+ auto page=ring_page_layout(20,{0,1000,0,800},500,400,6,0,false,true);
+ for(int i=0;i<6;++i){float x=(page.buttons[i].xmin+page.buttons[i].xmax)/2-500;
+  float y=(page.buttons[i].ymin+page.buttons[i].ymax)/2-400;
+  assert(std::abs(std::hypot(x,y)-98)<.001f);}
 }
 ''')
-        start = NATIVE.index('  data.visible_count = int(block->buttons.size());')
-        end = NATIVE.index('  if (kind == ipad_ring::RingKind::Mode) {', start)
-        self.assertIn('data.touch_tools, kind == ipad_ring::RingKind::Base)', NATIVE[start:end])
+        self.assertIn('data.touch_tools, kind == ipad_ring::RingKind::Base)', NATIVE)
 
     def test_exact_classifier_propagates_anchor_and_touch_for_every_owned_menu(self):
         classifier=function(NATIVE,'bool UI_ipad_ring_menu(')
@@ -139,12 +137,17 @@ constexpr int UI_HIDDEN=1,UI_BUT_DISABLED=2,UI_SELECT_DRAW=4,UI_BUT_UNDO=8,UI_RE
 constexpr int UI_BUT_ALIGN_TOP=1,UI_BUT_ALIGN_DOWN=2,UI_BUT_ALIGN_LEFT=4,UI_BUT_ALIGN_RIGHT=8,BKE_ST_MAXNAME=256;
 constexpr float UI_UNIT_X=20;
 namespace blender::ui{enum class EmbossType{Emboss};}
-struct PointerRNA{std::string name="VIEW3D_MT_ipad_tool_inventory";int mode=1;bool anchored=false,touch=false;int x=0,y=0;};
-struct wmOperatorType{const char *idname="WM_OT_call_menu_pie";};
+struct PointerRNA{void *type=(void*)17;std::string name="VIEW3D_MT_ipad_tool_inventory";int mode=1;bool anchored=false,touch=false;int x=0,y=0;};
+struct wmOperatorType{const char *idname="WM_OT_call_menu_pie";void *srna=(void*)17;};
+wmOperatorType menu,mode{"OBJECT_OT_mode_set"};
+wmOperatorType *WM_operatortype_find(const char *,bool){return &menu;}
+struct PanelType{};PanelType next_drag;
+PanelType *WM_paneltype_find(const char*,bool){return &next_drag;}
 struct uiBut{wmOperatorType *optype;PointerRNA *opptr;int flag=UI_BUT_UNDO,pie_dir=1,alignnr=1,drawflag=15;ipad_ring::Rect rect{};blender::ui::EmbossType emboss=blender::ui::EmbossType::Emboss;};
 struct uiBlock{std::vector<std::unique_ptr<uiBut>> buttons;ipad_ring::Rect bounds{};bool ipad_ring_full_labels=false;};
+PanelType *UI_but_paneltype_get(uiBut *but){return but->optype?nullptr:&next_drag;}
 struct Object{int mode=1;};struct bContext{Object *object;};struct uiPopupBlockHandle{int menuretval=0;};
-struct Data{int visible_count=0,inventory_count=0,anchor[2]={350,400};float phase=0;bool touch_tools=false;};
+struct Data{std::string tool_identity="builtin.move";int visible_count=0,inventory_count=0,anchor[2]={350,400};float phase=0;bool touch_tools=false;};
 Object *CTX_data_active_object(bContext *C){return C->object;}
 int RNA_enum_get(PointerRNA *p,const char *){return p->mode;}
 void RNA_string_get(PointerRNA *p,const char *,char *out){std::memcpy(out,p->name.c_str(),p->name.size()+1);}
@@ -155,14 +158,17 @@ void BLI_rctf_init(ipad_ring::Rect *r,float a,float b,float c,float d){*r={a,b,c
 void UI_block_bounds_set_normal(uiBlock *,int){}
 void UI_block_bounds_set_explicit(uiBlock *b,int a,int c,int d,int e){b->bounds={float(a),float(d),float(c),float(e)};}
 uiBlock *build(bContext *C,uiBlock *block,uiPopupBlockHandle *handle,Data &data,ipad_ring::Rect viewport,ipad_ring::RingKind kind){FRAGMENT return nullptr;}
-int main(){Object object;bContext C{&object};uiPopupBlockHandle handle;uiBlock block;Data data;wmOperatorType menu,mode{"OBJECT_OT_mode_set"};PointerRNA props[20];
+int main(){Object object;bContext C{&object};uiPopupBlockHandle handle;uiBlock block;Data data;PointerRNA props[20];
  for(int i=0;i<20;++i)block.buttons.push_back(std::make_unique<uiBut>(uiBut{i==0?&mode:&menu,&props[i]}));
  auto run=[&](ipad_ring::RingKind kind=ipad_ring::RingKind::Inventory){return build(&C,&block,&handle,data,{40,800,90,900},kind);};
  assert(run()==&block&&data.visible_count==9&&!handle.menuretval);
  for(int i=0;i<20;++i){auto &b=*block.buttons[i];assert(bool(b.flag&UI_HIDDEN)==(i>=9));if(i<9)assert(!b.alignnr&&!b.pie_dir&&!b.drawflag);}
  assert(block.buttons[0]->flag&UI_SELECT_DRAW);assert(!(block.buttons[0]->flag&UI_BUT_UNDO));
  assert(props[1].anchored&&props[1].x==350&&props[1].y==400&&!props[1].touch);
+ for(int i=1;i<20;++i)assert(props[i].anchored&&props[i].x==350&&props[i].y==400);
  auto bounds=block.bounds;data.phase=1;assert(run()==&block);assert(block.buttons[0]->flag&UI_HIDDEN);assert(!(block.buttons[9]->flag&UI_HIDDEN));assert(block.bounds.xmin==bounds.xmin&&block.bounds.ymax==bounds.ymax);
+ block.buttons[3]->optype=nullptr;data.phase=0;run();assert(block.buttons[3]->flag&UI_SELECT_DRAW);
+ block.buttons[3]->flag&=~UI_SELECT_DRAW;data.tool_identity="builtin.select_box";run();assert(!(block.buttons[3]->flag&UI_SELECT_DRAW));
  data.phase=0;object.mode=2;run(ipad_ring::RingKind::Layout);assert(!(block.buttons[0]->flag&UI_SELECT_DRAW));
  assert(build(&C,&block,&handle,data,{0,60,0,100},ipad_ring::RingKind::Inventory)==&block&&handle.menuretval==UI_RETURN_CANCEL);
  for(auto &b:block.buttons)assert((b->flag&(UI_HIDDEN|UI_BUT_DISABLED))==(UI_HIDDEN|UI_BUT_DISABLED));
