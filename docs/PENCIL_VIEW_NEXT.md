@@ -1,4 +1,4 @@
-# Pencil viewport View category: bounded next increment
+# Pencil viewport View category: implementation audit
 
 October 7, 2026. Latest package37674139551@cb77143 contains current-tool options and fixed Base positions; it does not contain this View category. Independent read-only review of pin d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e found the following contract. This is an implementation audit, not target interaction evidence.
 
@@ -25,4 +25,4 @@ Base currently has five permanent actions plus an optional tool shortcut. Additi
 
 ## Meaningful verification
 
-Execute exact post-resolution admission source against same-owner projection/lock/timer changes, redirected quad target, changed rv3d identity and stale registered type. Check actual native operator properties/context and ordinary popup parity. Stock-host native EXEC should demonstrate changed view while mesh/object/cursor/camera/root-parent/keyframes and Undo stay unchanged. Inspect actual source UI contents/icons and measured labels; host layout is not patched target GPU geometry. Then build exact completed source once and verify full downloaded IPA. No View implementation or device acceptance exists at this audit checkpoint.
+Execute exact post-resolution admission source against same-owner projection/lock/timer changes, redirected quad target, changed rv3d identity and stale registered type. Check actual native operator properties/context and ordinary popup parity. Stock-host native EXEC should demonstrate changed view while mesh/object/cursor/camera/root-parent/keyframes and Undo stay unchanged. Inspect actual source UI contents/icons and measured labels; host layout is not patched target GPU geometry. Then build exact completed source once and verify full downloaded IPA. The connected implementation now follows this contract; see newest PROJECT_HANDOFF. Source/host checks pass; no native View build or device acceptance yet.

@@ -167,6 +167,7 @@ void semantic(bContext *C,const char *name){assert(!owned||C->live);calls.emplac
  if(std::string_view(name)=="popup"&&stop=="reload")++registered_types.front()->ipad_lifetime_id;
 }
 void CTX_store_set(bContext *,bContextStore *store){installed=bool(store);}
+bool ui_ipad_view_dispatch_allowed(bContext*,const uiAfterFunc&,wmOperatorType*,PointerRNA*){return true;}
 wmOperator *ui_ipad_popup_operator_resolve(bContext *,const uiAfterFunc &after){return lease?after.popup_op:nullptr;}
 void popup_check(bContext *C,wmOperator *){semantic(C,"popup");}
 bool UI_ipad_context_matches(bContext *,const uint64_t *){return true;}

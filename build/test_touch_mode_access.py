@@ -146,6 +146,7 @@ struct uiBlock{struct{int flags=UI_PIE_IPAD_MODE;}pie_data;uiPopupBlockHandle *h
 struct uiBut{wmOperatorType *optype=nullptr;int opcontext=1;PointerRNA *opptr=nullptr;};
 struct uiIPadOperatorReceipt{wmOperatorType *type=nullptr;};
 struct After{bool ipad_ring_guarded=false;uint64_t ipad_ring_context[13]={};std::string ipad_ring_tool;uint64_t ipad_ring_lifetime=0;std::string ipad_ring_selection_target;wmOperatorType *optype=nullptr;int opcontext=0;PointerRNA *opptr=nullptr;std::string drawstr;ipad_ring::ActionOrigin ipad_action_origin{};uiIPadOperatorReceipt ipad_operator{};};
+bool ui_ipad_view_dispatch_allowed(bContext*,const After&,wmOperatorType*,PointerRNA*){return true;}
 wmOperatorType *ui_ipad_operator_resolve(const uiIPadOperatorReceipt &receipt){return receipt.type;}
 namespace blender::wm{using OpCallContext=int;}
 bool safe=true;int calls=0,frees=0,notifiers=0,safety_checks=0;

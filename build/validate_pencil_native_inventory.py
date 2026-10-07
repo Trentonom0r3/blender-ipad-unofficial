@@ -116,9 +116,10 @@ with bpy.context.temp_override(area=area, region=region):
     transform = draw('VIEW3D_MT_ipad_transform_options')
     assert transform.operators[0][2].name == 'VIEW3D_MT_ipad_tool_inventory'
     base = draw('VIEW3D_MT_ipad_base_ring')
-    assert len(base.operators) == 6
-    assert base.operators[5][1]['text'] == 'Move Options'
-    assert base.operators[5][2].name == 'VIEW3D_MT_ipad_transform_options'
+    assert len(base.operators) == 7
+    assert base.operators[5][2].name == 'VIEW3D_MT_ipad_view_ring'
+    assert base.operators[6][1]['text'] == 'Move Options'
+    assert base.operators[6][2].name == 'VIEW3D_MT_ipad_transform_options'
     assert [base.operators[i][2].name for i in (0,1,4)] == [
         'VIEW3D_MT_ipad_layout_mode_ring', 'VIEW3D_MT_ipad_tool_inventory', 'VIEW3D_MT_ipad_selection_options']
     assert [base.operators[i][0] for i in (2,3)] == ['ed.undo','ed.redo']
@@ -137,17 +138,17 @@ with bpy.context.temp_override(area=area, region=region):
                 buttons=draw('VIEW3D_MT_ipad_base_ring').operators
                 assert [b[1]['text'] for b in buttons[:5]]==['Layout / Mode','Tools','Undo','Redo','Select']
                 if action=='NONE':
-                    assert len(buttons)==5
+                    assert len(buttons)==6
                 else:
-                    assert len(buttons)==6 and buttons[5][1]['text']==label+' Options'
+                    assert len(buttons)==7 and buttons[6][1]['text']==label+' Options'
                     native=next(t for t in module.ipad_native_tool_inventory(bpy.context) if t.idname==name)
-                    assert {k:v for k,v in buttons[5][1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
-                    assert buttons[5][1]['depress'] and buttons[5][2].name=='VIEW3D_MT_ipad_transform_options'
+                    assert {k:v for k,v in buttons[6][1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
+                    assert buttons[6][1]['depress'] and buttons[6][2].name=='VIEW3D_MT_ipad_transform_options'
                     assert module.VIEW3D_MT_ipad_transform_options.poll(bpy.context)
                 shortcuts.append({'mode':bpy.context.mode,'tool':name,'child_action':action,'base_slots':len(buttons)})
         for name in ('builtin.select_box','builtin.cursor'):
             bpy.ops.wm.tool_set_by_id(name=name)
-            assert len(draw('VIEW3D_MT_ipad_base_ring').operators)==5
+            assert len(draw('VIEW3D_MT_ipad_base_ring').operators)==6
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.wm.tool_set_by_id(name='builtin.move')
     assert bpy.ops.view3d.ipad_native_tool(name='builtin.rotate', inventory=receipt,

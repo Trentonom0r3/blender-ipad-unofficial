@@ -462,7 +462,181 @@ diff --git a/source/blender/makesrna/intern/rna_ui_api.cc b/source/blender/makes
    ot = WM_operatortype_find(opname, false); /* print error next */
    if (!ot || !ot->srna) {
      RNA_warning("%s '%s'", ot ? "operator missing srna" : "unknown operator", opname);
-@@ -1425,80 +1436,85 @@
+@@ -824,80 +835,85 @@
+ {
+   return &layout->box();
+ }
+
+ static uiLayout *rna_uiLayoutSplit(uiLayout *layout, float factor, bool align)
+ {
+   return &layout->split(factor, align);
+ }
+
+ static uiLayout *rna_uiLayoutRowWithHeading(
+     uiLayout *layout, bool align, const char *heading, const char *heading_ctxt, bool translate)
+ {
+   /* Get translated heading. */
+   std::optional<StringRefNull> text = rna_translate_ui_text(
+       heading, heading_ctxt, nullptr, nullptr, translate);
+   return &layout->row(align, text.value_or(""));
+ }
+
+ static uiLayout *rna_uiLayoutColumnWithHeading(
+     uiLayout *layout, bool align, const char *heading, const char *heading_ctxt, bool translate)
+ {
+   /* Get translated heading. */
+   std::optional<StringRefNull> text = rna_translate_ui_text(
+       heading, heading_ctxt, nullptr, nullptr, translate);
+   return &layout->column(align, text.value_or(""));
+ }
+
+ static uiLayout *rna_uiLayoutColumnFlow(uiLayout *layout, int number, bool align)
+ {
+   return &layout->column_flow(number, align);
+ }
+
+ static uiLayout *rna_uiLayoutGridFlow(uiLayout *layout,
+                                       bool row_major,
+                                       int columns_len,
+                                       bool even_columns,
+                                       bool even_rows,
+                                       bool align)
+ {
+   return &layout->grid_flow(row_major, columns_len, even_columns, even_rows, align);
++}
++
++static int rna_uiLayout_ipad_view_navigation_mask(uiLayout *layout, bContext *C)
++{
++  return UI_ipad_view_navigation_layout_mask(C, layout->block());
+ }
+
+ static uiLayout *rna_uiLayoutMenuPie(uiLayout *layout)
+ {
+   return &layout->menu_pie();
+ }
+
+ void rna_uiLayoutPanelProp(uiLayout *layout,
+                            bContext *C,
+                            ReportList *reports,
+                            PointerRNA *data,
+                            const char *property,
+                            uiLayout **r_layout_header,
+                            uiLayout **r_layout_body)
+ {
+   Panel *panel = layout->root_panel();
+   if (panel == nullptr) {
+     BKE_reportf(reports, RPT_ERROR, "Layout panels can not be used in this context");
+     *r_layout_header = nullptr;
+     *r_layout_body = nullptr;
+     return;
+   }
+
+   PanelLayout panel_layout = layout->panel_prop(C, data, property);
+   *r_layout_header = panel_layout.header;
+   *r_layout_body = panel_layout.body;
+ }
+
+ void rna_uiLayoutPanel(uiLayout *layout,
+                        bContext *C,
+                        ReportList *reports,
+                        const char *idname,
+                        const bool default_closed,
+                        uiLayout **r_layout_header,
+                        uiLayout **r_layout_body)
+ {
+   Panel *panel = layout->root_panel();
+   if (panel == nullptr) {
+     BKE_reportf(reports, RPT_ERROR, "Layout panels can not be used in this context");
+     *r_layout_header = nullptr;
+@@ -1300,80 +1316,87 @@
+   RNA_def_int(
+       func,
+       "columns",
+       0,
+       INT_MIN,
+       INT_MAX,
+       "",
+       "Number of columns, positive are absolute fixed numbers, 0 is automatic, negative are "
+       "automatic multiple numbers along major axis (e.g. -2 will only produce 2, 4, 6 etc. "
+       "columns for row major layout, and 2, 4, 6 etc. rows for column major layout).",
+       INT_MIN,
+       INT_MAX);
+   RNA_def_boolean(func, "even_columns", false, "", "All columns will have the same width");
+   RNA_def_boolean(func, "even_rows", false, "", "All rows will have the same height");
+   RNA_def_boolean(func, "align", false, "", "Align buttons to each other");
+   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
+   RNA_def_function_return(func, parm);
+
+   /* box layout */
+   func = RNA_def_function(srna, "box", "rna_uiLayoutBox");
+   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
+   RNA_def_function_return(func, parm);
+   RNA_def_function_ui_description(func,
+                                   "Sublayout (items placed in this sublayout are placed "
+                                   "under each other in a column and are surrounded by a box)");
+
+   /* split layout */
+   func = RNA_def_function(srna, "split", "rna_uiLayoutSplit");
+   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
+   RNA_def_function_return(func, parm);
+   RNA_def_float(func,
+                 "factor",
+                 0.0f,
+                 0.0f,
+                 1.0f,
+                 "Percentage",
+                 "Percentage of width to split at (leave unset for automatic calculation)",
+                 0.0f,
+                 1.0f);
+   RNA_def_boolean(func, "align", false, "", "Align buttons to each other");
++
++  /* Context-aware internal Pencil view capability. Self is uiLayout*, then C;
++   * the int result is generated as the return, not an extra output argument. */
++  func = RNA_def_function(srna, "ipad_view_navigation_mask", "rna_uiLayout_ipad_view_navigation_mask");
++  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
++  parm = RNA_def_int(func, "mask", 0, 0, 7, "", "Available single-pane view commands", 0, 7);
++  RNA_def_function_return(func, parm);
+
+   /* radial/pie layout */
+   func = RNA_def_function(srna, "menu_pie", "rna_uiLayoutMenuPie");
+   parm = RNA_def_pointer(func, "layout", "UILayout", "", "Sub-layout to put items in");
+   RNA_def_function_return(func, parm);
+   RNA_def_function_ui_description(func,
+                                   "Sublayout. Items placed in this sublayout are placed "
+                                   "in a radial fashion around the menu center).");
+
+   /* Icon of a rna pointer */
+   func = RNA_def_function(srna, "icon", "rna_ui_get_rnaptr_icon");
+   parm = RNA_def_int(func, "icon_value", ICON_NONE, 0, INT_MAX, "", "Icon identifier", 0, INT_MAX);
+   RNA_def_function_return(func, parm);
+   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_CONTEXT);
+   parm = RNA_def_pointer(func, "data", "AnyType", "", "Data from which to take the icon");
+   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+   RNA_def_function_ui_description(func,
+                                   "Return the custom icon for this data, "
+                                   "use it e.g. to get materials or texture icons.");
+
+   /* UI name, description and icon of an enum item */
+   func = RNA_def_function(srna, "enum_item_name", "rna_ui_get_enum_name");
+   parm = RNA_def_string(func, "name", nullptr, 0, "", "UI name of the enum item");
+   RNA_def_function_return(func, parm);
+   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_CONTEXT);
+   api_ui_item_rna_common(func);
+   parm = RNA_def_string(func, "identifier", nullptr, 0, "", "Identifier of the enum item");
+   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+   RNA_def_function_ui_description(func, "Return the UI name for this enum item");
+
+   func = RNA_def_function(srna, "enum_item_description", "rna_ui_get_enum_description");
+   parm = RNA_def_string(func, "description", nullptr, 0, "", "UI description of the enum item");
+   RNA_def_function_return(func, parm);
+   RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_CONTEXT);
+   api_ui_item_rna_common(func);
+   parm = RNA_def_string(func, "identifier", nullptr, 0, "", "Identifier of the enum item");
+   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+   RNA_def_function_ui_description(func, "Return the UI description for this enum item");
+
+   func = RNA_def_function(srna, "enum_item_icon", "rna_ui_get_enum_icon");
+@@ -1425,80 +1448,85 @@
                INT_MAX,
                "",
                "The index of this button, when set a single member of an array can be accessed, "
@@ -5804,7 +5978,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1476 @@
+@@ -0,0 +1,1518 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -6047,7 +6221,48 @@ new file mode 100644
 +        selection.enabled = context.mode in IPAD_SELECT_ALL
 +        selection.operator('wm.call_menu_pie', text='Select', icon='RESTRICT_SELECT_OFF').name = (
 +            'VIEW3D_MT_ipad_selection_options')
++        # Permanent categories precede the optional current-tool shortcut so
++        # adding/removing that shortcut never moves View or the first five.
++        layout.operator('wm.call_menu_pie', text='View', icon='VIEW3D').name = 'VIEW3D_MT_ipad_view_ring'
 +        ipad_active_tool_options_button(layout, context)
++
++
++class VIEW3D_MT_ipad_view_ring(Menu):
++    bl_label = 'View'
++
++    @classmethod
++    def poll(cls, context):
++        return context.area is not None and context.area.type == 'VIEW_3D'
++
++    def draw(self, context):
++        layout = self.layout.column()
++        # The native getter proves the current WINDOW and records its actual
++        # RegionView3D on this draw's block. Dispatch repeats the same mask and
++        # identity check after popup teardown and registered-type resolution.
++        mask = layout.ipad_view_navigation_mask()
++        layout.operator_context = 'EXEC_REGION_WIN'
++        frame = layout.column()
++        frame.enabled = bool(mask & 1)
++        props = frame.operator('view3d.view_selected', text='Frame Selection', icon='ZOOM_SELECTED')
++        props.use_all_regions = False
++        props = frame.operator('view3d.view_all', text='Frame Scene', icon='ZOOM_ALL')
++        props.use_all_regions = False
++        props.center = False
++        axes = layout.column()
++        axes.enabled = bool(mask & 2)
++        for axis, text, icon in (('TOP', 'Top', 'TRIA_UP'),
++                                 ('FRONT', 'Front', 'NONE'),
++                                 ('RIGHT', 'Right', 'TRIA_RIGHT')):
++            props = axes.operator('view3d.view_axis', text=text, icon=icon)
++            props.type, props.align_active, props.relative = axis, False, False
++        projection = layout.row()
++        projection.enabled = bool(mask & 4)
++        is_ortho = context.region_data is not None and context.region_data.view_perspective == 'ORTHO'
++        projection.operator('view3d.view_persportho',
++                            text='Perspective' if is_ortho else 'Orthographic',
++                            icon='VIEW_PERSPECTIVE' if is_ortho else 'VIEW_ORTHO')
++        layout.operator_context = 'INVOKE_REGION_WIN'
++        ipad_base_return(layout)
 +
 +
 +class VIEW3D_MT_ipad_layout_mode_ring(Menu):
@@ -7228,6 +7443,7 @@ new file mode 100644
 +    VIEW3D_OT_ipad_native_tool,
 +    VIEW3D_OT_ipad_native_controls,
 +    VIEW3D_MT_ipad_base_ring,
++    VIEW3D_MT_ipad_view_ring,
 +    VIEW3D_MT_ipad_tool_inventory,
 +    VIEW3D_MT_ipad_layout_mode_ring,
 +    VIEW3D_MT_ipad_workspaces_ring,
@@ -13918,7 +14134,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
 
    /** Custom button data (borrowed, not owned). */
    void *custom_data = nullptr;
-@@ -647,80 +671,84 @@
+@@ -647,80 +671,87 @@
 
    int flag;
    short alignnr;
@@ -13961,6 +14177,9 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
    uiPopupBlockHandle *handle;
 +  blender::ui::ipad::ActionOrigin ipad_action_origin{};
 +  uiIPadButtonLease ipad_parent_button{};
++  /* Numeric identity captured by the actual View-category draw, never a
++   * borrowed rv3d pointer. uiBlock owns it; popup-handle memcpy is unaffected. */
++  uint64_t ipad_view_region_data = 0;
 +  uint64_t ipad_ring_lifetime = 0, ipad_ring_generation = 0;
 +  bool ipad_ring_full_labels = false;
 
@@ -14003,7 +14222,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
    rctf safety;
  };
  /* `interface.cc` */
-@@ -891,81 +919,93 @@
+@@ -891,81 +922,93 @@
  /**
   * Check if the button is pushed, this is only meaningful for some button types.
   *
@@ -14097,7 +14316,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
    float retvec[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
    /** Menu direction. */
-@@ -1074,80 +1114,89 @@
+@@ -1074,80 +1117,89 @@
                                            uiBut *but,
                                            uiBlockCreateFunc create_func,
                                            uiBlockHandleCreateFunc handle_create_func,
@@ -14187,7 +14406,7 @@ diff --git a/source/blender/editors/interface/interface_intern.hh b/source/blend
  /**
   * Draws in resolution of 48x4 colors.
   */
-@@ -1709,40 +1758,115 @@
+@@ -1709,40 +1761,115 @@
   * \param r_is_array_prop: Output parameter, that stores whether the passed
   * property is an array property or not.
   *
@@ -15364,7 +15583,9 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/blender/editors/interface/interface_handlers.cc
 --- a/source/blender/editors/interface/interface_handlers.cc
 +++ b/source/blender/editors/interface/interface_handlers.cc
-@@ -3,107 +3,113 @@
+@@ -1,109 +1,117 @@
+ /* SPDX-FileCopyrightText: 2008 Blender Authors
+  *
   * SPDX-License-Identifier: GPL-2.0-or-later */
 
  /** \file
@@ -15385,6 +15606,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
  #include "DNA_curveprofile_types.h"
  #include "DNA_scene_types.h"
  #include "DNA_screen_types.h"
++#include "DNA_view3d_types.h"
 
  #include "BLI_array.hh"
  #include "BLI_array_utils.h"
@@ -15428,6 +15650,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 +#  include "ED_ipad_panels.hh"
 +#endif
  #include "ED_undo.hh"
++#include "ED_view3d.hh"
 
  #include "UI_abstract_view.hh"
  #include "UI_interface.hh"
@@ -15478,7 +15701,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
  /**
   * Check to avoid very small mouse-moves from jumping away from keyboard navigation,
-@@ -147,143 +153,152 @@
+@@ -147,143 +155,152 @@
  /**
   * When #USER_CONTINUOUS_MOUSE is disabled or tablet input is used,
   * Use this as a maximum soft range for mapping cursor motion to the value.
@@ -15631,7 +15854,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
  static void ui_selectcontext_end(uiBut *but, uiSelectContextStore *selctx_data);
  static void ui_selectcontext_apply(bContext *C,
                                     uiBut *but,
-@@ -491,103 +506,115 @@
+@@ -491,103 +508,117 @@
    uiSelectContextStore select_others;
  #endif
 
@@ -15674,6 +15897,8 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
 +  blender::ui::ipad::ActionOrigin ipad_action_origin{};
 +  bool ipad_ring_guarded = false;
++  bool ipad_view_guarded = false;
++  uint64_t ipad_view_region_data = 0;
 +  uiIPadOperatorReceipt ipad_operator{};
 +  uint64_t ipad_popup_lifetime = 0;
 +  bool ipad_numbers_callback = false;
@@ -15747,7 +15972,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
  /** \} */
 
  /* -------------------------------------------------------------------- */
-@@ -881,373 +908,503 @@
+@@ -881,373 +912,589 @@
      after->opptr = *properties;
      *properties = nullptr;
    }
@@ -15833,6 +16058,86 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 +  return live;
 +}
 +
++int UI_ipad_view_navigation_mask(bContext *C, uint64_t *region_data)
++{
++  if (region_data) *region_data = 0;
++  uint64_t context[13];
++  if (!UI_ipad_context_capture(C, context)) return 0;
++  ARegion *region = CTX_wm_region(C);
++  RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
++  if (!rv3d) return 0;
++  /* Executing with zero smoothing must never force-finish an older animation
++   * (that can sync/autokey a camera). BOXVIEW can update another pane. */
++  if (rv3d->persp == RV3D_CAMOB || rv3d->sms || rv3d->smooth_timer ||
++      (RV3D_LOCK_FLAGS(rv3d) & RV3D_BOXVIEW)) return 0;
++  const int locks = RV3D_LOCK_FLAGS(rv3d);
++  int mask = (locks & (RV3D_LOCK_LOCATION | RV3D_LOCK_ZOOM_AND_DOLLY)) ? 0 : 1;
++  View3D *resolved_view = nullptr;
++  ARegion *resolved_region = nullptr;
++  /* Axis/projection otherwise redirect locked quad panes to another WINDOW. */
++  if (ED_view3d_context_user_region(C, &resolved_view, &resolved_region) &&
++      resolved_view == CTX_wm_view3d(C) && resolved_region == region) {
++    if (!(locks & RV3D_LOCK_ROTATION)) mask |= 2;
++    if (!(locks & RV3D_LOCK_ANY_TRANSFORM)) mask |= 4;
++  }
++  if (mask && region_data) *region_data = uint64_t(reinterpret_cast<uintptr_t>(rv3d));
++  return mask;
++}
++
++int UI_ipad_view_navigation_layout_mask(bContext *C, uiBlock *block)
++{
++  if (!block) return 0;
++  block->ipad_view_region_data = 0;
++  if (!ui_ipad_action_origin_valid(C, block->ipad_action_origin)) return 0;
++  return UI_ipad_view_navigation_mask(C, &block->ipad_view_region_data);
++}
++
++static int ui_ipad_view_action_bit(const wmOperatorType *type)
++{
++  if (!type || !type->idname) return 0;
++  if (STREQ(type->idname, "VIEW3D_OT_view_all") ||
++      STREQ(type->idname, "VIEW3D_OT_view_selected")) return 1;
++  if (STREQ(type->idname, "VIEW3D_OT_view_axis")) return 2;
++  if (STREQ(type->idname, "VIEW3D_OT_view_persportho")) return 4;
++  return 0;
++}
++
++static bool ui_ipad_view_dispatch_allowed(bContext *C, const uiAfterFunc &after,
++                                           wmOperatorType *type, PointerRNA *properties)
++{
++  if (!after.ipad_action_origin.present() || !after.ipad_view_guarded) return true;
++  const int bit = ui_ipad_view_action_bit(type);
++  if (!bit || after.opcontext != blender::wm::OpCallContext::ExecRegionWin ||
++      !after.ipad_view_region_data || type->flag || !type->exec || type->invoke) return false;
++  uint64_t identity = 0;
++  if (!(UI_ipad_view_navigation_mask(C, &identity) & bit) ||
++      identity != after.ipad_view_region_data) return false;
++  if (bit != 4) {
++    if (!properties || properties->type != type->srna || !properties->data) return false;
++    const auto explicit_false = [&](const char *name) {
++      PropertyRNA *property = RNA_struct_find_property(properties, name);
++      return property && RNA_property_type(property) == PROP_BOOLEAN &&
++             RNA_property_array_length(properties, property) == 0 &&
++             RNA_struct_property_is_set(properties, name) &&
++             !RNA_property_boolean_get(properties, property);
++    };
++    if (bit == 1 && (!explicit_false("use_all_regions") ||
++        (STREQ(type->idname, "VIEW3D_OT_view_all") && !explicit_false("center")))) return false;
++    if (bit == 2) {
++      PropertyRNA *axis = RNA_struct_find_property(properties, "type");
++      if (!axis || RNA_property_type(axis) != PROP_ENUM ||
++          !RNA_struct_property_is_set(properties, "type") ||
++          !explicit_false("align_active") || !explicit_false("relative")) return false;
++      const int value = RNA_property_enum_get(properties, axis);
++      if (!ELEM(value, RV3D_VIEW_TOP, RV3D_VIEW_FRONT, RV3D_VIEW_RIGHT)) return false;
++    }
++  }
++  /* Recheck after property reads: no cached region/RNA pointer is used by the
++   * native operation until the final live owner/state proof succeeds. */
++  return (UI_ipad_view_navigation_mask(C, &identity) & bit) &&
++         identity == after.ipad_view_region_data;
++}
++
  static void ui_apply_but_func(bContext *C, uiBut *but)
  {
 +  if (!ui_ipad_but_self_callback_allowed(C, but)) return;
@@ -15903,6 +16208,11 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
    if (!but->operator_never_call) {
 +    if (after->ipad_action_origin.present())
 +      after->ipad_operator = ui_ipad_operator_capture(but->optype);
++    if (after->ipad_action_origin.present() && after->ipad_operator.lifetime) {
++      wmOperatorType *live_type = ui_ipad_operator_resolve(after->ipad_operator);
++      after->ipad_view_guarded = ui_ipad_view_action_bit(live_type) != 0;
++      if (after->ipad_view_guarded) after->ipad_view_region_data = block->ipad_view_region_data;
++    }
 +    if ((block->pie_data.flags & UI_PIE_IPAD_TOOLS) && but->optype) {
 +      after->ipad_ring_guarded = true;
 +      after->ipad_ring_selection_target = ui_ipad_ring_selection_target(C, but);
@@ -16128,7 +16438,8 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 +    if (after.optype && ipad_ring_allowed && allowed()) {
 +      wmOperatorType *dispatch_type = after.ipad_action_origin.present() ?
 +          ui_ipad_operator_resolve(after.ipad_operator) : after.optype;
-+      if (dispatch_type) {
++      if (dispatch_type && ui_ipad_view_dispatch_allowed(
++              C, after, dispatch_type, after.opptr ? &opptr : nullptr)) {
 +        /* Parentless native dialogs inherit the admitted origin while their
 +         * creator runs. The scope cannot leak to the next hardware action. */
 +        const uiIPadActionOriginScope creator_origin(after.ipad_action_origin);
@@ -16287,7 +16598,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
    if (but->bit) {
      value_toggle = UI_BITBUT_VALUE_TOGGLED(int(value), but->bitnr);
    }
-@@ -1398,80 +1555,81 @@
+@@ -1398,80 +1645,81 @@
    ui_but_v3_set(but, data->vec);
    ui_but_update_edited(but);
    ui_apply_but_func(C, but);
@@ -16369,7 +16680,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
          if (!mbut_state->select_others.elems.is_empty()) {
            ui_selectcontext_apply(C,
                                   but.get(),
-@@ -1479,171 +1637,174 @@
+@@ -1479,171 +1727,174 @@
                                   mbut_state->origvalue,
                                   mbut_state->origvalue);
          }
@@ -16545,7 +16856,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      }
      else {
        /* Dragging (use delta). */
-@@ -1853,80 +2014,83 @@
+@@ -1853,80 +2104,83 @@
        break;
      }
    }
@@ -16629,7 +16940,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
                                                 &lptr,
                                                 &lprop))
          {
-@@ -1961,80 +2125,82 @@
+@@ -1961,80 +2215,82 @@
            /* ignored for now */
  #  if 0
            else if (rna_type == PROP_BOOLEAN) {
@@ -16712,7 +17023,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
        }
      }
      else if (rna_type == PROP_POINTER) {
-@@ -2255,80 +2421,86 @@
+@@ -2255,80 +2511,86 @@
    return false;
  }
 
@@ -16799,7 +17110,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
          if (data->select_others.elems.is_empty())
      {
        wmWindow *win = CTX_wm_window(C);
-@@ -2508,154 +2680,186 @@
+@@ -2508,154 +2770,186 @@
      uiButCurveMapping *but_cumap = (uiButCurveMapping *)but;
      but_cumap->edit_cumap = editcumap;
    }
@@ -16987,7 +17298,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
    float xyz[3];
    if (parse_float_array(buf_paste, xyz, 3)) {
      if (normalize_v3(xyz) == 0.0f) {
-@@ -2770,80 +2974,81 @@
+@@ -2770,80 +3064,81 @@
  {
    if (but_copypaste_profile_alive && but->poin != nullptr) {
      button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
@@ -17069,7 +17380,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
        if (!has_required_data) {
          break;
        }
-@@ -2867,80 +3072,81 @@
+@@ -2867,80 +3162,81 @@
      case ButType::Curve:
        ui_but_copy_curvemapping(but);
        break;
@@ -17151,7 +17462,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      case ButType::SearchMenu:
        if (!has_required_data) {
          break;
-@@ -3644,81 +3850,81 @@
+@@ -3644,81 +3940,81 @@
    keyboard_properties.text_box_origin[1] = text_box.b_;
    keyboard_properties.text_box_size[0] = text_box.getWidth();
    keyboard_properties.text_box_size[1] = text_box.getHeight();
@@ -17234,7 +17545,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
            WM_global_reportf(RPT_ERROR, "Failed to find '%s'", but->editstr);
            WM_report_banner_show(CTX_wm_manager(C), win);
          }
-@@ -4110,85 +4316,85 @@
+@@ -4110,85 +4406,85 @@
            }
            else {
              ui_textedit_next_but(block, but, data);
@@ -17323,7 +17634,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
        update = true;
      }
    }
-@@ -8852,80 +9058,81 @@
+@@ -8852,80 +9148,81 @@
      ui_numedit_end(but, data);
 
      if (state != BUTTON_STATE_TEXT_EDITING) {
@@ -17405,7 +17716,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      else {
        if (button_modal_state(data->state)) {
          /* true = postpone free */
-@@ -9034,214 +9241,226 @@
+@@ -9034,214 +9331,226 @@
          subbut = ui_but_first(subblock);
 
          if (subbut) {
@@ -17641,7 +17952,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      uiBut *active_but_override = nullptr;
      uiBut *active_but_real = nullptr;
      uiBut *active_but_last = nullptr;
-@@ -9287,128 +9506,148 @@
+@@ -9287,128 +9596,148 @@
        return but_found;
      }
    }
@@ -17790,7 +18101,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
          }
        }
      }
-@@ -9695,80 +9934,91 @@
+@@ -9695,80 +10024,91 @@
 
  /* -------------------------------------------------------------------- */
  /** \name Handle Events for Activated Buttons
@@ -17882,7 +18193,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
          break;
        }
  #endif
-@@ -10623,80 +10873,81 @@
+@@ -10623,80 +10963,81 @@
 
  static void ui_region_auto_open_clear(ARegion *region)
  {
@@ -17964,7 +18275,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      retval = ui_handle_button_event(C, event, but);
 
      if (menu->ctx_area) {
-@@ -10747,84 +10998,99 @@
+@@ -10747,84 +11088,99 @@
      wmOperatorType *ot = WM_operatortype_find("WM_OT_search_single_menu", false);
      after->optype = ot;
      after->opcontext = blender::wm::OpCallContext::InvokeDefault;
@@ -18065,7 +18376,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
      }
      else {
        if (event->type == MOUSEMOVE) {
-@@ -11823,80 +12089,85 @@
+@@ -11823,80 +12179,85 @@
            CASE_NUM_TO_DIR(2, UI_RADIAL_S);
            ATTR_FALLTHROUGH;
            CASE_NUM_TO_DIR(3, UI_RADIAL_SE);
@@ -18151,7 +18462,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
            ED_region_tag_redraw(menu->region);
            ED_region_tag_refresh_ui(menu->region);
            ARegion *prev_region_popup = CTX_wm_region_popup(C);
-@@ -11960,133 +12231,162 @@
+@@ -11960,133 +12321,162 @@
              retval = retval_test;
              handled = true;
            }
@@ -18314,7 +18625,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
 
    int retval = WM_UI_HANDLER_CONTINUE;
 
-@@ -12135,273 +12435,620 @@
+@@ -12135,273 +12525,620 @@
    if (but_other->rect.xmin < but->rect.xmin) {
      /* Right to Left. */
      if (but->rect.xmin - but_other->rect.xmax > (24.0f * UI_SCALE_FAC)) {
@@ -18942,7 +19253,7 @@ diff --git a/source/blender/editors/interface/interface_handlers.cc b/source/ble
            uiPopupBlockHandle *parent_popup = static_cast<uiPopupBlockHandle *>(
                handler_next->user_data);
            ED_region_tag_refresh_ui(parent_popup->region);
-@@ -12534,121 +13181,179 @@
+@@ -12534,121 +13271,179 @@
 
    return nullptr;
  }
@@ -22467,7 +22778,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_tool_ring.hh b/sour
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_tool_ring.hh
-@@ -0,0 +1,413 @@
+@@ -0,0 +1,415 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -22751,7 +23062,7 @@ new file mode 100644
 +  return a.xmin == b.xmin && a.xmax == b.xmax && a.ymin == b.ymin && a.ymax == b.ymax;
 +}
 +
-+enum class RingKind { None, Tools, Selection, Transform, Mode, Base, Layout, Workspaces, Inventory, SelectOptions, TransformOptions };
++enum class RingKind { None, Tools, Selection, Transform, Mode, Base, Layout, Workspaces, Inventory, SelectOptions, TransformOptions, View };
 +inline RingKind ring_kind(const char *name)
 +{
 +  if (!name) return RingKind::None;
@@ -22765,13 +23076,15 @@ new file mode 100644
 +  if (std::strcmp(name, "VIEW3D_MT_ipad_tool_inventory") == 0) return RingKind::Inventory;
 +  if (std::strcmp(name, "VIEW3D_MT_ipad_selection_options") == 0) return RingKind::SelectOptions;
 +  if (std::strcmp(name, "VIEW3D_MT_ipad_transform_options") == 0) return RingKind::TransformOptions;
++  if (std::strcmp(name, "VIEW3D_MT_ipad_view_ring") == 0) return RingKind::View;
 +  return RingKind::None;
 +}
 +
 +inline bool ring_uses_pages(RingKind kind)
 +{
 +  return kind == RingKind::Base || kind == RingKind::Layout || kind == RingKind::Workspaces ||
-+         kind == RingKind::Inventory || kind == RingKind::SelectOptions || kind == RingKind::TransformOptions;
++         kind == RingKind::Inventory || kind == RingKind::SelectOptions || kind == RingKind::TransformOptions ||
++         kind == RingKind::View;
 +}
 +
 +inline bool ring_setting_stays_open(RingKind kind, const char *operator_id)
@@ -35221,7 +35534,7 @@ diff --git a/source/blender/editors/include/UI_interface_c.hh b/source/blender/e
 
  /* Blocks
   *
-@@ -908,80 +946,93 @@
+@@ -908,80 +946,98 @@
                       wmWindow *window,
                       Scene *scene,
                       ARegion *region,
@@ -35270,6 +35583,11 @@ diff --git a/source/blender/editors/include/UI_interface_c.hh b/source/blender/e
 +/* Value receipts: no old owner or dynamic RNA pointer survives queued UI work. */
 +bool UI_ipad_ring_event_dispatch(bContext *C, const wmEvent *event);
 +bool UI_ipad_context_capture(bContext *C, uint64_t values[13]);
++/** Fresh single-pane noncamera view support: frame=1, axis=2, projection=4.
++ * Optional numeric identity is captured only after native context admission. */
++int UI_ipad_view_navigation_mask(bContext *C, uint64_t *region_data = nullptr);
++/** Capture only on the actual proven View-category draw block. */
++int UI_ipad_view_navigation_layout_mask(bContext *C, uiBlock *block);
 +bool UI_ipad_context_matches(bContext *C, const uint64_t values[13]);
 +/** Draw only for a live admitted native stroke. No interactive block or extra owner. */
 +void UI_ipad_stroke_cue_draw(const bContext *C, ARegion *region,

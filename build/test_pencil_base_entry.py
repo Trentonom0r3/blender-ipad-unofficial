@@ -80,17 +80,18 @@ class PencilBaseEntryTests(unittest.TestCase):
             active.idname = tool.idname
             records.clear()
             namespace['VIEW3D_MT_ipad_base_ring'].draw(types.SimpleNamespace(layout=Layout()), context)
-            self.assertEqual(len(records), 6)
+            self.assertEqual(len(records), 7)
             self.assertEqual([r[1]['text'] for r in records[:5]],
                              ['Layout / Mode', 'Tools', 'Undo', 'Redo', 'Select'])
             self.assertEqual([records[i][2].name for i in (0, 1, 4)],
                              ['VIEW3D_MT_ipad_layout_mode_ring', 'VIEW3D_MT_ipad_tool_inventory',
                               'VIEW3D_MT_ipad_selection_options'])
             self.assertEqual([records[i][0] for i in (2, 3)], ['ed.undo', 'ed.redo'])
-            self.assertEqual(records[5][0], 'wm.call_menu_pie')
-            self.assertEqual(records[5][1], {'text': label + ' Options', 'depress': True,
+            self.assertEqual(records[5][2].name, 'VIEW3D_MT_ipad_view_ring')
+            self.assertEqual(records[6][0], 'wm.call_menu_pie')
+            self.assertEqual(records[6][1], {'text': label + ' Options', 'depress': True,
                                            'icon_value': tool.icon})
-            self.assertEqual(records[5][2].name, 'VIEW3D_MT_ipad_transform_options')
+            self.assertEqual(records[6][2].name, 'VIEW3D_MT_ipad_transform_options')
 
     def test_current_options_refuse_unsupported_or_changed_dynamic_context(self):
         active = types.SimpleNamespace(idname='builtin.move')

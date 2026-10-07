@@ -88,6 +88,14 @@ with zipfile.ZipFile(ipa) as archive:
     has_default_native_header = b'diff --git a/scripts/startup/bl_ui/space_view3d.py ' not in patch
     has_contact_only_browsing = b'+  /* Ring browsing is contact-only.' in patch
     has_current_tool_shortcut = 'def ipad_active_tool_options_button(layout, context):' in expected
+    has_view_category = 'class VIEW3D_MT_ipad_view_ring' in expected
+    if has_view_category:
+        assert "layout.ipad_view_navigation_mask()" in actual
+        assert "layout.operator_context = 'EXEC_REGION_WIN'" in actual
+        for marker in ('VIEW3D_MT_ipad_view_ring', 'ipad_view_navigation_mask'):
+            assert marker.encode() in binary, marker
+        assert b'+      if (dispatch_type && ui_ipad_view_dispatch_allowed(' in patch
+        assert b'+  uint64_t ipad_view_region_data = 0;' in patch
     if has_current_tool_shortcut:
         assert 'ipad_active_tool_options_button(layout, context)' in actual
         assert "text=labels[active_id] + ' Options'" in actual
@@ -162,6 +170,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,
     'current_tool_options_in_base_with_stable_native_slots':has_current_tool_shortcut,
+    'viewport_view_category_with_presented_identity_and_exec_guards':has_view_category,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),
