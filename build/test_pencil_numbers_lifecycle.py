@@ -24,6 +24,7 @@ GUARD+='\n'.join(definition(HANDLERS,s) for s in (
 
 WORLD=r'''
 #include <cassert>
+#include <cstdint>
 #include <vector>
 #include <string>
 #include <algorithm>
