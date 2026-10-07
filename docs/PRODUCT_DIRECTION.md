@@ -1,5 +1,11 @@
 # Product direction and decisions
 
+## Exported gizmo header path correction - 2026-10-07
+
+Exact run37636426674 at c000718897b30035960f37592956ed8cf3feb792 passed cloud preflight and Configure, then failed native Release at interface.cc71: WM_gizmo_api.hh was not found. The header exists in the pin under windowmanager/gizmo; the interface target links bf::windowmanager, whose exported root does not make the nested filename an unqualified include. Both gizmo includes now use gizmo/WM_gizmo_api.hh and gizmo/WM_gizmo_types.hh. The exact API/type declarations and all registry/RNA/owner guards remain unchanged. Log: .cache/ring-native-failure-37636426674.log.
+
+Preflight now validates new WM includes at their actual exported pinned paths as well as BLI dependencies. All13 preflight checker tests, including the two new unqualified-refusal/qualified-resolution cases, and98-file offline pinned preflight/diff check pass. The previous full200-test behavioral suite passed at c000718; this correction changes only the two include paths and the checker, so no broader behavioral rerun was added. Canonical LF patch SHA256 **507d7cc3306d7a467f56a6ccb7b550c3b1e656e3a14f6385965e65ac6e39a1c0**. Next commit/push this correction and build its exact source once; fix actual remaining native failures, then verify the full downloaded IPA with the expanded exact-source/native-icon checker. Full Base/category/rotating Tools workflow, keyboard ownership and older-project Color/sidebar regression fixes remain connected. Latest verified package remains Mode37181963133@07938989bfcad34b323519ede65bfec7e968b914; no ring IPA or device acceptance exists. Full goal remains unfinished, with old-project Save success still unknown on the iPad.
+
 ## Native redraw declaration and connected keyboard text ownership - 2026-10-07
 
 Exact run37630330486 at e3f37cca8bc7f2edfeafba40e6cfe03bbbb3f627 passed cloud preflight/Configure and the prior coordinate call, then failed Release with eight undeclared redraw/refresh calls in interface_region_menu_pie.cc. The source now includes their pinned declaring header ED_screen.hh. Redraw/input semantics and all ownership gates are unchanged. Full failure log: .cache/ring-native-failure-37630330486.log.

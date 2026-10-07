@@ -94,6 +94,25 @@ new file mode 100644
         check_patch(patch, patch_files(patch), load)
         self.assertEqual(requested.count('source/blender/blenlib/BLI_memory_utils.hh'), 1)
 
+    def test_unqualified_gizmo_header_is_rejected_at_the_exported_root(self):
+        patch = PATCH.replace('+new', '+#include "WM_gizmo_api.hh"')
+        def load(path):
+            if path == 'source/example.cc':
+                return b'old\n'
+            self.assertEqual(path, 'source/blender/windowmanager/WM_gizmo_api.hh')
+            raise ValueError('Missing pinned exported header')
+        with self.assertRaisesRegex(ValueError, 'Missing pinned exported header'):
+            check_patch(patch, patch_files(patch), load)
+
+    def test_qualified_gizmo_header_resolves_inside_the_exported_root(self):
+        patch = PATCH.replace('+new', '+#include "gizmo/WM_gizmo_api.hh"')
+        requested = []
+        def load(path):
+            requested.append(path)
+            return b'old\n' if path == 'source/example.cc' else b'#pragma once\n'
+        check_patch(patch, patch_files(patch), load)
+        self.assertIn('source/blender/windowmanager/gizmo/WM_gizmo_api.hh', requested)
+
     def test_patched_python_is_parsed(self):
         invalid = PATCH.replace('source/example.cc', 'source/example.py').replace('+new', '+if')
         with self.assertRaises(SyntaxError):
