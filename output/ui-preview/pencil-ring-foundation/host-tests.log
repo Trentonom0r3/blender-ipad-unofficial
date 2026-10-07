@@ -112,9 +112,9 @@ test_requested_selection_enum_is_copied_and_only_native_targets_admitted (test_p
 test_exact_classifier_propagates_anchor_and_touch_for_every_owned_menu (test_pencil_ring_pages.PencilRingPageTests.test_exact_classifier_propagates_anchor_and_touch_for_every_owned_menu) ... ok
 test_native_page_builder_hides_overflow_and_binds_current_modes_and_transitions (test_pencil_ring_pages.PencilRingPageTests.test_native_page_builder_hides_overflow_and_binds_current_modes_and_transitions) ... ok
 test_nine_visible_slots_stable_origin_all_phases_and_empty_center (test_pencil_ring_pages.PencilRingPageTests.test_nine_visible_slots_stable_origin_all_phases_and_empty_center) ... ok
-test_native_roll_never_selects_and_stale_end_cannot_clear_reacquired_hover (test_pencil_ring_roll.PencilRingRollTests.test_native_roll_never_selects_and_stale_end_cannot_clear_reacquired_hover) ... ok
-test_sensor_is_pencil_only_available_and_independent_of_coalesced_mouse_flags (test_pencil_ring_roll.PencilRingRollTests.test_sensor_is_pencil_only_available_and_independent_of_coalesced_mouse_flags) ... ok
-test_sensor_packets_follow_hover_lifetime_boundaries_and_reacquisition (test_pencil_ring_roll.PencilRingRollTests.test_sensor_packets_follow_hover_lifetime_boundaries_and_reacquisition) ... ok
+test_hover_sensor_and_cancel_never_publish_navigation_or_touch_owners (test_pencil_ring_roll.PencilRingRollTests.test_hover_sensor_and_cancel_never_publish_navigation_or_touch_owners) ... ok
+test_old_roll_packets_are_consumed_without_accessing_popup_contact_or_scene (test_pencil_ring_roll.PencilRingRollTests.test_old_roll_packets_are_consumed_without_accessing_popup_contact_or_scene) ... ok
+test_ordinary_hover_keeps_cursor_feedback_without_navigation_or_activation (test_pencil_ring_roll.PencilRingRollTests.test_ordinary_hover_keeps_cursor_feedback_without_navigation_or_activation) ... ok
 test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind (test_pencil_rna_constructors.PencilRNAConstructorTests.test_fine_and_combined_gizmo_roots_are_typed_find_only_and_consumers_rebind) ... ok
 test_orientation_slots_and_complete_native_snap_options_use_literal_paths (test_pencil_rna_constructors.PencilRNAConstructorTests.test_orientation_slots_and_complete_native_snap_options_use_literal_paths) ... ok
 test_pending_constructor_scope_handoff_refresh_and_retired_bootstrap (test_pencil_rna_constructors.PencilRNAConstructorTests.test_pending_constructor_scope_handoff_refresh_and_retired_bootstrap) ... ok
@@ -220,6 +220,6 @@ PASS: exact native seam callbacks: invoke, drag, reversal, commit, cancellation,
 test_modal_saved_geometry_and_lifetime (test_working_seam.WorkingSeamTests.test_modal_saved_geometry_and_lifetime) ... ok
 
 ----------------------------------------------------------------------
-Ran 204 tests in 168.890s
+Ran 204 tests in 152.710s
 
 OK

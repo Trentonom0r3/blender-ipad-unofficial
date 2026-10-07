@@ -2487,7 +2487,7 @@ diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
-@@ -1,891 +1,1952 @@
+@@ -1,891 +1,1913 @@
  /* SPDX-FileCopyrightText: 2025 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -3332,16 +3332,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                action:@selector(handleHover:)];
    hover_gesture_recognizer.delegate = self;
    [window->getView() addGestureRecognizer:hover_gesture_recognizer];
-+  if (@available(iOS 17.5, *)) {
-+    /* Separate Pencil-only sensor route: roll packets own their values and
-+     * cannot disappear into coalesced mouse movement or hardware hover. */
-+    ring_hover_gesture_recognizer = [[GHOSTUIHoverGestureRecognizer alloc]
-+        initWithTarget:self action:@selector(handlePencilRingHover:)];
-+    ring_hover_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil) ];
-+    ring_hover_gesture_recognizer.delegate = self;
-+    [window->getView() addGestureRecognizer:ring_hover_gesture_recognizer];
-+    [ring_hover_gesture_recognizer release]; /* The view owns its recognizer. */
-+  }
++  /* Ring browsing is contact-only. Keep the ordinary hover recognizer for
++   * cursor/highlight feedback; do not attach a barrel-roll navigation sensor. */
    current_pencil_touch = nil;
 
    /**  Apple Pencil double-tap. */
@@ -4259,46 +4251,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)cancelRingHover
 +{
-+  if (!ring_hover_capture.finish()) return;
-+  if (!system || !window || !system->getWindowManager()->getWindowFound(window)) return;
-+  const GHOST_TEventPencilRingData packet{ring_hover_capture.lifetime,
-+      ring_hover_capture.generation, ring_hover_capture.origin_x,
-+      ring_hover_capture.origin_y, GHOST_kPencilRingRollEnd, ring_hover_capture.serial, 0.0f};
-+  system->pushEvent(new GHOST_EventPencilRing(system->getMilliSeconds(), window, packet));
++  ring_hover_capture.finish();
 +}
 +
 +- (void)handlePencilRingHover:(GHOSTUIHoverGestureRecognizer *)sender
 +{
-+  if (!system || !window || !system->getWindowManager()->getWindowFound(window)) {
-+    ring_hover_capture.finish(); return;
-+  }
-+  if (sender.view != window->getView() || pointer_capture.active() || ring_capture.captured ||
-+      current_pencil_touch || [pan_gesture_recognizer pencilTouch] ||
-+      mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed || native_chrome_hovered ||
-+      (sender.state != UIGestureRecognizerStateBegan && sender.state != UIGestureRecognizerStateChanged)) {
-+    [self cancelRingHover]; return;
-+  }
-+  if (@available(iOS 17.5, *)) {
-+    const auto receipt = ghost::ios::pencil_ring_presentation(window);
-+    const CGPoint point = [sender getScaledTouchPoint:window];
-+    if (!receipt.lifetime || !receipt.generation || !receipt.contact_enabled ||
-+        !receipt.bounds.contains(int(point.x), int(point.y))) {
-+      [self cancelRingHover]; return;
-+    }
-+    if (ring_hover_capture.captured &&
-+        (ring_hover_capture.lifetime != receipt.lifetime ||
-+         sender.state == UIGestureRecognizerStateBegan)) [self cancelRingHover];
-+    GHOST_TPencilRingPhase phase = GHOST_kPencilRingRollMotion;
-+    if (!ring_hover_capture.captured) {
-+      if (!ring_hover_capture.begin(receipt, int(point.x), int(point.y))) return;
-+      phase = GHOST_kPencilRingRollBegin;
-+    }
-+    ring_hover_capture.generation = receipt.generation;
-+    ring_hover_capture.origin_x = int(point.x); ring_hover_capture.origin_y = int(point.y);
-+    const GHOST_TEventPencilRingData packet{receipt.lifetime, receipt.generation,
-+        int(point.x), int(point.y), phase, ring_hover_capture.serial, float(sender.rollAngle)};
-+    system->pushEvent(new GHOST_EventPencilRing(system->getMilliSeconds(), window, packet));
-+  }
++  /* A queued callback from a previously installed sensor is harmless. Hover
++   * must never move the choices under the Pencil; only tip contact can browse. */
++  (void)sender;
++  ring_hover_capture.finish();
 +}
 +
 +- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
@@ -4510,7 +4471,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                             target:nil
                             action:@selector(handleDoneButton)];
 
-@@ -966,182 +2027,184 @@
+@@ -966,182 +1988,184 @@
                                             GHOST_kEventKeyDown,
                                             window,
                                             GHOST_kKeyTextEdit,
@@ -4700,7 +4661,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    text_field.autocorrectionType = UITextAutocorrectionTypeNo;
    text_field.spellCheckingType = UITextSpellCheckingTypeNo;
 
-@@ -1161,381 +2224,923 @@
+@@ -1161,381 +2185,923 @@
        [text_field selectAll:nil];
        break;
      }
@@ -5650,7 +5611,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    if (deferred_swap_buffers_count) {
 
      /* These two messages should be made asserts when we've fixed all the issues. */
-@@ -1581,81 +3186,81 @@
+@@ -1581,81 +3147,81 @@
      window_title_ = nullptr;
    }
    window_title_ = (char *)malloc(strlen(title) + 1);
@@ -5733,7 +5694,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
     * TODO: Support coordinate mapping for sized windows. */
    outX = inX;
    outY = inY;
-@@ -1871,98 +3476,105 @@
+@@ -1871,98 +3437,105 @@
  }
 
  /* Indicate that we want this window to be the next active one. */
@@ -14460,7 +14421,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 
    /* if pie is spawned by a left click, release or click event,
     * it is always assumed to be click style */
-@@ -153,96 +178,953 @@
+@@ -153,96 +178,917 @@
      if (icon) {
        SNPRINTF_UTF8(titlestr, " %s", title);
        w = ui_pie_menu_title_width(titlestr, icon);
@@ -14869,47 +14830,11 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +#endif
 +}
 +
-+bool ui_ipad_ring_roll_input(bContext *C, uiBlock *block, const wmEvent *event)
++bool ui_ipad_ring_roll_input(bContext * /*C*/, uiBlock * /*block*/, const wmEvent * /*event*/)
 +{
-+  const auto &packet = *static_cast<const GHOST_TEventPencilRingData *>(event->customdata);
-+  if (!(block->pie_data.flags & UI_PIE_IPAD_TOOLS) || !ui_ipad_ring_context_valid(C, block)) return true;
-+  auto *data = static_cast<uiIPadRingData *>(block->handle->popup_create_vars.arg);
-+  if (!ipad_ring::ring_uses_pages(ipad_ring::ring_kind(data->menu.c_str())) ||
-+      packet.lifetime != data->lifetime || !packet.contact ||
-+      !packet.generation || packet.generation > data->presented_generation) return true;
-+  if (packet.phase == GHOST_kPencilRingRollEnd) {
-+    if (packet.contact == data->roll_serial && packet.generation >= data->roll_generation) {
-+      data->roll_serial = 0; data->browse.roll(packet.lifetime, 0, false);
-+    }
-+    return true;
-+  }
-+  if (data->browse.contact || ui_ipad_ring_child_open(block) ||
-+      ui_ipad_ring_waits_for_draw(block) ||
-+      !std::isfinite(packet.roll)) return true;
-+  if (packet.phase == GHOST_kPencilRingRollBegin) {
-+    if (packet.generation != data->presented_generation) return true;
-+    data->roll_serial = packet.contact; data->roll_generation = packet.generation;
-+  }
-+  else if (packet.phase != GHOST_kPencilRingRollMotion) return true;
-+  else if (!data->roll_serial && packet.generation == data->presented_generation) {
-+    /* Fresh presentation after Home/child/contact suspension reacquires a
-+     * baseline. Queued pre-reset motion cannot seed or end this receipt. */
-+    data->roll_serial = packet.contact; data->roll_generation = packet.generation;
-+    data->browse.roll_seeded = false;
-+  }
-+  else if (packet.contact != data->roll_serial || packet.generation < data->roll_generation) return true;
-+  const auto result = data->browse.roll(packet.lifetime, packet.roll, true,
-+      packet.phase == GHOST_kPencilRingRollBegin);
-+  if (result.result == ipad_ring::RingInputResult::Rebuild) {
-+    data->phase = data->browse.phase; data->input_suspended = true;
-+    for (const auto &button : block->buttons) {
-+      if (button->semi_modal_state && button->semi_modal_state != button->active)
-+        ui_but_semi_modal_state_free(C, button.get());
-+      if (button->active) ui_but_active_free(C, button.get());
-+    }
-+    ED_region_tag_refresh_ui(block->handle->region); ED_region_tag_redraw(block->handle->region);
-+  }
-+  return true; /* Roll navigation never returns a button or invokes a tool. */
++  /* Consume old queued roll packets without reading a popup or changing its
++   * page/contact/buttons. Only admitted Begin/Motion/End tip contacts browse. */
++  return true;
 +}
 +
 +bool ui_ipad_ring_contact_input(bContext *C, uiBlock *block, const wmEvent *event, uiBut **tap)

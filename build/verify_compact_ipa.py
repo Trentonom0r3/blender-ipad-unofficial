@@ -86,6 +86,12 @@ with zipfile.ZipFile(ipa) as archive:
     has_base = "options = {'name': 'VIEW3D_MT_ipad_base_ring'}" in expected
     has_pencil_entry_fix = "bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', True, **options)" in expected
     has_default_native_header = b'diff --git a/scripts/startup/bl_ui/space_view3d.py ' not in patch
+    has_contact_only_browsing = b'+  /* Ring browsing is contact-only.' in patch
+    if has_contact_only_browsing:
+        assert b'+    ring_hover_gesture_recognizer = [[' not in patch
+        assert b'+    system->pushEvent(new GHOST_EventPencilRing(system->getMilliSeconds(), window, packet));' not in patch
+        assert b'+bool ui_ipad_ring_roll_input(bContext * /*C*/, uiBlock * /*block*/, const wmEvent * /*event*/)' in patch
+        assert b'+      result = data->browse.motion(packet.lifetime, event->xy[0], event->xy[1]);' in patch
     if has_pencil_entry_fix:
         header_node = next(n for n in ast.parse(actual).body if isinstance(n,ast.FunctionDef) and n.name=='draw_canvas_header')
         header_source = ast.get_source_segment(actual,header_node)
@@ -149,6 +155,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'base_ring_and_native_header_return_markers':has_base,
     'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
+    'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),

@@ -100,7 +100,7 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_ring_contacts.py -v
       - name: Test native copyable Pencil action origin values
         run: python3 -m unittest discover -s build -p test_pencil_action_origin.py -v
-      - name: Test Pencil-only hover-roll packets and native navigation receipts
+      - name: Test contact-only Pencil browsing and inert hover-roll packets
         run: python3 -m unittest discover -s build -p test_pencil_ring_roll.py -v
       - name: Test native Pencil interaction owner proof and context-free disposal
         run: python3 -m unittest discover -s build -p test_pencil_callback_disposal.py -v
