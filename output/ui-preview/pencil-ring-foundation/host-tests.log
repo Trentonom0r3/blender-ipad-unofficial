@@ -81,6 +81,8 @@ test_enum_refresh_shortcut_and_early_draw_guards_precede_metadata (test_pencil_p
 test_native_enum_step_refuses_unknown_owned_function_and_stale_metadata (test_pencil_parent_properties.PencilParentPropertyTests.test_native_enum_step_refuses_unknown_owned_function_and_stale_metadata) ... ok
 test_nested_parent_scope_restores_value_without_container_ownership (test_pencil_parent_properties.PencilParentPropertyTests.test_nested_parent_scope_restores_value_without_container_ownership) ... ok
 test_parent_metadata_requires_same_drawn_button_lifetime_and_fresh_field (test_pencil_parent_properties.PencilParentPropertyTests.test_parent_metadata_requires_same_drawn_button_lifetime_and_fresh_field) ... ok
+test_actual_popup_scrolltest_keeps_hidden_inventory_from_disabling_drawn_page (test_pencil_popup_integration.PencilPopupIntegrationTests.test_actual_popup_scrolltest_keeps_hidden_inventory_from_disabling_drawn_page) ... ok
+test_python_ui_bridge_preserves_real_editing_depth_without_artificial_suppression (test_pencil_popup_integration.PencilPopupIntegrationTests.test_python_ui_bridge_preserves_real_editing_depth_without_artificial_suppression) ... ok
 test_each_native_semantic_step_rechecks_but_all_owned_disposal_runs (test_pencil_popup_ownership.PencilPopupOwnershipTests.test_each_native_semantic_step_rechecks_but_all_owned_disposal_runs) ... ok
 test_exhausted_root_nonce_refuses_before_argument_or_python_draw (test_pencil_popup_ownership.PencilPopupOwnershipTests.test_exhausted_root_nonce_refuses_before_argument_or_python_draw) ... ok
 test_lookup_starts_at_live_registered_handlers_and_never_old_operator (test_pencil_popup_ownership.PencilPopupOwnershipTests.test_lookup_starts_at_live_registered_handlers_and_never_old_operator) ... ok
@@ -140,8 +142,10 @@ test_duplicates_and_empty_input_are_rejected (test_preflight.PreflightTests.test
 test_existing_source_patch (test_preflight.PreflightTests.test_existing_source_patch) ... ok
 test_new_file_does_not_fetch_upstream (test_preflight.PreflightTests.test_new_file_does_not_fetch_upstream) ... ok
 test_patched_python_is_parsed (test_preflight.PreflightTests.test_patched_python_is_parsed) ... ok
+test_qualified_gizmo_header_resolves_inside_the_exported_root (test_preflight.PreflightTests.test_qualified_gizmo_header_resolves_inside_the_exported_root) ... ok
 test_stale_hunk_count_is_rejected (test_preflight.PreflightTests.test_stale_hunk_count_is_rejected) ... ok
 test_unique_ipad_registrations_pass (test_preflight.PreflightTests.test_unique_ipad_registrations_pass) ... ok
+test_unqualified_gizmo_header_is_rejected_at_the_exported_root (test_preflight.PreflightTests.test_unqualified_gizmo_header_is_rejected_at_the_exported_root) ... ok
 test_unsafe_paths_are_rejected_before_download (test_preflight.PreflightTests.test_unsafe_paths_are_rejected_before_download) ... ok
 test_wrong_upstream_is_rejected (test_preflight.PreflightTests.test_wrong_upstream_is_rejected) ... error: patch failed: source/example.cc:1
 error: source/example.cc: patch does not apply
@@ -216,6 +220,6 @@ PASS: exact native seam callbacks: invoke, drag, reversal, commit, cancellation,
 test_modal_saved_geometry_and_lifetime (test_working_seam.WorkingSeamTests.test_modal_saved_geometry_and_lifetime) ... ok
 
 ----------------------------------------------------------------------
-Ran 200 tests in 139.605s
+Ran 204 tests in 159.639s
 
 OK

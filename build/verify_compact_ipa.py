@@ -84,6 +84,14 @@ with zipfile.ZipFile(ipa) as archive:
         for marker in ('VIEW3D_MT_ipad_modes','Expand this viewport to show modes'):
             assert marker.encode() in binary,marker
     has_base = "options = {'name': 'VIEW3D_MT_ipad_base_ring'}" in expected
+    has_pencil_entry_fix = "bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', True, **options)" in expected
+    if has_pencil_entry_fix:
+        header_node = next(n for n in ast.parse(actual).body if isinstance(n,ast.FunctionDef) and n.name=='draw_canvas_header')
+        header_source = ast.get_source_segment(actual,header_node)
+        for removed in ('wm.ipad_tool_palette','wm.call_menu_pie','view3d.ipad_native_controls',
+                        'view3d.ipad_ring_interface','view3d.ipad_shelf_visibility'):
+            assert removed not in header_source,removed
+        assert "text='Canvas View'" in actual
     if has_base:
         for marker in ('class VIEW3D_MT_ipad_base_ring','class VIEW3D_MT_ipad_tool_inventory',
                        'class VIEW3D_OT_ipad_native_tool','class VIEW3D_OT_ipad_native_controls',
@@ -133,6 +141,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
+    'explicit_native_pencil_entry_and_caption_only_header':has_pencil_entry_fix,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),

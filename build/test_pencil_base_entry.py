@@ -33,7 +33,7 @@ class PencilBaseEntryTests(unittest.TestCase):
             def __exit__(self, *args): return False
         bpy = types.SimpleNamespace(
             props=types.SimpleNamespace(BoolProperty=lambda **kwargs: None),
-            ops=types.SimpleNamespace(wm=types.SimpleNamespace(call_menu_pie=lambda *args, **kwargs: calls.append(('menu', kwargs)))))
+            ops=types.SimpleNamespace(wm=types.SimpleNamespace(call_menu_pie=lambda *args, **kwargs: calls.append(('menu', args, kwargs)))))
         area, window = object(), object()
         namespace = python_nodes('WM_OT_ipad_tool_palette', Operator=object, bpy=bpy,
                                  ipad_palette_target=lambda C, x, y: (area, window))
@@ -43,8 +43,9 @@ class PencilBaseEntryTests(unittest.TestCase):
             operator.touch_targets = touch
             self.assertEqual(operator.invoke(context, types.SimpleNamespace(mouse_x=52, mouse_y=71)), {'FINISHED'})
             self.assertEqual(calls[-2], ('override', {'area': area, 'region': window}))
-            self.assertEqual(calls[-1][1]['name'], 'VIEW3D_MT_ipad_base_ring')
-            self.assertEqual(calls[-1][1].get('ipad_touch_targets', False), touch)
+            self.assertEqual(calls[-1][1], ('INVOKE_DEFAULT', True))
+            self.assertEqual(calls[-1][2]['name'], 'VIEW3D_MT_ipad_base_ring')
+            self.assertEqual(calls[-1][2].get('ipad_touch_targets', False), touch)
         namespace['ipad_palette_target'] = lambda *args: (None, None)
         before = len(calls)
         self.assertEqual(operator.invoke(context, types.SimpleNamespace(mouse_x=0, mouse_y=0)), {'CANCELLED'})
@@ -115,8 +116,8 @@ int main(){bScreen screen;Runtime runtime;ARegion window{RGN_TYPE_WINDOW,&runtim
         for _ in range(10000):
             row = Layout()
             self.assertTrue(namespace['draw_canvas_header'](row, context))
-            self.assertEqual([name for name, _, _ in row.actions], ['wm.ipad_tool_palette', 'wm.call_menu_pie', 'view3d.ipad_native_controls'])
-            self.assertEqual(row.actions[1][2].name, 'VIEW3D_MT_ipad_transform_options')
+            self.assertEqual([name for name, _, _ in row.actions], ['label'])
+            self.assertEqual(row.actions[0][1]['text'], 'Object Mode · Move · X · Fine')
         for mode in ('SCULPT', 'PAINT_TEXTURE', 'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'):
             context.mode = mode
             self.assertFalse(namespace['draw_canvas_header'](Layout(), context))

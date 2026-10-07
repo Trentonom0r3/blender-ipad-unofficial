@@ -5843,7 +5843,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1483 @@
+@@ -0,0 +1,1472 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -5904,7 +5904,9 @@ new file mode 100644
 +            options = {'name': 'VIEW3D_MT_ipad_base_ring'}
 +            if self.touch_targets:
 +                options['ipad_touch_targets'] = True
-+            bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', **options)
++            # Preserve the native UI call contract: Python's default undo=False adds
++            # suppression depth even for this non-Undo popup, blocking admission.
++            bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', True, **options)
 +        return {'FINISHED'}
 +
 +
@@ -6080,6 +6082,7 @@ new file mode 100644
 +            layout.operator_enum('object.mode_set', 'mode')
 +        layout.operator('wm.call_menu_pie', text='Layouts', icon='WORKSPACE').name = (
 +            'VIEW3D_MT_ipad_workspaces_ring')
++        layout.operator('view3d.ipad_ring_interface', text='Canvas View', icon='VIEW3D')
 +        ipad_base_return(layout)
 +
 +
@@ -7233,27 +7236,16 @@ new file mode 100644
 +def draw_canvas_header(layout, context):
 +    if not context.area or context.area.type != 'VIEW_3D':
 +        return False
-+    supported = ipad_pencil_header_supported(context)
-+    compact = supported and not context.space_data.show_region_tool_header
-+    row = layout.row(align=True)
-+    row.operator_context = 'INVOKE_REGION_WIN'
-+    row.operator('wm.ipad_tool_palette', text='Ring').touch_targets = True
++    compact = (ipad_pencil_header_supported(context)
++               and not context.space_data.show_region_tool_header)
 +    if compact:
-+        ring = ipad_context_ring_name(context)
-+        ring = {'VIEW3D_MT_ipad_selection_ring': 'VIEW3D_MT_ipad_selection_options',
-+                'VIEW3D_MT_ipad_transform_ring': 'VIEW3D_MT_ipad_transform_options'}.get(ring, ring)
-+        if ring:
-+            row.operator('wm.call_menu_pie', text=ipad_canvas_caption(context)).name = ring
-+        else:
-+            row.label(text=ipad_canvas_caption(context))
-+        row.operator('view3d.ipad_native_controls', text='Controls', icon='TOOL_SETTINGS')
++        # Squeeze owns ring entry. The header only reports the live editing state.
++        layout.label(text=ipad_canvas_caption(context))
 +    else:
-+        if not context.space_data.show_region_tool_header:
-+            row.operator('view3d.ipad_native_controls', text='Controls', icon='TOOL_SETTINGS')
-+        if supported:
-+            row.operator('view3d.ipad_ring_interface', text='Ring UI', icon='BACK')
-+        row.operator('view3d.ipad_shelf_visibility', text='Shelf', icon='MENU_PANEL',
-+                     depress=ipad_editing_shelf_enabled(context))
++        # Preserve the earlier camera/Bevel native-header routes, without the
++        # duplicate Ring, context, Controls, Ring UI or trial Shelf buttons.
++        row = layout.row(align=True)
++        row.operator_context = 'INVOKE_REGION_WIN'
 +        if ipad_bevel_state(context) is not None:
 +            row.popover(panel='VIEW3D_PT_ipad_bevel', text='Bevel', icon='MOD_BEVEL')
 +        if ipad_camera_state(context) is not None:
@@ -7261,9 +7253,6 @@ new file mode 100644
 +        row.operator('view3d.ipad_flythrough_toggle',
 +                     text='Exit Flythrough' if getattr(context.window_manager, 'ipad_flythrough_active', False) else 'Flythrough',
 +                     icon='CAMERA_STEREO')
-+    # Returning True is the explicit replacement seam in VIEW3D_HT_header.
-+    # Native Controls and left-rail Settings restore the same native tool row;
-+    # its existing visibility is also the per-viewport full-header return state.
 +    return compact
 +
 +
@@ -36060,7 +36049,7 @@ new file mode 100644
 diff --git a/source/blender/editors/interface/regions/interface_region_popup.cc b/source/blender/editors/interface/regions/interface_region_popup.cc
 --- a/source/blender/editors/interface/regions/interface_region_popup.cc
 +++ b/source/blender/editors/interface/regions/interface_region_popup.cc
-@@ -380,114 +380,146 @@
+@@ -380,182 +380,219 @@
      const bool off_screen_right = (block->rect.xmax > win_size[0]);
 
      if (fully_aligned_with_button) {
@@ -36216,7 +36205,80 @@ diff --git a/source/blender/editors/interface/regions/interface_region_popup.cc 
    if (block->rect.xmax > win_size[0] - margin) {
      const float xofs = win_size[0] - margin - block->rect.xmax;
      block->rect.xmin += xofs;
-@@ -611,124 +643,154 @@
+     block->rect.xmax += xofs;
+   }
+   /* shift menus to right if outside of view */
+   if (block->rect.xmin < margin) {
+     const float xofs = (margin - block->rect.xmin);
+     block->rect.xmin += xofs;
+     block->rect.xmax += xofs;
+   }
+
+   block->rect.ymin = std::max<float>(block->rect.ymin, margin);
+   block->rect.ymax = std::min<float>(block->rect.ymax, win_size[1] - UI_POPUP_MENU_TOP);
+
+   /* ensure menu items draw inside left/right boundary */
+   const float xofs = block->rect.xmin - xmin_orig;
+   for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+     bt->rect.xmin += xofs;
+     bt->rect.xmax += xofs;
+   }
+ }
+
+ void ui_popup_block_scrolltest(uiBlock *block)
+ {
+   block->flag &= ~(UI_BLOCK_CLIPBOTTOM | UI_BLOCK_CLIPTOP);
+
+   for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+     bt->flag &= ~UI_SCROLLED;
+   }
+
++  /* Paged ring positions are already bounded explicitly. Hidden inventory
++   * rows retain their native construction coordinates, not a scroll extent. */
++  if ((block->pie_data.flags & UI_PIE_IPAD_TOOLS) && block->ipad_ring_full_labels) {
++    return;
++  }
+   if (block->buttons.size() < 2) {
+     return;
+   }
+
+   /* mark buttons that are outside boundary */
+   for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+     if (bt->rect.ymin < block->rect.ymin) {
+       bt->flag |= UI_SCROLLED;
+       block->flag |= UI_BLOCK_CLIPBOTTOM;
+     }
+     if (bt->rect.ymax > block->rect.ymax) {
+       bt->flag |= UI_SCROLLED;
+       block->flag |= UI_BLOCK_CLIPTOP;
+     }
+   }
+
+   /* mark buttons overlapping arrows, if we have them */
+   for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+     if (block->flag & UI_BLOCK_CLIPBOTTOM) {
+       if (bt->rect.ymin < block->rect.ymin + UI_MENU_SCROLL_ARROW) {
+         bt->flag |= UI_SCROLLED;
+       }
+     }
+     if (block->flag & UI_BLOCK_CLIPTOP) {
+       if (bt->rect.ymax > block->rect.ymax - UI_MENU_SCROLL_ARROW) {
+         bt->flag |= UI_SCROLLED;
+       }
+     }
+   }
+ }
+
+ static void ui_popup_block_remove(bContext *C, uiPopupBlockHandle *handle)
+ {
+   wmWindow *ctx_win = CTX_wm_window(C);
+   ScrArea *ctx_area = CTX_wm_area(C);
+   ARegion *ctx_region = CTX_wm_region(C);
+
+   wmWindowManager *wm = CTX_wm_manager(C);
+   wmWindow *win = ctx_win;
+   bScreen *screen = CTX_wm_screen(C);
+@@ -611,124 +648,154 @@
  {
    Panel *&panel = region->runtime->popup_block_panel;
    if (!panel) {
@@ -36373,15 +36435,97 @@ diff --git a/source/blender/editors/interface/regions/interface_region_popup.cc 
    if (block->flag & UI_BLOCK_PIE_MENU) {
      const int win_width = UI_SCREEN_MARGIN;
 
-@@ -835,174 +897,203 @@
-       for (const std::unique_ptr<uiBut> &bt : block->buttons) {
-         bt->rect.ymin += handle->scrolloffset;
-         bt->rect.ymax += handle->scrolloffset;
+@@ -782,227 +849,265 @@
+         if (but_iter->pie_dir != UI_RADIAL_NONE) {
+           BLI_rctf_recenter(&but_iter->rect, UNPACK2(block->pie_data.pie_center_spawned));
+         }
        }
      }
-     /* Layout panels are relative to `block->rect.ymax`. Rather than a
-      * scroll, this is a offset applied due to the overflow at the top. */
-     ui_layout_panel_popup_scroll_apply(block->panel, -scroll_min);
+   }
+   else {
+     /* Add an offset to draw the popover arrow. */
+     if ((block->flag & UI_BLOCK_POPOVER) && ELEM(block->direction, UI_DIR_UP, UI_DIR_DOWN)) {
+       /* Keep sync with 'ui_draw_popover_back_impl'. */
+       const float unit_size = U.widget_unit / block->aspect;
+       const float unit_half = unit_size * (block->direction == UI_DIR_DOWN ? 0.5 : -0.5);
+
+       UI_block_translate(block, 0, -unit_half);
+     }
+
+     /* clip block with window boundary */
+     ui_popup_block_clip(window, block);
+
+     /* Avoid menu moving down and losing cursor focus by keeping it at
+      * the same height. */
+     if (handle->refresh && handle->prev_block_rect.ymax > block->rect.ymax) {
+       if (block->bounds_type != UI_BLOCK_BOUNDS_POPUP_CENTER) {
+         const float offset = handle->prev_block_rect.ymax - block->rect.ymax;
+         UI_block_translate(block, 0, offset);
+         block->rect.ymin = handle->prev_block_rect.ymin;
+       }
+     }
+
+     handle->prev_block_rect = block->rect;
+
+     /* the block and buttons were positioned in window space as in 2.4x, now
+      * these menu blocks are regions so we bring it back to region space.
+      * additionally we add some padding for the menu shadow or rounded menus */
+     region->winrct.xmin = block->rect.xmin - margin;
+     region->winrct.xmax = block->rect.xmax + margin;
+     region->winrct.ymin = block->rect.ymin - margin;
+     region->winrct.ymax = block->rect.ymax + UI_POPUP_MENU_TOP;
+
+     UI_block_translate(block, -region->winrct.xmin, -region->winrct.ymin);
+-    /* Popups can change size, fix scroll offset if a panel was closed. */
+-    float ymin = FLT_MAX;
+-    float ymax = -FLT_MAX;
+-    for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+-      ymin = min_ff(ymin, bt->rect.ymin);
+-      ymax = max_ff(ymax, bt->rect.ymax);
+-    }
+-    const int scroll_pad = ui_block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f;
+-    const float scroll_min = std::min(block->rect.ymax - ymax - scroll_pad, 0.0f);
+-    const float scroll_max = std::max(block->rect.ymin - ymin + scroll_pad, 0.0f);
+-    handle->scrolloffset = std::clamp(handle->scrolloffset, scroll_min, scroll_max);
+-    /* apply scroll offset */
+-    if (handle->scrolloffset != 0.0f) {
++    /* Paged rings own their visible positions; native hidden inventory rows
++     * must not manufacture a linear-menu scroll range or shift a page. */
++    const bool ipad_page = (block->pie_data.flags & UI_PIE_IPAD_TOOLS) &&
++                           block->ipad_ring_full_labels;
++    if (ipad_page) {
++      handle->scrolloffset = 0.0f;
++    }
++    else {
++      /* Popups can change size, fix scroll offset if a panel was closed. */
++      float ymin = FLT_MAX;
++      float ymax = -FLT_MAX;
+       for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+-        bt->rect.ymin += handle->scrolloffset;
+-        bt->rect.ymax += handle->scrolloffset;
+-      }
+-    }
+-    /* Layout panels are relative to `block->rect.ymax`. Rather than a
+-     * scroll, this is a offset applied due to the overflow at the top. */
+-    ui_layout_panel_popup_scroll_apply(block->panel, -scroll_min);
++        ymin = min_ff(ymin, bt->rect.ymin);
++        ymax = max_ff(ymax, bt->rect.ymax);
++      }
++      const int scroll_pad = ui_block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f;
++      const float scroll_min = std::min(block->rect.ymax - ymax - scroll_pad, 0.0f);
++      const float scroll_max = std::max(block->rect.ymin - ymin + scroll_pad, 0.0f);
++      handle->scrolloffset = std::clamp(handle->scrolloffset, scroll_min, scroll_max);
++      /* apply scroll offset */
++      if (handle->scrolloffset != 0.0f) {
++        for (const std::unique_ptr<uiBut> &bt : block->buttons) {
++          bt->rect.ymin += handle->scrolloffset;
++          bt->rect.ymax += handle->scrolloffset;
++        }
++      }
++      /* Layout panels are relative to `block->rect.ymax`. Rather than a
++       * scroll, this is a offset applied due to the overflow at the top. */
++      ui_layout_panel_popup_scroll_apply(block->panel, -scroll_min);
++    }
    }
    /* Apply popup scroll offset to layout panels. */
    ui_layout_panel_popup_scroll_apply(block->panel, handle->scrolloffset);
@@ -36412,16 +36556,16 @@ diff --git a/source/blender/editors/interface/regions/interface_region_popup.cc 
  #endif
 
    return block;
- }
-
++}
++
 +static uint64_t ui_ipad_popup_next_lifetime = 1;
 +
 +static uint64_t ui_ipad_popup_lifetime_allocate()
 +{
 +  if (ui_ipad_popup_next_lifetime == UINT64_MAX) return 0;
 +  return ui_ipad_popup_next_lifetime++;
-+}
-+
+ }
+
  uiPopupBlockHandle *ui_popup_block_create(bContext *C,
                                            ARegion *butregion,
                                            uiBut *but,
