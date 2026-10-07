@@ -2,7 +2,7 @@
   "evidence": "exact target5.0 Python inventory and candidate guarded tool operator on stock host",
   "host_version": "5.1.2",
   "tool_definition_sha256": "f29a4d4e7b782cd5b08e0fd586e8970f8362b6ee0c09d2eff7d750064e29bd75",
-  "candidate_python_sha256": "09bf199bd78e02a2c12c4669ca7e583c06241dfd91a546b7f6cb0a6a81a0f7aa",
+  "candidate_python_sha256": "de03c7a4146a30213a4cdbbaf984368f99318b9e9200442bcf288badb804dbe9",
   "contexts": [
     {
       "mode": "OBJECT",
@@ -177,41 +177,127 @@
     {
       "mode": "OBJECT",
       "tool_buttons": 20,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": false
     },
     {
       "mode": "EDIT_MESH",
       "tool_buttons": 43,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": false
     },
     {
       "mode": "SCULPT",
       "tool_buttons": 34,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": true
     },
     {
       "mode": "PAINT_VERTEX",
       "tool_buttons": 8,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": true
     },
     {
       "mode": "PAINT_WEIGHT",
       "tool_buttons": 11,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": true
     },
     {
       "mode": "PAINT_TEXTURE",
       "tool_buttons": 10,
-      "navigation_buttons": 2,
+      "navigation_buttons": 3,
       "brush_asset_popover": true
     }
   ],
   "registered_base_selection_transform_inventory_routes": "passed",
+  "current_tool_shortcuts": [
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.move",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.rotate",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.scale",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "TRANSLATE",
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "ROTATE",
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "SCALE",
+      "base_slots": 6
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "NONE",
+      "base_slots": 5
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.move",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.rotate",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.scale",
+      "child_action": null,
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "TRANSLATE",
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "ROTATE",
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "SCALE",
+      "base_slots": 6
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "NONE",
+      "base_slots": 5
+    }
+  ],
   "guarded_native_activation_and_refusals": "passed",
   "registered_native_controls_visibility_action": "passed; current header restored with tool/mode/workspace/object transform preserved; no popup/target claim",
   "native_popup_modal_and_device_evidence": false

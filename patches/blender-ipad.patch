@@ -5804,7 +5804,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1455 @@
+@@ -0,0 +1,1476 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -6007,6 +6007,26 @@ new file mode 100644
 +    layout.operator('wm.call_menu_pie', text='Base', icon='BACK').name = 'VIEW3D_MT_ipad_base_ring'
 +
 +
++def ipad_active_tool_options_button(layout, context):
++    # Base exposes the current tool's existing controls without another trip
++    # through Tools. Copy the ID before dynamic inventory callbacks, then recheck.
++    active = ToolSelectPanelHelper.tool_active_from_context(context)
++    active_id = active.idname if active else ''
++    labels = {name: label for label, name, _ in IPAD_RADIAL_TOOLS
++              if name in {*IPAD_TRANSFORM_TOOLS, 'builtin.transform'}}
++    if active_id not in labels or ipad_context_ring_name(context) != 'VIEW3D_MT_ipad_transform_ring':
++        return False
++    tool = next((tool for tool in ipad_native_tool_inventory(context)
++                 if tool.idname == active_id), None)
++    current = ToolSelectPanelHelper.tool_active_from_context(context)
++    if (tool is None or current is None or current.idname != active_id
++            or ipad_context_ring_name(context) != 'VIEW3D_MT_ipad_transform_ring'):
++        return False
++    layout.operator('wm.call_menu_pie', text=labels[active_id] + ' Options',
++                    depress=True, **ipad_native_tool_icon(tool)).name = 'VIEW3D_MT_ipad_transform_options'
++    return True
++
++
 +class VIEW3D_MT_ipad_base_ring(Menu):
 +    bl_label = 'Pencil Manipulation'
 +
@@ -6027,6 +6047,7 @@ new file mode 100644
 +        selection.enabled = context.mode in IPAD_SELECT_ALL
 +        selection.operator('wm.call_menu_pie', text='Select', icon='RESTRICT_SELECT_OFF').name = (
 +            'VIEW3D_MT_ipad_selection_options')
++        ipad_active_tool_options_button(layout, context)
 +
 +
 +class VIEW3D_MT_ipad_layout_mode_ring(Menu):
@@ -15103,7 +15124,7 @@ diff --git a/source/blender/editors/interface/regions/interface_region_menu_pie.
 +  if (ipad_ring::ring_uses_pages(kind)) {
 +    const auto geometry = ipad_ring::ring_page_layout(UI_UNIT_X, viewport,
 +        float(data.anchor[0]), float(data.anchor[1]), int(block->buttons.size()), data.phase,
-+        data.touch_tools);
++        data.touch_tools, kind == ipad_ring::RingKind::Base);
 +    if (!geometry.fits) {
 +      handle->menuretval = UI_RETURN_CANCEL;
 +      for (const std::unique_ptr<uiBut> &but : block->buttons) but->flag |= UI_HIDDEN | UI_BUT_DISABLED;
@@ -22446,7 +22467,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_tool_ring.hh b/sour
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_tool_ring.hh
-@@ -0,0 +1,408 @@
+@@ -0,0 +1,413 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -22669,7 +22690,8 @@ new file mode 100644
 +/* Every category uses one full-nine footprint, including unused positions. A
 + * category switch or fractional browsing phase must not move the canvas origin. */
 +inline RingPageLayout ring_page_layout(float unit, Rect viewport, float x, float y,
-+                                       int total, float phase, bool touch = false)
++                                       int total, float phase, bool touch = false,
++                                       bool fixed_slots = false)
 +{
 +  RingPageLayout result;
 +  if (!std::isfinite(unit) || unit <= 0 || total < 1 || total > 4096 ||
@@ -22699,6 +22721,10 @@ new file mode 100644
 +  result.footprint = {x - extent_x / 2, x + extent_x / 2,
 +                      y - extent_y / 2, y + extent_y / 2};
 +  const int visible = std::min(total, 9);
++  /* Base reserves nine stable positions. Context-only choices can disappear
++   * without moving Undo/Redo/Tools; unused positions and the center stay empty. */
++  if (fixed_slots && total > 9) return result;
++  const int angular_slots = fixed_slots ? 9 : visible;
 +  phase = total > 9 ? std::remainder(phase, float(total)) : 0;
 +  const int first = int(std::floor(phase));
 +  const float fraction = phase - std::floor(phase);
@@ -22709,7 +22735,7 @@ new file mode 100644
 +      cy = result.footprint.ymax - height / 2 - (i / columns) * (height + gap);
 +    }
 +    else {
-+      const float angle = (float(i) - fraction) * 6.283185307179586f / visible;
++      const float angle = (float(i) - fraction) * 6.283185307179586f / angular_slots;
 +      cx = x + std::sin(angle) * radius;
 +      cy = y + std::cos(angle) * radius;
 +    }

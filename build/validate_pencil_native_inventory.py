@@ -73,12 +73,13 @@ with bpy.context.temp_override(area=area, region=region):
         assert all(tool.label and tool.icon for tool in candidate)
         brush = module.VIEW3D_PT_ipad_brush_access.poll(bpy.context)
         drawn = draw('VIEW3D_MT_ipad_tool_inventory')
-        assert len(drawn.operators) == len(ids) + 2
-        assert drawn.operators[-2][0] == 'view3d.ipad_native_controls'
+        assert len(drawn.operators) == len(ids) + 3
+        assert drawn.operators[-3][0] == 'view3d.ipad_native_controls'
+        assert drawn.operators[-2][0] == 'view3d.ipad_flythrough_toggle'
         assert drawn.operators[-1][2].name == 'VIEW3D_MT_ipad_base_ring'
         assert bool(drawn.popovers) == bool(brush)
         if brush: assert drawn.popovers[0]['panel'] == 'VIEW3D_PT_ipad_brush_access'
-        routes.append({'mode': bpy.context.mode, 'tool_buttons': len(ids), 'navigation_buttons': 2,
+        routes.append({'mode': bpy.context.mode, 'tool_buttons': len(ids), 'navigation_buttons': 3,
                        'brush_asset_popover': bool(drawn.popovers)})
         records.append({'mode': bpy.context.mode, 'count': len(ids), 'native_tool_ids': ids,
                         'native_brush_assets_available': bool(brush)})
@@ -115,10 +116,40 @@ with bpy.context.temp_override(area=area, region=region):
     transform = draw('VIEW3D_MT_ipad_transform_options')
     assert transform.operators[0][2].name == 'VIEW3D_MT_ipad_tool_inventory'
     base = draw('VIEW3D_MT_ipad_base_ring')
-    assert len(base.operators) == 5
+    assert len(base.operators) == 6
+    assert base.operators[5][1]['text'] == 'Move Options'
+    assert base.operators[5][2].name == 'VIEW3D_MT_ipad_transform_options'
     assert [base.operators[i][2].name for i in (0,1,4)] == [
         'VIEW3D_MT_ipad_layout_mode_ring', 'VIEW3D_MT_ipad_tool_inventory', 'VIEW3D_MT_ipad_selection_options']
     assert [base.operators[i][0] for i in (2,3)] == ['ed.undo','ed.redo']
+    # Actual native current-tool IDs/icons and preexisting option-route poll.
+    shortcuts=[]
+    for mode in ('OBJECT','EDIT'):
+        if bpy.context.object.mode!='OBJECT': bpy.ops.object.mode_set(mode='OBJECT')
+        if mode!='OBJECT': bpy.ops.object.mode_set(mode=mode)
+        for name,label in (('builtin.move','Move'),('builtin.rotate','Rotate'),
+                           ('builtin.scale','Scale'),('builtin.transform','Transform')):
+            assert bpy.ops.wm.tool_set_by_id(name=name)=={'FINISHED'}
+            active=ToolSelectPanelHelper.tool_active_from_context(bpy.context)
+            actions=('TRANSLATE','ROTATE','SCALE','NONE') if name=='builtin.transform' else (None,)
+            for action in actions:
+                if action is not None: active.gizmo_group_properties('VIEW3D_GGT_xform_gizmo').drag_action=action
+                buttons=draw('VIEW3D_MT_ipad_base_ring').operators
+                assert [b[1]['text'] for b in buttons[:5]]==['Layout / Mode','Tools','Undo','Redo','Select']
+                if action=='NONE':
+                    assert len(buttons)==5
+                else:
+                    assert len(buttons)==6 and buttons[5][1]['text']==label+' Options'
+                    native=next(t for t in module.ipad_native_tool_inventory(bpy.context) if t.idname==name)
+                    assert {k:v for k,v in buttons[5][1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
+                    assert buttons[5][1]['depress'] and buttons[5][2].name=='VIEW3D_MT_ipad_transform_options'
+                    assert module.VIEW3D_MT_ipad_transform_options.poll(bpy.context)
+                shortcuts.append({'mode':bpy.context.mode,'tool':name,'child_action':action,'base_slots':len(buttons)})
+        for name in ('builtin.select_box','builtin.cursor'):
+            bpy.ops.wm.tool_set_by_id(name=name)
+            assert len(draw('VIEW3D_MT_ipad_base_ring').operators)==5
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.wm.tool_set_by_id(name='builtin.move')
     assert bpy.ops.view3d.ipad_native_tool(name='builtin.rotate', inventory=receipt,
                                          expected_tool='builtin.select_box') == {'CANCELLED'}
     assert bpy.ops.view3d.ipad_native_tool(name='builtin.rotate', inventory=receipt+'obsolete',
@@ -133,6 +164,7 @@ report={
     'candidate_python_sha256': hashlib.sha256(source.encode()).hexdigest(),
     'contexts': records, 'menu_routes': routes,
     'registered_base_selection_transform_inventory_routes': 'passed',
+    'current_tool_shortcuts': shortcuts,
     'guarded_native_activation_and_refusals': 'passed',
     'registered_native_controls_visibility_action': 'passed; current header restored with tool/mode/workspace/object transform preserved; no popup/target claim',
     'native_popup_modal_and_device_evidence': False}

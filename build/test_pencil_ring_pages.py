@@ -56,6 +56,43 @@ int main(){
 }
 ''')
 
+    def test_base_slots_stay_fixed_when_current_tool_choice_appears_or_disappears(self):
+        self.run_cpp(r'''
+#include <cassert>
+using namespace blender::ui::ipad;
+bool equal(Rect a,Rect b){return a.xmin==b.xmin&&a.xmax==b.xmax&&a.ymin==b.ymin&&a.ymax==b.ymax;}
+bool overlaps(Rect a,Rect b){return a.xmin<b.xmax&&b.xmin<a.xmax&&a.ymin<b.ymax&&b.ymin<a.ymax;}
+int main(){
+ for(float unit:{20.f,30.f,40.f})for(bool touch:{false,true})
+ for(Rect v:{Rect{0,1000,0,800},Rect{30,360,20,900},Rect{50,240,60,760}}){
+  Rect view{v.xmin*unit/20,v.xmax*unit/20,v.ymin*unit/20,v.ymax*unit/20};
+  for(float x:{view.xmin,view.xmax})for(float y:{view.ymin,view.ymax}){
+   auto all=ring_page_layout(unit,view,x,y,9,0,touch,true);assert(all.fits);
+   auto tools=ring_page_layout(unit,view,x,y,9,0,touch);assert(tools.fits);
+   for(int total:{1,5,6,9}){
+    auto page=ring_page_layout(unit,view,x,y,total,7,touch,true);assert(page.fits);
+    assert(page.buttons.size()==size_t(total)&&equal(page.footprint,all.footprint));
+    for(int i=0;i<total;++i){
+     assert(equal(page.buttons[i],all.buttons[i])&&equal(page.buttons[i],tools.buttons[i]));
+     assert(page.indices[i]==i);
+     if(!page.grid){auto b=page.buttons[i];assert(page.center_x<b.xmin||page.center_x>b.xmax||page.center_y<b.ymin||page.center_y>b.ymax);}
+     for(int j=i+1;j<total;++j)assert(!overlaps(page.buttons[i],page.buttons[j]));
+    }
+   }
+   assert(!ring_page_layout(unit,view,x,y,10,0,touch,true).fits);
+   assert(ring_page_layout(unit,view,x,y,43,0,touch).fits);
+  }
+ }
+ // Other short categories retain their original even spacing.
+ auto legacy=ring_page_layout(20,{0,1000,0,800},500,400,5,0);
+ auto fixed=ring_page_layout(20,{0,1000,0,800},500,400,5,0,false,true);
+ assert(!equal(legacy.buttons[1],fixed.buttons[1]));
+}
+''')
+        start = NATIVE.index('  data.visible_count = int(block->buttons.size());')
+        end = NATIVE.index('  if (kind == ipad_ring::RingKind::Mode) {', start)
+        self.assertIn('data.touch_tools, kind == ipad_ring::RingKind::Base)', NATIVE[start:end])
+
     def test_exact_classifier_propagates_anchor_and_touch_for_every_owned_menu(self):
         classifier=function(NATIVE,'bool UI_ipad_ring_menu(')
         call=function(changed_source('source/blender/windowmanager/intern/wm_operators.cc'),

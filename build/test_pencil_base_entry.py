@@ -51,6 +51,83 @@ class PencilBaseEntryTests(unittest.TestCase):
         self.assertEqual(operator.invoke(context, types.SimpleNamespace(mouse_x=0, mouse_y=0)), {'CANCELLED'})
         self.assertEqual(len(calls), before)
 
+    def test_base_exposes_current_transform_options_with_native_icon_and_original_actions(self):
+        tree = ast.parse(PYTHON)
+        constants = [node for node in tree.body if isinstance(node, ast.Assign)
+                     and any(isinstance(t, ast.Name) and t.id in {'IPAD_RADIAL_TOOLS', 'IPAD_TRANSFORM_TOOLS'}
+                             for t in node.targets)]
+        active = types.SimpleNamespace(idname='builtin.move')
+        tools = [types.SimpleNamespace(idname=name, icon=index + 100)
+                 for index, name in enumerate(('builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.transform'))]
+        records = []
+        class Layout:
+            def column(self): return self
+            def row(self): return self
+            def operator(self, name, **kwargs):
+                props = types.SimpleNamespace()
+                records.append((name, kwargs, props))
+                return props
+        namespace = python_nodes('ipad_active_tool_options_button', 'VIEW3D_MT_ipad_base_ring',
+                                 Menu=object, ToolSelectPanelHelper=types.SimpleNamespace(
+                                     tool_active_from_context=lambda C: active),
+                                 ipad_native_tool_inventory=lambda C: tools,
+                                 ipad_native_tool_icon=lambda tool: {'icon_value': tool.icon},
+                                 ipad_context_ring_name=lambda C: 'VIEW3D_MT_ipad_transform_ring',
+                                 IPAD_SELECT_ALL={'OBJECT'})
+        exec(compile(ast.Module(body=constants, type_ignores=[]), 'actual-tool-constants.py', 'exec'), namespace)
+        context = types.SimpleNamespace(mode='OBJECT')
+        for tool, label in zip(tools, ('Move', 'Rotate', 'Scale', 'Transform')):
+            active.idname = tool.idname
+            records.clear()
+            namespace['VIEW3D_MT_ipad_base_ring'].draw(types.SimpleNamespace(layout=Layout()), context)
+            self.assertEqual(len(records), 6)
+            self.assertEqual([r[1]['text'] for r in records[:5]],
+                             ['Layout / Mode', 'Tools', 'Undo', 'Redo', 'Select'])
+            self.assertEqual([records[i][2].name for i in (0, 1, 4)],
+                             ['VIEW3D_MT_ipad_layout_mode_ring', 'VIEW3D_MT_ipad_tool_inventory',
+                              'VIEW3D_MT_ipad_selection_options'])
+            self.assertEqual([records[i][0] for i in (2, 3)], ['ed.undo', 'ed.redo'])
+            self.assertEqual(records[5][0], 'wm.call_menu_pie')
+            self.assertEqual(records[5][1], {'text': label + ' Options', 'depress': True,
+                                           'icon_value': tool.icon})
+            self.assertEqual(records[5][2].name, 'VIEW3D_MT_ipad_transform_options')
+
+    def test_current_options_refuse_unsupported_or_changed_dynamic_context(self):
+        active = types.SimpleNamespace(idname='builtin.move')
+        expected = types.SimpleNamespace(idname='builtin.move', icon=107)
+        state = {'ring': 'VIEW3D_MT_ipad_transform_ring', 'inventory': [expected]}
+        class Layout:
+            def operator(self, *args, **kwargs):
+                raise AssertionError('Refused context must not publish a button')
+        namespace = python_nodes('ipad_active_tool_options_button',
+                                 ToolSelectPanelHelper=types.SimpleNamespace(tool_active_from_context=lambda C: active),
+                                 IPAD_RADIAL_TOOLS=(('Move', 'builtin.move', ''), ('Transform', 'builtin.transform', '')),
+                                 IPAD_TRANSFORM_TOOLS={'builtin.move': ()},
+                                 ipad_native_tool_inventory=lambda C: state['inventory'],
+                                 ipad_native_tool_icon=lambda tool: {'icon_value': tool.icon},
+                                 ipad_context_ring_name=lambda C: state['ring'])
+        helper = namespace['ipad_active_tool_options_button']
+        for tool in ('builtin.select_box', 'builtin.cursor', 'builtin.bevel', 'removed.addon.tool'):
+            active.idname = tool
+            self.assertFalse(helper(Layout(), object()))
+        active.idname = 'builtin.move'
+        state['ring'] = None
+        self.assertFalse(helper(Layout(), object()))
+        state['ring'] = 'VIEW3D_MT_ipad_transform_ring'
+        state['inventory'] = []
+        self.assertFalse(helper(Layout(), object()))
+        def changed_inventory(C):
+            active.idname = 'builtin.cursor'
+            return [expected]
+        namespace['ipad_native_tool_inventory'] = changed_inventory
+        self.assertFalse(helper(Layout(), object()))
+        active.idname = 'builtin.move'
+        def changed_context(C):
+            state['ring'] = None
+            return [expected]
+        namespace['ipad_native_tool_inventory'] = changed_context
+        self.assertFalse(helper(Layout(), object()))
+
     def test_native_header_capability_uses_actual_adapted_single_window_bounds(self):
         source = changed_source('source/blender/makesrna/intern/rna_screen.cc')
         getter = function(source, 'static bool rna_Area_ipad_pencil_header_supported_get(')

@@ -1,0 +1,70 @@
+{
+  "host": "5.1.2",
+  "patch_sha256": "f6ea491e822f772e845ff35e238fe87e0d0d67f9e873e0a28f4a15e8e72d19c5",
+  "interaction_python_sha256": "de03c7a4146a30213a4cdbbaf984368f99318b9e9200442bcf288badb804dbe9",
+  "native_active_tool": "builtin.move",
+  "layout": "actual stock-host native grid content comparison",
+  "menus": {
+    "before": [
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Layout / Mode",
+        "icon": "WORKSPACE"
+      },
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Tools",
+        "icon": "TOOL_SETTINGS"
+      },
+      {
+        "operator": "ed.undo",
+        "text": "Undo",
+        "icon": "LOOP_BACK"
+      },
+      {
+        "operator": "ed.redo",
+        "text": "Redo",
+        "icon": "LOOP_FORWARDS"
+      },
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Select",
+        "icon": "RESTRICT_SELECT_OFF"
+      }
+    ],
+    "after": [
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Layout / Mode",
+        "icon": "WORKSPACE"
+      },
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Tools",
+        "icon": "TOOL_SETTINGS"
+      },
+      {
+        "operator": "ed.undo",
+        "text": "Undo",
+        "icon": "LOOP_BACK"
+      },
+      {
+        "operator": "ed.redo",
+        "text": "Redo",
+        "icon": "LOOP_FORWARDS"
+      },
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Select",
+        "icon": "RESTRICT_SELECT_OFF"
+      },
+      {
+        "operator": "wm.call_menu_pie",
+        "text": "Move Options",
+        "depress": true,
+        "icon_value": 1088
+      }
+    ]
+  },
+  "scope": "Native UILayout/icons and exact shipped menu contents. Target circular placement/sizing/modal input and iPad comfort remain unverified."
+}

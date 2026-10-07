@@ -87,6 +87,11 @@ with zipfile.ZipFile(ipa) as archive:
     has_pencil_entry_fix = "bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', True, **options)" in expected
     has_default_native_header = b'diff --git a/scripts/startup/bl_ui/space_view3d.py ' not in patch
     has_contact_only_browsing = b'+  /* Ring browsing is contact-only.' in patch
+    has_current_tool_shortcut = 'def ipad_active_tool_options_button(layout, context):' in expected
+    if has_current_tool_shortcut:
+        assert 'ipad_active_tool_options_button(layout, context)' in actual
+        assert "text=labels[active_id] + ' Options'" in actual
+        assert b'+        data.touch_tools, kind == ipad_ring::RingKind::Base);' in patch
     if has_contact_only_browsing:
         assert b'+    ring_hover_gesture_recognizer = [[' not in patch
         assert b'+    system->pushEvent(new GHOST_EventPencilRing(system->getMilliSeconds(), window, packet));' not in patch
@@ -156,6 +161,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,
+    'current_tool_options_in_base_with_stable_native_slots':has_current_tool_shortcut,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),
