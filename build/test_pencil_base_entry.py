@@ -96,7 +96,7 @@ int main(){bScreen screen;Runtime runtime;ARegion window{RGN_TYPE_WINDOW,&runtim
 '''.replace('GETTER', getter))
         self.assertIn('RNA_def_property_clear_flag(prop, PROP_EDITABLE)', source[source.index('"ipad_pencil_header_supported", PROP_BOOLEAN'):])
 
-    def test_header_replacement_and_native_fallback_are_explicit_and_reversible(self):
+    def test_default_header_is_unmodified_and_no_custom_widgets_are_inserted(self):
         class Layout:
             def __init__(self): self.actions = []
             def row(self, **kwargs): return self
@@ -115,9 +115,8 @@ int main(){bScreen screen;Runtime runtime;ARegion window{RGN_TYPE_WINDOW,&runtim
                     window_manager=types.SimpleNamespace(ipad_flythrough_active=False))
         for _ in range(10000):
             row = Layout()
-            self.assertTrue(namespace['draw_canvas_header'](row, context))
-            self.assertEqual([name for name, _, _ in row.actions], ['label'])
-            self.assertEqual(row.actions[0][1]['text'], 'Object Mode · Move · X · Fine')
+            self.assertFalse(namespace['draw_canvas_header'](row, context))
+            self.assertEqual(row.actions, [])
         for mode in ('SCULPT', 'PAINT_TEXTURE', 'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'):
             context.mode = mode
             self.assertFalse(namespace['draw_canvas_header'](Layout(), context))
@@ -131,25 +130,11 @@ int main(){bScreen screen;Runtime runtime;ARegion window{RGN_TYPE_WINDOW,&runtim
         context.space_data.show_region_tool_header = False
         context.window_manager.ipad_flythrough_active = True
         self.assertFalse(namespace['draw_canvas_header'](Layout(), context))
-        # Execute the actual enclosing native header prefix through its branch.
-        source = changed_source('scripts/startup/bl_ui/space_view3d.py')
-        start = source.rfind('    def draw(self, context):', 0, source.index('from .space_view3d_ipad import draw_canvas_header'))
-        self.assertGreaterEqual(start, 0)
-        stop = source.index('        tool_settings = context.tool_settings', start)
-        tree = ast.parse(textwrap.dedent(source[start:stop]))
-        draw = tree.body[0]
-        prefix = draw.body[:3]  # layout, import, handled return
-        self.assertIsInstance(prefix[-1], ast.If)
-        self.assertTrue(any(isinstance(n, ast.Return) for n in prefix[-1].body))
-        prefix = [n for n in prefix if not isinstance(n, ast.ImportFrom)]
-        prefix.append(ast.parse('native_continuation.append(1)').body[0])
-        draw.body = prefix
-        scope = {'draw_canvas_header': lambda layout, context: context, 'native_continuation': []}
-        exec(compile(ast.fix_missing_locations(ast.Module(body=[draw], type_ignores=[])), 'actual-header-prefix.py', 'exec'), scope)
-        scope['draw'](types.SimpleNamespace(layout=Layout()), True)
-        self.assertEqual(scope['native_continuation'], [])
-        scope['draw'](types.SimpleNamespace(layout=Layout()), False)
-        self.assertEqual(scope['native_continuation'], [1])
+        # No patch section means the entire shipped native header module is
+        # the pinned Blender version, with no injected replacement or row.
+        from pathlib import Path
+        patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
+        self.assertNotIn('diff --git a/scripts/startup/bl_ui/space_view3d.py ', patch)
 
     def test_disabled_shelf_refuses_before_native_header_poll(self):
         source = changed_source('source/blender/editors/screen/screen_ipad_panels.cc')

@@ -29,7 +29,7 @@ ToolSelectPanelHelper._tool_class_from_space_type=staticmethod(lambda space:targ
 target.VIEW3D_PT_tools_active.register()
 area=next(a for a in bpy.context.window.screen.areas if a.type=='VIEW_3D')
 region=next(r for r in area.regions if r.type=='WINDOW')
-labels={'Layout / Mode','Tools','Undo','Redo','Select','Workspaces','Object Mode','Edit Mode','Sculpt Mode','Vertex Paint','Weight Paint','Texture Paint','Replace','Add','Remove','Fine','Snap','Numbers','Base','Native Controls','Brush Assets','Layouts','Canvas View','More','Free','X','Y','Z','Vertex','Edge','Face','Clear','Invert'}
+labels={'Layout / Mode','Tools','Undo','Redo','Select','Workspaces','Object Mode','Edit Mode','Sculpt Mode','Vertex Paint','Weight Paint','Texture Paint','Replace','Add','Remove','Fine','Snap','Numbers','Base','Native Controls','Brush Assets','Layouts','Flythrough','More','Free','X','Y','Z','Vertex','Edge','Face','Clear','Invert'}
 counts={}
 with bpy.context.temp_override(area=area,region=region):
     for mode in ('OBJECT','EDIT','SCULPT','VERTEX_PAINT','WEIGHT_PAINT','TEXTURE_PAINT'):

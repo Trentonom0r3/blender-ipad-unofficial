@@ -85,22 +85,28 @@ with zipfile.ZipFile(ipa) as archive:
             assert marker.encode() in binary,marker
     has_base = "options = {'name': 'VIEW3D_MT_ipad_base_ring'}" in expected
     has_pencil_entry_fix = "bpy.ops.wm.call_menu_pie('INVOKE_DEFAULT', True, **options)" in expected
+    has_default_native_header = b'diff --git a/scripts/startup/bl_ui/space_view3d.py ' not in patch
     if has_pencil_entry_fix:
         header_node = next(n for n in ast.parse(actual).body if isinstance(n,ast.FunctionDef) and n.name=='draw_canvas_header')
         header_source = ast.get_source_segment(actual,header_node)
         for removed in ('wm.ipad_tool_palette','wm.call_menu_pie','view3d.ipad_native_controls',
                         'view3d.ipad_ring_interface','view3d.ipad_shelf_visibility'):
             assert removed not in header_source,removed
-        assert "text='Canvas View'" in actual
+        if not has_default_native_header:
+            assert "text='Canvas View'" in actual
     if has_base:
         for marker in ('class VIEW3D_MT_ipad_base_ring','class VIEW3D_MT_ipad_tool_inventory',
                        'class VIEW3D_OT_ipad_native_tool','class VIEW3D_OT_ipad_native_controls',
                        'class VIEW3D_OT_ipad_shelf_visibility','ipad_editing_shelf_enabled',
-                       'def draw_canvas_header(layout, context)', 'return compact'):
+                       'def draw_canvas_header(layout, context)'):
             assert marker in actual,marker
         header,=[n for n in names if n.endswith('/bl_ui/space_view3d.py')]
         header_text=archive.read(header).decode('utf-8').replace('\r\n','\n')
-        assert 'if draw_canvas_header(layout, context):\n            return' in header_text
+        if has_default_native_header:
+            native_header_pin=get_source(pin,'scripts/startup/bl_ui/space_view3d.py',repo/'.cache/preflight',False).decode('utf-8').replace('\r\n','\n')
+            assert header_text==native_header_pin,'Default Blender header differs from pinned source'
+        else:
+            assert 'if draw_canvas_header(layout, context):\n            return' in header_text
         for marker in ('VIEW3D_MT_ipad_base_ring','VIEW3D_MT_ipad_tool_inventory',
                        'VIEW3D_OT_ipad_native_controls','VIEW3D_OT_ipad_transform_numbers',
                        'ipad_pencil_header_supported','ipad_editing_shelf_enabled'):
@@ -141,7 +147,8 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'preserved_ring_transform_bevel_files_and_native_icon_markers':True,
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
-    'explicit_native_pencil_entry_and_caption_only_header':has_pencil_entry_fix,
+    'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
+    'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),

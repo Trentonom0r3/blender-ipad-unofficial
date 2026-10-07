@@ -5843,7 +5843,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1472 @@
+@@ -0,0 +1,1455 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -6038,6 +6038,7 @@ new file mode 100644
 +        if BrushAssetShelf.get_shelf_name_from_context(context) is not None:
 +            layout.popover(panel='VIEW3D_PT_ipad_brush_access', text='Brush Assets', icon='BRUSH_DATA')
 +        ipad_native_controls_button(layout)
++        layout.operator('view3d.ipad_flythrough_toggle', text='Flythrough', icon='CAMERA_STEREO')
 +        ipad_base_return(layout)
 +
 +
@@ -6082,7 +6083,6 @@ new file mode 100644
 +            layout.operator_enum('object.mode_set', 'mode')
 +        layout.operator('wm.call_menu_pie', text='Layouts', icon='WORKSPACE').name = (
 +            'VIEW3D_MT_ipad_workspaces_ring')
-+        layout.operator('view3d.ipad_ring_interface', text='Canvas View', icon='VIEW3D')
 +        ipad_base_return(layout)
 +
 +
@@ -7234,26 +7234,9 @@ new file mode 100644
 +
 +
 +def draw_canvas_header(layout, context):
-+    if not context.area or context.area.type != 'VIEW_3D':
-+        return False
-+    compact = (ipad_pencil_header_supported(context)
-+               and not context.space_data.show_region_tool_header)
-+    if compact:
-+        # Squeeze owns ring entry. The header only reports the live editing state.
-+        layout.label(text=ipad_canvas_caption(context))
-+    else:
-+        # Preserve the earlier camera/Bevel native-header routes, without the
-+        # duplicate Ring, context, Controls, Ring UI or trial Shelf buttons.
-+        row = layout.row(align=True)
-+        row.operator_context = 'INVOKE_REGION_WIN'
-+        if ipad_bevel_state(context) is not None:
-+            row.popover(panel='VIEW3D_PT_ipad_bevel', text='Bevel', icon='MOD_BEVEL')
-+        if ipad_camera_state(context) is not None:
-+            row.popover(panel='VIEW3D_PT_ipad_camera', text='Camera', icon='VIEW_CAMERA')
-+        row.operator('view3d.ipad_flythrough_toggle',
-+                     text='Exit Flythrough' if getattr(context.window_manager, 'ipad_flythrough_active', False) else 'Flythrough',
-+                     icon='CAMERA_STEREO')
-+    return compact
++    # Compatibility for existing callers: the iPad ring adds no header widgets
++    # and never replaces Blender's normal menu/viewport header.
++    return False
 +
 +
 +# This module is installed by the iOS-only overlay. Do not gate registration on
@@ -7316,94 +7299,6 @@ new file mode 100644
 +
 +
 +# Native screen presentation now owns startup, workspace switching and panel visibility.
-diff --git a/scripts/startup/bl_ui/space_view3d.py b/scripts/startup/bl_ui/space_view3d.py
---- a/scripts/startup/bl_ui/space_view3d.py
-+++ b/scripts/startup/bl_ui/space_view3d.py
-@@ -757,80 +757,84 @@
-         if object_mode in {
-             'EDIT',
-             'PARTICLE_EDIT',
-             'SCULPT_GREASE_PENCIL',
-             'EDIT_GPENCIL',
-             'OBJECT',
-         } and context.mode != 'EDIT_ARMATURE':
-             row = layout.row(align=True)
-             kw = {}
-             if object_mode == 'OBJECT':
-                 attr = "use_proportional_edit_objects"
-             else:
-                 attr = "use_proportional_edit"
-
-                 if tool_settings.use_proportional_edit:
-                     if tool_settings.use_proportional_connected:
-                         kw["icon"] = 'PROP_CON'
-                     elif tool_settings.use_proportional_projected:
-                         kw["icon"] = 'PROP_PROJECTED'
-                     else:
-                         kw["icon"] = 'PROP_ON'
-                 else:
-                     kw["icon"] = 'PROP_OFF'
-
-             row.prop(tool_settings, attr, icon_only=True, **kw)
-             sub = row.row(align=True)
-             sub.active = getattr(tool_settings, attr)
-             sub.prop_with_popover(
-                 tool_settings,
-                 "proportional_edit_falloff",
-                 text="",
-                 icon_only=True,
-                 panel="VIEW3D_PT_proportional_edit",
-             )
-
-         if object_mode == 'EDIT' and obj.type == 'GREASEPENCIL':
-             draw_topbar_grease_pencil_layer_panel(context, layout)
-
-     def draw(self, context):
-         layout = self.layout
-+
-+        from .space_view3d_ipad import draw_canvas_header
-+        if draw_canvas_header(layout, context):
-+            return
-
-         tool_settings = context.tool_settings
-         view = context.space_data
-         shading = view.shading
-
-         layout.row(align=True).template_header()
-
-         row = layout.row(align=True)
-         obj = context.active_object
-         mode_string = context.mode
-         object_mode = 'OBJECT' if obj is None else obj.mode
-         has_pose_mode = (
-             (object_mode == 'POSE') or
-             (object_mode == 'WEIGHT_PAINT' and context.pose_object is not None)
-         )
-
-         # Note: This is actually deadly in case enum_items have to be dynamically generated
-         #       (because internal RNA array iterator will free everything immediately...).
-         # XXX This is an RNA internal issue, not sure how to fix it.
-         # Note: Tried to add an accessor to get translated UI strings instead of manual call
-         #       to pgettext_iface below, but this fails because translated enum-items
-         #       are always dynamically allocated.
-         act_mode_item = bpy.types.Object.bl_rna.properties["mode"].enum_items[object_mode]
-         act_mode_i18n_context = bpy.types.Object.bl_rna.properties["mode"].translation_context
-
-         sub = row.row(align=True)
-         sub.operator_menu_enum(
-             "object.mode_set", "mode",
-             text=iface_(act_mode_item.name, act_mode_i18n_context),
-             icon=act_mode_item.icon,
-         )
-         del act_mode_item
-
-         layout.template_header_3D_mode()
-
-         # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode...
-         if obj:
-             # Particle edit
-             if object_mode == 'PARTICLE_EDIT':
-                 row = layout.row()
 diff --git a/intern/ghost/intern/GHOST_SystemIOS.mm b/intern/ghost/intern/GHOST_SystemIOS.mm
 --- a/intern/ghost/intern/GHOST_SystemIOS.mm
 +++ b/intern/ghost/intern/GHOST_SystemIOS.mm
