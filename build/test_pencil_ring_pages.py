@@ -45,8 +45,8 @@ int main(){
  auto next=ring_page_layout(20,view,512,384,20,1);assert(next.indices[0]==1&&next.indices[8]==9);
  auto previous=ring_page_layout(20,view,512,384,20,-1);assert(previous.indices[0]==19&&previous.indices[1]==0);
  auto original=tool_ring_layout(20,view,512,384);auto finger=tool_ring_layout(20,view,512,384,true);
- assert(home.buttons[0].xmax-home.buttons[0].xmin>original.buttons[0].xmax-original.buttons[0].xmin);
- assert(home.footprint.xmax-home.footprint.xmin<2*7.4f*20+4.4f*20);
+ assert(std::abs((home.buttons[0].xmax-home.buttons[0].xmin)-(original.buttons[0].xmax-original.buttons[0].xmin))<.01f);
+ assert(std::abs((home.footprint.xmax-home.footprint.xmin)-(2*7.6f*20+4.7f*20))<.01f);
  assert(home.buttons[0].ymax-home.buttons[0].ymin<finger.buttons[0].ymax-finger.buttons[0].ymin);
  for(int total:{0,4097})assert(!ring_page_layout(20,view,512,384,total,0).fits);
  assert(!ring_page_layout(20,{0,60,0,900},0,0,20,0).fits);
@@ -147,7 +147,10 @@ struct uiBut{wmOperatorType *optype;PointerRNA *opptr;int flag=UI_BUT_UNDO,pie_d
 struct uiBlock{std::vector<std::unique_ptr<uiBut>> buttons;ipad_ring::Rect bounds{};bool ipad_ring_full_labels=false;};
 PanelType *UI_but_paneltype_get(uiBut *but){return but->optype?nullptr:&next_drag;}
 struct Object{int mode=1;};struct bContext{Object *object;};struct uiPopupBlockHandle{int menuretval=0;};
-struct Data{std::string tool_identity="builtin.move";int visible_count=0,inventory_count=0,anchor[2]={350,400};float phase=0;bool touch_tools=false;};
+struct Data{std::string tool_identity="builtin.move",reopen_tool_inventory,reopen_workspace_inventory;int visible_count=0,inventory_count=0,anchor[2]={350,400};float phase=0;bool touch_tools=false,reopen_phase_pending=false;struct{float phase=0;}browse;};
+std::string ui_ipad_ring_native_inventory(uiBlock *){return "tools";}
+void *CTX_data_main(bContext *){return nullptr;}
+std::string ui_ipad_ring_workspace_inventory(void *){return "workspaces";}
 Object *CTX_data_active_object(bContext *C){return C->object;}
 int RNA_enum_get(PointerRNA *p,const char *){return p->mode;}
 void RNA_string_get(PointerRNA *p,const char *,char *out){std::memcpy(out,p->name.c_str(),p->name.size()+1);}

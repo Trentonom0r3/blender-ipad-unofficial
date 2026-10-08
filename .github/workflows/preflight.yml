@@ -138,5 +138,15 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_numbers_expression.py -v
       - name: Test pending Numbers native unregister and terminal ownership
         run: python3 -m unittest discover -s build -p test_pencil_numbers_lifecycle.py -v
+      - name: Unified Pencil ring styling and actual overflow cue
+        run: python3 -m unittest discover -s build -p test_pencil_ring_visual.py -v
+      - name: Fresh persistent ring actions and deferred workspace return
+        run: python3 -m unittest discover -s build -p test_pencil_ring_reopen.py -v
+      - name: Actual-composited native HUD receipts and canvas exclusion
+        run: python3 -m unittest discover -s build -p test_pencil_hud_presentation.py -v
+      - name: Frozen physical HUD contacts and GHOST payloads
+        run: python3 -m unittest discover -s build -p test_pencil_hud_contacts.py -v
+      - name: Native HUD field ownership and one-contact Redo continuation
+        run: python3 -m unittest discover -s build -p test_pencil_hud_fields.py -v
       - name: Validate patch against pinned upstream and check scripts
         run: python3 build/preflight.py

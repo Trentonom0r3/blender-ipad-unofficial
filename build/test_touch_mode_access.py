@@ -29,7 +29,7 @@ namespace ipad_ring=blender::ui::ipad;
 template<class T>struct List{T *first=nullptr;};
 template<class T>int BLI_findindex(const List<T> *list,const T *ptr){int i=0;for(auto *p=list->first;p;p=p->next,++i)if(p==ptr)return i;return -1;}
 struct ID{unsigned int session_uid=1;};
-struct Main{};
+struct wmWindowManager;struct Main{List<wmWindowManager> wm;};
 struct Object{ID id;void *data=nullptr;int mode=0;};
 struct ViewLayer{ViewLayer *next=nullptr;Object *active=nullptr;};
 struct Scene{ID id;List<ViewLayer> view_layers;};
@@ -38,9 +38,9 @@ struct ARegion{ARegion *next=nullptr;RegionRuntime *runtime=nullptr;int regionty
 struct ScrArea{ScrArea *next=nullptr;List<ARegion> regionbase;int spacetype=2;};
 struct bScreen{ID id;List<ScrArea> areabase;};
 struct wmWindow{wmWindow *next=nullptr;bScreen *screen=nullptr;Scene *scene=nullptr;ViewLayer *layer=nullptr;int winid=17;};
-struct wmWindowManager{ID id;List<wmWindow> windows;};
+struct wmWindowManager{ID id;List<wmWindow> windows;wmWindowManager *next=nullptr;};
 struct bContext{Main *main;wmWindowManager *wm;wmWindow *window;ScrArea *area;ARegion *region;Scene *scene;ViewLayer *layer;Object *object;};
-constexpr int RGN_TYPE_WINDOW=1,SPACE_VIEW3D=2;
+inline constexpr int RGN_TYPE_WINDOW=1,RGN_TYPE_HUD=2,SPACE_VIEW3D=2;
 wmWindowManager *CTX_wm_manager(bContext *C){return C->wm;}
 wmWindow *CTX_wm_window(bContext *C){return C->window;}
 Main *CTX_data_main(bContext *C){return C->main;}
@@ -49,6 +49,8 @@ Scene *WM_window_get_active_scene(wmWindow *w){return w->scene;}
 ViewLayer *WM_window_get_active_view_layer(wmWindow *w){return w->layer;}
 ScrArea *CTX_wm_area(bContext *C){return C->area;}
 ARegion *CTX_wm_region(bContext *C){return C->region;}
+void CTX_wm_area_set(bContext *C,ScrArea *area){C->area=area;}
+void CTX_wm_region_set(bContext *C,ARegion *region){C->region=region;}
 Scene *CTX_data_scene(bContext *C){return C->scene;}
 ViewLayer *CTX_data_view_layer(bContext *C){return C->layer;}
 Object *CTX_data_active_object(bContext *C){return C->object;}
@@ -59,6 +61,7 @@ struct Fixture{
  RegionRuntime runtime;ARegion region{nullptr,&runtime};ScrArea area{nullptr,{&region}};
  bScreen screen{{8},{&area}};wmWindow window{nullptr,&screen,&scene,&layer};wmWindowManager wm{{7},{&window}};
  bContext C{&main,&wm,&window,&area,&region,&scene,&layer,&object};
+ Fixture(){main.wm.first=&wm;}
 };
 '''
 
@@ -135,6 +138,7 @@ int main(){
    'bool ui_ipad_ring_action_capture('))
   self.run_cpp(WORLD+IDENTITY+r'''
 #define WITH_APPLE_CROSSPLATFORM
+#define LISTBASE_FOREACH(type,var,list) for(type var=(list)->first;var;var=var->next)
 #define STREQ(a,b) (std::strcmp(a,b)==0)
 constexpr int UI_PIE_IPAD_TOOLS=256,UI_PIE_IPAD_MODE=1024,NC_SPACE=1,ND_SPACE_VIEW3D=2;
 struct bToolRef{std::string idname;};bToolRef live_tool{"builtin.move"};bool has_tool=true;int tool_lookups=0;
@@ -145,7 +149,8 @@ struct uiPopupBlockHandle{struct{void *arg=nullptr;}popup_create_vars;};
 struct uiBlock{struct{int flags=UI_PIE_IPAD_MODE;}pie_data;uiPopupBlockHandle *handle;};
 struct uiBut{wmOperatorType *optype=nullptr;int opcontext=1;PointerRNA *opptr=nullptr;};
 struct uiIPadOperatorReceipt{wmOperatorType *type=nullptr;};
-struct After{bool ipad_ring_guarded=false;uint64_t ipad_ring_context[13]={};std::string ipad_ring_tool;uint64_t ipad_ring_lifetime=0;std::string ipad_ring_selection_target;wmOperatorType *optype=nullptr;int opcontext=0;PointerRNA *opptr=nullptr;std::string drawstr;ipad_ring::ActionOrigin ipad_action_origin{};uiIPadOperatorReceipt ipad_operator{};};
+struct uiIPadRingReopenRequest{bool present()const{return false;}};
+struct After{uiIPadRingReopenRequest ipad_ring_reopen{};bool ipad_ring_guarded=false;uint64_t ipad_ring_context[13]={};std::string ipad_ring_tool;uint64_t ipad_ring_lifetime=0;std::string ipad_ring_selection_target;wmOperatorType *optype=nullptr;int opcontext=0;PointerRNA *opptr=nullptr;std::string drawstr;ipad_ring::ActionOrigin ipad_action_origin{};uiIPadOperatorReceipt ipad_operator{};};
 bool ui_ipad_view_dispatch_allowed(bContext*,const After&,wmOperatorType*,PointerRNA*){return true;}
 wmOperatorType *ui_ipad_operator_resolve(const uiIPadOperatorReceipt &receipt){return receipt.type;}
 namespace blender::wm{using OpCallContext=int;}
@@ -156,7 +161,14 @@ bool ui_ipad_ring_waits_for_draw(const uiBlock *b){auto *p=static_cast<uiIPadRin
 std::string ui_ipad_ring_selection_target(bContext *,const uiBut *){return {};}
 void ui_ipad_ring_selection_rebase(bContext *,const uint64_t *,const std::string &,const std::string &,uint64_t){}
 POPUP
+bool UI_ipad_ring_reopen_capture(bContext*,const uiBlock*,uiIPadRingReopenRequest&);
 void transfer(bContext *C,uiBlock *block,uiBut *but,After *after){after->ipad_operator.type=but->optype;CAPTURE}
+// This historical destroyed-popup fixture has no persistent request; the new terminal route is executed separately.
+using wmOperatorStatus=int;
+bool UI_ipad_ring_reopen_capture(bContext*,const uiBlock*,uiIPadRingReopenRequest&){return false;}
+bool ui_ipad_ring_reopen_leaf(bContext*,After&,wmOperatorType*,PointerRNA*){return false;}
+wmOperatorStatus WM_operator_name_call_ptr(bContext *C,wmOperatorType *,int,PointerRNA *,void *){++calls;C->object->mode=1;return 1;}
+void UI_ipad_ring_reopen_queue(bContext*,const uiIPadRingReopenRequest&,wmOperatorStatus){}
 void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,wmOperatorType *,int,PointerRNA *,void *,std::string){++calls;C->object->mode=1;}
 void WM_main_add_notifier(int,void *){++notifiers;}
 void WM_operator_properties_free(PointerRNA *){++frees;}

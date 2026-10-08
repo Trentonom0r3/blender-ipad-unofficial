@@ -20,8 +20,10 @@ template<class T,class... U>bool elem(const T &v,const U &... choices){return ((
 constexpr int PROP_ENUM_FLAG=2;constexpr double UI_BUT_VALUE_UNSET=1e30;
 enum class ButPointerType{None,Char,Short,Int,Float};
 enum class ButType{Num,Unitvec};
-struct uiBut{uiBlock *block=nullptr;PointerRNA rnapoin;PropertyRNA *rnaprop=nullptr;uiIPadRNAReceipt ipad_rna_receipt;int rnaindex=0;double *editval=nullptr;char *poin=nullptr;ButPointerType pointype=ButPointerType::None;ButType type=ButType::Num;};
+struct uiBut{bool ipad_callback_retired=false;uiBlock *block=nullptr;PointerRNA rnapoin;PropertyRNA *rnaprop=nullptr;uiIPadRNAReceipt ipad_rna_receipt;int rnaindex=0;double *editval=nullptr;char *poin=nullptr;ButPointerType pointype=ButPointerType::None;ButType type=ButType::Num;};
 struct uiBlock{ipad_ring::ActionOrigin ipad_action_origin;void *evil_C=nullptr;std::vector<std::unique_ptr<uiBut>> buttons;};
+// Physical HUD ownership executes in test_pencil_hud_fields. These popup fixtures have no HUD contact.
+bool ui_ipad_hud_button_owner_allowed(bContext *,const uiBut *){return true;}
 // Immediate callback classification executes in test_pencil_self_callback.
 bool ui_ipad_but_self_callback_allowed(bContext *,uiBut *){return true;}
 double stored_value=0;int value_reads=0,value_writes=0;

@@ -101,6 +101,26 @@ with zipfile.ZipFile(ipa) as archive:
         assert b'+  ui_ipad_ring_inventory_capture(block, *data);' in patch
         assert b'+    radius = 4.9f * unit;' in patch
 
+    has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
+    if has_corner_panels:
+        tree = ast.parse(actual)
+        for name in ('VIEW3D_PT_ipad_corner_transform', 'VIEW3D_PT_ipad_corner_selection', 'VIEW3D_PT_ipad_corner_view'):
+            node = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == name)
+            content = ast.get_source_segment(actual, node)
+            assert "bl_region_type = 'HUD'" in content and "bl_options = {'DEFAULT_CLOSED'}" in content
+        inventory = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'ipad_draw_native_tool_inventory')
+        assert 'popover' not in ast.get_source_segment(actual, inventory)
+        assert 'view3d.ipad_native_tool' in ast.get_source_segment(actual, inventory)
+        for value in ('Press & circle', 'VIEW3D_PT_ipad_corner_'):
+            assert value.encode() in binary, value
+        for value in (b'+  uiIPadRingReopenRequest ipad_ring_reopen{};',
+                      b'+static bool ui_ipad_corner_panels_size(',
+                      b'+  if (!ui_ipad_hud_button_input(C, event, but))',
+                      b'+bool UI_ipad_hud_event_admit(',
+                      b'+static bool wm_draw_region_blend_receipt(',
+                      b'+  uint64_t ipad_hud_generation = 0, ipad_hud_serial = 0;'):
+            assert value in patch, value
+
     if has_view_category:
         assert "layout.ipad_view_navigation_mask()" in actual
         assert "layout.operator_context = 'EXEC_REGION_WIN'" in actual
@@ -179,6 +199,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'native_mode_chooser_and_current_mode_ui_markers':has_modes,
     'base_ring_and_native_header_return_markers':has_base,
     'compact_base_next_drag_and_final_draw_continuity':has_compact_next_drag,
+    'unified_persistent_ring_and_collapsed_corner_source_markers':has_corner_panels,
     'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,

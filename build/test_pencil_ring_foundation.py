@@ -43,20 +43,24 @@ int main(int argc,char **argv) {
   assert(argc==2);
   int which=std::atoi(argv[1]);
   RingBrowseState s; open(s);
+  const Rect north = items()[0].bounds;
+  const float touch_x = (north.xmin + north.xmax) * .5f;
+  const float touch_y = (north.ymin + north.ymax) * .5f;
+  const float ring_radius = touch_y - 400.f;
   if(which==1) {
-    assert(s.press(19,500,492).result==Result::Shield);
-    assert(s.motion(19,502,492).result==Result::Shield);
-    const auto tap=s.release(19,502,492,false);
+    assert(s.press(19,touch_x,touch_y).result==Result::Shield);
+    assert(s.motion(19,touch_x+2,touch_y).result==Result::Shield);
+    const auto tap=s.release(19,touch_x+2,touch_y,false);
     assert(tap.result==Result::Tap && tap.identity=="native-tool-0");
-    assert(s.release(19,500,492,false).result==Result::Shield);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
     assert(s.press(19,500,400).result==Result::Shield);
     assert(s.release(19,500,400,false).result==Result::Close);
   }
   if(which==2) {
-    s.press(19,500,492);
+    s.press(19,touch_x,touch_y);
     for(int i=1;i<=10;++i) {
       float angle=i*.2f;
-      assert(s.motion(19,500+std::sin(angle)*92,400+std::cos(angle)*92).result==Result::Rebuild);
+      assert(s.motion(19,touch_x+std::sin(angle)*ring_radius,400+std::cos(angle)*ring_radius).result==Result::Rebuild);
       assert(!s.ready());
       assert(present(s));
     }
@@ -65,29 +69,29 @@ int main(int argc,char **argv) {
     assert(lifted.result==Result::Rebuild && lifted.identity.empty());
     assert(std::floor(s.phase)==s.phase);
     assert(present(s));
-    assert(s.release(19,500,492,false).result==Result::Shield);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
   }
   if(which==3) {
-    s.press(19,500,492);
+    s.press(19,touch_x,touch_y);
     ++s.desired_generation;
     assert(s.publish(19,s.desired_generation,items(1),43,{0,1000,0,800},500,400,20));
-    assert(s.release(19,500,492,false).result==Result::Shield);
-    s.press(19,500,492); s.home(19);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
+    s.press(19,touch_x,touch_y); s.home(19);
     assert(present(s));
-    assert(s.release(19,500,492,false).result==Result::Shield);
-    s.press(19,500,492);
-    assert(s.release(19,500,492,true).result==Result::Shield);
-    assert(s.release(19,500,492,false).result==Result::Shield);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
+    s.press(19,touch_x,touch_y);
+    assert(s.release(19,touch_x,touch_y,true).result==Result::Shield);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
   }
   if(which==4) {
-    s.press(19,500,492); s.retire(); open(s,20);
-    assert(s.release(19,500,492,false).result==Result::Shield);
+    s.press(19,touch_x,touch_y); s.retire(); open(s,20);
+    assert(s.release(19,touch_x,touch_y,false).result==Result::Shield);
     assert(s.roll(19,1,true).result==Result::Shield);
     assert(s.home(19).result==Result::Shield);
     assert(s.phase==0 && s.ready() && !s.contact);
-    s.press(20,500,492);
+    s.press(20,touch_x,touch_y);
     s.press(20,items(1)[1].bounds.xmin+1,items(1)[1].bounds.ymin+1);
-    assert(s.release(20,500,492,false).identity=="native-tool-0");
+    assert(s.release(20,touch_x,touch_y,false).identity=="native-tool-0");
   }
   if(which==5) {
     assert(s.roll(19,0,true,true).result==Result::Shield);
@@ -101,9 +105,9 @@ int main(int argc,char **argv) {
     assert(s.roll(19,-1.f,true).result==Result::Shield && s.phase==stable);
     s.roll(19,0,false);
     assert(s.roll(19,2,true).result==Result::Shield && s.phase==stable);
-    s.press(19,500,492);
+    s.press(19,touch_x,touch_y);
     assert(s.roll(19,3,true).result==Result::Shield);
-    s.release(19,500,492,true);
+    s.release(19,touch_x,touch_y,true);
     assert(s.roll(19,0,true).result==Result::Shield && s.phase==stable);
   }
   if(which==7) {
@@ -144,10 +148,10 @@ int main(int argc,char **argv) {
     assert(!s.publish(19,1,items(),43,{0,1000,0,800},500,400,0));
     assert(s.roll(19,std::numeric_limits<float>::quiet_NaN(),true).result==Result::Shield);
     for(int i=0;i<10000;++i) {
-      s.press(19,500,492);
-      assert(s.motion(19,520,490).result==Result::Rebuild);
+      s.press(19,touch_x,touch_y);
+      assert(s.motion(19,touch_x+30,touch_y-5).result==Result::Rebuild);
       assert(present(s));
-      assert(s.release(19,520,490,true).result==Result::Rebuild);
+      assert(s.release(19,touch_x+30,touch_y-5,true).result==Result::Rebuild);
       assert(!s.rotating && present(s));
       assert(s.first_item()>=0 && s.first_item()<43);
     }

@@ -14,8 +14,6 @@ POPUP=changed_source('source/blender/editors/interface/regions/interface_region_
 
 ORIGIN_WORLD=WORLD+r'''
 #define LISTBASE_FOREACH(type,var,list) for(type var=(list)->first;var;var=var->next)
-void CTX_wm_area_set(bContext *C,ScrArea *area){C->area=area;}
-void CTX_wm_region_set(bContext *C,ARegion *region){C->region=region;}
 std::string live_tool="builtin.move";int tool_reads=0;
 std::string ui_ipad_ring_tool_identity(bContext *){++tool_reads;return live_tool;}
 '''+IDENTITY+'\n'+function(NATIVE,'bool ui_ipad_action_origin_valid(')+'\n'+function(NATIVE,'bool ui_ipad_action_origin_rebind(')

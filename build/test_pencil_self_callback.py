@@ -35,7 +35,7 @@ struct PropertyRNA{};
 struct wmWindow{struct Event{int modifier=0;} event;Event *eventstate=&event;};
 struct bContext{bool live=true,rebind=true;Scene *scene=nullptr;wmWindow win;};
 struct uiPopupBlockHandle{int menuretval=0;};
-struct uiBlock{ipad_ring::ActionOrigin ipad_action_origin;void *evil_C=nullptr;
+struct uiBlock{uint64_t ipad_corner_block_lifetime=0;ipad_ring::ActionOrigin ipad_action_origin;void *evil_C=nullptr;
  uiPopupBlockHandle *handle=nullptr;void *handle_func=nullptr;};
 using uiButHandleFunc=void (*)(bContext *,void *,void *);
 struct uiBut{uiBlock *block=nullptr;uiIPadRNAReceipt ipad_rna_receipt;
@@ -49,11 +49,16 @@ int reads=0,writes=0,rebinds=0,freed=0,outer_writes=0;
 wmWindow *CTX_wm_window(bContext *C){return &C->win;}
 Scene *CTX_data_scene(bContext *C){return C->scene;}
 bool ui_ipad_action_origin_valid(bContext *C,const ipad_ring::ActionOrigin &o){return !o.present()||C->live;}
+// These Snap popup fixtures have no native corner/HUD owner. Dedicated tests execute those receipts.
+bool ui_ipad_corner_history_matches(bContext *,const uiBlock *){return true;}
+bool ui_ipad_hud_button_owner_allowed(bContext *,const uiBut *){return true;}
 bool ui_ipad_but_rna_rebind(bContext *C,uiBut *){++rebinds;return C->live&&C->rebind;}
 int RNA_property_enum_get(PointerRNA *p,PropertyRNA *){++reads;return static_cast<ToolSettings *>(p->data)->snap_mode;}
 void RNA_property_enum_set(PointerRNA *p,PropertyRNA *,int value){++writes;static_cast<ToolSettings *>(p->data)->snap_mode=value;}
 void ui_but_active_free(bContext *,uiBut *){++freed;}
 struct uiHandleButtonData{bool cancel=false;};struct wmEvent{};
+// No physical HUD stream enters this self-callback fixture.
+bool ui_ipad_hud_button_input(bContext *,const wmEvent *,uiBut *){return true;}
 '''
 FIXTURE = r'''
 struct Fixture{

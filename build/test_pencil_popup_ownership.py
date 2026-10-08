@@ -139,6 +139,8 @@ using uiButArgNFree=void(*)(void *);
 using uiButHandleRenameFunc=void(*)(bContext *,void *,char *);
 using uiBlockHandleFunc=void(*)(bContext *,void *,int);
 using uiFreeArgFunc=void(*)(void *);
+using wmOperatorStatus=int;
+struct uiIPadRingReopenRequest{bool present()const{return false;}};
 namespace blender::wm{enum class OpCallContext{Invoke};}
 constexpr int BKE_UNDO_STR_MAX=64,NC_SPACE=1,ND_SPACE_VIEW3D=2;
 #define BLI_assert(x) assert(x)
@@ -152,7 +154,14 @@ template<class T>void MEM_delete(T *p){if constexpr(std::is_same_v<T,uiAfterFunc
 void MEM_freeN(void *){++rename_frees;}
 std::vector<std::string> calls;std::string stop;bool owned=true,lease=true,installed=false;
 bool ui_ipad_action_origin_valid(bContext *C,const ipad_ring::ActionOrigin &o){return !o.present()||C->live;}
+void *CTX_wm_area(bContext*){return nullptr;}void *CTX_wm_region(bContext*){return nullptr;}
+bool ui_ipad_action_origin_rebind(bContext *C,const ipad_ring::ActionOrigin &o){return !o.present()||C->live;}
+void ui_ipad_action_context_restore(bContext*,uintptr_t,uintptr_t){}
 bool ui_ipad_context_store_rebind(bContext *,const ipad_ring::ActionOrigin &o,bContextStore &store){return !o.present()||!store.unproved_pointer;}
+// These historical popup fixtures carry no physical HUD field receipt.
+bool ui_ipad_hud_field_allowed(bContext *,uint64_t uid){assert(uid==0);return true;}
+void ED_undo_operator_repeat_cb_evt(bContext *,void *,int){}
+bool ui_ipad_hud_native_repeat(bContext *,uint64_t uid,const void *){assert(uid==0);return false;}
 bool numbers_lease=true;
 struct uiBlock{int generation=2;};struct RNARuntime{struct{uiBlock *first=nullptr;} uiblocks;};struct RNARegion{RNARuntime *runtime=nullptr;};
 struct uiPopupBlockHandle{void *popup_arg=nullptr;RNARegion *region=nullptr;};
@@ -173,6 +182,10 @@ void popup_check(bContext *C,wmOperator *){semantic(C,"popup");}
 bool UI_ipad_context_matches(bContext *,const uint64_t *){return true;}
 std::string ui_ipad_ring_tool_identity(bContext *){return "builtin.move";}
 struct uiIPadActionOriginScope{explicit uiIPadActionOriginScope(const ipad_ring::ActionOrigin &){};};
+// Historical callback cases carry no reopen request; dedicated tests execute the native queue/flush.
+bool ui_ipad_ring_reopen_leaf(bContext*,uiAfterFunc&,wmOperatorType*,PointerRNA*){return false;}
+wmOperatorStatus WM_operator_name_call_ptr(bContext *C,wmOperatorType *,blender::wm::OpCallContext,PointerRNA *,void *){semantic(C,"operator");return 1;}
+void UI_ipad_ring_reopen_queue(bContext*,const uiIPadRingReopenRequest&,wmOperatorStatus){}
 void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,wmOperatorType *,blender::wm::OpCallContext,PointerRNA *,void *,const std::string &){semantic(C,"operator");}
 void ui_ipad_ring_selection_rebase(bContext *,const uint64_t *,const std::string &,const std::string &,uint64_t){}
 void WM_main_add_notifier(int,void *){}

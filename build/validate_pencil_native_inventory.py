@@ -112,7 +112,7 @@ with bpy.context.temp_override(area=area, region=region):
     assert module.VIEW3D_MT_ipad_transform_options.poll(bpy.context)
     drawn = draw('VIEW3D_MT_ipad_tool_inventory')
     assert [kwargs['text'].removesuffix('…') for _, kwargs, _ in drawn.entries[:9]] == [label for label, _, _ in module.IPAD_RADIAL_TOOLS]
-    assert drawn.entries[2][0]=='popover' and drawn.entries[2][1]['panel']=='VIEW3D_PT_ipad_transform'
+    assert drawn.entries[2][0]=='view3d.ipad_native_tool' and drawn.entries[2][2].name=='builtin.move'
     selection = draw('VIEW3D_MT_ipad_selection_options')
     assert selection.operators[0][2].name == 'VIEW3D_MT_ipad_tool_inventory'
     transform = draw('VIEW3D_MT_ipad_transform_options')
@@ -142,7 +142,7 @@ with bpy.context.temp_override(area=area, region=region):
                 entry=next(e for e in tools.entries if e[1].get('text','').removesuffix('…')==label)
                 native=next(t for t in module.ipad_native_tool_inventory(bpy.context) if t.idname==name)
                 assert {k:v for k,v in entry[1].items() if k in {'icon','icon_value'}}==module.ipad_native_tool_icon(native)
-                assert entry[0]=='popover' and entry[1]['panel']=='VIEW3D_PT_ipad_transform'
+                assert entry[0]=='view3d.ipad_native_tool' and entry[2].name==name
                 shortcuts.append({'mode':bpy.context.mode,'tool':name,'child_action':action,'base_slots':len(buttons)})
         for name in ('builtin.select_box','builtin.cursor'):
             bpy.ops.wm.tool_set_by_id(name=name)
@@ -163,7 +163,7 @@ report={
     'candidate_python_sha256': hashlib.sha256(source.encode()).hexdigest(),
     'contexts': records, 'menu_routes': routes,
     'registered_base_selection_transform_inventory_routes': 'passed',
-    'compact_base_and_selected_tool_next_drag': shortcuts,
+    'compact_base_and_direct_tool_selection': shortcuts,
     'guarded_native_activation_and_refusals': 'passed',
     'registered_native_controls_visibility_action': 'passed; current header restored with tool/mode/workspace/object transform preserved; no popup/target claim',
     'native_popup_modal_and_device_evidence': False}

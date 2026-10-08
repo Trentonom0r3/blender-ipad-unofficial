@@ -121,7 +121,7 @@ int main(){
 '''.replace('HELPER',helper))
 
     def test_draw_gate_requires_current_owned_generation_and_all_drawn_buttons(self):
-        world=WORLD.replace('constexpr int RGN_TYPE_WINDOW','[[maybe_unused]] constexpr int RGN_TYPE_WINDOW')
+        world=WORLD.replace('inline constexpr int RGN_TYPE_WINDOW','[[maybe_unused]] inline constexpr int RGN_TYPE_WINDOW')
         self.run_cpp(world+UI_FIXTURE+GATES+r'''
 int main(){
  uiIPadRingData data;uiPopupBlockHandle handle{true,{&data,ui_ipad_ring_create}};

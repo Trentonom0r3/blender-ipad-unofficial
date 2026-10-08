@@ -67,7 +67,7 @@ class PencilBaseEntryTests(unittest.TestCase):
             self.assertEqual([records[i][0] for i in (2,3)],['ed.undo','ed.redo'])
         self.assertNotIn('ipad_active_tool_options_button',PYTHON)
 
-    def test_selected_transform_uses_compact_next_drag_and_native_icons(self):
+    def test_selected_transform_selects_directly_and_corner_controls_are_collapsed(self):
         records=[]
         tool=types.SimpleNamespace(idname='builtin.move',label='Move')
         class Layout:
@@ -82,10 +82,16 @@ class PencilBaseEntryTests(unittest.TestCase):
             IPAD_TRANSFORM_TOOLS={'builtin.move':()},
             VIEW3D_PT_ipad_transform=types.SimpleNamespace(poll=lambda C:True))
         ns['ipad_draw_native_tool_inventory'](Layout(),types.SimpleNamespace(mode='OBJECT'))
-        self.assertEqual(records,[('popover',{'panel':'VIEW3D_PT_ipad_transform','text':'Move…','icon_value':101})])
+        self.assertEqual(records[0][:3],('operator','view3d.ipad_native_tool',{'text':'Move','icon_value':101,'depress':True}))
+        self.assertEqual(records[0][3].name,'builtin.move')
         tool.idname='builtin.transform';tool.label='Transform';records.clear()
         ns['ipad_draw_native_tool_inventory'](Layout(),types.SimpleNamespace(mode='OBJECT'))
-        self.assertEqual(records,[('popover',{'panel':'VIEW3D_PT_ipad_transform','text':'Transform…','icon_value':101})])
+        self.assertEqual(records[0][:3],('operator','view3d.ipad_native_tool',{'text':'Transform','icon_value':101,'depress':True}))
+        self.assertEqual(records[0][3].name,'builtin.transform')
+        for name in ('VIEW3D_PT_ipad_corner_transform','VIEW3D_PT_ipad_corner_selection','VIEW3D_PT_ipad_corner_view'):
+            corner=next(n for n in ast.parse(PYTHON).body if getattr(n,'name','')==name)
+            self.assertIn("bl_region_type = 'HUD'",ast.unparse(corner))
+            self.assertIn("bl_options = {'DEFAULT_CLOSED'}",ast.unparse(corner))
         panel=next(n for n in ast.parse(PYTHON).body if getattr(n,'name','')=='VIEW3D_PT_ipad_transform')
         text=ast.unparse(panel)
         self.assertIn("bl_label = 'Next drag'",text)

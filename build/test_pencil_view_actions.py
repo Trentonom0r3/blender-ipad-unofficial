@@ -30,9 +30,13 @@ bool UI_ipad_context_capture(bContext *C,uint64_t*){return C&&C->valid;}
 ARegion *CTX_wm_region(bContext *C){return C->region;}
 View3D *CTX_wm_view3d(bContext *C){return C->view;}
 bool ED_view3d_context_user_region(bContext *C,View3D **view,ARegion **region){*view=C->view;*region=C->redirect?nullptr:C->region;return true;}
-struct Origin{bool owned=true;bool present()const{return owned;}};
+struct Origin{bool owned=true,corner=false;bool present()const{return owned;}};
 struct uiBlock{Origin ipad_action_origin;uint64_t ipad_view_region_data=999;};
 bool ui_ipad_action_origin_valid(bContext *C,const Origin&){return C&&C->valid;}
+void *CTX_wm_area(bContext*){return nullptr;}
+bool rebind_enabled=true;int rebinds=0,restores=0;
+bool ui_ipad_action_origin_rebind(bContext*,const Origin&){++rebinds;return rebind_enabled;}
+void ui_ipad_action_context_restore(bContext*,uintptr_t,uintptr_t){++restores;}
 namespace blender::wm{enum class OpCallContext{ExecRegionWin,InvokeRegionWin,ExecDefault};}
 struct uiAfterFunc{Origin ipad_action_origin;bool ipad_view_guarded=true;uint64_t ipad_view_region_data=0;blender::wm::OpCallContext opcontext=blender::wm::OpCallContext::ExecRegionWin;};
 struct wmOperatorType{const char *idname;int flag=0;void *exec=reinterpret_cast<void*>(1),*invoke=nullptr,*srna=reinterpret_cast<void*>(2);};
@@ -112,6 +116,7 @@ int main(){RegionView3D view,other;ARegion region{&view};View3D space;bContext C
         self.assertLess(producer.index('after->ipad_view_region_data ='),producer.index('but->optype = nullptr'))
         dispatch=definition(HANDLERS,'static void ui_apply_but_funcs_after(')
         self.assertLess(dispatch.index('ui_ipad_operator_resolve(after.ipad_operator)'),dispatch.index('ui_ipad_view_dispatch_allowed('))
+        self.assertLess(dispatch.index('ui_ipad_view_dispatch_allowed('),dispatch.index('WM_operator_name_call_ptr('))
         self.assertLess(dispatch.index('ui_ipad_view_dispatch_allowed('),dispatch.index('WM_operator_name_call_ptr_with_depends_on_cursor('))
 
     def test_actual_python_menu_properties_context_disabled_state_and_base_return(self):
