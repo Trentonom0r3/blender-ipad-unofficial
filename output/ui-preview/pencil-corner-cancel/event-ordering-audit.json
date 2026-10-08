@@ -1,0 +1,11 @@
+{
+  "status": "source_ordering_confirmed",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source": "eced37573ab6adf8b34d0de3f53b0762d52fea57",
+  "ordering": "Native queue ordering was independently audited against the exact pin: handlePan2f enqueues cancelPointerCapture's original-window release before orbit; GHOST pushes front/pops back and WM appends tail (FIFO). The active numeric UI handler calls ui_handle_button_event then synchronously ui_apply_but_funcs_after before returning; WM advances to the next event afterward. Its native restoration/repeat therefore finishes before the following navigation modal exists. UI handlers themselves are permitted by the native mode-safety gate. This is source ordering evidence, not target/device proof.",
+  "producer": "GHOST_WindowIOS.mm handlePan2f / cancelPointerCapture",
+  "ghost_queue": "GHOST_EventManager.cc pushEvent / dispatchEvent",
+  "wm_queue": "wm_event_system.cc wm_event_add_intern / wm_event_do_handlers",
+  "consumer": "interface_handlers.cc ui_handler_region_menu / ui_apply_but_funcs_after",
+  "device_acceptance": false
+}
