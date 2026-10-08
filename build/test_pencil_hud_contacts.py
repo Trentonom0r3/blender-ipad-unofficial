@@ -79,7 +79,7 @@ int main(){
     def test_connected_recognizer_and_native_dispatch_stamps(self):
         ios=changed_source('intern/ghost/intern/GHOST_WindowIOS.mm')
         self.assertEqual(ios.count('hud_origin = ghost::ios::hud_contact_at_start'),2)
-        self.assertIn('pointer.hud_serial = [sender hudContact].serial;',ios)
+        self.assertIn('pointer.hud_serial = pointer_hud_contact.serial;',ios)
         event=changed_source('source/blender/windowmanager/intern/wm_event_system.cc')
         self.assertIn('event.ipad_hud_generation = 0;',event)
         self.assertIn('event.ipad_hud_serial = 0;',event)

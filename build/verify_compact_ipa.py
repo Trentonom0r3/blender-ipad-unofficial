@@ -121,6 +121,17 @@ with zipfile.ZipFile(ipa) as archive:
                       b'+  uint64_t ipad_hud_generation, ipad_hud_serial;'):
             assert value in patch, value
 
+    if b'+static bool ui_ipad_hud_numeric_pointer_terminal(' in patch:
+        for value in (b'+  ghost::ios::HUDContact pointer_hud_contact;',
+                      b'+    release.hud_serial = pointer_hud_contact.serial;',
+                      b'+    const bool pointer_cancel = ui_ipad_hud_numeric_pointer_terminal(C, but, event);',
+                      b'+static std::unordered_map<uintptr_t, uiIPadHUDContactState> ui_ipad_hud_contacts;',
+                      b'+  const bool initialized = region->regiondata == nullptr;',
+                      b'+    has_active_panel |= UI_panel_is_active(panel);'):
+            assert value in patch, value
+        assert b'+  short regionid = -1;' not in patch
+        assert b'+  bool redo_suppressed = false;' not in patch
+
     if has_view_category:
         assert "layout.ipad_view_navigation_mask()" in actual
         assert "layout.operator_context = 'EXEC_REGION_WIN'" in actual

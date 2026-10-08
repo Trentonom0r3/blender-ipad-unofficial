@@ -41,6 +41,7 @@ WORLD = r"""
 #include <vector>
 #include <utility>
 #define WITH_APPLE_CROSSPLATFORM
+inline constexpr int WM_EVENT_IS_POINTER_CANCEL=64;
 #define BLI_assert(v) assert(v)
 #define LISTBASE_FOREACH(T,v,list) for(T v:*(list))
 template<class T,class... R>bool ELEM(T v,R... r){return ((v==r)||...);}
@@ -88,6 +89,7 @@ void ED_undo_operator_repeat_cb_evt(bContext*,void*,int){}
 struct Origin{bool owned=false;bool present()const{return owned;}};
 struct rctf{float xmin=0,xmax=100,ymin=0,ymax=100;};
 struct Active{int state=BUTTON_STATE_HIGHLIGHT;ARegion*region=nullptr;};
+using uiHandleButtonData=Active;
 struct uiBut{uint64_t ipad_ui_lifetime=91;uiBlock*block=nullptr;PointerRNA rnapoin{};
  PropertyRNA*rnaprop=nullptr;int rnaindex=0;ButType type=ButType::Num;
  void*func=nullptr,*funcN=nullptr,*apply_func=nullptr,*optype=nullptr,*rename_func=nullptr,
@@ -107,7 +109,7 @@ struct Main{std::vector<wmWindowManager*>wm;};
 struct bContext{Main*main;wmWindowManager*wm;wmWindow*win;ScrArea*area;ARegion*region,*canvas;
  std::string tool="builtin.move";uint64_t scene=31,object=41,data=51,mode=0,layer=61;
  bool safe=true,canvas_capture=true,pixels_ready=true;};
-struct wmEvent{uint64_t ipad_hud_generation=101,ipad_hud_serial=201;int type=LEFTMOUSE,val=KM_PRESS,xy[2]={20,20};};
+struct wmEvent{uint64_t ipad_hud_generation=101,ipad_hud_serial=201;int flag=0,type=LEFTMOUSE,val=KM_PRESS,xy[2]={20,20};};
 Main*CTX_data_main(bContext*C){return C->main;}wmWindowManager*CTX_wm_manager(bContext*C){return C->wm;}
 wmWindow*CTX_wm_window(bContext*C){return C->win;}ScrArea*CTX_wm_area(bContext*C){return C->area;}
 ARegion*CTX_wm_region(bContext*C){return C->region;}
@@ -155,7 +157,7 @@ struct Fixture{
  IDProperty properties;PointerRNA ptr{&wm.id,&schema,&properties};wmOperator op{&type,&ptr,&properties,{}};
  uiBlock block, replacement;Active active{BUTTON_STATE_HIGHLIGHT,&hud};wmEvent event;
  Fixture(){
- (void)&ui_ipad_hud_native_repeat;
+ (void)&ui_ipad_hud_native_repeat; (void)&ui_ipad_hud_numeric_pointer_terminal; (void)&ui_ipad_hud_bound_numeric;
  ui_ipad_hud_fields.clear();registry={&type};op_lifetimes.clear();onfree={};repeat_callback={};frees=repeats=0;
  main.wm={&wm};wm.windows={&win};runtime.operators={&op};schema.properties={&prop};
  area.regionbase={&hud,&canvas};screen.areabase={&area};hr.uiblocks={&block};
