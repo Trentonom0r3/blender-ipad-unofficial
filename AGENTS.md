@@ -1,5 +1,9 @@
 # Blender iPad development
 
+## Corrected exact ring/corner build dispatched - 2026-10-08
+
+Source **7fc0298ec6d6e4b59933c4da72210310efb5d96f** is committed/pushed and building once in [run37808365199](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37808365199). It includes the completed ring/corner increment and actual native allocation/synthetic-contact corrections. Inspect this exact run before replacements. The hidden one-build watcher saves actual failure logs or downloads/verifies full IPA on success; inspect .cache/corner-build-watch.log/error.log and output/ui-preview/pencil-corner/ipa-37808365199-*.json. Watcher launch is not verification. Latest verified IPA remains37703677904@38e42d2; no new package/device acceptance. Later docs-only commits do not change this source. Full goal remains unfinished.
+
 ## Native event allocation correction - 2026-10-08
 
 Run37799814732@d0c0df85f7760bcc5cdbba00145eed1dfe830eb6 passed the complete cloud preflight but failed native Release: MEM_callocN<wmEvent> in wm_window.cc914 requires a trivial type. The two new HUD default member initializers violated that contract. They are removed; explicit GHOST conversion clearing and zeroed native allocations remain. Independent allocation audit verified stack/state initialization and intended contact copies, and found real synthetic wm_event_add_mousemove_to_head copying the last handled HUD serial/generation. The real implementation now clears both before enqueuing housekeeping motion, preserving coordinates/modifiers and ordinary native behavior. No owner/history/queued-input guard is relaxed.
