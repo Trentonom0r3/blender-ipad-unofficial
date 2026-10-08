@@ -98,16 +98,20 @@ int main(){
 #include <algorithm>
 #include <cassert>
 #include <vector>
-constexpr int PANEL_ACTIVE=1;
+constexpr int PANEL_ACTIVE=(1<<2);
 float UI_UNIT_X=20,UI_SCALE_FAC=1;
-struct Panel{int runtime_flag=1,ofsy=0,sizey=0;bool closed=true;};
+struct Panel{int runtime_flag=PANEL_ACTIVE,ofsy=0,sizey=0;bool closed=true;};
 struct ARegion{std::vector<const Panel*>panels;};
+bool UI_panel_is_active(const Panel *panel)
+{
+  return panel->runtime_flag & PANEL_ACTIVE;
+}
 bool UI_panel_is_closed(const Panel*p){return p->closed;}
 int UI_panel_size_y(const Panel*p){return 20+(p->closed?0:p->sizey);}
 #define LISTBASE_FOREACH(T,v,list) for(T v:*(list))
 HELPER
 int main(){
- Panel redo{1,-20,0,true},future{1,-40,0,true},view{1,-60,0,true};
+ Panel redo{PANEL_ACTIVE,-20,0,true},future{PANEL_ACTIVE,-40,0,true},view{PANEL_ACTIVE,-60,0,true};
  Panel inactive{0,-900,800,false};
  ARegion region{{&redo,&future,&view,&inactive}};int size[2]={0,0};
  assert(ui_ipad_corner_panels_size(&region,size)&&size[0]==160&&size[1]==60);

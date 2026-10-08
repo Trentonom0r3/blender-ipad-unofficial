@@ -9132,7 +9132,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 +  bool active = false, expanded = false;
 +  int bottom = 0, top = 0;
 +  LISTBASE_FOREACH (const Panel *, panel, &region->panels) {
-+    if (!(panel->runtime_flag & PANEL_ACTIVE)) continue;
++    if (!UI_panel_is_active(panel)) continue;
 +    active = true;
 +    const bool closed = UI_panel_is_closed(panel);
 +    expanded |= !closed;
