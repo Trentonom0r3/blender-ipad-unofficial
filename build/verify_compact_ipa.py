@@ -89,7 +89,9 @@ with zipfile.ZipFile(ipa) as archive:
     has_contact_only_browsing = b'+  /* Ring browsing is contact-only.' in patch
     has_current_tool_shortcut = 'def ipad_active_tool_options_button(layout, context):' in expected
     has_view_category = 'class VIEW3D_MT_ipad_view_ring' in expected
-    has_compact_next_drag = 'bl_label = "Next drag"' in expected
+    has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
+    # Retained internal panel code does not imply the retired primary route.
+    has_compact_next_drag = 'bl_label = "Next drag"' in expected and not has_corner_panels
     if has_compact_next_drag:
         panel = next(n for n in ast.parse(actual).body if isinstance(n,ast.ClassDef) and n.name=='VIEW3D_PT_ipad_transform')
         panel_source = ast.get_source_segment(actual,panel)
@@ -97,12 +99,13 @@ with zipfile.ZipFile(ipa) as archive:
         assert 'ipad_transform_numbers' not in panel_source
         assert 'ipad_active_tool_options_button' not in actual
         assert "ring == 'NEXT_DRAG'" in actual
+    if has_compact_next_drag or has_corner_panels:
         assert b'+  uint64_t refused_generation = 0;' in patch
         assert b'+  ui_ipad_ring_inventory_capture(block, *data);' in patch
         assert b'+    radius = 4.9f * unit;' in patch
 
-    has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
     if has_corner_panels:
+        assert "ring == 'NEXT_DRAG'" not in actual
         tree = ast.parse(actual)
         for name in ('VIEW3D_PT_ipad_corner_transform', 'VIEW3D_PT_ipad_corner_selection', 'VIEW3D_PT_ipad_corner_view'):
             node = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == name)
@@ -111,7 +114,7 @@ with zipfile.ZipFile(ipa) as archive:
         inventory = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'ipad_draw_native_tool_inventory')
         assert 'popover' not in ast.get_source_segment(actual, inventory)
         assert 'view3d.ipad_native_tool' in ast.get_source_segment(actual, inventory)
-        for value in ('Press & circle', 'VIEW3D_PT_ipad_corner_'):
+        for value in ('Press & circle', 'UI_ipad_corner_hud_refresh', 'UI_ipad_hud_event_admit'):
             assert value.encode() in binary, value
         for value in (b'+  uiIPadRingReopenRequest ipad_ring_reopen{};',
                       b'+static bool ui_ipad_corner_panels_size(',
