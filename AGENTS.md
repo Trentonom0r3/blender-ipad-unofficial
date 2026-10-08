@@ -1,5 +1,9 @@
 # Blender iPad development
 
+## Exact unified ring/corner build dispatched - 2026-10-08
+
+Source **d0c0df85f7760bcc5cdbba00145eed1dfe830eb6** is committed/pushed and building once in [run37799814732](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37799814732). All238 host tests and98-file pinned preflight passed. The full unified persistent-ring/collapsed-corner/HUD input source is included; no replacement or unchanged build was dispatched. Latest verified prior IPA remains37703677904@38e42d2. No new native package or device acceptance exists. Inspect this exact run and .cache/corner-build-state.json before further work; fix actual native failures. A hidden one-build watcher downloads/verifies the exact IPA on success and copies reports into output/ui-preview/pencil-corner. Watcher launch is not package verification. Read its logs and actual verification reports. Later documentation commits do not alter building source. Full personal goal remains unfinished.
+
 ## Unified persistent rings and native corner controls source - 2026-10-08
 
 The coherent source now uses the existing native Tools widget theme for all ring actions, without changing UI_but_is_tool semantics. Shared 4.7-unit targets preserve proper icons/home/empty center and fit Transform on one line. Paged radius7.6 prevents target overlap; compact six-choice Base retains4.9. Actual measured overflow draws a noninteractive “Press & circle”/+N cue only inside free presented bounds. Hover/barrel roll remain inert. Accepted contact browsing and Pencil-barrel Home/reset are preserved.
