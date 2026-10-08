@@ -1,5 +1,11 @@
 # Native Pencil ring integration checkpoint — 2026-10-04
 
+## Public panel API correction building - 2026-10-08
+
+Exact source **6e6292540e719fe3ecdd05c7dbb1ad5e9334c9a0** is pushed and building once in [run37813208584](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37813208584). Prior37808365199@7fc0298 passed cloud preflight but failed native Release because area.cc used private PANEL_ACTIVE. Sizing now calls the public UI_panel_is_active; the fixture executes the exact pinned implementation/real bit. All4 affected checks and98-file preflight/diff pass. No ownership, event or UI behavior guard is loosened. Canonical LF patch **9899a51452f05c54a4c3e5b6d2310a9c71908f6898bd703c803ce52315dfe370**. Inspect this run/watcher before replacements; no new IPA/device acceptance. Latest verified package remains37703677904@38e42d2. Full goal remains unfinished.
+
+Independent next source is isolated in Temp/blender-pencil-corner-cancel, not this build: cancelPointerCapture currently loses HUD contact stamps and native numeric release treats interruption as finish. Complete connected native Cancel restoration, strict single-field/multi-number ownership and terminal/hardware parity checks before admission; do not overwrite or emit that partial candidate. The manual reset fulfilled the request,0credits remain, ordinary reset21:09:25UTC/4:09:25PM Chicago.
+
 ## Corrected exact ring/corner build dispatched - 2026-10-08
 
 Source **7fc0298ec6d6e4b59933c4da72210310efb5d96f** is committed/pushed and building once in [run37808365199](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37808365199). It includes the completed ring/corner increment and actual native allocation/synthetic-contact corrections. Inspect this exact run before replacements. The hidden one-build watcher saves actual failure logs or downloads/verifies full IPA on success; inspect .cache/corner-build-watch.log/error.log and output/ui-preview/pencil-corner/ipa-37808365199-*.json. Watcher launch is not verification. Latest verified IPA remains37703677904@38e42d2; no new package/device acceptance. Later docs-only commits do not change this source. Full goal remains unfinished.
