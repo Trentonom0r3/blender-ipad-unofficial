@@ -284,6 +284,10 @@ struct ARegion{int regiontype=RGN_TYPE_HUD,flag=0;Runtime*runtime=nullptr;
  void*regiondata=nullptr;View2D v2d;};
 struct ScrArea{int type=1;std::vector<ARegion*>regions;};
 struct bContext{ScrArea*area;ARegion*canvas;bool supported=true;};
+struct wmWindowManager{};struct wmWindow{};
+wmWindowManager wm;wmWindow win;
+wmWindowManager*CTX_wm_manager(bContext*){return &wm;}
+wmWindow*CTX_wm_window(bContext*){return &win;}
 ScrArea*CTX_wm_area(bContext*C){return C->area;}
 ARegion*UI_ipad_corner_canvas(bContext*C){return C->supported?C->canvas:nullptr;}
 ARegion*BKE_area_find_region_type(ScrArea*a,int kind){for(auto*r:a->regions)if(r->regiontype==kind)return r;return nullptr;}
@@ -295,6 +299,8 @@ ARegion*hud_region_add(ScrArea*a){new_region={RGN_TYPE_HUD,RGN_FLAG_HIDDEN,&new_
 template<class T>T*MEM_callocN(const char*){static_assert(std::is_trivial_v<T>);++allocations;return static_cast<T*>(std::calloc(1,sizeof(T)));}
 void ED_area_tag_region_size_update(ScrArea*,ARegion*){++sizes;}
 void ED_region_tag_redraw(ARegion*){++redraws;}
+void ED_area_update_region_sizes(wmWindowManager*,wmWindow*,ScrArea*){}
+void hud_region_hide(ARegion*r){r->flag|=RGN_FLAG_HIDDEN;}
 void ED_region_floating_init(ARegion*){++inits;}
 void UI_view2d_scroller_size_get(View2D*,bool,float*x,float*y){*x=3;*y=5;}
 ARegion*area_find_region_by_type_and_index_hint(const ScrArea*a,short kind,int hint){

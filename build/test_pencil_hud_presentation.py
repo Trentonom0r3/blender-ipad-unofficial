@@ -79,7 +79,7 @@ uintptr_t main_address=1;
 void *CTX_data_main(bContext*){return reinterpret_cast<void*>(main_address);}
 ScrArea *CTX_wm_area(bContext *C){return C->area;}
 ARegion *CTX_wm_region(bContext *C){return C->region;}
-void CTX_wm_area_set(bContext *C,ScrArea *a){C->area=a;}
+void CTX_wm_area_set(bContext *C,ScrArea *a){C->area=a;C->region=nullptr;}
 void CTX_wm_region_set(bContext *C,ARegion *r){C->region=r;}
 bScreen *WM_window_get_active_screen(const wmWindow *w){return w->screen;}
 bool ED_ipad_panels_enabled(const bScreen *s){return s->enabled;}

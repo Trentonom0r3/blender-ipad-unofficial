@@ -1,0 +1,24 @@
+{
+  "failed_source": "eced37573ab6adf8b34d0de3f53b0762d52fea57",
+  "failed_run": 37818071469,
+  "device_launch_failure": true,
+  "exception": "EXC_BAD_ACCESS at0x20",
+  "binary_uuid": "fad9fbb9-94db-3c74-8f22-40454213aaeb",
+  "fault_function": "panel_handle_data_ensure+100",
+  "fault_instruction": "ldr s0,[x19,#0x20]",
+  "null_argument": "ARegion* arg2 copied to x19=0",
+  "cause": "HUD owner capture restored region then area; native area setter clears region even for the same area before panel layout.",
+  "correction": "Area-before-region on all five success/refusal exits; native size/init before first HUD layout; fresh canvas/offset reacquisition.",
+  "tests": {
+    "host_suite": 249,
+    "independent_launch": 4,
+    "total": 253,
+    "old_capture_rejected": true,
+    "refusal_variants": 31,
+    "pinned_source_preflight_files": 98
+  },
+  "source_patch_sha256": "d4ed6fd191f19e5bfc3465e664cf118e90b2ec9c5279c1621098a07394513dbc",
+  "native_build_verified": false,
+  "device_acceptance": false,
+  "evidence_limits": "Native functions execute with explicit WM/list/timer/GPU/geometry/keymap/View2D boundary fixtures. Source checks are not target launch acceptance."
+}

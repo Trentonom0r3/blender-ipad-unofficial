@@ -113,7 +113,7 @@ struct wmEvent{uint64_t ipad_hud_generation=101,ipad_hud_serial=201;int flag=0,t
 Main*CTX_data_main(bContext*C){return C->main;}wmWindowManager*CTX_wm_manager(bContext*C){return C->wm;}
 wmWindow*CTX_wm_window(bContext*C){return C->win;}ScrArea*CTX_wm_area(bContext*C){return C->area;}
 ARegion*CTX_wm_region(bContext*C){return C->region;}
-void CTX_wm_area_set(bContext*C,ScrArea*a){C->area=a;}void CTX_wm_region_set(bContext*C,ARegion*r){C->region=r;}
+void CTX_wm_area_set(bContext*C,ScrArea*a){C->area=a;C->region=nullptr;}void CTX_wm_region_set(bContext*C,ARegion*r){C->region=r;}
 bScreen*WM_window_get_active_screen(wmWindow*w){return w->screen;}
 ARegion*UI_ipad_corner_hud_window(bContext*C,ScrArea*,ARegion*){return C->canvas;}
 bool UI_ipad_context_capture(bContext*C,uint64_t*v){

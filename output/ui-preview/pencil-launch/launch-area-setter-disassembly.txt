@@ -1,0 +1,31 @@
+
+C:/Users/tjerf/AppData/Local/Temp/blender-ipad-run-37818071469/Blender-launch-audit:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+00000001000b4aa8 <__Z15CTX_wm_area_setP8bContextP7ScrArea>:
+1000b4aa8: d10103ff    	sub	sp, sp, #0x40
+1000b4aac: a9037bfd    	stp	x29, x30, [sp, #0x30]
+1000b4ab0: 9100c3fd    	add	x29, sp, #0x30
+1000b4ab4: aa0003e8    	mov	x8, x0
+1000b4ab8: b0031469    	adrp	x9, 0x106341000 <_zlibVersion+0x106341000>
+1000b4abc: f943f929    	ldr	x9, [x9, #0x7f0]
+1000b4ac0: f9400129    	ldr	x9, [x9]
+1000b4ac4: f81f83a9    	stur	x9, [x29, #-0x8]
+1000b4ac8: f8488c09    	ldr	x9, [x0, #0x88]!
+1000b4acc: a93a7c01    	stp	x1, xzr, [x0, #-0x60]
+1000b4ad0: b4000129    	cbz	x9, 0x1000b4af4 <__Z15CTX_wm_area_setP8bContextP7ScrArea+0x4c>
+1000b4ad4: d00314c9    	adrp	x9, 0x10634e000 <__ZTCN7blender7fstreamE16_NSt3__113basic_ostreamIcNS0_11char_traitsIcEEEE+0x30>
+1000b4ad8: 91344129    	add	x9, x9, #0xd10
+1000b4adc: ad400520    	ldp	q0, q1, [x9]
+1000b4ae0: ad0007e0    	stp	q0, q1, [sp]
+1000b4ae4: f9404901    	ldr	x1, [x8, #0x90]
+1000b4ae8: 910003e2    	mov	x2, sp
+1000b4aec: 52800083    	mov	w3, #0x4                ; =4
+1000b4af0: 9450b60b    	bl	0x1014e231c <__Z36BPY_context_dict_clear_members_arrayPPvS_PPKcj>
+1000b4af4: f85f83a8    	ldur	x8, [x29, #-0x8]
+1000b4af8: b0031469    	adrp	x9, 0x106341000 <_zlibVersion+0x106341000>
+1000b4afc: f943f929    	ldr	x9, [x9, #0x7f0]
+1000b4b00: f9400129    	ldr	x9, [x9]
+1000b4b04: eb08013f    	cmp	x9, x8
+1000b4b08: 54000081    	b.ne	0x1000b4b18 <__Z15CTX_wm_area_setP8bContextP7ScrArea+0x70>

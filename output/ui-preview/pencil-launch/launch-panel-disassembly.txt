@@ -1,0 +1,49 @@
+
+C:\Users\tjerf\AppData\Local\Temp\blender-ipad-run-37818071469\Blender-launch-audit:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000101f51f2c <__ZL24panel_handle_data_ensurePK8bContextP8wmWindowPK7ARegionP5Panel18uiHandlePanelState>:
+101f51f2c: a9bc5ff8    	stp	x24, x23, [sp, #-0x40]!
+101f51f30: a90157f6    	stp	x22, x21, [sp, #0x10]
+101f51f34: a9024ff4    	stp	x20, x19, [sp, #0x20]
+101f51f38: a9037bfd    	stp	x29, x30, [sp, #0x30]
+101f51f3c: 9100c3fd    	add	x29, sp, #0x30
+101f51f40: aa0403f6    	mov	x22, x4
+101f51f44: aa0303f4    	mov	x20, x3
+101f51f48: aa0203f3    	mov	x19, x2
+101f51f4c: aa0103f5    	mov	x21, x1
+101f51f50: aa0003f7    	mov	x23, x0
+101f51f54: f9404878    	ldr	x24, [x3, #0x90]
+101f51f58: b4000338    	cbz	x24, 0x101f51fbc <__ZL24panel_handle_data_ensurePK8bContextP8wmWindowPK7ARegionP5Panel18uiHandlePanelState+0x90>
+101f51f5c: f9400708    	ldr	x8, [x24, #0x8]
+101f51f60: b4000508    	cbz	x8, 0x101f52000 <__ZL24panel_handle_data_ensurePK8bContextP8wmWindowPK7ARegionP5Panel18uiHandlePanelState+0xd4>
+101f51f64: b9000316    	str	w22, [x24]
+101f51f68: f9407aa8    	ldr	x8, [x21, #0xf0]
+101f51f6c: b9401508    	ldr	w8, [x8, #0x14]
+101f51f70: b9001b08    	str	w8, [x24, #0x18]
+101f51f74: f9407aa8    	ldr	x8, [x21, #0xf0]
+101f51f78: b9401908    	ldr	w8, [x8, #0x18]
+101f51f7c: b9001f08    	str	w8, [x24, #0x1c]
+101f51f80: b9406a88    	ldr	w8, [x20, #0x68]
+101f51f84: b9002308    	str	w8, [x24, #0x20]
+101f51f88: b9406e88    	ldr	w8, [x20, #0x6c]
+101f51f8c: b9002708    	str	w8, [x24, #0x24]
+101f51f90: bd402260    	ldr	s0, [x19, #0x20]
+101f51f94: bd002b00    	str	s0, [x24, #0x28]
+101f51f98: bd402a60    	ldr	s0, [x19, #0x28]
+101f51f9c: bd002f00    	str	s0, [x24, #0x2c]
+101f51fa0: 97a36ff8    	bl	0x10082df80 <__Z20BLI_time_now_secondsv>
+101f51fa4: fd000b00    	str	d0, [x24, #0x10]
+101f51fa8: a9437bfd    	ldp	x29, x30, [sp, #0x30]
+101f51fac: a9424ff4    	ldp	x20, x19, [sp, #0x20]
+101f51fb0: a94157f6    	ldp	x22, x21, [sp, #0x10]
+101f51fb4: a8c45ff8    	ldp	x24, x23, [sp], #0x40
+101f51fb8: d65f03c0    	ret
+101f51fbc: f0016ee1    	adrp	x1, 0x104d30000 <__ZL3hex+0x1867ad>
+101f51fc0: 9108c821    	add	x1, x1, #0x232
+101f51fc4: 52800600    	mov	w0, #0x30               ; =48
+101f51fc8: 97ae48a9    	bl	0x100ae426c <_MEM_callocN>
+101f51fcc: f9004a80    	str	x0, [x20, #0x90]
+101f51fd0: b0000002    	adrp	x2, 0x101f52000 <__ZL24panel_handle_data_ensurePK8bContextP8wmWindowPK7ARegionP5Panel18uiHandlePanelState+0xd4>
+101f51fd4: 91009042    	add	x2, x2, #0x24

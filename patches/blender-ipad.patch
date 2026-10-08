@@ -36070,7 +36070,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2839 @@
+@@ -0,0 +1,2841 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -37811,14 +37811,16 @@ new file mode 100644
 +                    RGN_FLAG_POLL_FAILED))) return false;
 +  /* This function resolves only fresh list members. Never cast an old receipt
 +   * address back into a region. The corner lifecycle owns quad-view selection. */
++  /* CTX_wm_area_set clears the region even when restoring the same area.
++   * Restore parent before child on every exit, including refused captures. */
 +  ScrArea *previous_area = CTX_wm_area(C);
 +  ARegion *previous_region = CTX_wm_region(C);
 +  CTX_wm_area_set(C, area);
 +  ARegion *window = UI_ipad_corner_hud_window(C, area, hud);
 +  if (!window || BLI_findindex(&area->regionbase, window) == -1 ||
 +      window->regiontype != RGN_TYPE_WINDOW || !window->runtime->visible) {
-+    CTX_wm_region_set(C, previous_region);
 +    CTX_wm_area_set(C, previous_area);
++    CTX_wm_region_set(C, previous_region);
 +    return false;
 +  }
 +  CTX_wm_region_set(C, window);
@@ -37836,21 +37838,21 @@ new file mode 100644
 +    }
 +    if (wmOperator *redo = WM_operator_last_redo(C)) {
 +      if (BLI_findindex(&wm->runtime->operators, redo) == -1) {
-+        CTX_wm_region_set(C, previous_region); CTX_wm_area_set(C, previous_area); return false;
++        CTX_wm_area_set(C, previous_area); CTX_wm_region_set(C, previous_region); return false;
 +      }
 +      wmOperatorType *registered_type = nullptr;
 +      for (wmOperatorType *type : WM_operatortypes_registered_get()) {
 +        if (type == redo->type) { registered_type = type; break; }
 +      }
 +      if (!registered_type || !registered_type->ipad_lifetime_id) {
-+        CTX_wm_region_set(C, previous_region); CTX_wm_area_set(C, previous_area); return false;
++        CTX_wm_area_set(C, previous_area); CTX_wm_region_set(C, previous_region); return false;
 +      }
 +      owner.redo_address = uint64_t(uintptr_t(redo));
 +      owner.redo_lifetime = WM_operator_touch_lifetime_id(redo);
 +      owner.redo_type_address = uint64_t(uintptr_t(registered_type));
 +      owner.redo_type_lifetime = registered_type->ipad_lifetime_id;
 +      if (!owner.redo_lifetime) {
-+        CTX_wm_region_set(C, previous_region); CTX_wm_area_set(C, previous_area); return false;
++        CTX_wm_area_set(C, previous_area); CTX_wm_region_set(C, previous_region); return false;
 +      }
 +    }
 +    owner.hud_address = uint64_t(uintptr_t(hud));
@@ -37862,8 +37864,8 @@ new file mode 100644
 +    owner.ui_scale = UI_SCALE_FAC;
 +    owner.valid = true;
 +  }
-+  CTX_wm_region_set(C, previous_region);
 +  CTX_wm_area_set(C, previous_area);
++  CTX_wm_region_set(C, previous_region);
 +  return captured;
 +}
 +static bool ipad_hud_rects_equal(const std::vector<rcti> &a, const std::vector<rcti> &b)
@@ -48866,7 +48868,7 @@ diff --git a/source/blender/editors/space_image/space_image.cc b/source/blender/
 diff --git a/source/blender/editors/interface/regions/interface_region_hud.cc b/source/blender/editors/interface/regions/interface_region_hud.cc
 --- a/source/blender/editors/interface/regions/interface_region_hud.cc
 +++ b/source/blender/editors/interface/regions/interface_region_hud.cc
-@@ -1,479 +1,592 @@
+@@ -1,479 +1,609 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -49291,15 +49293,32 @@ diff --git a/source/blender/editors/interface/regions/interface_region_hud.cc b/
 +  if (created || hidden || initialized) {
 +    ED_area_tag_region_size_update(area, region);
 +    ED_region_tag_redraw(region);
++    /* A newly inserted HUD has no View2D, UI handlers or measured rect yet.
++     * Match native HUD ensure: initialize sizes before the first panel layout. */
++    ED_area_update_region_sizes(CTX_wm_manager(C), CTX_wm_window(C), area);
 +    ED_region_floating_init(region);
++  }
++  /* Native region sizing can change the exposed canvas; reacquire it. */
++  canvas = UI_ipad_corner_canvas(C);
++  if (!canvas) {
++    hud_region_hide(region);
++    ED_region_tag_redraw(region);
++    return;
 +  }
 +  region->runtime->visible = !(region->flag & RGN_FLAG_TOO_SMALL);
 +  /* Native scrollers and the adapted canvas's left/bottom rails both reserve
 +   * their real pixels. Layout remains the native measured, stacked HUD. */
 +  float x, y;
 +  UI_view2d_scroller_size_get(&canvas->v2d, true, &x, &y);
-+  region->runtime->offset_x = std::max(x, float(canvas->runtime->ipad_canvas_rect.xmin));
-+  region->runtime->offset_y = std::max(y, float(canvas->runtime->ipad_canvas_rect.ymin));
++  x = std::max(x, float(canvas->runtime->ipad_canvas_rect.xmin));
++  y = std::max(y, float(canvas->runtime->ipad_canvas_rect.ymin));
++  if (region->runtime->offset_x != x || region->runtime->offset_y != y) {
++    region->runtime->offset_x = x;
++    region->runtime->offset_y = y;
++    /* The caller finishes this native placement pass before drawing. */
++    ED_area_tag_region_size_update(area, region);
++    ED_region_tag_redraw(region);
++  }
 +#else
 +  UNUSED_VARS(C, area);
 +#endif

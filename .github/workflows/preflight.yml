@@ -150,6 +150,10 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_hud_fields.py -v
       - name: Native Pencil numeric interruption and one-step restoration
         run: python3 -m unittest discover -s build -p test_pencil_hud_cancel.py -v
+      - name: Native HUD launch context and first-layout initialization
+        run: python3 -m unittest discover -s build -p test_pencil_hud_launch.py -v
+      - name: Native HUD first-frame sizing and initializer contract
+        run: python3 -m unittest discover -s build -p test_pencil_hud_initialization.py -v
       - name: Native wmEvent allocation and synthetic-contact provenance
         run: python3 -m unittest discover -s build -p test_wm_event_allocation.py -v
       - name: Validate patch against pinned upstream and check scripts
