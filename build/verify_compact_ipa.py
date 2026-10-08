@@ -118,7 +118,7 @@ with zipfile.ZipFile(ipa) as archive:
                       b'+  if (!ui_ipad_hud_button_input(C, event, but))',
                       b'+bool UI_ipad_hud_event_admit(',
                       b'+static bool wm_draw_region_blend_receipt(',
-                      b'+  uint64_t ipad_hud_generation = 0, ipad_hud_serial = 0;'):
+                      b'+  uint64_t ipad_hud_generation, ipad_hud_serial;'):
             assert value in patch, value
 
     if has_view_category:

@@ -13733,7 +13733,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
   * If no appropriate parent window can be found from the context window, return the first
   * registered window (which can be assumed to be a regular window, e.g. no modal File Browser; this
   * is asserted).
-@@ -5699,129 +6275,133 @@
+@@ -5699,129 +6275,136 @@
      else {
        if ((event_time_ms - event_prev_press_time_ms) < uint64_t(U.dbl_click_time)) {
          return true;
@@ -13809,6 +13809,9 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      memset(&tevent, 0x0, sizeof(tevent));
    }
 
++  /* Housekeeping motion is not a new or continued physical HUD contact. */
++  tevent.ipad_hud_generation = 0;
++  tevent.ipad_hud_serial = 0;
    tevent.type = MOUSEMOVE;
    tevent.val = KM_NOTHING;
    copy_v2_v2_int(tevent.prev_xy, tevent.xy);
@@ -13869,7 +13872,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    event_state->type = event->type;
    /* It's important only to write into the `event_state` modifier for keyboard
     * events because emulate MMB clears one of the modifiers in `event->modifier`,
-@@ -5899,288 +6479,332 @@
+@@ -5899,288 +6482,332 @@
      /* Only ignore repeat events from the keyboard, and allow accumulation of non-repeat events.
       *
       * The goal of this check is to allow events coming from a keyboard macro software, which can
@@ -25261,7 +25264,7 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
   *
   * Events hold information about the state when the last #KM_PRESS event was added.
   * This is used for generating #KM_CLICK, #KM_DBL_CLICK & #KM_PRESS_DRAG events.
-@@ -755,80 +762,81 @@
+@@ -755,80 +762,83 @@
   *   this isn't a problem however releasing other keys such as modifiers prevents click/click-drag
   *   events from being detected, see: #89989.
   *
@@ -25302,7 +25305,9 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
 
    /** Tablet info, available for mouse move and button events. */
    wmTabletData tablet;
-+  uint64_t ipad_hud_generation = 0, ipad_hud_serial = 0;
++  /* Keep wmEvent trivial for native MEM_callocN and complete state copies.
++   * GHOST conversion explicitly clears these before assigning a contact. */
++  uint64_t ipad_hud_generation, ipad_hud_serial;
 
    eWM_EventFlag flag;
 
@@ -25343,7 +25348,7 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
    /** The `type` at the point of the press action. */
    wmEventType prev_press_type;
    /**
-@@ -1124,82 +1132,84 @@
+@@ -1124,82 +1134,84 @@
 
    /**
     * Return a different description to use in the user interface, based on property values.

@@ -148,5 +148,7 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_hud_contacts.py -v
       - name: Native HUD field ownership and one-contact Redo continuation
         run: python3 -m unittest discover -s build -p test_pencil_hud_fields.py -v
+      - name: Native wmEvent allocation and synthetic-contact provenance
+        run: python3 -m unittest discover -s build -p test_wm_event_allocation.py -v
       - name: Validate patch against pinned upstream and check scripts
         run: python3 build/preflight.py
