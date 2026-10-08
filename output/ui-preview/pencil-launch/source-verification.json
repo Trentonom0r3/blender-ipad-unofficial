@@ -1,7 +1,6 @@
 {
   "failed_source": "eced37573ab6adf8b34d0de3f53b0762d52fea57",
   "failed_run": 37818071469,
-  "device_launch_failure": true,
   "exception": "EXC_BAD_ACCESS at0x20",
   "binary_uuid": "fad9fbb9-94db-3c74-8f22-40454213aaeb",
   "fault_function": "panel_handle_data_ensure+100",
@@ -18,9 +17,21 @@
     "pinned_source_preflight_files": 98
   },
   "source_patch_sha256": "d4ed6fd191f19e5bfc3465e664cf118e90b2ec9c5279c1621098a07394513dbc",
-  "native_build_verified": false,
+  "native_build_verified": true,
   "device_acceptance": false,
-  "evidence_limits": "Native functions execute with explicit WM/list/timer/GPU/geometry/keymap/View2D boundary fixtures. Source checks are not target launch acceptance.",
+  "evidence_limits": "Native functions execute with explicit WM/list/timer/GPU/geometry/keymap/View2D boundary fixtures. Source checks are not target launch acceptance. Bounded compiled checks prove ordered restoration and size-call control flow in the packaged binary; no physical iPad launch is established.",
   "fixed_source": "4c8d7548cf4cffc72317646624d3c9d4f85f8ca8",
-  "replacement_run": 37847847360
+  "replacement_run": 37847847360,
+  "prior_device_launch_failure": true,
+  "native_package_verified": true,
+  "compiled_launch_obligations_verified": true,
+  "replacement_binary_uuid": "019F83D9-134D-3303-9DD5-1585D8790DA1",
+  "replacement_binary_sha256": "7faeca3abeba6b14345a75c95de9758b4121325ad43511d4a1cb7a1e30ba7617",
+  "replacement_device_launch_verified": true,
+  "compiled_audit_algorithm_checks": 9,
+  "compiled_old_baseline_rejected": true,
+  "ipa_sha256": "790d7955e23bff897ea89233f9e2825f9a949e396f44ce37016df29aa3018a84",
+  "device_launch_acceptance": true,
+  "device_launch_evidence": "device-launch-acceptance.json",
+  "device_acceptance_scope": "Launch accepted; full Pencil workflow acceptance remains unverified."
 }
