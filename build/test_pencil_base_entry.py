@@ -51,21 +51,53 @@ class PencilBaseEntryTests(unittest.TestCase):
         self.assertEqual(operator.invoke(context, types.SimpleNamespace(mouse_x=0, mouse_y=0)), {'CANCELLED'})
         self.assertEqual(len(calls), before)
 
-    def test_base_has_six_stable_categories_without_duplicate_transform_ring(self):
+    def test_base_has_exact_nine_direct_actions_and_native_receipts_in_every_mode(self):
         records=[]
+        requested=('builtin.select_box','builtin.move','builtin.rotate','builtin.scale','builtin.cursor')
+        native=[types.SimpleNamespace(idname=name,label=name,icon=name) for name in requested]
         class Layout:
+            enabled=True
             def column(self): return self
-            def row(self): return self
+            def row(self): return Layout()
             def operator(self, name, **kwargs):
-                props=types.SimpleNamespace();records.append((name,kwargs,props));return props
-        namespace=python_nodes('VIEW3D_MT_ipad_base_ring',Menu=object,IPAD_SELECT_ALL={'OBJECT','EDIT_MESH'})
-        for mode in ('OBJECT','EDIT_MESH','SCULPT','POSE'):
+                props=types.SimpleNamespace();records.append((name,kwargs,props,self.enabled));return props
+        active=types.SimpleNamespace(idname='builtin.move')
+        home=tuple((label,name,'NONE') for label,name in zip(('Select','Move','Rotate','Scale','Cursor'),requested))
+        available=list(native)
+        namespace=python_nodes('VIEW3D_MT_ipad_base_ring',Menu=object,IPAD_RADIAL_TOOLS=home,
+            ipad_native_tool_inventory=lambda C:available,ipad_native_inventory_receipt=lambda C:'FULL-inventory',
+            ipad_native_tool_icon=lambda tool:{'icon_value':native.index(tool)+100},
+            ToolSelectPanelHelper=types.SimpleNamespace(tool_active_from_context=lambda C:active))
+        for mode in ('OBJECT','EDIT_MESH','SCULPT','POSE','PAINT_VERTEX','PAINT_WEIGHT','PAINT_TEXTURE'):
+            available[:]=native if mode in {'OBJECT','EDIT_MESH','POSE'} else native[1:4] if mode=='SCULPT' else []
             records.clear()
             namespace['VIEW3D_MT_ipad_base_ring'].draw(types.SimpleNamespace(layout=Layout()),types.SimpleNamespace(mode=mode))
-            self.assertEqual([r[1]['text'] for r in records],['Layout / Mode','Tools','Undo','Redo','Select','View'])
-            self.assertEqual([records[i][2].name for i in (0,1,4,5)],['VIEW3D_MT_ipad_layout_mode_ring','VIEW3D_MT_ipad_tool_inventory','VIEW3D_MT_ipad_selection_options','VIEW3D_MT_ipad_view_ring'])
+            self.assertEqual([r[1]['text'] for r in records],['Layout / Mode','More Tools','Undo','Redo','Select','Move','Rotate','Scale','Cursor'])
+            self.assertEqual([records[i][2].name for i in (0,1)],['VIEW3D_MT_ipad_layout_mode_ring','VIEW3D_MT_ipad_tool_inventory'])
             self.assertEqual([records[i][0] for i in (2,3)],['ed.undo','ed.redo'])
+            self.assertEqual([r[0] for r in records[4:]],['view3d.ipad_native_tool']*5)
+            self.assertEqual([r[2].name for r in records[4:]],list(requested))
+            for row in records[4:]:
+                self.assertEqual(row[2].inventory,'FULL-inventory')
+                self.assertEqual(row[2].expected_tool,'builtin.move')
+                self.assertEqual(row[3],any(t.idname==row[2].name for t in available))
+                if row[3]:self.assertIn('icon_value',row[1])
+            self.assertFalse(any(r[2].__dict__.get('name') in {'VIEW3D_MT_ipad_view_ring','VIEW3D_MT_ipad_selection_options'} for r in records))
         self.assertNotIn('ipad_active_tool_options_button',PYTHON)
+
+    def test_more_tools_excludes_only_exact_base_ids_and_preserves_variants_and_receipts(self):
+        primary={'builtin.select_box','builtin.move','builtin.rotate','builtin.scale','builtin.cursor'}
+        extra=['builtin.select_lasso','builtin.select_circle','builtin.transform','builtin.annotate','builtin.measure','builtin.primitive_cube_add','builtin.extrude_region']
+        inventory=[types.SimpleNamespace(idname=name,label=name,icon=name) for name in sorted(primary)+extra]
+        ns=python_nodes('ipad_more_tool_inventory',IPAD_BASE_TOOL_IDS=primary,ipad_native_tool_inventory=lambda C:inventory)
+        more=ns['ipad_more_tool_inventory'](None)
+        self.assertEqual([t.idname for t in more],extra)
+        self.assertFalse(primary & {t.idname for t in more})
+        # The source constant, rather than labels/group ownership, defines the exclusion.
+        constant=next(n for n in ast.parse(PYTHON).body if isinstance(n,ast.Assign) and any(getattr(t,'id','')=='IPAD_BASE_TOOL_IDS' for t in n.targets))
+        self.assertEqual(ast.literal_eval(constant.value.args[0]),primary)
+        inventory[:]=inventory[len(primary):]
+        self.assertEqual(ns['ipad_more_tool_inventory'](None),tuple(inventory))
 
     def test_selected_transform_selects_directly_and_corner_controls_are_collapsed(self):
         records=[]

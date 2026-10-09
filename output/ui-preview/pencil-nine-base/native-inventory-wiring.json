@@ -1,0 +1,326 @@
+{
+  "evidence": "exact target5.0 Python inventory and candidate guarded tool operator on stock host",
+  "host_version": "5.1.2",
+  "tool_definition_sha256": "f29a4d4e7b782cd5b08e0fd586e8970f8362b6ee0c09d2eff7d750064e29bd75",
+  "candidate_python_sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+  "contexts": [
+    {
+      "mode": "OBJECT",
+      "count": 20,
+      "native_tool_ids": [
+        "builtin.select_box",
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.transform",
+        "builtin.annotate",
+        "builtin.measure",
+        "builtin.primitive_cube_add",
+        "builtin.select",
+        "builtin.select_circle",
+        "builtin.select_lasso",
+        "builtin.scale_cage",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser",
+        "builtin.primitive_cone_add",
+        "builtin.primitive_cylinder_add",
+        "builtin.primitive_uv_sphere_add",
+        "builtin.primitive_ico_sphere_add"
+      ],
+      "native_brush_assets_available": false
+    },
+    {
+      "mode": "EDIT_MESH",
+      "count": 43,
+      "native_tool_ids": [
+        "builtin.select_box",
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.transform",
+        "builtin.annotate",
+        "builtin.measure",
+        "builtin.primitive_cube_add",
+        "builtin.select",
+        "builtin.select_circle",
+        "builtin.select_lasso",
+        "builtin.scale_cage",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser",
+        "builtin.primitive_cone_add",
+        "builtin.primitive_cylinder_add",
+        "builtin.primitive_uv_sphere_add",
+        "builtin.primitive_ico_sphere_add",
+        "builtin.extrude_region",
+        "builtin.extrude_manifold",
+        "builtin.extrude_along_normals",
+        "builtin.extrude_individual",
+        "builtin.extrude_to_cursor",
+        "builtin.inset_faces",
+        "builtin.bevel",
+        "builtin.loop_cut",
+        "builtin.offset_edge_loop_cut",
+        "builtin.knife",
+        "builtin.bisect",
+        "builtin.poly_build",
+        "builtin.spin",
+        "builtin.smooth",
+        "builtin.randomize",
+        "builtin.edge_slide",
+        "builtin.vertex_slide",
+        "builtin.shrink_fatten",
+        "builtin.push_pull",
+        "builtin.shear",
+        "builtin.to_sphere",
+        "builtin.rip_region",
+        "builtin.rip_edge"
+      ],
+      "native_brush_assets_available": false
+    },
+    {
+      "mode": "SCULPT",
+      "count": 34,
+      "native_tool_ids": [
+        "builtin.brush",
+        "builtin_brush.paint",
+        "builtin_brush.mask",
+        "builtin_brush.draw_face_sets",
+        "builtin.box_mask",
+        "builtin.lasso_mask",
+        "builtin.line_mask",
+        "builtin.polyline_mask",
+        "builtin.box_hide",
+        "builtin.lasso_hide",
+        "builtin.line_hide",
+        "builtin.polyline_hide",
+        "builtin.box_face_set",
+        "builtin.lasso_face_set",
+        "builtin.line_face_set",
+        "builtin.polyline_face_set",
+        "builtin.box_trim",
+        "builtin.lasso_trim",
+        "builtin.line_trim",
+        "builtin.polyline_trim",
+        "builtin.line_project",
+        "builtin.mesh_filter",
+        "builtin.cloth_filter",
+        "builtin.color_filter",
+        "builtin.face_set_edit",
+        "builtin.mask_by_color",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.transform",
+        "builtin.annotate",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser"
+      ],
+      "native_brush_assets_available": true
+    },
+    {
+      "mode": "PAINT_VERTEX",
+      "count": 8,
+      "native_tool_ids": [
+        "builtin.brush",
+        "builtin_brush.blur",
+        "builtin_brush.average",
+        "builtin_brush.smear",
+        "builtin.annotate",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser"
+      ],
+      "native_brush_assets_available": true
+    },
+    {
+      "mode": "PAINT_WEIGHT",
+      "count": 11,
+      "native_tool_ids": [
+        "builtin.brush",
+        "builtin_brush.blur",
+        "builtin_brush.average",
+        "builtin_brush.smear",
+        "builtin.gradient",
+        "builtin.sample_weight",
+        "builtin.sample_vertex_group",
+        "builtin.annotate",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser"
+      ],
+      "native_brush_assets_available": true
+    },
+    {
+      "mode": "PAINT_TEXTURE",
+      "count": 10,
+      "native_tool_ids": [
+        "builtin.brush",
+        "builtin_brush.soften",
+        "builtin_brush.smear",
+        "builtin_brush.clone",
+        "builtin_brush.fill",
+        "builtin_brush.mask",
+        "builtin.annotate",
+        "builtin.annotate_line",
+        "builtin.annotate_polygon",
+        "builtin.annotate_eraser"
+      ],
+      "native_brush_assets_available": true
+    }
+  ],
+  "menu_routes": [
+    {
+      "mode": "OBJECT",
+      "tool_buttons": 15,
+      "base_native_tools_available": [
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.select_box"
+      ],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool_buttons": 38,
+      "base_native_tools_available": [
+        "builtin.cursor",
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale",
+        "builtin.select_box"
+      ],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    },
+    {
+      "mode": "SCULPT",
+      "tool_buttons": 31,
+      "base_native_tools_available": [
+        "builtin.move",
+        "builtin.rotate",
+        "builtin.scale"
+      ],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    },
+    {
+      "mode": "PAINT_VERTEX",
+      "tool_buttons": 8,
+      "base_native_tools_available": [],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    },
+    {
+      "mode": "PAINT_WEIGHT",
+      "tool_buttons": 11,
+      "base_native_tools_available": [],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    },
+    {
+      "mode": "PAINT_TEXTURE",
+      "tool_buttons": 10,
+      "base_native_tools_available": [],
+      "navigation_buttons": 0,
+      "brush_asset_popover": false
+    }
+  ],
+  "registered_base_selection_transform_inventory_routes": "passed",
+  "nine_base_and_filtered_more_tools": [
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.move",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.rotate",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.scale",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "TRANSLATE",
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "ROTATE",
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "SCALE",
+      "base_slots": 9
+    },
+    {
+      "mode": "OBJECT",
+      "tool": "builtin.transform",
+      "child_action": "NONE",
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.move",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.rotate",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.scale",
+      "child_action": null,
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "TRANSLATE",
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "ROTATE",
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "SCALE",
+      "base_slots": 9
+    },
+    {
+      "mode": "EDIT_MESH",
+      "tool": "builtin.transform",
+      "child_action": "NONE",
+      "base_slots": 9
+    }
+  ],
+  "guarded_native_activation_and_refusals": "passed",
+  "registered_native_controls_visibility_action": "passed; current header restored with tool/mode/workspace/object transform preserved; no popup/target claim",
+  "native_popup_modal_and_device_evidence": false
+}

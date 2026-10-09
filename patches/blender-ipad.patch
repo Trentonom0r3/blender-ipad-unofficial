@@ -6028,7 +6028,7 @@ diff --git a/scripts/startup/bl_ui/space_view3d_ipad.py b/scripts/startup/bl_ui/
 new file mode 100644
 --- /dev/null
 +++ b/scripts/startup/bl_ui/space_view3d_ipad.py
-@@ -0,0 +1,1585 @@
+@@ -0,0 +1,1601 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
 +"""Compact iPad viewport controls built entirely from existing Blender operators."""
 +
@@ -6050,6 +6050,11 @@ new file mode 100644
 +    ("Add Cube", 'builtin.primitive_cube_add', 'MESH_CUBE'),
 +)
 +
++
++# Direct Base tools are exact native identities, never whole groups or labels.
++IPAD_BASE_TOOL_IDS = frozenset({
++    'builtin.select_box', 'builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.cursor',
++})
 +
 +def ipad_palette_target(context, x, y):
 +    views = [area for area in context.window.screen.areas if area.type == 'VIEW_3D']
@@ -6187,14 +6192,21 @@ new file mode 100644
 +        return bpy.ops.wm.tool_set_by_id(name=self.name, cycle=False, as_fallback=False)
 +
 +
-+def ipad_draw_native_tool_inventory(layout, context):
-+    """All native tools; the owned compositor presents only nine at a time."""
++def ipad_more_tool_inventory(context):
++    """Remaining native tools; retain every variant not directly on Base."""
++    return tuple(tool for tool in ipad_native_tool_inventory(context)
++                 if tool.idname not in IPAD_BASE_TOOL_IDS)
++
++
++def ipad_draw_native_tool_inventory(layout, context, *, more_tools=False):
++    """Native tools; the owned compositor presents only nine at a time."""
 +    layout.operator_context = 'INVOKE_REGION_WIN'
 +    active = ToolSelectPanelHelper.tool_active_from_context(context)
 +    active_id = active.idname if active else ''
 +    receipt = ipad_native_inventory_receipt(context)
 +    home_labels = {name: label for label, name, _ in IPAD_RADIAL_TOOLS}
-+    for tool in ipad_native_tool_inventory(context):
++    tools = ipad_more_tool_inventory(context) if more_tools else ipad_native_tool_inventory(context)
++    for tool in tools:
 +        label = home_labels.get(tool.idname, tool.label) if context.mode in {'OBJECT', 'EDIT_MESH'} else tool.label
 +        selected = active_id == tool.idname
 +        # Tool selection remains a tool action. Applicable settings are
@@ -6205,7 +6217,7 @@ new file mode 100644
 +
 +
 +class VIEW3D_MT_ipad_tool_inventory(Menu):
-+    bl_label = 'Pencil Tools'
++    bl_label = 'More Tools'
 +
 +    @classmethod
 +    def poll(cls, context):
@@ -6213,14 +6225,7 @@ new file mode 100644
 +
 +    def draw(self, context):
 +        layout = self.layout.column()
-+        ipad_draw_native_tool_inventory(layout, context)
-+        from bl_ui.properties_paint_common import BrushAssetShelf
-+        if BrushAssetShelf.get_shelf_name_from_context(context) is not None:
-+            layout.popover(panel='VIEW3D_PT_ipad_brush_access', text='Brush Assets', icon='BRUSH_DATA')
-+        ipad_native_controls_button(layout)
-+        layout.operator('view3d.ipad_flythrough_toggle', text='Flythrough', icon='CAMERA_STEREO')
-+        ipad_base_return(layout)
-+
++        ipad_draw_native_tool_inventory(layout, context, more_tools=True)
 +
 +def ipad_base_return(layout):
 +    layout.operator('wm.call_menu_pie', text='Base', icon='BACK').name = 'VIEW3D_MT_ipad_base_ring'
@@ -6234,19 +6239,30 @@ new file mode 100644
 +        return context.area is not None and context.area.type == 'VIEW_3D'
 +
 +    def draw(self, context):
++        # Exactly nine clockwise positions, using the same geometry/style as Tools.
 +        layout = self.layout.column()
 +        layout.operator_context = 'INVOKE_REGION_WIN'
-+        for name, text, icon in (
-+                ('VIEW3D_MT_ipad_layout_mode_ring', 'Layout / Mode', 'WORKSPACE'),
-+                ('VIEW3D_MT_ipad_tool_inventory', 'Tools', 'TOOL_SETTINGS')):
-+            layout.operator('wm.call_menu_pie', text=text, icon=icon).name = name
++        layout.operator('wm.call_menu_pie', text='Layout / Mode', icon='WORKSPACE').name = (
++            'VIEW3D_MT_ipad_layout_mode_ring')
++        layout.operator('wm.call_menu_pie', text='More Tools', icon='TOOL_SETTINGS').name = (
++            'VIEW3D_MT_ipad_tool_inventory')
 +        layout.operator('ed.undo', text='Undo', icon='LOOP_BACK')
 +        layout.operator('ed.redo', text='Redo', icon='LOOP_FORWARDS')
-+        selection = layout.row()
-+        selection.enabled = context.mode in IPAD_SELECT_ALL
-+        selection.operator('wm.call_menu_pie', text='Select', icon='RESTRICT_SELECT_OFF').name = (
-+            'VIEW3D_MT_ipad_selection_options')
-+        layout.operator('wm.call_menu_pie', text='View', icon='VIEW3D').name = 'VIEW3D_MT_ipad_view_ring'
++        available = {tool.idname: tool for tool in ipad_native_tool_inventory(context)}
++        active = ToolSelectPanelHelper.tool_active_from_context(context)
++        active_id = active.idname if active else ''
++        receipt = ipad_native_inventory_receipt(context)
++        home = {name: (label, fallback) for label, name, fallback in IPAD_RADIAL_TOOLS}
++        for name in ('builtin.select_box', 'builtin.move', 'builtin.rotate', 'builtin.scale', 'builtin.cursor'):
++            label, fallback_icon = home[name]
++            slot = layout.row()
++            tool = available.get(name)
++            # Fixed visible positions; unavailable native actions are disabled.
++            slot.enabled = tool is not None
++            icons = ipad_native_tool_icon(tool) if tool else {'icon': fallback_icon}
++            props = slot.operator('view3d.ipad_native_tool', text=label,
++                                  depress=active_id == name, **icons)
++            props.name, props.inventory, props.expected_tool = name, receipt, active_id
 +
 +
 +class VIEW3D_MT_ipad_view_ring(Menu):
@@ -31351,7 +31367,7 @@ diff --git a/source/blender/editors/interface/interface_ipad_tool_ring.hh b/sour
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/interface/interface_ipad_tool_ring.hh
-@@ -0,0 +1,459 @@
+@@ -0,0 +1,454 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -31611,8 +31627,8 @@ new file mode 100644
 +  bool fits = false, grid = false;
 +};
 +
-+/* Clamp every category using the full Tools footprint so category switches
-+ * keep their origin. Base itself presents/captures only its smaller footprint. */
++/* Every category uses the same Tools footprint and origin. Base is limited
++ * to nine positions; no separate compact geometry is presented or captured. */
 +inline RingPageLayout ring_page_layout(float unit, Rect viewport, float x, float y,
 +                                       int total, float phase, bool touch = false,
 +                                       bool compact_base = false)
@@ -31644,11 +31660,6 @@ new file mode 100644
 +                                  viewport.xmax - gap - extent_x / 2);
 +  result.center_y = y = std::clamp(y, viewport.ymin + gap + extent_y / 2,
 +                                  viewport.ymax - gap - extent_y / 2);
-+  if (compact_base && total <= 6 && !result.grid) {
-+    radius = 4.9f * unit;
-+    extent_x = 2 * radius + width;
-+    extent_y = 2 * radius + height;
-+  }
 +  result.footprint = {x - extent_x / 2, x + extent_x / 2,
 +                      y - extent_y / 2, y + extent_y / 2};
 +  const int visible = std::min(total, 9);

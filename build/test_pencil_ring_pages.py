@@ -56,7 +56,7 @@ int main(){
 }
 ''')
 
-    def test_compact_balanced_base_preserves_category_origin_and_targets(self):
+    def test_base_matches_tools_footprint_and_nine_targets_at_every_scale_and_fit(self):
         self.run_cpp(r'''
 #include <cassert>
 using namespace blender::ui::ipad;
@@ -67,10 +67,12 @@ int main(){
   Rect view{logical.xmin*unit/20,logical.xmax*unit/20,logical.ymin*unit/20,logical.ymax*unit/20};
   for(float x:{view.xmin,view.xmax})for(float y:{view.ymin,view.ymax}){
    auto tools=ring_page_layout(unit,view,x,y,43,0,touch);assert(tools.fits);
-   auto base=ring_page_layout(unit,view,x,y,6,0,touch,true);assert(base.fits&&base.buttons.size()==6);
+   auto base=ring_page_layout(unit,view,x,y,9,0,touch,true);assert(base.fits&&base.buttons.size()==9);
    assert(base.center_x==tools.center_x&&base.center_y==tools.center_y);
-   if(!base.grid){assert(base.footprint.xmax-base.footprint.xmin<tools.footprint.xmax-tools.footprint.xmin);
-    assert(base.footprint.ymax-base.footprint.ymin<tools.footprint.ymax-tools.footprint.ymin);}
+   assert(base.footprint.xmin==tools.footprint.xmin&&base.footprint.xmax==tools.footprint.xmax);
+   assert(base.footprint.ymin==tools.footprint.ymin&&base.footprint.ymax==tools.footprint.ymax);
+   for(int i=0;i<9;++i){assert(base.buttons[i].xmin==tools.buttons[i].xmin&&base.buttons[i].xmax==tools.buttons[i].xmax);
+    assert(base.buttons[i].ymin==tools.buttons[i].ymin&&base.buttons[i].ymax==tools.buttons[i].ymax);}
    for(int total:{1,5,6,7,8,9}){
     auto page=ring_page_layout(unit,view,x,y,total,7,touch,true);assert(page.fits);
     assert(page.center_x==tools.center_x&&page.center_y==tools.center_y);
@@ -86,7 +88,7 @@ int main(){
  auto page=ring_page_layout(20,{0,1000,0,800},500,400,6,0,false,true);
  for(int i=0;i<6;++i){float x=(page.buttons[i].xmin+page.buttons[i].xmax)/2-500;
   float y=(page.buttons[i].ymin+page.buttons[i].ymax)/2-400;
-  assert(std::abs(std::hypot(x,y)-98)<.001f);}
+  assert(std::abs(std::hypot(x,y)-152)<.001f);}
 }
 ''')
         self.assertIn('data.touch_tools, kind == ipad_ring::RingKind::Base)', NATIVE)
