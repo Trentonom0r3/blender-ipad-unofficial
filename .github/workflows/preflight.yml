@@ -30,6 +30,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_ui_rna_registration.py -v
       - name: Test native sidebar root and mode admission
         run: python3 -m unittest discover -s build -p test_panel_category_admission.py -v
+      - name: Characterize native painting terminal ownership contract
+        run: python3 -m unittest discover -s build -p test_paint_terminal_contract.py -v
       - name: Test native Weight Paint cancellation cleanup
         run: python3 -m unittest discover -s build -p test_weight_paint_cancel.py -v
       - name: Test paint context loss in Color Picker
@@ -162,6 +164,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_hud_launch.py -v
       - name: Native HUD first-frame sizing and initializer contract
         run: python3 -m unittest discover -s build -p test_pencil_hud_initialization.py -v
+      - name: Recognizer-owned Pencil device and pressure snapshots
+        run: python3 -m unittest discover -s build -p test_pencil_gesture_samples.py -v
       - name: Native wmEvent allocation and synthetic-contact provenance
         run: python3 -m unittest discover -s build -p test_wm_event_allocation.py -v
       - name: Validate patch against pinned upstream and check scripts

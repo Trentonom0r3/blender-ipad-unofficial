@@ -183,7 +183,8 @@ int main() {
         self.assertIn('g_flythrough_zoom_accum', patch)
 
         # 4. Verify pencil tap captures stylus tablet data in GHOSTUITapGestureRecognizer
-        self.assertIn('- (UITouch *)pencilTouch;', patch)
+        self.assertIn('- (BOOL)gestureUsesPencil;', patch)
+        self.assertIn('gesture_contact.begin(ios_touch_device(touch)', patch)
         self.assertIn('tablet_data.Active = GHOST_kTabletModeStylus;', patch)
 
         # 5. Verify pencil annotate tap routes to GPENCIL_OT_annotate instead of selecting objects

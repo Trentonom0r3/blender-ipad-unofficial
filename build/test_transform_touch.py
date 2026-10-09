@@ -57,7 +57,7 @@ int main() {
                          if line.startswith((' ', '+')) and not line.startswith('+++'))
         start = code.index('  if (pointer_capture.active() || current_pencil_touch ||')
         end = code.index('\n  }', start) + len('\n  }')
-        guard = code[start:end].replace('[pan_gesture_recognizer pencilTouch]', 'recognizer_pencil')
+        guard = code[start:end].replace('[pan_gesture_recognizer pencilContactDown]', 'recognizer_pencil')
         # The guard precedes every hover phase branch, including hover end.
         self.assertLess(end, code.index('  if (sender.state == UIGestureRecognizerStateBegan', end))
         start = code.index('    const GHOST_TabletData event_tablet =')
@@ -72,7 +72,7 @@ GUARD
 }
 using GHOST_TabletData = int;
 constexpr int GHOST_TABLET_DATA_NONE = 0;
-struct Event { bool pencil_used; };
+struct Event { bool pencil_used; bool tablet_snapshot_valid=false; int tablet_snapshot=0; };
 int sample(Event event_info, int tablet_data) {
 SNAPSHOT
   return event_tablet;
@@ -88,6 +88,8 @@ int main() {
   for (int hover_tablet : {0, 1, 2, 3}) {
     assert(sample({false}, hover_tablet) == GHOST_TABLET_DATA_NONE);
     assert(sample({true}, hover_tablet) == hover_tablet);
+    assert(sample({true,true,7}, hover_tablet) == 7);
+    assert(sample({false,true,7}, hover_tablet) == GHOST_TABLET_DATA_NONE);
   }
 }
 """.replace('GUARD', guard.replace('return;', 'return 0;')).replace('SNAPSHOT', snapshot).replace('#include <cassert>', '#include <cassert>\n#include <initializer_list>'))

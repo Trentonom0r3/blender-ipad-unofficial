@@ -72,7 +72,7 @@ int main(){
         code = IOS[start:end]
         code = code.replace('- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender',
                             'void hover(Sender *sender)')
-        code = code.replace('[pan_gesture_recognizer pencilTouch]', 'pencil_touch')
+        code = code.replace('[pan_gesture_recognizer pencilContactDown]', 'pencil_touch')
         code = code.replace('[sender getScaledTouchPoint:window]', 'sender->point')
         code = code.replace('[self generateUserInputEvents:event_info]', 'generate(event_info)')
         code = code.replace('sender.state', 'sender->state').replace('nil', 'nullptr')

@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "patch_sha256": "345a975a12633d789145d2262b29c33c9ccae1a026251b11b95a9becd5c48710",
+  "python_sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+  "focused_checks": {
+    "gesture_device_samples": 5,
+    "retained_hover_roll": 3,
+    "pinned_source_files": 99
+  },
+  "native_build_verified": false,
+  "device_acceptance": false,
+  "production_scope": "Strict recognizer-owned device and pressure/tilt samples, measured Tap peak and Pan latest, separate physical-down guards and event-owned snapshots. No ring/UI or new interrupted-terminal semantics.",
+  "fixtures": "Actual portable contact/sample policy, UserInputEvent fields/constructor/setter and tablet selector, GHOST cursor/button constructors and pinned WM tablet conversion execute. UIKit actions/reset timing, SDK objects, preference storage and brush effects are modeled or unexecuted.",
+  "stock_pressure_probe": "Stock5.1.2 Window.event_simulate exposes no pressure/tilt injection; no host amplitude proof claimed.",
+  "overlay_changed_files": [
+    "intern/ghost/intern/GHOST_WindowIOS.mm",
+    "intern/ghost/GHOST_NavigationIOS.hh"
+  ],
+  "prior_weight_cleanup_overlay_unchanged": true,
+  "interaction_python_overlay_unchanged": true,
+  "independent_final_review": "Passed: original input/UX and calibrated fallback refinement; no remaining blocker. UIKit delivery and native paint terminal ownership remain separate.",
+  "full_retained_suite": 286,
+  "final_pressure_consumer_rerun": 5,
+  "native_pressure_curve": "Actual pinned wm_pressure_curve executes: native threshold/softness and calibrated zero; preference storage/CLAMP SDK types modeled.",
+  "diff_check": true
+}

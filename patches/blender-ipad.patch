@@ -2661,7 +2661,7 @@ diff --git a/scripts/startup/bl_ui/__init__.py b/scripts/startup/bl_ui/__init__.
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
-@@ -1,891 +1,1963 @@
+@@ -1,1968 +1,3585 @@
  /* SPDX-FileCopyrightText: 2025 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -2742,6 +2742,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGPoint translation;
    CGFloat distance;
    bool pencil_used;
++  bool tablet_snapshot_valid = false;
++  GHOST_TabletData tablet_snapshot = GHOST_TABLET_DATA_NONE;
 +  bool direct_touch = false;
 +  bool cancelled = false;
 +  bool direct_tool = false;
@@ -2754,6 +2756,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      translation = tran ? *tran : CGPointMake(0.0f, 0.0f);
      distance = dist ? *dist : 0.0f;
      pencil_used = pencil;
++  }
++
++  void set_tablet_snapshot(const GHOST_TabletData &sample)
++  {
++    tablet_snapshot = sample;
++    tablet_snapshot_valid = true;
    }
 
    void add_event(EventTypes event_type)
@@ -2821,31 +2829,54 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  system->pushEvent(new GHOST_EventPencilRing(system->getMilliSeconds(), window, packet));
 +}
 +
++/* Sample before UIKit advances state or resets its touch storage. Only this
++ * recognizer's physical contact can supply device/pressure/tilt to its action. */
++static ghost::ios::TouchDevice ios_touch_device(UITouch *touch)
++{
++  if (!touch) return ghost::ios::TouchDevice::Unknown;
++  switch (touch.type) {
++    case UITouchTypePencil: return ghost::ios::TouchDevice::Pencil;
++    case UITouchTypeDirect: return ghost::ios::TouchDevice::Finger;
++    case UITouchTypeIndirect:
++    case UITouchTypeIndirectPointer: return ghost::ios::TouchDevice::Indirect;
++  }
++  return ghost::ios::TouchDevice::Unknown;
++}
++static ghost::ios::PencilSample ios_pencil_sample(UITouch *touch, UIView *view)
++{
++  if (!touch || touch.type != UITouchTypePencil || !view) return {};
++  return ghost::ios::pencil_sample(touch.force, touch.maximumPossibleForce,
++                                   [touch azimuthAngleInView:view], touch.altitudeAngle);
++}
++static GHOST_TabletData ios_tablet_snapshot(const ghost::ios::PencilSample &sample)
++{
++  GHOST_TabletData result = GHOST_TABLET_DATA_NONE;
++  result.Active = GHOST_kTabletModeStylus;
++  result.Pressure = sample.valid ? sample.pressure : 0.0f;
++  result.Xtilt = sample.valid ? sample.xtilt : 0.0f;
++  result.Ytilt = sample.valid ? sample.ytilt : 0.0f;
++  return result;
++}
++
  /* GHOSTUITapGesture interface for capturing taps. */
  @interface GHOSTUITapGestureRecognizer : UITapGestureRecognizer
 +{
-+  __unsafe_unretained UITouch *pencil_touch;
++  ghost::ios::GestureContact gesture_contact;
 +  ghost::ios::TouchAdmission touch_admission;
 +  GHOST_WindowIOS *ring_window;
 +  ghost::ios::PencilRingContact ring_origin;
 +  ghost::ios::HUDContact hud_origin;
-+  CGFloat pencil_force;
-+  CGFloat pencil_max_force;
-+  CGFloat pencil_azimuth;
-+  CGFloat pencil_altitude;
 +}
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window;
-+- (UITouch *)pencilTouch;
++- (BOOL)gestureUsesPencil;
++- (BOOL)pencilContactDown;
++- (ghost::ios::PencilSample)pencilSample;
 +- (BOOL)touchStreamAllowed;
 +- (void)setRingWindow:(GHOST_WindowIOS *)value;
 +- (ghost::ios::PencilRingContact)ringContact;
 +- (ghost::ios::HUDContact)hudContact;
 +- (void)invalidateTouchStream;
-+- (CGFloat)pencilForce;
-+- (CGFloat)pencilMaxForce;
-+- (CGFloat)pencilAzimuth;
-+- (CGFloat)pencilAltitude;
 
  @end
 
@@ -2871,36 +2902,21 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  touch_admission.interrupt();
 +}
 +
-+- (UITouch *)pencilTouch
-+{
-+  return pencil_touch;
-+}
-+
-+- (CGFloat)pencilForce
-+{
-+  return pencil_force;
-+}
-+
-+- (CGFloat)pencilMaxForce
-+{
-+  return pencil_max_force;
-+}
-+
-+- (CGFloat)pencilAzimuth
-+{
-+  return pencil_azimuth;
-+}
-+
-+- (CGFloat)pencilAltitude
-+{
-+  return pencil_altitude;
-+}
++- (BOOL)gestureUsesPencil { return gesture_contact.pencil(); }
++- (BOOL)pencilContactDown { return gesture_contact.pencil_down(); }
++- (ghost::ios::PencilSample)pencilSample { return gesture_contact.peak; }
 +
 +- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 +{
 +  const bool fresh_contact = !touch_admission.active;
 +  touch_admission.begin();
 +  if (fresh_contact) {
++    if (touches.count == 1) {
++      for (UITouch *touch in touches) {
++        gesture_contact.begin(ios_touch_device(touch), reinterpret_cast<uintptr_t>(touch),
++                              ios_pencil_sample(touch, self.view));
++      }
++    }
 +    ring_origin = ios_ring_contact_at_start(ring_window, self.view, touches);
 +    hud_origin = {};
 +    if (ring_window && self.view == ring_window->getView() && touches.count == 1) {
@@ -2913,20 +2929,35 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    }
 +  }
 +  [super touchesBegan:touches withEvent:event];
-+  pencil_touch = nil;
-+  pencil_force = 0.0f;
-+  pencil_max_force = 0.0f;
-+  pencil_azimuth = 0.0f;
-+  pencil_altitude = 0.0f;
-+  for (UITouch *t in touches) {
-+    if (t.type == UITouchTypePencil) {
-+      pencil_touch = t;
-+      pencil_force = t.force;
-+      pencil_max_force = t.maximumPossibleForce;
-+      pencil_azimuth = [t azimuthAngleInView:self.view];
-+      pencil_altitude = t.altitudeAngle;
-+      break;
-+    }
++}
++
++- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
++{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
++  [super touchesMoved:touches withEvent:event];
++}
++
++- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
++{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
++  [super touchesEnded:touches withEvent:event];
++  for (UITouch *touch in touches) {
++    gesture_contact.end(reinterpret_cast<uintptr_t>(touch));
++  }
++}
++
++- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
++{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
++  [super touchesCancelled:touches withEvent:event];
++  for (UITouch *touch in touches) {
++    gesture_contact.end(reinterpret_cast<uintptr_t>(touch));
 +  }
 +}
 +
@@ -2935,8 +2966,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  ring_origin = ghost::ios::PencilRingContact{};
 +  hud_origin = {};
 +  touch_admission.reset();
++  gesture_contact.reset();
 +  [super reset];
-+  pencil_touch = nil;
 +}
 +
  @end
@@ -2945,11 +2976,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  @interface GHOSTUIPanGestureRecognizer : UIPanGestureRecognizer
  {
    CGPoint cached_translation;
-+  /* Apple Pencil UITouch for the current gesture, captured in this recognizer's
-+   * own touchesBegan (which runs BEFORE the recognizer's action), so handlePan's
-+   * Began already knows it's a pencil + its pressure. The view's touchesBegan that
-+   * sets current_pencil_touch runs AFTER the action. */
-+  __unsafe_unretained UITouch *pencil_touch;
++  /* Device and finite samples are frozen before superclass action delivery. */
++  ghost::ios::GestureContact gesture_contact;
 +  ghost::ios::TouchAdmission touch_admission;
 +  GHOST_WindowIOS *ring_window;
 +  ghost::ios::PencilRingContact ring_origin;
@@ -2960,7 +2988,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)setCachedTranslation:(CGPoint)translation;
  - (CGPoint)getCachedTranslation;
-+- (UITouch *)pencilTouch;
++- (BOOL)gestureUsesPencil;
++- (BOOL)pencilContactDown;
++- (ghost::ios::PencilSample)pencilSample;
 +- (BOOL)touchStreamAllowed;
 +- (void)setRingWindow:(GHOST_WindowIOS *)value;
 +- (ghost::ios::PencilRingContact)ringContact;
@@ -2979,6 +3009,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  const bool fresh_contact = !touch_admission.active;
 +  touch_admission.begin();
 +  if (fresh_contact) {
++    if (touches.count == 1) {
++      for (UITouch *touch in touches) {
++        gesture_contact.begin(ios_touch_device(touch), reinterpret_cast<uintptr_t>(touch),
++                              ios_pencil_sample(touch, self.view));
++      }
++    }
 +    ring_origin = ios_ring_contact_at_start(ring_window, self.view, touches);
 +    hud_origin = {};
 +    if (ring_window && self.view == ring_window->getView() && touches.count == 1) {
@@ -2990,28 +3026,36 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      }
 +    }
 +  }
-+  for (UITouch *t in touches) {
-+    if (t.type == UITouchTypePencil) {
-+      pencil_touch = t;
-+      break;
-+    }
-+  }
 +  [super touchesBegan:touches withEvent:event];
++}
++
++- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
++{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
++  [super touchesMoved:touches withEvent:event];
 +}
 +
 +- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 +{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
 +  [super touchesEnded:touches withEvent:event];
-+  if (pencil_touch && [touches containsObject:pencil_touch]) {
-+    pencil_touch = nil;
++  for (UITouch *touch in touches) {
++    gesture_contact.end(reinterpret_cast<uintptr_t>(touch));
 +  }
 +}
 +
 +- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 +{
++  for (UITouch *touch in touches) {
++    gesture_contact.update(reinterpret_cast<uintptr_t>(touch), ios_pencil_sample(touch, self.view));
++  }
 +  [super touchesCancelled:touches withEvent:event];
-+  if (pencil_touch && [touches containsObject:pencil_touch]) {
-+    pencil_touch = nil;
++  for (UITouch *touch in touches) {
++    gesture_contact.end(reinterpret_cast<uintptr_t>(touch));
 +  }
 +}
 +
@@ -3020,8 +3064,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  ring_origin = ghost::ios::PencilRingContact{};
 +  hud_origin = {};
 +  touch_admission.reset();
++  gesture_contact.reset();
 +  [super reset];
-+  pencil_touch = nil;
 +  cached_translation = CGPointZero;
 +}
 +
@@ -3035,10 +3079,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  touch_admission.interrupt();
 +}
 +
-+- (UITouch *)pencilTouch
-+{
-+  return pencil_touch;
-+}
++- (BOOL)gestureUsesPencil { return gesture_contact.pencil(); }
++- (BOOL)pencilContactDown { return gesture_contact.pencil_down(); }
++- (ghost::ios::PencilSample)pencilSample { return gesture_contact.latest; }
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
@@ -3557,8 +3600,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Lock access to ensure all input-events are received sequentially. */
    @synchronized(self) {
 +    /* Finger/indirect samples must not inherit a nearby Pencil's hover data. */
-+    const GHOST_TabletData event_tablet = event_info.pencil_used ? tablet_data :
-+                                                               GHOST_TABLET_DATA_NONE;
++    const GHOST_TabletData event_tablet = event_info.pencil_used ?
++        (event_info.tablet_snapshot_valid ? event_info.tablet_snapshot : tablet_data) :
++        GHOST_TABLET_DATA_NONE;
      for (int i = 0; i < event_info.num_events; i++) {
        UserInputEvent::EventTypes event_type = event_info.event_list[i];
        IOS_INPUT_LOG(@"%d-%@ %f,%f",
@@ -3854,33 +3898,14 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    ios_ring_packet(system, window, ring, GHOST_kPencilRingEnd, touch_point);
 +    return;
 +  }
-+  UITouch *pen = [sender pencilTouch];
-+  if (pen == nil) {
-+    pen = current_pencil_touch;
-+  }
-+  last_tap_with_pencil = (pen != nil);
-+
-+  if (last_tap_with_pencil) {
-+    tablet_data.Active = GHOST_kTabletModeStylus;
-+    tablet_data.Pressure = ([sender pencilMaxForce] > 0.0f) ?
-+                               ([sender pencilForce] / [sender pencilMaxForce]) :
-+                               1.0f;
-+    if (tablet_data.Pressure <= 0.0f && pen.maximumPossibleForce > 0.0f) {
-+      tablet_data.Pressure = pen.force / pen.maximumPossibleForce;
-+    }
-+    if (tablet_data.Pressure <= 0.0f) {
-+      tablet_data.Pressure = 1.0f;
-+    }
-+    CGFloat az = [sender pencilAzimuth];
-+    CGFloat alt = [sender pencilAltitude];
-+    CGFloat maxTilt = cos(0);
-+    tablet_data.Xtilt = sin(az) * cos(alt) / maxTilt;
-+    tablet_data.Ytilt = -cos(az) * cos(alt) / maxTilt;
-+  }
++  last_tap_with_pencil = [sender gestureUsesPencil];
++  const GHOST_TabletData gesture_tablet = ios_tablet_snapshot([sender pencilSample]);
++  if (last_tap_with_pencil) tablet_data = gesture_tablet;
 +
 +  const auto hud = [sender hudContact];
 +  if (hud.generation) touch_point = CGPointMake(hud.x, hud.y);
    UserInputEvent event_info(&touch_point, nullptr, nullptr, last_tap_with_pencil);
++  if (last_tap_with_pencil) event_info.set_tablet_snapshot(gesture_tablet);
 +  event_info.hud_generation = hud.generation;
 +  event_info.hud_serial = hud.serial;
 +  event_info.direct_tool = !hud.generation && ghost::ios::selection_hit(
@@ -4028,15 +4053,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGPoint translation = [sender getScaledTranslation:window];
 -  bool pencil_pan = current_pencil_touch ? true : false;
 -
-+  /* Detect the pencil from the recognizer (captured in its own touchesBegan, which
-+   * runs BEFORE this action) — current_pencil_touch (set in the view's
-+   * touchesBegan) is not yet populated on the gesture's Began, so relying on it
-+   * makes the FIRST dab a mouse-type (full-pressure) click = the "dot at the
-+   * stroke start". */
-+  UITouch *pen = [sender pencilTouch];
-+  if (pen == nil) { pen = current_pencil_touch; }
-+  bool pencil_pan = (pen != nil);
-+
++  const bool pencil_pan = [sender gestureUsesPencil];
++  const GHOST_TabletData gesture_tablet = ios_tablet_snapshot([sender pencilSample]);
 +
 +  if (sender.state == UIGestureRecognizerStateBegan) {
 +    ring_capture = [sender ringContact];
@@ -4058,19 +4076,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    else ios_ring_packet(system, window, ring_capture, GHOST_kPencilRingMotion, touch_point);
 +    return; /* Never synthesize mouse presses, scrolling or an ordinary release. */
 +  }
-+  /* Refresh tablet data from the pencil so the FIRST stroke sample
-+   * (Began -> LEFT_BUTTON_DOWN) carries real stylus pressure/tilt. */
-+  if (pencil_pan) {
-+    tablet_data.Active = GHOST_kTabletModeStylus;
-+    tablet_data.Pressure = (pen.maximumPossibleForce > 0.0) ?
-+                               (pen.force / pen.maximumPossibleForce) :
-+                               0.0f;
-+    CGFloat azimuthAngle = [pen azimuthAngleInView:window->getView()];
-+    CGFloat altitudeAngle = [pen altitudeAngle];
-+    CGFloat maxTilt = cos(0);
-+    tablet_data.Xtilt = sin(azimuthAngle) * cos(altitudeAngle) / maxTilt;
-+    tablet_data.Ytilt = -cos(azimuthAngle) * cos(altitudeAngle) / maxTilt;
-+  }
++  if (pencil_pan) tablet_data = gesture_tablet;
 +  /* Use the rendered navigation hit rectangles, not a fixed screen corner.
 +   * Start at the actual touch origin: UIKit recognizes a pan only after movement,
 +   * which can already put a Pencil/finger outside a small round button. */
@@ -4084,6 +4090,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    if (hud.generation) pointer_capture.begin(ghost::ios::PointerCaptureKind::Navigation);
 +    if (pointer_capture.active()) {
 +      UserInputEvent begin(&origin, nullptr, nullptr, pencil_pan);
++      if (pencil_pan) begin.set_tablet_snapshot(gesture_tablet);
 +      begin.hud_generation = hud.generation;
 +      begin.hud_serial = hud.serial;
 +      begin.direct_tool = pointer_capture.kind == ghost::ios::PointerCaptureKind::ToolManipulation;
@@ -4097,6 +4104,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  }
 +  if (pointer_capture.active()) {
 +    UserInputEvent pointer(&touch_point, nullptr, nullptr, pencil_pan);
++    if (pencil_pan) pointer.set_tablet_snapshot(gesture_tablet);
 +    pointer.hud_generation = pointer_hud_contact.generation;
 +    pointer.hud_serial = pointer_hud_contact.serial;
 +    pointer.direct_tool = pointer_capture.kind == ghost::ios::PointerCaptureKind::ToolManipulation;
@@ -4175,27 +4183,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    return;
 +  }
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
++  if (pencil_pan) event_info.set_tablet_snapshot(gesture_tablet);
 
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
    {
      /* Register initial click for click and drag support. */
      if (sender.state == UIGestureRecognizerStateBegan) {
-+      /* Refresh tablet pressure/tilt from the pencil NOW so the stroke's first
-+       * event (LEFT_BUTTON_DOWN below) carries the real (light) pencil pressure.
-+       * Otherwise tablet_data is still GHOST_TABLET_DATA_NONE (mouse, pressure
-+       * 1.0) because touchesMoved hasn't run yet, so the first paint/sculpt dab
-+       * lands at full pressure (the "dot" at the stroke start). */
-+      if (current_pencil_touch != nil) {
-+        tablet_data.Active = GHOST_kTabletModeStylus;
-+        tablet_data.Pressure = (current_pencil_touch.maximumPossibleForce > 0.0) ?
-+            (current_pencil_touch.force / current_pencil_touch.maximumPossibleForce) :
-+            0.0f;
-+        CGFloat az = [current_pencil_touch azimuthAngleInView:window->getView()];
-+        CGFloat alt = [current_pencil_touch altitudeAngle];
-+        tablet_data.Xtilt = sin(az) * cos(alt);
-+        tablet_data.Ytilt = -cos(az) * cos(alt);
-+      }
        /* Set inital translation */
        [sender setCachedTranslation:translation];
        event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
@@ -4492,7 +4486,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  /* A captured finger/Pencil drag owns both cursor and tablet samples.
 +   * Apply this to hover end too; clearing pressure mid-stroke also corrupts input. */
 +  if (pointer_capture.active() || current_pencil_touch ||
-+      [pan_gesture_recognizer pencilTouch]) {
++      [pan_gesture_recognizer pencilContactDown]) {
 +    return;
 +  }
 +  if (sender.state == UIGestureRecognizerStateBegan ||
@@ -4539,7 +4533,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +           sender.state == UIGestureRecognizerStateCancelled ||
 +           sender.state == UIGestureRecognizerStateFailed)
 +  {
-+    if (!current_pencil_touch && ![pan_gesture_recognizer pencilTouch]) {
++    if (!current_pencil_touch && ![pan_gesture_recognizer pencilContactDown]) {
 +      tablet_data = GHOST_TABLET_DATA_NONE;
 +    }
    }
@@ -4604,7 +4598,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction
  {
 +  if ([UIPencilInteraction preferredTapAction] == UIPencilPreferredActionIgnore ||
-+      current_pencil_touch || [pan_gesture_recognizer pencilTouch] ||
++      current_pencil_touch || [pan_gesture_recognizer pencilContactDown] ||
 +      mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)
 +  {
 +    return;
@@ -4635,7 +4629,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  if (@available(iOS 17.5, *)) {
 +    if (squeeze.phase != UIPencilInteractionPhaseEnded ||
 +        [UIPencilInteraction preferredSqueezeAction] == UIPencilPreferredActionIgnore ||
-+        current_pencil_touch || [pan_gesture_recognizer pencilTouch] ||
++        current_pencil_touch || [pan_gesture_recognizer pencilContactDown] ||
 +        mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)
 +    {
 +      return;
@@ -4695,7 +4689,80 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                             target:nil
                             action:@selector(handleDoneButton)];
 
-@@ -966,182 +2038,184 @@
+   toolbar_cancel_editing_item = [[UIBarButtonItem alloc]
+       initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                            target:nil
+                            action:@selector(handleCancelButton)];
+
+   /* Prevents editing of tip and live text fields. */
+   toolbar_tip_item.enabled = NO;
+   toolbar_live_text_item.enabled = NO;
+   toolbar_live_text_item.tintColor = UIColor.blackColor;
+
+   /* Set the live text to a fixed width. */
+   /* IOS_FIXME - should this be set dynamically? Need to move out of init if so. */
+   toolbar_live_text_item.width = 150.0f;
+
+   toolbar.items = @[
+     toolbar_tip_item,
+     toolbar_live_text_item,
+     toolbar_done_editing_item,
+     toolbar_cancel_editing_item
+   ];
+ }
+
+ - (void)generateKeyboardReturnEvent
+ {
+   /*
+    Only push the event back if the keyboard is active otherwise we may generate new
+    spurious events.
+    */
+   if (onscreen_keyboard_active) {
+     /*
+      This event should cause ui_textedit_end() to be called which will
+      hide the keyboard.
+      */
+     system->pushEvent(new GHOST_EventKey(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
+                                          GHOST_kEventKeyDown,
+                                          window,
+                                          GHOST_kKeyEnter,
+                                          false,
+                                          nullptr));
+   }
+   else {
+     IOS_INPUT_LOG(@"Ignoring handleKeyboardReturn %@", text_field.text);
+   }
+ }
+
+ - (void)handleKeyboardReturn:(UITextField *)text_field
+ {
+   @synchronized(self) {
+     IOS_INPUT_LOG(@"handleKeyboardReturn %@", text_field.text);
+     [self generateKeyboardReturnEvent];
+   }
+ }
+
+ - (void)handleKeyboardEditChange:(UITextField *)text_field
+ {
+   @synchronized(self) {
+
+     /* Update the text in the tool bar as the edits arrive. */
+     if (toolbar_live_text_item) {
+       toolbar_live_text_item.title = text_field.text;
+       /* Force toolbar to update */
+       [toolbar setNeedsLayout];
+       [toolbar layoutIfNeeded];
+     }
+     IOS_INPUT_LOG(@"Keyboard Edit change detected %@", text_field.text);
+
+     /* IOS_FIXME - Enabling this will propogate text changes back into the Blender text field
+      as they happen. Since pushing back individual key presses appears to be difficult this
+      might be the best we can do. However this currently causes a segmentation fault if you delete
+      text as the Blender-side string ends up being NULL in some cases. */
+     bool push_edits_back_to_blender = false;
+
+     if (push_edits_back_to_blender) {
+       system->pushEvent(new GHOST_EventKey(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),
                                             GHOST_kEventKeyDown,
                                             window,
                                             GHOST_kKeyTextEdit,
@@ -4885,7 +4952,19 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    text_field.autocorrectionType = UITextAutocorrectionTypeNo;
    text_field.spellCheckingType = UITextSpellCheckingTypeNo;
 
-@@ -1161,381 +2235,923 @@
+   /* Set font size. */
+   float fontSize = keyboard_properties.font_size / window->getWindowScaleFactor();
+   text_field.font = [UIFont systemFontOfSize:fontSize];
+
+   /* Set font color. */
+   text_field.textColor = [UIColor colorWithRed:keyboard_properties.font_color[0]
+                                          green:keyboard_properties.font_color[1]
+                                           blue:keyboard_properties.font_color[2]
+                                          alpha:keyboard_properties.font_color[3]];
+
+   /* Initial highlighting and text-cursor position. */
+   switch (keyboard_properties.inital_text_state) {
+     case GHOST_KeyboardProperties::select_all_text: {
        [text_field selectAll:nil];
        break;
      }
@@ -5835,7 +5914,45 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    if (deferred_swap_buffers_count) {
 
      /* These two messages should be made asserts when we've fixed all the issues. */
-@@ -1581,81 +3197,81 @@
+     if (!getValid()) {
+       IOS_WINDOW_LOG(@"Ignoring swap (invalid) con(%p) (win=%p)", getContext(), this);
+       return;
+     }
+
+     if (!is_active_window_) {
+       IOS_WINDOW_LOG(@"Ignoring swap (not active window) con(%p) (win=%p)", getContext(), this);
+       return;
+     }
+
+     IOS_WINDOW_LOG(@"Swapping (ui_View)%p (mtkView)%p con(%p) (win=%p) (sc=%d)",
+                    uiview_,
+                    metal_view_,
+                    getContext(),
+                    this,
+                    deferred_swap_buffers_count);
+
+     GHOST_ContextIOS *context = reinterpret_cast<GHOST_ContextIOS *>(getContext());
+     context->swapBuffers();
+     deferred_swap_buffers_count = 0;
+   }
+ }
+
+ void GHOST_WindowIOS::beginFrame()
+ {
+   GHOSTUIWindow *ui_window = (GHOSTUIWindow *)rootWindow;
+   [ui_window beginFrame];
+ }
+
+ void GHOST_WindowIOS::endFrame()
+ {
+   GHOSTUIWindow *ui_window = (GHOSTUIWindow *)rootWindow;
+   [ui_window endFrame];
+ }
+
+ void GHOST_WindowIOS::setTitle(const char *title)
+ {
+   if (window_title_) {
+     free(window_title_);
      window_title_ = nullptr;
    }
    window_title_ = (char *)malloc(strlen(title) + 1);
@@ -5918,7 +6035,215 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
     * TODO: Support coordinate mapping for sized windows. */
    outX = inX;
    outY = inY;
-@@ -1871,98 +3487,105 @@
+ }
+
+ void GHOST_WindowIOS::clientToScreen(int32_t inX, int32_t inY, int32_t &outX, int32_t &outY) const
+ {
+   /* Pass through for fullscreen windows.
+    * TODO: Support coordinate mapping for sized windows. */
+   outX = inX;
+   outY = inY;
+ }
+
+ void GHOST_WindowIOS::screenToClientIntern(int32_t inX,
+                                            int32_t inY,
+                                            int32_t &outX,
+                                            int32_t &outY) const
+ {
+   /* Pass through for fullscreen windows.
+    * TODO: Support coordinate mapping for sized windows. */
+   outX = inX;
+   outY = inY;
+ }
+
+ void GHOST_WindowIOS::clientToScreenIntern(int32_t inX,
+                                            int32_t inY,
+                                            int32_t &outX,
+                                            int32_t &outY) const
+ {
+   /* Pass through for fullscreen windows.
+    * TODO: Support coordinate mapping for sized windows. */
+   outX = inX;
+   outY = inY;
+ }
+
+ /* called for event, when window leaves monitor to another */
+ void GHOST_WindowIOS::setNativePixelSize(void) {}
+
+ /**
+  * \note Fullscreen switch is not actual fullscreen with display capture.
+  * As this capture removes all OS X window manager features.
+  *
+  * Instead, the menu bar and the dock are hidden, and the window is made border-less and
+  * enlarged. Thus, process switch, exposé, spaces, ... still work in fullscreen mode
+  */
+ GHOST_TSuccess GHOST_WindowIOS::setState(GHOST_TWindowState /*state*/)
+ {
+   // Ignore on iOS?
+   return GHOST_kSuccess;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setModifiedState(bool isUnsavedChanges)
+ {
+   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+   [pool drain];
+   return GHOST_Window::setModifiedState(isUnsavedChanges);
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setOrder(GHOST_TWindowOrder /*order*/)
+ {
+   /* TODO: Support or deprecate for iOS */
+   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+   GHOST_ASSERT(getValid(), "GHOST_WindowIOS::setOrder(): window invalid");
+
+   [pool drain];
+   return GHOST_kSuccess;
+ }
+
+ #pragma mark Drawing context
+
+ GHOST_Context *GHOST_WindowIOS::newDrawingContext(GHOST_TDrawingContextType type)
+ {
+
+   if (type == GHOST_kDrawingContextTypeMetal) {
+
+     GHOST_Context *context = new GHOST_ContextIOS(want_context_params_, uiview_, metal_view_);
+
+     if (context->initializeDrawingContext())
+       return context;
+     else
+       delete context;
+   }
+
+   return NULL;
+ }
+
+ #pragma mark invalidate
+
+ GHOST_TSuccess GHOST_WindowIOS::invalidate()
+ {
+   GHOST_ASSERT(getValid(), "GHOST_WindowIOS::invalidate(): window invalid");
+   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+   [pool drain];
+   return GHOST_kSuccess;
+ }
+
+ #pragma mark Progress bar
+
+ GHOST_TSuccess GHOST_WindowIOS::setProgressBar(float /*progress*/)
+ {
+   return GHOST_kSuccess;
+ }
+
+ static void postNotification() {}
+
+ GHOST_TSuccess GHOST_WindowIOS::endProgressBar()
+ {
+   return GHOST_kSuccess;
+ }
+
+ #pragma mark Cursor handling
+
+ void GHOST_WindowIOS::loadCursor(bool /*visible*/, GHOST_TStandardCursor /*shape*/) const {}
+
+ bool GHOST_WindowIOS::isDialog() const
+ {
+   return is_dialog_;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setWindowCursorVisibility(bool /*visible*/)
+ {
+   return GHOST_kSuccess;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setWindowCursorGrab(GHOST_TGrabCursorMode /*mode*/)
+ {
+   return GHOST_kSuccess;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setWindowCursorShape(GHOST_TStandardCursor /*shape*/)
+ {
+   return GHOST_kSuccess;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::hasCursorShape(GHOST_TStandardCursor /*shape*/)
+ {
+   return GHOST_kSuccess;
+ }
+
+ /** Reverse the bits in a uint16_t */
+ static uint16_t uns16ReverseBits(uint16_t shrt)
+ {
+   shrt = ((shrt >> 1) & 0x5555) | ((shrt << 1) & 0xAAAA);
+   shrt = ((shrt >> 2) & 0x3333) | ((shrt << 2) & 0xCCCC);
+   shrt = ((shrt >> 4) & 0x0F0F) | ((shrt << 4) & 0xF0F0);
+   shrt = ((shrt >> 8) & 0x00FF) | ((shrt << 8) & 0xFF00);
+   return shrt;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::setWindowCustomCursorShape(const uint8_t * /*bitmap*/,
+                                                            const uint8_t * /*mask*/,
+                                                            const int /*size*/[2],
+                                                            const int /*hot_spot*/[2],
+                                                            bool /*canInvertColor*/)
+ {
+   /* Passthrough for iOS. */
+   return GHOST_kSuccess;
+ }
+
+ uint16_t GHOST_WindowIOS::getDPIHint()
+ {
+   return 288;
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::popupOnscreenKeyboard(
+     const GHOST_KeyboardProperties &keyboard_properties)
+ {
+   GHOSTUIWindow *ghost_rootWindow = (GHOSTUIWindow *)rootWindow;
+   return [ghost_rootWindow popupOnscreenKeyboard:keyboard_properties];
+ }
+
+ GHOST_TSuccess GHOST_WindowIOS::hideOnscreenKeyboard()
+ {
+   GHOSTUIWindow *ghost_rootWindow = (GHOSTUIWindow *)rootWindow;
+   return [ghost_rootWindow hideOnscreenKeyboard];
+ }
+
+ const char *GHOST_WindowIOS::getLastKeyboardString()
+ {
+   GHOSTUIWindow *ghost_rootWindow = (GHOSTUIWindow *)rootWindow;
+   return [ghost_rootWindow getLastKeyboardString];
+ }
+
+ UITextField *GHOST_WindowIOS::getUITextField()
+ {
+   GHOSTUIWindow *ghost_rootWindow = (GHOSTUIWindow *)rootWindow;
+   return [ghost_rootWindow getUITextField];
+ }
+
+ const GHOST_TabletData GHOST_WindowIOS::getTabletData()
+ {
+   GHOSTUIWindow *ghost_rootWindow = (GHOSTUIWindow *)rootWindow;
+   return [ghost_rootWindow getTabletData];
+ }
+
+ /* This is the size of the window pre-scaled */
+ CGSize GHOST_WindowIOS::getLogicalWindowSize()
+ {
+   return metal_view_.frame.size;
+ }
+
+ /* This is the size of the window post-scaled */
+ CGSize GHOST_WindowIOS::getNativeWindowSize()
+ {
+   return metal_view_.drawableSize;
+ }
+
+ float GHOST_WindowIOS::getWindowScaleFactor()
+ {
+   return [[UIScreen mainScreen] scale];
  }
 
  /* Indicate that we want this window to be the next active one. */
@@ -39290,10 +39615,12 @@ diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_Navigation
 new file mode 100644
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,222 @@
+@@ -0,0 +1,278 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
++#include <algorithm>
++#include <cmath>
 +#include <cstdint>
 +#include <cstring>
 +#include <unordered_map>
@@ -39336,6 +39663,60 @@ new file mode 100644
 +  void interrupt() { if (active) { interrupted = true; } }
 +  bool allowed() const { return !interrupted; }
 +  void reset() { active = false; interrupted = false; }
++};
++
++/* Value-only device and samples belong to one recognizer contact. A nearby
++ * Pencil/hover must not relabel a finger, and a valid zero force stays zero. */
++enum class TouchDevice { Unknown, Finger, Pencil, Indirect };
++struct PencilSample {
++  bool valid = false;
++  float pressure = 0.0f, xtilt = 0.0f, ytilt = 0.0f;
++  bool calibrated = false;
++};
++/* maximum_force <= 0 means UIKit has no calibrated force; retain the native
++ * unknown-force fallback. Calibrated zero is a real light/ended sample. */
++inline PencilSample pencil_sample(double force, double maximum_force,
++                                  double azimuth, double altitude)
++{
++  if (!std::isfinite(force) || !std::isfinite(maximum_force) ||
++      !std::isfinite(azimuth) || !std::isfinite(altitude)) return {};
++  return {true, float(std::clamp(maximum_force > 0.0 ? force / maximum_force : 1.0,
++                                 0.0, 1.0)),
++          float(std::sin(azimuth) * std::cos(altitude)),
++          float(-std::cos(azimuth) * std::cos(altitude)), maximum_force > 0.0};
++}
++struct GestureContact {
++  TouchDevice device = TouchDevice::Unknown;
++  uintptr_t touch = 0;
++  bool down = false;
++  PencilSample latest{}, peak{};
++  bool begin(TouchDevice kind, uintptr_t identity, const PencilSample &sample)
++  {
++    if (touch || !identity || kind == TouchDevice::Unknown) return false;
++    device = kind;
++    touch = identity;
++    down = true;
++    update(identity, sample);
++    return true;
++  }
++  void update(uintptr_t identity, PencilSample sample)
++  {
++    if (!touch || identity != touch || device != TouchDevice::Pencil || !sample.valid ||
++        !std::isfinite(sample.pressure) || !std::isfinite(sample.xtilt) ||
++        !std::isfinite(sample.ytilt)) return;
++    sample.pressure = std::clamp(sample.pressure, 0.0f, 1.0f);
++    sample.xtilt = std::clamp(sample.xtilt, -1.0f, 1.0f);
++    sample.ytilt = std::clamp(sample.ytilt, -1.0f, 1.0f);
++    latest = sample;
++    /* A calibrated tap sample supersedes unknown-force fallback, even at zero.
++     * Later loss of calibration cannot promote a measured peak to full force. */
++    if (!peak.valid || (sample.calibrated && !peak.calibrated) ||
++        (sample.calibrated == peak.calibrated && sample.pressure > peak.pressure)) peak = sample;
++  }
++  bool pencil() const { return touch && device == TouchDevice::Pencil; }
++  bool pencil_down() const { return down && pencil(); }
++  void end(uintptr_t identity) { if (touch && identity == touch) down = false; }
++  void reset() { *this = {}; }
 +};
 +
 +struct NavigationRect {

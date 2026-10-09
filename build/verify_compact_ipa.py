@@ -93,6 +93,7 @@ with zipfile.ZipFile(ipa) as archive:
     has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
     has_left_corner_placement = b'+bool ED_ipad_hud_exposed_rect(' in patch
     has_selection_cue = b'+void WM_gesture_ipad_selection_draw(bContext *C)' in patch
+    has_gesture_samples = b'+struct GestureContact {' in patch
     has_nine_base = 'IPAD_BASE_TOOL_IDS = frozenset(' in expected
     nine_base_contract = None
     # Retained internal panel code does not imply the retired primary route.
@@ -153,6 +154,16 @@ with zipfile.ZipFile(ipa) as archive:
                       b'+  uint64_t ipad_selection_type_lifetime;',
                       b'+  gesture_ipad_selection_begin(C, op, event, WM_event_add_modal_handler(C, op));',
                       b'+    WM_gesture_ipad_selection_draw(C);'):
+            assert value in patch, value
+
+    if has_gesture_samples:
+        for value in ('gestureUsesPencil', 'pencilSample', 'pencilContactDown'):
+            assert value.encode('utf-8') in binary, value
+        for value in (b'+  bool tablet_snapshot_valid = false;',
+                      b'+        gesture_contact.begin(ios_touch_device(touch)',
+                      b'+  const bool pencil_pan = [sender gestureUsesPencil];',
+                      b'+  last_tap_with_pencil = [sender gestureUsesPencil];',
+                      b'+  if (last_tap_with_pencil) event_info.set_tablet_snapshot(gesture_tablet);'):
             assert value in patch, value
 
     if b'+static bool ui_ipad_hud_numeric_pointer_terminal(' in patch:
