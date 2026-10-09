@@ -1,0 +1,19 @@
+{
+  "status": "source_gap_reproduced",
+  "observations": [
+    {
+      "ordering": "terminal_then_interrupt",
+      "presses": 1,
+      "terminals": 1
+    },
+    {
+      "ordering": "interrupt_then_terminal_before_reset",
+      "presses": 1,
+      "terminals": 0
+    }
+  ],
+  "native_patch_sha256_lf": "1b0d16f5de452ba4df5963acb9c18127bf5da4a0108a5e1f6121384d2dbd9300",
+  "scope": "Actual portable PointerCapture/TouchAdmission, shipped Cancel producer and Pan admission guard/press/release statements executed. UIKit callback ordering, painting ownership/GPU/native brush cancellation are modeled or not executed. Shows an eligible uncaptured fallback path loses its terminal for one admitted ordering, not an observed device hang.",
+  "correction_implemented": false,
+  "device_defect_confirmed": false
+}

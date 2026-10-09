@@ -26,6 +26,8 @@ compiler=shutil.which('clang++') or 'C:/Program Files/LLVM/bin/clang++.exe'
 subprocess.run([compiler,'-std=c++17',str(geometry_folder/'layout.cc'),'-o',str(geometry_exe)],check=True)
 
 area=next(a for a in bpy.context.window.screen.areas if a.type=='VIEW_3D');region=next(r for r in area.regions if r.type=='WINDOW');window=bpy.context.window
+bpy.context.preferences.use_preferences_save=False;bpy.context.preferences.filepaths.temporary_directory=tempfile.mkdtemp(prefix='disposable-pencil-host-')+'/'
+bpy.context.preferences.filepaths.use_auto_save_temporary_files=False
 bpy.context.preferences.view.show_splash=False;bpy.context.preferences.view.show_tooltips=False
 step=0;cue=None;records=[];geometry=None;original_selection=None
 font=0

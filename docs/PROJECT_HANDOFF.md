@@ -1,5 +1,11 @@
 # Project handoff — 2026-10-03
 
+## Weight Paint Cancel cleanup reviewed; selection IPA verified - 2026-10-09
+
+The current coherent source removes premature Weight Paint cache deletion: native completion restores Alt Smooth and owns the one cache free. All279 host checks, four source-executing cleanup regressions (including10,000 started cycles and the old null-access reproduction),99-file pinned preflight and independent final UX/native review pass. This changes cleanup only, with no paint rollback, new Pencil terminal routing or device acceptance. See PENCIL_PAINT_CONTACT_NEXT and output/ui-preview/pencil-paint-contact/weight-cancel-source-verification.json. One exact native build/package check is next; do not rebuild the previous source unchanged.
+
+Latest verified IPA is selection feedback **37902275601@e374d9e02a518680920315b153d2af8b5cee385d**: native Release, downloaded full3368-entry CRC/arm64/iPhoneOS/whole exact interaction UI/toolbar/default header/native tool definitions/all129 icons/nine-slot contract/selection-cue markers and preserved compiled launch audit pass. Artifact11603933940; IPA248585870 bytes/SHA256fc3d75dda363a65ac4e6fa6497b3a25258a64fca6c400783ef960eb89ff7b9f4. Binary UUID D9D9E040-14F1-36C0-98B7-3019FF9377D8. Box/Lasso now has actual mode and Lift/Cancel feedback; this is feedback for existing behavior. Reports output/ui-preview/pencil-selection-cue/ipa-37902275601-*.json and binary-37902275601/audit.json. No new package/device acceptance is claimed. Keep accepted ring browsing/barrel Home, exact nine Base choices, native Tools look/full bars/close-left collapsed controls and every launch/context/history guard. The full personal goal remains unfinished.
+
 ## Next bounded Pencil painting gap - 2026-10-09
 
 Independent native audit confirms finger taps can reach brush press/pressure1 while ordinary finger drags already scroll; steady Pencil pressure/tilt already works in source. Tap/Pan global Pencil fallback and uncaptured paint press also lack strict per-contact origin/matched interruption terminal proof. See docs/PENCIL_PAINT_CONTACT_NEXT.md for the next connected canvas/device/owner/terminal contract and explicit limits. No paint correction source or reported device defect exists. Preserve ring/corner/native UI/hardware and finish exact selection build37902275601 before changing its patch.

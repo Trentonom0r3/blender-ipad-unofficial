@@ -1,0 +1,22 @@
+{
+  "status": "source_checks_passed",
+  "canonical_lf_patch_sha256": "76fc179b83c6f5eb73f58cd1839ce7500d0caaf8bfc33f0f49a6c198f6218075",
+  "host_tests": 279,
+  "pinned_patch_files": 99,
+  "weight_cleanup_tests": 4,
+  "started_cycles": 10000,
+  "independent_final_review": "passed_no_blocker",
+  "only_production_change": "Remove premature Weight Paint cache deletion; native done owns cleanup",
+  "old_null_access_reproduced": true,
+  "normal_and_alt_smooth_exactly_once_cleanup": true,
+  "refused_start_preserves_foreign_cache": true,
+  "native_build_verified": false,
+  "paint_rollback_changed": false,
+  "pencil_terminal_routing_changed": false,
+  "device_acceptance": false,
+  "model_limits": [
+    "Context/allocator/brush/timer/cursor/notifier boundaries modeled",
+    "Pinned function bodies execute; no UIKit transport or target modal execution"
+  ],
+  "latest_verified_ipa": "37902275601@e374d9e02a518680920315b153d2af8b5cee385d"
+}
