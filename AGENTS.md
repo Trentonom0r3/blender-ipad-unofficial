@@ -1,5 +1,11 @@
 # Blender iPad development
 
+## Left-corner exact build in progress - 2026-10-09
+
+Reviewed source **5deae3398776416c47f438b33d1aa1eba485159c** is pushed and building once in [run37883530390](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37883530390). Cloud preflight passed; latest observation is native iOS Release compilation in progress. A hidden one-build watcher downloads/verifies the full exact IPA, including the compiled corner exposure marker and preserved launch obligations, or saves actual failure logs. Inspect .cache/hud-left-build-watch.log/error.log and output/ui-preview/pencil-left-corner before replacements. No corrected placement IPA or device acceptance yet; latest verified prior IPA remains37874166837@4ebf161. Do not send an unchanged package. Later documentation/verifier changes do not alter this native source.
+
+The user also requests a concept of the final completed app with full Pencil workflows. An inspectable seven-stage end-state concept covers the nine-slot ring, modeling, future controls vs native last-operation Redo, sculpt, material nodes/Inspector, animation and Files/render. It explicitly labels future targets, preserves Blender bars and the accepted input language, uses exact pinned native tool inventories and existing native tool icon geometry, and has independent concept review plus browser checks at1024/736/320. Properties-category pictograms and controls are illustrative, not exact target UI or device evidence. This is a visual direction for review, not approval to skip current interaction/ownership work or expand imports now. See docs/PENCIL_FINISHED_APP_CONCEPT.md. Full personal goal remains unfinished.
+
 ## Left-corner controls correction - 2026-10-09
 
 Latest human feedback: everything seems okay so far; Selection/View/Move floating windows need to sit farther left. This is provisional positive device feedback, with installed revision not reconfirmed. The current source moves the applicable native HUD toward Blender's small lower-left margin when its measured full height clears the actual launcher buttons and open panels. Typical closed-rail offset changes56 to3 scaled pixels (native margin remains), about53 pixels left. Bottom placement, native widget appearance, nine Base actions, Pencil browsing/barrel Home and Redo remain unchanged.
