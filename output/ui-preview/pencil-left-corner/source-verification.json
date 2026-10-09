@@ -4,7 +4,7 @@
   "pinned_source_preflight_files": 98,
   "focused_hud_checks": 33,
   "focused_placement_checks": 4,
-  "native_build_verified": false,
+  "native_build_verified": true,
   "device_acceptance": false,
   "user_feedback": "everything seem okay so far; Selection/View/Move floating windows too far right",
   "feedback_scope": "Positive provisional device feedback, exact installed revision not reconfirmed; requested left placement remains unverified.",
@@ -20,13 +20,6 @@
     "correctness": "Passed after callback-free chrome snapshots and post-layout same-frame reevaluation; /root/pencil_native_inventory_review"
   },
   "evidence_scope": "Actual native source/compiled host fixtures. Chrome constructor/font/GPU geometry boundaries modeled. Existing inspected stock native widgets unchanged. No patched target UIKit/GPU/device placement proof.",
-  "typical_closed_rail": {
-    "old_offset_scaled_pixels": 56,
-    "new_scroller_offset_scaled_pixels": 3,
-    "left_shift_scaled_pixels": 53,
-    "native_margin_added_once": true,
-    "bottom_offset_unchanged": true
-  },
   "checks": [
     "success/hidden/copied/reopened native init",
     "empty/occupied launcher column",
@@ -38,5 +31,19 @@
     "queued old footprint refuses newly covered fields and still shields stale pixels",
     "full measured expanded/collapsed span before final same-frame placement",
     "context restored and native Redo origin preserved"
-  ]
+  ],
+  "source": "5deae3398776416c47f438b33d1aa1eba485159c",
+  "run": "37883530390",
+  "native_package_verified": true,
+  "compiled_launch_obligations_verified": true,
+  "binary_uuid": "96F2DD9B-308E-3152-8FA9-6A17C07C28C2",
+  "ipa_sha256": "069cbbca43ab416b336d509942e9ec55a1b2c663907bc2942500e0ecc7413a1b",
+  "artifact": 11596315357,
+  "reference_fixture_closed_rail": {
+    "old_offset_scaled_pixels": 56,
+    "new_scroller_offset_scaled_pixels": 3,
+    "left_shift_scaled_pixels": 53,
+    "native_margin_added_once": true,
+    "bottom_offset_unchanged": true
+  }
 }
