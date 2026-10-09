@@ -278,10 +278,12 @@ int main(){
 inline constexpr int RGN_TYPE_HUD=1,RGN_TYPE_WINDOW=2,RGN_FLAG_HIDDEN_BY_USER=1,
  RGN_FLAG_HIDDEN=2,RGN_FLAG_TOO_SMALL=4;
 struct ARegionType{};struct View2D{};
+struct rcti{int xmin=0,xmax=0,ymin=0,ymax=0;};
+void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 struct Runtime{ARegionType*type=nullptr;bool visible=false;
  struct{int xmin=7,ymin=9;}ipad_canvas_rect;float offset_x=0,offset_y=0;};
 struct ARegion{int regiontype=RGN_TYPE_HUD,flag=0;Runtime*runtime=nullptr;
- void*regiondata=nullptr;View2D v2d;};
+ void*regiondata=nullptr;View2D v2d;rcti winrct{};};
 struct ScrArea{int type=1;std::vector<ARegion*>regions;};
 struct bContext{ScrArea*area;ARegion*canvas;bool supported=true;};
 struct wmWindowManager{};struct wmWindow{};
@@ -303,6 +305,10 @@ void ED_area_update_region_sizes(wmWindowManager*,wmWindow*,ScrArea*){}
 void hud_region_hide(ARegion*r){r->flag|=RGN_FLAG_HIDDEN;}
 void ED_region_floating_init(ARegion*){++inits;}
 void UI_view2d_scroller_size_get(View2D*,bool,float*x,float*y){*x=3;*y=5;}
+bool ED_ipad_hud_exposed_rect(bContext*,wmWindow*,ScrArea*,const ARegion*c,const rcti&,rcti&e){
+ e={c->runtime->ipad_canvas_rect.xmin,999,c->runtime->ipad_canvas_rect.ymin,999};
+ BLI_rcti_translate(&e,c->winrct.xmin,c->winrct.ymin);return true;
+}
 ARegion*area_find_region_by_type_and_index_hint(const ScrArea*a,short kind,int hint){
  int index=0;ARegion*first=nullptr;
  for(auto*r:a->regions){if(r->regiontype==kind){

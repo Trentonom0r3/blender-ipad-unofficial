@@ -19,6 +19,10 @@ def source(path):
 SCREEN = source('source/blender/editors/screen/screen_ipad_panels.cc')
 DRAW = source('source/blender/windowmanager/intern/wm_draw.cc')
 HEADER = source('source/blender/editors/include/ED_ipad_panels.hh')
+CHROME = function(SCREEN, 'struct IPadHUDChrome {')+';'
+CHROME += '\nstatic std::unordered_map<uintptr_t, IPadHUDChrome> ipad_hud_chrome;\n'
+CAPTURE = function(SCREEN, 'static void ipad_hud_chrome_capture(').replace('static void', '[[maybe_unused]] static void', 1)
+EXPOSED = function(SCREEN, 'bool ED_ipad_hud_exposed_rect(')
 RECEIPTS = SCREEN[SCREEN.index('namespace {\nstruct IPadHUDOwner {'):
                   SCREEN.index('\nvoid ED_ipad_editing_canvas_parts',
                                SCREEN.index('namespace {\nstruct IPadHUDOwner {'))]
@@ -57,7 +61,7 @@ struct ARegion{int regiontype=RGN_TYPE_HUD,flag=0,alignment=RGN_ALIGN_FLOAT;bool
 struct AreaRuntime{int ipad_layer=1;};
 struct ScrArea{int spacetype=SPACE_VIEW3D;bool visible=true;AreaRuntime runtime;std::vector<ARegion*> regionbase;};
 struct ID{uint32_t session_uid;};
-struct bScreen{bool enabled=true;std::vector<ScrArea*> areabase;ID id{19};};
+struct bScreen{bool do_refresh=false,enabled=true;std::vector<ScrArea*> areabase;ID id{19};};
 struct wmWindow{int winid=11,height=800;bScreen *screen;};
 int WM_window_native_pixel_x(const wmWindow*){return 600;}
 int WM_window_native_pixel_y(const wmWindow *w){return w->height;}
@@ -91,6 +95,11 @@ bool UI_ipad_context_capture(bContext *C,uint64_t *v){if(!C->valid)return false;
 bToolRef *WM_toolsystem_ref_from_context(bContext *C){return &C->tool;}
 int redraws=0;
 void ED_region_tag_redraw(ARegion*){++redraws;}
+struct Rect {int xmin=0,ymin=0,xmax=0,ymax=0;bool empty()const{return xmax<=xmin||ymax<=ymin;}};
+struct Model {ScrArea *main=nullptr;Rect bounds;struct {Rect tools_panel,side_panel,bottom_panel,canvas;} layout;};
+struct Button {Rect rect;};Model hud_model;std::vector<Button> hud_buttons;
+ARegion*BKE_area_find_region_type(ScrArea*a,int kind){for(auto*r:a->regionbase)if(r->regiontype==kind)return r;return nullptr;}
+const std::vector<Button>&buttons(const Model&,bScreen*){return hud_buttons;}
 std::unordered_map<ARegion*,std::unordered_set<std::string>> native_blocks;
 std::vector<std::string> freed_blocks;
 std::function<void(bContext*,ARegion*)> onfree;
@@ -127,7 +136,7 @@ def compiled_prefix():
     a = layer.index('      if (region->overlap) {', layer.index('/* Blend in overlapping area regions. */'))
     b = layer.index('\n    }\n  }', a)
     producer = 'void native_overlap(bContext *C,wmWindow *win,ScrArea *area,ARegion *region){\n' + layer[a:b] + '\n}'
-    return '#define WITH_APPLE_CROSSPLATFORM\n' + WORLD + public + RECEIPTS + blend + producer
+    return '#define WITH_APPLE_CROSSPLATFORM\n' + WORLD + public + CHROME + CAPTURE + EXPOSED + RECEIPTS + blend + producer
 
 
 class PencilHUDPresentationTests(unittest.TestCase):

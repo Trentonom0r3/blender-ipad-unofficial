@@ -33570,7 +33570,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
   * \{ */
 
  static void wm_paintcursor_draw(bContext *C, ScrArea *area, ARegion *region)
-@@ -814,436 +821,642 @@
+@@ -814,436 +821,648 @@
 
  static void wm_draw_region_blit(ARegion *region, int view)
  {
@@ -33772,6 +33772,12 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
      }
    }
 
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Expansion/collapse changes the measured HUD span during native layout.
++   * Re-evaluate its corner before placing/drawing this same frame. */
++  UI_ipad_corner_hud_refresh(C, area);
++#endif
++
    ED_area_update_region_sizes(wm, win, area);
 
 +#ifndef WITH_APPLE_CROSSPLATFORM
@@ -34268,7 +34274,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
      /* For side-by-side and top-bottom, we need to render each view to an
       * an off-screen texture and then draw it. This used to happen for all
-@@ -1491,80 +1704,87 @@
+@@ -1491,80 +1710,87 @@
  {
    if (WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) {
      WM_window_pixels_read_sample_from_frontbuffer(CTX_wm_manager(C), win, pos, r_col);
@@ -34463,7 +34469,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,86 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -34512,6 +34518,8 @@ new file mode 100644
 +  int xmin, ymin, xmax, ymax;
 +  uint64_t generation;
 +};
++bool ED_ipad_hud_exposed_rect(bContext *C, wmWindow *win, ScrArea *area,
++                               const ARegion *canvas, const rcti &hud_rect, rcti &exposed);
 +void ED_ipad_hud_layout_begin(bContext *C, wmWindow *win, ScrArea *area, ARegion *hud);
 +void ED_ipad_hud_layout_end(bContext *C, wmWindow *win, ScrArea *area, ARegion *hud);
 +void ED_ipad_hud_draw_end(bContext *C, wmWindow *win, ScrArea *area, ARegion *hud);
@@ -36081,7 +36089,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,2841 @@
+@@ -0,0 +1,2934 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -36813,6 +36821,50 @@ new file mode 100644
 +  return result;
 +}
 +
++struct IPadHUDChrome {
++  uintptr_t screen_address = 0;
++  uint32_t screen_uid = 0;
++  uint64_t window_id = 0;
++  int width = 0, height = 0;
++  float scale = 0;
++  Rect canvas;
++  std::vector<Rect> blockers;
++};
++static std::unordered_map<uintptr_t, IPadHUDChrome> ipad_hud_chrome;
++
++static void ipad_hud_chrome_capture(wmWindow *win, bScreen *screen, const Model &model)
++{
++  IPadHUDChrome next;
++  next.screen_address = uintptr_t(screen); next.screen_uid = screen->id.session_uid;
++  next.window_id = uint64_t(win->winid);
++  next.width = WM_window_native_pixel_x(win); next.height = WM_window_native_pixel_y(win);
++  next.scale = UI_SCALE_FAC; next.canvas = model.layout.canvas;
++  for (const Button &button : buttons(model, screen)) next.blockers.push_back(button.rect);
++  for (const Rect &panel : {model.layout.tools_panel, model.layout.side_panel,
++                            model.layout.bottom_panel}) {
++    if (!panel.empty()) next.blockers.push_back(panel);
++  }
++  const auto previous = ipad_hud_chrome.find(uintptr_t(win));
++  auto same_rect = [](const Rect &a, const Rect &b) {
++    return a.xmin == b.xmin && a.ymin == b.ymin && a.xmax == b.xmax && a.ymax == b.ymax;
++  };
++  const bool same = previous != ipad_hud_chrome.end() &&
++      previous->second.screen_address == next.screen_address &&
++      previous->second.screen_uid == next.screen_uid && previous->second.window_id == next.window_id &&
++      previous->second.width == next.width && previous->second.height == next.height &&
++      previous->second.scale == next.scale && same_rect(previous->second.canvas, next.canvas) &&
++      previous->second.blockers.size() == next.blockers.size() &&
++      std::equal(previous->second.blockers.begin(), previous->second.blockers.end(),
++                 next.blockers.begin(), same_rect);
++  ipad_hud_chrome[uintptr_t(win)] = std::move(next);
++  if (!same) {
++    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++      if (area->runtime.ipad_layer != 1) continue;
++      if (ARegion *hud = BKE_area_find_region_type(area, RGN_TYPE_HUD)) ED_region_tag_redraw(hud);
++    }
++  }
++}
++
 +static void tag_layout(bContext *C, wmWindow *win, const bool refresh_cursor = true)
 +{
 +  bScreen *screen = WM_window_get_active_screen(win);
@@ -37506,6 +37558,7 @@ new file mode 100644
 +      model.main->runtime.ipad_bottom_region = tab->region_type;
 +    }
 +  }
++  ipad_hud_chrome_capture(win, screen, model);
 +}
 +
 +bool ED_ipad_panels_main_region_layout(const wmWindow *win, ScrArea *main)
@@ -37750,6 +37803,53 @@ new file mode 100644
 +/* Native HUD receipts deliberately do not own operators, RNA or UI pointers.
 + * Cached textures keep their original content owner; compositing cannot make
 + * an old UI tree current merely by observing a newer scene/history. */
++/* Use only copied chrome from existing native prepare/draw paths here. No
++ * panel poll, Python callback or RNA access may run while a HUD/frame is held. */
++bool ED_ipad_hud_exposed_rect(bContext *C, wmWindow *win, ScrArea *area,
++                               const ARegion *canvas, const rcti &hud_rect, rcti &exposed)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm || !win || BLI_findindex(&wm->windows, win) == -1) return false;
++  bScreen *screen = WM_window_get_active_screen(win);
++  if (!screen || !ED_ipad_panels_enabled(screen) || !area ||
++      BLI_findindex(&screen->areabase, area) == -1 || area->runtime.ipad_layer != 1 ||
++      !canvas || BLI_findindex(&area->regionbase, canvas) == -1 ||
++      canvas->regiontype != RGN_TYPE_WINDOW || !canvas->runtime->visible ||
++      !canvas->runtime->ipad_canvas ||
++      (canvas->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL | RGN_FLAG_POLL_FAILED)))
++    return false;
++  exposed = canvas->runtime->ipad_canvas_rect;
++  BLI_rcti_translate(&exposed, canvas->winrct.xmin, canvas->winrct.ymin);
++  if (hud_rect.ymin < exposed.ymin || hud_rect.ymax > exposed.ymax) return true;
++  int windows = 0;
++  LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++    if (region->regiontype == RGN_TYPE_WINDOW) ++windows;
++  }
++  if (windows != 1 || screen->do_refresh) return true;
++  const auto found = ipad_hud_chrome.find(uintptr_t(win));
++  if (found == ipad_hud_chrome.end()) return true;
++  const IPadHUDChrome &chrome = found->second;
++  if (chrome.screen_address != uintptr_t(screen) || chrome.screen_uid != screen->id.session_uid ||
++      chrome.window_id != uint64_t(win->winid) || chrome.width != WM_window_native_pixel_x(win) ||
++      chrome.height != WM_window_native_pixel_y(win) || chrome.scale != UI_SCALE_FAC) return true;
++  /* A native header/split may settle after prepare. Wait for matching geometry. */
++  const rcti &w = canvas->winrct;
++  const rcti expected{std::clamp(chrome.canvas.xmin, w.xmin, w.xmax),
++                      std::clamp(chrome.canvas.xmax, w.xmin + 1, w.xmax + 1) - 1,
++                      std::clamp(chrome.canvas.ymin, w.ymin, w.ymax),
++                      std::clamp(chrome.canvas.ymax, w.ymin + 1, w.ymax + 1) - 1};
++  if (expected.xmin != exposed.xmin || expected.xmax != exposed.xmax ||
++      expected.ymin != exposed.ymin || expected.ymax != exposed.ymax) return true;
++  const Rect strip{w.xmin, hud_rect.ymin, exposed.xmin, hud_rect.ymax + 1};
++  for (const Rect &blocker : chrome.blockers) {
++    if (!strip.empty() && !blocker.empty() && strip.xmin < blocker.xmax &&
++        strip.xmax > blocker.xmin && strip.ymin < blocker.ymax && strip.ymax > blocker.ymin)
++      return true;
++  }
++  exposed.xmin = w.xmin;
++  return true;
++}
++
 +namespace {
 +struct IPadHUDOwner {
 +  std::array<uint64_t, 13> context{};
@@ -37969,9 +38069,8 @@ new file mode 100644
 +  LISTBASE_FOREACH (ARegion *, canvas, &area->regionbase) {
 +    if (canvas->regiontype != RGN_TYPE_WINDOW || !canvas->runtime->visible ||
 +        !canvas->runtime->ipad_canvas) continue;
-+    rcti exposed = canvas->runtime->ipad_canvas_rect;
-+    BLI_rcti_translate(&exposed, canvas->winrct.xmin, canvas->winrct.ymin);
-+    rcti clipped;
++    rcti exposed, clipped;
++    if (!ED_ipad_hud_exposed_rect(C, win, area, canvas, hud->winrct, exposed)) continue;
 +    /* These native canvas bounds exclude Inspector/Tools/bottom editors,
 +     * rails, headers and seams. Do not promote a covered HUD above them. */
 +    if (BLI_rcti_isect(&drawn, &exposed, &clipped)) presentation.rects.push_back(clipped);
@@ -38034,9 +38133,9 @@ new file mode 100644
 +          LISTBASE_FOREACH (ARegion *, canvas, &area->regionbase) {
 +            if (canvas->regiontype != RGN_TYPE_WINDOW || !canvas->runtime->visible ||
 +                !canvas->runtime->ipad_canvas) continue;
-+            rcti exposed = canvas->runtime->ipad_canvas_rect, clipped;
-+            BLI_rcti_translate(&exposed, canvas->winrct.xmin, canvas->winrct.ymin);
-+            if (BLI_rcti_isect(&exposed, &r, &clipped) && ipad_hud_rect_equal(r, clipped))
++            rcti exposed, clipped;
++            if (ED_ipad_hud_exposed_rect(C, win, area, canvas, hud->winrct, exposed) &&
++                BLI_rcti_isect(&exposed, &r, &clipped) && ipad_hud_rect_equal(r, clipped))
 +              fits = true;
 +          }
 +          if (!fits) return false;
@@ -38149,6 +38248,7 @@ new file mode 100644
 +void ED_ipad_hud_forget_window(const wmWindow *win)
 +{
 +  ipad_hud_frames.erase(uintptr_t(win));
++  ipad_hud_chrome.erase(uintptr_t(win));
 +}
 +
 +void ED_ipad_editing_canvas_parts(bContext * /*C*/, ARegion *region, std::vector<rcti> &rects)
@@ -38336,6 +38436,7 @@ new file mode 100644
 +    }
 +  }
 +  GPU_blend(GPU_BLEND_NONE);
++  ipad_hud_chrome_capture(win, screen, model);
 +}
 +
 +static wmOperatorStatus panel_activate_exec(bContext *C, wmOperator *op)
@@ -48879,7 +48980,7 @@ diff --git a/source/blender/editors/space_image/space_image.cc b/source/blender/
 diff --git a/source/blender/editors/interface/regions/interface_region_hud.cc b/source/blender/editors/interface/regions/interface_region_hud.cc
 --- a/source/blender/editors/interface/regions/interface_region_hud.cc
 +++ b/source/blender/editors/interface/regions/interface_region_hud.cc
-@@ -1,479 +1,609 @@
+@@ -1,479 +1,623 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -49317,12 +49418,26 @@ diff --git a/source/blender/editors/interface/regions/interface_region_hud.cc b/
 +    return;
 +  }
 +  region->runtime->visible = !(region->flag & RGN_FLAG_TOO_SMALL);
-+  /* Native scrollers and the adapted canvas's left/bottom rails both reserve
-+   * their real pixels. Layout remains the native measured, stacked HUD. */
++  /* Use Blender's small lower-left margin below the launcher buttons. Only
++   * reserve the full left column when the measured HUD actually meets chrome.
++   * Keep the native bottom placement and last-operation storage unchanged. */
 +  float x, y;
 +  UI_view2d_scroller_size_get(&canvas->v2d, true, &x, &y);
-+  x = std::max(x, float(canvas->runtime->ipad_canvas_rect.xmin));
 +  y = std::max(y, float(canvas->runtime->ipad_canvas_rect.ymin));
++  rcti prospective = region->winrct;
++  /* Native floating placement already adds its quarter-unit margin. Its
++   * measured origin also handles nonzero/split WINDOW positions. */
++  const int native_x = region->winrct.xmin - int(region->runtime->offset_x);
++  const int native_y = region->winrct.ymin - int(region->runtime->offset_y);
++  BLI_rcti_translate(&prospective, native_x + int(x) - prospective.xmin,
++                     native_y + int(y) - prospective.ymin);
++  rcti exposed;
++  if (ED_ipad_hud_exposed_rect(C, CTX_wm_window(C), area, canvas, prospective, exposed)) {
++    x = std::max(x, float(exposed.xmin - canvas->winrct.xmin));
++  }
++  else {
++    x = std::max(x, float(canvas->runtime->ipad_canvas_rect.xmin));
++  }
 +  if (region->runtime->offset_x != x || region->runtime->offset_y != y) {
 +    region->runtime->offset_x = x;
 +    region->runtime->offset_y = y;

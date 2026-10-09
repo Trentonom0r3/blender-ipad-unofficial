@@ -1,5 +1,13 @@
 # Native last-operation HUD: Pencil input admission
 
+## Left-corner controls correction - 2026-10-09
+
+Latest human feedback: everything seems okay so far; Selection/View/Move floating windows need to sit farther left. This is provisional positive device feedback, with installed revision not reconfirmed. The current source moves the applicable native HUD toward Blender's small lower-left margin when its measured full height clears the actual launcher buttons and open panels. Typical closed-rail offset changes56 to3 scaled pixels (native margin remains), about53 pixels left. Bottom placement, native widget appearance, nine Base actions, Pencil browsing/barrel Home and Redo remain unchanged.
+
+The exposure guard reads copied chrome values from existing prepare/draw paths, never new Python/RNA/panel polls while borrowed HUD/frame state is held. Unknown/pending/changed screen/window/scale/canvas/quad geometry falls back. Native expansion/collapse is rechecked after layout and before final sizing/draw in the same frame. Actual-composited footprint and queued admission use the same full measured HUD clearance; old pixels remain reserved until presentation changes. All launch/context/history/property/Cancel guards remain.
+
+All **271 host tests**, **33 HUD checks**, **4 connected placement checks**, **98-file pinned preflight** and diff check pass. Independent UX and correctness reviews pass after their findings were fixed. Existing inspected stock native widget visuals remain applicable; source/fixtures model font/chrome/GPU boundaries and do not prove target placement. Evidence: output/ui-preview/pencil-left-corner/source-verification.json. Canonical LF patch **b357137460dbbf0b9690507572900c4b8c0caf36601f9aacb99fb014f8e1d2fd**; interaction Python unchanged4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319. Exact corrected source awaits native build/package verification; latest verified prior IPA remains37874166837@4ebf161. No unchanged rebuild. Preserve untracked selection-collapsed.png. Full personal Pencil-first goal remains unfinished.
+
 The bounded audit below is historical; its HUD input/corner implementation is now packaged in the launch-corrected source described in the current checkpoint. The user confirms that replacement reaches the interface; broader native editing remains separately unverified. Preserve the user's preferred existing small lower-left panel; do not replace it with custom Numbers or embed its native Redo template in owned-ring provenance.
 
 ## Nine direct Base actions: native IPA verified - 2026-10-09

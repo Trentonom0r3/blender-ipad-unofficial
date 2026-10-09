@@ -1,0 +1,42 @@
+{
+  "source_patch_sha256": "b357137460dbbf0b9690507572900c4b8c0caf36601f9aacb99fb014f8e1d2fd",
+  "host_suite_passed": 271,
+  "pinned_source_preflight_files": 98,
+  "focused_hud_checks": 33,
+  "focused_placement_checks": 4,
+  "native_build_verified": false,
+  "device_acceptance": false,
+  "user_feedback": "everything seem okay so far; Selection/View/Move floating windows too far right",
+  "feedback_scope": "Positive provisional device feedback, exact installed revision not reconfirmed; requested left placement remains unverified.",
+  "acceptance": [
+    "Move only the applicable floating controls toward native lower-left edge",
+    "Preserve vertical placement and existing native widget appearance",
+    "Reserve actual higher buttons/panels only when measured HUD overlaps",
+    "Same envelope for actual composited footprint and queued input",
+    "Preserve launch, native Redo, context/property/history guards and nine-slot ring"
+  ],
+  "independent_reviews": {
+    "ux": "Passed after whole-HUD compositor criterion; /root/inspector_ux_review",
+    "correctness": "Passed after callback-free chrome snapshots and post-layout same-frame reevaluation; /root/pencil_native_inventory_review"
+  },
+  "evidence_scope": "Actual native source/compiled host fixtures. Chrome constructor/font/GPU geometry boundaries modeled. Existing inspected stock native widgets unchanged. No patched target UIKit/GPU/device placement proof.",
+  "typical_closed_rail": {
+    "old_offset_scaled_pixels": 56,
+    "new_scroller_offset_scaled_pixels": 3,
+    "left_shift_scaled_pixels": 53,
+    "native_margin_added_once": true,
+    "bottom_offset_unchanged": true
+  },
+  "checks": [
+    "success/hidden/copied/reopened native init",
+    "empty/occupied launcher column",
+    "open Tools/side/bottom panels",
+    "exact edge versus1px overlap",
+    "native nonzero split origins and scales",
+    "quad/unmatched/layout-pending fallback",
+    "actual compositor cached textures10k repeats",
+    "queued old footprint refuses newly covered fields and still shields stale pixels",
+    "full measured expanded/collapsed span before final same-frame placement",
+    "context restored and native Redo origin preserved"
+  ]
+}

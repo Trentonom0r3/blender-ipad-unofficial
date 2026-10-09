@@ -37,6 +37,7 @@ inline constexpr int RGN_TYPE_HUD=1,RGN_TYPE_WINDOW=2,RGN_FLAG_HIDDEN=1,
 struct rcti{int xmin=0,xmax=0,ymin=0,ymax=0;};
 struct rctf{float xmin=0,xmax=0,ymin=0,ymax=0;};
 void BLI_rcti_init(rcti*r,int a,int b,int c,int d){*r={a,b,c,d};}
+void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 int BLI_rcti_size_x(const rcti*r){return r->xmax-r->xmin;}
 int BLI_rcti_size_y(const rcti*r){return r->ymax-r->ymin;}
 struct View2D{rcti mask;rctf cur,tot;int scroll=0;float maxzoom=0,minzoom=0;bool initialized=false;};
@@ -64,6 +65,11 @@ void ED_area_tag_region_size_update(ScrArea*a,ARegion*){a->flag|=AREA_FLAG_REGIO
 void ED_region_tag_redraw(ARegion*){}
 void hud_region_hide(ARegion*r){r->flag|=RGN_FLAG_HIDDEN;}
 void UI_view2d_scroller_size_get(View2D*,bool,float*x,float*y){*x=3;*y=5;}
+bool left_clear=false;int corner_block_y=-1,fixture_hud_height=44;
+bool ED_ipad_hud_exposed_rect(bContext*,wmWindow*,ScrArea*,const ARegion*c,const rcti&h,rcti&e){
+ e=c->runtime->ipad_canvas_rect;BLI_rcti_translate(&e,c->winrct.xmin,c->winrct.ymin);
+ if(left_clear&&(corner_block_y<0||h.ymax<corner_block_y))e.xmin=c->winrct.xmin;return true;
+}
 void UI_view2d_region_reinit(View2D*v,int,int x,int y){
  assert(x>0&&y>0);if(!v->initialized){v->cur=v->tot={0,float(x),0,float(y)};v->initialized=true;}}
 struct wmKeyMap{};wmKeyMap keymap;
@@ -80,7 +86,7 @@ void region_evaulate_visibility(ARegion*r){r->runtime->visible=!(r->flag&(RGN_FL
 void area_region_rects_calc(wmWindow*,ScrArea*a){
  for(auto*r:a->regionbase){if(r->regiontype==RGN_TYPE_HUD){
   r->winrct={int(r->runtime->offset_x),int(r->runtime->offset_x)+239,
-             int(r->runtime->offset_y),int(r->runtime->offset_y)+43};r->winx=240;r->winy=44;}}}
+             int(r->runtime->offset_y),int(r->runtime->offset_y)+fixture_hud_height-1};r->winx=240;r->winy=fixture_hud_height;}}}
 '''
 
 class PencilHUDInitializationTests(unittest.TestCase):

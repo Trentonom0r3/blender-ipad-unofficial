@@ -10,6 +10,8 @@ More Tools contains only the remaining compatible native tools. Exclude the exac
 
 Keep all nine positions in modes lacking a requested tool, visibly disabled and guarded against dispatch. Do not silently substitute a brush or mask for Select. Preserve accepted contact-only circular browsing, persistent admitted choices, Pencil-barrel Home/context, outside/repeat-squeeze dismissal, collapsed lower-left future controls, native Redo/Cancel/one-step Undo, full Blender bars, Inspector/editors/splits/Files/hardware and launch correction.
 
+Latest placement instruction: keep Selection/View/Move native floating controls close to the left corner, preserving y/style and the working ring. Use the actual full measured panel and concrete higher chrome, with consistent last-presented/queued-input admission. Routine placement choices are owned by development and independently reviewed.
+
 ## Independent pre-delivery review
 
 1. Write a literal acceptance list from the latest human direction before implementation. Reconcile older design notes with it; do not add categories by inference.
