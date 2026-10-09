@@ -1,5 +1,9 @@
 # Project handoff — 2026-10-03
 
+## Next bounded Pencil painting gap - 2026-10-09
+
+Independent native audit confirms finger taps can reach brush press/pressure1 while ordinary finger drags already scroll; steady Pencil pressure/tilt already works in source. Tap/Pan global Pencil fallback and uncaptured paint press also lack strict per-contact origin/matched interruption terminal proof. See docs/PENCIL_PAINT_CONTACT_NEXT.md for the next connected canvas/device/owner/terminal contract and explicit limits. No paint correction source or reported device defect exists. Preserve ring/corner/native UI/hardware and finish exact selection build37902275601 before changing its patch.
+
 ## Selection feedback exact build running - 2026-10-09
 
 Reviewed exact production source **e374d9e02a518680920315b153d2af8b5cee385d** is pushed and building once in [run37902275601](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37902275601). Hidden .cache/watch-selection-cue-build.py verifies that head, downloads the whole IPA on success, runs exact-source archive/UI/icons/cue marker checks and the preserved compiled launch audit. Logs .cache/selection-cue-build-watch.log/error.log; actual failures are saved separately. Inspect it before replacements. No selection-cue IPA or device acceptance yet; latest verified prior package remains37883530390@5deae339. Subsequent documentation/CI-only commits do not change native patch or Python. The four connected new checks are added to future cloud preflight; all275 host checks and98-file pinned preflight passed.
