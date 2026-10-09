@@ -1,0 +1,336 @@
+{
+  "source": "0cee12092ad10cd0ecd571764aa2e210d934679e",
+  "run": "37960879236",
+  "binary_uuid": "3643AF6F-D71B-39BE-8451-4D4A6E18008A",
+  "methods": [
+    {
+      "method": "-[GHOSTUITapGestureRecognizer gestureUsesPencil]",
+      "symbol": "-[GHOSTUITapGestureRecognizer gestureUsesPencil]",
+      "instructions": [
+        [
+          "adrp",
+          "x8, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x8, [x8, #0xd8c]"
+        ],
+        [
+          "add",
+          "x8, x0, x8"
+        ],
+        [
+          "ldr",
+          "x9, [x8, #0x8]"
+        ],
+        [
+          "cbz",
+          "x9, 0x10109c3d8 <-[GHOSTUITapGestureRecognizer gestureUsesPencil]+0x24>"
+        ],
+        [
+          "ldr",
+          "w8, [x8]"
+        ],
+        [
+          "cmp",
+          "w8, #0x2"
+        ],
+        [
+          "cset",
+          "w0, eq"
+        ],
+        [
+          "ret",
+          ""
+        ],
+        [
+          "mov",
+          "w0, #0x0"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    },
+    {
+      "method": "-[GHOSTUITapGestureRecognizer pencilContactDown]",
+      "symbol": "-[GHOSTUITapGestureRecognizer pencilContactDown]",
+      "instructions": [
+        [
+          "adrp",
+          "x8, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x8, [x8, #0xd8c]"
+        ],
+        [
+          "add",
+          "x8, x0, x8"
+        ],
+        [
+          "ldrb",
+          "w9, [x8, #0x10]"
+        ],
+        [
+          "cmp",
+          "w9, #0x1"
+        ],
+        [
+          "b.ne",
+          "0x10109c410 <-[GHOSTUITapGestureRecognizer pencilContactDown]+0x30>"
+        ],
+        [
+          "ldr",
+          "x9, [x8, #0x8]"
+        ],
+        [
+          "cbz",
+          "x9, 0x10109c410 <-[GHOSTUITapGestureRecognizer pencilContactDown]+0x30>"
+        ],
+        [
+          "ldr",
+          "w8, [x8]"
+        ],
+        [
+          "cmp",
+          "w8, #0x2"
+        ],
+        [
+          "cset",
+          "w0, eq"
+        ],
+        [
+          "ret",
+          ""
+        ],
+        [
+          "mov",
+          "w0, #0x0"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    },
+    {
+      "method": "-[GHOSTUITapGestureRecognizer pencilSample]",
+      "symbol": "-[GHOSTUITapGestureRecognizer pencilSample]",
+      "instructions": [
+        [
+          "adrp",
+          "x9, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x9, [x9, #0xd8c]"
+        ],
+        [
+          "add",
+          "x9, x0, x9"
+        ],
+        [
+          "ldur",
+          "q0, [x9, #0x28]"
+        ],
+        [
+          "str",
+          "q0, [x8]"
+        ],
+        [
+          "ldr",
+          "w9, [x9, #0x38]"
+        ],
+        [
+          "str",
+          "w9, [x8, #0x10]"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer gestureUsesPencil]",
+      "symbol": "-[GHOSTUIPanGestureRecognizer gestureUsesPencil]",
+      "instructions": [
+        [
+          "adrp",
+          "x8, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x8, [x8, #0xda0]"
+        ],
+        [
+          "add",
+          "x8, x0, x8"
+        ],
+        [
+          "ldr",
+          "x9, [x8, #0x8]"
+        ],
+        [
+          "cbz",
+          "x9, 0x10109ee54 <-[GHOSTUIPanGestureRecognizer gestureUsesPencil]+0x24>"
+        ],
+        [
+          "ldr",
+          "w8, [x8]"
+        ],
+        [
+          "cmp",
+          "w8, #0x2"
+        ],
+        [
+          "cset",
+          "w0, eq"
+        ],
+        [
+          "ret",
+          ""
+        ],
+        [
+          "mov",
+          "w0, #0x0"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+      "symbol": "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+      "instructions": [
+        [
+          "adrp",
+          "x8, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x8, [x8, #0xda0]"
+        ],
+        [
+          "add",
+          "x8, x0, x8"
+        ],
+        [
+          "ldrb",
+          "w9, [x8, #0x10]"
+        ],
+        [
+          "cmp",
+          "w9, #0x1"
+        ],
+        [
+          "b.ne",
+          "0x10109ee8c <-[GHOSTUIPanGestureRecognizer pencilContactDown]+0x30>"
+        ],
+        [
+          "ldr",
+          "x9, [x8, #0x8]"
+        ],
+        [
+          "cbz",
+          "x9, 0x10109ee8c <-[GHOSTUIPanGestureRecognizer pencilContactDown]+0x30>"
+        ],
+        [
+          "ldr",
+          "w8, [x8]"
+        ],
+        [
+          "cmp",
+          "w8, #0x2"
+        ],
+        [
+          "cset",
+          "w0, eq"
+        ],
+        [
+          "ret",
+          ""
+        ],
+        [
+          "mov",
+          "w0, #0x0"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer pencilSample]",
+      "symbol": "-[GHOSTUIPanGestureRecognizer pencilSample]",
+      "instructions": [
+        [
+          "adrp",
+          "x9, 0x1065ff000 <_zlibVersion+0x1065ff000>"
+        ],
+        [
+          "ldrsw",
+          "x9, [x9, #0xda0]"
+        ],
+        [
+          "add",
+          "x9, x0, x9"
+        ],
+        [
+          "ldur",
+          "q0, [x9, #0x14]"
+        ],
+        [
+          "str",
+          "q0, [x8]"
+        ],
+        [
+          "ldr",
+          "w9, [x9, #0x24]"
+        ],
+        [
+          "str",
+          "w9, [x8, #0x10]"
+        ],
+        [
+          "ret",
+          ""
+        ]
+      ]
+    }
+  ],
+  "scope": "Exact compiled native method presence and instructions for manual review; no UIKit scheduling/device proof.",
+  "bounded_field_shapes": [
+    {
+      "method": "-[GHOSTUITapGestureRecognizer gestureUsesPencil]",
+      "status": "passed"
+    },
+    {
+      "method": "-[GHOSTUITapGestureRecognizer pencilContactDown]",
+      "status": "passed"
+    },
+    {
+      "method": "-[GHOSTUITapGestureRecognizer pencilSample]",
+      "status": "passed"
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer gestureUsesPencil]",
+      "status": "passed"
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+      "status": "passed"
+    },
+    {
+      "method": "-[GHOSTUIPanGestureRecognizer pencilSample]",
+      "status": "passed"
+    }
+  ],
+  "status": "passed",
+  "limits": "Exact six bounded compiled getter instruction shapes support instance contact fields and20-byte Tap peak/Pan latest values, with no callback/view/global sample call in those bodies. This is shape recognition, not semantic CFG or ivar-relocation proof; initializer/action/reset ordering and UIKit/device delivery remain unexecuted. Shape mismatch requires review as inconclusive."
+}

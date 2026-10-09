@@ -7,11 +7,11 @@
     "retained_hover_roll": 3,
     "pinned_source_files": 99
   },
-  "native_build_verified": false,
+  "native_build_verified": true,
   "device_acceptance": false,
   "production_scope": "Strict recognizer-owned device and pressure/tilt samples, measured Tap peak and Pan latest, separate physical-down guards and event-owned snapshots. No ring/UI or new interrupted-terminal semantics.",
   "fixtures": "Actual portable contact/sample policy, UserInputEvent fields/constructor/setter and tablet selector, GHOST cursor/button constructors and pinned WM tablet conversion execute. UIKit actions/reset timing, SDK objects, preference storage and brush effects are modeled or unexecuted.",
-  "stock_pressure_probe": "Stock5.1.2 Window.event_simulate exposes no pressure/tilt injection; no host amplitude proof claimed.",
+  "stock_pressure_probe": "Stock5.1.2 Window.event_simulate exposes no pressure/tilt injection. Separate native OperatorStrokeElement replay measures amplitude and Undo/Redo; it does not prove interactive transport.",
   "overlay_changed_files": [
     "intern/ghost/intern/GHOST_WindowIOS.mm",
     "intern/ghost/GHOST_NavigationIOS.hh"
@@ -22,5 +22,30 @@
   "full_retained_suite": 286,
   "final_pressure_consumer_rerun": 5,
   "native_pressure_curve": "Actual pinned wm_pressure_curve executes: native threshold/softness and calibrated zero; preference storage/CLAMP SDK types modeled.",
-  "diff_check": true
+  "diff_check": true,
+  "package_verified": true,
+  "native_source": "0cee12092ad10cd0ecd571764aa2e210d934679e",
+  "native_run": "37960879236",
+  "compiled_launch_and_weight_cleanup": true,
+  "compiled_getter_fields": 6,
+  "stock_pressure_replay": {
+    "zero": 0,
+    "light": 0.02404303496900294,
+    "firm": 0.12822954567687703,
+    "nonzero_undo_and_redo": true,
+    "scope": "Stock5.1.2 native OperatorStrokeElement replay; not interactive UIKit/GHOST/WM delivery or tilt geometry proof."
+  },
+  "later_stock_weight_observation": {
+    "status": "observed",
+    "host_version": "5.1.2",
+    "escape_retains_painted_weights": true,
+    "one_undo_restores_original": true,
+    "target_device_acceptance": false,
+    "report": "native-weight-cancel-host.json"
+  },
+  "independent_final_evidence_review": {
+    "status": "passed",
+    "reviewer": "/root/weight_cancel_final_review",
+    "scope": "Disposable stock pressure and Weight probes; canvas/WM source audits; exact package and bounded compiled getters. No UIKit/device or semantic CFG/ivar-relocation proof."
+  }
 }
