@@ -86,6 +86,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_compact_shelf.py -v
       - name: Test touch Mode native geometry and deferred owner receipts
         run: python3 -m unittest discover -s build -p test_touch_mode_access.py -v
+      - name: Test admitted native Box/Lasso feedback and fresh gesture ownership
+        run: python3 -m unittest discover -s build -p test_selection_stroke_cue.py -v
       - name: Test admitted native Transform stroke feedback and bounded drawing
         run: python3 -m unittest discover -s build -p test_touch_stroke_cue.py -v
       - name: Test owned Pencil ring browsing and presented input receipts

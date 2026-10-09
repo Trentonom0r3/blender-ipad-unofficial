@@ -1,5 +1,9 @@
 # Project handoff — 2026-10-03
 
+## Selection feedback exact build running - 2026-10-09
+
+Reviewed exact production source **e374d9e02a518680920315b153d2af8b5cee385d** is pushed and building once in [run37902275601](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37902275601). Hidden .cache/watch-selection-cue-build.py verifies that head, downloads the whole IPA on success, runs exact-source archive/UI/icons/cue marker checks and the preserved compiled launch audit. Logs .cache/selection-cue-build-watch.log/error.log; actual failures are saved separately. Inspect it before replacements. No selection-cue IPA or device acceptance yet; latest verified prior package remains37883530390@5deae339. Subsequent documentation/CI-only commits do not change native patch or Python. The four connected new checks are added to future cloud preflight; all275 host checks and98-file pinned preflight passed.
+
 ## Native Box/Lasso feedback candidate - 2026-10-09
 
 Box/Lasso direct strokes now reuse the transient Transform cue: actual Replace/Add/Remove mode, Lift to apply and Two-finger drag to cancel. This adds feedback to existing selection behavior; no ring, corner placement, capability or history change. Fresh registered native modal/gesture and numeric operator/type/context/tool/geometry ownership are required; stale state retires the cue, native popups suppress it, and native completion/Cancel frees its values. Full-window projection precedes region-local drawing. All275 host tests/98-file preflight and independent UX/native correctness review pass. Inspected stock Box/Lasso shapes use a cue reconstruction with exact compiled portable geometry/native font/theme; target WM/GHOST/GPU/device execution remains unverified. See docs/PENCIL_SELECTION_FEEDBACK.md and output/ui-preview/pencil-selection-cue. Latest verified IPA is still left-corner37883530390@5deae339; this coherent candidate awaits one exact native build and downloaded checks.
