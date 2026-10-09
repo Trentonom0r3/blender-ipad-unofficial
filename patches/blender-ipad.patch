@@ -32075,7 +32075,57 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
  using wmGenericCallbackFn = void (*)(bContext *C, void *user_data);
 
  struct wmGenericCallback {
-@@ -666,82 +667,88 @@
+@@ -625,123 +626,138 @@
+   int points;
+   /** Optional, maximum amount of points stored. */
+   int points_alloc;
+   int modal_state;
+   /** Optional, draw the active side of the straight-line gesture. */
+   bool draw_active_side;
+   /** Latest mouse position relative to area. Currently only used by lasso drawing code. */
+   blender::int2 mval;
+
+   /**
+    * For modal operators which may be running idle, waiting for an event to activate the gesture.
+    * Typically this is set when the user is click-dragging the gesture
+    * (box and circle select for eg).
+    */
+   uint is_active : 1;
+   /** Previous value of is-active (use to detect first run & edge cases). */
+   uint is_active_prev : 1;
+   /** Use for gestures that support both immediate or delayed activation. */
+   uint wait_for_input : 1;
+   /** Use for gestures that can be moved, like box selection. */
+   uint move : 1;
+   /** For gestures that support snapping, stores if snapping is enabled using the modal keymap
+    * toggle. */
+   uint use_snap : 1;
+   /** For gestures that support flip, stores if flip is enabled using the modal keymap
+    * toggle. */
+   uint use_flip : 1;
+   /** For gestures that support smoothing, stores if smoothing is enabled using the modal keymap
+    * toggle. */
+   uint use_smooth : 1;
+
+   /**
+    * customdata
+    * - for border is a #rcti.
+    * - for circle is #rcti, (`xmin`, `ymin`) is center, `xmax` radius.
+    * - for lasso is short array.
+    * - for straight line is a #rcti: (`xmin`, `ymin`) is start, (`xmax`, `ymax`) is end.
+    */
+   void *customdata;
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /** Value-only feedback for an admitted native Box/Lasso stroke. Zeroed by gesture allocation. */
++  bool ipad_selection_cue;
++  int ipad_selection_mode;
++  uint64_t ipad_selection_context[13];
++  uint64_t ipad_selection_operator_lifetime;
++  uint64_t ipad_selection_type_lifetime;
++#endif
++
+   /** Free pointer to use for operator allocations (if set, its freed on exit). */
    wmGenericUserData user_data;
  };
 
@@ -32166,7 +32216,7 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
   *
   * Events hold information about the state when the last #KM_PRESS event was added.
   * This is used for generating #KM_CLICK, #KM_DBL_CLICK & #KM_PRESS_DRAG events.
-@@ -755,80 +762,83 @@
+@@ -755,80 +771,83 @@
   *   this isn't a problem however releasing other keys such as modifiers prevents click/click-drag
   *   events from being detected, see: #89989.
   *
@@ -32250,7 +32300,7 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
    /** The `type` at the point of the press action. */
    wmEventType prev_press_type;
    /**
-@@ -1124,82 +1134,84 @@
+@@ -1124,82 +1143,84 @@
 
    /**
     * Return a different description to use in the user interface, based on property values.
@@ -33570,7 +33620,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
   * \{ */
 
  static void wm_paintcursor_draw(bContext *C, ScrArea *area, ARegion *region)
-@@ -814,436 +821,648 @@
+@@ -814,436 +821,651 @@
 
  static void wm_draw_region_blit(ARegion *region, int view)
  {
@@ -34127,6 +34177,9 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
    if (win->gesture.first) {
      wm_gesture_draw(win);
      wmWindowViewport(win);
++#ifdef WITH_APPLE_CROSSPLATFORM
++    WM_gesture_ipad_selection_draw(C);
++#endif
    }
 
    /* Needs pixel coords in screen. */
@@ -34146,7 +34199,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
        wm_software_cursor_motion_clear_with_window(win);
      }
    }
-+
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  std::vector<ghost::ios::NavigationRect> navigation;
 +  if (ED_ipad_panels_enabled(screen)) {
@@ -34234,7 +34287,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +  }
 +  ghost::ios::set_navigation_regions(win->ghostwin, std::move(navigation));
 +#endif
-
++
    GPU_debug_group_end();
  }
 
@@ -34274,7 +34327,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
      /* For side-by-side and top-bottom, we need to render each view to an
       * an off-screen texture and then draw it. This used to happen for all
-@@ -1491,80 +1710,87 @@
+@@ -1491,80 +1713,87 @@
  {
    if (WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) {
      WM_window_pixels_read_sample_from_frontbuffer(CTX_wm_manager(C), win, pos, r_col);
@@ -41313,7 +41366,352 @@ diff --git a/source/blender/editors/transform/transform_ops.cc b/source/blender/
 diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blender/windowmanager/intern/wm_gesture_ops.cc
 --- a/source/blender/windowmanager/intern/wm_gesture_ops.cc
 +++ b/source/blender/windowmanager/intern/wm_gesture_ops.cc
-@@ -195,6 +195,14 @@
+@@ -1,297 +1,456 @@
+ /* SPDX-FileCopyrightText: 2007 Blender Authors
+  *
+  * SPDX-License-Identifier: GPL-2.0-or-later */
+
+ /** \file
+  * \ingroup wm
+  *
+  * Default operator callbacks for use with gestures (border/circle/lasso/straightline).
+  * Operators themselves are defined elsewhere.
+  *
+  * - Keymaps are in `wm_operators.cc`.
+  * - Property definitions are in `wm_operator_props.cc`.
+  */
+ #include "MEM_guardedalloc.h"
+
+ #include <fmt/format.h>
+
+ #include <algorithm>
+
+ #include "DNA_space_types.h"
+ #include "DNA_windowmanager_types.h"
+
+ #include "BLI_math_rotation.h"
+ #include "BLI_math_vector.h"
+ #include "BLI_math_vector.hh"
+ #include "BLI_math_vector_types.hh"
+ #include "BLI_rect.h"
+
+ #include "BKE_context.hh"
+
+ #include "WM_api.hh"
+ #include "WM_types.hh"
+
+ #include "wm.hh"
+ #include "wm_event_types.hh"
+
+ #include "ED_screen.hh"
+ #include "ED_select_utils.hh"
+
+ #include "RNA_access.hh"
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "DNA_screen_types.h"
++#  include "DNA_workspace_types.h"
++#  include "BKE_screen.hh"
++#  include "BLI_listbase.h"
++#  include "BLT_translation.hh"
++#  include "GPU_matrix.hh"
++#  include "UI_interface_c.hh"
++#  include "WM_toolsystem.hh"
++#  include "wm_event_system.hh"
++#endif
++
+ using blender::Array;
+ using blender::float2;
+ using blender::int2;
+
+ /* -------------------------------------------------------------------- */
+ /** \name Internal Gesture Utilities
+  *
+  * Border gesture has two types:
+  * -# #WM_GESTURE_CROSS_RECT: starts a cross, on mouse click it changes to border.
+  * -# #WM_GESTURE_RECT: starts immediate as a border, on mouse click or release it ends.
+  *
+  * It stores 4 values (xmin, xmax, ymin, ymax) and event it ended with (event_type).
+  *
+  * \{ */
++
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static int gesture_ipad_selection_kind(const wmOperator *op)
++{
++  /* Resolve registration before dereferencing a saved operator type. */
++  if (!op || op->opm) return 0;
++  wmOperatorType *box = WM_operatortype_find("VIEW3D_OT_select_box", true);
++  wmOperatorType *lasso = WM_operatortype_find("VIEW3D_OT_select_lasso", true);
++  if (box && op->type == box && box->ipad_lifetime_id &&
++      box->invoke == WM_gesture_box_invoke && box->modal == WM_gesture_box_modal &&
++      box->cancel == WM_gesture_box_cancel) return WM_GESTURE_RECT;
++  if (lasso && op->type == lasso && lasso->ipad_lifetime_id &&
++      lasso->invoke == WM_gesture_lasso_invoke && lasso->modal == WM_gesture_lasso_modal &&
++      lasso->cancel == WM_gesture_lasso_cancel) return WM_GESTURE_LASSO;
++  return 0;
++}
++
++static bool gesture_ipad_selection_tool(const bContext *C, const int kind)
++{
++  const bToolRef *tool = WM_toolsystem_ref_from_context(C);
++  return tool && STREQ(tool->idname, kind == WM_GESTURE_RECT ? "builtin.select_box" :
++                                                                "builtin.select_lasso");
++}
++
++static void gesture_ipad_selection_begin(bContext *C, wmOperator *op, const wmEvent *event,
++                                         const wmEventHandler_Op *handler)
++{
++  wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
++  gesture->ipad_selection_cue = false;
++  const int kind = gesture_ipad_selection_kind(op);
++  if (!kind || !handler || handler->op != op || !event || event->type != LEFTMOUSE ||
++      event->val != KM_PRESS_DRAG || !(event->flag & WM_EVENT_IS_DIRECT_TOOL) ||
++      event->modifier || event->keymodifier != EVENT_NONE || gesture->type != kind ||
++      gesture->wait_for_input || !gesture_ipad_selection_tool(C, kind) ||
++      !UI_ipad_context_capture(C, gesture->ipad_selection_context)) return;
++  /* Both exact native operators own this fixed scalar enum. No getter is used during draw. */
++  const int mode = RNA_enum_get(op->ptr, "mode");
++  if (!ELEM(mode, SEL_OP_SET, SEL_OP_ADD, SEL_OP_SUB)) return;
++  gesture->ipad_selection_operator_lifetime = WM_operator_touch_lifetime_id(op);
++  gesture->ipad_selection_type_lifetime = op->type->ipad_lifetime_id;
++  gesture->ipad_selection_mode = mode;
++  gesture->ipad_selection_cue = gesture->ipad_selection_operator_lifetime != 0;
++}
++
++void WM_gesture_ipad_selection_draw(bContext *C)
++{
++  wmWindow *window = CTX_wm_window(C);
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm || !window || BLI_findindex(&wm->windows, window) == -1) return;
++  bScreen *screen = WM_window_get_active_screen(window);
++  if (!screen) return;
++  /* The window overlay is above native menus. Never promote this noninteractive cue over them. */
++  LISTBASE_FOREACH (const ARegion *, popup, &screen->regionbase) {
++    if (popup->runtime->visible) return;
++  }
++  LISTBASE_FOREACH (wmEventHandler *, base, &window->modalhandlers) {
++    if (base->type != WM_HANDLER_TYPE_OP || (base->flag & WM_HANDLER_DO_FREE)) continue;
++    const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++    wmOperator *op = handler->op;
++    if (!op || !op->customdata || BLI_findindex(&window->gesture, op->customdata) == -1) continue;
++    wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
++    if (!gesture->ipad_selection_cue) continue;
++    const int kind = gesture_ipad_selection_kind(op);
++    if (!kind || gesture->type != kind || gesture->wait_for_input ||
++        !WM_operator_touch_lifetime_matches(op, gesture->ipad_selection_operator_lifetime) ||
++        op->type->ipad_lifetime_id != gesture->ipad_selection_type_lifetime ||
++        (handler->context.win && handler->context.win != window)) {
++      gesture->ipad_selection_cue = false;
++      continue;
++    }
++    ScrArea *area = nullptr;
++    ARegion *region = nullptr;
++    LISTBASE_FOREACH (ScrArea *, candidate, &screen->areabase) {
++      if (uintptr_t(candidate) == gesture->ipad_selection_context[3] &&
++          candidate == handler->context.area) { area = candidate; break; }
++    }
++    if (area) {
++      LISTBASE_FOREACH (ARegion *, candidate, &area->regionbase) {
++        if (uintptr_t(candidate) == gesture->ipad_selection_context[4] &&
++            candidate == handler->context.region && candidate->regiontype == RGN_TYPE_WINDOW) {
++          region = candidate;
++          break;
++        }
++      }
++    }
++    if (!region || region->winrct.xmin != gesture->winrct.xmin ||
++        region->winrct.xmax != gesture->winrct.xmax ||
++        region->winrct.ymin != gesture->winrct.ymin ||
++        region->winrct.ymax != gesture->winrct.ymax) {
++      gesture->ipad_selection_cue = false;
++      continue;
++    }
++    ScrArea *previous_area = CTX_wm_area(C);
++    ARegion *previous_region = CTX_wm_region(C);
++    CTX_wm_area_set(C, area);
++    CTX_wm_region_set(C, region);
++    if (!UI_ipad_context_matches(C, gesture->ipad_selection_context) ||
++        !gesture_ipad_selection_tool(C, kind)) {
++      gesture->ipad_selection_cue = false;
++    }
++    else {
++      const char *status = nullptr;
++      if (kind == WM_GESTURE_RECT) {
++        switch (gesture->ipad_selection_mode) {
++          case SEL_OP_SET: status = IFACE_("Box · Replace"); break;
++          case SEL_OP_ADD: status = IFACE_("Box · Add"); break;
++          case SEL_OP_SUB: status = IFACE_("Box · Remove"); break;
++        }
++      }
++      else {
++        switch (gesture->ipad_selection_mode) {
++          case SEL_OP_SET: status = IFACE_("Lasso · Replace"); break;
++          case SEL_OP_ADD: status = IFACE_("Lasso · Add"); break;
++          case SEL_OP_SUB: status = IFACE_("Lasso · Remove"); break;
++        }
++      }
++      /* Caller restored the full window projection after native gesture drawing.
++       * The shared cue uses region-local pixels; translate from that exact live WINDOW. */
++      GPU_matrix_push();
++      GPU_matrix_translate_2f(float(region->winrct.xmin), float(region->winrct.ymin));
++      UI_ipad_stroke_cue_draw(C, region, gesture->ipad_selection_context, status);
++      GPU_matrix_pop();
++    }
++    /* Native area setter clears region, even when restoring the same area. */
++    CTX_wm_area_set(C, previous_area);
++    CTX_wm_region_set(C, previous_region);
++    return; /* One native admitted pointer stream, no callbacks or saved owners retained. */
++  }
++}
++#endif
+
+ static void gesture_modal_end(bContext *C, wmOperator *op)
+ {
+   wmWindow *win = CTX_wm_window(C);
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+
+   WM_gesture_end(win, gesture); /* Frees gesture itself, and unregisters from window. */
+   op->customdata = nullptr;
+
+   ED_area_tag_redraw(CTX_wm_area(C));
+
+   if (RNA_struct_find_property(op->ptr, "cursor")) {
+     WM_cursor_modal_restore(win);
+   }
+ }
+
+ static void gesture_modal_state_to_operator(wmOperator *op, int modal_state)
+ {
+   PropertyRNA *prop;
+
+   switch (modal_state) {
+     case GESTURE_MODAL_SELECT:
+     case GESTURE_MODAL_DESELECT:
+       if ((prop = RNA_struct_find_property(op->ptr, "deselect"))) {
+         RNA_property_boolean_set(op->ptr, prop, (modal_state == GESTURE_MODAL_DESELECT));
+       }
+       if ((prop = RNA_struct_find_property(op->ptr, "mode"))) {
+         RNA_property_enum_set(
+             op->ptr, prop, (modal_state == GESTURE_MODAL_DESELECT) ? SEL_OP_SUB : SEL_OP_ADD);
+       }
+       break;
+     case GESTURE_MODAL_IN:
+     case GESTURE_MODAL_OUT:
+       if ((prop = RNA_struct_find_property(op->ptr, "zoom_out"))) {
+         RNA_property_boolean_set(op->ptr, prop, (modal_state == GESTURE_MODAL_OUT));
+       }
+       break;
+   }
+ }
+
+ static int UNUSED_FUNCTION(gesture_modal_state_from_operator)(wmOperator *op)
+ {
+   PropertyRNA *prop;
+
+   if ((prop = RNA_struct_find_property(op->ptr, "deselect"))) {
+     if (RNA_property_is_set(op->ptr, prop)) {
+       return RNA_property_boolean_get(op->ptr, prop) ? GESTURE_MODAL_DESELECT :
+                                                        GESTURE_MODAL_SELECT;
+     }
+   }
+   if ((prop = RNA_struct_find_property(op->ptr, "mode"))) {
+     if (RNA_property_is_set(op->ptr, prop)) {
+       return RNA_property_enum_get(op->ptr, prop) == SEL_OP_SUB ? GESTURE_MODAL_DESELECT :
+                                                                   GESTURE_MODAL_SELECT;
+     }
+   }
+   if ((prop = RNA_struct_find_property(op->ptr, "zoom_out"))) {
+     if (RNA_property_is_set(op->ptr, prop)) {
+       return RNA_property_boolean_get(op->ptr, prop) ? GESTURE_MODAL_OUT : GESTURE_MODAL_IN;
+     }
+   }
+   return GESTURE_MODAL_NOP;
+ }
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name Border Gesture
+  *
+  * Border gesture has two types:
+  * -# #WM_GESTURE_CROSS_RECT: starts a cross, on mouse click it changes to border.
+  * -# #WM_GESTURE_RECT: starts immediate as a border, on mouse click or release it ends.
+  *
+  * It stores 4 values (xmin, xmax, ymin, ymax) and event it ended with (event_type).
+  *
+  * \{ */
+
+ static bool gesture_box_apply_rect(wmOperator *op)
+ {
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   const rcti *rect = static_cast<const rcti *>(gesture->customdata);
+
+   if (rect->xmin == rect->xmax || rect->ymin == rect->ymax) {
+     return false;
+   }
+
+   /* Operator arguments and storage. */
+   RNA_int_set(op->ptr, "xmin", min_ii(rect->xmin, rect->xmax));
+   RNA_int_set(op->ptr, "ymin", min_ii(rect->ymin, rect->ymax));
+   RNA_int_set(op->ptr, "xmax", max_ii(rect->xmin, rect->xmax));
+   RNA_int_set(op->ptr, "ymax", max_ii(rect->ymin, rect->ymax));
+
+   return true;
+ }
+
+ static bool gesture_box_apply(bContext *C, wmOperator *op)
+ {
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+
+   if (!gesture_box_apply_rect(op)) {
+     return false;
+   }
+
+   if (gesture->wait_for_input) {
+     gesture_modal_state_to_operator(op, gesture->modal_state);
+   }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Retire before exec can redraw: the stroke is already finishing. */
++  gesture->ipad_selection_cue = false;
++#endif
+   const wmOperatorStatus retval = op->type->exec(C, op);
+   OPERATOR_RETVAL_CHECK(retval);
+
+   return (retval & OPERATOR_FINISHED) ? true : false;
+ }
+
+ wmOperatorStatus WM_gesture_box_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wmWindow *win = CTX_wm_window(C);
+   const ARegion *region = CTX_wm_region(C);
+   const bool wait_for_input = !WM_event_is_mouse_drag_or_press(event) &&
+                               RNA_boolean_get(op->ptr, "wait_for_input");
+
+   if (wait_for_input) {
+     op->customdata = WM_gesture_new(win, region, event, WM_GESTURE_CROSS_RECT);
+   }
+   else {
+     op->customdata = WM_gesture_new(win, region, event, WM_GESTURE_RECT);
+   }
+
+   {
+     wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+     gesture->wait_for_input = wait_for_input;
+   }
+
+   /* Add modal handler. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++  gesture_ipad_selection_begin(C, op, event, WM_event_add_modal_handler(C, op));
++#else
+   WM_event_add_modal_handler(C, op);
++#endif
+
+   wm_gesture_tag_redraw(win);
+
+   return OPERATOR_RUNNING_MODAL;
+ }
 
  wmOperatorStatus WM_gesture_box_modal(bContext *C, wmOperator *op, const wmEvent *event)
  {
@@ -41328,7 +41726,270 @@ diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blen
    wmWindow *win = CTX_wm_window(C);
    wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
    rcti *rect = static_cast<rcti *>(gesture->customdata);
-@@ -556,6 +564,14 @@
+
+   if (event->type == EVT_MODAL_MAP) {
+     switch (event->val) {
+       case GESTURE_MODAL_MOVE: {
+         gesture->move = !gesture->move;
+         break;
+       }
+       case GESTURE_MODAL_BEGIN: {
+         if (gesture->type == WM_GESTURE_CROSS_RECT && gesture->is_active == false) {
+           gesture->is_active = true;
+           wm_gesture_tag_redraw(win);
+         }
+         break;
+       }
+       case GESTURE_MODAL_SELECT:
+       case GESTURE_MODAL_DESELECT:
+       case GESTURE_MODAL_IN:
+       case GESTURE_MODAL_OUT: {
+         if (gesture->wait_for_input) {
+           gesture->modal_state = event->val;
+         }
+         if (gesture_box_apply(C, op)) {
+           gesture_modal_end(C, op);
+           return OPERATOR_FINISHED;
+         }
+         gesture_modal_end(C, op);
+         return OPERATOR_CANCELLED;
+       }
+       case GESTURE_MODAL_CANCEL: {
+         gesture_modal_end(C, op);
+         return OPERATOR_CANCELLED;
+       }
+     }
+   }
+   else {
+     switch (event->type) {
+       case MOUSEMOVE: {
+         if (gesture->type == WM_GESTURE_CROSS_RECT && gesture->is_active == false) {
+           rect->xmin = rect->xmax = event->xy[0] - gesture->winrct.xmin;
+           rect->ymin = rect->ymax = event->xy[1] - gesture->winrct.ymin;
+         }
+         else if (gesture->move) {
+           BLI_rcti_translate(rect,
+                              (event->xy[0] - gesture->winrct.xmin) - rect->xmax,
+                              (event->xy[1] - gesture->winrct.ymin) - rect->ymax);
+         }
+         else {
+           rect->xmax = event->xy[0] - gesture->winrct.xmin;
+           rect->ymax = event->xy[1] - gesture->winrct.ymin;
+         }
+         gesture_box_apply_rect(op);
+
+         wm_gesture_tag_redraw(win);
+
+         break;
+       }
+ #ifdef WITH_INPUT_NDOF
+       case NDOF_MOTION: {
+         return OPERATOR_PASS_THROUGH;
+       }
+ #endif
+
+       default:
+ #if 0 /* This allows view navigation, keep disabled as it's too unpredictable. */
+         return OPERATOR_PASS_THROUGH;
+ #endif
+         break;
+     }
+   }
+
+   gesture->is_active_prev = gesture->is_active;
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ void WM_gesture_box_cancel(bContext *C, wmOperator *op)
+ {
+   gesture_modal_end(C, op);
+ }
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name Circle Gesture
+  *
+  * Currently only used for selection or modal paint stuff,
+  * calls #wmOperatorType.exec while hold mouse, exits on release
+  * (with no difference between cancel and confirm).
+  *
+  * \{ */
+
+ static void gesture_circle_apply(bContext *C, wmOperator *op);
+
+ wmOperatorStatus WM_gesture_circle_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wmWindow *win = CTX_wm_window(C);
+   const bool wait_for_input = !WM_event_is_mouse_drag_or_press(event) &&
+                               RNA_boolean_get(op->ptr, "wait_for_input");
+@@ -394,265 +553,277 @@
+       case GESTURE_MODAL_SELECT:
+       case GESTURE_MODAL_DESELECT:
+       case GESTURE_MODAL_NOP: {
+         if (gesture->wait_for_input) {
+           gesture->modal_state = event->val;
+         }
+         if (event->val == GESTURE_MODAL_NOP) {
+           /* Single action, click-drag & release to exit. */
+           if (gesture->wait_for_input == false) {
+             is_finished = true;
+           }
+         }
+         else {
+           /* Apply first click. */
+           gesture->is_active = true;
+           gesture_circle_apply(C, op);
+           wm_gesture_tag_redraw(win);
+         }
+         break;
+       }
+       case GESTURE_MODAL_CANCEL:
+       case GESTURE_MODAL_CONFIRM:
+         is_finished = true;
+     }
+
+     if (is_finished) {
+       gesture_modal_end(C, op);
+       return OPERATOR_FINISHED; /* Use finish or we don't get an undo. */
+     }
+
+     if (is_circle_size) {
+       wm_gesture_tag_redraw(win);
+
+       /* So next use remembers last seen size, even if we didn't apply it. */
+       RNA_int_set(op->ptr, "radius", rect->xmax);
+     }
+   }
+ #ifdef WITH_INPUT_NDOF
+   else if (event->type == NDOF_MOTION) {
+     return OPERATOR_PASS_THROUGH;
+   }
+ #endif
+
+ #if 0
+   /* Allow view navigation??? */
+   /* NOTE: this gives issues:
+    * 1) other modal ops run on top (box select),
+    * 2) middle-mouse is used now 3) tablet/trackpad? */
+   else {
+     return OPERATOR_PASS_THROUGH;
+   }
+ #endif
+
+   gesture->is_active_prev = gesture->is_active;
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ void WM_gesture_circle_cancel(bContext *C, wmOperator *op)
+ {
+   gesture_modal_end(C, op);
+ }
+
+ #if 0
+ /* Template to copy from. */
+ void WM_OT_circle_gesture(wmOperatorType *ot)
+ {
+   ot->name = "Circle Gesture";
+   ot->idname = "WM_OT_circle_gesture";
+   ot->description = "Enter rotate mode with a circular gesture";
+
+   ot->invoke = WM_gesture_circle_invoke;
+   ot->modal = WM_gesture_circle_modal;
+   ot->poll = WM_operator_winactive;
+
+   /* Properties. */
+   WM_operator_properties_gesture_circle(ot);
+ }
+ #endif
+
+ /** \} */
+
+ /* -------------------------------------------------------------------- */
+ /** \name Lasso Gesture
+  * There are two types of lasso gesture:
+  * 1. #WM_GESTURE_LASSO: A lasso that follows the mouse cursor with the enclosed area shaded.
+  * 2. #WM_GESTURE_LINES: A lasso that follows the mouse cursor without the enclosed area shaded.
+  *
+  * The operator stores data in the "path" property as a series of screen space positions.
+  * \{ */
+
+ wmOperatorStatus WM_gesture_lasso_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wmWindow *win = CTX_wm_window(C);
+   PropertyRNA *prop;
+
+   op->customdata = WM_gesture_new(win, CTX_wm_region(C), event, WM_GESTURE_LASSO);
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   gesture->use_smooth = RNA_boolean_get(op->ptr, "use_smooth_stroke");
+
+   /* Add modal handler. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++  gesture_ipad_selection_begin(C, op, event, WM_event_add_modal_handler(C, op));
++#else
+   WM_event_add_modal_handler(C, op);
++#endif
+
+   wm_gesture_tag_redraw(win);
+
+   if ((prop = RNA_struct_find_property(op->ptr, "cursor"))) {
+     WM_cursor_modal_set(win, RNA_property_int_get(op->ptr, prop));
+   }
+
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ wmOperatorStatus WM_gesture_lines_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   wmWindow *win = CTX_wm_window(C);
+   PropertyRNA *prop;
+
+   op->customdata = WM_gesture_new(win, CTX_wm_region(C), event, WM_GESTURE_LINES);
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   if ((prop = RNA_struct_find_property(op->ptr, "use_smooth_stroke"))) {
+     gesture->use_smooth = RNA_property_boolean_get(op->ptr, prop);
+   }
+
+   /* Add modal handler. */
+   WM_event_add_modal_handler(C, op);
+
+   wm_gesture_tag_redraw(win);
+
+   if ((prop = RNA_struct_find_property(op->ptr, "cursor"))) {
+     WM_cursor_modal_set(win, RNA_property_int_get(op->ptr, prop));
+   }
+
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ static wmOperatorStatus gesture_lasso_apply(bContext *C, wmOperator *op)
+ {
+   wmOperatorStatus retval = OPERATOR_FINISHED;
+   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+   PointerRNA itemptr;
+   float loc[2];
+   int i;
+   const float *lasso = static_cast<const float *>(gesture->customdata);
+
+   /* Operator storage as path. */
+
+   RNA_collection_clear(op->ptr, "path");
+   for (i = 0; i < gesture->points; i++, lasso += 2) {
+     loc[0] = lasso[0];
+     loc[1] = lasso[1];
+     RNA_collection_add(op->ptr, "path", &itemptr);
+     RNA_float_set_array(&itemptr, "loc", loc);
+   }
+
+   gesture_modal_end(C, op);
+
+   if (op->type->exec) {
+     retval = op->type->exec(C, op);
+     OPERATOR_RETVAL_CHECK(retval);
+   }
+
+   return retval;
+ }
 
  wmOperatorStatus WM_gesture_lasso_modal(bContext *C, wmOperator *op, const wmEvent *event)
  {
@@ -41343,6 +42004,103 @@ diff --git a/source/blender/windowmanager/intern/wm_gesture_ops.cc b/source/blen
    wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
    const float factor = gesture->use_smooth ? RNA_float_get(op->ptr, "smooth_stroke_factor") : 0.0f;
    const int radius = gesture->use_smooth ? RNA_int_get(op->ptr, "smooth_stroke_radius") : 0;
+
+   if (event->type == EVT_MODAL_MAP) {
+     switch (event->val) {
+       case GESTURE_MODAL_MOVE: {
+         gesture->move = !gesture->move;
+         break;
+       }
+     }
+   }
+   else {
+     switch (event->type) {
+       case MOUSEMOVE:
+       case INBETWEEN_MOUSEMOVE: {
+         wm_gesture_tag_redraw(CTX_wm_window(C));
+         gesture->mval = int2((event->xy[0] - gesture->winrct.xmin),
+                              (event->xy[1] - gesture->winrct.ymin));
+
+         if (gesture->points == gesture->points_alloc) {
+           gesture->points_alloc *= 2;
+           gesture->customdata = MEM_reallocN(gesture->customdata,
+                                              sizeof(float[2]) * gesture->points_alloc);
+         }
+
+         {
+           float(*lasso)[2] = static_cast<float(*)[2]>(gesture->customdata);
+           const float2 current_mouse_position = float2(gesture->mval);
+           const float2 last_position(lasso[gesture->points - 1][0], lasso[gesture->points - 1][1]);
+
+           const float2 delta = current_mouse_position - last_position;
+           const float dist_squared = blender::math::length_squared(delta);
+
+           /* Move the lasso. */
+           if (gesture->move) {
+             for (int i = 0; i < gesture->points; i++) {
+               lasso[i][0] += delta.x;
+               lasso[i][1] += delta.y;
+             }
+           }
+           else if (gesture->use_smooth) {
+             if (dist_squared > square_f(radius)) {
+               float2 result = blender::math::interpolate(
+                   current_mouse_position, last_position, factor);
+
+               lasso[gesture->points][0] = result.x;
+               lasso[gesture->points][1] = result.y;
+               gesture->points++;
+             }
+           }
+           else if (dist_squared > pow2f(2.0f * UI_SCALE_FAC)) {
+             /* Make a simple distance check to get a smoother lasso even if smoothing isn't enabled
+              * add only when at least 2 pixels between this and previous location. */
+             lasso[gesture->points][0] = gesture->mval.x;
+             lasso[gesture->points][1] = gesture->mval.y;
+             gesture->points++;
+           }
+         }
+         break;
+       }
+       case LEFTMOUSE:
+       case MIDDLEMOUSE:
+       case RIGHTMOUSE: {
+         if (event->val == KM_RELEASE) { /* Key release. */
+           return gesture_lasso_apply(C, op);
+         }
+         break;
+       }
+       case EVT_ESCKEY: {
+         gesture_modal_end(C, op);
+         return OPERATOR_CANCELLED;
+       }
+       default: {
+         break;
+       }
+     }
+   }
+
+   gesture->is_active_prev = gesture->is_active;
+   return OPERATOR_RUNNING_MODAL;
+ }
+
+ wmOperatorStatus WM_gesture_lines_modal(bContext *C, wmOperator *op, const wmEvent *event)
+ {
+   return WM_gesture_lasso_modal(C, op, event);
+ }
+
+ void WM_gesture_lasso_cancel(bContext *C, wmOperator *op)
+ {
+   gesture_modal_end(C, op);
+ }
+
+ void WM_gesture_lines_cancel(bContext *C, wmOperator *op)
+ {
+   gesture_modal_end(C, op);
+ }
+
+ Array<int2> WM_gesture_lasso_path_to_array(bContext * /*C*/, wmOperator *op)
+ {
 diff --git a/source/blender/editors/space_view3d/view3d_select.cc b/source/blender/editors/space_view3d/view3d_select.cc
 --- a/source/blender/editors/space_view3d/view3d_select.cc
 +++ b/source/blender/editors/space_view3d/view3d_select.cc
@@ -43742,7 +44500,44 @@ diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc b/sourc
 diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanager/WM_api.hh
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -956,6 +956,12 @@
+@@ -919,80 +919,86 @@
+     wmOperator *op,
+     const wmEvent *event,
+     std::optional<std::string> title = std::nullopt,
+     std::optional<std::string> confirm_text = std::nullopt,
+     bool cancel_default = false,
+     std::optional<std::string> message = std::nullopt);
+
+ /**
+  * Same as #WM_operator_props_popup but call the operator first,
+  * This way - the button values correspond to the result of the operator.
+  * Without this, first access to a button will make the result jump, see #32452.
+  */
+ wmOperatorStatus WM_operator_props_popup_call(bContext *C, wmOperator *op, const wmEvent *event);
+ wmOperatorStatus WM_operator_props_popup(bContext *C, wmOperator *op, const wmEvent *event);
+
+ wmOperatorStatus WM_operator_props_dialog_popup(
+     bContext *C,
+     wmOperator *op,
+     int width,
+     std::optional<std::string> title = std::nullopt,
+     std::optional<std::string> confirm_text = std::nullopt,
+     bool cancel_default = false,
+     std::optional<std::string> message = std::nullopt);
+
+ wmOperatorStatus WM_operator_redo_popup(bContext *C, wmOperator *op);
+ wmOperatorStatus WM_operator_ui_popup(bContext *C, wmOperator *op, int width);
+
+ /**
+  * Can't be used as an invoke directly, needs message arg (can be NULL).
+  */
+ wmOperatorStatus WM_operator_confirm_message_ex(bContext *C,
+                                                 wmOperator *op,
+                                                 const char *title,
+                                                 int icon,
+                                                 const char *message,
+                                                 blender::wm::OpCallContext opcontext);
+ wmOperatorStatus WM_operator_confirm_message(bContext *C, wmOperator *op, const char *message);
 
  /* Operator API. */
 
@@ -43755,6 +44550,128 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  void WM_operator_free(wmOperator *op);
  void WM_operator_free_all_after(wmWindowManager *wm, wmOperator *op);
  /**
+  * Use with extreme care!
+  * Properties, custom-data etc - must be compatible.
+  *
+  * \param op: Operator to assign the type to.
+  * \param ot: Operator type to assign.
+  */
+ void WM_operator_type_set(wmOperator *op, wmOperatorType *ot);
+ void WM_operator_stack_clear(wmWindowManager *wm);
+ /**
+  * This function is needed in the case when an addon id disabled
+  * while a modal operator it defined is running.
+  */
+ void WM_operator_handlers_clear(wmWindowManager *wm, wmOperatorType *ot);
+
+ bool WM_operator_poll(bContext *C, wmOperatorType *ot);
+ bool WM_operator_poll_context(bContext *C, wmOperatorType *ot, blender::wm::OpCallContext context);
+ /**
+  * For running operators with frozen context (modal handlers, menus).
+  *
+  * \param store: Store properties for re-use when an operator has finished
+  * (unless #PROP_SKIP_SAVE is set).
+  *
+  * \warning do not use this within an operator to call itself! #29537.
+  */
+ wmOperatorStatus WM_operator_call_ex(bContext *C, wmOperator *op, bool store);
+ wmOperatorStatus WM_operator_call(bContext *C, wmOperator *op);
+ /**
+  * This is intended to be used when an invoke operator wants to call exec on itself
+  * and is basically like running op->type->exec() directly, no poll checks no freeing,
+  * since we assume whoever called invoke will take care of that
+  */
+ wmOperatorStatus WM_operator_call_notest(bContext *C, wmOperator *op);
+ /**
+  * Execute this operator again, put here so it can share above code
+  */
+ wmOperatorStatus WM_operator_repeat(bContext *C, wmOperator *op);
+ wmOperatorStatus WM_operator_repeat_last(bContext *C, wmOperator *op);
+@@ -1491,80 +1497,84 @@
+ wmOperatorStatus WM_gesture_polyline_invoke(bContext *C, wmOperator *op, const wmEvent *event);
+ wmOperatorStatus WM_gesture_polyline_modal(bContext *C, wmOperator *op, const wmEvent *event);
+ void WM_gesture_polyline_cancel(bContext *C, wmOperator *op);
+ /**
+  * helper function, we may want to add options for conversion to view space
+  */
+ blender::Array<blender::int2> WM_gesture_lasso_path_to_array(bContext *C, wmOperator *op);
+
+ wmOperatorStatus WM_gesture_straightline_invoke(bContext *C, wmOperator *op, const wmEvent *event);
+ /**
+  * This invoke callback starts the straight-line gesture with a viewport preview to the right side
+  * of the line.
+  */
+ wmOperatorStatus WM_gesture_straightline_active_side_invoke(bContext *C,
+                                                             wmOperator *op,
+                                                             const wmEvent *event);
+ /**
+  * This modal callback calls exec once per mouse move event while the gesture is active with the
+  * updated line start and end values, so it can be used for tools that have a real time preview
+  * (like a gradient updating in real time over the mesh).
+  */
+ wmOperatorStatus WM_gesture_straightline_modal(bContext *C, wmOperator *op, const wmEvent *event);
+ /**
+  * This modal one-shot callback only calls exec once after the gesture finishes without any updates
+  * during the gesture execution. Should be used for operations that are intended to be applied once
+  * without real time preview (like a trimming tool that only applies the bisect operation once
+  * after finishing the gesture as the bisect operation is too heavy to be computed in real time for
+  * a preview).
+  */
+ wmOperatorStatus WM_gesture_straightline_oneshot_modal(bContext *C,
+                                                        wmOperator *op,
+                                                        const wmEvent *event);
+ void WM_gesture_straightline_cancel(bContext *C, wmOperator *op);
+
+ /* Gesture manager API. */
+
+ /**
+  * Context checked on having screen, window and area.
+  */
+ wmGesture *WM_gesture_new(wmWindow *window, const ARegion *region, const wmEvent *event, int type);
++#ifdef WITH_APPLE_CROSSPLATFORM
++/** Draw transient feedback from fresh registered selection modal/gesture owners. */
++void WM_gesture_ipad_selection_draw(bContext *C);
++#endif
+ void WM_gesture_end(wmWindow *win, wmGesture *gesture);
+ void WM_gestures_remove(wmWindow *win);
+ void WM_gestures_free_all(wmWindow *win);
+ bool WM_gesture_is_modal_first(const wmGesture *gesture);
+
+ /* File-selecting support. */
+
+ /**
+  * The idea here is to keep a handler alive on window queue, owning the operator.
+  * The file window can send event to make it execute, thus ensuring
+  * executing happens outside of lower level queues, with UI refreshed.
+  * Should also allow multi-window solutions.
+  */
+ void WM_event_add_fileselect(bContext *C, wmOperator *op);
+ void WM_event_fileselect_event(wmWindowManager *wm, void *ophandle, int eventval);
+
+ /* Event consecutive data. */
+
+ /** Return a borrowed reference to the custom-data. */
+ void *WM_event_consecutive_data_get(wmWindow *win, const char *id);
+ /** Set the custom-data (and own the pointer), free with #MEM_freeN. */
+ void WM_event_consecutive_data_set(wmWindow *win, const char *id, void *custom_data);
+ /** Clear and free the consecutive custom-data. */
+ void WM_event_consecutive_data_free(wmWindow *win);
+
+ /**
+  * Sets the active region for this space from the context.
+  *
+  * \see #BKE_area_find_region_active_win
+  */
+ void WM_operator_region_active_win_set(bContext *C);
+
+ /**
+  * Indented for use in a selection (picking) operators #wmOperatorType::invoke callback
+  * to implement click-drag, where the initial click selects and the drag action
+  * grabs or performs box-select (for example).
+  *
+  * - In this case, returning `OPERATOR_FINISHED` causes the PRESS event
+  *   to be handled and prevents further CLICK (on release) or DRAG (on cursor motion)
+  *   from being generated & handled.
 diff --git a/source/blender/windowmanager/gizmo/WM_gizmo_types.hh b/source/blender/windowmanager/gizmo/WM_gizmo_types.hh
 --- a/source/blender/windowmanager/gizmo/WM_gizmo_types.hh
 +++ b/source/blender/windowmanager/gizmo/WM_gizmo_types.hh

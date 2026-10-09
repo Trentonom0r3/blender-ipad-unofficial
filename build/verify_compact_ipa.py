@@ -92,6 +92,7 @@ with zipfile.ZipFile(ipa) as archive:
     has_view_category = 'class VIEW3D_MT_ipad_view_ring' in expected
     has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
     has_left_corner_placement = b'+bool ED_ipad_hud_exposed_rect(' in patch
+    has_selection_cue = b'+void WM_gesture_ipad_selection_draw(bContext *C)' in patch
     has_nine_base = 'IPAD_BASE_TOOL_IDS = frozenset(' in expected
     nine_base_contract = None
     # Retained internal panel code does not imply the retired primary route.
@@ -140,6 +141,18 @@ with zipfile.ZipFile(ipa) as archive:
                       b'+static void ipad_hud_chrome_capture(',
                       b'+  if (windows != 1 || screen->do_refresh) return true;',
                       b'+  /* Expansion/collapse changes the measured HUD span during native layout.'):
+            assert value in patch, value
+
+    if has_selection_cue:
+        assert b'WM_gesture_ipad_selection_draw' in binary
+        for value in ('Box · Replace', 'Box · Add', 'Box · Remove',
+                      'Lasso · Replace', 'Lasso · Add', 'Lasso · Remove'):
+            assert value.encode('utf-8') in binary, value
+        for value in (b'+  uint64_t ipad_selection_context[13];',
+                      b'+  uint64_t ipad_selection_operator_lifetime;',
+                      b'+  uint64_t ipad_selection_type_lifetime;',
+                      b'+  gesture_ipad_selection_begin(C, op, event, WM_event_add_modal_handler(C, op));',
+                      b'+    WM_gesture_ipad_selection_draw(C);'):
             assert value in patch, value
 
     if b'+static bool ui_ipad_hud_numeric_pointer_terminal(' in patch:
@@ -233,6 +246,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'compact_base_next_drag_and_final_draw_continuity':has_compact_next_drag,
     'unified_persistent_ring_and_collapsed_corner_source_markers':has_corner_panels,
     'left_corner_compiled_exposure_and_measured_chrome_contract':has_left_corner_placement,
+    'native_box_lasso_live_selection_cue_and_owner_contract':has_selection_cue,
     'explicit_native_pencil_entry_and_no_added_header_controls':has_pencil_entry_fix,
     'entire_default_blender_viewport_header_matches_exact_pin':has_base and has_default_native_header,
     'exact_build_source_uses_contact_only_browsing':has_contact_only_browsing,
