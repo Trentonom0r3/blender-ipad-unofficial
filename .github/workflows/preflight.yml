@@ -138,6 +138,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_numbers_expression.py -v
       - name: Test pending Numbers native unregister and terminal ownership
         run: python3 -m unittest discover -s build -p test_pencil_numbers_lifecycle.py -v
+      - name: Exact packaged nine-slot ring contract
+        run: python3 -m unittest discover -s build -p test_pencil_package_contract.py -v
       - name: Unified Pencil ring styling and actual overflow cue
         run: python3 -m unittest discover -s build -p test_pencil_ring_visual.py -v
       - name: Fresh persistent ring actions and deferred workspace return

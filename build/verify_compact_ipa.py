@@ -15,6 +15,7 @@ import subprocess
 import sys
 import zipfile
 from preflight import get_source
+from pencil_ring_contract import verify_nine_base_contract
 
 run_id,revision,directory=sys.argv[1:]
 repo=Path(__file__).resolve().parents[1]
@@ -90,6 +91,8 @@ with zipfile.ZipFile(ipa) as archive:
     has_current_tool_shortcut = 'def ipad_active_tool_options_button(layout, context):' in expected
     has_view_category = 'class VIEW3D_MT_ipad_view_ring' in expected
     has_corner_panels = 'class VIEW3D_PT_ipad_corner_transform' in expected
+    has_nine_base = 'IPAD_BASE_TOOL_IDS = frozenset(' in expected
+    nine_base_contract = None
     # Retained internal panel code does not imply the retired primary route.
     has_compact_next_drag = 'bl_label = "Next drag"' in expected and not has_corner_panels
     if has_compact_next_drag:
@@ -102,7 +105,13 @@ with zipfile.ZipFile(ipa) as archive:
     if has_compact_next_drag or has_corner_panels:
         assert b'+  uint64_t refused_generation = 0;' in patch
         assert b'+  ui_ipad_ring_inventory_capture(block, *data);' in patch
-        assert b'+    radius = 4.9f * unit;' in patch
+        if has_nine_base:
+            header_path='source/blender/editors/interface/interface_ipad_tool_ring.hh'
+            policy_section=patch.decode('utf-8').split(f'diff --git a/{header_path} b/{header_path}\n',1)[1].split('diff --git ',1)[0]
+            policy=''.join(line[1:] for line in policy_section.splitlines(True) if line.startswith('+') and not line.startswith('+++'))
+            nine_base_contract=verify_nine_base_contract(actual,policy)
+        else:
+            assert b'+    radius = 4.9f * unit;' in patch
 
     if has_corner_panels:
         assert "ring == 'NEXT_DRAG'" not in actual
@@ -222,6 +231,7 @@ report={'run':run,'artifact':artifact,'ipa':{'path':str(ipa),'bytes':ipa.stat().
     'entire_packaged_toolbar_matches_exact_source':toolbar_expected is not None,
     'native_tool_definitions_match_exact_pin':True,
     'native_tool_icon_files_checked':len(native_icons),
+    'nine_direct_base_and_native_more_tools_contract':nine_base_contract,
     'device_acceptance':False}
 (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (folder/'artifact-metadata.json').write_text(json.dumps(metadata,indent=2)+'\n',encoding='utf-8')
