@@ -74007,7 +74007,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 index 32c8d9b..b374145 100644
 --- a/source/blender/editors/screen/screen_edit.cc
 +++ b/source/blender/editors/screen/screen_edit.cc
-@@ -1,2175 +1,2254 @@
+@@ -1,2175 +1,2259 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -75525,6 +75525,11 @@ index 32c8d9b..b374145 100644
        bmain, workspace, layout, layout, win);
    bScreen *screen_new = BKE_workspace_layout_screen_get(layout_new);
  
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (screen_old != screen_new) {
++    WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++  }
++#endif
    screen_change_prepare(screen_old, screen_new, bmain, C, win);
  
    if (screen_old != screen_new) {
@@ -157742,6 +157747,60 @@ index 0de9e58..0d340e7 100644
    win->eventstate->prev_xy[1] = oldy;
  
    win->eventstate->xy[0] = oldx;
+@@ -3120,22 +3166,32 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
+ }
+-
++
+-void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
+-{
+-  wmWindowManager *wm = CTX_wm_manager(C);
+-  wmWindow *win_parent = (win->parent) ? win->parent : win;
+-
+-  ED_workspace_change(workspace, C, wm, win);
+-
+-  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
+-    if (win_child->parent == win_parent) {
+-      bScreen *screen = WM_window_get_active_screen(win_child);
+-      /* Don't change temporary screens, they only serve a single purpose. */
+-      if (screen->temp) {
+-        continue;
+-      }
+-      ED_workspace_change(workspace, C, wm, win_child);
+-    }
+-  }
+-}
++void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
++{
++  wmWindowManager *wm = CTX_wm_manager(C);
++  wmWindow *win_parent = (win->parent) ? win->parent : win;
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (WM_window_get_active_workspace(win) != workspace) {
++    WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++  }
++#endif
++  ED_workspace_change(workspace, C, wm, win);
++
++  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
++    if (win_child->parent == win_parent) {
++      bScreen *screen = WM_window_get_active_screen(win_child);
++      /* Don't change temporary screens, they only serve a single purpose. */
++      if (screen->temp) {
++        continue;
++      }
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (WM_window_get_active_workspace(win_child) != workspace) {
++        WM_event_ipad_pencil_paint_owner_teardown(C, win_child, nullptr, nullptr);
++      }
++#endif
++      ED_workspace_change(workspace, C, wm, win_child);
++    }
++  }
++}
+-
++
+ WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win)
+
 diff --git a/source/blender/windowmanager/wm.hh b/source/blender/windowmanager/wm.hh
 index 1b1725c..0be6ee0 100644
 --- a/source/blender/windowmanager/wm.hh

@@ -30,6 +30,8 @@ MODAL_ADMIT = function(WM, 'static eIPadPencilPaintModalAdmission wm_ipad_pencil
 OWNER_TEARDOWN = function(WM, 'void WM_event_ipad_pencil_paint_owner_teardown(')
 SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
+SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
+WORKSPACE_CHANGE = function(WINDOW, 'void WM_window_set_active_workspace(')
 OPERATOR_CALL = function(WM, 'static eHandlerActionFlag wm_handler_operator_call(')
 TEARDOWN_PREADMISSION = lease.cpp_block(
     OPERATOR_CALL, 'if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial')
@@ -396,7 +398,184 @@ int main(){
 }
 '''
 
+
+WORKSPACE_SWITCH_FIXTURE = r"""
+#include <cassert>
+#include <vector>
+struct WorkSpace { int id = 0; };
+struct bScreen { bool temp = false; };
+struct WorkspaceHook { WorkSpace *active = nullptr; };
+struct wmWindow {
+  wmWindow *next = nullptr;
+  wmWindow *parent = nullptr;
+  WorkspaceHook *workspace_hook = nullptr;
+  bScreen *screen = nullptr;
+  int id = 0;
+};
+struct ListBase { void *first = nullptr; };
+struct wmWindowManager { ListBase windows; };
+struct bContext { wmWindowManager *wm = nullptr; };
+struct ScrArea;
+struct ARegion;
+static int g_target_id = 0;
+static std::vector<int> g_events;
+#define LISTBASE_FOREACH(type, var, list) \
+  for (type var = static_cast<type>((list)->first); var; var = var->next)
+wmWindowManager *CTX_wm_manager(bContext *C) { return C->wm; }
+WorkSpace *WM_window_get_active_workspace(const wmWindow *win)
+{
+  return win->workspace_hook->active;
+}
+bScreen *WM_window_get_active_screen(const wmWindow *win) { return win->screen; }
+void WM_event_ipad_pencil_paint_owner_teardown(
+    bContext *C, wmWindow *win, const ScrArea *, const ARegion *)
+{
+  assert(C && win && win->workspace_hook->active);
+  assert(win->workspace_hook->active->id != g_target_id);
+  g_events.push_back(100 + win->id);
+}
+void ED_workspace_change(WorkSpace *workspace, bContext *C, wmWindowManager *wm, wmWindow *win)
+{
+  assert(C->wm == wm);
+  if (WM_window_get_active_workspace(win) != workspace) {
+    assert(!g_events.empty() && g_events.back() == 100 + win->id);
+  }
+  g_events.push_back(200 + win->id);
+  win->workspace_hook->active = workspace;
+}
+#define WITH_APPLE_CROSSPLATFORM
+""" + WORKSPACE_CHANGE + r"""
+int main()
+{
+  WorkSpace original{1}, target{2};
+  g_target_id = target.id;
+  WorkspaceHook root_hook{&original}, child_hook{&original}, sibling_hook{&target},
+      temporary_hook{&original}, unrelated_hook{&original};
+  bScreen root_screen{}, child_screen{}, sibling_screen{}, temporary_screen{true},
+      unrelated_screen{};
+  wmWindow root{}, child{}, sibling{}, temporary{}, unrelated_root{}, unrelated{};
+  root.id = 1; root.workspace_hook = &root_hook; root.screen = &root_screen;
+  child.id = 2; child.parent = &root; child.workspace_hook = &child_hook; child.screen = &child_screen;
+  sibling.id = 3; sibling.parent = &root; sibling.workspace_hook = &sibling_hook;
+  sibling.screen = &sibling_screen;
+  temporary.id = 4; temporary.parent = &root; temporary.workspace_hook = &temporary_hook;
+  temporary.screen = &temporary_screen;
+  unrelated_root.id = 90;
+  unrelated.id = 5; unrelated.parent = &unrelated_root; unrelated.workspace_hook = &unrelated_hook;
+  unrelated.screen = &unrelated_screen;
+  root.next = &child; child.next = &sibling; sibling.next = &temporary;
+  temporary.next = &unrelated;
+  wmWindowManager manager;
+  manager.windows.first = &root;
+  bContext C;
+  C.wm = &manager;
+
+  WM_window_set_active_workspace(&C, &root, &target);
+  assert((g_events == std::vector<int>{101, 201, 102, 202, 203}));
+  assert(root_hook.active == &target && child_hook.active == &target);
+  assert(sibling_hook.active == &target);
+  assert(temporary_hook.active == &original && unrelated_hook.active == &original);
+
+  g_events.clear();
+  root_hook.active = &target;
+  child_hook.active = &target;
+  temporary_hook.active = &target;
+  WM_window_set_active_workspace(&C, &root, &target);
+  assert((g_events == std::vector<int>{201, 202, 203}));
+}
+"""
+
+SCREEN_SWITCH_FIXTURE = r"""
+#include <cassert>
+#include <vector>
+struct Main {};
+struct WorkSpace {};
+struct bScreen { int id = 0; };
+struct WorkSpaceLayout { bScreen *screen = nullptr; };
+struct WorkspaceHook { WorkSpace *workspace = nullptr; };
+struct wmWindow { WorkspaceHook *workspace_hook = nullptr; bScreen *screen = nullptr; };
+struct bContext { Main *main = nullptr; wmWindow *win = nullptr; bScreen *screen = nullptr; };
+static WorkSpaceLayout g_requested_layout, g_resolved_layout;
+static bScreen *g_requested_screen = nullptr;
+static bool g_expect_teardown = false;
+static std::vector<int> g_events;
+Main *CTX_data_main(bContext *C) { return C->main; }
+wmWindow *CTX_wm_window(bContext *C) { return C->win; }
+bScreen *CTX_wm_screen(bContext *C) { return C->screen; }
+WorkSpace *BKE_workspace_active_get(WorkspaceHook *hook) { return hook->workspace; }
+WorkSpaceLayout *BKE_workspace_layout_find(WorkSpace *, bScreen *screen)
+{
+  assert(screen == g_requested_screen);
+  return &g_requested_layout;
+}
+WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(
+    Main *, WorkSpace *, WorkSpaceLayout *layout, WorkSpaceLayout *, wmWindow *)
+{
+  assert(layout == &g_requested_layout);
+  return &g_resolved_layout;
+}
+bScreen *BKE_workspace_layout_screen_get(WorkSpaceLayout *layout) { return layout->screen; }
+void WM_event_ipad_pencil_paint_owner_teardown(
+    bContext *, wmWindow *, const struct ScrArea *, const struct ARegion *)
+{
+  assert(g_expect_teardown);
+  assert(g_events.empty());
+  g_events.push_back(1);
+}
+void screen_change_prepare(bScreen *old_screen, bScreen *new_screen, Main *, bContext *, wmWindow *)
+{
+  if (old_screen != new_screen) {
+    assert(g_expect_teardown && !g_events.empty() && g_events.back() == 1);
+  }
+  else {
+    assert(!g_expect_teardown && g_events.empty());
+  }
+  g_events.push_back(2);
+}
+void WM_window_set_active_screen(wmWindow *win, WorkSpace *, bScreen *screen)
+{
+  g_events.push_back(3);
+  win->screen = screen;
+}
+void screen_change_update(bContext *C, wmWindow *, bScreen *screen)
+{
+  g_events.push_back(4);
+  C->screen = screen;
+}
+#define WITH_APPLE_CROSSPLATFORM
+""" + SCREEN_CHANGE + r"""
+int main()
+{
+  Main main;
+  WorkSpace workspace;
+  WorkspaceHook hook{&workspace};
+  bScreen old_screen{1}, requested_screen{2}, resolved_screen{3};
+  WorkSpaceLayout active_layout{&requested_screen}, resolved_layout{&resolved_screen};
+  wmWindow win{&hook, &old_screen};
+  bContext C{&main, &win, &old_screen};
+  g_requested_layout = active_layout;
+  g_resolved_layout = resolved_layout;
+  g_requested_screen = &requested_screen;
+  g_expect_teardown = true;
+  assert(ED_screen_change(&C, &requested_screen));
+  assert((g_events == std::vector<int>{1, 2, 3, 4}));
+  assert(win.screen == &resolved_screen && C.screen == &resolved_screen);
+
+  g_events.clear();
+  win.screen = &old_screen;
+  C.screen = &old_screen;
+  g_resolved_layout.screen = &old_screen;
+  g_expect_teardown = false;
+  assert(!ED_screen_change(&C, &requested_screen));
+  assert((g_events == std::vector<int>{2}));
+}
+"""
+
 class PencilPaintOwnerTeardownTests(unittest.TestCase):
+    def test_workspace_and_layout_changes_retire_original_owner_before_context_mutation(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(WORKSPACE_SWITCH_FIXTURE)
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(SCREEN_SWITCH_FIXTURE)
+
     def test_connected_area_region_teardown_and_native_locked_cancel_cleanup(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP_FIXTURE)
 
