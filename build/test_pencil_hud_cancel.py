@@ -126,6 +126,139 @@ int main(){
         self.assertIn('pointer.hud_serial = pointer_hud_contact.serial;',pan)
         self.assertIn('if (pointer_capture.ended) { pointer_hud_contact = {}; pointer_finger_contact = false; }',pan)
 
+    def test_cancelled_uncaptured_pencil_terminal_enters_ghost_once(self):
+        ios = fields.source('intern/ghost/intern/GHOST_WindowIOS.mm')
+        enqueue = function(ios, '- (void)generateUserInputEvents:')
+        sample_owner = enqueue[
+            enqueue.index('    const GHOST_TabletData event_tablet ='):
+            enqueue.index('    for (int i = 0;', enqueue.index('    const GHOST_TabletData event_tablet ='))]
+        pointer_gate = block(enqueue, '      if (pointer_event) {')
+        release_start = enqueue.index('        case UserInputEvent::EventTypes::LEFT_BUTTON_UP:')
+        release_end = enqueue.index('        case UserInputEvent::EventTypes::PINCH_GESTURE:', release_start)
+        release_case = enqueue[release_start:release_end]
+
+        cancel = function(ios, '- (void)cancelPointerCapture\n{')
+        cancel_body = cancel[cancel.index('{') + 1:cancel.rindex('}')]
+        cancel_body = cancel_body.replace('[self cancelRingHover];', '')
+        cancel_body = cancel_body.replace('[tap_gesture_recognizer invalidateTouchStream];', 'reset_tap();')
+        cancel_body = cancel_body.replace('[pan_gesture_recognizer invalidateTouchStream];', 'reset_pan();')
+        ring_start = cancel_body.index('  if (ring_capture.finish()) {')
+        ring_end = cancel_body.index('  const auto end = pointer_capture.finish(true);', ring_start)
+        cancel_body = cancel_body[:ring_start] + cancel_body[ring_end:]
+        cancel_body = cancel_body.replace('[self generateUserInputEvents:release];',
+                                          'generateUserInputEvents(release);')
+
+        navigation = fields.source('intern/ghost/GHOST_NavigationIOS.hh').replace('#pragma once', '')
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(navigation + r'''
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <vector>
+using CGFloat = double;
+struct CGPoint { double x=0, y=0; };
+CGPoint CGPointMake(double x,double y){return {x,y};}
+struct GHOST_TabletData { float pressure=1; };
+const GHOST_TabletData GHOST_TABLET_DATA_NONE{};
+using GHOST_SystemHandle = void *;
+enum { GHOST_kEventButtonUp=3, GHOST_kButtonMaskLeft=1 };
+struct GHOST_EventButton {
+  int type,button; GHOST_TabletData tablet; bool cancelled,direct_tool;
+  uint64_t hud_generation,hud_serial,finger_generation,pencil_serial,pencil_generation;
+  bool direct_finger; uintptr_t pencil_region; int32_t origin_x,origin_y;
+  GHOST_EventButton(uint64_t,int event_type,void*,int event_button,GHOST_TabletData event_tablet,
+      bool is_cancelled=false,bool is_direct_tool=false,uint64_t hg=0,uint64_t hs=0,
+      bool is_direct_finger=false,uint64_t fg=0,uint64_t ps=0,uint64_t pg=0,
+      uintptr_t pr=0,int32_t ox=0,int32_t oy=0)
+    :type(event_type),button(event_button),tablet(event_tablet),cancelled(is_cancelled),
+     direct_tool(is_direct_tool),hud_generation(hg),hud_serial(hs),finger_generation(fg),
+     pencil_serial(ps),pencil_generation(pg),direct_finger(is_direct_finger),
+     pencil_region(pr),origin_x(ox),origin_y(oy){}
+};
+struct EventQueue { std::vector<GHOST_EventButton*> events;
+  void pushEvent(GHOST_EventButton* event){events.push_back(event);} };
+struct GHOST_System { EventQueue *queue=nullptr;
+  void pushEvent(GHOST_EventButton* event){queue->pushEvent(event);} };
+uint64_t GHOST_GetMilliSeconds(void*){return 1;}
+void reset_tap(){}
+void reset_pan(){}
+struct UserInputEvent {
+  enum class EventTypes { CURSOR_MOVE, LEFT_BUTTON_DOWN, LEFT_BUTTON_UP, PINCH_GESTURE };
+  EventTypes event_list[2]{}; int num_events=0; CGPoint location{};
+  bool pencil_used=false,tablet_snapshot_valid=false,cancelled=false,direct_tool=false,direct_finger=false;
+  GHOST_TabletData tablet_snapshot{}; uint64_t hud_generation=0,hud_serial=0,finger_paint_generation=0;
+  ghost::ios::PencilPaintContact pencil_paint{};
+  UserInputEvent(const CGPoint *loc,const CGPoint*,const CGFloat*,bool pencil)
+    :location(loc?*loc:CGPoint{}),pencil_used(pencil){}
+  void set_tablet_snapshot(const GHOST_TabletData &value){tablet_snapshot=value;tablet_snapshot_valid=true;}
+  void add_event(EventTypes value){event_list[num_events++]=value;}
+};
+struct Input {
+  GHOST_System *system=nullptr; void *window=nullptr; GHOST_TabletData tablet_data{};
+  bool pencil_paint_enqueued_down=false;
+  ghost::ios::PencilPaintContact pencil_paint_enqueued{}; uint64_t pencil_paint_retired_serial=0;
+  CGPoint pencil_paint_last_location{}; GHOST_TabletData pencil_paint_last_tablet{};
+  ghost::ios::PointerCapture pointer_capture; ghost::ios::HUDContact pointer_hud_contact;
+  bool pointer_finger_contact=false; double mouse_cursor_x=0,mouse_cursor_y=0;
+  void generateUserInputEvents(const UserInputEvent &event_info){
+''' + sample_owner + r'''
+    for(int i=0;i<event_info.num_events;i++){
+      const auto event_type=event_info.event_list[i];
+      const bool pointer_event=event_type==UserInputEvent::EventTypes::CURSOR_MOVE ||
+        event_type==UserInputEvent::EventTypes::LEFT_BUTTON_DOWN ||
+        event_type==UserInputEvent::EventTypes::LEFT_BUTTON_UP;
+''' + pointer_gate + r'''
+      switch(event_type){
+''' + release_case + r'''
+        default: break;
+      }
+    }
+  }
+  void cancelPointerCapture(){
+''' + cancel_body + r'''
+  }
+};
+int main(){
+  EventQueue queue; GHOST_System system{&queue}; Input input; input.system=&system; input.window=reinterpret_cast<void*>(1);
+  const ghost::ios::PencilPaintContact old_contact{41,71,99,40,50};
+  input.pencil_paint_enqueued=old_contact; input.pencil_paint_enqueued_down=true;
+  input.pencil_paint_last_location=CGPointMake(42,53); input.pencil_paint_last_tablet.pressure=.37f;
+  input.cancelPointerCapture();
+  assert(queue.events.size()==1);
+  const GHOST_EventButton &cancelled=*queue.events.front();
+  assert(cancelled.type==GHOST_kEventButtonUp&&cancelled.button==GHOST_kButtonMaskLeft&&cancelled.cancelled);
+  assert(cancelled.pencil_serial==41&&cancelled.pencil_generation==71&&cancelled.pencil_region==99);
+  assert(cancelled.origin_x==40&&cancelled.origin_y==50&&cancelled.tablet.pressure==.37f);
+  assert(!input.pencil_paint_enqueued_down&&input.pencil_paint_retired_serial==41);
+  input.cancelPointerCapture(); assert(queue.events.size()==1); // idempotent repeat
+
+  const CGPoint release_location{42,53};
+  UserInputEvent delayed(&release_location,nullptr,nullptr,true);
+  delayed.set_tablet_snapshot(cancelled.tablet); delayed.pencil_paint=old_contact;
+  delayed.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
+  input.generateUserInputEvents(delayed); assert(queue.events.size()==1); // retired terminal
+
+  const ghost::ios::PencilPaintContact next_contact{42,72,100,60,70};
+  input.pencil_paint_enqueued=next_contact; input.pencil_paint_enqueued_down=true;
+  UserInputEvent old_during_new(&release_location,nullptr,nullptr,true);
+  old_during_new.set_tablet_snapshot(cancelled.tablet); old_during_new.pencil_paint=old_contact;
+  old_during_new.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
+  input.generateUserInputEvents(old_during_new);
+  assert(queue.events.size()==1&&input.pencil_paint_enqueued_down&&
+         ghost::ios::pencil_paint_contact_equal(input.pencil_paint_enqueued,next_contact));
+
+  UserInputEvent next_end(&release_location,nullptr,nullptr,true);
+  next_end.set_tablet_snapshot(cancelled.tablet); next_end.pencil_paint=next_contact;
+  next_end.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);
+  input.generateUserInputEvents(next_end);
+  assert(queue.events.size()==2&&!queue.events.back()->cancelled);
+  assert(queue.events.back()->pencil_serial==42&&input.pencil_paint_retired_serial==42);
+  for(auto *event:queue.events) delete event;
+}
+''')
+        self.assertIn('release.cancelled = true;', cancel_body)
+        self.assertIn('event_info.cancelled,', release_case)
+        self.assertIn('contact.serial, contact.generation, contact.region,', release_case)
+
     def test_real_num_slider_cancel_and_native_restoration_dispatch(self):
         for signature in ('static int ui_do_but_NUM(','static int ui_do_but_SLI('):
             with self.subTest(signature=signature):
