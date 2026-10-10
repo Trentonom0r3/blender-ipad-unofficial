@@ -58,7 +58,7 @@ Validation:305/305 host tests;5/5 focused HUD presentation tests;107-file online
 
 ## Next connected work
 
-Audit original-owner loss and mode-specific completion/disposal for asynchronous context changes and native terminal paths. Prove safe native cleanup before replacement context or owner destruction; if the original owner is gone, do not call Cancel through the new context and do not silently discard live native stroke storage. Preserve one-step native Undo and distinguish completed, partial, and cancelled strokes per mode. Extend actual source-executing checks over the smallest connected consumer and make affected owner/WM reviews before the next exact-source build. The home check of IPA40ff is useful when available but is not a dependency for continued source work.
+The unbuilt local candidate now retires a matching Pencil paint owner before ED_region_visibility_change_update_ex removes handlers from its hidden or poll-failed region. Continue auditing original-owner loss and mode-specific completion/disposal for asynchronous context changes and native terminal paths. Prove safe native cleanup before replacement context or owner destruction; if the original owner is gone, do not call Cancel through the new context and do not silently discard live native stroke storage. Preserve one-step native Undo and distinguish completed, partial, and cancelled strokes per mode. Extend actual source-executing checks over the smallest connected consumer and make affected owner/WM reviews before the next exact-source build. The home check of IPA40ff is useful when available but is not a dependency for continued source work.
 
 ## Recognizer-owned Pencil sample IPA verified - 2026-10-09
 

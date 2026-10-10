@@ -17,12 +17,14 @@ API_PATH = 'source/blender/windowmanager/WM_api.hh'
 FILES_PATH = 'source/blender/windowmanager/intern/wm_files.cc'
 WINDOW_PATH = 'source/blender/windowmanager/intern/wm_window.cc'
 SCREEN_OPS_PATH = 'source/blender/editors/screen/screen_ops.cc'
+AREA_PATH = 'source/blender/editors/screen/area.cc'
 WM = changed_source(WM_PATH)
 SCREEN = changed_source(SCREEN_PATH)
 API = changed_source(API_PATH)
 FILES = changed_source(FILES_PATH)
 WINDOW = changed_source(WINDOW_PATH)
 SCREEN_OPS = changed_source(SCREEN_OPS_PATH)
+AREA = changed_source(AREA_PATH)
 FILE_READ_SETUP = function(FILES, 'static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(')
 WINDOW_CLOSE = function(WINDOW, 'void wm_window_close(')
 AREA_JOIN_MODAL = function(SCREEN_OPS, 'static wmOperatorStatus area_join_modal(')
@@ -32,6 +34,7 @@ REGISTERED = function(WM, 'static bool wm_ipad_pencil_paint_handler_registered('
 OWNER_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_modal_owner_matches(')
 MODAL_ADMIT = function(WM, 'static eIPadPencilPaintModalAdmission wm_ipad_pencil_paint_modal_admit(')
 OWNER_TEARDOWN = function(WM, 'void WM_event_ipad_pencil_paint_owner_teardown(')
+REGION_VISIBILITY_CHANGE = function(AREA, 'void ED_region_visibility_change_update_ex(')
 SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
 SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
@@ -66,7 +69,7 @@ struct ARegion; struct wmOperator; struct wmEvent; struct wmEventHandler_Op; str
 struct ListBase { void *first=nullptr; };
 struct ID { uint64_t session_uid=17; };
 struct rcti { int xmin=10,ymin=20,xmax=110,ymax=120; };
-struct ARegionRuntime { bool visible=true,ipad_canvas=true; };
+struct ARegionRuntime { bool visible=true,ipad_canvas=true; ListBase handlers; };
 struct ARegion { ARegion *next=nullptr; int regiontype=1,flag=0; ARegionRuntime *runtime=nullptr; rcti winrct; };
 struct ScrArea { ScrArea *next=nullptr; ListBase regionbase; bool hidden=false; int spacetype=7; };
 struct bScreen { ID id; ListBase areabase; };
@@ -112,7 +115,9 @@ int g_cancel_calls=0,g_cancel_context_correct=0,g_locked_refusals=0;
 uint64_t g_owner_values[19]{}; char g_owner_tool[64]{};
 int g_operator_frees=0,g_handler_frees=0,g_unlinks=0,g_report_calls=0,g_cursor_disables=0;
 int g_handler_context_calls=0,g_modal_calls=0,g_stale_list_reads=0,g_list_reads=0;
+int g_region_handler_remove_calls=0,g_region_ui_free_calls=0,g_area_init_calls=0,g_area_redraw_calls=0;
 bool g_interface_unlocked=false,g_owner_valid=true,g_replace_context=false,g_context_replaced=false;
+bool g_expect_hide_order=false;
 ListBase *g_retired_list=nullptr; wmWindow *g_retired_window=nullptr;
 ScrArea *g_owner_area=nullptr; ARegion *g_owner_region=nullptr;
 wmWindow *g_replacement_window=nullptr; wmWindowManager *g_replacement_manager=nullptr;
@@ -150,6 +155,16 @@ ScrArea *CTX_wm_area(bContext *C){return C?C->area:nullptr;}
 ARegion *CTX_wm_region(bContext *C){return C?C->region:nullptr;}
 void CTX_wm_area_set(bContext *C,ScrArea *a){C->area=a;}
 void CTX_wm_region_set(bContext *C,ARegion *r){C->region=r;}
+void WM_event_remove_handlers(bContext*,ListBase*){
+  if(g_expect_hide_order)assert(g_cancel_calls==1&&g_operator_frees==1);
+  ++g_region_handler_remove_calls;
+}
+void UI_region_free_active_but_all(bContext*,ARegion*){
+  if(g_expect_hide_order)assert(g_cancel_calls==1&&g_operator_frees==1);
+  ++g_region_ui_free_calls;
+}
+void ED_area_init(bContext*,wmWindow*,ScrArea*){++g_area_init_calls;}
+void ED_area_tag_redraw(ScrArea*){++g_area_redraw_calls;}
 bool WM_operator_touch_lifetime_matches(const wmOperator *op,uint64_t identity){
   return op&&op->ipad_lifetime==identity;}
 wmOperatorType *WM_operatortype_find(const char *idname,bool){
@@ -236,7 +251,7 @@ bool ED_ipad_finger_paint_capture(bContext*C,IPadFingerPaintOwner &owner){
  std::copy(std::begin(g_owner_tool),std::end(g_owner_tool),owner.tool.begin());
  return g_owner_valid&&C&&wm_window_registered(C->wm,C->win);
 }
-''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n' + REGION_REPLACE + '\n#define WITH_APPLE_CROSSPLATFORM\nvoid test_scene_change_prefix(bContext *C, wmWindow *win, Scene *scene) {\n' + SCENE_CHANGE_PREFIX + '\n  win->scene = scene;\n}\n#undef WITH_APPLE_CROSSPLATFORM\n' + r'''
+''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n' + REGION_REPLACE + '\n#define WITH_APPLE_CROSSPLATFORM\n' + REGION_VISIBILITY_CHANGE + '\nvoid test_scene_change_prefix(bContext *C, wmWindow *win, Scene *scene) {\n' + SCENE_CHANGE_PREFIX + '\n  win->scene = scene;\n}\n#undef WITH_APPLE_CROSSPLATFORM\n' + r'''
 void reset_globals();
 struct Fixture {
   bScreen screen;ScrArea owner_area,outside_area;ARegionRuntime runtime;
@@ -276,7 +291,9 @@ void reset_globals(){
   g_cancel_calls=g_cancel_context_correct=g_locked_refusals=0;
   g_operator_frees=g_handler_frees=g_unlinks=g_report_calls=g_cursor_disables=0;
   g_handler_context_calls=g_modal_calls=g_stale_list_reads=g_list_reads=0;
+  g_region_handler_remove_calls=g_region_ui_free_calls=g_area_init_calls=g_area_redraw_calls=0;
   g_interface_unlocked=false;g_owner_valid=true;g_replace_context=false;g_context_replaced=false;
+  g_expect_hide_order=false;
   g_retired_list=nullptr;g_owner_area=nullptr;g_owner_region=nullptr;
   g_replacement_window=nullptr;g_replacement_manager=nullptr;g_registered_type=nullptr;
   g_report_list.list.first=nullptr;std::fill(std::begin(g_owner_values),std::end(g_owner_values),0);g_owner_tool[0]='\0';
@@ -308,6 +325,48 @@ int main(){
   /* Locked native UI still uses Blender's exact Cancel/status/free path for the owner. */
   assert_normal_area_or_region_teardown(false);
   assert_normal_area_or_region_teardown(true);
+  {
+    /* Hiding a live owner region is not ED_region_exit: cancel while the original
+     * region is still registered and before Blender frees its local handlers. */
+    Fixture f;
+    f.owner_region.flag=RGN_FLAG_HIDDEN;
+    g_expect_hide_order=true;
+    ED_region_visibility_change_update_ex(
+        &f.C,&f.owner_area,&f.owner_region,true,false);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1);
+    assert(f.handler.op==nullptr&&f.window.modalhandlers.first==nullptr);
+    assert(g_region_handler_remove_calls==1&&g_region_ui_free_calls==1);
+    assert(g_area_init_calls==0&&g_area_redraw_calls==0);
+  }
+  {
+    /* Poll failure hides a previously visible region before ED_area_init updates
+     * runtime visibility, so teardown must still find its registered owner. */
+    Fixture f;
+    f.owner_region.flag=RGN_FLAG_POLL_FAILED;
+    g_expect_hide_order=true;
+    ED_region_visibility_change_update_ex(
+        &f.C,&f.owner_area,&f.owner_region,true,false);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1);
+    assert(f.handler.op==nullptr&&f.window.modalhandlers.first==nullptr);
+    assert(g_region_handler_remove_calls==1&&g_region_ui_free_calls==1);
+  }
+  {
+    /* Hiding another region must not retire an owner in the view window. */
+    Fixture f;
+    f.outside_region.runtime=&f.runtime;
+    ED_region_visibility_change_update_ex(
+        &f.C,&f.outside_area,&f.outside_region,true,false);
+    assert(g_cancel_calls==0&&f.handler.op==&f.op);
+    assert(g_region_handler_remove_calls==1&&g_region_ui_free_calls==1);
+  }
+  {
+    Fixture f;
+    ED_region_visibility_change_update_ex(
+        &f.C,&f.owner_area,&f.owner_region,false,true);
+    assert(g_cancel_calls==0&&f.handler.op==&f.op);
+    assert(g_region_handler_remove_calls==0&&g_region_ui_free_calls==0);
+    assert(g_area_init_calls==1&&g_area_redraw_calls==1);
+  }
   {
     /* Match the area pull-out sequence: clean up with the original region
      * attached, then run Blender's native modal-region replacement. */
