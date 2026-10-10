@@ -190,6 +190,8 @@ struct WindowRuntimeHandle {uint64_t ipad_pencil_paint_queued_serial=0,ipad_penc
   int32_t ipad_pencil_paint_queued_origin_xy[2]{};bool ipad_pencil_paint_queued_down=false;};
 struct GHOST_IWindow {};
 struct wmWindow {WindowRuntimeHandle *runtime;GHOST_IWindow *ghostwin;};
+struct wmEventHandler_Op {uint64_t ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;};
+""" + CANCELLED_CONTACT_MARK + r"""
 bool dispatch_down=false,tagged=false;uint8_t dispatch_phase=0;int ghost_shared_state_updates=0;
 void queue_contact(const int type,const uint64_t serial,const uint64_t generation,
                    const uintptr_t region,const int32_t origin_x,const int32_t origin_y,
@@ -227,8 +229,8 @@ int main(){WindowRuntimeHandle runtime;GHOST_IWindow ghostwin;wmWindow win{&runt
   runtime.ipad_pencil_paint_queued_origin_xy[0]=100;
   runtime.ipad_pencil_paint_queued_origin_xy[1]=200;
   runtime.ipad_pencil_paint_queued_down=true;
-  runtime.ipad_pencil_paint_cancelled_serial=45;
-  runtime.ipad_pencil_paint_cancelled_generation=8;
+  wmEventHandler_Op cancelled_handler{45,8};
+  wm_ipad_pencil_paint_cancelled_contact_mark(&win,&cancelled_handler);
   const int before_cancelled_tail=ghost_shared_state_updates;
   queue_contact(GHOST_kEventCursorMove,45,8,12,100,200,0,&win);
   assert(ghost_shared_state_updates==before_cancelled_tail&&runtime.ipad_pencil_paint_queued_down);
@@ -240,6 +242,25 @@ int main(){WindowRuntimeHandle runtime;GHOST_IWindow ghostwin;wmWindow win{&runt
          !runtime.ipad_pencil_paint_queued_serial&&!runtime.ipad_pencil_paint_queued_down);
   queue_contact(GHOST_kEventCursorMove,45,8,12,100,200,0,&win);
   assert(ghost_shared_state_updates==before_cancelled_tail);
+  for(uint64_t serial=100;serial<10100;++serial) {
+    const uint64_t generation=serial+900;
+    runtime.ipad_pencil_paint_queued_serial=serial;
+    runtime.ipad_pencil_paint_queued_generation=generation;
+    runtime.ipad_pencil_paint_queued_region=12;
+    runtime.ipad_pencil_paint_queued_origin_xy[0]=100;
+    runtime.ipad_pencil_paint_queued_origin_xy[1]=200;
+    runtime.ipad_pencil_paint_queued_down=true;
+    cancelled_handler.ipad_pencil_paint_serial=serial;
+    cancelled_handler.ipad_pencil_paint_generation=generation;
+    wm_ipad_pencil_paint_cancelled_contact_mark(&win,&cancelled_handler);
+    const int before_cycle=ghost_shared_state_updates;
+    queue_contact(GHOST_kEventCursorMove,serial,generation,12,100,200,0,&win);
+    queue_contact(GHOST_kEventButtonDown,serial,generation,12,100,200,GHOST_kButtonMaskLeft,&win);
+    queue_contact(GHOST_kEventButtonUp,serial,generation,12,100,200,GHOST_kButtonMaskLeft,&win);
+    queue_contact(GHOST_kEventCursorMove,serial,generation,12,100,200,0,&win);
+    assert(ghost_shared_state_updates==before_cycle&&runtime.ipad_pencil_paint_retired_serial==serial);
+    assert(!runtime.ipad_pencil_paint_cancelled_serial&&!runtime.ipad_pencil_paint_queued_serial);
+  }
   dispatch_down=false;tagged=false;queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,nullptr);
   assert(!tagged&&!dispatch_down);
 }
