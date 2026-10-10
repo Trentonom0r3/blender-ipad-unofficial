@@ -428,8 +428,6 @@ struct WindowRuntime {
   ListBase event_queue;
   uint64_t ipad_pencil_paint_cancelled_serial=0,
     ipad_pencil_paint_cancelled_generation=0;
-  uintptr_t ipad_pencil_paint_cancelled_region=0;
-  int32_t ipad_pencil_paint_cancelled_origin_xy[2]{};
 };
 struct wmWindow { WindowRuntime *runtime=nullptr; };
 struct wmEventHandler_Op {
@@ -472,8 +470,9 @@ int main(){
   wmEvent motion; motion.ipad_pencil_paint_down=true;
   motion.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_MOTION;
   motion.ipad_pencil_paint_serial=41;motion.ipad_pencil_paint_generation=7;
+  /* A resize/reprojection changes event coordinates after cancellation. */
   motion.ipad_pencil_paint_region=uintptr_t(0x1234);
-  motion.ipad_pencil_paint_origin_xy[0]=100;motion.ipad_pencil_paint_origin_xy[1]=200;
+  motion.ipad_pencil_paint_origin_xy[0]=900;motion.ipad_pencil_paint_origin_xy[1]=1200;
   route_late_contact_event(&win,&motion);
   assert(motion.freed&&replacement_modal_deliveries==0&&
          runtime.ipad_pencil_paint_cancelled_serial==41);

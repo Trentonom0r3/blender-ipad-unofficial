@@ -14635,7 +14635,7 @@ diff --git a/source/blender/blenkernel/BKE_wm_runtime.hh b/source/blender/blenke
 index a6fd685..b02ecab 100644
 --- a/source/blender/blenkernel/BKE_wm_runtime.hh
 +++ b/source/blender/blenkernel/BKE_wm_runtime.hh
-@@ -1,115 +1,151 @@
+@@ -1,115 +1,149 @@
  /* SPDX-FileCopyrightText: 2024 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -14769,8 +14769,6 @@ index a6fd685..b02ecab 100644
 +  /* Cancelled native paint contact remains quarantined through physical lift. */
 +  uint64_t ipad_pencil_paint_cancelled_serial = 0;
 +  uint64_t ipad_pencil_paint_cancelled_generation = 0;
-+  uintptr_t ipad_pencil_paint_cancelled_region = 0;
-+  int32_t ipad_pencil_paint_cancelled_origin_xy[2] = {0, 0};
 +#endif
  
  #ifdef WITH_INPUT_IME
@@ -132503,7 +132501,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..8d1ece6 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8452 @@
+@@ -1,6918 +1,8441 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -134985,16 +134983,13 @@ index 46a8fef..8d1ece6 100644
 +    wmWindow *win, const wmEventHandler_Op *handler)
 +{
 +  if (!win || !win->runtime || !handler || !handler->ipad_pencil_paint_serial ||
-+      !handler->ipad_pencil_paint_generation || !handler->ipad_pencil_region)
++      !handler->ipad_pencil_paint_generation)
 +  {
 +    return;
 +  }
 +  auto *runtime = win->runtime;
 +  runtime->ipad_pencil_paint_cancelled_serial = handler->ipad_pencil_paint_serial;
 +  runtime->ipad_pencil_paint_cancelled_generation = handler->ipad_pencil_paint_generation;
-+  runtime->ipad_pencil_paint_cancelled_region = handler->ipad_pencil_region;
-+  runtime->ipad_pencil_paint_cancelled_origin_xy[0] = handler->ipad_pencil_origin_x;
-+  runtime->ipad_pencil_paint_cancelled_origin_xy[1] = handler->ipad_pencil_origin_y;
 +}
 +
 +/* A cancelled stroke's queued physical tail belongs to its old native owner.
@@ -135013,21 +135008,13 @@ index 46a8fef..8d1ece6 100644
 +  }
 +  auto *runtime = win->runtime;
 +  if (runtime->ipad_pencil_paint_cancelled_serial != event->ipad_pencil_paint_serial ||
-+      runtime->ipad_pencil_paint_cancelled_generation != event->ipad_pencil_paint_generation ||
-+      runtime->ipad_pencil_paint_cancelled_region != event->ipad_pencil_paint_region ||
-+      runtime->ipad_pencil_paint_cancelled_origin_xy[0] !=
-+          event->ipad_pencil_paint_origin_xy[0] ||
-+      runtime->ipad_pencil_paint_cancelled_origin_xy[1] !=
-+          event->ipad_pencil_paint_origin_xy[1])
++      runtime->ipad_pencil_paint_cancelled_generation != event->ipad_pencil_paint_generation)
 +  {
 +    return false;
 +  }
 +  if (event->ipad_pencil_paint_phase == WM_PENCIL_PAINT_PHASE_END) {
 +    runtime->ipad_pencil_paint_cancelled_serial = 0;
 +    runtime->ipad_pencil_paint_cancelled_generation = 0;
-+    runtime->ipad_pencil_paint_cancelled_region = 0;
-+    runtime->ipad_pencil_paint_cancelled_origin_xy[0] = 0;
-+    runtime->ipad_pencil_paint_cancelled_origin_xy[1] = 0;
 +  }
 +  return true;
 +}
