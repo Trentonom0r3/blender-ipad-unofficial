@@ -1,13 +1,14 @@
 {
-  "status": "source_candidate_repaired_prebuild",
-  "base_head": "40defc4bdb5bd54a5df2babfb3a574d1402d192c",
+  "status": "pinned_native_type_correction_validated_prebuild",
+  "base_head": "236a7162a0123b18498c07821f8c592273c3f263",
   "production_base": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
-  "candidate_patch_sha256": "cc0260bc555faa374a6a3bd6f16574d1d946cb4358c27384cf6497ebbaabbb74",
-  "focused_test_sha256": "9be99ae3f657f0ed6d43830e0260a09f0c21cdd161d28be10f9a7747766ce3ae",
+  "candidate_patch_sha256": "9fa5f212da8a5cfde13fe7e49ed1972b5d2c0ad8671164ba5f55dce5cab641ac",
+  "focused_test_sha256": "2fbff24a4c326d2522752c873967c12b0a65b66a0c1278b5b7c60a8f4db6cc20",
   "validation": {
-    "full_host_tests": "303 passed",
-    "online_pinned_preflight": "107 files passed; all declared new files confirmed absent at pin",
-    "offline_pinned_preflight": "107 files passed from warmed exact-commit cache",
+    "full_host_tests": "304 passed",
+    "focused_pencil_paint_lease_tests": "6 passed",
+    "online_pinned_preflight": "107 files passed",
+    "offline_pinned_preflight": "107 files passed",
     "diff_check_excluding_unified_patch": "passed"
   },
   "device": {
@@ -16,7 +17,8 @@
     "candidate_ipa": "none"
   },
   "scope_limits": [
-    "No native iOS compilation or candidate IPA exists for the corrected source yet",
+    "Corrected pinned WM event/runtime types have not yet passed native iOS compilation",
+    "No candidate IPA exists",
     "No target UIKit/GHOST/WM/GPU brush execution evidence",
     "Native mode-specific Cancel does not promise paint rollback",
     "No candidate device acceptance"
@@ -27,11 +29,17 @@
   "preflight_source_sha256": "0c3785aafe762341f66b498f013d0e6c238d22a3909f38e208f3cb4fae107f97",
   "preflight_test_sha256": "29ec2d77982b0d02c74aa5fda3d824e35bb38729cd1c49807687a683d973c1aa",
   "build_attempt": {
-    "run_id": 38032181458,
-    "source": "40defc4bdb5bd54a5df2babfb3a574d1402d192c",
-    "result": "failed before native compilation during git apply --check",
-    "cause": "wm_event_system.hh was marked as new although present at the pinned Blender commit",
-    "correction": "unified update hunk against exact pinned header; preflight now verifies every new-file path is absent",
+    "run_id": 38033293882,
+    "source": "236a7162a0123b18498c07821f8c592273c3f263",
+    "result": "native Release compilation failed after cloud preflight, patch application, and Xcode configuration passed",
+    "cause": "native wmEvent uses int ipad_pencil_paint_origin_xy[2]; wmWindow::runtime is a raw pointer, not a smart pointer",
+    "correction": "use the exact native event coordinate array and raw runtime pointer; compile the extracted queue block in a connected fixture",
     "replacement_build": "not dispatched yet"
+  },
+  "previous_build_attempt": {
+    "run_id": 38032181458,
+    "result": "failed before native compilation during git apply --check",
+    "cause": "wm_event_system.hh existed in pinned source despite being marked as a new file",
+    "correction": "replaced the whole-file addition with an exact pinned-header update hunk and added pinned absence checks for created paths"
   }
 }

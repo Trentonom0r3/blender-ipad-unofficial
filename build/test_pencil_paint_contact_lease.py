@@ -43,6 +43,9 @@ def cpp_block(source, marker, occurrence=0):
     raise AssertionError(f"unterminated C++ block {marker!r}")
 
 
+QUEUE_CAPTURE = cpp_block(WM, "if (any_contact_value) {")
+
+
 NATIVE_UNDO_BEGIN = cpp_block(OPERATOR_CALL, "if (ot->flag & OPTYPE_UNDO) {")
 NATIVE_INTERRUPT = cpp_block(OPERATOR_CALL, "if (ipad_pencil_paint_interrupt) {")
 NATIVE_UNDO_END = cpp_block(
@@ -92,6 +95,67 @@ int wm_handler_operator_call(bContext *C, ListBase *handlers, wmEventHandler *ba
 class PencilPaintContactLeaseTests(unittest.TestCase):
     def run_cpp(self, source):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP + source)
+
+    def test_actual_contact_queue_matches_pinned_runtime_and_event_schema(self):
+        source = r"""
+#include <algorithm>
+#include <cstdint>
+enum { GHOST_kEventCursorMove=1, GHOST_kEventButtonDown=2, GHOST_kEventButtonUp=3,
+       GHOST_kButtonMaskLeft=1, WM_PENCIL_PAINT_PHASE_PREPRESS=0,
+       WM_PENCIL_PAINT_PHASE_BEGIN=1, WM_PENCIL_PAINT_PHASE_MOTION=2,
+       WM_PENCIL_PAINT_PHASE_END=3 };
+namespace ghost::ios {
+struct PencilPaintContact {uint64_t serial,generation;uintptr_t region;int32_t origin_x,origin_y;};
+bool ticket_valid=true;
+bool pencil_paint_ticket_live(void*,const PencilPaintContact &contact) {
+  return ticket_valid&&contact.serial==44&&contact.generation==7&&contact.region==12&&
+         contact.origin_x==100&&contact.origin_y==200;
+}
+}
+struct GHOST_TEventCursorData {uint64_t ipad_pencil_paint_serial,ipad_pencil_paint_generation;
+  uintptr_t ipad_pencil_paint_region;int32_t ipad_pencil_paint_origin_x,ipad_pencil_paint_origin_y;};
+struct GHOST_TEventButtonData {uint64_t ipad_pencil_paint_serial,ipad_pencil_paint_generation;
+  uintptr_t ipad_pencil_paint_region;int32_t ipad_pencil_paint_origin_x,ipad_pencil_paint_origin_y;int button;};
+struct WindowRuntimeHandle {uint64_t ipad_pencil_paint_queued_serial=0,ipad_pencil_paint_queued_generation=0,
+  ipad_pencil_paint_retired_serial=0;uintptr_t ipad_pencil_paint_queued_region=0;
+  int32_t ipad_pencil_paint_queued_origin_xy[2]{};bool ipad_pencil_paint_queued_down=false;};
+struct GHOST_IWindow {};
+struct wmWindow {WindowRuntimeHandle *runtime;GHOST_IWindow *ghostwin;};
+bool dispatch_down=false,tagged=false;uint8_t dispatch_phase=0;
+void queue_contact(const int type,const uint64_t serial,const uint64_t generation,
+                   const uintptr_t region,const int32_t origin_x,const int32_t origin_y,
+                   const int button,wmWindow *win) {
+  const bool any_contact_value = serial || generation || region || origin_x || origin_y;
+  ghost::ios::PencilPaintContact ipad_pencil_contact{};
+  bool ipad_pencil_dispatch_down=false,ipad_pencil_tagged=false;
+  uint8_t ipad_pencil_dispatch_phase=WM_PENCIL_PAINT_PHASE_PREPRESS;
+""" + QUEUE_CAPTURE + r"""
+  dispatch_down=ipad_pencil_dispatch_down;
+  dispatch_phase=ipad_pencil_dispatch_phase;
+  tagged=ipad_pencil_tagged;
+}
+int main(){WindowRuntimeHandle runtime;GHOST_IWindow ghostwin;wmWindow win{&runtime,&ghostwin};
+  queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,&win);
+  assert(runtime.ipad_pencil_paint_queued_serial==44&&!runtime.ipad_pencil_paint_queued_down);
+  assert(tagged&&dispatch_phase==WM_PENCIL_PAINT_PHASE_PREPRESS&&!dispatch_down);
+  queue_contact(GHOST_kEventCursorMove,45,7,12,100,200,0,&win);
+  assert(runtime.ipad_pencil_paint_queued_serial==44&&!runtime.ipad_pencil_paint_queued_down);
+  queue_contact(GHOST_kEventButtonDown,44,7,12,100,200,GHOST_kButtonMaskLeft,&win);
+  assert(runtime.ipad_pencil_paint_queued_serial==44&&runtime.ipad_pencil_paint_queued_down);
+  assert(dispatch_down&&dispatch_phase==WM_PENCIL_PAINT_PHASE_BEGIN);
+  queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,&win);
+  assert(dispatch_down&&dispatch_phase==WM_PENCIL_PAINT_PHASE_MOTION);
+  queue_contact(GHOST_kEventButtonUp,44,7,12,100,200,GHOST_kButtonMaskLeft,&win);
+  assert(dispatch_down&&dispatch_phase==WM_PENCIL_PAINT_PHASE_END);
+  assert(runtime.ipad_pencil_paint_retired_serial==44&&!runtime.ipad_pencil_paint_queued_serial&&
+         !runtime.ipad_pencil_paint_queued_down);
+  queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,&win);
+  assert(!runtime.ipad_pencil_paint_queued_serial);
+  dispatch_down=false;tagged=false;queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,nullptr);
+  assert(!tagged&&!dispatch_down);
+}
+"""
+        self.run_cpp(source)
 
     def test_actual_owner_match_accepts_redraws_but_refuses_live_owner_changes(self):
         self.run_cpp(r"""
@@ -166,13 +230,14 @@ struct wmEvent {
   int type=1, ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
   bool ipad_pencil_paint_down=true;
   uint64_t ipad_pencil_paint_serial=44, ipad_pencil_paint_generation=7,
-           ipad_pencil_paint_region=12, ipad_pencil_paint_origin_x=100,
-           ipad_pencil_paint_origin_y=200;
+           ipad_pencil_paint_region=12;
+  int ipad_pencil_paint_origin_xy[2]{100,200};
 };
 struct wmEventHandler_Op {
   wmEventHandler head;
   uint64_t ipad_pencil_paint_serial=44, ipad_pencil_paint_generation=7,
-           ipad_pencil_region=12, ipad_pencil_origin_x=100, ipad_pencil_origin_y=200;
+           ipad_pencil_region=12;
+  int32_t ipad_pencil_origin_x=100, ipad_pencil_origin_y=200;
   ScrArea *area=nullptr; ARegion *region=nullptr; wmOperator *op=nullptr;
   bool registered=true;
 };
@@ -245,9 +310,9 @@ int main(){
  assert(wm_ipad_pencil_paint_modal_pre_dispatch(&C,&win,&event)==eIPadPencilPaintPreDispatch::DispatchModal&&cancel_calls==0);
  event.type=1;event.ipad_pencil_paint_down=true;event.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
  event.ipad_pencil_paint_serial=43;event.ipad_pencil_paint_generation=7;event.ipad_pencil_paint_region=12;
- event.ipad_pencil_paint_origin_x=100;event.ipad_pencil_paint_origin_y=200;
+ event.ipad_pencil_paint_origin_xy[0]=100;event.ipad_pencil_paint_origin_xy[1]=200;
  assert(wm_ipad_pencil_paint_modal_pre_dispatch(&C,&win,&event)==eIPadPencilPaintPreDispatch::Consume&&cancel_calls==0);
- event.ipad_pencil_paint_serial=44;event.ipad_pencil_paint_origin_x++;
+ event.ipad_pencil_paint_serial=44;event.ipad_pencil_paint_origin_xy[0]++;
  assert(wm_ipad_pencil_paint_modal_pre_dispatch(&C,&win,&event)==eIPadPencilPaintPreDispatch::Consume&&cancel_calls==0);
  event.ipad_pencil_paint_serial=0;event.ipad_pencil_paint_down=false;
  event.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_BEGIN;event.type=PENCIL_RING_INPUT;

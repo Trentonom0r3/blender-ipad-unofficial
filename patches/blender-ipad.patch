@@ -134732,8 +134732,8 @@ index 46a8fef..efe2997 100644
 +         handler->ipad_pencil_paint_serial == event->ipad_pencil_paint_serial &&
 +         handler->ipad_pencil_paint_generation == event->ipad_pencil_paint_generation &&
 +         handler->ipad_pencil_region == event->ipad_pencil_paint_region &&
-+         handler->ipad_pencil_origin_x == event->ipad_pencil_paint_origin_x &&
-+         handler->ipad_pencil_origin_y == event->ipad_pencil_paint_origin_y;
++         handler->ipad_pencil_origin_x == event->ipad_pencil_paint_origin_xy[0] &&
++         handler->ipad_pencil_origin_y == event->ipad_pencil_paint_origin_xy[1];
 +}
 +
 +enum class eIPadPencilPaintModalEvent : uint8_t { OwnedContact, StaleContact, Timer, Interrupt };
@@ -138094,8 +138094,8 @@ index 46a8fef..efe2997 100644
 +  handler->ipad_pencil_type_address = uintptr_t(registered_type);
 +  handler->ipad_pencil_area = uintptr_t(handler->context.area);
 +  handler->ipad_pencil_region = uintptr_t(handler->context.region);
-+  handler->ipad_pencil_origin_x = dispatch.event.ipad_pencil_paint_origin_x;
-+  handler->ipad_pencil_origin_y = dispatch.event.ipad_pencil_paint_origin_y;
++  handler->ipad_pencil_origin_x = dispatch.event.ipad_pencil_paint_origin_xy[0];
++  handler->ipad_pencil_origin_y = dispatch.event.ipad_pencil_paint_origin_xy[1];
 +  handler->ipad_pencil_paint_mode = mode;
 +  for (int i = 0; i <= 12; i++) {
 +    handler->ipad_pencil_owner_values[i] = owner.values[i];
@@ -139496,7 +139496,7 @@ index 46a8fef..efe2997 100644
 +      if (!serial || !generation || !region || !win || !win->runtime ||
 +          (type != GHOST_kEventCursorMove && button != GHOST_kButtonMaskLeft)) return;
 +      ipad_pencil_contact = {serial, generation, region, origin_x, origin_y};
-+      auto *runtime = win->runtime.get();
++      auto *runtime = win->runtime;
 +      const auto matches_queued = [&]() {
 +        return runtime->ipad_pencil_paint_queued_serial == serial &&
 +               runtime->ipad_pencil_paint_queued_generation == generation &&

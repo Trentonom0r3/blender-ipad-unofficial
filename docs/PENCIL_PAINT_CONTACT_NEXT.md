@@ -1,3 +1,10 @@
+## Latest compiler correction - 2026-10-10
+
+Build 38033293882 (https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38033293882) applied the overlay and configured Xcode, then exposed two real pinned-type errors: the native event origin is int ipad_pencil_paint_origin_xy[2], and wmWindow::runtime is a raw pointer. Production now indexes the native origin array and uses the runtime pointer directly. The new source-executing queue fixture extracts the actual contact block and runs it against those exact declarations.
+
+Validation is 304/304 full host tests, 6/6 focused Pencil lease tests, and 107-file online/offline pinned-source preflight. Canonical LF patch SHA256 9fa5f212da8a5cfde13fe7e49ed1972b5d2c0ad8671164ba5f55dce5cab641ac; focused fixture SHA256 2fbff24a4c326d2522752c873967c12b0a65b66a0c1278b5b7c60a8f4db6cc20. This is source/fixture evidence; the type correction has no successful native build or IPA yet. Commit and build this exact correction once, then inspect the downloaded complete IPA. The user's prior 40ff7550ed0c7118392898c248cc86b204fd2a9a home install check remains pending.
+
+
 ## Connected Pencil paint/contact lease candidate - 2026-10-10
 
 The first build attempt for commit `40defc4bdb5bd54a5df2babfb3a574d1402d192c`, [run 38032181458](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38032181458), failed before native compilation: `git apply --check` found `source/blender/windowmanager/wm_event_system.hh` already existed in the pinned Blender checkout. The overlay had incorrectly represented the header as a new file. The corrected overlay changes only the intended 17-field addition against the exact pinned header. Preflight now verifies that each patch-created path is absent from the pinned source, with confirmed 404s cached for offline preflight. This correction prevents the same class of failure before the build runner.
