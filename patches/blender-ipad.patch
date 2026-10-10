@@ -74004,10 +74004,10 @@ index 14913f2..cfc5c2a 100644
    data->draw_callback = WM_draw_cb_activate(win, area_animate_highlight_cb, data);
  }
 diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/editors/screen/screen_edit.cc
-index 32c8d9b..a053c2d 100644
+index 32c8d9b..b374145 100644
 --- a/source/blender/editors/screen/screen_edit.cc
 +++ b/source/blender/editors/screen/screen_edit.cc
-@@ -1,2120 +1,2185 @@
+@@ -1,2175 +1,2246 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -74972,6 +74972,9 @@ index 32c8d9b..a053c2d 100644
    wmWindowManager *wm = CTX_wm_manager(C);
    wmWindow *win = CTX_wm_window(C);
    ARegion *prevar = CTX_wm_region(C);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, region);
++#endif
  
    if (region->runtime->type && region->runtime->type->exit) {
      region->runtime->type->exit(wm, region);
@@ -75019,6 +75022,9 @@ index 32c8d9b..a053c2d 100644
    wmWindowManager *wm = CTX_wm_manager(C);
    wmWindow *win = CTX_wm_window(C);
    ScrArea *prevsa = CTX_wm_area(C);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  WM_event_ipad_pencil_paint_owner_teardown(C, win, area, nullptr);
++#endif
  
    if (area->type && area->type->exit) {
      area->type->exit(wm, area);
@@ -76202,6 +76208,66 @@ index 32c8d9b..a053c2d 100644
      }
    }
  
+   return false;
+ }
+-
++
+ Scene *ED_screen_scene_find_with_window(const bScreen *screen,
+                                         const wmWindowManager *wm,
+                                         wmWindow **r_window)
+ {
+   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+     if (WM_window_get_active_screen(win) == screen) {
+       if (r_window) {
+         *r_window = win;
+       }
+       return WM_window_get_active_scene(win);
+     }
+   }
+-
++
+   /* Can by nullptr when accessing a screen that isn't active. */
+   return nullptr;
+ }
+-
++
+ ScrArea *ED_screen_area_find_with_spacedata(const bScreen *screen,
+                                             const SpaceLink *sl,
+                                             const bool only_visible)
+ {
+   if (only_visible) {
+     LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+       if (area->spacedata.first == sl) {
+         return area;
+       }
+     }
+   }
+   else {
+     LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+       if (BLI_findindex(&area->spacedata, sl) != -1) {
+         return area;
+       }
+     }
+   }
+   return nullptr;
+ }
+-
++
+ Scene *ED_screen_scene_find(const bScreen *screen, const wmWindowManager *wm)
+ {
+   return ED_screen_scene_find_with_window(screen, wm, nullptr);
+ }
+-
++
+ wmWindow *ED_screen_window_find(const bScreen *screen, const wmWindowManager *wm)
+ {
+   LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+     if (WM_window_get_active_screen(win) == screen) {
+       return win;
+     }
+   }
+   return nullptr;
+ }
 diff --git a/source/blender/editors/screen/screen_ops.cc b/source/blender/editors/screen/screen_ops.cc
 index 212a5d9..8e69964 100644
 --- a/source/blender/editors/screen/screen_ops.cc
@@ -121393,10 +121459,10 @@ index b7412e3..4e9ba90 100644
    return pyrna_struct_CreatePyObject(&ptr_otmacro);
  }
 diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanager/WM_api.hh
-index e5a618f..fb936a0 100644
+index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2315 @@
+@@ -1,2303 +1,2322 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -122100,6 +122166,13 @@ index e5a618f..fb936a0 100644
                                  void *user_data,
                                  bool postpone);
  void WM_event_remove_handlers_by_area(ListBase *handlers, const ScrArea *area);
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Cancel an admitted Pencil paint owner before its area/region is torn down. */
++void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,
++                                               wmWindow *win,
++                                               const ScrArea *area,
++                                               const ARegion *region);
++#endif
  void WM_event_free_ui_handler_all(bContext *C,
                                    ListBase *handlers,
                                    wmUIHandlerFunc handle_fn,
@@ -132404,10 +132477,10 @@ index 3bcd482..f86d507 100644
  
  /** \} */
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
-index 46a8fef..efe2997 100644
+index 46a8fef..8d1ece6 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8229 @@
+@@ -1,6918 +1,8345 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -135220,7 +135293,9 @@ index 46a8fef..efe2997 100644
                                                     wmEventHandler *handler_base,
                                                     wmEvent *event,
                                                     PointerRNA *properties,
-                                                    const char *kmi_idname)
+-                                                   const char *kmi_idname)
++                                                   const char *kmi_idname,
++                                                   bool ipad_pencil_owner_teardown = false)
  {
    wmOperatorStatus retval = OPERATOR_PASS_THROUGH;
  
@@ -135231,8 +135306,21 @@ index 46a8fef..efe2997 100644
      wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
      wmOperator *op = handler->op;
      wmOperatorType *ot = op->type;
++    bool ipad_pencil_owner_teardown_admitted = false;
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial && event &&
++        event->type == EVT_NONE)
++    {
++      ipad_pencil_owner_teardown_admitted =
++          wm_ipad_pencil_paint_modal_admit(
++              C, CTX_wm_window(C), event, handler) == eIPadPencilPaintModalAdmission::Cancel;
++    }
++#else
++    UNUSED_VARS(ipad_pencil_owner_teardown);
++#endif
  
-     if (!wm_operator_check_locked_interface(C, ot)) {
+-    if (!wm_operator_check_locked_interface(C, ot)) {
++    if (!wm_operator_check_locked_interface(C, ot) && !ipad_pencil_owner_teardown_admitted) {
        /* Interface is locked and operator is not allowed to run,
         * nothing to do in this case. */
      }
@@ -135243,15 +135331,24 @@ index 46a8fef..efe2997 100644
        ScrArea *area = CTX_wm_area(C);
        ARegion *region = CTX_wm_region(C);
  
-       wm_handler_op_context(C, handler, event);
+-      wm_handler_op_context(C, handler, event);
 -      wm_region_mouse_co(C, event);
 -
++      if (!ipad_pencil_owner_teardown) {
++        wm_handler_op_context(C, handler, event);
++      }
 +      bool ipad_pencil_paint_interrupt = false;
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+      if (handler->ipad_pencil_paint_serial) {
++      if (handler->ipad_pencil_paint_serial || ipad_pencil_owner_teardown) {
 +        const eIPadPencilPaintModalAdmission admission =
-+            wm_ipad_pencil_paint_modal_admit(C, win, event, handler);
-+        if (admission == eIPadPencilPaintModalAdmission::Consume) {
++            ipad_pencil_owner_teardown ?
++                (ipad_pencil_owner_teardown_admitted ?
++                     eIPadPencilPaintModalAdmission::Cancel :
++                     eIPadPencilPaintModalAdmission::Consume) :
++                wm_ipad_pencil_paint_modal_admit(C, win, event, handler);
++        if (admission == eIPadPencilPaintModalAdmission::Consume ||
++            (ipad_pencil_owner_teardown && admission != eIPadPencilPaintModalAdmission::Cancel))
++        {
 +          CTX_wm_area_set(C, area);
 +          CTX_wm_region_set(C, region);
 +          return WM_HANDLER_BREAK | WM_HANDLER_HANDLED;
@@ -135563,6 +135660,101 @@ index 46a8fef..efe2997 100644
 +    }
 +  }
 +  return false;
++}
++#endif
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Retire a leased Pencil stroke before its original region is dismantled. Never
++ * invoke a mode callback after the live scene/tool/context no longer matches. */
++void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,
++                                                wmWindow *win,
++                                                const ScrArea *area,
++                                                const ARegion *region)
++{
++  if (!C || !win || (!area && !region) || CTX_wm_window(C) != win || !win->runtime) {
++    return;
++  }
++  wmWindowManager *wm = CTX_wm_manager(C);
++  if (!wm) {
++    return;
++  }
++  for (;;) {
++    wmEventHandler_Op *candidate = nullptr;
++    LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
++      if (handler_base->type != WM_HANDLER_TYPE_OP) continue;
++      wmEventHandler_Op *handler = reinterpret_cast<wmEventHandler_Op *>(handler_base);
++      if (!handler->ipad_pencil_paint_serial ||
++          (area && handler->ipad_pencil_area != uintptr_t(area)) ||
++          (region && handler->ipad_pencil_region != uintptr_t(region))) continue;
++      candidate = handler;
++      break;
++    }
++    if (!candidate || !wm_ipad_pencil_paint_handler_registered(win, candidate)) return;
++
++    /* Resolve the value identity back through the current screen before using
++     * coordinates. Registration has proved the same live visible WINDOW region
++     * and operator/type lifetimes. */
++    bScreen *screen = WM_window_get_active_screen(win);
++    if (!screen) return;
++    ScrArea *owner_area = nullptr;
++    ARegion *owner_region = nullptr;
++    LISTBASE_FOREACH (ScrArea *, screen_area, &screen->areabase) {
++      if (uintptr_t(screen_area) != candidate->ipad_pencil_area) continue;
++      owner_area = screen_area;
++      LISTBASE_FOREACH (ARegion *, screen_region, &screen_area->regionbase) {
++        if (uintptr_t(screen_region) == candidate->ipad_pencil_region) {
++          owner_region = screen_region;
++          break;
++        }
++      }
++      break;
++    }
++    if (!owner_area || !owner_region) return;
++
++    /* This synthetic event selects the proven owner context; EVT_NONE and zero
++     * contact provenance prevent it from reaching operator modal. */
++    wmEvent cancel_event{};
++    cancel_event.type = EVT_NONE;
++    cancel_event.val = KM_NOTHING;
++    cancel_event.xy[0] = (owner_region->winrct.xmin + owner_region->winrct.xmax) / 2;
++    cancel_event.xy[1] = (owner_region->winrct.ymin + owner_region->winrct.ymax) / 2;
++    ScrArea *area_prev = CTX_wm_area(C);
++    ARegion *region_prev = CTX_wm_region(C);
++    CTX_wm_area_set(C, owner_area);
++    CTX_wm_region_set(C, owner_region);
++    const eIPadPencilPaintModalAdmission admission =
++        wm_ipad_pencil_paint_modal_admit(C, win, &cancel_event, candidate);
++    const uint64_t owner_lifetime = candidate->ipad_pencil_operator_lifetime;
++    if (admission != eIPadPencilPaintModalAdmission::Cancel) {
++      CTX_wm_area_set(C, area_prev);
++      CTX_wm_region_set(C, region_prev);
++      return;
++    }
++
++    /* Keep mode-specific Cancel, Undo-depth accounting and handler disposal on
++     * Blender's normal native status path. The dedicated flag permits this
++     * cleanup while the interface is locked, matching WM_event_remove_handlers. */
++    wm_handler_operator_call(
++        C, &win->modalhandlers, &candidate->head, &cancel_event, nullptr, nullptr, true);
++    /* Native cancellation callbacks may replace the active context. Do not
++     * dereference the old window or restore area/region values after that. */
++    if (CTX_wm_window(C) != win || CTX_wm_manager(C) != wm) {
++      return;
++    }
++    CTX_wm_area_set(C, area_prev);
++    CTX_wm_region_set(C, region_prev);
++    /* Reacquire after callbacks by value lifetime; keep no old pointer. */
++    bool owner_still_registered = false;
++    LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
++      if (handler_base->type != WM_HANDLER_TYPE_OP) continue;
++      const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(handler_base);
++      if (handler->ipad_pencil_operator_lifetime == owner_lifetime) {
++        owner_still_registered = true;
++        break;
++      }
++    }
++    if (owner_still_registered) return;
++  }
 +}
 +#endif
 +
