@@ -492,6 +492,25 @@ int main(){
   unowned_zero_contact.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
   route_late_contact_event(&win,&unowned_zero_contact);
   assert(!unowned_zero_contact.freed&&replacement_modal_deliveries==2);
+
+  for(uint64_t serial=100;serial<10100;serial++){
+    old_owner.ipad_pencil_paint_serial=serial;
+    cancel_old_owner_with_native_status(&win,&old_owner,&C,&op,&ot);
+    wmEvent repeated_motion;
+    repeated_motion.ipad_pencil_paint_down=true;
+    repeated_motion.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_MOTION;
+    repeated_motion.ipad_pencil_paint_serial=serial;
+    repeated_motion.ipad_pencil_paint_generation=7;
+    route_late_contact_event(&win,&repeated_motion);
+    assert(repeated_motion.freed&&replacement_modal_deliveries==2);
+    wmEvent repeated_lift=repeated_motion;
+    repeated_lift.freed=false;
+    repeated_lift.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
+    route_late_contact_event(&win,&repeated_lift);
+    assert(repeated_lift.freed&&replacement_modal_deliveries==2&&
+           runtime.ipad_pencil_paint_cancelled_serial==0);
+  }
+  assert(cancel_callbacks==10001);
 }
 """
         self.run_cpp(source)
