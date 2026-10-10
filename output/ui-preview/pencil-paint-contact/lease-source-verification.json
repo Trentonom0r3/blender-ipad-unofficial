@@ -1,12 +1,12 @@
 {
-  "status": "pinned_native_type_correction_validated_prebuild",
-  "base_head": "236a7162a0123b18498c07821f8c592273c3f263",
+  "status": "native_include_correction_validated_prebuild",
+  "base_head": "7ce7a0bd804f6b1bd440e05a1039a13c0e0824e9",
   "production_base": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
-  "candidate_patch_sha256": "9fa5f212da8a5cfde13fe7e49ed1972b5d2c0ad8671164ba5f55dce5cab641ac",
-  "focused_test_sha256": "2fbff24a4c326d2522752c873967c12b0a65b66a0c1278b5b7c60a8f4db6cc20",
+  "candidate_patch_sha256": "e56b9c72fa7cc4269cd6060e0370a311e4fa0b9c0a414063927e3ae39192dc38",
+  "focused_test_sha256": "93976250d28db27bba38098a523eb4ab9223d6ea190546fde1d9798ccdeed127",
   "validation": {
-    "full_host_tests": "304 passed",
-    "focused_pencil_paint_lease_tests": "6 passed",
+    "full_host_tests": "305 passed",
+    "focused_hud_presentation_tests": "5 passed",
     "online_pinned_preflight": "107 files passed",
     "offline_pinned_preflight": "107 files passed",
     "diff_check_excluding_unified_patch": "passed"
@@ -17,7 +17,7 @@
     "candidate_ipa": "none"
   },
   "scope_limits": [
-    "Corrected pinned WM event/runtime types have not yet passed native iOS compilation",
+    "The missing BLI string declaration correction has not yet passed native iOS compilation",
     "No candidate IPA exists",
     "No target UIKit/GHOST/WM/GPU brush execution evidence",
     "Native mode-specific Cancel does not promise paint rollback",
@@ -29,11 +29,11 @@
   "preflight_source_sha256": "0c3785aafe762341f66b498f013d0e6c238d22a3909f38e208f3cb4fae107f97",
   "preflight_test_sha256": "29ec2d77982b0d02c74aa5fda3d824e35bb38729cd1c49807687a683d973c1aa",
   "build_attempt": {
-    "run_id": 38033293882,
-    "source": "236a7162a0123b18498c07821f8c592273c3f263",
-    "result": "native Release compilation failed after cloud preflight, patch application, and Xcode configuration passed",
-    "cause": "native wmEvent uses int ipad_pencil_paint_origin_xy[2]; wmWindow::runtime is a raw pointer, not a smart pointer",
-    "correction": "use the exact native event coordinate array and raw runtime pointer; compile the extracted queue block in a connected fixture",
+    "run_id": 38034984417,
+    "source": "7ce7a0bd804f6b1bd440e05a1039a13c0e0824e9",
+    "result": "cloud preflight, patch application and Xcode configuration passed; native Release compilation failed",
+    "cause": "wm_draw.cc called BLI_strncpy without including BLI_string.h",
+    "correction": "add BLI_string.h to the translation unit and source-execute an assertion that the declaration precedes the owner-tool copy",
     "replacement_build": "not dispatched yet"
   },
   "previous_build_attempt": {
@@ -41,5 +41,19 @@
     "result": "failed before native compilation during git apply --check",
     "cause": "wm_event_system.hh existed in pinned source despite being marked as a new file",
     "correction": "replaced the whole-file addition with an exact pinned-header update hunk and added pinned absence checks for created paths"
-  }
+  },
+  "previous_build_attempts": [
+    {
+      "run_id": 38033293882,
+      "result": "native Release compilation failed after cloud preflight, patch application and Xcode configuration passed",
+      "cause": "native wmEvent uses int ipad_pencil_paint_origin_xy[2]; wmWindow::runtime is a raw pointer, not a smart pointer",
+      "correction": "use the exact native event coordinate array and raw runtime pointer; compile the extracted queue block in a connected fixture"
+    },
+    {
+      "run_id": 38032181458,
+      "result": "failed before native compilation during git apply --check",
+      "cause": "wm_event_system.hh existed in pinned source despite being marked as a new file",
+      "correction": "replaced the whole-file addition with an exact pinned-header update hunk and added pinned absence checks for created paths"
+    }
+  ]
 }

@@ -144,6 +144,11 @@ def compiled_prefix():
 
 
 class PencilHUDPresentationTests(unittest.TestCase):
+    def test_draw_owner_tool_copy_declares_bli_string_api(self):
+        include = DRAW.index('#include "BLI_string.h"')
+        copy = DRAW.index('BLI_strncpy(buffer->ipad_finger_paint_owner_tool')
+        self.assertLess(include, copy)
+
     def run_native(self, test):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(compiled_prefix() + test)
 

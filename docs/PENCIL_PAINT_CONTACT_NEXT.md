@@ -1,8 +1,8 @@
-## Latest compiler correction - 2026-10-10
+## Latest native compile correction - 2026-10-10
 
-Build 38033293882 (https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38033293882) applied the overlay and configured Xcode, then exposed two real pinned-type errors: the native event origin is int ipad_pencil_paint_origin_xy[2], and wmWindow::runtime is a raw pointer. Production now indexes the native origin array and uses the runtime pointer directly. The new source-executing queue fixture extracts the actual contact block and runs it against those exact declarations.
+Exact build 38034984417 passed cloud preflight, patch application, and Xcode configuration, then failed in wm_draw.cc because the newly used BLI_strncpy declaration was not included. The patch now includes BLI_string.h in that translation unit; its abbreviated Git blob hash was regenerated from the exact pinned source. The source-executing HUD presentation suite now checks that the include precedes the actual owner-tool copy call.
 
-Validation is 304/304 full host tests, 6/6 focused Pencil lease tests, and 107-file online/offline pinned-source preflight. Canonical LF patch SHA256 9fa5f212da8a5cfde13fe7e49ed1972b5d2c0ad8671164ba5f55dce5cab641ac; focused fixture SHA256 2fbff24a4c326d2522752c873967c12b0a65b66a0c1278b5b7c60a8f4db6cc20. This is source/fixture evidence; the type correction has no successful native build or IPA yet. Commit and build this exact correction once, then inspect the downloaded complete IPA. The user's prior 40ff7550ed0c7118392898c248cc86b204fd2a9a home install check remains pending.
+The candidate passes 305/305 full host tests, 5/5 focused HUD presentation tests, and both online and offline 107-file pinned-source preflight. Canonical LF patch SHA256 e56b9c72fa7cc4269cd6060e0370a311e4fa0b9c0a414063927e3ae39192dc38; focused fixture SHA256 93976250d28db27bba38098a523eb4ab9223d6ea190546fde1d9798ccdeed127. The current correction has no successful native compile or IPA yet. Commit and push this exact source, then run one replacement native build and audit the downloaded full package. The user's at-home check of prior IPA 40ff7550ed0c7118392898c248cc86b204fd2a9a remains pending.
 
 
 ## Connected Pencil paint/contact lease candidate - 2026-10-10

@@ -130224,10 +130224,10 @@ index 6cf3eda..a03ca20 100644
    }
  }
 diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/windowmanager/intern/wm_draw.cc
-index 3bcd482..bfc9a1a 100644
+index 3bcd482..f86d507 100644
 --- a/source/blender/windowmanager/intern/wm_draw.cc
 +++ b/source/blender/windowmanager/intern/wm_draw.cc
-@@ -1,1733 +1,2156 @@
+@@ -1,1733 +1,2157 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -130259,6 +130259,7 @@ index 3bcd482..bfc9a1a 100644
  #include "BLI_math_vector.h"
  #include "BLI_math_vector_types.hh"
  #include "BLI_rect.h"
++#include "BLI_string.h"
  #include "BLI_utildefines.h"
  
  #include "BKE_context.hh"
