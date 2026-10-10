@@ -2868,7 +2868,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  GHOST_WindowIOS *ring_window;
 +  ghost::ios::PencilRingContact ring_origin;
 +  ghost::ios::HUDContact hud_origin;
-+  uint64_t finger_paint_origin = 0;
++  uint64_t finger_paint_origin;
 +}
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window;

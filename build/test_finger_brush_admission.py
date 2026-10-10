@@ -143,6 +143,9 @@ int main(){int a=0,b=0;wmWindow w{&a,{}},other{&b,{}};wmWindowManager wm;wm.wind
 }
 """)
  def test_actual_payload_producers_and_physical_pan_cancel(self):
+  tap_interface=IOS.split('@interface GHOSTUITapGestureRecognizer',1)[1].split('}',1)[0]
+  self.assertIn('uint64_t finger_paint_origin;',tap_interface)
+  self.assertNotIn('finger_paint_origin =',tap_interface) # Objective-C runtime zero-initializes interface ivars; C++ default member initializers are rejected here.
   for phase in ('Tap','Pan'):
    implementation=IOS.split('@implementation GHOSTUI'+phase+'GestureRecognizer',1)[1].split('@end',1)[0]
    self.assertIn('gestureUsesFinger',implementation)
