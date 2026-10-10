@@ -85056,7 +85056,7 @@ index 9d933a1..9a27123 100644
    Scene &scene = *CTX_data_scene(C);
    ToolSettings &ts = *scene.toolsettings;
    PaintStroke *stroke = (PaintStroke *)op->customdata;
-@@ -1112,1282 +1115,1286 @@ static void do_vpaint_brush_blur_loops(const bContext *C,
+@@ -1112,1282 +1115,1282 @@ static void do_vpaint_brush_blur_loops(const bContext *C,
  
    const Brush &brush = *ob.sculpt->cache->brush;
    const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
@@ -86103,10 +86103,10 @@ index 9d933a1..9a27123 100644
  
  static void vpaint_cancel(bContext *C, wmOperator *op)
  {
-   Object &ob = *CTX_data_active_object(C);
-   MEM_delete(ob.sculpt->cache);
-   ob.sculpt->cache = nullptr;
- 
+-  Object &ob = *CTX_data_active_object(C);
+-  MEM_delete(ob.sculpt->cache);
+-  ob.sculpt->cache = nullptr;
+-
    paint_stroke_cancel(C, op, (PaintStroke *)op->customdata);
  }
  
