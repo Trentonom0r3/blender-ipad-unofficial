@@ -1,5 +1,11 @@
 ## Current checkpoint - 2026-10-10
 
+## Sculpt cancel contract fixture - 2026-10-10
+
+build/test_sculpt_pencil_cancel_contract.py executes the exact pinned dyntopo::stroke_is_dyntopo predicate and sculpt_brush_stroke_cancel callback. Four cases cover ordinary mesh Undo restoration, dynamic-topology preservation, anchored and Alt Smooth restore rules, and cleanup ordering. The complete host suite passes 326/326; the offline patch preflight applies to all 107 pinned source files; diff hygiene passes. Test SHA256: 2161BE80CAB45B394A495F3EA7C83D736C9ACBB7E83985F2F0AB9D321D57D062.
+
+This is source/host evidence only. The production overlay is unchanged, so no new native build, IPA, or device claim is made. The latest verified IPA remains 46520f4 / run 38062626368, which the user plans to check at home.
+
 Latest verified production source **46520f4e8d4773fe07d18e70e9f272ff5bac741f** completed native iOS Release and full downloaded IPA verification in run **38062626368** (artifact **11673983435**). The 248,606,813-byte IPA has SHA256 `a70714ceca595d7d82035a4280f93f878be2862d07ac2764bf9a6bb2541a0310`; full 3,368-entry CRC, arm64/iPhoneOS 5.0.0, exact UI/default Blender header/native tools/all129 icons and nine-action Base/native-only More Tools contract pass. Its compiled first-frame HUD launch, area-pullout owner-teardown call, and bounded Weight Paint cancel checks pass. These checks do not establish iPad ring, paint, modal, or older-project behavior. No device acceptance for this exact package is recorded yet.
 
 The area-pullout correction retires the admitted Pencil paint owner before `WM_event_modal_handler_region_replace`, with strict owner/lifetime/context checks unchanged. The current local source candidate passes the 322-test host suite and 107-file offline pinned preflight. Continue the original-owner and mode-specific paint lifecycle audit without waiting for the user's home test. Never cancel through a replacement context or discard live stroke state. Preserve all accepted Pencil ring, header, HUD, history, editor, Files, keyboard, Color, and modeling behavior. Current detailed contract and reports are in `docs/PENCIL_PAINT_CONTACT_NEXT.md` and `docs/PROJECT_HANDOFF.md`.
