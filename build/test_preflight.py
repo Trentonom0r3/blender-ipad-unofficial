@@ -1,8 +1,10 @@
 """Exercise preflight against real git apply and malformed/untrusted patch paths."""
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from preflight import check_patch, patch_files
+from preflight import check_patch, get_source, patch_files
 
 
 PATCH = '''diff --git a/source/example.cc b/source/example.cc
@@ -35,7 +37,7 @@ new file mode 100644
         with self.assertRaises(subprocess.CalledProcessError):
             check_patch(PATCH, patch_files(PATCH), lambda _: b'different\n')
 
-    def test_new_file_does_not_fetch_upstream(self):
+    def test_new_file_is_verified_absent_from_pinned_source(self):
         patch = '''diff --git a/new.py b/new.py
 new file mode 100644
 --- /dev/null
@@ -44,8 +46,28 @@ new file mode 100644
 +value = 1
 '''
         def unexpected(_):
-            self.fail('A new file must not be downloaded')
+            raise FileNotFoundError('not present at pinned revision')
         check_patch(patch, patch_files(patch), unexpected)
+
+    def test_new_file_that_exists_upstream_is_rejected(self):
+        patch = '''diff --git a/new.py b/new.py
+new file mode 100644
+--- /dev/null
++++ b/new.py
+@@ -0,0 +1 @@
++value = 1
+'''
+        with self.assertRaisesRegex(ValueError, 'existing pinned source file as new: new.py'):
+            check_patch(patch, patch_files(patch), lambda _: b'already exists\n')
+
+    def test_cached_pinned_absence_is_usable_offline(self):
+        with TemporaryDirectory() as directory:
+            cache = Path(directory)
+            marker = cache / 'commit/new.py.missing'
+            marker.parent.mkdir(parents=True)
+            marker.write_text('absent at pinned commit\n', encoding='utf-8')
+            with self.assertRaisesRegex(FileNotFoundError, 'does not exist: new.py'):
+                get_source('commit', 'new.py', cache, offline=True)
 
     def test_unsafe_paths_are_rejected_before_download(self):
         for name in ('../escape', '.git/config', 'C:/escape', '/absolute', 'a/../../escape',

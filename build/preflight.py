@@ -52,8 +52,11 @@ def pinned_commit(repo: Path) -> str:
 
 def get_source(commit: str, path: str, cache: Path, offline: bool) -> bytes:
     destination = cache / commit / path
+    missing_marker = destination.with_name(destination.name + '.missing')
     if destination.is_file():
         return destination.read_bytes()
+    if missing_marker.is_file():
+        raise FileNotFoundError(f'Pinned source file does not exist: {path}')
     if offline:
         raise ValueError(f'Uncached upstream file: {path}; run once without --offline')
     url = f'https://raw.githubusercontent.com/blender/blender/{commit}/{path}'
@@ -63,6 +66,10 @@ def get_source(commit: str, path: str, cache: Path, offline: bool) -> bytes:
                 data = response.read()
             break
         except HTTPError as error:
+            if error.code == 404:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                missing_marker.write_text('absent at pinned commit\n', encoding='utf-8')
+                raise FileNotFoundError(f'Pinned source file does not exist: {path}') from error
             if error.code < 500 or attempt == 2:
                 raise
             time.sleep(attempt + 1)
@@ -100,6 +107,17 @@ def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> Non
                 destination = work / path
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(data)
+        new_files = [path for path, needs_source in files if not needs_source]
+
+        def verify_new_file_is_absent(path: str) -> None:
+            try:
+                source_loader(path)
+            except FileNotFoundError:
+                return
+            raise ValueError(f'Patch marks an existing pinned source file as new: {path}')
+
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(verify_new_file_is_absent, new_files))
         # New BLI and WM includes must exist at their actual exported paths in
         # the pin. WM exports its root; gizmo headers require the gizmo/ prefix.
         added_headers = set(re.findall(

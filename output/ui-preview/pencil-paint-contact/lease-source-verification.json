@@ -1,13 +1,14 @@
 {
-  "status": "source_host_candidate_validated_native_build_pending",
-  "base_head": "7a0a87539c462c282ad199ffc3576f9af06839aa",
+  "status": "source_candidate_repaired_prebuild",
+  "base_head": "40defc4bdb5bd54a5df2babfb3a574d1402d192c",
   "production_base": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
-  "candidate_patch_sha256": "7b38c8353a28826deaa453eae8a0fb9cdcf67d4bf46c180c34f817c4ee9ee1cb",
+  "candidate_patch_sha256": "cc0260bc555faa374a6a3bd6f16574d1d946cb4358c27384cf6497ebbaabbb74",
   "focused_test_sha256": "9be99ae3f657f0ed6d43830e0260a09f0c21cdd161d28be10f9a7747766ce3ae",
   "validation": {
-    "full_host_tests": "301 passed",
-    "offline_pinned_preflight": "107 files passed",
-    "diff_check_excluding_patch": "passed"
+    "full_host_tests": "303 passed",
+    "online_pinned_preflight": "107 files passed; all declared new files confirmed absent at pin",
+    "offline_pinned_preflight": "107 files passed from warmed exact-commit cache",
+    "diff_check_excluding_unified_patch": "passed"
   },
   "device": {
     "prior_ipa": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
@@ -15,11 +16,22 @@
     "candidate_ipa": "none"
   },
   "scope_limits": [
+    "No native iOS compilation or candidate IPA exists for the corrected source yet",
     "No target UIKit/GHOST/WM/GPU brush execution evidence",
     "Native mode-specific Cancel does not promise paint rollback",
-    "Candidate has no native build, IPA, or device acceptance"
+    "No candidate device acceptance"
   ],
   "preserved_untracked": [
     "output/ui-preview/pencil-corner/selection-collapsed.png"
-  ]
+  ],
+  "preflight_source_sha256": "0c3785aafe762341f66b498f013d0e6c238d22a3909f38e208f3cb4fae107f97",
+  "preflight_test_sha256": "29ec2d77982b0d02c74aa5fda3d824e35bb38729cd1c49807687a683d973c1aa",
+  "build_attempt": {
+    "run_id": 38032181458,
+    "source": "40defc4bdb5bd54a5df2babfb3a574d1402d192c",
+    "result": "failed before native compilation during git apply --check",
+    "cause": "wm_event_system.hh was marked as new although present at the pinned Blender commit",
+    "correction": "unified update hunk against exact pinned header; preflight now verifies every new-file path is absent",
+    "replacement_build": "not dispatched yet"
+  }
 }
