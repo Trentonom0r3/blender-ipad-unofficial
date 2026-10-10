@@ -135309,7 +135309,7 @@ index 46a8fef..8d1ece6 100644
 +    bool ipad_pencil_owner_teardown_admitted = false;
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial && event &&
-+        event->type == EVT_NONE)
++        event->type == EVENT_NONE)
 +    {
 +      ipad_pencil_owner_teardown_admitted =
 +          wm_ipad_pencil_paint_modal_admit(
@@ -135711,10 +135711,10 @@ index 46a8fef..8d1ece6 100644
 +    }
 +    if (!owner_area || !owner_region) return;
 +
-+    /* This synthetic event selects the proven owner context; EVT_NONE and zero
++    /* This synthetic event selects the proven owner context; EVENT_NONE and zero
 +     * contact provenance prevent it from reaching operator modal. */
 +    wmEvent cancel_event{};
-+    cancel_event.type = EVT_NONE;
++    cancel_event.type = EVENT_NONE;
 +    cancel_event.val = KM_NOTHING;
 +    cancel_event.xy[0] = (owner_region->winrct.xmin + owner_region->winrct.xmax) / 2;
 +    cancel_event.xy[1] = (owner_region->winrct.ymin + owner_region->winrct.ymax) / 2;

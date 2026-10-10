@@ -17,6 +17,7 @@ API_PATH = 'source/blender/windowmanager/WM_api.hh'
 WM = changed_source(WM_PATH)
 SCREEN = changed_source(SCREEN_PATH)
 API = changed_source(API_PATH)
+EVENT_TYPES = changed_source('source/blender/windowmanager/wm_event_types.hh')
 REGISTERED = function(WM, 'static bool wm_ipad_pencil_paint_handler_registered(')
 OWNER_TEARDOWN = function(WM, 'void WM_event_ipad_pencil_paint_owner_teardown(')
 OPERATOR_CALL = function(WM, 'static eHandlerActionFlag wm_handler_operator_call(')
@@ -74,7 +75,7 @@ struct bContext { wmWindowManager *wm=nullptr; wmWindow *win=nullptr; ScrArea *a
   ARegion *region=nullptr; };
 struct PointerRNA {};
 enum { WM_HANDLER_TYPE_OP=1,WM_HANDLER_DO_FREE=2,RGN_TYPE_WINDOW=3,OB_MODE_SCULPT=8,
-  EVT_NONE=100,LEFTMOUSE=101,KM_NOTHING=0,OPTYPE_UNDO=16,OPERATOR_CANCELLED=32,
+  EVENT_NONE=100,LEFTMOUSE=101,KM_NOTHING=0,OPTYPE_UNDO=16,OPERATOR_CANCELLED=32,
   OPERATOR_FINISHED=64,OPERATOR_PASS_THROUGH=128,WM_HANDLER_CONTINUE=0,
   WM_HANDLER_BREAK=4,WM_HANDLER_HANDLED=8,NC_SPACE=1,ND_SPACE_INFO_REPORT=2 };
 using wmOperatorStatus=int; using eHandlerActionFlag=int;
@@ -192,7 +193,7 @@ CPP_FIXTURE = CPP_PRELUDE + r'''
 static eIPadPencilPaintModalAdmission wm_ipad_pencil_paint_modal_admit(
  bContext *C,wmWindow *win,const wmEvent *event,const wmEventHandler_Op*){
  ++g_admit_calls;
- if(!C||!win||CTX_wm_window(C)!=win||!event||event->type!=EVT_NONE||
+ if(!C||!win||CTX_wm_window(C)!=win||!event||event->type!=EVENT_NONE||
     event->ipad_pencil_paint_serial||event->ipad_pencil_paint_generation||
     event->ipad_pencil_paint_region||CTX_wm_area(C)!=g_owner_area||
     CTX_wm_region(C)!=g_owner_region||!g_owner_valid)
@@ -270,7 +271,7 @@ int main(){
     Fixture f;wmEvent event;event.type=LEFTMOUSE;g_interface_unlocked=false;
     wm_handler_operator_call(&f.C,&f.window.modalhandlers,&f.handler.head,&event,nullptr,nullptr,true);
     assert(g_admit_calls==0&&g_locked_refusals==1&&g_cancel_calls==0);
-    event.type=EVT_NONE;f.handler.ipad_pencil_paint_serial=0;
+    event.type=EVENT_NONE;f.handler.ipad_pencil_paint_serial=0;
     wm_handler_operator_call(&f.C,&f.window.modalhandlers,&f.handler.head,&event,nullptr,nullptr,true);
     assert(g_admit_calls==0&&g_locked_refusals==2&&g_cancel_calls==0);
   }
@@ -288,6 +289,12 @@ int main(){
 class PencilPaintOwnerTeardownTests(unittest.TestCase):
     def test_connected_area_region_teardown_and_native_locked_cancel_cleanup(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP_FIXTURE)
+
+    def test_uses_the_pinned_native_none_event_enumerator(self):
+        self.assertIn('EVENT_NONE =', EVENT_TYPES)
+        self.assertIn('event->type == EVENT_NONE', OPERATOR_CALL)
+        self.assertIn('cancel_event.type = EVENT_NONE', OWNER_TEARDOWN)
+        self.assertNotIn('EVT_NONE', OWNER_TEARDOWN)
 
     def test_teardown_hooks_precede_native_area_and_region_exit_callbacks(self):
         area_exit = function(SCREEN, 'void ED_area_exit(')
