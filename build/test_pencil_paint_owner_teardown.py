@@ -306,6 +306,15 @@ int main(){
   assert_normal_area_or_region_teardown(false,0,true);
   assert_normal_area_or_region_teardown(true,0,true);
   {
+    /* wm_window_close unlinks a live window before it runs the owner hook. */
+    Fixture f;wmWindow remaining_window{};
+    f.manager.windows.first=&remaining_window;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1&&g_modal_calls==0);
+    assert(g_operator_frees==1&&g_handler_frees==1&&g_unlinks==1);
+    assert(f.window.modalhandlers.first==nullptr&&f.handler.head.freed);
+  }
+  {
     Fixture f;ScrArea *pa=f.C.area;ARegion *pr=f.C.region;g_owner_valid=false;
     f.owner_region.flag=RGN_FLAG_TOO_SMALL;f.runtime.ipad_canvas=false;
     WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,&f.owner_area,nullptr);
@@ -406,6 +415,7 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(FILE_READ_SETUP.index('CTX_wm_window_set(C, win);'), FILE_READ_SETUP.index(owner_teardown))
         self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index('WM_event_remove_handlers(C, &win->handlers)'))
         self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index(remove_modal))
+        self.assertLess(WINDOW_CLOSE.index('BLI_remlink(&wm->windows, win);'), WINDOW_CLOSE.index(owner_teardown))
         self.assertLess(WINDOW_CLOSE.index('CTX_wm_window_set(C, win);'), WINDOW_CLOSE.index(owner_teardown))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('WM_event_remove_handlers(C, &win->handlers)'))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index(remove_modal))

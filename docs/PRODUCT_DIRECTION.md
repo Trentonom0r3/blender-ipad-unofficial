@@ -1,5 +1,15 @@
 # Product direction and decisions
 
+## Latest exact-source IPA and teardown checkpoint - 2026-10-10
+
+Exact production source **b3c5d2926066b0278ab6e5de175caa379b108c91** passed the cloud preflight and native iOS Release in [run 38053128171](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38053128171). Artifact **11670647877**. The downloaded full IPA is **248,606,042 bytes**, SHA256 `fd87495734021760ad753b76c8f2db9ef642f20124f88929cb3111409fd791f3`, at `output/ui-preview/pencil-paint-contact/run-38053128171/Blender-iPad-Unofficial.ipa`. It passes all **3,368** archive CRC entries, arm64/iPhoneOS 5.0.0, exact packaged interaction UI and full default Blender header, pinned native tools, all129 native tool icons, and the exact nine-action Base/native-only More Tools contract. Binary UUID `BCCAF32E-F2CE-387B-B8F8-A5AAA3D7B72D` passes the compiled first-frame HUD launch audit.
+
+The compiled teardown audit now selects exact ARM64 symbols and confirms direct calls from scene change, area exit, region exit, file-read setup, and window close into the live-owner teardown helper. The compiled Weight Paint cancel callback retains the expected generic-cancel tail call. These are compile/call-shape checks, not execution of full WM lifetimes, UIKit, GPU input, or device behavior. Detailed report: `output/ui-preview/pencil-paint-contact/run-38053128171/binary-audit/scene-teardown-exact-binary.json`.
+
+The full host suite passes **311 tests**, including the connected case where `wm_window_close` has already unlinked a still-live window before owner cleanup; offline pinned-source preflight passes for **107 files**, and `git diff --check` passes. This fixture/doc update changes no production patch and does not change the exact IPA source. The user will check this exact IPA at home; no device acceptance is yet recorded for run38053128171. The earlier narrow launch confirmation applies only to its earlier package.
+
+The production patch SHA256 is `1883aedc8e8905464cf5341d3ba9a6986a5b9e69d40f20b1c051aba9c1e94184`. Preserve the complete Pencil-first goal and all accepted Base/ring, native header, corner HUD, history, paint ownership and recovery behavior. Next continue the source audit for original-owner loss and mode-specific paint completion/disposal; never cancel through replacement context or silently discard live native stroke state. Do not rebuild the unchanged production source.
+
 ## Connected Pencil paint/contact lease candidate - 2026-10-10
 
 Exact prior package **40ff7550ed0c7118392898c248cc86b204fd2a9a** / [run 38019754190](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38019754190) is still awaiting the user's at-home install check. Full archive CRC/arm64/iPhoneOS5.0.0, complete interaction UI/default Blender header/native tools and129 icons/nine-action Base, compiled HUD launch/context/first-layout and Weight Cancel audits pass. Artifact11658710795; IPA SHA256 `f398d012b00365ccedd35b2d52b4a00e0ad51b614ae4eee6690369b1a304e59e`. This is package evidence, not confirmation it launches or that its ring/paint interaction works on-device.
