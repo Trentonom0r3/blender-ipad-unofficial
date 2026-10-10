@@ -129654,10 +129654,10 @@ index f6771bb..0af093a 100644
              ED_region_tag_redraw(region);
            }
 diff --git a/source/blender/windowmanager/intern/wm.cc b/source/blender/windowmanager/intern/wm.cc
-index 6cf3eda..a03ca20 100644
+index 6cf3eda..3fd8faf 100644
 --- a/source/blender/windowmanager/intern/wm.cc
 +++ b/source/blender/windowmanager/intern/wm.cc
-@@ -1,613 +1,651 @@
+@@ -1,613 +1,657 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -130261,7 +130261,14 @@ index 6cf3eda..a03ca20 100644
  #endif
    wm_xr_data_free(wm);
  
-   while (wmWindow *win = static_cast<wmWindow *>(BLI_pophead(&wm->windows))) {
+-  while (wmWindow *win = static_cast<wmWindow *>(BLI_pophead(&wm->windows))) {
++  while (wmWindow *win = static_cast<wmWindow *>(wm->windows.first)) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (C && CTX_wm_manager(C) == wm) {
++      WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++    }
++#endif
++    BLI_remlink(&wm->windows, win);
      /* Prevent draw clear to use screen. */
      BKE_workspace_active_set(win->workspace_hook, nullptr);
      wm_window_free(C, wm, win);
