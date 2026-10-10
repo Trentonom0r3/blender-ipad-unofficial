@@ -78214,7 +78214,7 @@ index 212a5d9..8e69964 100644
  static int area_snap_calc_location(const bScreen *screen,
                                     const enum AreaMoveSnapType snap_type,
                                     const int delta,
-@@ -4193,2804 +4211,2832 @@ static AreaDockTarget area_docking_target(sAreaJoinData *jd, const wmEvent *even
+@@ -4193,2804 +4211,2837 @@ static AreaDockTarget area_docking_target(sAreaJoinData *jd, const wmEvent *even
  
    if (jd->win2 && jd->win2->workspace_hook) {
      bScreen *screen = BKE_workspace_active_screen_get(jd->win2->workspace_hook);
@@ -78594,6 +78594,11 @@ index 212a5d9..8e69964 100644
            if (event->xy[0] < 0 || event->xy[0] > jd->win1->sizex || event->xy[1] < 1 ||
                event->xy[1] > jd->win1->sizey)
            {
++            /* The source area can own an admitted Pencil paint modal operator.
++             * Retire it while its original registered region is still attached. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++            WM_event_ipad_pencil_paint_owner_teardown(C, jd->win1, jd->sa1, nullptr);
++#endif
              /* We have to clear handlers or we get an error in wm_gizmomap_modal_get. */
              WM_event_modal_handler_region_replace(jd->win1, CTX_wm_region(C), nullptr);
              area_dupli_open(C, jd->sa1, blender::int2(event->xy[0], event->xy[1] - jd->sa1->winy));

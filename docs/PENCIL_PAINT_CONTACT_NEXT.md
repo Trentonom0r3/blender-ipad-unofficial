@@ -10,6 +10,12 @@ The current verified source already emits a canceled `LEFT_BUTTON_UP` from `canc
 
 The full host suite passes **313 tests**, and the final focused cancellation suite passes **8/8**. `git diff --check` passes. The fixture uses a bounded queue/GHOST boundary; it does not execute UIKit scheduling, Blender's live GHOST queue, full WM modal dispatch, or the iPad. An offline pinned-source preflight could not run because this checkout's cache lacks `build_files/cmake/platform/platform_apple.cmake`; this test/docs-only change does not alter the production overlay. It does not call for rebuilding the unchanged IPA. The user plans to check exact package **4a25d2d / run 38057529174** at home; that package still has no device acceptance.
 
+## Editor pull-out owner teardown correction - 2026-10-10
+
+`area_join_modal` may replace a modal handler's original region before closing the source area. The later area-exit hook then correctly refuses to cancel through a region identity that native WM already cleared. The overlay now calls the existing strict owner-teardown helper on the source window/area immediately before native region replacement. No ownership check was loosened.
+
+The connected fixture executes the actual teardown helper plus pinned `WM_event_modal_handler_region_replace`, with a negative control proving replacement-first leaves the live lease untouched. Focused teardown tests pass7/7; all314 host tests pass; pinned offline preflight applies107 files. This is a source candidate, not a native/package/device result. The exact package remains4a25d2d/run38057529174 pending the user's home check.
+
 Recognizer-owned Pencil samples, four-profile presented-canvas Finger admission, and the per-contact native paint lease are already present in the verified production source. The remaining lifecycle work is asynchronous loss of the original owner and mode-specific completion/disposal. Never Cancel through a replacement context or claim generic pointer-cancel means brush rollback.
 
 ## Latest exact-source IPA and teardown checkpoint - 2026-10-10

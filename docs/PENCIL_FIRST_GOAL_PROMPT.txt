@@ -6,6 +6,10 @@ The latest proven production source is **4a25d2df48c4b7510ed4a3dd5348387d4243895
 
 The manager-close Cancel attempt **5736692** was audited and reverted in **e681e20** before native build. Final `wm_close_and_free` may run after Main replacement, while file-read setup already retires a valid owner before replacement. Production patch content after the revert matches verified source4a. No IPA was built from573. The revert is pushed; continue the original-owner/mode-specific paint lifecycle audit using only live-context teardown seams. Never Cancel through replacement context.
 
+## Validated source candidate - 2026-10-10
+
+The area pull-out modal now retires an admitted Pencil paint owner before native WM clears its original region. The connected test runs teardown and the exact region-replacement body in both safe and old order; full host suite314/314, focused owner teardown7/7, offline pinned preflight107 files, and diff check pass. Patch SHA256 `0c0bba3a4fd49ac6c27fe174de1b76ff2107cd8c4e402bcd2ff5129f4c9c315b`. No native build exists yet; latest exact IPA stays4a25d2d/run38057529174, which the user plans to test at home. Push candidate, inspect hosted preflight, build once, verify the complete IPA and launch/Weight cancellation obligations, then continue original-owner and per-mode paint cleanup without weakening leases.
+
 ## Current source follow-up
 
 Exact source commit **03abd935e2d44cb75838553518df166384cde4e1** is pushed. It adds a connected null-runtime guard to registered Pencil paint handler admission. The complete host suite passed306 tests; the final7 focused lease tests and107-file pinned offline preflight pass. Native iOS Release is compiling in [run38039851995](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38039851995) after hosted preflight passed. No IPA or new device acceptance exists yet. Continue only after inspecting this run and verifying its downloaded full archive against the exact source. The remaining owner-loss and mode-specific disposal contract is still open.

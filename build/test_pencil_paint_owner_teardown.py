@@ -16,13 +16,17 @@ SCREEN_PATH = 'source/blender/editors/screen/screen_edit.cc'
 API_PATH = 'source/blender/windowmanager/WM_api.hh'
 FILES_PATH = 'source/blender/windowmanager/intern/wm_files.cc'
 WINDOW_PATH = 'source/blender/windowmanager/intern/wm_window.cc'
+SCREEN_OPS_PATH = 'source/blender/editors/screen/screen_ops.cc'
 WM = changed_source(WM_PATH)
 SCREEN = changed_source(SCREEN_PATH)
 API = changed_source(API_PATH)
 FILES = changed_source(FILES_PATH)
 WINDOW = changed_source(WINDOW_PATH)
+SCREEN_OPS = changed_source(SCREEN_OPS_PATH)
 FILE_READ_SETUP = function(FILES, 'static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(')
 WINDOW_CLOSE = function(WINDOW, 'void wm_window_close(')
+AREA_JOIN_MODAL = function(SCREEN_OPS, 'static wmOperatorStatus area_join_modal(')
+REGION_REPLACE = function(WM, 'void WM_event_modal_handler_region_replace(')
 EVENT_TYPES = changed_source('source/blender/windowmanager/wm_event_types.hh')
 REGISTERED = function(WM, 'static bool wm_ipad_pencil_paint_handler_registered(')
 OWNER_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_modal_owner_matches(')
@@ -80,7 +84,7 @@ struct wmOperatorType { uint64_t ipad_lifetime_id=29; ModalFn modal=nullptr; Can
 struct wmOperator { wmOperatorType *type=nullptr; wmOperator *opm=nullptr;
   uint64_t ipad_lifetime=31; ReportList *reports=nullptr; bool freed=false; };
 struct wmEventHandler_Op { wmEventHandler head; bool is_fileselect=false;
-  struct { wmWindow *win=nullptr; ScrArea *area=nullptr; ARegion *region=nullptr; } context;
+  struct { wmWindow *win=nullptr; ScrArea *area=nullptr; ARegion *region=nullptr; int region_type=0; } context;
   uint64_t ipad_pencil_operator_lifetime=31,ipad_pencil_type_lifetime=29,
     ipad_pencil_type_address=0,ipad_pencil_screen_uid=17,ipad_pencil_area=0,
     ipad_pencil_region=0,ipad_pencil_paint_serial=44,ipad_pencil_paint_generation=3;
@@ -227,7 +231,7 @@ bool ED_ipad_finger_paint_capture(bContext*,IPadFingerPaintOwner &owner){
  std::copy(std::begin(g_owner_tool),std::end(g_owner_tool),owner.tool.begin());
  return g_owner_valid;
 }
-''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n#define WITH_APPLE_CROSSPLATFORM\nvoid test_scene_change_prefix(bContext *C, wmWindow *win, Scene *scene) {\n' + SCENE_CHANGE_PREFIX + '\n  win->scene = scene;\n}\n#undef WITH_APPLE_CROSSPLATFORM\n' + r'''
+''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n' + REGION_REPLACE + '\n#define WITH_APPLE_CROSSPLATFORM\nvoid test_scene_change_prefix(bContext *C, wmWindow *win, Scene *scene) {\n' + SCENE_CHANGE_PREFIX + '\n  win->scene = scene;\n}\n#undef WITH_APPLE_CROSSPLATFORM\n' + r'''
 void reset_globals();
 struct Fixture {
   bScreen screen;ScrArea owner_area,outside_area;ARegionRuntime runtime;
@@ -299,6 +303,27 @@ int main(){
   /* Locked native UI still uses Blender's exact Cancel/status/free path for the owner. */
   assert_normal_area_or_region_teardown(false);
   assert_normal_area_or_region_teardown(true);
+  {
+    /* Match the area pull-out sequence: clean up with the original region
+     * attached, then run Blender's native modal-region replacement. */
+    Fixture f;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C, &f.window, &f.owner_area, nullptr);
+    assert(g_cancel_calls == 1 && g_cancel_context_correct == 1);
+    assert(f.handler.op == nullptr && f.handler.head.freed);
+    WM_event_modal_handler_region_replace(&f.window, &f.owner_region, nullptr);
+    assert(f.handler.context.region == &f.owner_region);
+    assert(g_cancel_calls == 1);
+  }
+  {
+    /* Negative control: the old order erases the handler's region identity, so
+     * strict owner matching must refuse cancellation instead of guessing. */
+    Fixture f;
+    WM_event_modal_handler_region_replace(&f.window, &f.owner_region, nullptr);
+    assert(f.handler.context.region == nullptr);
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C, &f.window, &f.owner_area, nullptr);
+    assert(g_cancel_calls == 0 && g_operator_frees == 0 && g_handler_frees == 0);
+    assert(f.handler.op == &f.op && !f.handler.head.freed);
+  }
   /* Resize/hidden layout may invalidate canvas drawing before the exit hook runs.
    * Normal admission refuses it; explicit live-owner teardown still cancels safely. */
   for(int flag : {RGN_FLAG_HIDDEN,RGN_FLAG_TOO_SMALL,RGN_FLAG_POLL_FAILED}){
@@ -606,6 +631,14 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
         self.assertLess(SCENE_CHANGE.index(hook), SCENE_CHANGE.index('win->scene = scene;'))
         self.assertIn('if (win->scene != scene)', SCENE_CHANGE)
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP_FIXTURE)
+
+    def test_area_pullout_retires_paint_before_replacing_modal_region(self):
+        hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, jd->win1, jd->sa1, nullptr);'
+        replace = 'WM_event_modal_handler_region_replace(jd->win1, CTX_wm_region(C), nullptr);'
+        self.assertLess(AREA_JOIN_MODAL.index(hook), AREA_JOIN_MODAL.index(replace))
+        self.assertLess(AREA_JOIN_MODAL.index(hook), AREA_JOIN_MODAL.index('area_dupli_open(C, jd->sa1'))
+        self.assertLess(AREA_JOIN_MODAL.index(hook), AREA_JOIN_MODAL.index('screen_area_close(C, op->reports'))
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP_FIXTURE)
 
     def test_teardown_hooks_precede_native_area_and_region_exit_callbacks(self):
