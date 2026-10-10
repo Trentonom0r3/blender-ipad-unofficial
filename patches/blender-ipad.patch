@@ -122167,7 +122167,7 @@ index e5a618f..0abebf2 100644
                                  bool postpone);
  void WM_event_remove_handlers_by_area(ListBase *handlers, const ScrArea *area);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+/* Cancel an admitted Pencil paint owner before its area/region is torn down. */
++/* Cancel admitted Pencil paint owners before teardown. A null area and region select the whole window. */
 +void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,
 +                                               wmWindow *win,
 +                                               const ScrArea *area,
@@ -135683,7 +135683,7 @@ index 46a8fef..8d1ece6 100644
 +                                                const ScrArea *area,
 +                                                const ARegion *region)
 +{
-+  if (!C || !win || (!area && !region) || CTX_wm_window(C) != win || !win->runtime) {
++  if (!C || !win || CTX_wm_window(C) != win || !win->runtime) {
 +    return;
 +  }
 +  wmWindowManager *wm = CTX_wm_manager(C);
@@ -140857,7 +140857,7 @@ diff --git a/source/blender/windowmanager/intern/wm_files.cc b/source/blender/wi
 index 27ddfd0..f529192 100644
 --- a/source/blender/windowmanager/intern/wm_files.cc
 +++ b/source/blender/windowmanager/intern/wm_files.cc
-@@ -1,4927 +1,5561 @@
+@@ -1,4927 +1,5564 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -141104,6 +141104,9 @@ index 27ddfd0..f529192 100644
    wmWindow *active_win = CTX_wm_window(C);
    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
      CTX_wm_window_set(C, win); /* Needed by operator close callbacks. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++    WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++#endif
      WM_event_remove_handlers(C, &win->handlers);
      WM_event_remove_handlers(C, &win->modalhandlers);
      ED_screen_exit(C, win, WM_window_get_active_screen(win));
@@ -154773,7 +154776,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 index 0de9e58..0d340e7 100644
 --- a/source/blender/windowmanager/intern/wm_window.cc
 +++ b/source/blender/windowmanager/intern/wm_window.cc
-@@ -1,2877 +1,2920 @@
+@@ -1,2877 +1,2923 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved. 2007 Blender Authors.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -155300,6 +155303,9 @@ index 0de9e58..0d340e7 100644
    BLI_remlink(&wm->windows, win);
  
    CTX_wm_window_set(C, win); /* Needed by handlers. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++  WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++#endif
    WM_event_remove_handlers(C, &win->handlers);
  
    WM_event_remove_handlers(C, &win->modalhandlers);

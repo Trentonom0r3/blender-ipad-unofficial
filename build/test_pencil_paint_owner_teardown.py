@@ -14,9 +14,15 @@ import test_ipad_panels
 WM_PATH = 'source/blender/windowmanager/intern/wm_event_system.cc'
 SCREEN_PATH = 'source/blender/editors/screen/screen_edit.cc'
 API_PATH = 'source/blender/windowmanager/WM_api.hh'
+FILES_PATH = 'source/blender/windowmanager/intern/wm_files.cc'
+WINDOW_PATH = 'source/blender/windowmanager/intern/wm_window.cc'
 WM = changed_source(WM_PATH)
 SCREEN = changed_source(SCREEN_PATH)
 API = changed_source(API_PATH)
+FILES = changed_source(FILES_PATH)
+WINDOW = changed_source(WINDOW_PATH)
+FILE_READ_SETUP = function(FILES, 'static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(')
+WINDOW_CLOSE = function(WINDOW, 'void wm_window_close(')
 EVENT_TYPES = changed_source('source/blender/windowmanager/wm_event_types.hh')
 REGISTERED = function(WM, 'static bool wm_ipad_pencil_paint_handler_registered(')
 OWNER_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_modal_owner_matches(')
@@ -310,6 +316,21 @@ int main(){
     assert(f.C.area==pa&&f.C.region==pr);
   }
   {
+    Fixture f;ScrArea *pa=f.C.area;ARegion *pr=f.C.region;
+    wmEventHandler_Op unrelated{};
+    unrelated.head.type=WM_HANDLER_TYPE_OP;
+    unrelated.ipad_pencil_paint_serial=0;
+    unrelated.head.next=&f.handler.head;
+    f.window.modalhandlers.first=&unrelated.head;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1&&g_modal_calls==0);
+    assert(g_operator_frees==1&&g_handler_frees==1&&g_unlinks==1);
+    assert(f.window.modalhandlers.first==&unrelated.head&&unrelated.head.next==nullptr);
+    assert(!unrelated.head.freed&&unrelated.op==nullptr);
+    assert(f.handler.op==nullptr&&f.handler.head.freed);
+    assert(f.C.area==pa&&f.C.region==pr);
+  }
+  {
     Fixture f;wmEvent event;event.type=LEFTMOUSE;g_interface_unlocked=false;
     wm_handler_operator_call(&f.C,&f.window.modalhandlers,&f.handler.head,&event,nullptr,nullptr,true);
     assert(g_locked_refusals==1&&g_cancel_calls==0);
@@ -340,6 +361,17 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertIn('if (!teardown &&', OWNER_MATCH)
         self.assertIn('candidate, true)', OWNER_TEARDOWN)
         self.assertNotIn('EVT_NONE', OWNER_TEARDOWN)
+
+    def test_file_load_and_window_close_retire_owner_before_modal_handler_removal(self):
+        owner_teardown = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
+        remove_modal = 'WM_event_remove_handlers(C, &win->modalhandlers);'
+        self.assertLess(FILE_READ_SETUP.index('CTX_wm_window_set(C, win);'), FILE_READ_SETUP.index(owner_teardown))
+        self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index('WM_event_remove_handlers(C, &win->handlers)'))
+        self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index(remove_modal))
+        self.assertLess(WINDOW_CLOSE.index('CTX_wm_window_set(C, win);'), WINDOW_CLOSE.index(owner_teardown))
+        self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('WM_event_remove_handlers(C, &win->handlers)'))
+        self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index(remove_modal))
+        self.assertIn('if (!C || !win || CTX_wm_window(C) != win || !win->runtime)', OWNER_TEARDOWN)
 
     def test_teardown_hooks_precede_native_area_and_region_exit_callbacks(self):
         area_exit = function(SCREEN, 'void ED_area_exit(')
