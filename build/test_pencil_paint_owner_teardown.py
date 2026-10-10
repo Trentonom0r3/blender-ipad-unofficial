@@ -127,6 +127,11 @@ int BLI_findindex(const ListBase *list,const wmEventHandler *target) {
     if(item==target)return n;
   }
   return -1; }
+bool wm_window_registered(const wmWindowManager *wm,const wmWindow *target) {
+  if(!wm||!target)return false;
+  for(auto *win=(wmWindow*)wm->windows.first;win;win=win->next)if(win==target)return true;
+  return false;
+}
 void BLI_remlink(ListBase *list,void *raw_target) {
   wmEventHandler *target=(wmEventHandler*)raw_target;
   wmEventHandler *prev=nullptr,*item=(wmEventHandler*)list->first;
@@ -226,10 +231,10 @@ CPP_FIXTURE = CPP_PRELUDE + r'''
 enum class eIPadPencilPaintModalEvent : uint8_t { OwnedContact, StaleContact, Timer, Interrupt };
 static eIPadPencilPaintModalEvent wm_ipad_pencil_paint_modal_event_classify(
  const wmEvent*,const wmEventHandler_Op*){return eIPadPencilPaintModalEvent::Interrupt;}
-bool ED_ipad_finger_paint_capture(bContext*,IPadFingerPaintOwner &owner){
+bool ED_ipad_finger_paint_capture(bContext*C,IPadFingerPaintOwner &owner){
  std::copy(std::begin(g_owner_values),std::end(g_owner_values),owner.values.begin());
  std::copy(std::begin(g_owner_tool),std::end(g_owner_tool),owner.tool.begin());
- return g_owner_valid;
+ return g_owner_valid&&C&&wm_window_registered(C->wm,C->win);
 }
 ''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n' + REGION_REPLACE + '\n#define WITH_APPLE_CROSSPLATFORM\nvoid test_scene_change_prefix(bContext *C, wmWindow *win, Scene *scene) {\n' + SCENE_CHANGE_PREFIX + '\n  win->scene = scene;\n}\n#undef WITH_APPLE_CROSSPLATFORM\n' + r'''
 void reset_globals();
@@ -333,13 +338,17 @@ int main(){
   assert_normal_area_or_region_teardown(false,0,true);
   assert_normal_area_or_region_teardown(true,0,true);
   {
-    /* wm_window_close unlinks a live window before it runs the owner hook. */
-    Fixture f;wmWindow remaining_window{};
-    f.manager.windows.first=&remaining_window;
+    /* Window-close teardown runs with the original window still registered. */
+    Fixture f;
+    CTX_wm_window_set(&f.C,&f.window);
+    assert(wm_window_registered(&f.manager,&f.window));
     WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr);
     assert(g_cancel_calls==1&&g_cancel_context_correct==1&&g_modal_calls==0);
     assert(g_operator_frees==1&&g_handler_frees==1&&g_unlinks==1);
     assert(f.window.modalhandlers.first==nullptr&&f.handler.head.freed);
+    /* The real close path unlinks only after this admitted teardown. */
+    f.manager.windows.first=nullptr;
+    assert(!wm_window_registered(&f.manager,&f.window));
   }
   {
     Fixture f;ScrArea *pa=f.C.area;ARegion *pr=f.C.region;g_owner_valid=false;
@@ -619,8 +628,8 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(FILE_READ_SETUP.index('CTX_wm_window_set(C, win);'), FILE_READ_SETUP.index(owner_teardown))
         self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index('WM_event_remove_handlers(C, &win->handlers)'))
         self.assertLess(FILE_READ_SETUP.index(owner_teardown), FILE_READ_SETUP.index(remove_modal))
-        self.assertLess(WINDOW_CLOSE.index('BLI_remlink(&wm->windows, win);'), WINDOW_CLOSE.index(owner_teardown))
         self.assertLess(WINDOW_CLOSE.index('CTX_wm_window_set(C, win);'), WINDOW_CLOSE.index(owner_teardown))
+        self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('BLI_remlink(&wm->windows, win);'))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('WM_event_remove_handlers(C, &win->handlers)'))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index(remove_modal))
         self.assertIn('if (!C || !win || !win->runtime)', OWNER_TEARDOWN)

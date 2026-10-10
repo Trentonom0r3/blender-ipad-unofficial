@@ -155424,12 +155424,13 @@ index 0de9e58..0d340e7 100644
    WorkSpace *workspace = WM_window_get_active_workspace(win);
    WorkSpaceLayout *layout = BKE_workspace_active_layout_get(win->workspace_hook);
  
-   BLI_remlink(&wm->windows, win);
+-  BLI_remlink(&wm->windows, win);
  
    CTX_wm_window_set(C, win); /* Needed by handlers. */
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
 +#endif
++  BLI_remlink(&wm->windows, win);
    WM_event_remove_handlers(C, &win->handlers);
  
    WM_event_remove_handlers(C, &win->modalhandlers);
