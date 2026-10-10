@@ -407,6 +407,21 @@ int main(){
         self.assertLess(
             NATIVE_INTERRUPT.index('wm_ipad_pencil_paint_cancelled_contact_mark(win, handler);'),
             NATIVE_INTERRUPT.index('ot->cancel(C, op);'))
+        event_loop = function(WM, 'void wm_event_do_handlers(')
+        cancelled_tail = event_loop.index(
+            'if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event))')
+        self.assertLess(
+            event_loop.index('while ((event = static_cast<wmEvent *>(win->runtime->event_queue.first)))'),
+            cancelled_tail)
+        for protected_state in (
+                'eHandlerActionFlag action = WM_HANDLER_CONTINUE;',
+                'if (win->event_queue_check_drag)',
+                'WM_event_consecutive_gesture_test(event)',
+                'wm_event_pie_filter(win, event)',
+                'CTX_wm_window_set(C, win)',
+                'wm_handlers_do(C, event, &win->modalhandlers)'):
+            with self.subTest(protected_state=protected_state):
+                self.assertLess(cancelled_tail, event_loop.index(protected_state))
         source = r"""
 #include <cassert>
 #include <cstdint>

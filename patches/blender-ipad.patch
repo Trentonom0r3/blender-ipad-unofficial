@@ -132498,10 +132498,10 @@ index 3bcd482..f86d507 100644
  
  /** \} */
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
-index 46a8fef..8d1ece6 100644
+index 46a8fef..40a4916 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8441 @@
+@@ -1,6918 +1,8443 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -137752,6 +137752,13 @@ index 46a8fef..8d1ece6 100644
  
      wmEvent *event;
      while ((event = static_cast<wmEvent *>(win->runtime->event_queue.first))) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event)) {
++        BLI_remlink(&win->runtime->event_queue, event);
++        wm_event_free_last_handled(win, event);
++        continue;
++      }
++#endif
        eHandlerActionFlag action = WM_HANDLER_CONTINUE;
  
        /* Force handling drag if a key is pressed even if the drag threshold has not been met.
@@ -137819,11 +137826,6 @@ index 46a8fef..8d1ece6 100644
 +        if (!live_wm || BLI_findindex(&live_wm->windows, win) == -1) return;
 +        /* Old pixels/contact are reserved until actual re-presentation. Never
 +         * reinterpret a stale native field stream as canvas/direct-tool input. */
-+        BLI_remlink(&win->runtime->event_queue, event);
-+        wm_event_free_last_handled(win, event);
-+        continue;
-+      }
-+      if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event)) {
 +        BLI_remlink(&win->runtime->event_queue, event);
 +        wm_event_free_last_handled(win, event);
 +        continue;
