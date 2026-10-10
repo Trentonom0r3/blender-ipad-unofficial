@@ -265,9 +265,11 @@ int main(){WindowRuntimeHandle runtime;GHOST_IWindow ghostwin;wmWindow win{&runt
   assert(!tagged&&!dispatch_down);
 }
 """
-        state_update = GHOST_EVENT.index('wm_event_state_update_and_click_set(&event,')
+        state_updates = [match.start() for match in re.finditer(
+            re.escape('wm_event_state_update_and_click_set(&event,'), GHOST_EVENT)]
         cancelled_guard = GHOST_EVENT.index('runtime->ipad_pencil_paint_cancelled_serial == serial')
-        self.assertLess(cancelled_guard, state_update)
+        self.assertEqual(len(state_updates), 3)
+        self.assertTrue(all(cancelled_guard < state_update for state_update in state_updates))
         self.run_cpp(source)
 
     def test_actual_owner_match_accepts_redraws_but_refuses_live_owner_changes(self):
