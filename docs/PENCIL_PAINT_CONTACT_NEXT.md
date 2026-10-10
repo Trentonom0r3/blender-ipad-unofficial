@@ -1,3 +1,15 @@
+## Connected Pencil paint/contact lease candidate - 2026-10-10
+
+This candidate binds an actual Pencil press to a native paint modal operation using value-only serial, presented generation, region and origin. WM records the lease only after the real registered modal handler is linked and its type/operator/current context match the admitted contact. Matching Motion/End is routed only to that leased handler; stale contacts and replacement owners are consumed. Ring and pending-reopen events perform a fresh owner check and retire the still-live operation through Blender's regular `ot->cancel`, undo-depth, reporting and once-only handler/operator cleanup before the ring bypasses modal handlers.
+
+UIKit cancellation snapshots the last admitted location/tablet values before recognizer teardown and queues a release only when the exact Pencil down was actually enqueued. GHOST/WM packets keep the contact values. No `UITouch`, Brush/RNA/operator/Undo pointer crosses callbacks or redraws. Existing last-composited Finger paint admission remains bounded to its four audited idle mesh VIEW3D profiles.
+
+The five focused source-executing tests cover owner matching, stale/mismatched event classification, actual pre-dispatch routing and native cancel/status/disposal. Full suite **301/301**, offline preflight **107 pinned files**, and diff hygiene outside the unified patch pass. Canonical patch SHA256: `7b38c8353a28826deaa453eae8a0fb9cdcf67d4bf46c180c34f817c4ee9ee1cb`. The candidate has no native build or IPA yet. The prior exact package `40ff7550ed0c7118392898c248cc86b204fd2a9a` is awaiting the user's at-home install check.
+
+Scope limits: source fixtures do not execute UIKit scheduling, target GHOST/WM/GPU or real brush drawing. Native Cancel remains operator/mode-specific; no blanket paint rollback or history removal is added. Never cancel through an invalid/replacement context. Device acceptance for this candidate is absent.
+
+---
+
 ## Current bounded Finger brush IPA checkpoint - 2026-10-10
 
 Exact source `40ff7550ed0c7118392898c248cc86b204fd2a9a` passed cloud preflight and native iOS Release in [run 38019754190](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38019754190). The downloaded full IPA passes3368-entry CRC, arm64/iPhoneOS5.0.0, whole exact interaction UI/default Blender header/toolbar/native tool definitions/all129 icons and the nine-action Base/native-only More Tools contract. Artifact11658710795; IPA248598376 bytes/SHA256 `f398d012b00365ccedd35b2d52b4a00e0ad51b614ae4eee6690369b1a304e59e`; binary UUID `F836E8A3-A214-3BDB-B71A-3CE44D29D899`. Compiled HUD launch/context/first-layout audit and bounded Weight Paint cancel order pass. Reports are `output/ui-preview/pencil-paint-contact/ipa-38019754190-*`, `binary-38019754190/audit.json` and `weight-cancel-38019754190-compiled.json`. This package is ready for a home install check; no device acceptance for this revision yet.

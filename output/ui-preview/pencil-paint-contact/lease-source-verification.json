@@ -1,0 +1,25 @@
+{
+  "status": "source_host_candidate_validated_native_build_pending",
+  "base_head": "7a0a87539c462c282ad199ffc3576f9af06839aa",
+  "production_base": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
+  "candidate_patch_sha256": "7b38c8353a28826deaa453eae8a0fb9cdcf67d4bf46c180c34f817c4ee9ee1cb",
+  "focused_test_sha256": "9be99ae3f657f0ed6d43830e0260a09f0c21cdd161d28be10f9a7747766ce3ae",
+  "validation": {
+    "full_host_tests": "301 passed",
+    "offline_pinned_preflight": "107 files passed",
+    "diff_check_excluding_patch": "passed"
+  },
+  "device": {
+    "prior_ipa": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
+    "home_check": "pending",
+    "candidate_ipa": "none"
+  },
+  "scope_limits": [
+    "No target UIKit/GHOST/WM/GPU brush execution evidence",
+    "Native mode-specific Cancel does not promise paint rollback",
+    "Candidate has no native build, IPA, or device acceptance"
+  ],
+  "preserved_untracked": [
+    "output/ui-preview/pencil-corner/selection-collapsed.png"
+  ]
+}

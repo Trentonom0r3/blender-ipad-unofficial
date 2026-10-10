@@ -88,14 +88,14 @@ enum{GHOST_kTabletModeNone=0,GHOST_kTabletModeStylus=1,EVT_TABLET_NONE=0};
 struct GHOST_TabletData{int Active;float Pressure,Xtilt,Ytilt;};
 const GHOST_TabletData GHOST_TABLET_DATA_NONE{0,1,0,0};
 using GHOST_TEventType=int;using GHOST_TButton=int;struct GHOST_IWindow{};
-struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
-struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
+struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
+struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
 struct GHOST_Event{void*data_=nullptr;GHOST_Event(uint64_t,int,GHOST_IWindow*){}};
 namespace blender{struct float2{float x,y;float2()=default;float2(float a,float b):x(a),y(b){}};}
 struct wmTabletData{int active;float pressure;blender::float2 tilt;bool is_motion_absolute;};
 #define CLAMP(v,lo,hi) (v=std::clamp(v,lo,hi))
 struct Preferences{float pressure_threshold_max=0,pressure_softness=0;}U; // numeric preferences only
-'''+event+tablet+constructors+native+'\nGHOST_TabletData select(const UserInputEvent&event_info,GHOST_TabletData tablet_data){'+select+'return event_tablet;}\n'+r'''
+'''+event+tablet+constructors+native+'\nusing ghost::ios::PencilPaintContact;PencilPaintContact pencil_paint_enqueued{};bool pencil_paint_enqueued_down=false;uint64_t pencil_paint_retired_serial=0;void *window=nullptr;\nGHOST_TabletData select(const UserInputEvent&event_info,GHOST_TabletData tablet_data){'+select+'(void)tagged_pencil;(void)same_contact;return event_tablet;}\n'+r'''
 int main(){GHOST_IWindow w;GestureContact c;c.begin(TouchDevice::Pencil,3,pencil_sample(.2,1,.3,.4));
  auto own=ios_tablet_snapshot(c.latest);UserInputEvent evt(nullptr,nullptr,nullptr,true);evt.set_tablet_snapshot(own);
  auto foreign=ios_tablet_snapshot(pencil_sample(.9,1,1,.1));auto selected=select(evt,foreign);assert(close(selected.Pressure,.2));

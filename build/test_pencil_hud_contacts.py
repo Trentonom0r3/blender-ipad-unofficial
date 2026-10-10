@@ -51,8 +51,8 @@ int main(){
 #include <cstdint>
 using GHOST_TEventType=int; using GHOST_TButton=int;
 struct GHOST_IWindow{};struct GHOST_TabletData{int value=3;};
-struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
-struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
+struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;uint64_t ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
+struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;uint64_t ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
 struct GHOST_Event{void *data_=nullptr;GHOST_Event(uint64_t,int,GHOST_IWindow*){}};
 BUTTON
 struct ButtonProbe:GHOST_EventButton{using GHOST_EventButton::GHOST_EventButton;using GHOST_EventButton::button_event_data_;};
@@ -71,6 +71,11 @@ int main(){
   assert(down.button_event_data_.ipad_hud_serial==uint64_t(i+1));
   assert(cancel.button_event_data_.is_cancelled&&!cancel.button_event_data_.is_direct_tool);
   assert(drag.cursor_event_data_.ipad_hud_generation==71&&drag.cursor_event_data_.ipad_hud_serial==uint64_t(i+1));
+  ButtonProbe paint_down(1,2,&w,1,tablet,false,false,0,0,false,0,uint64_t(i+1),81,99,40,50);
+  CursorProbe paint_move(1,2,&w,40,50,tablet,false,0,0,false,0,uint64_t(i+1),81,99,40,50);
+  assert(paint_down.button_event_data_.ipad_pencil_paint_serial==uint64_t(i+1));
+  assert(paint_down.button_event_data_.ipad_pencil_paint_generation==81&&paint_down.button_event_data_.ipad_pencil_paint_region==99);
+  assert(paint_move.cursor_event_data_.ipad_pencil_paint_origin_x==40&&paint_move.cursor_event_data_.ipad_pencil_paint_origin_y==50);
   assert(down.data_==&down.button_event_data_&&drag.data_==&drag.cursor_event_data_);
  }
 }

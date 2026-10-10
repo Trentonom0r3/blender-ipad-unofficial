@@ -78,14 +78,26 @@ class PencilHUDCancelTests(unittest.TestCase):
         begin=body.index('  if (ring_capture.finish())')
         end=body.index('  const auto end = pointer_capture.finish(true);')
         body=body[:begin]+body[end:]
-        body=body.replace('[self generateUserInputEvents:release];','events.push_back(release);')
+        body=body.replace('[self generateUserInputEvents:release];',
+                  'events.push_back(release); if (release.pencil_paint.valid()) pencil_paint_enqueued_down = false;')
         header=fields.source('intern/ghost/GHOST_NavigationIOS.hh').replace('#pragma once','')
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(header+r'''
 #include <cassert>
-struct CGPoint{double x,y;};CGPoint CGPointMake(double x,double y){return{x,y};}
+struct CGPoint{double x,y;};using CGFloat=double;
+CGPoint CGPointMake(double x,double y){return{x,y};}
+struct GHOST_TabletData{int pressure=0;};
+bool pencil_paint_enqueued_down=true;
+CGPoint pencil_paint_last_location{};
+GHOST_TabletData pencil_paint_last_tablet{};
+ghost::ios::PencilPaintContact pencil_paint_enqueued{};
 struct UserInputEvent{enum class EventTypes{LEFT_BUTTON_UP};
  uint64_t hud_generation=0,hud_serial=0;bool cancelled=false,direct_finger=false;
- UserInputEvent(const CGPoint*,void*,void*,bool){} void add_event(EventTypes){} };
+ CGPoint location{};bool tablet_snapshot_valid=false;GHOST_TabletData tablet_snapshot{};
+ ghost::ios::PencilPaintContact pencil_paint{};
+ UserInputEvent(const CGPoint*loc,const CGPoint*,const CGFloat*,bool)
+     :location(loc?*loc:CGPointMake(-1.0,-1.0)){}
+ void set_tablet_snapshot(const GHOST_TabletData &sample){tablet_snapshot=sample;tablet_snapshot_valid=true;}
+ void add_event(EventTypes){} };
 int main(){
  ghost::ios::PointerCapture pointer_capture;
  ghost::ios::HUDContact pointer_hud_contact,recognizer;bool pointer_finger_contact=true;
@@ -93,10 +105,18 @@ int main(){
  std::vector<UserInputEvent>events;
  auto cancel=[&](){BODY};
  for(int i=1;i<=10000;++i){
+  pencil_paint_enqueued={uint64_t(i),71,99,40,50};pencil_paint_enqueued_down=true;
+  pencil_paint_last_location=CGPointMake(40+i,50+i);pencil_paint_last_tablet={i};
   pointer_capture.begin(ghost::ios::PointerCaptureKind::Navigation);
   pointer_hud_contact={71,uint64_t(i),40,50};recognizer={99,9999,80,90};
   cancel();assert(!recognizer.generation&&!pointer_hud_contact.serial);
   assert(events.back().cancelled&&events.back().hud_generation==71&&events.back().hud_serial==uint64_t(i));
+  const UserInputEvent &paint_terminal=events[events.size()-2];
+  assert(paint_terminal.cancelled&&paint_terminal.pencil_paint.serial==uint64_t(i));
+  assert(paint_terminal.pencil_paint.generation==71&&paint_terminal.pencil_paint.region==99);
+  assert(paint_terminal.pencil_paint.origin_x==40&&paint_terminal.location.x==40+i);
+  assert(paint_terminal.tablet_snapshot_valid&&paint_terminal.tablet_snapshot.pressure==i);
+  assert(!pencil_paint_enqueued_down);
   auto count=events.size();cancel();assert(events.size()==count);
  }
 }

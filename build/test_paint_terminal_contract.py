@@ -16,10 +16,10 @@ COMMON=r"""
 #include <cstdint>
 using GHOST_TEventType=int;using GHOST_TButton=int;
 struct GHOST_IWindow{};struct GHOST_TabletData{float pressure=1;};
-struct GHOST_TEventButtonData{GHOST_TButton button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
+struct GHOST_TEventButtonData{GHOST_TButton button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
 struct GHOST_Event{void*data_=nullptr;GHOST_Event(uint64_t,int,GHOST_IWindow*){};};
 enum{GHOST_kEventButtonDown=1,GHOST_kEventButtonUp=2,LEFTMOUSE=3,MIDDLEMOUSE=4,KM_PRESS=5,KM_RELEASE=6,WM_EVENT_IS_DIRECT_TOOL=8,WM_EVENT_IS_POINTER_CANCEL=16,WM_EVENT_IS_DIRECT_FINGER=256,OPERATOR_FINISHED=1,OPERATOR_RUNNING_MODAL=2};
-struct wmEvent{int type=0,val=0,flag=0,mval[2]{4,7};uint64_t ipad_hud_generation=0,ipad_hud_serial=0;};
+struct wmEvent{int type=0,val=0,flag=0,mval[2]{4,7};uint64_t ipad_hud_generation=0,ipad_hud_serial=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0,ipad_pencil_paint_region=0;int ipad_pencil_paint_origin_xy[2]{};bool ipad_pencil_paint_down=false;uint8_t ipad_pencil_paint_phase=0;};
 int wm_event_type_from_ghost_button(int,int){return LEFTMOUSE;}
 struct bContext{};struct wmOperator{int lifetime;};
 struct PaintStroke{int event_type=LEFTMOUSE;int line_finishes=0,completed=0,owner=0;};

@@ -51,8 +51,8 @@ int main(){Runtime rt{nullptr};ARegion r{&rt,{3,4,700,800}};
 #include <initializer_list>
 using GHOST_TEventType=int;
 enum{GHOST_kEventButtonDown=1,GHOST_kEventButtonUp=2,KM_PRESS=1,KM_RELEASE=2,MIDDLEMOUSE=3,LEFTMOUSE=4,WM_EVENT_IS_DIRECT_TOOL=8,WM_EVENT_IS_POINTER_CANCEL=16,WM_EVENT_IS_DIRECT_FINGER=256};
-struct GHOST_TabletData{int value=0;};struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
-struct wmEvent{int type=0,val=0,flag=0,modifier=0,keymodifier=0,prev_type=0,prev_val=0,xy[2]{3,4};GHOST_TabletData tablet;uint64_t ipad_hud_generation=0,ipad_hud_serial=0;};
+struct GHOST_TabletData{int value=0;};struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0;uintptr_t ipad_pencil_paint_region=0;int32_t ipad_pencil_paint_origin_x=0,ipad_pencil_paint_origin_y=0;};
+struct wmEvent{int type=0,val=0,flag=0,modifier=0,keymodifier=0,prev_type=0,prev_val=0,xy[2]{3,4};GHOST_TabletData tablet;uint64_t ipad_hud_generation=0,ipad_hud_serial=0,ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0,ipad_pencil_paint_region=0;int ipad_pencil_paint_origin_xy[2]{};bool ipad_pencil_paint_down=false;uint8_t ipad_pencil_paint_phase=0;};
 struct wmWindow{wmEvent *eventstate;int delivered=0;wmEvent last{};};struct wmWindowManager{wmWindow *other;};
 int updates=0,emulations=0,hit_tests=0;
 int wm_event_type_from_ghost_button(int,int){return LEFTMOUSE;}
@@ -63,7 +63,7 @@ wmWindow*wm_event_cursor_other_windows(wmWindowManager*wm,wmWindow*,wmEvent*){++
 void copy_v2_v2_int(int*d,const int*s){d[0]=s[0];d[1]=s[1];}
 void wm_event_add_intern(wmWindow*w,wmEvent*e){++w->delivered;w->last=*e;}
 void deliver(wmWindowManager*wm,wmWindow*win,int type,const GHOST_TEventButtonData*customdata){
- wmEvent event=*win->eventstate;int event_time_ms=0,previous=0;int*event_state_prev_press_time_ms_p=&previous;auto*event_state=win->eventstate;
+ wmEvent event=*win->eventstate;bool ipad_pencil_tagged=false;int event_time_ms=0,previous=0;int*event_state_prev_press_time_ms_p=&previous;auto*event_state=win->eventstate;
  switch(type){
 '''+case+r'''
  default:assert(false);}}

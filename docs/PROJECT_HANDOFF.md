@@ -8,6 +8,16 @@ Continue the connected Pencil paint contact/terminal ownership work in `PENCIL_P
 
 # Project handoff — 2026-10-03
 
+## Connected Pencil paint/contact lease candidate - 2026-10-10
+
+Exact prior package **40ff7550ed0c7118392898c248cc86b204fd2a9a** / [run 38019754190](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38019754190) is still awaiting the user's at-home install check. Full archive CRC/arm64/iPhoneOS5.0.0, complete interaction UI/default Blender header/native tools and129 icons/nine-action Base, compiled HUD launch/context/first-layout and Weight Cancel audits pass. Artifact11658710795; IPA SHA256 `f398d012b00365ccedd35b2d52b4a00e0ad51b614ae4eee6690369b1a304e59e`. This is package evidence, not confirmation it launches or that its ring/paint interaction works on-device.
+
+A connected native Pencil paint/contact candidate is under review over source40ff. It freezes value-only serial/generation/origin/sample data, leases only an actual linked native paint modal handler, revalidates current handler/type/operator/context/mode before matching motion and terminal dispatch, and consumes stale/replacement events. Ring/reopen input cancels a still-live owner through Blender's ordinary WM cancel/status/disposal path before bypassing modal handlers. UIKit interruption queues one matching terminal only if the exact down was actually enqueued. Existing Finger admission remains bounded to four audited idle mesh VIEW3D paint profiles. It retains no Brush/RNA/Undo/operator pointer and does not claim native Cancel rolls painted data back.
+
+The candidate passes **301/301 host tests** (including five connected lease/pre-dispatch tests), **107-file offline pinned-source preflight**, and diff hygiene outside the unified patch. Canonical LF patch SHA256: `7b38c8353a28826deaa453eae8a0fb9cdcf67d4bf46c180c34f817c4ee9ee1cb`. Next: commit/push this source, inspect its single exact-source iOS build, then verify the complete downloaded IPA. No native build or device acceptance exists for this candidate yet. Preserve `selection-collapsed.png`, exact nine-slot Tools-styled ring, full Blender bars, close-left controls and every prior ownership/history guard. Full personal goal remains unfinished.
+
+
+
 ## Recognizer-owned Pencil sample IPA verified - 2026-10-09
 
 Exact source **0cee12092ad10cd0ecd571764aa2e210d934679e** passed cloud preflight/native iOS Release in [run37960879236](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/37960879236). Downloaded full IPA passes3368-entry CRC, arm64/iPhoneOS5.0.0, whole exact interaction UI/toolbar/default native header/pinned tools/all129 icons/nine-slot/selection cues/Objective-C sample selectors, preserved compiled HUD launch and Weight cleanup checks. Artifact11631696873; IPA248595655 bytes/SHA256439e69cb842001aa5954fbd3b0138860864b83ff60e54c1b2e1df8c00b94d429; binaryUUID3643AF6F-D71B-39BE-8451-4D4A6E18008A. Six actual compiled getters read instance device/down and copy Tap peak/Pan latest20-byte samples. Watcher completed; no unchanged rebuild. Reports output/ui-preview/pencil-paint-contact/ipa-37960879236-*.json, binary-37960879236/audit.json, compiled-gesture-37960879236/getters.json and weight-cancel-37960879236-compiled.json. **No new device acceptance.**

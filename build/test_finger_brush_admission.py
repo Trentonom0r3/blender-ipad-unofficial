@@ -55,10 +55,12 @@ int main(){int w=0,other=0;NavigationRect canvas{0,0,500,500};
 """)
  def test_actual_early_group_guard_before_pointer_and_cross_window_effects(self):
   body=WM[WM.index('void wm_event_add_ghostevent('):]
-  start=body.index('#ifdef WITH_APPLE_CROSSPLATFORM\n  /* Keyboard modifiers')
-  end=body.index('  /**\n   * Having both,')
+  start=body.index('  /* Keyboard modifiers are shared from the active window')
+  end=body.index('\n#ifdef WITH_APPLE_CROSSPLATFORM\n  if (ELEM(type, GHOST_kEventCursorMove',start)
   prefix=body[start:end]
-  self.assertLess(body.index('ipad_finger_paint_generation) return'),body.index('wmEvent event,'))
+  self.assertLess(start,body.index('wmEvent event,'))
+  self.assertLess(start,body.index('wm_event_state_update_and_click_set(&event'))
+  self.assertLess(start,body.index('wm_event_cursor_other_windows(wm, win, &event)'))
   self.run_cpp(GHOST+r"""
 enum{GHOST_kEventKeyDown=1,GHOST_kEventKeyUp=2,GHOST_kEventCursorMove=3,GHOST_kEventButtonDown=4,GHOST_kEventButtonUp=5};
 template<class... T>bool ELEM(int v,T...a){return ((v==a)||...);}
@@ -67,6 +69,7 @@ using GHOST_TEventButtonData=GHOST_TEventCursorData;
 struct wmWindow{void*ghostwin;int modifier=0;};struct wmWindowManager{List<wmWindow>windows;};
 int pointer_mutations=0,modal_calls=0,redirects=0;
 void deliver(wmWindowManager*wm,int type,const void*customdata){
+#ifdef WITH_APPLE_CROSSPLATFORM
 """+prefix+r"""
  ++pointer_mutations;++modal_calls;++redirects;
 }
@@ -92,12 +95,13 @@ struct ID{uint64_t session_uid=10;};struct Brush{ID id;int flag=0;};struct Paint
 struct ToolSettings{Sculpt*sculpt,*vpaint,*wpaint;Sculpt imapaint;};struct Scene{ToolSettings*toolsettings;};
 struct Object{int type=OB_MESH,mode=OB_MODE_SCULPT;};struct ToolRuntime{int flag=TOOLREF_FLAG_USE_BRUSHES;};struct bToolRef{ToolRuntime*runtime;char idname_pending[64]{},idname[64]="builtin.brush";};
 struct UndoStack{uint64_t ipad_lifetime_id=11,ipad_mutation_generation=12;};struct Runtime{UndoStack*undo_stack;};struct wmWindowManager{Runtime*runtime;};
-struct wmEvent{int flag,modifier=0,keymodifier=0;};struct bContext{Object*object;Scene*scene;bToolRef*tool;wmWindowManager*wm;bool admitted=true;};
+struct wmEvent{int flag,modifier=0,keymodifier=0;uint64_t ipad_pencil_paint_serial=0;};struct bContext{Object*object;Scene*scene;bToolRef*tool;wmWindowManager*wm;bool admitted=true;};
 bool UI_ipad_context_capture(bContext*C,uint64_t*v){if(!C->admitted)return false;for(int i=0;i<13;++i)v[i]=i;v[9]=C->object->mode;return true;}
 Object*CTX_data_active_object(bContext*C){return C->object;}Scene*CTX_data_scene(bContext*C){return C->scene;}
 const bToolRef*WM_toolsystem_ref_from_context(bContext*C){return C->tool;}wmWindowManager*CTX_wm_manager(bContext*C){return C->wm;}
 Brush*BKE_paint_brush(Paint*p){return p?p->brush:nullptr;} // native callback-free getter boundary
 void BLI_strncpy(char*d,const char*s,size_t n){std::strncpy(d,s,n);d[n-1]=0;}
+bool WM_ipad_pencil_paint_contact_validate(bContext*C,const wmEvent*e,int mode){return C->admitted&&e->ipad_pencil_paint_serial==42&&mode==OB_MODE_SCULPT;}
 """+function(screen,'bool ED_ipad_finger_paint_capture(')+function(screen,'bool ED_ipad_finger_brush_invoke_block(')+r"""
 int main(){Brush brush;Sculpt paint{{&brush}};ToolSettings ts{&paint,&paint,&paint,paint};Scene scene{&ts};Object object;ToolRuntime tr;bToolRef tool{&tr};UndoStack undo;Runtime runtime{&undo};wmWindowManager wm{&runtime};bContext C{&object,&scene,&tool,&wm};
  wmEvent finger{WM_EVENT_IS_DIRECT_FINGER},pencil{0};IPadFingerPaintOwner receipt;
@@ -117,6 +121,7 @@ int main(){Brush brush;Sculpt paint{{&brush}};ToolSettings ts{&paint,&paint,&pai
  tool.idname_pending[0]='x';assert(!ED_ipad_finger_paint_capture(&C,receipt));tool.idname_pending[0]=0;
  tr.flag=0;assert(!ED_ipad_finger_paint_capture(&C,receipt));tr.flag=1;
  object.type=0;assert(!ED_ipad_finger_paint_capture(&C,receipt));object.type=OB_MESH;object.mode=99;assert(!ED_ipad_finger_paint_capture(&C,receipt));
+ wmEvent tagged{0};tagged.ipad_pencil_paint_serial=42;assert(!ED_ipad_finger_brush_invoke_block(&C,&tagged,OB_MODE_SCULPT));C.admitted=false;assert(ED_ipad_finger_brush_invoke_block(&C,&tagged,OB_MODE_SCULPT));C.admitted=true;
  C.admitted=false;assert(!ED_ipad_finger_paint_capture(&C,receipt)&&!receipt.valid);
 }
 """)
@@ -219,13 +224,14 @@ int main(){int ghostkey=0;wmEvent state,active_state;wmWindow w{&ghostkey,19,{},
   self.run_cpp(GHOST+r"""
 struct rcti{int xmin,ymin,xmax,ymax;};
 struct IPadFingerPaintOwner{std::array<uint64_t,19>values{};std::array<char,64>tool{};bool valid=false;};
-struct wmDrawBuffer{bool stereo=false;uint64_t ipad_finger_paint_generation=0;int ipad_finger_paint_region[4]{},ipad_finger_paint_rect[4]{},ipad_finger_paint_navigation[4]{};bool ipad_finger_paint_unknown_widgets=false,ipad_finger_paint_navigation_present=false;};
+struct ID{uint64_t session_uid=77;};struct bScreen{ID id;};
+struct wmDrawBuffer{bool stereo=false;uint64_t ipad_finger_paint_generation=0,ipad_finger_paint_screen_uid=0,ipad_finger_paint_window_id=0,ipad_finger_paint_owner_values[19]{};char ipad_finger_paint_owner_tool[64]{};int ipad_finger_paint_region[4]{},ipad_finger_paint_rect[4]{},ipad_finger_paint_navigation[4]{};bool ipad_finger_paint_unknown_widgets=false,ipad_finger_paint_navigation_present=false;};
 struct Runtime{wmDrawBuffer*draw_buffer;bool ipad_canvas=true; rcti ipad_canvas_rect{0,0,500,500};bool ipad_finger_paint_overlay_blocked=false,ipad_finger_paint_navigation_drawn=false;};
 struct ARegion{Runtime*runtime;rcti winrct{0,0,500,500};};struct ScrArea{struct {rcti ipad_navigation_rect{400,400,500,500};}runtime;};
-struct wmWindow{int width=501,height=501;};struct bContext{IPadFingerPaintOwner after;};float UI_SCALE_FAC=1;
+struct wmWindow{int width=501,height=501,winid=19;bScreen*screen=nullptr;};bScreen*WM_window_get_active_screen(wmWindow*w){return w->screen;}struct bContext{IPadFingerPaintOwner after;};float UI_SCALE_FAC=1;
 void ED_ipad_hud_draw_end(bContext*,wmWindow*,ScrArea*,ARegion*){}
 void ED_ipad_finger_paint_capture(bContext*C,IPadFingerPaintOwner&out){out=C->after;}
-int WM_window_native_pixel_x(wmWindow*w){return w->width;}int WM_window_native_pixel_y(wmWindow*w){return w->height;}
+void BLI_strncpy(char*d,const char*s,size_t n){std::strncpy(d,s,n);d[n-1]=0;}int WM_window_native_pixel_x(wmWindow*w){return w->width;}int WM_window_native_pixel_y(wmWindow*w){return w->height;}
 void wm_ipad_finger_rect_copy(int d[4],const rcti&r){d[0]=r.xmin;d[1]=r.ymin;d[2]=r.xmax;d[3]=r.ymax;}
 void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 bool render(bContext*C,wmWindow*win,ScrArea*area,ARegion*region,IPadFingerPaintOwner paint_before,bool paint_partial=false,bool paint_canvas_valid=true){
@@ -239,7 +245,7 @@ struct RegionDrawCB{int type;void(*draw)(const bContext*,ARegion*,void*);void*cu
 #define LISTBASE_FOREACH_MUTABLE(type,var,list) for(type var : std::vector((list)->items))
 """+cb+r"""
 void remove_self(const bContext*,ARegion*,void*data){auto*art=static_cast<ARegionType*>(data);art->drawcalls={};}
-int main(){IPadFingerPaintOwner before;before.valid=true;before.tool[0]='x';before.values[17]=1;before.values[18]=2;bContext C{before};wmWindow win;ScrArea area;wmDrawBuffer buffer;Runtime rt{&buffer};ARegion region{&rt};
+int main(){IPadFingerPaintOwner before;before.valid=true;before.tool[0]='x';before.values[17]=1;before.values[18]=2;bContext C{before};wmWindow win;bScreen screen;win.screen=&screen;ScrArea area;wmDrawBuffer buffer;Runtime rt{&buffer};ARegion region{&rt};
  for(int i=0;i<10000;++i){render(&C,&win,&area,&region,before);assert(buffer.ipad_finger_paint_generation&&buffer.ipad_finger_paint_rect[2]==500);}
  auto good=buffer.ipad_finger_paint_generation;
  assert(render(&C,&win,&area,&region,before,true)&&!buffer.ipad_finger_paint_generation);
