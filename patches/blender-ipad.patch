@@ -154900,7 +154900,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 index 0de9e58..0d340e7 100644
 --- a/source/blender/windowmanager/intern/wm_window.cc
 +++ b/source/blender/windowmanager/intern/wm_window.cc
-@@ -1,2877 +1,2923 @@
+@@ -1,2877 +1,2926 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved. 2007 Blender Authors.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -156611,6 +156611,9 @@ index 0de9e58..0d340e7 100644
  
    switch (type) {
      case GHOST_kEventWindowDeactivate: {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++#endif
        wm_window_update_eventstate_modifiers_clear(wm, win, event_time_ms);
  
        wm_event_add_ghostevent(wm, win, type, data, event_time_ms);
