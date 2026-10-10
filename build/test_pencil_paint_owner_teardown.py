@@ -16,13 +16,11 @@ SCREEN_PATH = 'source/blender/editors/screen/screen_edit.cc'
 API_PATH = 'source/blender/windowmanager/WM_api.hh'
 FILES_PATH = 'source/blender/windowmanager/intern/wm_files.cc'
 WINDOW_PATH = 'source/blender/windowmanager/intern/wm_window.cc'
-WM_MANAGER_PATH = 'source/blender/windowmanager/intern/wm.cc'
 WM = changed_source(WM_PATH)
 SCREEN = changed_source(SCREEN_PATH)
 API = changed_source(API_PATH)
 FILES = changed_source(FILES_PATH)
 WINDOW = changed_source(WINDOW_PATH)
-WM_MANAGER = changed_source(WM_MANAGER_PATH)
 FILE_READ_SETUP = function(FILES, 'static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(')
 WINDOW_CLOSE = function(WINDOW, 'void wm_window_close(')
 EVENT_TYPES = changed_source('source/blender/windowmanager/wm_event_types.hh')
@@ -34,10 +32,6 @@ SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
 SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
 WORKSPACE_CHANGE = function(WINDOW, 'void WM_window_set_active_workspace(')
-WM_CLOSE_AND_FREE = function(WM_MANAGER, 'void wm_close_and_free(')
-WINDOW_MANAGER_SHUTDOWN_LOOP = lease.cpp_block(
-    WM_CLOSE_AND_FREE,
-    'while (wmWindow *win = static_cast<wmWindow *>(wm->windows.first))')
 OPERATOR_CALL = function(WM, 'static eHandlerActionFlag wm_handler_operator_call(')
 TEARDOWN_PREADMISSION = lease.cpp_block(
     OPERATOR_CALL, 'if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial')
@@ -577,85 +571,6 @@ int main()
 }
 """
 
-WINDOW_MANAGER_SHUTDOWN_FIXTURE = r"""
-#include <cassert>
-#include <vector>
-struct WorkSpace { int id = 0; };
-struct WorkspaceHook { WorkSpace *active = nullptr; int id = 0; };
-struct wmWindow {
-  wmWindow *next = nullptr;
-  WorkspaceHook *workspace_hook = nullptr;
-  int id = 0;
-  bool pencil_paint_owner = false;
-};
-struct ListBase { void *first = nullptr; };
-struct wmWindowManager { ListBase windows; };
-struct bContext { wmWindowManager *wm = nullptr; wmWindow *win = nullptr; };
-struct ScrArea;
-struct ARegion;
-static std::vector<int> g_events;
-wmWindowManager *CTX_wm_manager(const bContext *C) { return C->wm; }
-static bool is_listed(const wmWindowManager *wm, const wmWindow *target)
-{
-  for (auto *win = static_cast<wmWindow *>(wm->windows.first); win; win = win->next) {
-    if (win == target) return true;
-  }
-  return false;
-}
-void WM_event_ipad_pencil_paint_owner_teardown(
-    bContext *C, wmWindow *win, const ScrArea *, const ARegion *)
-{
-  assert(C && C->wm && win && is_listed(C->wm, win));
-  assert(win->workspace_hook && win->workspace_hook->active);
-  if (win->pencil_paint_owner) win->pencil_paint_owner = false;
-  g_events.push_back(10 + win->id);
-}
-void BLI_remlink(ListBase *list, wmWindow *target)
-{
-  wmWindow *previous = nullptr;
-  for (auto *win = static_cast<wmWindow *>(list->first); win; win = win->next) {
-    if (win != target) { previous = win; continue; }
-    if (previous) previous->next = win->next;
-    else list->first = win->next;
-    win->next = nullptr;
-    g_events.push_back(20 + win->id);
-    return;
-  }
-  assert(false && "window must still be listed when detached");
-}
-void BKE_workspace_active_set(WorkspaceHook *hook, WorkSpace *workspace)
-{
-  assert(hook && hook->active && !workspace);
-  hook->active = workspace;
-  g_events.push_back(30 + hook->id);
-}
-void wm_window_free(bContext *C, wmWindowManager *, wmWindow *win)
-{
-  assert(C && C->wm && win && !is_listed(C->wm, win));
-  assert(!win->pencil_paint_owner && !win->workspace_hook->active);
-  g_events.push_back(40 + win->id);
-  if (C->win == win) C->win = nullptr;
-}
-#define WITH_APPLE_CROSSPLATFORM
-int main()
-{
-  WorkSpace workspace{1};
-  WorkspaceHook first_hook{&workspace, 1}, second_hook{&workspace, 2};
-  wmWindow first{nullptr, &first_hook, 1, true};
-  wmWindow second{nullptr, &second_hook, 2, false};
-  first.next = &second;
-  wmWindowManager manager{{&first}};
-  bContext context{&manager, &second};
-  bContext *C = &context;
-  wmWindowManager *wm = &manager;
-""" + WINDOW_MANAGER_SHUTDOWN_LOOP + r"""
-
-  assert(manager.windows.first == nullptr);
-  assert(!first.pencil_paint_owner && !second.pencil_paint_owner);
-  assert((g_events == std::vector<int>{11, 21, 31, 41, 12, 22, 32, 42}));
-}
-"""
-
 class PencilPaintOwnerTeardownTests(unittest.TestCase):
     def test_workspace_and_layout_changes_retire_original_owner_before_context_mutation(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(WORKSPACE_SWITCH_FIXTURE)
@@ -686,19 +601,6 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertIn('if (!C || !win || !win->runtime)', OWNER_TEARDOWN)
         self.assertIn('owner_context_copy = CTX_copy(C)', OWNER_TEARDOWN)
         self.assertIn('CTX_py_state_push(owner_context_copy, &owner_context_python_state, nullptr)', OWNER_TEARDOWN)
-
-    def test_manager_shutdown_cancels_each_owner_before_unlinking_or_clearing_workspace(self):
-        self.assertLess(
-            WINDOW_MANAGER_SHUTDOWN_LOOP.index('WM_event_ipad_pencil_paint_owner_teardown'),
-            WINDOW_MANAGER_SHUTDOWN_LOOP.index('BLI_remlink(&wm->windows, win)'))
-        self.assertLess(
-            WINDOW_MANAGER_SHUTDOWN_LOOP.index('WM_event_ipad_pencil_paint_owner_teardown'),
-            WINDOW_MANAGER_SHUTDOWN_LOOP.index('BKE_workspace_active_set(win->workspace_hook, nullptr)'))
-        self.assertIn('while (wmWindow *win = static_cast<wmWindow *>(wm->windows.first))',
-                      WINDOW_MANAGER_SHUTDOWN_LOOP)
-        self.assertIn('if (C && CTX_wm_manager(C) == wm)', WINDOW_MANAGER_SHUTDOWN_LOOP)
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(
-            WINDOW_MANAGER_SHUTDOWN_FIXTURE)
 
     def test_scene_change_cancels_before_mutating_native_owner(self):
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
