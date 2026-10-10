@@ -1,5 +1,15 @@
 ## Current checkpoint - 2026-10-10
 
+## Authenticated Pencil cancellation dispatch - 2026-10-10
+
+A queued Pencil interruption reaches the native operator handler as a tagged `LEFT_BUTTON_UP` carrying `WM_EVENT_IS_POINTER_CANCEL`. Owner admission correctly returned `Dispatch` for that matching terminal, but the operator caller only treated admission `Cancel` as interruption; the tagged lift could therefore reach a paint operator's ordinary modal mouse-up path. The production overlay now routes an owner-admitted `Dispatch` with the pointer-cancel flag through the existing native `ot->cancel` and operator status/free/unlink path. Stale or unregistered owners still return `Consume` before this decision. The connected fixture executes the native admission, decision, cancellation/tombstone and status slices for ordinary lift, matching cancelled lift, changed owner and unregistered handler.
+
+This uses each built-in paint operator's native cancellation behavior; it does **not** promise universal rollback. For example, the pinned Texture Paint Fill cancel callback can apply its Fill, while Sculpt and Weight/Vertex have mode-specific cleanup and restore behavior. Existing ownership, one-step history and tail-quarantine guards remain intact.
+
+Validation: full host suite **327/327** passed; final focused Pencil contact suite **9/9**, owner teardown **7/7**, paint terminal **2/2**, Sculpt **4/4**, Texture Fill **3/3**, Vertex **3/3**, Weight **4/4**; offline preflight applies to **107 pinned files**; diff hygiene passes. Source/host evidence only: this exact candidate has no native iOS build, IPA or device acceptance yet. Latest verified package remains **46520f4 / run 38062626368**; its acceptance remains unconfirmed.
+
+Next: run the exact-source native iOS build once, inspect any actual compiler failures, then verify the downloaded full IPA against that source. Afterward continue the original-owner loss and per-mode interruption audit without assuming Cancel means rollback.
+
 ## Sculpt cancel contract fixture - 2026-10-10
 
 build/test_sculpt_pencil_cancel_contract.py executes the exact pinned dyntopo::stroke_is_dyntopo predicate and sculpt_brush_stroke_cancel callback. Four cases cover ordinary mesh Undo restoration, dynamic-topology preservation, anchored and Alt Smooth restore rules, and cleanup ordering. The complete host suite passes 326/326; the offline patch preflight applies to all 107 pinned source files; diff hygiene passes. Test SHA256: 2161BE80CAB45B394A495F3EA7C83D736C9ACBB7E83985F2F0AB9D321D57D062.

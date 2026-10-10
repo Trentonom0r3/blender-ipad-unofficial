@@ -132504,7 +132504,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8460 @@
+@@ -1,6918 +1,8463 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -135432,7 +135432,10 @@ index 46a8fef..86d574b 100644
 +        /* Cancel while the frozen owner is still live, before this other input can
 +         * switch context or reach the old modal operation. The ordinary WM status
 +         * path removes and frees the operator/handler exactly once. */
-+        ipad_pencil_paint_interrupt = admission == eIPadPencilPaintModalAdmission::Cancel;
++        ipad_pencil_paint_interrupt =
++            admission == eIPadPencilPaintModalAdmission::Cancel ||
++            (admission == eIPadPencilPaintModalAdmission::Dispatch && event &&
++             (event->flag & WM_EVENT_IS_POINTER_CANCEL));
 +      }
 +#endif
        wmEvent_ModalMapStore event_backup;

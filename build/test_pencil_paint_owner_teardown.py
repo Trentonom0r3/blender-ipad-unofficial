@@ -77,7 +77,7 @@ struct wmEventHandler { int type=1,flag=0; wmEventHandler *next=nullptr; bool fr
 struct wmWindow { wmWindow *next=nullptr; int runtime_data=1; void *runtime=nullptr; Scene *scene=nullptr;
   bScreen *screen=nullptr; ListBase modalhandlers,handlers; };
 struct wmWindowManager { int op_undo_depth=0; ListBase windows; };
-struct wmEvent { int type=0,val=0,xy[2]{}; uint64_t ipad_pencil_paint_serial=0,
+struct wmEvent { int type=0,val=0,xy[2]{},flag=0; uint64_t ipad_pencil_paint_serial=0,
   ipad_pencil_paint_generation=0; uintptr_t ipad_pencil_paint_region=0; };
 struct ReportList { ListBase list; };
 using ModalFn=int(*)(bContext*,wmOperator*,wmEvent*);
@@ -104,7 +104,8 @@ struct IPadFingerPaintOwner { std::array<uint64_t,19> values{}; std::array<char,
 struct PointerRNA {};
 enum { WM_HANDLER_TYPE_OP=1,WM_HANDLER_DO_FREE=2,RGN_TYPE_WINDOW=3,OB_MODE_SCULPT=8,
   SPACE_VIEW3D=7,RGN_FLAG_HIDDEN=4,RGN_FLAG_TOO_SMALL=8,RGN_FLAG_POLL_FAILED=16,
-  EVENT_NONE=100,LEFTMOUSE=101,KM_NOTHING=0,OPTYPE_UNDO=16,OPERATOR_CANCELLED=32,
+  EVENT_NONE=100,LEFTMOUSE=101,KM_NOTHING=0,WM_EVENT_IS_POINTER_CANCEL=(1<<6),
+  OPTYPE_UNDO=16,OPERATOR_CANCELLED=32,
   OPERATOR_FINISHED=64,OPERATOR_PASS_THROUGH=128,WM_HANDLER_CONTINUE=0,
   WM_HANDLER_BREAK=4,WM_HANDLER_HANDLED=8,NC_SPACE=1,ND_SPACE_INFO_REPORT=2 };
 using wmOperatorStatus=int; using eHandlerActionFlag=int;

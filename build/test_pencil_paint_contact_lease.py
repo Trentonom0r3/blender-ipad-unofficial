@@ -57,6 +57,10 @@ GHOST_EVENT = function(WM, 'void wm_event_add_ghostevent(')
 
 NATIVE_UNDO_BEGIN = cpp_block(OPERATOR_CALL, "if (ot->flag & OPTYPE_UNDO) {")
 NATIVE_INTERRUPT = cpp_block(OPERATOR_CALL, "if (ipad_pencil_paint_interrupt) {")
+INTERRUPT_DECISION_START = OPERATOR_CALL.index(
+    "ipad_pencil_paint_interrupt =", OPERATOR_CALL.index("Cancel while the frozen owner"))
+INTERRUPT_DECISION_END = OPERATOR_CALL.index(";", INTERRUPT_DECISION_START) + 1
+INTERRUPT_DECISION = OPERATOR_CALL[INTERRUPT_DECISION_START:INTERRUPT_DECISION_END]
 NATIVE_UNDO_END = cpp_block(
     OPERATOR_CALL, "if (ot->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {")
 NATIVE_CANCEL_REPORTS = cpp_block(
@@ -625,14 +629,99 @@ int main(){
     def test_actual_modal_dispatch_revalidates_and_uses_native_cancel_status_cleanup(self):
         context = OPERATOR_CALL.index("wm_handler_op_context(C, handler, event);")
         admission = OPERATOR_CALL.index("wm_ipad_pencil_paint_modal_admit(C, win, event, handler);")
+        consume = OPERATOR_CALL.index("if (admission == eIPadPencilPaintModalAdmission::Consume")
+        decision = OPERATOR_CALL.index(INTERRUPT_DECISION)
         native_modal = OPERATOR_CALL.index("retval = ot->modal(C, op, event);")
         cancel = OPERATOR_CALL.index("ot->cancel(C, op);")
         self.assertLess(context, admission)
-        self.assertLess(admission, cancel)
+        self.assertLess(admission, consume)
+        self.assertLess(consume, decision)
+        self.assertLess(decision, cancel)
         self.assertLess(cancel, native_modal)
         self.assertIn("retval = OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;", OPERATOR_CALL)
         self.assertIn("WM_operator_free(op);\n          handler->op = nullptr;", OPERATOR_CALL)
         self.assertIn("BLI_remlink(handlers, handler);\n          wm_event_free_handler(&handler->head);", OPERATOR_CALL)
+
+    def test_owned_cancelled_lift_uses_mode_cancel_instead_of_paint_release(self):
+        source = r"""
+#include <cassert>
+#include <cstdint>
+enum { LEFTMOUSE=1, KM_RELEASE=2, WM_EVENT_IS_POINTER_CANCEL=1<<6,
+       OPERATOR_RUNNING_MODAL=4, OPERATOR_CANCELLED=32, OPERATOR_PASS_THROUGH=128,
+       WM_HANDLER_HANDLED=8, OB_MODE_SCULPT=8, TIMER=9,
+       WM_PENCIL_PAINT_PHASE_MOTION=2, WM_PENCIL_PAINT_PHASE_END=3 };
+#define ISTIMER(type) ((type)==TIMER)
+enum class eIPadPencilPaintModalEvent : uint8_t { OwnedContact, StaleContact, Timer, Interrupt };
+enum class eIPadPencilPaintModalAdmission : uint8_t { Dispatch, Consume, Cancel };
+template<class... T> bool ELEM(uint8_t value,T... values){return ((value==values)||...);}
+struct wmEvent {
+  int type=LEFTMOUSE,val=KM_RELEASE;
+  uint32_t flag=0;
+  bool ipad_pencil_paint_down=true;
+  uint8_t ipad_pencil_paint_phase=3;
+  uint64_t ipad_pencil_paint_serial=44,ipad_pencil_paint_generation=7;
+  uintptr_t ipad_pencil_paint_region=12;
+  int32_t ipad_pencil_paint_origin_xy[2]{100,200};
+};
+struct Runtime { uint64_t ipad_pencil_paint_cancelled_serial=0,
+                       ipad_pencil_paint_cancelled_generation=0; };
+struct wmWindow { Runtime *runtime=nullptr; };
+struct wmEventHandler_Op {
+  uint64_t ipad_pencil_paint_serial=44,ipad_pencil_paint_generation=7;
+  uintptr_t ipad_pencil_region=12;
+  int32_t ipad_pencil_origin_x=100,ipad_pencil_origin_y=200;
+};
+struct bContext {};
+struct wmOperator {};
+struct wmOperatorType { void (*cancel)(bContext*,wmOperator*)=nullptr; };
+int cancel_calls=0,modal_calls=0;
+bool handler_registered=true,owner_matches=true;
+bool wm_ipad_pencil_paint_handler_registered(wmWindow*,const wmEventHandler_Op*) { return handler_registered; }
+bool wm_ipad_pencil_paint_modal_owner_matches(bContext*,wmWindow*,const wmEventHandler_Op*,bool) { return owner_matches; }
+""" + EVENT_MATCH + "\n" + CLASSIFY + "\n" + ADMIT + "\n" + CANCELLED_CONTACT_MARK + r"""
+void native_cancel(bContext*,wmOperator*) { ++cancel_calls; }
+int admitted_operator_call(bContext *C,wmWindow *win,wmEventHandler_Op *handler,
+                           wmOperator *op,wmOperatorType *ot,wmEvent *event) {
+  const eIPadPencilPaintModalAdmission admission=
+      wm_ipad_pencil_paint_modal_admit(C,win,event,handler);
+  if(admission==eIPadPencilPaintModalAdmission::Consume) return WM_HANDLER_HANDLED;
+  bool ipad_pencil_paint_interrupt=false;
+""" + INTERRUPT_DECISION + "\nint retval=OPERATOR_RUNNING_MODAL;\n" + NATIVE_INTERRUPT + r"""
+  if(!ipad_pencil_paint_interrupt) ++modal_calls;
+  return retval;
+}
+int main(){
+  Runtime runtime;wmWindow win{&runtime};bContext C;wmEventHandler_Op handler;
+  wmOperator op;wmOperatorType ot{native_cancel};wmEvent event;
+  assert(wm_ipad_pencil_paint_modal_admit(&C,&win,&event,&handler)==
+         eIPadPencilPaintModalAdmission::Dispatch);
+  assert(admitted_operator_call(&C,&win,&handler,&op,&ot,&event)==OPERATOR_RUNNING_MODAL);
+  assert(modal_calls==1&&cancel_calls==0);
+
+  event.flag=WM_EVENT_IS_POINTER_CANCEL;
+  owner_matches=false;
+  assert(wm_ipad_pencil_paint_modal_admit(&C,&win,&event,&handler)==
+         eIPadPencilPaintModalAdmission::Consume);
+  assert(admitted_operator_call(&C,&win,&handler,&op,&ot,&event)==WM_HANDLER_HANDLED);
+  assert(modal_calls==1&&cancel_calls==0);
+
+  owner_matches=true;
+  assert(wm_ipad_pencil_paint_modal_admit(&C,&win,&event,&handler)==
+         eIPadPencilPaintModalAdmission::Dispatch);
+  assert(admitted_operator_call(&C,&win,&handler,&op,&ot,&event)==
+         (OPERATOR_CANCELLED|OPERATOR_PASS_THROUGH));
+  assert(modal_calls==1&&cancel_calls==1);
+  assert(runtime.ipad_pencil_paint_cancelled_serial==44&&
+         runtime.ipad_pencil_paint_cancelled_generation==7);
+
+  handler_registered=false;
+  assert(wm_ipad_pencil_paint_modal_admit(&C,&win,&event,&handler)==
+         eIPadPencilPaintModalAdmission::Consume);
+  assert(admitted_operator_call(&C,&win,&handler,&op,&ot,&event)==WM_HANDLER_HANDLED);
+  assert(modal_calls==1&&cancel_calls==1);
+}
+"""
+        self.run_cpp(source)
 
 
 if __name__ == "__main__":
