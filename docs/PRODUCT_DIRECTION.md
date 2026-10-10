@@ -1,5 +1,11 @@
 # Product direction and decisions
 
+## Current checkpoint - 2026-10-10
+
+The latest proven production source is **4a25d2df48c4b7510ed4a3dd5348387d4243895e**, with native iOS Release in run **38057529174** and a downloaded full IPA of 248,606,411 bytes (SHA256 `c34e2f7e05416560251184e604cd88c2837a2ca03d42e40e89fc7fc7f813b8a4`). The full archive, arm64/iPhoneOS build, exact UI, default Blender header, native tool definitions and 129 icons verify. The user plans to install this package at home; there is no new device acceptance yet.
+
+The manager-close Cancel attempt in commit **5736692038deb1d2b963da0a57f41968aa7dc395** was audited and reverted by **e681e20** before any native build. Final `wm_close_and_free` can run after Main replacement, while the earlier file-read teardown already retires a valid owner before replacement. After the revert, the production patch matches the verified 4a source. The safety revert **e681e20** is now pushed; no IPA was built from 573. Continue the original-owner and mode-specific paint lifecycle audit at proven live-context seams. Never Cancel through a replacement context. Keep source, host, package and device evidence separate.
+
 ## Latest exact-source IPA and teardown checkpoint - 2026-10-10
 
 Exact production source **b3c5d2926066b0278ab6e5de175caa379b108c91** passed the cloud preflight and native iOS Release in [run 38053128171](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38053128171). Artifact **11670647877**. The downloaded full IPA is **248,606,042 bytes**, SHA256 `fd87495734021760ad753b76c8f2db9ef642f20124f88929cb3111409fd791f3`, at `output/ui-preview/pencil-paint-contact/run-38053128171/Blender-iPad-Unofficial.ipa`. It passes all **3,368** archive CRC entries, arm64/iPhoneOS 5.0.0, exact packaged interaction UI and full default Blender header, pinned native tools, all129 native tool icons, and the exact nine-action Base/native-only More Tools contract. Binary UUID `BCCAF32E-F2CE-387B-B8F8-A5AAA3D7B72D` passes the compiled first-frame HUD launch audit.
