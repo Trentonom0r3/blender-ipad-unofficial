@@ -52,6 +52,7 @@ CANCELLED_CONTACT_EARLY_BLOCK = cpp_block(
     ROUTER, 'if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event))')
 
 QUEUE_CAPTURE = cpp_block(WM, "if (any_contact_value) {")
+GHOST_EVENT = function(WM, 'void wm_event_add_ghostevent(')
 
 
 NATIVE_UNDO_BEGIN = cpp_block(OPERATOR_CALL, "if (ot->flag & OPTYPE_UNDO) {")
@@ -184,11 +185,12 @@ struct GHOST_TEventCursorData {uint64_t ipad_pencil_paint_serial,ipad_pencil_pai
 struct GHOST_TEventButtonData {uint64_t ipad_pencil_paint_serial,ipad_pencil_paint_generation;
   uintptr_t ipad_pencil_paint_region;int32_t ipad_pencil_paint_origin_x,ipad_pencil_paint_origin_y;int button;};
 struct WindowRuntimeHandle {uint64_t ipad_pencil_paint_queued_serial=0,ipad_pencil_paint_queued_generation=0,
-  ipad_pencil_paint_retired_serial=0;uintptr_t ipad_pencil_paint_queued_region=0;
+  ipad_pencil_paint_retired_serial=0,ipad_pencil_paint_cancelled_serial=0,
+  ipad_pencil_paint_cancelled_generation=0;uintptr_t ipad_pencil_paint_queued_region=0;
   int32_t ipad_pencil_paint_queued_origin_xy[2]{};bool ipad_pencil_paint_queued_down=false;};
 struct GHOST_IWindow {};
 struct wmWindow {WindowRuntimeHandle *runtime;GHOST_IWindow *ghostwin;};
-bool dispatch_down=false,tagged=false;uint8_t dispatch_phase=0;
+bool dispatch_down=false,tagged=false;uint8_t dispatch_phase=0;int ghost_shared_state_updates=0;
 void queue_contact(const int type,const uint64_t serial,const uint64_t generation,
                    const uintptr_t region,const int32_t origin_x,const int32_t origin_y,
                    const int button,wmWindow *win) {
@@ -197,6 +199,7 @@ void queue_contact(const int type,const uint64_t serial,const uint64_t generatio
   bool ipad_pencil_dispatch_down=false,ipad_pencil_tagged=false;
   uint8_t ipad_pencil_dispatch_phase=WM_PENCIL_PAINT_PHASE_PREPRESS;
 """ + QUEUE_CAPTURE + r"""
+  ++ghost_shared_state_updates; // The native event-state update follows admission.
   dispatch_down=ipad_pencil_dispatch_down;
   dispatch_phase=ipad_pencil_dispatch_phase;
   tagged=ipad_pencil_tagged;
@@ -218,10 +221,32 @@ int main(){WindowRuntimeHandle runtime;GHOST_IWindow ghostwin;wmWindow win{&runt
          !runtime.ipad_pencil_paint_queued_down);
   queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,&win);
   assert(!runtime.ipad_pencil_paint_queued_serial);
+  runtime.ipad_pencil_paint_queued_serial=45;
+  runtime.ipad_pencil_paint_queued_generation=8;
+  runtime.ipad_pencil_paint_queued_region=12;
+  runtime.ipad_pencil_paint_queued_origin_xy[0]=100;
+  runtime.ipad_pencil_paint_queued_origin_xy[1]=200;
+  runtime.ipad_pencil_paint_queued_down=true;
+  runtime.ipad_pencil_paint_cancelled_serial=45;
+  runtime.ipad_pencil_paint_cancelled_generation=8;
+  const int before_cancelled_tail=ghost_shared_state_updates;
+  queue_contact(GHOST_kEventCursorMove,45,8,12,100,200,0,&win);
+  assert(ghost_shared_state_updates==before_cancelled_tail&&runtime.ipad_pencil_paint_queued_down);
+  queue_contact(GHOST_kEventButtonDown,45,8,12,100,200,GHOST_kButtonMaskLeft,&win);
+  assert(ghost_shared_state_updates==before_cancelled_tail&&runtime.ipad_pencil_paint_cancelled_serial==45);
+  queue_contact(GHOST_kEventButtonUp,45,8,12,100,200,GHOST_kButtonMaskLeft,&win);
+  assert(ghost_shared_state_updates==before_cancelled_tail&&runtime.ipad_pencil_paint_retired_serial==45);
+  assert(!runtime.ipad_pencil_paint_cancelled_serial&&!runtime.ipad_pencil_paint_cancelled_generation&&
+         !runtime.ipad_pencil_paint_queued_serial&&!runtime.ipad_pencil_paint_queued_down);
+  queue_contact(GHOST_kEventCursorMove,45,8,12,100,200,0,&win);
+  assert(ghost_shared_state_updates==before_cancelled_tail);
   dispatch_down=false;tagged=false;queue_contact(GHOST_kEventCursorMove,44,7,12,100,200,0,nullptr);
   assert(!tagged&&!dispatch_down);
 }
 """
+        state_update = GHOST_EVENT.index('wm_event_state_update_and_click_set(&event,')
+        cancelled_guard = GHOST_EVENT.index('runtime->ipad_pencil_paint_cancelled_serial == serial')
+        self.assertLess(cancelled_guard, state_update)
         self.run_cpp(source)
 
     def test_actual_owner_match_accepts_redraws_but_refuses_live_owner_changes(self):
