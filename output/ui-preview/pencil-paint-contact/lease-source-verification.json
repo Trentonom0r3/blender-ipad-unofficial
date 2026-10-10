@@ -1,6 +1,6 @@
 {
-  "status": "native_include_correction_validated_prebuild",
-  "base_head": "7ce7a0bd804f6b1bd440e05a1039a13c0e0824e9",
+  "status": "exact_native_build_and_package_verified_device_pending",
+  "base_head": "6cbbb99db6b39115a64ed415cd463d85c8b48c63",
   "production_base": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
   "candidate_patch_sha256": "e56b9c72fa7cc4269cd6060e0370a311e4fa0b9c0a414063927e3ae39192dc38",
   "focused_test_sha256": "93976250d28db27bba38098a523eb4ab9223d6ea190546fde1d9798ccdeed127",
@@ -13,15 +13,17 @@
   },
   "device": {
     "prior_ipa": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
+    "prior_run": 38019754190,
     "home_check": "pending",
-    "candidate_ipa": "none"
+    "candidate_ipa_source": "6cbbb99db6b39115a64ed415cd463d85c8b48c63",
+    "candidate_run": 38036333417,
+    "candidate_home_check": "pending; no device acceptance"
   },
   "scope_limits": [
-    "The missing BLI string declaration correction has not yet passed native iOS compilation",
-    "No candidate IPA exists",
-    "No target UIKit/GHOST/WM/GPU brush execution evidence",
-    "Native mode-specific Cancel does not promise paint rollback",
-    "No candidate device acceptance"
+    "No candidate device acceptance yet; the user will check when home",
+    "No target UIKit/GHOST/WM/GPU brush execution proof from source fixtures or package audit",
+    "Native Cancel remains mode-specific and does not promise paint rollback",
+    "No broad older-project open/save device acceptance"
   ],
   "preserved_untracked": [
     "output/ui-preview/pencil-corner/selection-collapsed.png"
@@ -29,12 +31,11 @@
   "preflight_source_sha256": "0c3785aafe762341f66b498f013d0e6c238d22a3909f38e208f3cb4fae107f97",
   "preflight_test_sha256": "29ec2d77982b0d02c74aa5fda3d824e35bb38729cd1c49807687a683d973c1aa",
   "build_attempt": {
-    "run_id": 38034984417,
-    "source": "7ce7a0bd804f6b1bd440e05a1039a13c0e0824e9",
-    "result": "cloud preflight, patch application and Xcode configuration passed; native Release compilation failed",
-    "cause": "wm_draw.cc called BLI_strncpy without including BLI_string.h",
-    "correction": "add BLI_string.h to the translation unit and source-execute an assertion that the declaration precedes the owner-tool copy",
-    "replacement_build": "not dispatched yet"
+    "run_id": 38036333417,
+    "source": "6cbbb99db6b39115a64ed415cd463d85c8b48c63",
+    "result": "cloud preflight and native iOS Release passed; full downloaded IPA and compiled launch/Weight checks passed",
+    "artifact_id": 11664790061,
+    "ipa_sha256": "a04c131492b7b4c6f777e8f692ba97a54586f37c24afe7b4e2c43fb7431ff2a2"
   },
   "previous_build_attempt": {
     "run_id": 38032181458,
@@ -55,5 +56,33 @@
       "cause": "wm_event_system.hh existed in pinned source despite being marked as a new file",
       "correction": "replaced the whole-file addition with an exact pinned-header update hunk and added pinned absence checks for created paths"
     }
-  ]
+  ],
+  "package": {
+    "artifact_id": 11664790061,
+    "ipa_bytes": 248604918,
+    "ipa_sha256": "a04c131492b7b4c6f777e8f692ba97a54586f37c24afe7b4e2c43fb7431ff2a2",
+    "zip_entries": 3368,
+    "full_crc": "passed",
+    "arm64_iphoneos_5_0_0": "passed",
+    "whole_interaction_ui_and_toolbar_matches_exact_source": "passed",
+    "default_blender_header": "passed",
+    "pinned_native_tool_definitions_and_icons": "passed; 129 icons",
+    "nine_action_base_and_native_only_more_tools": "passed",
+    "compiled_hud_launch_owner_and_first_layout": "passed",
+    "compiled_weight_cancel_callback": "passed",
+    "compiled_binary_uuid": "9B8E6AFA-3914-33A7-9391-4B92AAA4FF97",
+    "verification_report": "output/ui-preview/pencil-paint-contact/ipa-38036333417-verification.json"
+  },
+  "latest_follow_up": {
+    "source_commit": "03abd935e2d44cb75838553518df166384cde4e1",
+    "scope": "guard null ARegion runtime before reading registered paint-handler visibility",
+    "connected_fixture": "valid, hidden, and cleared-runtime native region states",
+    "host_suite": "306 tests passed; final focused paint lease suite 7/7 passed",
+    "pinned_preflight": "107 files passed offline",
+    "diff_check": "passed",
+    "build_run_id": 38039851995,
+    "build_state": "hosted preflight passed; native Release compilation in progress",
+    "ipa": "not yet available",
+    "device_acceptance": "none"
+  }
 }
