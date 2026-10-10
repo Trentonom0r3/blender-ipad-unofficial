@@ -132480,7 +132480,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..8d1ece6 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8345 @@
+@@ -1,6918 +1,8357 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -132641,7 +132641,7 @@ index 46a8fef..8d1ece6 100644
 +static bool wm_ipad_pencil_paint_handler_matches(
 +    wmWindow *win, const wmEvent *event, const wmEventHandler_Op *handler);
 +static bool wm_ipad_pencil_paint_modal_owner_matches(
-+    bContext *C, wmWindow *win, const wmEventHandler_Op *handler);
++    bContext *C, wmWindow *win, const wmEventHandler_Op *handler, const bool teardown);
 +#endif
  
  static void wm_event_state_update_and_click_set_ex(wmEvent *event,
@@ -134885,7 +134885,7 @@ index 46a8fef..8d1ece6 100644
 + * first draw generation to remain current. These values are compared only; they
 + * are never dereferenced as pointers. */
 +static bool wm_ipad_pencil_paint_modal_owner_matches(
-+    bContext *C, wmWindow *win, const wmEventHandler_Op *handler)
++    bContext *C, wmWindow *win, const wmEventHandler_Op *handler, const bool teardown)
 +{
 +  if (!C || !win || !handler || CTX_wm_window(C) != win ||
 +      CTX_wm_area(C) != handler->context.area ||
@@ -134910,8 +134910,16 @@ index 46a8fef..8d1ece6 100644
 +  }
 +  if (!owner_area || owner_area->spacetype != SPACE_VIEW3D || !owner_region ||
 +      !owner_region->runtime || owner_region->regiontype != RGN_TYPE_WINDOW ||
-+      !owner_region->runtime->visible || !owner_region->runtime->ipad_canvas ||
-+      (owner_region->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL | RGN_FLAG_POLL_FAILED)))
++      !owner_region->runtime->visible)
++  {
++    return false;
++  }
++  /* A live region being torn down can already be hidden, too small, poll-failed, or
++   * have lost its canvas geometry. Only the explicit teardown path may ignore those
++   * presentation flags; keep every original typed owner and lifetime check below. */
++  if (!teardown &&
++      (!owner_region->runtime->ipad_canvas ||
++       (owner_region->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL | RGN_FLAG_POLL_FAILED))))
 +  {
 +    return false;
 +  }
@@ -134928,7 +134936,11 @@ index 46a8fef..8d1ece6 100644
 +  return std::strcmp(handler->ipad_pencil_owner_tool, current.tool.data()) == 0;
 +}
 +static eIPadPencilPaintModalAdmission wm_ipad_pencil_paint_modal_admit(
-+    bContext *C, wmWindow *win, const wmEvent *event, const wmEventHandler_Op *handler)
++    bContext *C,
++    wmWindow *win,
++    const wmEvent *event,
++    const wmEventHandler_Op *handler,
++    const bool teardown = false)
 +{
 +  const eIPadPencilPaintModalEvent contact_event =
 +      wm_ipad_pencil_paint_modal_event_classify(event, handler);
@@ -134936,7 +134948,7 @@ index 46a8fef..8d1ece6 100644
 +    return eIPadPencilPaintModalAdmission::Consume;
 +  }
 +  if (!wm_ipad_pencil_paint_handler_registered(win, handler) ||
-+      !wm_ipad_pencil_paint_modal_owner_matches(C, win, handler))
++      !wm_ipad_pencil_paint_modal_owner_matches(C, win, handler, teardown))
 +  {
 +    return eIPadPencilPaintModalAdmission::Consume;
 +  }
@@ -135313,7 +135325,7 @@ index 46a8fef..8d1ece6 100644
 +    {
 +      ipad_pencil_owner_teardown_admitted =
 +          wm_ipad_pencil_paint_modal_admit(
-+              C, CTX_wm_window(C), event, handler) == eIPadPencilPaintModalAdmission::Cancel;
++              C, CTX_wm_window(C), event, handler, true) == eIPadPencilPaintModalAdmission::Cancel;
 +    }
 +#else
 +    UNUSED_VARS(ipad_pencil_owner_teardown);
@@ -135723,7 +135735,7 @@ index 46a8fef..8d1ece6 100644
 +    CTX_wm_area_set(C, owner_area);
 +    CTX_wm_region_set(C, owner_region);
 +    const eIPadPencilPaintModalAdmission admission =
-+        wm_ipad_pencil_paint_modal_admit(C, win, &cancel_event, candidate);
++        wm_ipad_pencil_paint_modal_admit(C, win, &cancel_event, candidate, true);
 +    const uint64_t owner_lifetime = candidate->ipad_pencil_operator_lifetime;
 +    if (admission != eIPadPencilPaintModalAdmission::Cancel) {
 +      CTX_wm_area_set(C, area_prev);

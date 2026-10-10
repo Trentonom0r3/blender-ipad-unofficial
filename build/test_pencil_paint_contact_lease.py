@@ -252,25 +252,25 @@ int main(){
   h.ipad_pencil_owner_values[2]=17; h.ipad_pencil_owner_values[4]=18;
   h.ipad_pencil_owner_values[17]=23; h.ipad_pencil_owner_values[18]=24;
   std::strcpy(h.ipad_pencil_owner_tool,"builtin_brush.Draw");
-  assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h));
+  assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false));
   for(uint64_t presented=8;presented<10008;++presented) {
     h.ipad_pencil_paint_generation=7;
-    assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h));
+    assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false));
   }
-  C.owner.values[17]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.values[17]--;
-  C.owner.values[18]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.values[18]--;
-  C.owner.values[9]=99; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.values[9]=OB_MODE_SCULPT;
-  C.owner.values[0]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.values[0]--;
-  C.owner.values[16]++; assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.values[16]--;
-  C.owner.tool[0]='x'; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.owner.tool[0]='b';
-  rr.visible=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); rr.visible=true;
-  rr.ipad_canvas=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); rr.ipad_canvas=true;
-  region.flag=RGN_FLAG_HIDDEN; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); region.flag=0;
-  ++screen.id.session_uid; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); --screen.id.session_uid;
-  ScrArea other; C.area=&other; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.area=&area;
+  C.owner.values[17]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.values[17]--;
+  C.owner.values[18]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.values[18]--;
+  C.owner.values[9]=99; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.values[9]=OB_MODE_SCULPT;
+  C.owner.values[0]++; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.values[0]--;
+  C.owner.values[16]++; assert(wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.values[16]--;
+  C.owner.tool[0]='x'; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.owner.tool[0]='b';
+  rr.visible=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); rr.visible=true;
+  rr.ipad_canvas=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); rr.ipad_canvas=true;
+  region.flag=RGN_FLAG_HIDDEN; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); region.flag=0;
+  ++screen.id.session_uid; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); --screen.id.session_uid;
+  ScrArea other; C.area=&other; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.area=&area;
   ARegion other_region{RGN_TYPE_WINDOW,0,&rr}; C.region=&other_region;
-  assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h)); C.region=&region;
-  C.capture_valid=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h));
+  assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false)); C.region=&region;
+  C.capture_valid=false; assert(!wm_ipad_pencil_paint_modal_owner_matches(&C,&win,&h,false));
 }
 """)
 
@@ -345,7 +345,9 @@ void CTX_wm_area_set(bContext*C,ScrArea*a){C->area=a;} void CTX_wm_region_set(bC
 void wm_handler_op_context(bContext*C,wmEventHandler_Op*h,const wmEvent*){C->area=h->area;C->region=h->region;}
 bool g_registered=true,g_owner=true,g_unlocked=true;
 bool wm_ipad_pencil_paint_handler_registered(wmWindow*,const wmEventHandler_Op*h){return g_registered&&h->registered&&h->op&&h->op->type;}
-bool wm_ipad_pencil_paint_modal_owner_matches(bContext*C,wmWindow*,const wmEventHandler_Op*){return g_owner&&C->owner_matches;}
+bool wm_ipad_pencil_paint_modal_owner_matches(
+ bContext*C,wmWindow*,const wmEventHandler_Op*,bool teardown){
+ (void)teardown;return g_owner&&C->owner_matches;}
 bool wm_operator_check_locked_interface(bContext*,wmOperatorType*){return g_unlocked;}
 int cancel_calls=0, cancel_context_correct=0;
 void paint_cancel(bContext*C,wmOperator*){++cancel_calls;event_order[event_order_count++]=0;
