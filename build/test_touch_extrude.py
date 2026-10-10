@@ -315,7 +315,7 @@ int main() {
         self.assertIn('MESH_OT_extrude_context_move', invoke)
         cursor = changed_source('intern/ghost/intern/GHOST_EventCursor.hh')
         self.assertIn('bool is_direct_tool = false', cursor)
-        self.assertIn('{x, y, tablet, is_direct_tool, ipad_hud_generation, ipad_hud_serial}', cursor)
+        self.assertIn('{x, y, tablet, is_direct_tool, ipad_hud_generation, ipad_hud_serial, is_direct_finger, ipad_finger_paint_generation}', cursor)
         events = changed_source('source/blender/windowmanager/intern/wm_event_system.cc')
         self.assertIn('if (cd->is_direct_tool)', events)
         self.assertIn('CLICK_DRAG inherits motion provenance', events)

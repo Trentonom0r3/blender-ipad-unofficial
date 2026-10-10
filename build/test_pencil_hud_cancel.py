@@ -84,11 +84,11 @@ class PencilHUDCancelTests(unittest.TestCase):
 #include <cassert>
 struct CGPoint{double x,y;};CGPoint CGPointMake(double x,double y){return{x,y};}
 struct UserInputEvent{enum class EventTypes{LEFT_BUTTON_UP};
- uint64_t hud_generation=0,hud_serial=0;bool cancelled=false;
+ uint64_t hud_generation=0,hud_serial=0;bool cancelled=false,direct_finger=false;
  UserInputEvent(const CGPoint*,void*,void*,bool){} void add_event(EventTypes){} };
 int main(){
  ghost::ios::PointerCapture pointer_capture;
- ghost::ios::HUDContact pointer_hud_contact,recognizer;
+ ghost::ios::HUDContact pointer_hud_contact,recognizer;bool pointer_finger_contact=true;
  double mouse_cursor_x=12,mouse_cursor_y=13;
  std::vector<UserInputEvent>events;
  auto cancel=[&](){BODY};
@@ -104,7 +104,7 @@ int main(){
         pan=function(ios,'- (void)handlePan:')
         self.assertIn('pointer_hud_contact = [sender hudContact];',pan)
         self.assertIn('pointer.hud_serial = pointer_hud_contact.serial;',pan)
-        self.assertIn('if (pointer_capture.ended) pointer_hud_contact = {};',pan)
+        self.assertIn('if (pointer_capture.ended) { pointer_hud_contact = {}; pointer_finger_contact = false; }',pan)
 
     def test_real_num_slider_cancel_and_native_restoration_dispatch(self):
         for signature in ('static int ui_do_but_NUM(','static int ui_do_but_SLI('):

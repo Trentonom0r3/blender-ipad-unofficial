@@ -88,8 +88,8 @@ enum{GHOST_kTabletModeNone=0,GHOST_kTabletModeStylus=1,EVT_TABLET_NONE=0};
 struct GHOST_TabletData{int Active;float Pressure,Xtilt,Ytilt;};
 const GHOST_TabletData GHOST_TABLET_DATA_NONE{0,1,0,0};
 using GHOST_TEventType=int;using GHOST_TButton=int;struct GHOST_IWindow{};
-struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;};
-struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;};
+struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
+struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
 struct GHOST_Event{void*data_=nullptr;GHOST_Event(uint64_t,int,GHOST_IWindow*){}};
 namespace blender{struct float2{float x,y;float2()=default;float2(float a,float b):x(a),y(b){}};}
 struct wmTabletData{int active;float pressure;blender::float2 tilt;bool is_motion_absolute;};

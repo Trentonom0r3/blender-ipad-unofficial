@@ -1,4 +1,18 @@
+## Bounded Finger brush candidate checkpoint - 2026-10-10
+
+Uncommitted coherent source now connects physical Finger metadata and completed native canvas textures to early whole-group consumption, plus fresh guards before four native mesh brush callbacks allocate strokes. Cached textures retain actual owner/tool/typed ToolSettings/Paint/Undo values and executed custom-widget blockers; actual higher rectangles/navigation are excluded. Native UI/OP modal registration and hardware key enqueue/arrival invalidate new acquisition; publication vetoes live modal/gesture/effective modifiers/unknown widgets. Every existing native modal stroke retains fallback: interrupted Pencil semantic ownership is still unfinished. No ring/UI/header change; all seven Python sections and native ring renderer match verified0cee120.
+
+Eight connected fixtures and independent native/UX final reviews pass;106-file pinned preflight passes. The affected HUD suite passes33/33, sample suite5/5, terminal/extrude6/6 and full host suite296/296 (235.479s); logs are .cache/finger-admission-tests-2.log, .cache/finger-hud-suite-4.log, .cache/finger-sample-tests.log, .cache/finger-terminal-extrude-tests.log and .cache/finger-full-tests-3.log. Canonical LF patch **461e4ebf814039fce1d1ca61ca384d0ed6060bd964213c67c533589747e9b977**; source materialization remains C:/Users/tjerf/AppData/Local/Temp/blender-pencil-rna-mlvacs05. Tracked source is uncommitted; no native build/new IPA/device acceptance. Last verified package remains0cee120/run37960879236. See [PENCIL_FINGER_BRUSH_ADMISSION](docs/PENCIL_FINGER_BRUSH_ADMISSION.md) and output/ui-preview/pencil-paint-contact/finger-admission-source-checkpoint.json. Preserve all local work and untracked selection-collapsed.png.
+
+Next finish validation, correct actual source/compiler failures without weakening admission, commit/push coherent source, build exact revision once and fully verify downloaded IPA/arm64/whole UI/default bars/native tools129icons/preserved compiled HUD launch and Weight cleanup. Then continue actual Pencil contact/terminal semantic ownership from PENCIL_PAINT_CONTACT_NEXT; no unleased Cancel/rollback or generic replacement-context cleanup. Full personal goal remains unfinished. Ordinary use94percent five-hour/88percent weekly at20:52UTC; reset October10 00:58:04UTC/October9 7:58:04PM Chicago, resume near8:03PM.0credits; no redemption.
+
 # Pencil paint contact ownership: next connected increment
+
+## Current bounded Finger admission candidate - 2026-10-10
+
+An uncommitted connected increment now prevents new unmodified Finger brush starts on four audited idle mesh VIEW3D paint profiles. It freezes actual presented canvas and native owner values, retains blockers with cached textures, excludes higher UI/navigation, invalidates acquisition on native modal or hardware-key activity, and guards the four exact stroke invokers. Eight connected fixtures, the 296-test full host suite, 33 HUD tests, 5 sample tests, 6 terminal/extrude tests, 106-file pinned preflight, `git diff --check`, and independent native/UX reviews pass. Canonical LF patch SHA256 `461e4ebf814039fce1d1ca61ca384d0ed6060bd964213c67c533589747e9b977`; details in `PENCIL_FINGER_BRUSH_ADMISSION.md` and `output/ui-preview/pencil-paint-contact/finger-admission-source-checkpoint.json`.
+
+This does not route Finger terminals to an existing Pencil stroke and does not promise rollback. All existing native modal strokes retain native fallback. Candidate is not built or device-tested; latest verified package remains `0cee120` / run `37960879236`. The following audits remain the contract for completing original Pencil terminal ownership.
 
 ## Recognizer-owned Pencil sample IPA verified - 2026-10-09
 

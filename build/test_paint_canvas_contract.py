@@ -11,7 +11,7 @@ import test_ipad_panels
 class PaintCanvasContractTests(unittest.TestCase):
  def test_actual_nonoverlap_canvas_blit_counts_cached_viewport_and_offscreen(self):
   source=changed_source('source/blender/windowmanager/intern/wm_draw.cc')
-  blit=function(source,'static void wm_draw_region_blit(')
+  blit=function(source,'static bool wm_draw_region_blit(')
   layers=function(source,'static void wm_draw_window_area_layer(')
   self.assertIn('if (region->overlap == false)',layers)
   self.assertIn('wm_draw_region_blit(region, view)',layers)
@@ -50,8 +50,8 @@ int main(){Runtime rt{nullptr};ARegion r{&rt,{3,4,700,800}};
 #include <cstdint>
 #include <initializer_list>
 using GHOST_TEventType=int;
-enum{GHOST_kEventButtonDown=1,GHOST_kEventButtonUp=2,KM_PRESS=1,KM_RELEASE=2,MIDDLEMOUSE=3,LEFTMOUSE=4,WM_EVENT_IS_DIRECT_TOOL=8,WM_EVENT_IS_POINTER_CANCEL=16};
-struct GHOST_TabletData{int value=0;};struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;};
+enum{GHOST_kEventButtonDown=1,GHOST_kEventButtonUp=2,KM_PRESS=1,KM_RELEASE=2,MIDDLEMOUSE=3,LEFTMOUSE=4,WM_EVENT_IS_DIRECT_TOOL=8,WM_EVENT_IS_POINTER_CANCEL=16,WM_EVENT_IS_DIRECT_FINGER=256};
+struct GHOST_TabletData{int value=0;};struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
 struct wmEvent{int type=0,val=0,flag=0,modifier=0,keymodifier=0,prev_type=0,prev_val=0,xy[2]{3,4};GHOST_TabletData tablet;uint64_t ipad_hud_generation=0,ipad_hud_serial=0;};
 struct wmWindow{wmEvent *eventstate;int delivered=0;wmEvent last{};};struct wmWindowManager{wmWindow *other;};
 int updates=0,emulations=0,hit_tests=0;

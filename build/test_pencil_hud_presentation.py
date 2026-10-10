@@ -133,6 +133,10 @@ def compiled_prefix():
     public = function(HEADER, 'struct IPadHUDPresentedRect {') + ';'
     blend = function(DRAW, 'static bool wm_draw_region_blend_receipt(')
     layer = function(DRAW, 'static void wm_draw_window_area_layer(')
+    # This compositor fixture exercises the existing native overlap blend;
+    # Finger receipt publication has its separate connected frame fixture.
+    layer = layer.replace('wm_ipad_finger_paint_record(C, win, area, region, paint_frame, composited_rect, true);', '')
+    layer = layer.replace('wm_ipad_finger_paint_record(C, win, area, region, paint_frame, region->winrct, false);', '')
     a = layer.index('      if (region->overlap) {', layer.index('/* Blend in overlapping area regions. */'))
     b = layer.index('\n    }\n  }', a)
     producer = 'void native_overlap(bContext *C,wmWindow *win,ScrArea *area,ARegion *region){\n' + layer[a:b] + '\n}'

@@ -51,8 +51,8 @@ int main(){
 #include <cstdint>
 using GHOST_TEventType=int; using GHOST_TButton=int;
 struct GHOST_IWindow{};struct GHOST_TabletData{int value=3;};
-struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;};
-struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;};
+struct GHOST_TEventButtonData{int button;GHOST_TabletData tablet;bool is_cancelled,is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
+struct GHOST_TEventCursorData{int32_t x,y;GHOST_TabletData tablet;bool is_direct_tool;uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger=false;uint64_t ipad_finger_paint_generation=0;};
 struct GHOST_Event{void *data_=nullptr;GHOST_Event(uint64_t,int,GHOST_IWindow*){}};
 BUTTON
 struct ButtonProbe:GHOST_EventButton{using GHOST_EventButton::GHOST_EventButton;using GHOST_EventButton::button_event_data_;};
