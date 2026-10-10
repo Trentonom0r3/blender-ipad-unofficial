@@ -8,6 +8,10 @@ The exact Base remains Layout/Mode, More Tools, Undo, Redo, Select, Move, Rotate
 
 Continue the remaining original-owner and mode-specific paint lifecycle audit without waiting for the home test. Never cancel through a replacement context or discard native stroke state. Preserve accepted Inspector, native editors/splits, hardware, Files, Color, keyboard, older-project recovery, and bounded Extrude/Bevel work. Do not rebuild this unchanged IPA; distinguish source, host, package, and device evidence.
 
+## Local source candidate - 2026-10-10
+
+A newer, unbuilt worktree candidate adds a value-only per-window receipt for native-cancelled Pencil paint contacts. It is set before Blender's native cancel callback, then consumes only that exact contact's queued motion and lift before ordinary modal/keymap routing; matching lift clears it, and zero-serial events cannot match an empty receipt. The completed-stroke path is unchanged. The latest verified IPA remains **46520f4 / run 38062626368**, which the user plans to check at home. The candidate passes 315/315 host tests, 8/8 focused contact-lease tests, the 107-file offline pinned preflight, and diff hygiene. It has not been natively built or packaged; it has no device evidence. The detailed contract and hashes are in docs/PENCIL_PAINT_CONTACT_NEXT.md.
+
 ## Area pull-out paint-owner correction - exact IPA verified
 
 The pinned area_join_modal pull-out path replaces the active modal region before closing the source area. The overlay now retires an admitted Pencil paint owner for the source window/area immediately before that replacement, while retaining all strict lifetime, context, scene, tool, and typed-owner checks.

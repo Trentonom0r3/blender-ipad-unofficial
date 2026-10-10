@@ -14635,7 +14635,7 @@ diff --git a/source/blender/blenkernel/BKE_wm_runtime.hh b/source/blender/blenke
 index a6fd685..b02ecab 100644
 --- a/source/blender/blenkernel/BKE_wm_runtime.hh
 +++ b/source/blender/blenkernel/BKE_wm_runtime.hh
-@@ -1,115 +1,146 @@
+@@ -1,115 +1,151 @@
  /* SPDX-FileCopyrightText: 2024 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -14766,6 +14766,11 @@ index a6fd685..b02ecab 100644
 +  int ipad_pencil_paint_queued_origin_xy[2] = {0, 0};
 +  uint64_t ipad_pencil_paint_retired_serial = 0;
 +  bool ipad_pencil_paint_queued_down = false;
++  /* Cancelled native paint contact remains quarantined through physical lift. */
++  uint64_t ipad_pencil_paint_cancelled_serial = 0;
++  uint64_t ipad_pencil_paint_cancelled_generation = 0;
++  uintptr_t ipad_pencil_paint_cancelled_region = 0;
++  int32_t ipad_pencil_paint_cancelled_origin_xy[2] = {0, 0};
 +#endif
  
  #ifdef WITH_INPUT_IME
@@ -132498,7 +132503,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..8d1ece6 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8391 @@
+@@ -1,6918 +1,8452 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -134976,6 +134981,57 @@ index 46a8fef..8d1ece6 100644
 +  return eIPadPencilPaintModalAdmission::Dispatch;
 +}
 +
++static void wm_ipad_pencil_paint_cancelled_contact_mark(
++    wmWindow *win, const wmEventHandler_Op *handler)
++{
++  if (!win || !win->runtime || !handler || !handler->ipad_pencil_paint_serial ||
++      !handler->ipad_pencil_paint_generation || !handler->ipad_pencil_region)
++  {
++    return;
++  }
++  auto *runtime = win->runtime;
++  runtime->ipad_pencil_paint_cancelled_serial = handler->ipad_pencil_paint_serial;
++  runtime->ipad_pencil_paint_cancelled_generation = handler->ipad_pencil_paint_generation;
++  runtime->ipad_pencil_paint_cancelled_region = handler->ipad_pencil_region;
++  runtime->ipad_pencil_paint_cancelled_origin_xy[0] = handler->ipad_pencil_origin_x;
++  runtime->ipad_pencil_paint_cancelled_origin_xy[1] = handler->ipad_pencil_origin_y;
++}
++
++/* A cancelled stroke's queued physical tail belongs to its old native owner.
++ * Consume it before a newly selected modal tool can interpret its release. */
++static bool wm_ipad_pencil_paint_cancelled_contact_consume(
++    wmWindow *win, const wmEvent *event)
++{
++  if (!win || !win->runtime || !event || !event->ipad_pencil_paint_down ||
++      !event->ipad_pencil_paint_serial ||
++      !ELEM(event->ipad_pencil_paint_phase,
++            WM_PENCIL_PAINT_PHASE_BEGIN,
++            WM_PENCIL_PAINT_PHASE_MOTION,
++            WM_PENCIL_PAINT_PHASE_END))
++  {
++    return false;
++  }
++  auto *runtime = win->runtime;
++  if (runtime->ipad_pencil_paint_cancelled_serial != event->ipad_pencil_paint_serial ||
++      runtime->ipad_pencil_paint_cancelled_generation != event->ipad_pencil_paint_generation ||
++      runtime->ipad_pencil_paint_cancelled_region != event->ipad_pencil_paint_region ||
++      runtime->ipad_pencil_paint_cancelled_origin_xy[0] !=
++          event->ipad_pencil_paint_origin_xy[0] ||
++      runtime->ipad_pencil_paint_cancelled_origin_xy[1] !=
++          event->ipad_pencil_paint_origin_xy[1])
++  {
++    return false;
++  }
++  if (event->ipad_pencil_paint_phase == WM_PENCIL_PAINT_PHASE_END) {
++    runtime->ipad_pencil_paint_cancelled_serial = 0;
++    runtime->ipad_pencil_paint_cancelled_generation = 0;
++    runtime->ipad_pencil_paint_cancelled_region = 0;
++    runtime->ipad_pencil_paint_cancelled_origin_xy[0] = 0;
++    runtime->ipad_pencil_paint_cancelled_origin_xy[1] = 0;
++  }
++  return true;
++}
++
 +#endif
 +
  void WM_event_remove_handlers(bContext *C, ListBase *handlers)
@@ -135403,6 +135459,11 @@ index 46a8fef..8d1ece6 100644
 -      retval = ot->modal(C, op, event);
 -      OPERATOR_RETVAL_CHECK(retval);
 +      if (ipad_pencil_paint_interrupt) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++        if (handler->ipad_pencil_paint_serial) {
++          wm_ipad_pencil_paint_cancelled_contact_mark(win, handler);
++        }
++#endif
 +        ot->cancel(C, op);
 +        retval = OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;
 +      }
@@ -137771,6 +137832,11 @@ index 46a8fef..8d1ece6 100644
 +        if (!live_wm || BLI_findindex(&live_wm->windows, win) == -1) return;
 +        /* Old pixels/contact are reserved until actual re-presentation. Never
 +         * reinterpret a stale native field stream as canvas/direct-tool input. */
++        BLI_remlink(&win->runtime->event_queue, event);
++        wm_event_free_last_handled(win, event);
++        continue;
++      }
++      if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event)) {
 +        BLI_remlink(&win->runtime->event_queue, event);
 +        wm_event_free_last_handled(win, event);
 +        continue;

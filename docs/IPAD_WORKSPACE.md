@@ -10,6 +10,10 @@ The exact Base remains Layout/Mode, More Tools, Undo, Redo, Select, Move, Rotate
 
 Continue the remaining original-owner and mode-specific paint lifecycle audit without waiting for the home test. Never cancel through a replacement context or discard native stroke state. Preserve accepted Inspector, native editors/splits, hardware, Files, Color, keyboard, older-project recovery, and bounded Extrude/Bevel work. Do not rebuild this unchanged IPA; distinguish source, host, package, and device evidence.
 
+## Local source candidate - 2026-10-10
+
+A newer, unbuilt worktree candidate adds a value-only per-window receipt for native-cancelled Pencil paint contacts. It is set before Blender's native cancel callback, then consumes only that exact contact's queued motion and lift before ordinary modal/keymap routing; matching lift clears it, and zero-serial events cannot match an empty receipt. The completed-stroke path is unchanged. The latest verified IPA remains **46520f4 / run 38062626368**, which the user plans to check at home. The candidate passes 315/315 host tests, 8/8 focused contact-lease tests, the 107-file offline pinned preflight, and diff hygiene. It has not been natively built or packaged; it has no device evidence. The detailed contract and hashes are in docs/PENCIL_PAINT_CONTACT_NEXT.md.
+
 ## Earlier exact-source IPA checkpoint - 2026-10-10
 
 Exact production source **b3c5d2926066b0278ab6e5de175caa379b108c91** passed the cloud preflight and native iOS Release in [run 38053128171](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38053128171). Artifact **11670647877**. The downloaded full IPA is **248,606,042 bytes**, SHA256 `fd87495734021760ad753b76c8f2db9ef642f20124f88929cb3111409fd791f3`, at `output/ui-preview/pencil-paint-contact/run-38053128171/Blender-iPad-Unofficial.ipa`. It passes all **3,368** archive CRC entries, arm64/iPhoneOS 5.0.0, exact packaged interaction UI and full default Blender header, pinned native tools, all129 native tool icons, and the exact nine-action Base/native-only More Tools contract. Binary UUID `BCCAF32E-F2CE-387B-B8F8-A5AAA3D7B72D` passes the compiled first-frame HUD launch audit.

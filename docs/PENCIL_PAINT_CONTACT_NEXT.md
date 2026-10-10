@@ -8,6 +8,14 @@ The exact Base remains Layout/Mode, More Tools, Undo, Redo, Select, Move, Rotate
 
 Continue the remaining original-owner and mode-specific paint lifecycle audit without waiting for the home test. Never cancel through a replacement context or discard native stroke state. Preserve accepted Inspector, native editors/splits, hardware, Files, Color, keyboard, older-project recovery, and bounded Extrude/Bevel work. Do not rebuild this unchanged IPA; distinguish source, host, package, and device evidence.
 
+## Local source candidate - 2026-10-10
+
+The candidate records only serial, generation, original region identity, and origin coordinates on the window runtime before normal ot->cancel. Its early event-loop guard consumes a matching cancelled Pencil Begin/Motion/Lift before any ordinary modal or keymap route, clearing the receipt only on the matching Lift. It requires a nonzero serial, so default/invalid event values cannot match an empty receipt. No operator, Brush, RNA, or Undo pointer is retained; normal completed contact dispatch is unchanged.
+
+build/test_pencil_paint_contact_lease.py::test_cancelled_native_paint_quarantines_motion_and_lift_from_new_tool executes the actual cancellation and router slices, including the post-cancel motion/lift, next contact, and zero-serial control. Validation: 315/315 complete host tests, 8/8 focused contact-lease tests, 107-file offline pinned preflight, and git diff --check. Canonical LF patch SHA256 799848449f94719374513c627138ac6624473a7d90716a1543dd38a7675d9659; focused test SHA256 f32d5599c264a9372e4480add613a2cc6adc456ff7ffc64e3cddd143b6e3c24a.
+
+This is source/fixture evidence only. It has not received native iOS compilation, packaging, or device testing. The latest verified package remains 46520f4 / run 38062626368, pending the user's home check. Mode-specific disposal and target UIKit/GHOST/WM contact behavior remain unverified.
+
 ## Earlier connected uncaptured Pencil terminal fixture - 2026-10-10
 
 The current verified source already emits a canceled `LEFT_BUTTON_UP` from `cancelPointerCapture` when (and only when) an uncaptured Pencil press was actually queued. The new `build/test_pencil_hud_cancel.py::test_cancelled_uncaptured_pencil_terminal_enters_ghost_once` fixture executes that producer together with the actual event snapshot, matching-contact admission gate, and native button-release constructor. It verifies one canceled terminal with the original serial/generation/region/origin/tablet sample, idempotent repeated cancellation, rejection of a retired packet, shielding of a replacement contact, and acceptance of that replacement's matching terminal.

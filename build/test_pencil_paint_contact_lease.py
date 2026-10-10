@@ -22,6 +22,10 @@ EVENT_ENUMS = '\n'.join(line for line in WM.splitlines()
 ROUTE_START = ROUTER.index("      /* First we do priority handlers, modal + some limited key-maps. */")
 ROUTE_END = ROUTER.index("\n      /* File-read case. */", ROUTE_START)
 ROUTE_BLOCK = ROUTER[ROUTE_START:ROUTE_END]
+CANCELLED_CONTACT_MARK = function(
+    WM, 'static void wm_ipad_pencil_paint_cancelled_contact_mark(')
+CANCELLED_CONTACT_CONSUME = function(
+    WM, 'static bool wm_ipad_pencil_paint_cancelled_contact_consume(')
 
 
 def cpp_block(source, marker, occurrence=0):
@@ -43,6 +47,9 @@ def cpp_block(source, marker, occurrence=0):
                 return source[start:index + 1]
     raise AssertionError(f"unterminated C++ block {marker!r}")
 
+
+CANCELLED_CONTACT_EARLY_BLOCK = cpp_block(
+    ROUTER, 'if (wm_ipad_pencil_paint_cancelled_contact_consume(win, event))')
 
 QUEUE_CAPTURE = cpp_block(WM, "if (any_contact_value) {")
 
@@ -352,6 +359,7 @@ bool wm_operator_check_locked_interface(bContext*,wmOperatorType*){return g_unlo
 int cancel_calls=0, cancel_context_correct=0;
 void paint_cancel(bContext*C,wmOperator*){++cancel_calls;event_order[event_order_count++]=0;
   if(C->area==reinterpret_cast<ScrArea*>(1)&&C->region==reinterpret_cast<ARegion*>(2))++cancel_context_correct;}
+void wm_ipad_pencil_paint_cancelled_contact_mark(wmWindow*,const wmEventHandler_Op*){}
 int wm_handler_operator_call(bContext*C,ListBase*handlers,wmEventHandler*base,wmEvent*,PointerRNA*,const char*);
 """
         source = (CPP + prelude + EVENT_ENUMS + "\n" + EVENT_MATCH + "\n" +
@@ -393,6 +401,101 @@ int main(){
 }
 """)
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source)
+
+
+    def test_cancelled_native_paint_quarantines_motion_and_lift_from_new_tool(self):
+        self.assertLess(
+            NATIVE_INTERRUPT.index('wm_ipad_pencil_paint_cancelled_contact_mark(win, handler);'),
+            NATIVE_INTERRUPT.index('ot->cancel(C, op);'))
+        source = r"""
+#include <cassert>
+#include <cstdint>
+#include <algorithm>
+enum { WM_PENCIL_PAINT_PHASE_BEGIN=1, WM_PENCIL_PAINT_PHASE_MOTION=2,
+       WM_PENCIL_PAINT_PHASE_END=3, OPERATOR_CANCELLED=32,
+       OPERATOR_PASS_THROUGH=128 };
+template<class... T> bool ELEM(uint8_t value,T... values){return ((value==values)||...);}
+struct ListBase { void *first=nullptr; };
+struct wmEvent {
+  int type=0; bool ipad_pencil_paint_down=false;
+  uint8_t ipad_pencil_paint_phase=0;
+  uint64_t ipad_pencil_paint_serial=0, ipad_pencil_paint_generation=0;
+  uintptr_t ipad_pencil_paint_region=0;
+  int32_t ipad_pencil_paint_origin_xy[2]{};
+  bool freed=false;
+};
+struct WindowRuntime {
+  ListBase event_queue;
+  uint64_t ipad_pencil_paint_cancelled_serial=0,
+    ipad_pencil_paint_cancelled_generation=0;
+  uintptr_t ipad_pencil_paint_cancelled_region=0;
+  int32_t ipad_pencil_paint_cancelled_origin_xy[2]{};
+};
+struct wmWindow { WindowRuntime *runtime=nullptr; };
+struct wmEventHandler_Op {
+  uint64_t ipad_pencil_paint_serial=0, ipad_pencil_paint_generation=0;
+  uintptr_t ipad_pencil_region=0;
+  int32_t ipad_pencil_origin_x=0, ipad_pencil_origin_y=0;
+};
+struct bContext {};
+struct wmOperator {};
+struct wmOperatorType { void (*cancel)(bContext*,wmOperator*)=nullptr; };
+int BLI_remlink(ListBase *list,void *target) {
+  if(list->first!=target)return 0; list->first=nullptr; return 1;
+}
+void wm_event_free_last_handled(wmWindow*,wmEvent *event){event->freed=true;}
+int cancel_callbacks=0, replacement_modal_deliveries=0;
+void native_cancel(bContext*,wmOperator*){++cancel_callbacks;}
+""" + CANCELLED_CONTACT_MARK + "\n" + CANCELLED_CONTACT_CONSUME + "\n" + r"""
+void cancel_old_owner_with_native_status(wmWindow *win,wmEventHandler_Op *handler,
+                                         bContext *C,wmOperator *op,wmOperatorType *ot) {
+  int retval=0; const bool ipad_pencil_paint_interrupt=true;
+""" + NATIVE_INTERRUPT + r"""
+  assert(retval==(OPERATOR_CANCELLED|OPERATOR_PASS_THROUGH));
+}
+void route_late_contact_event(wmWindow *win,wmEvent *event) {
+  win->runtime->event_queue.first=event;
+  while(win->runtime->event_queue.first) {
+""" + CANCELLED_CONTACT_EARLY_BLOCK + r"""
+    ++replacement_modal_deliveries;
+    break;
+  }
+}
+int main(){
+  WindowRuntime runtime; wmWindow win{&runtime}; bContext C; wmOperator op;
+  wmOperatorType ot{native_cancel};
+  wmEventHandler_Op old_owner{41,7,uintptr_t(0x1234),100,200};
+  cancel_old_owner_with_native_status(&win,&old_owner,&C,&op,&ot);
+  assert(cancel_callbacks==1&&runtime.ipad_pencil_paint_cancelled_serial==41&&
+         runtime.ipad_pencil_paint_cancelled_generation==7);
+
+  wmEvent motion; motion.ipad_pencil_paint_down=true;
+  motion.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_MOTION;
+  motion.ipad_pencil_paint_serial=41;motion.ipad_pencil_paint_generation=7;
+  motion.ipad_pencil_paint_region=uintptr_t(0x1234);
+  motion.ipad_pencil_paint_origin_xy[0]=100;motion.ipad_pencil_paint_origin_xy[1]=200;
+  route_late_contact_event(&win,&motion);
+  assert(motion.freed&&replacement_modal_deliveries==0&&
+         runtime.ipad_pencil_paint_cancelled_serial==41);
+
+  wmEvent lift=motion;lift.freed=false;lift.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
+  route_late_contact_event(&win,&lift);
+  assert(lift.freed&&replacement_modal_deliveries==0&&
+         runtime.ipad_pencil_paint_cancelled_serial==0);
+
+  wmEvent next_contact=motion;next_contact.freed=false;
+  next_contact.ipad_pencil_paint_serial=42;next_contact.ipad_pencil_paint_generation=8;
+  route_late_contact_event(&win,&next_contact);
+  assert(!next_contact.freed&&replacement_modal_deliveries==1);
+
+  wmEvent unowned_zero_contact;
+  unowned_zero_contact.ipad_pencil_paint_down=true;
+  unowned_zero_contact.ipad_pencil_paint_phase=WM_PENCIL_PAINT_PHASE_END;
+  route_late_contact_event(&win,&unowned_zero_contact);
+  assert(!unowned_zero_contact.freed&&replacement_modal_deliveries==2);
+}
+"""
+        self.run_cpp(source)
 
     def test_actual_router_branch_never_runs_ring_on_stale_owner(self):
         source = (CPP + r"""
