@@ -8,6 +8,7 @@ import test_ipad_panels
 
 WM = changed_source('source/blender/windowmanager/intern/wm_event_system.cc')
 OWNER_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_modal_owner_matches(')
+REGISTERED = function(WM, 'static bool wm_ipad_pencil_paint_handler_registered(')
 OPERATOR_CALL = function(WM, 'static eHandlerActionFlag wm_handler_operator_call(')
 EVENT_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_event_matches_handler(')
 CLASSIFY = function(WM, 'static eIPadPencilPaintModalEvent wm_ipad_pencil_paint_modal_event_classify(')
@@ -95,6 +96,65 @@ int wm_handler_operator_call(bContext *C, ListBase *handlers, wmEventHandler *ba
 class PencilPaintContactLeaseTests(unittest.TestCase):
     def run_cpp(self, source):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP + source)
+
+    def test_actual_registered_handler_refuses_region_runtime_teardown(self):
+        self.run_cpp(r"""
+enum { WM_HANDLER_TYPE_OP=1, WM_HANDLER_DO_FREE=2, RGN_TYPE_WINDOW=3,
+       OB_MODE_SCULPT=8 };
+struct ID { uint64_t session_uid=17; };
+struct ARegionRuntime { bool visible=true; };
+struct ARegion { int regiontype=RGN_TYPE_WINDOW; ARegionRuntime *runtime; };
+struct ScrArea { List<ARegion> regionbase; };
+struct bScreen { ID id; List<ScrArea> areabase; };
+using OperatorCallback=void(*)();
+void noop_operator_callback() {}
+struct wmOperatorType { uint64_t ipad_lifetime_id=29;
+  OperatorCallback modal=noop_operator_callback, cancel=noop_operator_callback; };
+struct wmOperator { wmOperatorType *type; wmOperator *opm=nullptr; };
+struct wmWindow;
+struct wmEventHandler { int type=WM_HANDLER_TYPE_OP, flag=0; };
+struct wmEventHandler_Op {
+  wmEventHandler head; bool is_fileselect=false;
+  struct { wmWindow *win=nullptr; } context;
+  uint64_t ipad_pencil_operator_lifetime=31, ipad_pencil_type_lifetime=29,
+           ipad_pencil_type_address=0, ipad_pencil_screen_uid=17,
+           ipad_pencil_area=0, ipad_pencil_region=0;
+  int ipad_pencil_paint_mode=OB_MODE_SCULPT;
+  wmOperator *op=nullptr;
+};
+int BLI_findindex(const List<wmEventHandler> *handlers,const wmEventHandler *handler) {
+  const auto found=std::find(handlers->items.cbegin(),handlers->items.cend(),handler);
+  return found==handlers->items.cend() ? -1 : int(found-handlers->items.cbegin());
+}
+struct wmWindow { int runtime_value=1; void *runtime=&runtime_value;
+  List<wmEventHandler> modalhandlers; bScreen *screen=nullptr; };
+wmOperatorType registered_type;
+wmOperatorType *WM_operatortype_find(const char *idname, bool) {
+  return idname && std::strcmp(idname,"SCULPT_OT_brush_stroke")==0 ? &registered_type : nullptr;
+}
+const char *wm_ipad_pencil_paint_operator_id(int mode) {
+  return mode==OB_MODE_SCULPT ? "SCULPT_OT_brush_stroke" : nullptr;
+}
+bool WM_operator_touch_lifetime_matches(const wmOperator *op,uint64_t identity) {
+  return op && identity==31;
+}
+bScreen *WM_window_get_active_screen(wmWindow *win){return win->screen;}
+"""+REGISTERED+r"""
+int main(){
+  bScreen screen; ScrArea area; ARegionRuntime runtime;
+  ARegion region{RGN_TYPE_WINDOW,&runtime}; area.regionbase.add(&region);
+  screen.areabase.add(&area); wmWindow win; win.screen=&screen;
+  wmOperator op{&registered_type}; wmEventHandler_Op handler; handler.op=&op;
+  handler.ipad_pencil_type_address=uintptr_t(&registered_type);
+  handler.ipad_pencil_area=uintptr_t(&area); handler.ipad_pencil_region=uintptr_t(&region);
+  win.modalhandlers.add(&handler.head);
+  assert(wm_ipad_pencil_paint_handler_registered(&win,&handler));
+  region.runtime=nullptr;
+  assert(!wm_ipad_pencil_paint_handler_registered(&win,&handler));
+  runtime.visible=false; region.runtime=&runtime;
+  assert(!wm_ipad_pencil_paint_handler_registered(&win,&handler));
+}
+""")
 
     def test_actual_contact_queue_matches_pinned_runtime_and_event_schema(self):
         source = r"""

@@ -134788,7 +134788,7 @@ index 46a8fef..efe2997 100644
 +    if (uintptr_t(area) != handler->ipad_pencil_area) continue;
 +    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
 +      if (uintptr_t(region) == handler->ipad_pencil_region &&
-+          region->regiontype == RGN_TYPE_WINDOW && region->runtime->visible)
++          region->regiontype == RGN_TYPE_WINDOW && region->runtime && region->runtime->visible)
 +      {
 +        found_context = true;
 +        break;
