@@ -1,5 +1,5 @@
 {
-  "status": "source_corrected_after_native_compile_failure",
+  "status": "native_package_verified_awaiting_device_review",
   "canonical_patch_sha256": "13dd6a8b77659bb7c7bb89f6b6922c5b18b13be3f9c68e83182fce5a0ebbeaa7",
   "candidate_connected_tests": 8,
   "pin_preflight_files": 106,
@@ -8,14 +8,23 @@
   "full_suite_status": "pass: 296 tests in 236.066s; .cache/finger-full-tests-4.log",
   "affected_hud_suite": "pass: 33/33; .cache/finger-hud-suite-4.log",
   "native_build": {
-    "run": "38012315328",
-    "source": "39e75b871702abdf5083e771168bce327bd0e0ac",
-    "cloud_preflight": "pass",
-    "native_release": "failed",
-    "cause": "Objective-C++ rejects a default member initializer on the finger_paint_origin ivar in GHOSTUITapGestureRecognizer's Objective-C interface",
-    "corrective_change": "Removed the initializer in source and patch; Objective-C object allocation zero-initializes ivars. Added a connected regression assertion.",
-    "failure_log": ".cache/finger-native-failure-38012315328.log",
-    "replacement_build": null
+    "initial_run": "38012315328",
+    "initial_source": "39e75b871702abdf5083e771168bce327bd0e0ac",
+    "initial_cloud_preflight": "pass",
+    "initial_native_release": "failed",
+    "initial_failure": "Objective-C++ interface ivar default initializer",
+    "correction_commit": "40ff7550ed0c7118392898c248cc86b204fd2a9a",
+    "replacement_run": "38019754190",
+    "replacement_url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38019754190",
+    "replacement_cloud_preflight": "pass",
+    "replacement_native_release": "pass",
+    "replacement_package_verification": "pass",
+    "artifact_id": 11658710795,
+    "ipa_bytes": 248598376,
+    "ipa_sha256": "f398d012b00365ccedd35b2d52b4a00e0ad51b614ae4eee6690369b1a304e59e",
+    "binary_uuid": "F836E8A3-A214-3BDB-B71A-3CE44D29D899",
+    "compiled_hud_launch_audit": "pass",
+    "compiled_weight_cancel_order": "pass"
   },
   "device_acceptance": null,
   "scope": "New plain Finger brush refusal on audited idle mesh VIEW3D canvases; all native modal handlers retain fallback; no interrupted Pencil lease",
@@ -28,5 +37,6 @@
     "pinned_preflight": "106 files pass",
     "diff_check": "pass"
   },
-  "full_suite_failures": []
+  "full_suite_failures": [],
+  "package_scope": "Exact source/package evidence only; awaiting user install and interaction feedback at home."
 }
