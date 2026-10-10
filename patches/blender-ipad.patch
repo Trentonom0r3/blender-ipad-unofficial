@@ -132488,7 +132488,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..8d1ece6 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8389 @@
+@@ -1,6918 +1,8391 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -135715,6 +135715,8 @@ index 46a8fef..8d1ece6 100644
 +    if (!owner_context_copy) {
 +      return;
 +    }
++    bContext_PyState owner_context_python_state{};
++    CTX_py_state_push(owner_context_copy, &owner_context_python_state, nullptr);
 +    CTX_wm_window_set(owner_context_copy, win);
 +    owner_C = owner_context_copy;
 +  }

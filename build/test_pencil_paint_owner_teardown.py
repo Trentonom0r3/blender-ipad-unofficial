@@ -85,7 +85,9 @@ struct wmEventHandler_Op { wmEventHandler head; bool is_fileselect=false;
   uint64_t ipad_pencil_owner_values[19]{}; char ipad_pencil_owner_tool[64]{};
   int ipad_pencil_paint_mode=8; wmOperator *op=nullptr; };
 struct bContext { wmWindowManager *wm=nullptr; wmWindow *win=nullptr; bScreen *screen=nullptr;
-  ScrArea *area=nullptr; ARegion *region=nullptr; };
+  ScrArea *area=nullptr; ARegion *region=nullptr; void *py_context=nullptr,*py_context_orig=nullptr; };
+struct bContext_PyState { void *py_context=nullptr,*py_context_orig=nullptr; };
+struct MockPyContext { int cleared_window_members=0; };
 struct Scene {};
 Scene *g_expected_scene=nullptr; int g_cancel_old_scene_calls=0;
 int g_context_copy_calls=0,g_context_free_calls=0;
@@ -131,7 +133,8 @@ wmWindow *CTX_wm_window(bContext *C){return C?C->win:nullptr;}
 wmWindowManager *CTX_wm_manager(bContext *C){return C?C->wm:nullptr;}
 bContext *CTX_copy(const bContext *C){++g_context_copy_calls;return C?new bContext(*C):nullptr;}
 void CTX_free(bContext *C){++g_context_free_calls;delete C;}
-void CTX_wm_window_set(bContext *C,wmWindow *win){C->win=win;C->screen=win?win->screen:nullptr;C->area=nullptr;C->region=nullptr;}
+void CTX_py_state_push(bContext *C,bContext_PyState *state,void *value){state->py_context=C->py_context;state->py_context_orig=C->py_context_orig;C->py_context=C->py_context_orig=value;}
+void CTX_wm_window_set(bContext *C,wmWindow *win){if(C->py_context)++static_cast<MockPyContext*>(C->py_context)->cleared_window_members;C->win=win;C->screen=win?win->screen:nullptr;C->area=nullptr;C->region=nullptr;}
 ScrArea *CTX_wm_area(bContext *C){return C?C->area:nullptr;}
 ARegion *CTX_wm_region(bContext *C){return C?C->region:nullptr;}
 void CTX_wm_area_set(bContext *C,ScrArea *a){C->area=a;}
@@ -350,7 +353,7 @@ int main(){
   }
   {
     Fixture f;Scene original_scene{},new_scene{},child_scene{};bScreen child_screen{};
-    ScrArea child_area{};ARegion child_region{};wmWindow child_window{};
+    ScrArea child_area{};ARegion child_region{};wmWindow child_window{};MockPyContext copied_python{},python_original{};
     f.window.scene=&original_scene;g_expected_scene=&original_scene;
     child_window.runtime=&child_window.runtime_data;child_window.scene=&child_scene;
     child_window.screen=&child_screen;f.window.next=&child_window;
@@ -358,11 +361,14 @@ int main(){
     child_screen.areabase.first=&child_area;
     f.manager.windows.first=&f.window;f.C.win=&child_window;f.C.screen=&child_screen;
     f.C.area=&child_area;f.C.region=&child_region;
+    f.C.py_context=&copied_python;f.C.py_context_orig=&python_original;
     test_scene_change_prefix(&f.C,&f.window,&new_scene);
     assert(g_cancel_calls==1&&g_cancel_old_scene_calls==1&&g_cancel_context_correct==1);
     assert(f.window.scene==&new_scene&&f.window.modalhandlers.first==nullptr);
     assert(f.C.win==&child_window&&f.C.screen==&child_screen&&f.C.area==&child_area&&f.C.region==&child_region);
     assert(g_context_copy_calls==1&&g_context_free_calls==1);
+    assert(copied_python.cleared_window_members==0&&python_original.cleared_window_members==0);
+    assert(f.C.py_context==&copied_python&&f.C.py_context_orig==&python_original);
   }
   {
     Fixture f;Scene same_scene{};f.window.scene=&same_scene;g_expected_scene=&same_scene;
@@ -405,6 +411,7 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index(remove_modal))
         self.assertIn('if (!C || !win || !win->runtime)', OWNER_TEARDOWN)
         self.assertIn('owner_context_copy = CTX_copy(C)', OWNER_TEARDOWN)
+        self.assertIn('CTX_py_state_push(owner_context_copy, &owner_context_python_state, nullptr)', OWNER_TEARDOWN)
 
     def test_scene_change_cancels_before_mutating_native_owner(self):
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
