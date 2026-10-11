@@ -1,3 +1,13 @@
+## Current verified checkpoint - 2026-10-11
+
+Exact source `921506f5473a53ced298ed57dcb1958dda1e4394` passed hosted preflight and native iOS Release in [run 38092455806](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38092455806), artifact `11685147055`. The downloaded full IPA at `output/ui-preview/pencil-paint-contact/run-38092455806/Blender-iPad-Unofficial.ipa` is 248,608,051 bytes, SHA256 `156ec5d447a08fe8651ad67ed223fd250ec35020ec878d98aa141d5ce4b6ef77`. Full 3,368-entry CRC, arm64/iPhoneOS 5.0.0 bundle, exact interaction Python/default Blender header/toolbar, pinned native tool definitions, all129 native icons, and the exact nine-action Base/native-only More Tools contract pass.
+
+The compiled binary UUID `8F1030F7-0E3F-3732-B78B-F4914ACAEF21` passes the bounded HUD first-frame sizing and area-before-region restoration audit, plus the native Weight Paint cleanup callback check. Exact operator-handler disassembly shows fresh paint-owner admission, stale/Consume branching before the new decision, extraction of the pointer-cancel event bit, and routing of an admitted interruption to the operator cancellation/status/free/unlink path. This is call-shape evidence, not complete WM, UIKit, brush, or device execution. The package has no device acceptance yet; the prior “opens to interface” reply applied to an earlier build only.
+
+Host evidence for this source: full suite `327/327`, focused Pencil contact `9/9`, owner teardown `7/7`, native terminal characterization Sculpt `4/4`, Texture Fill `3/3`, Vertex `3/3`, Weight `4/4`, 107-file offline pinned preflight, and hosted preflight all pass. Reports: `output/ui-preview/pencil-paint-contact/run-38092455806/verification.json`, `output/ui-preview/pencil-paint-contact/binary-38092455806/audit/audit.json`, `output/ui-preview/pencil-paint-contact/binary-38092455806/weight-cancel-38092455806-compiled.json`, and `output/ui-preview/pencil-paint-contact/binary-38092455806/paint-handler-call.asm`.
+
+The source correction is already committed and pushed. Continue the remaining original-owner loss and mode-specific paint lifecycle audit without waiting for device feedback; do not assume Cancel means rollback or cancel through a replacement context. Preserve the exact nine Base choices, Tools styling/icons, contact-only browsing, Pencil-barrel Home/reset, stationary hover, native headers, close-left collapsed controls, HUD/history and all existing ownership guards. Keep source, host, package, and device evidence distinct. This checkpoint supersedes older pre-build statements below; those entries are retained as history.
+
 ## Current checkpoint - 2026-10-10
 
 ## Authenticated Pencil cancellation dispatch - 2026-10-10
