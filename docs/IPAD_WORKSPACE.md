@@ -1,8 +1,8 @@
 ## Current checkpoint — object deletion owner cleanup — 2026-10-11
 
-Verified source `32a28f147df791c3d1fceae0cd5918c66b0f1f3a` completed run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). Its full downloaded IPA passes the 3,368-entry CRC, arm64/iPhoneOS bundle, exact UI/default Blender header/native tool inventory and 129-icon checks. Compiled View Layer teardown ordering passes. No device paint acceptance is attached to this build.
+Verified source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed native iOS Release and full IPA verification in run [38169232285](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38169232285). The 248,606,296-byte IPA has SHA256 `62336f41020b09159739fc0b9513554e696e9ee0068c22fbe537d59a87e6c094` (artifact `11713269730`). Full CRC, arm64/iPhoneOS bundle, exact UI/default Blender header, pinned tool inventory and 129-icon checks pass.
 
-The current unbuilt source candidate tears down only matching strict Pencil paint owners before current-scene object unlink or global tagged-object deletion. Validation: full host suite **343/343**, focused owner tests **9/9**, object-delete tests **2/2**, exact pinned preflight **109 files**. Build this exact commit once, verify the whole downloaded IPA and compiled object-deletion call sites, then continue original-owner lifecycle work.
+ARM64 disassembly confirms teardown before current-scene unlink and global object deletion; the compiled strict handler retains scene/object UID comparisons. The HUD launch/context and first-layout audit also passes. Validation: **343/343** host tests, **14/14** focused owner/object fixtures and **109-file** pinned preflight. Device paint behavior is still unverified; continue the remaining original-owner lifecycle work without weakening native ownership guards.
 
 ## Current source candidate - 2026-10-11
 

@@ -1,10 +1,10 @@
-## Object deletion owner-teardown candidate — 2026-10-11
+## Verified object deletion owner teardown — 2026-10-11
 
-The last verified source is `32a28f147df791c3d1fceae0cd5918c66b0f1f3a`, built and fully downloaded as run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). The full 3,368-entry IPA check, arm64/iPhoneOS bundle, exact packaged UI/default Blender header, native tool definitions and all 129 icons pass. Its compiled binary confirms the View Layer teardown call precedes layer unlink. This is package/compiled-shape evidence; no device paint acceptance is recorded.
+Source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed the exact-source native iOS Release and downloaded IPA verification in run [38169232285](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38169232285). The IPA is 248,606,296 bytes, SHA256 `62336f41020b09159739fc0b9513554e696e9ee0068c22fbe537d59a87e6c094`, artifact `11713269730`. Its 3,368-entry archive CRC, arm64/iPhoneOS 5.0.0 bundle, exact packaged interaction UI, complete default Blender header, pinned tool definitions and all 129 native icon files pass. Canonical patch SHA256 is `352c7934c2a0f9ffcb9c26298e3149a9c1b62190e654839ab615ff914a3514ec`.
 
-The current candidate covers both object deletion paths in `object_delete_exec`: when a shared object is unlinked from only the current scene, matching scene/object owners retire before unlink; when objects are globally deleted, each tagged object's owner retires before multi-ID deletion. The existing strict teardown matches immutable session UIDs and revalidates the original live owner. It does not cancel unrelated scene/object owners or relax native lifetime checks.
+The compiled ARM64 binary UUID `743778D2-6BB8-3E64-B355-41BD086A9F34` confirms teardown at `0x101c6a1dc` before current-scene unlink at `0x101c6a210`, and teardown at `0x101c6a308` before global multi-ID deletion at `0x101c6a31c`. The strict teardown binary retains scene-UID and object-UID comparisons. The previous compiled HUD launch/context restoration and first-layout initialization audit also passes. Durable reports are in `output/ui-preview/pencil-paint-contact/run-38169232285/`.
 
-Validation so far: full host suite **343/343**, owner teardown **9/9**, focused object-delete checks **2/2**, exact pinned preflight **109 files**. The candidate still needs commit, exact-source native Release and full downloaded IPA/compiled-call verification. No device paint behavior is claimed.
+Validation: full host suite **343/343**, focused owner/object fixtures **14/14**, exact pinned offline preflight **109 files**, downloaded archive verification and compiled call-order audit pass. This establishes source, host and package evidence only; device paint behavior remains unconfirmed.
 
 ## View Layer deletion teardown candidate - 2026-10-11
 

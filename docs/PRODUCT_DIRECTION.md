@@ -1,8 +1,8 @@
-## Current source candidate — object deletion cleanup — 2026-10-11
+## Current source checkpoint — object deletion owner teardown — 2026-10-11
 
-The latest fully verified build is source `32a28f147df791c3d1fceae0cd5918c66b0f1f3a`, run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). Its downloaded full IPA and compiled View Layer deletion hook pass archive, arm64/iPhoneOS, UI/header/icon and ordering checks; this does not establish iPad paint interaction.
+Verified source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed native iOS Release and full downloaded IPA verification in run [38169232285](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38169232285). The IPA is 248,606,296 bytes, SHA256 `62336f41020b09159739fc0b9513554e696e9ee0068c22fbe537d59a87e6c094`, artifact `11713269730`. Its full CRC covers 3,368 entries; the arm64/iPhoneOS bundle, exact interaction UI, default Blender header, pinned native tools and all 129 icons pass.
 
-An unbuilt candidate now retires a Pencil paint owner before either current-scene object unlink or global object free, using scene/object session UIDs to leave unrelated owners alone. Full host tests pass **343/343** and the exact pinned overlay preflight applies to **109 files**. Next is an exact-source build and downloaded-package verification. Keep the accepted ring, native headers, left-corner panels, editing fallback and strict owner/lifetime behavior unchanged.
+The compiled executable confirms matching scene/object owner teardown before current-scene unlink and before global tagged-object deletion, with strict scene/object UID filters preserved. The compiled HUD launch/context restoration and first-layout initialization audit also passes. Host suite **343/343**, focused owner/object tests **14/14**, and exact pinned preflight **109 files** pass. This is source/host/package evidence, not device paint acceptance. Continue the Pencil-first contact/lifecycle work while preserving the accepted ring, full native headers, compact lower-left controls and owner guards.
 
 # Product direction and decisions
 
