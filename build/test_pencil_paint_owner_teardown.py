@@ -42,10 +42,9 @@ AREA_NEWSPACE = function(AREA, 'void ED_area_newspace(')
 AREA_FIND_UNDER_CURSOR = function(AREA, 'ScrArea *ED_area_find_under_cursor(')
 AREA_EXIT = function(SCREEN, 'void ED_area_exit(')
 AREA_EXIT_OWNER_LOOKUP = re.search(
-    r'wmWindow \*paint_owner_win = wm \? WM_window_find_by_area\(wm, area\) : nullptr;'
+    r'wmWindow \*paint_owner_win = nullptr;'
     r'.*?WM_event_ipad_pencil_paint_owner_teardown\(C, paint_owner_win, area, nullptr\);',
     AREA_EXIT, re.S).group(0)
-WINDOW_AREA_LOOKUP = function(WINDOW, 'wmWindow *WM_window_find_by_area(')
 SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
 SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
@@ -509,7 +508,7 @@ int main(){
 }
 '''
 
-CROSS_WINDOW_EXIT_FIXTURE = CPP_PRELUDE + '\n' + WINDOW_AREA_LOOKUP + r'''
+CROSS_WINDOW_EXIT_FIXTURE = CPP_PRELUDE + r'''
 enum class eIPadPencilPaintModalEvent : uint8_t { OwnedContact,StaleContact,Timer,Interrupt };
 static eIPadPencilPaintModalEvent wm_ipad_pencil_paint_modal_event_classify(
     const wmEvent *,const wmEventHandler_Op*){return eIPadPencilPaintModalEvent::Interrupt;}
@@ -528,16 +527,17 @@ void ED_area_exit(bContext *C,ScrArea *area){
 int main(){
   bScreen owner_screen,current_screen;
   owner_screen.id.session_uid=17;current_screen.id.session_uid=91;
-  ScrArea owner_area,current_area;ARegionRuntime runtime;ARegion owner_region;
+  ScrArea owner_area,current_area,unlisted_area;ARegionRuntime runtime;ARegion owner_region;
   owner_area.spacetype=SPACE_VIEW3D;owner_area.regionbase.first=&owner_region;
   owner_region.regiontype=RGN_TYPE_WINDOW;owner_region.runtime=&runtime;
   owner_region.winrct={10,20,110,120};
   owner_screen.areabase.first=&owner_area;current_screen.areabase.first=&current_area;
-  wmWindow current_window,owner_window;current_window.runtime=&current_window.runtime_data;
+  wmWindow no_screen_window,current_window,owner_window;
+  current_window.runtime=&current_window.runtime_data;
   owner_window.runtime=&owner_window.runtime_data;
   current_window.screen=&current_screen;owner_window.screen=&owner_screen;
-  current_window.next=&owner_window;
-  wmWindowManager manager;manager.windows.first=&current_window;
+  no_screen_window.next=&current_window;current_window.next=&owner_window;
+  wmWindowManager manager;manager.windows.first=&no_screen_window;
   bContext context; bContext *C=&context;
   C->wm=&manager;C->win=&current_window;C->screen=&current_screen;C->area=&current_area;
 
@@ -558,6 +558,8 @@ int main(){
   g_owner_values[17]=81;g_owner_values[18]=82;
   std::copy_n("builtin_brush.Draw",sizeof("builtin_brush.Draw"),g_owner_tool);
 
+  ED_area_exit(C,&unlisted_area);
+  assert(g_cancel_calls==0&&current_window.modalhandlers.first==nullptr);
   ED_area_exit(C,&current_area);
   assert(g_cancel_calls==0&&current_window.modalhandlers.first==nullptr);
   ED_area_exit(C,&owner_area);
@@ -788,10 +790,13 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
     def test_teardown_hooks_precede_native_area_and_region_exit_callbacks(self):
         area_exit = function(SCREEN, 'void ED_area_exit(')
         region_exit = function(SCREEN, 'void ED_region_exit(')
-        lookup = 'wmWindow *paint_owner_win = wm ? WM_window_find_by_area(wm, area) : nullptr;'
+        lookup = 'wmWindow *paint_owner_win = nullptr;'
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, paint_owner_win, area, nullptr);'
         region_hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, region);'
         self.assertLess(area_exit.index(lookup), area_exit.index(hook))
+        self.assertIn('if (owner_screen && BLI_findindex(&owner_screen->areabase, area) != -1)',
+                      area_exit)
+        self.assertIn('if (paint_owner_win == nullptr)', area_exit)
         self.assertLess(area_exit.index(hook), area_exit.index('area->type->exit'))
         self.assertLess(region_exit.index(region_hook), region_exit.index('region->runtime->type->exit'))
         self.assertLess(region_exit.index(region_hook), region_exit.index('region->runtime->visible = false'))
@@ -820,7 +825,7 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         before_copy = AREA_SWAPSPACE.index('ED_area_data_copy(tmp, sa1, false);')
         self.assertLess(first_exit, second_exit)
         self.assertLess(second_exit, before_copy)
-        self.assertLess(AREA_EXIT.index('WM_window_find_by_area(wm, area)'),
+        self.assertLess(AREA_EXIT.index('WM_window_get_active_screen(owner_win)'),
                         AREA_EXIT.index('WM_event_ipad_pencil_paint_owner_teardown('))
         self.assertLess(AREA_EXIT.index('WM_event_ipad_pencil_paint_owner_teardown('),
                         AREA_EXIT.index('area->type->exit'))

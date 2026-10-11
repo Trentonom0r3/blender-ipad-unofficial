@@ -2,7 +2,7 @@ Continue the full personal Pencil-first Blender iPad goal independently in `D:/d
 
 ## Current local candidate - 2026-10-11
 
-The shared `ED_area_exit` hook now resolves an area's active-screen owner via pinned `WM_window_find_by_area` and calls the existing strict Pencil paint-owner teardown before native callbacks. This prevents the foreign-window `ED_area_swapspace` route from replacing the original modal paint context. Connected owner teardown9/9, Texture Paint Cancel5/5, full host suite331/331, 107-file offline pinned preflight, and diff check pass. Commit `8f1efaf` passed native Release in run38153137628 but predates this broader shared-hook version. Current source still needs its own exact build and downloaded IPA verification; no device acceptance is claimed. Continue the full ownership and mode-specific cancellation audit after this checkpoint.
+The shared `ED_area_exit` hook scans manager windows, safely skips a null active screen during close, and matches the area's live owner before invoking strict Pencil paint-owner teardown. An unlisted area preserves the context-window fallback. This prevents foreign-window `ED_area_swapspace` from replacing the original modal paint context. Connected owner teardown9/9, Texture Paint Cancel5/5, full host suite331/331, 107-file offline pinned preflight, and diff check pass. Commit `8f1efaf` passed native Release in run38153137628 but predates this guarded version; attempt `57c93fb` was cancelled before native compilation after the null-screen edge was identified. Current source still needs its own exact build and downloaded IPA verification; no device acceptance is claimed. Continue the full ownership and mode-specific cancellation audit after this checkpoint.
 
 ## Live checkpoint - 2026-10-10
 

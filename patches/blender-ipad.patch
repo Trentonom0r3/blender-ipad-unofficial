@@ -74013,7 +74013,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 index 32c8d9b..b374145 100644
 --- a/source/blender/editors/screen/screen_edit.cc
 +++ b/source/blender/editors/screen/screen_edit.cc
-@@ -1,2175 +1,2263 @@
+@@ -1,2175 +1,2272 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -75029,7 +75029,16 @@ index 32c8d9b..b374145 100644
    wmWindow *win = CTX_wm_window(C);
    ScrArea *prevsa = CTX_wm_area(C);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  wmWindow *paint_owner_win = wm ? WM_window_find_by_area(wm, area) : nullptr;
++  wmWindow *paint_owner_win = nullptr;
++  if (wm) {
++    LISTBASE_FOREACH (wmWindow *, owner_win, &wm->windows) {
++      bScreen *owner_screen = WM_window_get_active_screen(owner_win);
++      if (owner_screen && BLI_findindex(&owner_screen->areabase, area) != -1) {
++        paint_owner_win = owner_win;
++        break;
++      }
++    }
++  }
 +  if (paint_owner_win == nullptr) {
 +    paint_owner_win = win;
 +  }
