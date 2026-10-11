@@ -1,3 +1,7 @@
+## Current source candidate - 2026-10-11
+
+View Layer deletion now retires admitted Pencil paint owners before the target layer is unlinked. The hook runs only after Blender's delete poll accepts, matches windows by the still-live scene and layer, and uses the existing strict native teardown path. The exact-source fixture verifies rejected deletion, matching and unrelated windows, and teardown order. Host suite **338/338**, focused test **3/3**, and **108-file** offline preflight pass. This source has not been built; the latest verified IPA is **67c86b2 / run 38162571744** and does not include it. Device paint behavior remains unverified. Preserve the exact ring/base workflow, common Tools styling, full Blender headers, collapsed left-corner controls, and all previously accepted input/lifetime guards.
+
 ## Verified cross-window Pencil owner cleanup - 2026-10-11
 
 Exact source **e435ec311f8b2657969ce58a8e295f540eb24047** passed the fork's hosted preflight and native iOS Release in [run 38155628823](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38155628823). Shared `ED_area_exit` now scans manager windows, skips null active screens, finds the target area in a live screen, then runs the existing strict owner teardown before native area/region exit. If no active screen contains the area, the current context-window fallback remains. This covers the foreign-window `ED_area_swapspace` path without calling the unsafe pinned finder on a null screen.

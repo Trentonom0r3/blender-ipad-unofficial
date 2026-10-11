@@ -1,3 +1,9 @@
+## View Layer deletion teardown candidate - 2026-10-11
+
+`ED_scene_view_layer_delete` had a separate destructive path: it unlinked a layer and only afterward changed affected windows' stored layer names. The Apple-only overlay now calls Blender's existing strict owner teardown for windows matching the accepted scene/layer delete, before node-tree cleanup and unlink. A refused deletion leaves the paint owner alone. The connected fixture compiles the exact patched delete prefix and verifies original layer identity at teardown, scene/layer filtering, and cancellation-before-unlink.
+
+Validation: **338/338** full host tests, **3/3** focused View Layer teardown tests, **108-file** exact pinned offline preflight, Python syntax, and whitespace-clean generated native-source diff pass. This is an unbuilt source candidate; latest verified package remains **67c86b2 / run 38162571744**. No iOS compile, IPA, or device paint evidence exists for this fix. Commit/push and build this exact source once, verify the full downloaded IPA and compiled teardown path, then continue the remaining original-owner and mode-specific paint lifecycle audit.
+
 ## Live View Layer mutation coverage - 2026-10-11
 
 The setter-only teardown missed `WM_window_open` reusing an existing temporary window: it directly copied the requested View Layer name before the scene-change path, and the scene can be unchanged. The Apple-only path now checks for a live GHOST window and a changed layer, then retires the original Pencil paint owner before that direct write. Newly allocated windows skip the hook because they cannot own an existing modal paint lease. The RNA setter still retires changed parent/child windows; scene replacement already tears down before changing the scene. The other remaining pinned writes initialize a newly copied or file-read window.

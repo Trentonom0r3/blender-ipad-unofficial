@@ -1,5 +1,9 @@
 # Product direction and decisions
 
+## Current source checkpoint - 2026-10-11
+
+The current Pencil-first source candidate closes a direct View Layer deletion route that bypassed the guarded window setter. Once deletion is accepted, matching windows are canceled through the strict original-owner path before the layer is unlinked. Host suite **338/338**, focused regression **3/3**, and exact pinned preflight **108 files** pass. The candidate is not built or device-tested; latest verified package remains **67c86b2 / run 38162571744**. Continue the full Pencil-first app goal, preserving the accepted ring, native header, history, corner HUD, and ownership constraints.
+
 ## Verified cross-window Pencil owner cleanup - 2026-10-11
 
 Exact source **e435ec311f8b2657969ce58a8e295f540eb24047** passed the fork's hosted preflight and native iOS Release in [run 38155628823](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38155628823). Shared `ED_area_exit` now scans manager windows, skips null active screens, finds the target area in a live screen, then runs the existing strict owner teardown before native area/region exit. If no active screen contains the area, the current context-window fallback remains. This covers the foreign-window `ED_area_swapspace` path without calling the unsafe pinned finder on a null screen.

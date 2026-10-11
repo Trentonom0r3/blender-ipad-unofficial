@@ -169217,3 +169217,34 @@ index 13c67db..a678996 100644
  
  /** #WM_HANDLER_TYPE_DROPBOX. */
  struct wmEventHandler_Dropbox {
+diff --git a/source/blender/editors/scene/scene_edit.cc b/source/blender/editors/scene/scene_edit.cc
+index 1b2b5ae..ded945f 100644
+--- a/source/blender/editors/scene/scene_edit.cc
++++ b/source/blender/editors/scene/scene_edit.cc
+@@ -181,6 +181,26 @@ bool ED_scene_view_layer_delete(Main *bmain, Scene *scene, ViewLayer *layer, Rep
+     return false;
+   }
+ 
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Retire paint owners before this layer is unlinked and stops identifying them. */
++  wmWindowManager *paint_owner_wm = static_cast<wmWindowManager *>(bmain->wm.first);
++  if (paint_owner_wm != nullptr) {
++    LISTBASE_FOREACH (wmWindow *, paint_owner_win, &paint_owner_wm->windows) {
++      if (paint_owner_win->scene == scene &&
++          STREQ(paint_owner_win->view_layer_name, layer->name))
++      {
++        bContext *paint_owner_context = CTX_create();
++        CTX_data_main_set(paint_owner_context, bmain);
++        CTX_wm_manager_set(paint_owner_context, paint_owner_wm);
++        CTX_wm_window_set(paint_owner_context, paint_owner_win);
++        WM_event_ipad_pencil_paint_owner_teardown(
++            paint_owner_context, paint_owner_win, nullptr, nullptr);
++        CTX_free(paint_owner_context);
++      }
++    }
++  }
++#endif
++
+   /* We need to unset node-trees before removing the layer, otherwise its index will be -1. */
+   view_layer_remove_unset_nodetrees(bmain, scene, layer);
+ 
