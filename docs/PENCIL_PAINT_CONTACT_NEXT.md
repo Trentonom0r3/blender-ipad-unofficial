@@ -6,6 +6,12 @@ The compiled ARM64 binary UUID `743778D2-6BB8-3E64-B355-41BD086A9F34` confirms t
 
 Validation: full host suite **343/343**, focused owner/object fixtures **14/14**, exact pinned offline preflight **109 files**, downloaded archive verification and compiled call-order audit pass. This establishes source, host and package evidence only; device paint behavior remains unconfirmed.
 
+## Scene deletion lifecycle integration fixture — 2026-10-11
+
+The owner-teardown suite now executes the pinned `ED_scene_delete` and patched `WM_window_set_active_scene`/`ED_screen_scene_change` chain together. The fixture covers deletion of a scene used by a parent window, its child, and another primary window; every matching owner is retired against the old scene before `BKE_id_delete`, unrelated windows remain untouched, and deletion of the only scene is refused without teardown. It reuses the exact pinned-source materialization from the View Layer teardown suite.
+
+Validation: focused owner teardown **10/10**, full host suite **344/344**, exact pinned offline preflight **109 files**, and diff hygiene pass. This is additional host evidence for already-packaged source `13b7c7c`; production code is unchanged, so there is no new native build, IPA, or device acceptance. The broader original-owner and mode-specific paint lifecycle audit continues.
+
 ## View Layer deletion teardown candidate - 2026-10-11
 
 `ED_scene_view_layer_delete` had a separate destructive path: it unlinked a layer and only afterward changed affected windows' stored layer names. The Apple-only overlay now calls Blender's existing strict owner teardown for windows matching the accepted scene/layer delete, before node-tree cleanup and unlink. A refused deletion leaves the paint owner alone. The connected fixture compiles the exact patched delete prefix and verifies original layer identity at teardown, scene/layer filtering, and cancellation-before-unlink.

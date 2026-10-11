@@ -10,6 +10,7 @@ from test_compact_shelf import function
 from test_touch_extrude import changed_source
 import test_pencil_paint_contact_lease as lease
 import test_ipad_panels
+import test_pencil_paint_view_layer_teardown as view_layer_teardown
 
 WM_PATH = 'source/blender/windowmanager/intern/wm_event_system.cc'
 SCREEN_PATH = 'source/blender/editors/screen/screen_edit.cc'
@@ -47,6 +48,9 @@ AREA_EXIT_OWNER_LOOKUP = re.search(
     AREA_EXIT, re.S).group(0)
 SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
+SCENE_EDIT = view_layer_teardown.SCENE
+SCENE_DELETE = function(SCENE_EDIT, 'bool ED_scene_delete(')
+WINDOW_SET_ACTIVE_SCENE = function(view_layer_teardown.WINDOW, 'void WM_window_set_active_scene(')
 SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
 WORKSPACE_CHANGE = function(WINDOW, 'void WM_window_set_active_workspace(')
 OPERATOR_CALL = function(WM, 'static eHandlerActionFlag wm_handler_operator_call(')
@@ -797,6 +801,95 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(SCENE_CHANGE.index(hook), SCENE_CHANGE.index('win->scene = scene;'))
         self.assertIn('if (win->scene != scene)', SCENE_CHANGE)
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP_FIXTURE)
+
+    def test_scene_delete_retires_every_live_parent_and_child_owner_before_free(self):
+        scene_change = (
+            'void ED_screen_scene_change(bContext *C, wmWindow *win, Scene *scene, '
+            'const bool refresh_toolsystem)\n{\n  (void)refresh_toolsystem;' + SCENE_CHANGE_PREFIX +
+            '\n  win->scene = scene;\n  if (CTX_wm_window(C) == win) {\n'
+            '    CTX_data_scene_set(C, scene);\n  }\n}')
+        fixture = r'''
+#include <cassert>
+#include <cstdint>
+struct ID { ID *prev = nullptr, *next = nullptr; uint64_t session_uid = 0; };
+struct Scene : ID { ID &id; Scene() : id(*this) {} };
+struct ViewLayer {};
+struct wmWindow;
+struct wmWindowManager;
+struct WorkSpace;
+struct ListBase { void *first = nullptr; };
+struct Main { ListBase wm, workspaces; };
+struct wmWindow {
+  wmWindow *next = nullptr, *parent = nullptr;
+  Scene *scene = nullptr;
+  char view_layer_name[64] = "ViewLayer";
+  int id = 0;
+};
+struct wmWindowManager { ListBase windows; };
+struct WorkSpace { WorkSpace *next = nullptr; Scene *sequencer_scene = nullptr; };
+struct bContext { wmWindowManager *manager = nullptr; wmWindow *window = nullptr; Scene *scene = nullptr; };
+#define WITH_APPLE_CROSSPLATFORM
+#define LISTBASE_FOREACH(type, item, list) \
+  for (type item = static_cast<type>((list)->first); item; item = item->next)
+constexpr int NC_WINDOW = 1;
+static int teardown_count = 0, deletion_count = 0;
+static uint64_t torn_down_scene_uids[8]{};
+wmWindowManager *CTX_wm_manager(const bContext *C) { return C->manager; }
+wmWindow *CTX_wm_window(const bContext *C) { return C->window; }
+void CTX_data_scene_set(bContext *C, Scene *scene) { C->scene = scene; }
+void WM_event_ipad_pencil_paint_owner_teardown(
+    bContext *, wmWindow *win, const void *, const void *, uint64_t = 0, uint64_t = 0)
+{
+  assert(win && win->scene);
+  torn_down_scene_uids[teardown_count++] = win->scene->id.session_uid;
+}
+void WM_jobs_kill_all_from_owner(wmWindowManager *, Scene *) {}
+ViewLayer *WM_window_get_active_view_layer(wmWindow *) { static ViewLayer layer; return &layer; }
+void ED_scene_change_update(Main *, Scene *, ViewLayer *) {}
+void WM_event_add_notifier(const bContext *, int, void *) {}
+void BKE_id_delete(Main *, Scene *scene)
+{
+  assert(scene);
+  for (int i = 0; i < teardown_count; ++i) {
+    assert(torn_down_scene_uids[i] == scene->id.session_uid);
+  }
+  ++deletion_count;
+}
+''' + scene_change + '\n' + WINDOW_SET_ACTIVE_SCENE + '\n' + SCENE_DELETE + r'''
+int main()
+{
+  Scene kept, doomed, unrelated;
+  kept.id.session_uid = 10; doomed.id.session_uid = 20; unrelated.id.session_uid = 30;
+  doomed.id.prev = &kept.id;
+  wmWindow primary, child, second_primary, other;
+  primary.id = 1; primary.scene = &doomed;
+  child.id = 2; child.parent = &primary; child.scene = &doomed;
+  second_primary.id = 3; second_primary.scene = &doomed;
+  other.id = 4; other.scene = &unrelated;
+  primary.next = &child; child.next = &second_primary; second_primary.next = &other;
+  wmWindowManager wm{{&primary}};
+  Main bmain{{&wm}, {nullptr}};
+  WorkSpace workspace;
+  workspace.sequencer_scene = &doomed;
+  bmain.workspaces.first = &workspace;
+  bContext C{&wm, &primary, &doomed};
+
+  assert(ED_scene_delete(&C, &bmain, &doomed));
+  assert(teardown_count == 3 && deletion_count == 1);
+  assert(primary.scene == &kept && child.scene == &kept && second_primary.scene == &kept);
+  assert(other.scene == &unrelated && workspace.sequencer_scene == &kept);
+
+  teardown_count = deletion_count = 0;
+  Scene only; only.id.session_uid = 40;
+  wmWindow only_window; only_window.id = 5; only_window.scene = &only;
+  wmWindowManager only_wm{{&only_window}};
+  Main only_main{{&only_wm}, {nullptr}};
+  bContext only_context{&only_wm, &only_window, &only};
+  assert(!ED_scene_delete(&only_context, &only_main, &only));
+  assert(teardown_count == 0 && deletion_count == 0 && only_window.scene == &only);
+}
+'''
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(fixture)
 
     def test_area_pullout_retires_paint_before_replacing_modal_region(self):
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, jd->win1, jd->sa1, nullptr);'

@@ -4,6 +4,12 @@ Verified source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed native iOS 
 
 The compiled ARM64 executable confirms owner teardown before both the current-scene unlink and global tagged-object deletion, and retains the strict scene/object UID checks. The earlier launch-crash correction also passes its compiled HUD context-restoration and first-layout audits. Full host suite **343/343**, focused owner/object fixtures **14/14**, and **109-file** exact pinned preflight pass. This package has no device paint acceptance. Continue the original Pencil stroke ownership and terminal audit while preserving the complete approved ring, default bars, corner controls, scene behavior and lifetime guards.
 
+## Scene deletion lifecycle fixture — 2026-10-11
+
+Added an end-to-end host fixture that executes pinned `ED_scene_delete` through the patched active-scene and scene-change functions. It verifies teardown for the deleted-scene windows, including a child window, before native scene free; preserves an unrelated window; and confirms deleting the sole scene refuses without disturbing its owner. The fixture reuses the same exact pinned-source materialization as the View Layer deletion tests.
+
+Focused owner teardown passes **10/10**, the full host suite **344/344**, the 109-file offline pinned preflight passes, and `git diff --check` is clean. This adds host coverage for already-verified production source `13b7c7c`; no IPA rebuild or device behavior claim is made.
+
 ## Current candidate - View Layer deletion teardown - 2026-10-11
 
 An additional native route removes a View Layer with `BLI_remlink` and rewrites window layer names directly, bypassing the guarded setter. After Blender accepts the deletion poll, the Apple-only overlay now retires the strict Pencil paint owner for each window still bound to that scene/layer, before node-tree cleanup, unlink, or free. Rejected deletion does not cancel. The source-executing regression checks matching versus unrelated windows and both accepted/refused deletion.
