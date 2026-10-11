@@ -1,3 +1,9 @@
+## Current source candidate — object deletion cleanup — 2026-10-11
+
+The latest fully verified build is source `32a28f147df791c3d1fceae0cd5918c66b0f1f3a`, run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). Its downloaded full IPA and compiled View Layer deletion hook pass archive, arm64/iPhoneOS, UI/header/icon and ordering checks; this does not establish iPad paint interaction.
+
+An unbuilt candidate now retires a Pencil paint owner before either current-scene object unlink or global object free, using scene/object session UIDs to leave unrelated owners alone. Full host tests pass **343/343** and the exact pinned overlay preflight applies to **109 files**. Next is an exact-source build and downloaded-package verification. Keep the accepted ring, native headers, left-corner panels, editing fallback and strict owner/lifetime behavior unchanged.
+
 # Product direction and decisions
 
 ## Current source checkpoint - 2026-10-11

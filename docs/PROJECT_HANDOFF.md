@@ -1,3 +1,9 @@
+## Current verified package and next source correction — 2026-10-11
+
+Verified source `32a28f147df791c3d1fceae0cd5918c66b0f1f3a` completed native iOS Release and full IPA verification in run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). The downloaded IPA is 248,608,632 bytes, SHA256 `e93da6aa7d347c06c46a8b53e0b3322ba9aef826542ac798e4162242947c8cb6`; artifact `11712473726`. Its archive CRC (3,368 entries), arm64/iPhoneOS 5.0.0 bundle, exact UI/default Blender header, native tool definitions and all129 icons pass. Compiled binary UUID `2FB1AB2E-858A-32B5-9DA8-F0C6BE980616` confirms View Layer owner teardown precedes unlink. This package has no device paint acceptance.
+
+Current unbuilt candidate covers object removal from the current scene and global tagged-object deletion. It filters teardown by scene/object session UID and calls before unlink/free. The full host suite passes **343/343**, focused owner teardown **9/9**, object-delete **2/2**, and pinned offline preflight **109 files**. Next: commit/push this source, build the exact commit once, verify the entire downloaded IPA and compiled deletion paths, then continue the full Pencil contact/lifecycle audit. Preserve the entire approved Base workflow, native headers, HUD placement, hardware and scene editing behavior.
+
 ## Current candidate - View Layer deletion teardown - 2026-10-11
 
 An additional native route removes a View Layer with `BLI_remlink` and rewrites window layer names directly, bypassing the guarded setter. After Blender accepts the deletion poll, the Apple-only overlay now retires the strict Pencil paint owner for each window still bound to that scene/layer, before node-tree cleanup, unlink, or free. Rejected deletion does not cancel. The source-executing regression checks matching versus unrelated windows and both accepted/refused deletion.

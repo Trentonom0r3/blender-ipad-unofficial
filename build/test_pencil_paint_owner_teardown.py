@@ -76,6 +76,8 @@ CPP_PRELUDE = r'''
 #include <initializer_list>
 struct bContext; struct wmWindow; struct wmWindowManager; struct ScrArea;
 struct ARegion; struct wmOperator; struct wmEvent; struct wmEventHandler_Op; struct Scene;
+void WM_event_ipad_pencil_paint_owner_teardown(
+    bContext *, wmWindow *, const ScrArea *, const ARegion *, uint64_t scene_uid = 0, uint64_t object_uid = 0);
 struct ListBase { void *first=nullptr; };
 struct ID { uint64_t session_uid=17; };
 struct rcti { int xmin=10,ymin=20,xmax=110,ymax=120; };
@@ -290,7 +292,8 @@ struct Fixture {
     handler.ipad_pencil_type_address=uintptr_t(&type);handler.ipad_pencil_screen_uid=17;
     handler.ipad_pencil_area=uintptr_t(&owner_area);handler.ipad_pencil_region=uintptr_t(&owner_region);
     handler.ipad_pencil_paint_mode=OB_MODE_SCULPT;handler.ipad_pencil_paint_serial=44;
-    handler.ipad_pencil_owner_values[5]=17;handler.ipad_pencil_owner_values[9]=OB_MODE_SCULPT;
+    handler.ipad_pencil_owner_values[5]=17;handler.ipad_pencil_owner_values[6]=53;
+    handler.ipad_pencil_owner_values[7]=67;handler.ipad_pencil_owner_values[9]=OB_MODE_SCULPT;
     handler.ipad_pencil_owner_values[17]=81;handler.ipad_pencil_owner_values[18]=82;
     std::copy_n("builtin_brush.Draw", sizeof("builtin_brush.Draw"),
                 handler.ipad_pencil_owner_tool);
@@ -342,6 +345,22 @@ int main(){
   /* Locked native UI still uses Blender's exact Cancel/status/free path for the owner. */
   assert_normal_area_or_region_teardown(false);
   assert_normal_area_or_region_teardown(true);
+  {
+    Fixture f;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,54,67);
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,53,68);
+    assert(g_cancel_calls==0&&f.window.modalhandlers.first==&f.handler.head);
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,53,67);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1);
+    assert(f.handler.op==nullptr&&f.handler.head.freed);
+  }
+  {
+    /* A global object removal ignores only the scene dimension, not identity. */
+    Fixture f;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,0,67);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1);
+    assert(f.handler.op==nullptr&&f.handler.head.freed);
+  }
   {
     /* Hiding a live owner region is not ED_region_exit: cancel while the original
      * region is still registered and before Blender frees its local handlers. */

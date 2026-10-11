@@ -1,3 +1,9 @@
+## Current checkpoint — object deletion owner cleanup — 2026-10-11
+
+Verified source `32a28f147df791c3d1fceae0cd5918c66b0f1f3a` completed run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). Its full downloaded IPA passes the 3,368-entry CRC, arm64/iPhoneOS bundle, exact UI/default Blender header/native tool inventory and 129-icon checks. Compiled View Layer teardown ordering passes. No device paint acceptance is attached to this build.
+
+The current unbuilt source candidate tears down only matching strict Pencil paint owners before current-scene object unlink or global tagged-object deletion. Validation: full host suite **343/343**, focused owner tests **9/9**, object-delete tests **2/2**, exact pinned preflight **109 files**. Build this exact commit once, verify the whole downloaded IPA and compiled object-deletion call sites, then continue original-owner lifecycle work.
+
 ## Current source candidate - 2026-10-11
 
 View Layer deletion now retires admitted Pencil paint owners before the target layer is unlinked. The hook runs only after Blender's delete poll accepts, matches windows by the still-live scene and layer, and uses the existing strict native teardown path. The exact-source fixture verifies rejected deletion, matching and unrelated windows, and teardown order. Host suite **338/338**, focused test **3/3**, and **108-file** offline preflight pass. This source has not been built; the latest verified IPA is **67c86b2 / run 38162571744** and does not include it. Device paint behavior remains unverified. Preserve the exact ring/base workflow, common Tools styling, full Blender headers, collapsed left-corner controls, and all previously accepted input/lifetime guards.

@@ -121499,7 +121499,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2322 @@
+@@ -1,2303 +1,2324 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -122208,7 +122208,9 @@ index e5a618f..0abebf2 100644
 +void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,
 +                                               wmWindow *win,
 +                                               const ScrArea *area,
-+                                               const ARegion *region);
++                                               const ARegion *region,
++                                               uint64_t owner_scene_uid = 0,
++                                               uint64_t owner_object_uid = 0);
 +#endif
  void WM_event_free_ui_handler_all(bContext *C,
                                    ListBase *handlers,
@@ -132517,7 +132519,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8463 @@
+@@ -1,6918 +1,8467 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -135766,7 +135768,9 @@ index 46a8fef..86d574b 100644
 +void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,
 +                                                wmWindow *win,
 +                                                const ScrArea *area,
-+                                                const ARegion *region)
++                                                const ARegion *region,
++                                                const uint64_t owner_scene_uid,
++                                                const uint64_t owner_object_uid)
 +{
 +  if (!C || !win || !win->runtime) {
 +    return;
@@ -135816,7 +135820,9 @@ index 46a8fef..86d574b 100644
 +      wmEventHandler_Op *handler = reinterpret_cast<wmEventHandler_Op *>(handler_base);
 +      if (!handler->ipad_pencil_paint_serial ||
 +          (area && handler->ipad_pencil_area != uintptr_t(area)) ||
-+          (region && handler->ipad_pencil_region != uintptr_t(region))) continue;
++          (region && handler->ipad_pencil_region != uintptr_t(region)) ||
++          (owner_scene_uid && handler->ipad_pencil_owner_values[6] != owner_scene_uid) ||
++          (owner_object_uid && handler->ipad_pencil_owner_values[7] != owner_object_uid)) continue;
 +      candidate = handler;
 +      break;
 +    }
@@ -169217,6 +169223,44 @@ index 13c67db..a678996 100644
  
  /** #WM_HANDLER_TYPE_DROPBOX. */
  struct wmEventHandler_Dropbox {
+diff --git a/source/blender/editors/object/object_add.cc b/source/blender/editors/object/object_add.cc
+index c680cef..c680cef 100644
+--- a/source/blender/editors/object/object_add.cc
++++ b/source/blender/editors/object/object_add.cc
+@@ -2206,1 +2206,16 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
++#ifdef WITH_APPLE_CROSSPLATFORM
++static void object_delete_ipad_pencil_paint_owner_teardown(
++    bContext *C, wmWindowManager *wm, Scene *scene, const Object *object)
++{
++  if (!C || !wm || !object) {
++    return;
++  }
++  const uint64_t scene_uid = scene ? scene->id.session_uid : 0;
++  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++    WM_event_ipad_pencil_paint_owner_teardown(
++        C, win, nullptr, nullptr, scene_uid, object->id.session_uid);
++  }
++}
++#endif
++
+ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+@@ -2256,3 +2271,6 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+     else {
+       /* Object is used in multiple scenes. Delete the object from the current scene only. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++      object_delete_ipad_pencil_paint_owner_teardown(C, wm, scene, ob);
++#endif
+       base_free_and_unlink_no_indirect_check(bmain, scene, ob);
+@@ -2269,2 +2287,9 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+   if (tagged_count > 0) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++    LISTBASE_FOREACH (Object *, object, &bmain->objects) {
++      if (object->id.tag & ID_TAG_DOIT) {
++        object_delete_ipad_pencil_paint_owner_teardown(C, wm, nullptr, object);
++      }
++    }
++#endif
+     BKE_id_multi_tagged_delete(bmain);
 diff --git a/source/blender/editors/scene/scene_edit.cc b/source/blender/editors/scene/scene_edit.cc
 index 1b2b5ae..ded945f 100644
 --- a/source/blender/editors/scene/scene_edit.cc

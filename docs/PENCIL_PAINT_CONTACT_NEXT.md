@@ -1,3 +1,11 @@
+## Object deletion owner-teardown candidate — 2026-10-11
+
+The last verified source is `32a28f147df791c3d1fceae0cd5918c66b0f1f3a`, built and fully downloaded as run [38166734482](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38166734482). The full 3,368-entry IPA check, arm64/iPhoneOS bundle, exact packaged UI/default Blender header, native tool definitions and all 129 icons pass. Its compiled binary confirms the View Layer teardown call precedes layer unlink. This is package/compiled-shape evidence; no device paint acceptance is recorded.
+
+The current candidate covers both object deletion paths in `object_delete_exec`: when a shared object is unlinked from only the current scene, matching scene/object owners retire before unlink; when objects are globally deleted, each tagged object's owner retires before multi-ID deletion. The existing strict teardown matches immutable session UIDs and revalidates the original live owner. It does not cancel unrelated scene/object owners or relax native lifetime checks.
+
+Validation so far: full host suite **343/343**, owner teardown **9/9**, focused object-delete checks **2/2**, exact pinned preflight **109 files**. The candidate still needs commit, exact-source native Release and full downloaded IPA/compiled-call verification. No device paint behavior is claimed.
+
 ## View Layer deletion teardown candidate - 2026-10-11
 
 `ED_scene_view_layer_delete` had a separate destructive path: it unlinked a layer and only afterward changed affected windows' stored layer names. The Apple-only overlay now calls Blender's existing strict owner teardown for windows matching the accepted scene/layer delete, before node-tree cleanup and unlink. A refused deletion leaves the paint owner alone. The connected fixture compiles the exact patched delete prefix and verifies original layer identity at teardown, scene/layer filtering, and cancellation-before-unlink.
