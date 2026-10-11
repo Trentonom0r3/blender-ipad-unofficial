@@ -35,6 +35,15 @@ OWNER_MATCH = function(WM, 'static bool wm_ipad_pencil_paint_modal_owner_matches
 MODAL_ADMIT = function(WM, 'static eIPadPencilPaintModalAdmission wm_ipad_pencil_paint_modal_admit(')
 OWNER_TEARDOWN = function(WM, 'void WM_event_ipad_pencil_paint_owner_teardown(')
 REGION_VISIBILITY_CHANGE = function(AREA, 'void ED_region_visibility_change_update_ex(')
+REGION_REMOVE = function(SCREEN, 'void ED_region_remove(')
+SCREEN_DELAREA = function(SCREEN, 'static void screen_delarea(')
+AREA_SWAPSPACE = function(AREA, 'void ED_area_swapspace(')
+AREA_NEWSPACE = function(AREA, 'void ED_area_newspace(')
+AREA_FIND_UNDER_CURSOR = function(AREA, 'ScrArea *ED_area_find_under_cursor(')
+AREA_SWAP_OWNER_SCAN = lease.cpp_block(AREA_SWAPSPACE, 'if (wm)')
+AREA_EXIT = function(SCREEN, 'void ED_area_exit(')
+AREA_EXIT_OWNER_HOOK = re.search(
+    r'WM_event_ipad_pencil_paint_owner_teardown\(C, win, area, nullptr\);', AREA_EXIT).group(0)
 SCENE_CHANGE = function(SCREEN, 'void ED_screen_scene_change(')
 SCENE_CHANGE_PREFIX = SCENE_CHANGE[SCENE_CHANGE.index('{') + 1:SCENE_CHANGE.index('  /* Switch scene. */')]
 SCREEN_CHANGE = function(SCREEN, 'bool ED_screen_change(')
@@ -492,6 +501,66 @@ int main(){
 }
 '''
 
+CROSS_WINDOW_SWAP_FIXTURE = CPP_PRELUDE + r'''
+enum class eIPadPencilPaintModalEvent : uint8_t { OwnedContact,StaleContact,Timer,Interrupt };
+static eIPadPencilPaintModalEvent wm_ipad_pencil_paint_modal_event_classify(
+    const wmEvent *,const wmEventHandler_Op*){return eIPadPencilPaintModalEvent::Interrupt;}
+bool ED_ipad_finger_paint_capture(bContext *C,IPadFingerPaintOwner &owner){
+  std::copy(std::begin(g_owner_values),std::end(g_owner_values),owner.values.begin());
+  std::copy(std::begin(g_owner_tool),std::end(g_owner_tool),owner.tool.begin());
+  return g_owner_valid&&C&&wm_window_registered(C->wm,C->win);
+}
+''' + REGISTERED + '\n' + OWNER_MATCH + '\n' + MODAL_ADMIT + '\n' + CALL_FIXTURE + '\n' + OWNER_TEARDOWN + '\n' + r'''
+void ED_area_exit(bContext *C,ScrArea *area){
+  wmWindow *win=CTX_wm_window(C);
+  AREA_EXIT_OWNER_HOOK
+}
+
+int main(){
+  bScreen owner_screen,current_screen;
+  owner_screen.id.session_uid=17;current_screen.id.session_uid=91;
+  ScrArea owner_area,current_area;ARegionRuntime runtime;ARegion owner_region;
+  owner_area.spacetype=SPACE_VIEW3D;owner_area.regionbase.first=&owner_region;
+  owner_region.regiontype=RGN_TYPE_WINDOW;owner_region.runtime=&runtime;
+  owner_region.winrct={10,20,110,120};
+  owner_screen.areabase.first=&owner_area;current_screen.areabase.first=&current_area;
+  wmWindow current_window,owner_window;current_window.runtime=&current_window.runtime_data;
+  owner_window.runtime=&owner_window.runtime_data;
+  current_window.screen=&current_screen;owner_window.screen=&owner_screen;
+  current_window.next=&owner_window;
+  wmWindowManager manager;manager.windows.first=&current_window;
+  bContext context; bContext *C=&context;
+  C->wm=&manager;C->win=&current_window;C->screen=&current_screen;C->area=&current_area;
+
+  wmOperatorType type;type.modal=noop_modal;type.cancel=paint_cancel;g_registered_type=&type;
+  wmOperator op;op.type=&type;op.reports=&g_report_list;
+  wmEventHandler_Op handler;handler.head.type=WM_HANDLER_TYPE_OP;handler.op=&op;
+  handler.context.win=&owner_window;handler.context.area=&owner_area;
+  handler.context.region=&owner_region;handler.ipad_pencil_operator_lifetime=31;
+  handler.ipad_pencil_type_lifetime=29;handler.ipad_pencil_type_address=uintptr_t(&type);
+  handler.ipad_pencil_screen_uid=17;handler.ipad_pencil_area=uintptr_t(&owner_area);
+  handler.ipad_pencil_region=uintptr_t(&owner_region);handler.ipad_pencil_paint_mode=OB_MODE_SCULPT;
+  handler.ipad_pencil_paint_serial=44;handler.ipad_pencil_paint_generation=3;
+  handler.ipad_pencil_owner_values[5]=17;handler.ipad_pencil_owner_values[9]=OB_MODE_SCULPT;
+  handler.ipad_pencil_owner_values[17]=81;handler.ipad_pencil_owner_values[18]=82;
+  std::copy_n("builtin_brush.Draw",sizeof("builtin_brush.Draw"),handler.ipad_pencil_owner_tool);
+  owner_window.modalhandlers.first=&handler;g_owner_area=&owner_area;g_owner_region=&owner_region;
+  g_owner_values[5]=17;g_owner_values[9]=OB_MODE_SCULPT;
+  g_owner_values[17]=81;g_owner_values[18]=82;
+  std::copy_n("builtin_brush.Draw",sizeof("builtin_brush.Draw"),g_owner_tool);
+
+  wmWindowManager *wm=CTX_wm_manager(C);wmWindow *win=CTX_wm_window(C);
+  ScrArea *sa1=&current_area,*sa2=&owner_area;
+  CROSS_WINDOW_OWNER_SCAN
+  assert(g_cancel_calls==1&&g_cancel_context_correct==1);
+  assert(owner_window.modalhandlers.first==nullptr&&handler.op==nullptr);
+  ED_area_exit(C,sa1);
+  ED_area_exit(C,sa2);
+  assert(g_cancel_calls==1&&g_operator_frees==1&&g_handler_frees==1);
+}
+'''.replace('AREA_EXIT_OWNER_HOOK', AREA_EXIT_OWNER_HOOK).replace(
+    'CROSS_WINDOW_OWNER_SCAN', AREA_SWAP_OWNER_SCAN)
+
 
 WORKSPACE_SWITCH_FIXTURE = r"""
 #include <cassert>
@@ -718,6 +787,35 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(region_exit.index(hook), region_exit.index('region->runtime->type->exit'))
         self.assertLess(region_exit.index(hook), region_exit.index('region->runtime->visible = false'))
         self.assertIn('void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,', API)
+
+    def test_area_and_region_replacement_routes_through_owner_exit_before_free(self):
+        """Guard the destruction entrypoints that must run the live-owner hook."""
+        self.assertLess(SCREEN_DELAREA.index('ED_area_exit(C, area);'),
+                        SCREEN_DELAREA.index('BKE_screen_area_free(area);'))
+        self.assertLess(REGION_REMOVE.index('ED_region_exit(C, region);'),
+                        REGION_REMOVE.index('BKE_area_region_free(area->type, region);'))
+        self.assertLess(AREA_SWAPSPACE.index('ED_area_exit(C, sa1);'),
+                        AREA_SWAPSPACE.index('ED_area_data_copy(sa1, sa2, true);'))
+        self.assertLess(AREA_SWAPSPACE.index('ED_area_exit(C, sa2);'),
+                        AREA_SWAPSPACE.index('ED_area_data_copy(sa1, sa2, true);'))
+        self.assertLess(AREA_NEWSPACE.index('ED_area_exit(C, area);'),
+                        AREA_NEWSPACE.index('area->spacetype = type;'))
+
+    def test_cross_window_area_swap_retires_foreign_paint_owner_before_exit(self):
+        """Area swap can find its second editor under another window."""
+        self.assertIn('WM_window_find_under_cursor(win, event_xy, event_xy_other)',
+                      AREA_FIND_UNDER_CURSOR)
+        self.assertIn('win = win_other;', AREA_FIND_UNDER_CURSOR)
+        first_exit = AREA_SWAPSPACE.index('ED_area_exit(C, sa1);')
+        second_exit = AREA_SWAPSPACE.index('ED_area_exit(C, sa2);')
+        before_copy = AREA_SWAPSPACE.index('ED_area_data_copy(tmp, sa1, false);')
+        self.assertLess(AREA_SWAPSPACE.index('WM_event_ipad_pencil_paint_owner_teardown(C, owner_win, sa1'),
+                        first_exit)
+        self.assertLess(AREA_SWAPSPACE.index('WM_event_ipad_pencil_paint_owner_teardown(C, owner_win, sa2'),
+                        first_exit)
+        self.assertLess(first_exit, second_exit)
+        self.assertLess(second_exit, before_copy)
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CROSS_WINDOW_SWAP_FIXTURE)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

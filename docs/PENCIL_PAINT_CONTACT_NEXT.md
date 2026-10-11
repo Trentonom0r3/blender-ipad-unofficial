@@ -1,3 +1,11 @@
+## Unbuilt cross-window owner-loss correction - 2026-10-11
+
+The local production candidate adds strict Pencil paint-owner retirement at the `ED_area_swapspace` seam. In the pinned source, `ED_area_find_under_cursor` can return a target area from another window, but `ED_area_exit` only searches the window in its supplied context. Before either swap target exits or copies data, the candidate scans foreign manager windows and calls the existing owner teardown for both targets; same-window ownership continues through the original exit hook. No raw operator, Brush, RNA, or Undo pointers are retained.
+
+`build/test_pencil_paint_owner_teardown.py` executes the extracted cross-window scan, real registration/admission/owner match and native cancel/status/free helper, and the exact `ED_area_exit` teardown hook. It verifies a foreign Sculpt owner is retired exactly once before area replacement and confirms the native area-under-cursor route can target the other window. Owner teardown is9/9, Texture Paint cancellation5/5, full host suite331/331, the offline pinned preflight covers107 files, and diff hygiene passes. This is an uncommitted, unbuilt source candidate: latest verified package remains run38092455806, with no new package or device result.
+
+Next: complete a literal area-swap/native-context review, then commit/push this coherent correction, build its exact source once, and verify the downloaded full IPA and compiled obligations. Continue the broader owner-loss/mode-specific lifecycle audit afterward; do not treat this bounded correction as completion.
+
 ## Current verified checkpoint - 2026-10-11
 
 Exact source `921506f5473a53ced298ed57dcb1958dda1e4394` passed hosted preflight and native iOS Release in [run 38092455806](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38092455806), artifact `11685147055`. The downloaded full IPA at `output/ui-preview/pencil-paint-contact/run-38092455806/Blender-iPad-Unofficial.ipa` is 248,608,051 bytes, SHA256 `156ec5d447a08fe8651ad67ed223fd250ec35020ec878d98aa141d5ce4b6ef77`. Full 3,368-entry CRC, arm64/iPhoneOS 5.0.0 bundle, exact interaction Python/default Blender header/toolbar, pinned native tool definitions, all129 native icons, and the exact nine-action Base/native-only More Tools contract pass.

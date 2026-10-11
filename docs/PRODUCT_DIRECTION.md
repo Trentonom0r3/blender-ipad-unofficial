@@ -1,5 +1,11 @@
 # Product direction and decisions
 
+## Current local source candidate - 2026-10-11
+
+The latest verified package remains exact source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, recorded below; it has no new device acceptance. The active worktree adds a strict foreign-window Pencil paint-owner teardown before `ED_area_swapspace` exits or replaces either target. This closes the case where `ED_area_find_under_cursor` selects an area in another window, beyond the existing context-window exit hook.
+
+Owner teardown passes9/9; Texture Paint cancel characterization5/5; the full host suite331/331; 107-file offline preflight and diff hygiene pass. The source candidate is not yet committed or built, so it has no iOS compile, IPA, or device evidence. Preserve the native cancellation semantics and original-owner checks.
+
 ## Current checkpoint - 2026-10-10
 
 The latest production source is **46520f4e8d4773fe07d18e70e9f272ff5bac741f**. Its native iOS Release completed successfully in [run 38062626368](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38062626368), artifact **11673983435**. The downloaded full IPA is **248,606,813 bytes**, SHA256 a70714ceca595d7d82035a4280f93f878be2862d07ac2764bf9a6bb2541a0310, at output/ui-preview/pencil-paint-contact/run-38062626368/Blender-iPad-Unofficial-ipa/Blender-iPad-Unofficial.ipa. Full archive CRC (3,368 entries), arm64/iPhoneOS 5.0.0, exact packaged interaction UI, default Blender header, pinned tools, all 129 native icons, and the exact nine-action Base/native-only More Tools contract pass. The user plans to check this exact build at home; it has no device acceptance yet.

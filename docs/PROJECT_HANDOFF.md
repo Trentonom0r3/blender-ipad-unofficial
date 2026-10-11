@@ -1,3 +1,15 @@
+## Cross-window area-swap owner-teardown candidate - 2026-10-11
+
+The current local source is based on `921506f5473a53ced298ed57dcb1958dda1e4394`; the latest verified IPA remains run `38092455806` and does not contain this correction. A follow-up trace found a real owner-loss gap: pinned `ED_area_find_under_cursor` may return an area from another window, while the existing `ED_area_exit` hook looks up owners only in the event context's window. `ED_area_swapspace` could therefore replace that foreign area's region and space data before its Pencil paint modal owner was retired.
+
+The overlay now visits other manager windows and calls the existing strict owner-teardown helper for both swap targets before either `ED_area_exit` or the data copy. Same-window owners still use the original exit hook. The connected C++ fixture composes the actual foreign-window scan, registered-owner checks, native cancel/status/free helper, and the real `ED_area_exit` hook; it verifies exactly-once retirement before replacement. It also checks the pinned hit-test path can select a foreign window. It retains fresh-context resolution and all existing owner guards.
+
+Validation: owner teardown **9/9**, Texture Paint cancellation **5/5**, full host suite **331/331**, 107-file offline pinned-source preflight, and `git diff --check` pass. An initial full-suite attempt was invalid because the read-only sandbox denied Clang temporary-file creation; the same suite passed after granting temporary-file access. The current source is not yet committed or built. These source/host checks do not establish iOS compile, package, or device behavior.
+
+The earlier old-project report remains narrowly addressed in source: the Color panel poll/draw guards missing brush settings, and project save host tests cover Save/Save As/Save Copy. The user later said Save seems to work. Their specific legacy files, in-app Open on device, and iOS Files-provider Open/Save remain unverified.
+
+The exact pinned Texture Paint Cancel characterization covers ordinary partial brush strokes plus Bucket/Gradient Fill. `paint_invoke` runs the first modal event before handler registration; successful initialization sets `IMAGEPAINT_DRAWING` and opens image undo only after it owns a stroke handle. The regular brush Cancel fixture verifies one mode-done call, one image-undo close, and no Fill. Native Cancel is mode-specific and is not universal rollback.
+
 ## Current verified checkpoint - 2026-10-11
 
 Exact source `921506f5473a53ced298ed57dcb1958dda1e4394` passed hosted preflight and native iOS Release in [run 38092455806](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38092455806), artifact `11685147055`. The downloaded full IPA at `output/ui-preview/pencil-paint-contact/run-38092455806/Blender-iPad-Unofficial.ipa` is 248,608,051 bytes, SHA256 `156ec5d447a08fe8651ad67ed223fd250ec35020ec878d98aa141d5ce4b6ef77`. Full 3,368-entry CRC, arm64/iPhoneOS 5.0.0 bundle, exact interaction Python/default Blender header/toolbar, pinned native tool definitions, all129 native icons, and the exact nine-action Base/native-only More Tools contract pass.

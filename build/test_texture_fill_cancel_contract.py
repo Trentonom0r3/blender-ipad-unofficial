@@ -29,10 +29,14 @@ STROKE = preflight.get_source(
     CACHE,
     False,
 ).decode('utf-8')
+IMAGE_INIT = function(IMAGE_PAINT, 'static std::unique_ptr<PaintOperation> texture_paint_init(')
+IMAGE_START = function(IMAGE_PAINT, 'static bool paint_stroke_test_start(')
+IMAGE_INVOKE = function(IMAGE_PAINT, 'static wmOperatorStatus paint_invoke(')
 IMAGE_DONE = function(IMAGE_PAINT, 'static void paint_stroke_done(')
 IMAGE_CANCEL = function(IMAGE_PAINT, 'static void paint_cancel(')
 STROKE_DONE = function(STROKE, 'static void stroke_done(')
 STROKE_CANCEL = function(STROKE, 'void paint_stroke_cancel(')
+STROKE_MODAL = function(STROKE, 'wmOperatorStatus paint_stroke_modal(')
 
 
 CPP = r"""
@@ -121,6 +125,24 @@ int main(){
 }
 """)
 
+    def test_regular_texture_brush_cancel_finishes_partial_stroke_without_fill(self):
+        self.run_native(r"""
+int main(){
+  PaintRuntime runtime;Brush brush;brush.image_brush_type=0;
+  ToolSettings settings;settings.imapaint.paint={&runtime,&brush};Scene scene{&settings};
+  int bucket=0,gradient=0,handle_done=0;AbstractPaintMode mode{&bucket,&gradient,&handle_done};
+  PaintOperation operation{&mode,reinterpret_cast<void*>(1)};
+  PaintStroke stroke;stroke.paint=&settings.imapaint.paint;stroke.brush=&brush;
+  stroke.stroke_started=true;stroke.mode_data=&operation;stroke.done=paint_stroke_done;
+  wmOperator op{&stroke};bContext C{&scene,&settings.imapaint.paint};
+  settings.imapaint.flag=1;
+  paint_cancel(&C,&op);
+  assert(bucket==0&&gradient==0&&handle_done==1&&operation.stroke_handle==nullptr);
+  assert(undo_end_calls==1&&free_calls==1&&settings.imapaint.flag==0);
+  assert(runtime.brush_rotation==0&&runtime.brush_rotation_sec==0);
+}
+""")
+
     def test_native_cancel_uses_gradient_fill_when_that_is_the_active_fill_mode(self):
         self.run_native(r"""
 int main(){
@@ -138,21 +160,36 @@ int main(){
 }
 """)
 
-    def test_native_cancel_of_unstarted_stroke_skips_done_callback(self):
+    def test_cancel_after_rejected_stroke_init_has_no_open_image_undo_state(self):
         self.run_native(r"""
 int main(){
   PaintRuntime runtime;Brush brush;brush.image_brush_type=IMAGE_PAINT_BRUSH_TYPE_FILL;
   ToolSettings settings;settings.imapaint.paint={&runtime,&brush};Scene scene{&settings};
-  int bucket=0,gradient=0,handle_done=0;AbstractPaintMode mode{&bucket,&gradient,&handle_done};
-  PaintOperation operation{&mode,reinterpret_cast<void*>(1)};
+  int bucket=0,gradient=0,handle_done=0;
   PaintStroke stroke;stroke.paint=&settings.imapaint.paint;stroke.brush=&brush;
-  stroke.stroke_started=false;stroke.mode_data=&operation;stroke.done=paint_stroke_done;
+  stroke.stroke_started=false;stroke.mode_data=nullptr;stroke.done=paint_stroke_done;
   wmOperator op{&stroke};bContext C{&scene,&settings.imapaint.paint};
+  settings.imapaint.flag=0;
   paint_cancel(&C,&op);
   assert(bucket==0&&gradient==0&&handle_done==0);
-  assert(undo_end_calls==0&&free_calls==1);
+  assert(settings.imapaint.flag==0&&undo_end_calls==0&&free_calls==1);
 }
 """)
+
+    def test_first_modal_initializes_mode_before_native_handler_registration(self):
+        """Successful Texture Paint init cannot be cancelled in a false pre-start state."""
+        handle_failure = IMAGE_INIT.index('if (!pop->stroke_handle)')
+        drawing_flag = IMAGE_INIT.index('settings->imapaint.flag |= IMAGEPAINT_DRAWING;')
+        undo_begin = IMAGE_INIT.index('ED_image_undo_push_begin(')
+        self.assertLess(handle_failure, drawing_flag)
+        self.assertLess(drawing_flag, undo_begin)
+        self.assertIn('if (!(pop = texture_paint_init(C, op, mouse))) {\n    return false;', IMAGE_START)
+        self.assertLess(IMAGE_START.index('texture_paint_init(C, op, mouse)'),
+                        IMAGE_START.index('paint_stroke_set_mode_data('))
+        self.assertIn('stroke->stroke_started = stroke->test_start(C, op, sample_average.mouse);',
+                      STROKE_MODAL)
+        self.assertLess(IMAGE_INVOKE.index('op->type->modal(C, op, event)'),
+                        IMAGE_INVOKE.index('WM_event_add_modal_handler(C, op);'))
 
 
 if __name__ == '__main__':

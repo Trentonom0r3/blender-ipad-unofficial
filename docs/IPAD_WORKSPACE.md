@@ -1,3 +1,9 @@
+## Current local source candidate - 2026-10-11
+
+Based on verified source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, the unbuilt worktree now retires Pencil paint owners in foreign windows before `ED_area_swapspace` exits or copies either target. The pinned area-under-cursor operator can select a target in another window, while the ordinary `ED_area_exit` hook is scoped to the context window. The connected regression executes foreign-window admission and native cancel/status/free before replacement.
+
+Owner teardown9/9, Texture Paint cancellation5/5, full host suite331/331, 107-file offline pinned preflight, and diff hygiene pass. This exact correction is not committed, compiled, packaged, or device-tested yet. Continue to preserve the strict original-owner and mode-specific Cancel behavior.
+
 ## Current verified checkpoint - 2026-10-11
 
 Exact source `921506f5473a53ced298ed57dcb1958dda1e4394` passed hosted preflight and native iOS Release in [run 38092455806](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38092455806), artifact `11685147055`. The downloaded full IPA at `output/ui-preview/pencil-paint-contact/run-38092455806/Blender-iPad-Unofficial.ipa` is 248,608,051 bytes, SHA256 `156ec5d447a08fe8651ad67ed223fd250ec35020ec878d98aa141d5ce4b6ef77`. Full 3,368-entry CRC, arm64/iPhoneOS 5.0.0 bundle, exact interaction Python/default Blender header/toolbar, pinned native tool definitions, all129 native icons, and the exact nine-action Base/native-only More Tools contract pass.
