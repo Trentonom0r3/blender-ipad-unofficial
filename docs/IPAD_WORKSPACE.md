@@ -1,8 +1,8 @@
 ## Current local source candidate - 2026-10-11
 
-Based on verified source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, the unbuilt worktree now retires Pencil paint owners in foreign windows before `ED_area_swapspace` exits or copies either target. The pinned area-under-cursor operator can select a target in another window, while the ordinary `ED_area_exit` hook is scoped to the context window. The connected regression executes foreign-window admission and native cancel/status/free before replacement.
+Based on verified source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, the uncommitted patch resolves the true owning window inside shared `ED_area_exit` using pinned `WM_window_find_by_area`. It then retires an admitted Pencil paint owner before native area/region callbacks; this handles the cross-window area-swap route without a one-call-site scan and leaves the original context-window fallback for areas outside active screens. The connected regression executes the pinned area-to-window lookup plus strict native cancel/status/free with a foreign owner.
 
-Owner teardown9/9, Texture Paint cancellation5/5, full host suite331/331, 107-file offline pinned preflight, and diff hygiene pass. This exact correction is not committed, compiled, packaged, or device-tested yet. Continue to preserve the strict original-owner and mode-specific Cancel behavior.
+Owner teardown **9/9**, Texture Paint Cancel **5/5**, full host suite **331/331**, 107-file offline pinned preflight, and diff hygiene pass. The narrower commit `8f1efaf` passed native Release in run `38153137628`; the current shared-hook correction is not included in that build and still needs its own exact-source build/package/device check. Preserve strict owner/context and mode-specific Cancel behavior.
 
 ## Current verified checkpoint - 2026-10-11
 

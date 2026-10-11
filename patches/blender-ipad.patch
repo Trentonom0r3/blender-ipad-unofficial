@@ -68410,7 +68410,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 index 0767a5d..a7491e3 100644
 --- a/source/blender/editors/screen/area.cc
 +++ b/source/blender/editors/screen/area.cc
-@@ -1,4427 +1,4622 @@
+@@ -1,4427 +1,4610 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -71203,20 +71203,7 @@ index 0767a5d..a7491e3 100644
  {
    ScrArea *tmp = MEM_callocN<ScrArea>(__func__);
    wmWindow *win = CTX_wm_window(C);
-+  wmWindowManager *wm = CTX_wm_manager(C);
  
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+  /* ED_area_find_under_cursor can select an area in a different window. Its
-+   * modal paint owner is not reached by ED_area_exit's context-window lookup. */
-+  if (wm) {
-+    LISTBASE_FOREACH (wmWindow *, owner_win, &wm->windows) {
-+      if (owner_win == win) continue;
-+      WM_event_ipad_pencil_paint_owner_teardown(C, owner_win, sa1, nullptr);
-+      WM_event_ipad_pencil_paint_owner_teardown(C, owner_win, sa2, nullptr);
-+    }
-+  }
-+#endif
-+
    ED_area_exit(C, sa1);
    ED_area_exit(C, sa2);
  
@@ -71232,7 +71219,7 @@ index 0767a5d..a7491e3 100644
    /* The areas being swapped could be between different windows,
     * so clear screen active region pointers. This is set later
     * through regular operations. #141313. */
--  wmWindowManager *wm = CTX_wm_manager(C);
+   wmWindowManager *wm = CTX_wm_manager(C);
    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
      if (bScreen *screen = WM_window_get_active_screen(win)) {
        screen->active_region = nullptr;
@@ -74026,7 +74013,7 @@ diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/edito
 index 32c8d9b..b374145 100644
 --- a/source/blender/editors/screen/screen_edit.cc
 +++ b/source/blender/editors/screen/screen_edit.cc
-@@ -1,2175 +1,2259 @@
+@@ -1,2175 +1,2263 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -75042,7 +75029,11 @@ index 32c8d9b..b374145 100644
    wmWindow *win = CTX_wm_window(C);
    ScrArea *prevsa = CTX_wm_area(C);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  WM_event_ipad_pencil_paint_owner_teardown(C, win, area, nullptr);
++  wmWindow *paint_owner_win = wm ? WM_window_find_by_area(wm, area) : nullptr;
++  if (paint_owner_win == nullptr) {
++    paint_owner_win = win;
++  }
++  WM_event_ipad_pencil_paint_owner_teardown(C, paint_owner_win, area, nullptr);
 +#endif
  
    if (area->type && area->type->exit) {

@@ -2,9 +2,9 @@
 
 ## Current local source candidate - 2026-10-11
 
-The latest verified package remains exact source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, recorded below; it has no new device acceptance. The active worktree adds a strict foreign-window Pencil paint-owner teardown before `ED_area_swapspace` exits or replaces either target. This closes the case where `ED_area_find_under_cursor` selects an area in another window, beyond the existing context-window exit hook.
+The latest verified package remains exact source `921506f5473a53ced298ed57dcb1958dda1e4394` / run `38092455806`, recorded below. The active patch resolves the owning window in shared `ED_area_exit` via pinned `WM_window_find_by_area`, then calls the existing strict Pencil paint-owner teardown before native area/region exit callbacks. This covers the foreign-window area-swap path and other registered-area exit paths, while preserving the context-window fallback if no active screen contains the target. It retains fresh owner/context validation and native mode-specific Cancel behavior.
 
-Owner teardown passes9/9; Texture Paint cancel characterization5/5; the full host suite331/331; 107-file offline preflight and diff hygiene pass. The source candidate is not yet committed or built, so it has no iOS compile, IPA, or device evidence. Preserve the native cancellation semantics and original-owner checks.
+Owner teardown passes **9/9**; Texture Paint Cancel characterization **5/5**; full host suite **331/331**; offline preflight applies to **107 pinned files**; and diff hygiene passes. Narrower source `8f1efaf` passed hosted preflight and native iOS Release in run `38153137628`, but predates this shared-hook correction. The current source needs its own exact build and downloaded IPA verification; no device acceptance is claimed.
 
 ## Current checkpoint - 2026-10-10
 
