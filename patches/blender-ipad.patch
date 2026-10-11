@@ -154919,7 +154919,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 index 0de9e58..0d340e7 100644
 --- a/source/blender/windowmanager/intern/wm_window.cc
 +++ b/source/blender/windowmanager/intern/wm_window.cc
-@@ -1,2877 +1,2926 @@
+@@ -1,2877 +1,2935 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved. 2007 Blender Authors.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -156091,6 +156091,10 @@ index 0de9e58..0d340e7 100644
    return false;
  }
  
++#ifdef WITH_APPLE_CROSSPLATFORM
++static void wm_window_ipad_pencil_paint_owner_teardown(wmWindowManager *wm, wmWindow *win);
++#endif
++
  wmWindow *WM_window_open(bContext *C,
                           const char *title,
                           const rcti *rect_unscaled,
@@ -156186,6 +156190,11 @@ index 0de9e58..0d340e7 100644
    }
  
    /* Set scene and view layer to match original window. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (win->ghostwin != nullptr && !STREQ(win->view_layer_name, view_layer->name)) {
++    wm_window_ipad_pencil_paint_owner_teardown(wm, win);
++  }
++#endif
    STRNCPY_UTF8(win->view_layer_name, view_layer->name);
    if (WM_window_get_active_scene(win) != scene) {
      /* No need to refresh the tool-system as the window has not yet finished being setup. */
@@ -157847,7 +157856,7 @@ index 0de9e58..0d340e7 100644
    win->eventstate->prev_xy[1] = oldy;
  
    win->eventstate->xy[0] = oldx;
-@@ -3088,1 +3137,21 @@ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
+@@ -3088,1 +3146,21 @@ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static void wm_window_ipad_pencil_paint_owner_teardown(wmWindowManager *wm, wmWindow *win)
 +{
@@ -157869,14 +157878,14 @@ index 0de9e58..0d340e7 100644
 +#endif
 +
  void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
-@@ -3099,1 +3168,6 @@
+@@ -3099,1 +3177,6 @@
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      if (!STREQ(win_iter->view_layer_name, view_layer->name)) {
 +        wm_window_ipad_pencil_paint_owner_teardown(wm, win_iter);
 +      }
 +#endif
        STRNCPY_UTF8(win_iter->view_layer_name, view_layer->name);
-@@ -3120,22 +3191,32 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
+@@ -3120,22 +3200,32 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
  }
 -
 +

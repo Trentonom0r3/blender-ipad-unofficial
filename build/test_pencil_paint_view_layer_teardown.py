@@ -42,6 +42,11 @@ WINDOW = patched_window_source()
 OWNER_TEARDOWN = function(
     WINDOW, 'static void wm_window_ipad_pencil_paint_owner_teardown(')
 SET_VIEW_LAYER = function(WINDOW, 'void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)\n{')
+WINDOW_OPEN = function(WINDOW, 'wmWindow *WM_window_open(')
+WINDOW_LAYER_SETUP = WINDOW_OPEN[
+    WINDOW_OPEN.index('  /* Set scene and view layer to match original window. */'):
+    WINDOW_OPEN.index('  if (WM_window_get_active_scene(win) != scene)')
+]
 
 SOURCE_FIXTURE = r'''
 #include <cassert>
@@ -61,6 +66,7 @@ struct wmWindow {
   wmWindow *next = nullptr;
   wmWindow *parent = nullptr;
   void *runtime = nullptr;
+  void *ghostwin = nullptr;
   char view_layer_name[64]{};
   bScreen *workspace_hook = nullptr;
   Scene *scene = nullptr;
@@ -156,6 +162,10 @@ void WM_event_ipad_pencil_paint_owner_teardown(
 
 #define WITH_APPLE_CROSSPLATFORM
 ''' + OWNER_TEARDOWN + '\n' + SET_VIEW_LAYER + r'''
+void setup_window_layer(wmWindowManager *wm, wmWindow *win, ViewLayer *view_layer)
+{
+''' + WINDOW_LAYER_SETUP + r'''
+}
 int main()
 {
   Scene scene;
@@ -181,17 +191,32 @@ int main()
   g_manager = &manager;
   g_target_layer = &target;
 
+  root.ghostwin = &root;
+  setup_window_layer(&manager, &root, &target);
+  assert((g_events == std::vector<int>{101}));
+  assert(STREQ(root.view_layer_name, "LayerB"));
+
+  copy_name(root.view_layer_name, sizeof(root.view_layer_name), "LayerA");
+  g_events.clear();
+  wmWindow fresh;
+  fresh.id = 4; fresh.scene = &scene; fresh.workspace_hook = &unrelated_screen;
+  copy_name(fresh.view_layer_name, sizeof(fresh.view_layer_name), "LayerA");
+  setup_window_layer(&manager, &fresh, &target);
+  assert(g_events.empty());
+  assert(STREQ(fresh.view_layer_name, "LayerB"));
+
+  g_events.clear();
   WM_window_set_active_view_layer(&root, &target);
   assert((g_events == std::vector<int>{101, 201, 102, 202}));
   assert(STREQ(root.view_layer_name, "LayerB"));
   assert(STREQ(child.view_layer_name, "LayerB"));
   assert(STREQ(unrelated.view_layer_name, "LayerA"));
-  assert(g_context_creates == 2 && g_context_frees == 2);
+  assert(g_context_creates == 3 && g_context_frees == 3);
 
   g_events.clear();
   WM_window_set_active_view_layer(&root, &target);
   assert((g_events == std::vector<int>{201, 202}));
-  assert(g_context_creates == 2 && g_context_frees == 2);
+  assert(g_context_creates == 3 && g_context_frees == 3);
 }
 '''
 
@@ -201,6 +226,11 @@ class PencilPaintViewLayerTeardownTests(unittest.TestCase):
         self.assertIn('CTX_wm_window_set(C, win);', OWNER_TEARDOWN)
         self.assertIn('WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);',
                       OWNER_TEARDOWN)
+        self.assertIn('win->ghostwin != nullptr', WINDOW_LAYER_SETUP)
+        self.assertIn('!STREQ(win->view_layer_name, view_layer->name)', WINDOW_LAYER_SETUP)
+        self.assertLess(
+            WINDOW_LAYER_SETUP.index('wm_window_ipad_pencil_paint_owner_teardown(wm, win);'),
+            WINDOW_LAYER_SETUP.index('STRNCPY_UTF8(win->view_layer_name, view_layer->name)'))
         hook = 'wm_window_ipad_pencil_paint_owner_teardown(wm, win_iter);'
         self.assertLess(SET_VIEW_LAYER.index(hook),
                         SET_VIEW_LAYER.index('STRNCPY_UTF8(win_iter->view_layer_name'))

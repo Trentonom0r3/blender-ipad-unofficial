@@ -1,3 +1,11 @@
+## Live View Layer mutation coverage - 2026-10-11
+
+The setter-only teardown missed `WM_window_open` reusing an existing temporary window: it directly copied the requested View Layer name before the scene-change path, and the scene can be unchanged. The Apple-only path now checks for a live GHOST window and a changed layer, then retires the original Pencil paint owner before that direct write. Newly allocated windows skip the hook because they cannot own an existing modal paint lease. The RNA setter still retires changed parent/child windows; scene replacement already tears down before changing the scene. The other remaining pinned writes initialize a newly copied or file-read window.
+
+The connected `test_pencil_paint_view_layer_teardown.py` applies the exact patch to pinned `wm_window.cc` and compiles the real helper, full setter, and exact `WM_window_open` layer-setup slice. It exercises reused and new windows, parent and child propagation, unrelated windows, and same-layer repeat. Full host suite **336/336**, focused fixture **1/1**, and offline pinned preflight **107 files** pass. This is source/host evidence only; no iOS build or device paint acceptance exists for this candidate. The previously queued incomplete run 38161570334 was canceled.
+
+Next: commit and push the complete source/test checkpoint, dispatch one exact-source native iOS Release build, then verify the downloaded full IPA and compiled launch/paint-owner paths. Keep source, package, and device behavior distinct.
+
 ## View Layer owner teardown - 2026-10-11
 
 `WM_window_set_active_view_layer` can change a live window's View Layer from the RNA setter, including the parent and its child windows, without receiving `bContext`. That changed the owner fingerprint while a Pencil paint modal operator remained registered. The Apple-only path now reconstructs a short-lived context from the live `G_MAIN`, registered window manager, and registered window, then calls the existing strict owner teardown before changing each window whose layer name actually differs. Re-selecting the same layer does not cancel again; unrelated windows are untouched.
