@@ -24,6 +24,9 @@ SETTER_GUARD = SETTER[GUARD_START:GUARD_END]
 
 
 class PencilToolSwitchTeardownTests(unittest.TestCase):
+    def test_private_event_handler_types_have_their_native_header(self):
+        self.assertIn('#include "wm_event_system.hh"', TOOL)
+
     def test_workspace_mutation_retires_matching_owners_before_unlink(self):
         self.assertLess(SETTER.index('toolsystem_ipad_pencil_paint_owners_teardown'),
                         SETTER.index('toolsystem_unlink_ref'))

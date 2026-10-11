@@ -153515,7 +153515,7 @@ diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blend
 index cae9c07..7816156 100644
 --- a/source/blender/windowmanager/intern/wm_toolsystem.cc
 +++ b/source/blender/windowmanager/intern/wm_toolsystem.cc
-@@ -1,1345 +1,1641 @@
+@@ -1,1345 +1,1642 @@
  /* SPDX-FileCopyrightText: 2023 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -153573,6 +153573,7 @@ index cae9c07..7816156 100644
  #include "WM_message.hh"
  #include "WM_toolsystem.hh" /* Own include. */
  #include "WM_types.hh"
++#include "wm_event_system.hh"
  
  static void toolsystem_reinit_with_toolref(bContext *C, WorkSpace * /*workspace*/, bToolRef *tref);
  static bToolRef *toolsystem_reinit_ensure_toolref(bContext *C,
