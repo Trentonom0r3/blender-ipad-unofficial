@@ -172,6 +172,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_gesture_samples.py -v
       - name: Original-owner Pencil paint teardown and cancellation
         run: python3 -m unittest discover -s build -p test_pencil_paint_owner_teardown.py -v
+      - name: Pencil paint owner teardown before native mode exit
+        run: python3 -m unittest discover -s build -p test_pencil_paint_mode_exit.py -v
       - name: Retire Pencil paint before workspace tool changes
         run: python3 -m unittest discover -s build -p test_pencil_tool_switch_teardown.py -v
       - name: Pencil paint View Layer owner teardown

@@ -68410,7 +68410,7 @@ diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/scre
 index 0767a5d..a7491e3 100644
 --- a/source/blender/editors/screen/area.cc
 +++ b/source/blender/editors/screen/area.cc
-@@ -1,4427 +1,4610 @@
+@@ -1,4426 +1,4609 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -84014,7 +84014,7 @@ diff --git a/source/blender/editors/sculpt_paint/paint_vertex.cc b/source/blende
 index 9d933a1..9a27123 100644
 --- a/source/blender/editors/sculpt_paint/paint_vertex.cc
 +++ b/source/blender/editors/sculpt_paint/paint_vertex.cc
-@@ -1,1054 +1,1057 @@
+@@ -1,1054 +1,1063 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -84858,6 +84858,9 @@ index 9d933a1..9a27123 100644
  }
  void ED_object_vpaintmode_exit(bContext *C)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return;
++#endif
    Object *ob = CTX_data_active_object(C);
    ED_object_vpaintmode_exit_ex(*ob);
  }
@@ -84873,6 +84876,9 @@ index 9d933a1..9a27123 100644
   */
  static wmOperatorStatus vpaint_mode_toggle_exec(bContext *C, wmOperator *op)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return OPERATOR_CANCELLED;
++#endif
    Main &bmain = *CTX_data_main(C);
    wmMsgBus *mbus = CTX_wm_message_bus(C);
    Object &ob = *CTX_data_active_object(C);
@@ -86363,7 +86369,7 @@ diff --git a/source/blender/editors/sculpt_paint/paint_weight.cc b/source/blende
 index 7a3968a..21b44c3 100644
 --- a/source/blender/editors/sculpt_paint/paint_weight.cc
 +++ b/source/blender/editors/sculpt_paint/paint_weight.cc
-@@ -1,1975 +1,1980 @@
+@@ -1,1975 +1,1986 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -87935,6 +87941,9 @@ index 7a3968a..21b44c3 100644
  }
  void ED_object_wpaintmode_exit(bContext *C)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return;
++#endif
    Object *ob = CTX_data_active_object(C);
    ED_object_wpaintmode_exit_ex(*ob);
  }
@@ -87990,6 +87999,9 @@ index 7a3968a..21b44c3 100644
   */
  static wmOperatorStatus wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return OPERATOR_CANCELLED;
++#endif
    Main &bmain = *CTX_data_main(C);
    wmMsgBus *mbus = CTX_wm_message_bus(C);
    Object &ob = *CTX_data_active_object(C);
@@ -100568,7 +100580,7 @@ index 940bf04..632df10 100644
    int is_inside_flag = 0;
  
    if (screen_co_a[0] != IS_CLIPPED) {
-@@ -2622,2000 +2623,2025 @@ static bool ed_object_select_pick(bContext *C,
+@@ -2622,2000 +2623,2029 @@ static bool ed_object_select_pick(bContext *C,
      int hits;
      bool do_nearest;
      bool has_bones;
@@ -100809,9 +100821,15 @@ index 940bf04..632df10 100644
          if (basact && !BKE_object_is_mode_compat(basact->object, object_mode)) {
            if (object_mode == OB_MODE_OBJECT) {
              Main *bmain = vc.bmain;
-             blender::ed::object::mode_generic_exit(bmain, vc.depsgraph, scene, basact->object);
+-            blender::ed::object::mode_generic_exit(bmain, vc.depsgraph, scene, basact->object);
++            if (!blender::ed::object::mode_generic_exit(
++                    bmain, vc.depsgraph, scene, basact->object))
++            {
++              basact = nullptr;
++            }
            }
-           if (!BKE_object_is_mode_compat(basact->object, object_mode)) {
+-          if (!BKE_object_is_mode_compat(basact->object, object_mode)) {
++          if (basact && !BKE_object_is_mode_compat(basact->object, object_mode)) {
              basact = nullptr;
            }
          }
@@ -121499,7 +121517,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2324 @@
+@@ -1,2303 +1,2328 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -121538,6 +121556,8 @@ index e5a618f..0abebf2 100644
  struct ImBuf;
  struct ImageFormatData;
  struct Main;
++struct Object;
++struct Scene;
  struct MenuType;
  struct PointerRNA;
  struct PropertyRNA;
@@ -122211,6 +122231,8 @@ index e5a618f..0abebf2 100644
 +                                               const ARegion *region,
 +                                               uint64_t owner_scene_uid = 0,
 +                                               uint64_t owner_object_uid = 0);
++bool WM_event_ipad_pencil_paint_mode_exit(bContext *C);
++bool WM_event_ipad_pencil_paint_mode_exit(Main *bmain, Scene *scene, Object *ob);
 +#endif
  void WM_event_free_ui_handler_all(bContext *C,
                                    ListBase *handlers,
@@ -132519,7 +132541,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8467 @@
+@@ -1,6918 +1,8631 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -132543,6 +132565,7 @@ index 46a8fef..86d574b 100644
  #include "AS_asset_library.hh"
  
  #include "DNA_listBase.h"
++#include "DNA_object_types.h"
  #include "DNA_scene_types.h"
  #include "DNA_screen_types.h"
  #include "DNA_userdef_types.h"
@@ -135892,6 +135915,169 @@ index 46a8fef..86d574b 100644
 +    }
 +    if (owner_still_registered) return;
 +  }
++}
++static bool wm_ipad_pencil_paint_scene_uid_exists(Main *bmain, const uint64_t scene_uid)
++{
++  if (!bmain || !scene_uid) return false;
++  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
++    if (scene->id.session_uid == scene_uid) return true;
++  }
++  return false;
++}
++
++/* Find one current owner, but audit every matching handler before invoking any
++ * callback. A malformed or non-modal match anywhere makes the mode exit refuse. */
++static bool wm_ipad_pencil_paint_mode_owner_find(Main *bmain,
++                                                 const uint64_t object_uid,
++                                                 const int mode,
++                                                 wmWindowManager **r_wm,
++                                                 wmWindow **r_win,
++                                                 wmEventHandler_Op **r_handler,
++                                                 bool *r_refused)
++{
++  *r_wm = nullptr;
++  *r_win = nullptr;
++  *r_handler = nullptr;
++  *r_refused = false;
++  if (!bmain || !object_uid) return false;
++
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      auto inspect_handlers = [&](ListBase *handlers, const bool modal) {
++        LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++          if (base->type != WM_HANDLER_TYPE_OP) continue;
++          auto *handler = reinterpret_cast<wmEventHandler_Op *>(base);
++          if (!handler->ipad_pencil_paint_serial ||
++              handler->ipad_pencil_owner_values[7] != object_uid)
++          {
++            continue;
++          }
++          const bool valid = modal && win->runtime &&
++                             handler->ipad_pencil_paint_mode == mode &&
++                             handler->ipad_pencil_owner_values[9] == uint64_t(mode) &&
++                             wm_ipad_pencil_paint_scene_uid_exists(
++                                 bmain, handler->ipad_pencil_owner_values[6]) &&
++                             wm_ipad_pencil_paint_handler_registered(win, handler);
++          if (!valid) {
++            *r_refused = true;
++          }
++          else if (!*r_handler) {
++            *r_wm = wm;
++            *r_win = win;
++            *r_handler = handler;
++          }
++        }
++      };
++      inspect_handlers(&win->handlers, false);
++      inspect_handlers(&win->modalhandlers, true);
++    }
++  }
++  return *r_handler != nullptr;
++}
++
++static bool wm_ipad_pencil_paint_mode_exit_target_valid(Main *bmain,
++                                                        Scene *scene,
++                                                        Object *ob,
++                                                        const uint64_t scene_uid,
++                                                        const uint64_t object_uid,
++                                                        const int mode)
++{
++  if (G_MAIN != bmain || BLI_findindex(&bmain->scenes, scene) == -1 ||
++      BLI_findindex(&bmain->objects, ob) == -1)
++  {
++    return false;
++  }
++  return scene->id.session_uid == scene_uid && ob->id.session_uid == object_uid &&
++         (ob->mode & mode) == mode;
++}
++
++bool WM_event_ipad_pencil_paint_mode_exit(Main *bmain, Scene *scene, Object *ob)
++{
++  if (!ob) return true;
++  const int paint_modes = OB_MODE_SCULPT | OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT |
++                          OB_MODE_TEXTURE_PAINT;
++  const int mode = ob->mode & paint_modes;
++  if (!mode) return true;
++  if ((mode & (mode - 1)) || !bmain || !scene || G_MAIN != bmain) return false;
++
++  const uint64_t scene_uid = scene->id.session_uid;
++  const uint64_t object_uid = ob->id.session_uid;
++  if (!scene_uid || !object_uid ||
++      !wm_ipad_pencil_paint_mode_exit_target_valid(
++          bmain, scene, ob, scene_uid, object_uid, mode))
++  {
++    return false;
++  }
++
++  /* Cancel callbacks can create or replace owners. Restart from the live Main
++   * after every native cancellation, and bound re-entrant replacement. */
++  for (int attempt = 0; attempt < 256; attempt++) {
++    if (!wm_ipad_pencil_paint_mode_exit_target_valid(
++            bmain, scene, ob, scene_uid, object_uid, mode))
++    {
++      return false;
++    }
++
++    wmWindowManager *owner_wm = nullptr;
++    wmWindow *owner_win = nullptr;
++    wmEventHandler_Op *owner_handler = nullptr;
++    bool refused = false;
++    const bool found = wm_ipad_pencil_paint_mode_owner_find(
++        bmain, object_uid, mode, &owner_wm, &owner_win, &owner_handler, &refused);
++    if (refused) return false;
++    if (!found) return true;
++    if (!owner_wm || !owner_win || !owner_handler ||
++        BLI_findindex(&bmain->wm, owner_wm) == -1 ||
++        BLI_findindex(&owner_wm->windows, owner_win) == -1 ||
++        BLI_findindex(&owner_win->modalhandlers, &owner_handler->head) == -1 ||
++        !wm_ipad_pencil_paint_handler_registered(owner_win, owner_handler))
++    {
++      return false;
++    }
++
++    const uint64_t owner_lifetime = owner_handler->ipad_pencil_operator_lifetime;
++    const uint64_t owner_scene_uid = owner_handler->ipad_pencil_owner_values[6];
++    bContext *owner_C = CTX_create();
++    if (!owner_C) return false;
++    CTX_data_main_set(owner_C, bmain);
++    CTX_wm_manager_set(owner_C, owner_wm);
++    CTX_wm_window_set(owner_C, owner_win);
++    WM_event_ipad_pencil_paint_owner_teardown(
++        owner_C, owner_win, nullptr, nullptr, owner_scene_uid, object_uid);
++    CTX_free(owner_C);
++
++    /* The native callback may close a window or replace the file. Compare the
++     * original pointers against live lists before dereferencing any of them. */
++    if (G_MAIN != bmain || BLI_findindex(&bmain->wm, owner_wm) == -1 ||
++        BLI_findindex(&bmain->objects, ob) == -1 ||
++        BLI_findindex(&bmain->scenes, scene) == -1 ||
++        !wm_ipad_pencil_paint_mode_exit_target_valid(
++            bmain, scene, ob, scene_uid, object_uid, mode) ||
++        BLI_findindex(&owner_wm->windows, owner_win) == -1)
++    {
++      return false;
++    }
++    LISTBASE_FOREACH (wmEventHandler *, base, &owner_win->modalhandlers) {
++      if (base->type != WM_HANDLER_TYPE_OP) continue;
++      const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++      if (handler->ipad_pencil_operator_lifetime == owner_lifetime) return false;
++    }
++    LISTBASE_FOREACH (wmEventHandler *, base, &owner_win->handlers) {
++      if (base->type != WM_HANDLER_TYPE_OP) continue;
++      const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++      if (handler->ipad_pencil_operator_lifetime == owner_lifetime) return false;
++    }
++  }
++  return false;
++}
++
++bool WM_event_ipad_pencil_paint_mode_exit(bContext *C)
++{
++  if (!C) return false;
++  Main *bmain = CTX_data_main(C);
++  Object *ob = CTX_data_active_object(C);
++  if (!ob) return true;
++  return WM_event_ipad_pencil_paint_mode_exit(bmain, CTX_data_scene(C), ob);
 +}
 +#endif
 +
@@ -169529,3 +169715,70 @@ index 1b2b5ae..ded945f 100644
    /* We need to unset node-trees before removing the layer, otherwise its index will be -1. */
    view_layer_remove_unset_nodetrees(bmain, scene, layer);
  
+diff --git a/source/blender/editors/sculpt_paint/paint_image.cc b/source/blender/editors/sculpt_paint/paint_image.cc
+index e2d6e40..e2d6e40 100644
+--- a/source/blender/editors/sculpt_paint/paint_image.cc
++++ b/source/blender/editors/sculpt_paint/paint_image.cc
+@@ -812,2 +812,5 @@ static wmOperatorStatus texture_paint_toggle_exec(bContext *C, wmOperator *op)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return OPERATOR_CANCELLED;
++#endif
+   using namespace blender::ed;
+diff --git a/source/blender/editors/sculpt_paint/sculpt_ops.cc b/source/blender/editors/sculpt_paint/sculpt_ops.cc
+index e5dada6..e5dada6 100644
+--- a/source/blender/editors/sculpt_paint/sculpt_ops.cc
++++ b/source/blender/editors/sculpt_paint/sculpt_ops.cc
+@@ -542,2 +542,5 @@ static wmOperatorStatus sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(C)) return OPERATOR_CANCELLED;
++#endif
+   wmMsgBus *mbus = CTX_wm_message_bus(C);
+diff --git a/source/blender/editors/object/object_modes.cc b/source/blender/editors/object/object_modes.cc
+index 2f02d40..9daf91f 100644
+@@ -48,0 +49 @@
++#include "WM_api.hh"
+@@ -369,4 +370,10 @@
+-void mode_generic_exit(Main *bmain, Depsgraph *depsgraph, Scene *scene, Object *ob)
++bool mode_generic_exit(Main *bmain, Depsgraph *depsgraph, Scene *scene, Object *ob)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!WM_event_ipad_pencil_paint_mode_exit(bmain, scene, ob)) {
++    return false;
++  }
++#endif
+   ed_object_mode_generic_exit_ex(bmain, depsgraph, scene, ob, false);
++  return true;
+ }
+diff --git a/source/blender/editors/include/ED_object.hh b/source/blender/editors/include/ED_object.hh
+index 94d76e7..01bd07f 100644
+@@ -446,2 +446,2 @@
+-void mode_generic_exit(Main *bmain, Depsgraph *depsgraph, Scene *scene, Object *ob);
++bool mode_generic_exit(Main *bmain, Depsgraph *depsgraph, Scene *scene, Object *ob);
+ bool mode_generic_has_data(Depsgraph *depsgraph, const Object *ob);
+diff --git a/source/blender/editors/space_outliner/outliner_select.cc b/source/blender/editors/space_outliner/outliner_select.cc
+index ec50ade..fa85cba 100644
+@@ -338,8 +338,12 @@
+         if (object_mode == OB_MODE_OBJECT) {
+           Main *bmain = CTX_data_main(C);
+           Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+-          object::mode_generic_exit(bmain, depsgraph, scene, base->object);
++          const bool mode_exit_succeeded = object::mode_generic_exit(
++              bmain, depsgraph, scene, base->object);
++          if (!mode_exit_succeeded || !BKE_object_is_mode_compat(base->object, object_mode)) {
++            base = nullptr;
++          }
+         }
+-        if (!BKE_object_is_mode_compat(base->object, object_mode)) {
++        if (base && !BKE_object_is_mode_compat(base->object, object_mode)) {
+           base = nullptr;
+         }
+diff --git a/source/blender/editors/sculpt_paint/sculpt_undo.cc b/source/blender/editors/sculpt_paint/sculpt_undo.cc
+index cb54db7..2055383 100644
+@@ -2194,2 +2194,5 @@
+       else {
++#ifdef WITH_APPLE_CROSSPLATFORM
++        if (!WM_event_ipad_pencil_paint_mode_exit(bmain, scene, ob)) return;
++#endif
+         object::mode_generic_exit(bmain, depsgraph, scene, ob);
