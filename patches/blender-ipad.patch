@@ -153515,7 +153515,7 @@ diff --git a/source/blender/windowmanager/intern/wm_toolsystem.cc b/source/blend
 index cae9c07..7816156 100644
 --- a/source/blender/windowmanager/intern/wm_toolsystem.cc
 +++ b/source/blender/windowmanager/intern/wm_toolsystem.cc
-@@ -1,1345 +1,1405 @@
+@@ -1,1345 +1,1641 @@
  /* SPDX-FileCopyrightText: 2023 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -153583,6 +153583,223 @@ index cae9c07..7816156 100644
                                                         WorkSpace *workspace,
                                                         bToolRef *tref);
  static void toolsystem_ref_set_by_brush_type(bContext *C, const char *brush_type);
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static bool toolsystem_ipad_window_is_live(const wmWindowManager *wm, const wmWindow *window)
++{
++  if (window == nullptr) {
++    return true;
++  }
++  LISTBASE_FOREACH (wmWindow *, live_window, &wm->windows) {
++    if (live_window == window) {
++      return true;
++    }
++  }
++  return false;
++}
++
++static bool toolsystem_ipad_workspace_is_live(const Main *bmain, const WorkSpace *workspace)
++{
++  if (bmain == nullptr || workspace == nullptr) {
++    return false;
++  }
++  LISTBASE_FOREACH (WorkSpace *, live_workspace, &bmain->workspaces) {
++    if (live_workspace == workspace) {
++      return true;
++    }
++  }
++  return false;
++}
++
++static bool toolsystem_ipad_pencil_owner_in_window(const wmWindow *win)
++{
++  if (win == nullptr) {
++    return false;
++  }
++  LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
++    if (handler_base->type != WM_HANDLER_TYPE_OP) {
++      continue;
++    }
++    const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(handler_base);
++    if (handler->ipad_pencil_paint_serial != 0) {
++      return true;
++    }
++  }
++  return false;
++}
++
++static bool toolsystem_ipad_pencil_owner_in_area(const wmWindow *win,
++                                                 const ScrArea *area,
++                                                 uint64_t *r_lifetime)
++{
++  *r_lifetime = 0;
++  LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
++    if (handler_base->type != WM_HANDLER_TYPE_OP) {
++      continue;
++    }
++    const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(handler_base);
++    if (handler->ipad_pencil_paint_serial != 0 &&
++        handler->ipad_pencil_area == uintptr_t(area))
++    {
++      *r_lifetime = handler->ipad_pencil_operator_lifetime;
++      return true;
++    }
++  }
++  return false;
++}
++
++/* The shared ToolRef refreshes across all Main window managers, but owner teardown
++ * can validate foreign windows only through a manager-specific context. */
++static bool toolsystem_ipad_other_manager_has_pencil_owner(const Main *bmain,
++                                                           const wmWindowManager *current_wm,
++                                                           const WorkSpace *workspace)
++{
++  for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
++       wm = static_cast<wmWindowManager *>(wm->id.next))
++  {
++    if (wm == current_wm) {
++      continue;
++    }
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      if (win->runtime == nullptr) {
++        if (toolsystem_ipad_pencil_owner_in_window(win)) {
++          return true;
++        }
++        continue;
++      }
++      if (WM_window_get_active_workspace(win) == workspace &&
++          toolsystem_ipad_pencil_owner_in_window(win))
++      {
++        return true;
++      }
++    }
++  }
++  return false;
++}
++
++static bool toolsystem_ipad_pencil_lifetime_is_live(const wmWindowManager *wm,
++                                                    const uint64_t lifetime)
++{
++  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++    if (win->runtime == nullptr) {
++      continue;
++    }
++    LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {
++      if (handler_base->type != WM_HANDLER_TYPE_OP) {
++        continue;
++      }
++      const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(handler_base);
++      if (handler->ipad_pencil_operator_lifetime == lifetime) {
++        return true;
++      }
++    }
++  }
++  return false;
++}
++
++/* Tool references belong to a workspace and are refreshed across its windows.
++ * Retire every matching leased Pencil paint owner before replacing that shared
++ * reference. The loop restarts from live window lists after each native Cancel. */
++static bool toolsystem_ipad_pencil_paint_owners_teardown(bContext *C,
++                                                         Main *bmain,
++                                                         WorkSpace *workspace,
++                                                         const bToolKey *tkey)
++{
++  if (C == nullptr || tkey == nullptr || !toolsystem_ipad_workspace_is_live(bmain, workspace)) {
++    return false;
++  }
++  wmWindowManager *context_wm = CTX_wm_manager(C);
++  wmWindow *context_window = CTX_wm_window(C);
++  if (context_wm == nullptr) {
++    return context_window == nullptr &&
++           !toolsystem_ipad_other_manager_has_pencil_owner(bmain, nullptr, workspace);
++  }
++  if (!toolsystem_ipad_window_is_live(context_wm, context_window) ||
++      toolsystem_ipad_other_manager_has_pencil_owner(bmain, context_wm, workspace))
++  {
++    return false;
++  }
++
++  for (int attempt = 0; attempt < 256; ++attempt) {
++    wmWindow *owner_window = nullptr;
++    ScrArea *owner_area = nullptr;
++    uint64_t owner_lifetime = 0;
++    LISTBASE_FOREACH (wmWindow *, win, &context_wm->windows) {
++      if (win->runtime == nullptr) {
++        if (toolsystem_ipad_pencil_owner_in_window(win)) {
++          return false;
++        }
++        continue;
++      }
++      if (WM_window_get_active_workspace(win) != workspace) {
++        continue;
++      }
++      bScreen *screen = WM_window_get_active_screen(win);
++      const Scene *scene = WM_window_get_active_scene(win);
++      if (screen == nullptr || scene == nullptr) {
++        if (toolsystem_ipad_pencil_owner_in_window(win)) {
++          return false;
++        }
++        continue;
++      }
++      ViewLayer *view_layer = BKE_view_layer_find(scene, win->view_layer_name);
++      if (view_layer == nullptr) {
++        LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++          uint64_t unused_lifetime = 0;
++          if (area->spacetype == tkey->space_type &&
++              toolsystem_ipad_pencil_owner_in_area(win, area, &unused_lifetime))
++          {
++            return false;
++          }
++        }
++        continue;
++      }
++      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++        if (area->spacetype != tkey->space_type ||
++            WM_toolsystem_mode_from_spacetype(scene, view_layer, area, area->spacetype) !=
++                tkey->mode)
++        {
++          continue;
++        }
++        if (!toolsystem_ipad_pencil_owner_in_area(win, area, &owner_lifetime)) {
++          continue;
++        }
++        if (owner_lifetime == 0) {
++          return false;
++        }
++        owner_window = win;
++        owner_area = area;
++        break;
++      }
++      if (owner_window != nullptr) {
++        break;
++      }
++    }
++
++    if (owner_window == nullptr) {
++      if (toolsystem_ipad_other_manager_has_pencil_owner(bmain, context_wm, workspace)) {
++        return false;
++      }
++      return CTX_data_main(C) == bmain && CTX_wm_manager(C) == context_wm &&
++             CTX_wm_window(C) == context_window &&
++             toolsystem_ipad_window_is_live(context_wm, context_window) &&
++             toolsystem_ipad_workspace_is_live(bmain, workspace);
++    }
++
++    WM_event_ipad_pencil_paint_owner_teardown(C, owner_window, owner_area, nullptr);
++    if (CTX_data_main(C) != bmain || CTX_wm_manager(C) != context_wm ||
++        CTX_wm_window(C) != context_window ||
++        !toolsystem_ipad_window_is_live(context_wm, context_window) ||
++        !toolsystem_ipad_workspace_is_live(bmain, workspace) ||
++        toolsystem_ipad_other_manager_has_pencil_owner(bmain, context_wm, workspace) ||
++        toolsystem_ipad_pencil_lifetime_is_live(context_wm, owner_lifetime))
++    {
++      return false;
++    }
++  }
++  return false;
++}
++#endif
  
  static void toolsystem_ref_set_by_id_pending(Main *bmain,
                                               bToolRef *tref,
@@ -154133,6 +154350,25 @@ index cae9c07..7816156 100644
  {
    Main *bmain = CTX_data_main(C);
  
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* `WorkSpaceTool.setup()` reaches this function before the shared workspace
++   * reference is unlinked. A refused owner teardown must leave the old tool in
++   * place; silently switching would strand its modal paint handler. */
++  if (tref->idname[0] && idname != nullptr && !STREQ(tref->idname, idname)) {
++    bToolKey tkey{};
++    tkey.space_type = tref->space_type;
++    tkey.mode = tref->mode;
++    char previous_idname[sizeof(tref->idname)];
++    STRNCPY_UTF8(previous_idname, tref->idname);
++    if (!toolsystem_ipad_pencil_paint_owners_teardown(C, bmain, workspace, &tkey) ||
++        WM_toolsystem_ref_find(workspace, &tkey) != tref ||
++        !STREQ(tref->idname, previous_idname))
++    {
++      return;
++    }
++  }
++#endif
++
    if (tref->runtime) {
      toolsystem_unlink_ref(C, workspace, tref);
    }
