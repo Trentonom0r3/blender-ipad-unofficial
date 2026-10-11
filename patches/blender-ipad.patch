@@ -157847,7 +157847,36 @@ index 0de9e58..0d340e7 100644
    win->eventstate->prev_xy[1] = oldy;
  
    win->eventstate->xy[0] = oldx;
-@@ -3120,22 +3166,32 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
+@@ -3088,1 +3137,21 @@ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
++#ifdef WITH_APPLE_CROSSPLATFORM
++static void wm_window_ipad_pencil_paint_owner_teardown(wmWindowManager *wm, wmWindow *win)
++{
++  if (!G_MAIN || !wm || !win || !win->runtime || BLI_findindex(&G_MAIN->wm, wm) == -1 ||
++      BLI_findindex(&wm->windows, win) == -1)
++  {
++    return;
++  }
++  bContext *C = CTX_create();
++  if (!C) {
++    return;
++  }
++  CTX_data_main_set(C, G_MAIN);
++  CTX_wm_manager_set(C, wm);
++  CTX_wm_window_set(C, win);
++  WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);
++  CTX_free(C);
++}
++#endif
++
+ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
+@@ -3099,1 +3168,6 @@
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (!STREQ(win_iter->view_layer_name, view_layer->name)) {
++        wm_window_ipad_pencil_paint_owner_teardown(wm, win_iter);
++      }
++#endif
+       STRNCPY_UTF8(win_iter->view_layer_name, view_layer->name);
+@@ -3120,22 +3191,32 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *workspace)
  }
 -
 +

@@ -1,3 +1,11 @@
+## View Layer owner teardown - 2026-10-11
+
+`WM_window_set_active_view_layer` can change a live window's View Layer from the RNA setter, including the parent and its child windows, without receiving `bContext`. That changed the owner fingerprint while a Pencil paint modal operator remained registered. The Apple-only path now reconstructs a short-lived context from the live `G_MAIN`, registered window manager, and registered window, then calls the existing strict owner teardown before changing each window whose layer name actually differs. Re-selecting the same layer does not cancel again; unrelated windows are untouched.
+
+`build/test_pencil_paint_view_layer_teardown.py` copies the pinned `wm_window.cc`, applies the exact overlay to that file, and compiles the patched helper and full setter. The fixture checks original main/manager/window/screen context and teardown-before-mutation for parent and child windows, verifies unrelated windows stay unchanged, and proves a repeat selection does not tear down again. Hosted preflight now materializes pinned source before this and other source-backed tests run.
+
+Validation: full host suite **336/336**, focused setter fixture **1/1**, 107-file offline pinned preflight, patch syntax and diff hygiene pass. This is source/host evidence only; the correction has not yet had its iOS Release build or downloaded IPA verification. Next build this exact committed source once, then verify the full IPA and compiled HUD/paint-lifecycle markers. Device paint behavior remains unconfirmed.
+
 ## Destructive-route regression layer - 2026-10-11
 
 Added `build/test_pencil_paint_destructive_routes.py` as a pinned-source inventory guard for the exact area/region pointer replacement sites, the offscreen-only exception, file-read/window-close ordering, and the two RNA invoke/execute error cleanup callers of Blender's low-level modal-handler removal API. The four new checks pass; the full host suite is now **335/335** and the 107-file offline pinned preflight passes. This is test-only; production source and the latest verified IPA remain `e435ec3` / run `38155628823`, so no rebuild was made. The audit does not prove UIKit/GHOST event delivery. Continue tracing semantically stale but still-live paint owners and mode-specific teardown without cancellation through replacement context.

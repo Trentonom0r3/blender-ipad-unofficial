@@ -26,6 +26,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare pinned source and validate the overlay
+        run: python3 build/preflight.py
       - name: Test generated UI RNA registration calls
         run: python3 -m unittest discover -s build -p test_ui_rna_registration.py -v
       - name: Test native sidebar root and mode admission
@@ -170,7 +172,7 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_gesture_samples.py -v
       - name: Original-owner Pencil paint teardown and cancellation
         run: python3 -m unittest discover -s build -p test_pencil_paint_owner_teardown.py -v
+      - name: Pencil paint View Layer owner teardown
+        run: python3 -m unittest discover -s build -p test_pencil_paint_view_layer_teardown.py -v
       - name: Native wmEvent allocation and synthetic-contact provenance
         run: python3 -m unittest discover -s build -p test_wm_event_allocation.py -v
-      - name: Validate patch against pinned upstream and check scripts
-        run: python3 build/preflight.py
