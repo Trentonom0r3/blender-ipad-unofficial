@@ -237,9 +237,13 @@ class PencilPaintTaggedImageDeleteTests(unittest.TestCase):
 
     def test_generic_library_override_image_teardown_precedes_remap_and_delete(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(OVERRIDE_IMAGE_GUARD_CPP)
+        helper_start = OUTLINER_TOOLS_SOURCE.index(
+            "static bool id_override_clear_single_ipad_image_owners("
+        )
         function_start = OUTLINER_TOOLS_SOURCE.index(
             "static bool id_override_library_clear_single_process("
         )
+        self.assertLess(helper_start, function_start)
         guard = OUTLINER_TOOLS_SOURCE.index(
             "id_override_clear_single_ipad_image_owners(bmain, data)", function_start
         )

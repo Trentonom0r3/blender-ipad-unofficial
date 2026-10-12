@@ -170204,7 +170204,10 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -1430,0 +1431,37 @@
+@@ -1429,10 +1429,50 @@
+   }
+ }
+-
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static bool id_override_clear_single_ipad_image_owners(
@@ -170242,7 +170245,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +  return G_MAIN == bmain;
 +}
 +#endif
-@@ -1432,7 +1469,10 @@
++
 -static void id_override_library_clear_single_process(bContext *C,
 +static bool id_override_library_clear_single_process(bContext *C,
                                                       ReportList * /*reports*/,
