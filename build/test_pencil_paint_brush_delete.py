@@ -9,6 +9,7 @@ import unittest
 WM_PATH = "source/blender/windowmanager/intern/wm_event_system.cc"
 OUTLINER_EDIT_PATH = "source/blender/editors/space_outliner/outliner_edit.cc"
 OUTLINER_TOOLS_PATH = "source/blender/editors/space_outliner/outliner_tools.cc"
+WM_API_PATH = "source/blender/windowmanager/WM_api.hh"
 PATCH = (Path(__file__).resolve().parents[1] / "patches/blender-ipad.patch").read_text(encoding="utf-8")
 WM = changed_source(WM_PATH)
 BRUSH_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(")
@@ -155,6 +156,10 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
     def test_every_generic_outliner_delete_retires_before_free(self):
         edit = patch_section(OUTLINER_EDIT_PATH)
         tools = patch_section(OUTLINER_TOOLS_PATH)
+        api = patch_section(WM_API_PATH)
+        self.assertIn("bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);", api)
+        self.assertNotIn('#include "WM_event_system.hh"', edit)
+        self.assertNotIn('#include "WM_event_system.hh"', tools)
         click_delete = edit.split("@@ -601,2 +602,8", 1)[1].split("@@ -2387,3", 1)[0]
         purge_delete = edit.split("@@ -2385,5 +2392,11", 1)[1]
         delete_branch = tools.split("@@ -2958,4 +2959,10", 1)[1]

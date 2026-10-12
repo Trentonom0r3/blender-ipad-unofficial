@@ -169896,10 +169896,6 @@ index cb54db7..2055383 100644
 diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/blender/editors/space_outliner/outliner_edit.cc
 --- a/source/blender/editors/space_outliner/outliner_edit.cc
 +++ b/source/blender/editors/space_outliner/outliner_edit.cc
-@@ -59,2 +59,3 @@
- #include "WM_api.hh"
-+#include "WM_event_system.hh"
- #include "WM_types.hh"
 @@ -601,2 +602,8 @@ static wmOperatorStatus outliner_id_delete_invoke(bContext *C,
 -  BKE_id_multi_tagged_delete(bmain);
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -169929,11 +169925,6 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -73,3 +73,4 @@
- #include "WM_api.hh"
-+#include "WM_event_system.hh"
- #include "WM_message.hh"
- #include "WM_types.hh"
 @@ -2958,4 +2959,10 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
