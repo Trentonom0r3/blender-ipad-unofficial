@@ -2,7 +2,10 @@
 from test_compact_shelf import function
 from test_touch_extrude import changed_source
 from pathlib import Path
+import subprocess
+import tempfile
 import test_ipad_panels
+import preflight
 import unittest
 
 
@@ -25,6 +28,9 @@ RNA_MESH_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_mesh_remove
 def patch_section(path):
     marker = f"diff --git a/{path} b/{path}\n"
     return PATCH.split(marker, 1)[1].split("diff --git ", 1)[0]
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 CPP = r"""
@@ -394,12 +400,39 @@ int main()
             line[1:] for line in section.splitlines()
             if line.startswith(("+", " ")) and not line.startswith("+++")
         )
-        self.assertIn('@@ -101,0 +102,1 @@\n+#  include "wm_event_system.hh"', section)
+        self.assertIn('#    include "wm_event_system.hh"', body)
         self.assertIn("handler->ipad_pencil_owner_values[8] != mesh_uid", body)
         self.assertIn("WM_event_ipad_pencil_paint_mode_exit(bmain, owner_scene, owner_object)", body)
         guard = "rna_Main_mesh_remove_guard(bmain, reports, id_ptr, do_unlink)"
         self.assertLess(body.index(guard), body.index("if (do_unlink) {"))
         self.assertLess(body.index("id_ptr->data = live_mesh"), body.index("if (do_unlink) {"))
+
+    def test_event_handler_header_hunk_applies_inside_rna_runtime(self):
+        commit = preflight.pinned_commit(ROOT)
+        upstream = preflight.get_source(
+            commit, RNA_MAIN_API_PATH, ROOT / ".cache/preflight", offline=True)
+        marker = f"diff --git a/{RNA_MAIN_API_PATH} b/{RNA_MAIN_API_PATH}\n"
+        start = PATCH.index(marker)
+        end = PATCH.find("\ndiff --git ", start + len(marker))
+        file_patch = PATCH[start:end if end >= 0 else None]
+        with tempfile.TemporaryDirectory(prefix="rna-runtime-include-", dir=ROOT) as directory:
+            relative = Path(directory).relative_to(ROOT).as_posix()
+            target = Path(directory) / RNA_MAIN_API_PATH
+            target.parent.mkdir(parents=True)
+            target.write_bytes(upstream)
+            patch_path = Path(directory) / "rna-main.patch"
+            patch_path.write_text(file_patch + "\n", encoding="utf-8", newline="\n")
+            subprocess.run(
+                ["git", "apply", f"--directory={relative}", str(patch_path)],
+                cwd=ROOT, check=True, capture_output=True, text=True)
+            applied = target.read_text(encoding="utf-8")
+        runtime = applied.index("#ifdef RNA_RUNTIME")
+        helpers = applied.index("static bool rna_Main_brush_remove_guard")
+        event_header = applied.index('#    include "wm_event_system.hh"')
+        apple_guard = applied.rfind("#  ifdef WITH_APPLE_CROSSPLATFORM", 0, event_header)
+        self.assertLess(runtime, apple_guard)
+        self.assertLess(apple_guard, event_header)
+        self.assertLess(event_header, helpers)
 
     def test_python_collection_mesh_removal_retires_each_live_owner(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(MESH_REMOVE_CPP)

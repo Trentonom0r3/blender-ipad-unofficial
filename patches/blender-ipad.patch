@@ -169968,10 +169968,9 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +#  include "BKE_global.hh"
  #  include "BKE_displist.h"
  #  include "BKE_gpencil_legacy.h"
-@@ -101,0 +102,1 @@
-+#  include "wm_event_system.hh"
-@@ -109,2 +113,314 @@
+@@ -109,2 +113,315 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
++#    include "wm_event_system.hh"
 +static bool rna_Main_brush_remove_guard(Main *bmain,
 +                                        ReportList *reports,
 +                                        PointerRNA *id_ptr,
@@ -170285,7 +170284,7 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +#  endif
 +
  static void rna_Main_ID_remove(Main *bmain,
-@@ -125,1 +441,10 @@
+@@ -125,1 +442,10 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
