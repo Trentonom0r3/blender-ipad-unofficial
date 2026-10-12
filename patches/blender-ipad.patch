@@ -83450,7 +83450,7 @@ diff --git a/source/blender/editors/sculpt_paint/paint_image_ops_paint.cc b/sour
 index b605e64..1a230d0 100644
 --- a/source/blender/editors/sculpt_paint/paint_image_ops_paint.cc
 +++ b/source/blender/editors/sculpt_paint/paint_image_ops_paint.cc
-@@ -1,551 +1,559 @@
+@@ -1,551 +1,593 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -83461,6 +83461,8 @@ index b605e64..1a230d0 100644
   */
  
  #include "DNA_brush_types.h"
++#include "DNA_ID_enums.h"
++#include "DNA_ID.h"
 +#include "DNA_object_types.h"
  #include "DNA_scene_types.h"
  #include "DNA_space_types.h"
@@ -83532,6 +83534,12 @@ index b605e64..1a230d0 100644
                                   void *stroke_handle,
                                   float mouse_start[2],
                                   float mouse_end[2]) = 0;
++  virtual eWMOperatorIDUse stroke_image_use(void * /*stroke_handle*/,
++                                             const Image * /*image*/) const
++  {
++    return eWMOperatorIDUse::Unknown;
++  }
++
  };
  
  class ImagePaintMode : public AbstractPaintMode {
@@ -83667,6 +83675,16 @@ index b605e64..1a230d0 100644
      paint_proj_redraw(C, stroke_handle, false);
      paint_proj_redraw(C, stroke_handle, true);
    }
++  eWMOperatorIDUse stroke_image_use(void *stroke_handle, const Image *image) const override
++  {
++    bool known = false;
++    const bool used = paint_proj_stroke_uses_image(stroke_handle, image, &known);
++    if (!known) {
++      return eWMOperatorIDUse::Unknown;
++    }
++    return used ? eWMOperatorIDUse::Used : eWMOperatorIDUse::NotUsed;
++  }
++
  };
  
  struct PaintOperation : public PaintModeData {
@@ -83987,6 +84005,19 @@ index b605e64..1a230d0 100644
  {
    paint_stroke_cancel(C, op, static_cast<PaintStroke *>(op->customdata));
  }
++static eWMOperatorIDUse paint_image_pencil_id_use(const wmOperator *op, const ID *id)
++{
++  if (!op || !op->customdata || !id || GS(id->name) != ID_IM) {
++    return eWMOperatorIDUse::Unknown;
++  }
++  PaintStroke *stroke = static_cast<PaintStroke *>(op->customdata);
++  PaintOperation *pop = static_cast<PaintOperation *>(paint_stroke_mode_data(stroke));
++  if (!pop || !pop->mode || !pop->stroke_handle) {
++    return eWMOperatorIDUse::Unknown;
++  }
++  return pop->mode->stroke_image_use(pop->stroke_handle, reinterpret_cast<const Image *>(id));
++}
++
  }  // namespace blender::ed::sculpt_paint::image::ops::paint
  
  void PAINT_OT_image_paint(wmOperatorType *ot)
@@ -84004,6 +84035,9 @@ index b605e64..1a230d0 100644
    ot->exec = paint_exec;
    ot->poll = ED_image_tools_paint_poll;
    ot->cancel = paint_cancel;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ot->ipad_id_use = paint_image_pencil_id_use;
++#endif
  
    /* flags */
    ot->flag = OPTYPE_BLOCKING;
@@ -121351,7 +121385,7 @@ diff --git a/source/blender/python/intern/bpy_operator_wrap.cc b/source/blender/
 index b7412e3..4e9ba90 100644
 --- a/source/blender/python/intern/bpy_operator_wrap.cc
 +++ b/source/blender/python/intern/bpy_operator_wrap.cc
-@@ -1,159 +1,161 @@
+@@ -1,159 +1,167 @@
  /* SPDX-FileCopyrightText: 2023 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -121440,9 +121474,15 @@ index b7412e3..4e9ba90 100644
     * WM_operatortype_append_ptr before opfunc() is called */
    StructRNA *srna = ot->srna;
 +  const uint64_t ipad_lifetime = ot->ipad_lifetime_id;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const auto ipad_id_use = ot->ipad_id_use;
++#endif
    *ot = *((wmOperatorType *)userdata);
    ot->srna = srna; /* restore */
 +  ot->ipad_lifetime_id = ipad_lifetime;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ot->ipad_id_use = ipad_id_use;
++#endif
  
    /* Use i18n context from rna_ext.srna if possible (py operators). */
    if (ot->rna_ext.srna) {
@@ -121517,7 +121557,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2331 @@
+@@ -1,2303 +1,2332 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -122234,6 +122274,7 @@ index e5a618f..0abebf2 100644
 +                                               uint64_t owner_brush_uid = 0);
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, uint64_t brush_uid);
++bool WM_event_ipad_pencil_paint_image_teardown(Main *bmain, uint64_t image_uid);
 +bool WM_event_ipad_pencil_paint_mode_exit(bContext *C);
 +bool WM_event_ipad_pencil_paint_mode_exit(Main *bmain, Scene *scene, Object *ob);
 +#endif
@@ -124026,7 +124067,7 @@ diff --git a/source/blender/windowmanager/WM_types.hh b/source/blender/windowman
 index 17ad7db..f42ff4c 100644
 --- a/source/blender/windowmanager/WM_types.hh
 +++ b/source/blender/windowmanager/WM_types.hh
-@@ -1,1470 +1,1509 @@
+@@ -1,1470 +1,1516 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -124742,6 +124783,8 @@ index 17ad7db..f42ff4c 100644
     * Mouse-move on trackpad/touch screen where three fingers triggered the event.
     */
    WM_EVENT_MULTITOUCH_THREE_FINGERS = (1 << 4),
+-};
+-ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_FORCE_DRAG_THRESHOLD);
 +  /** Direct screen pinch, not a mouse or indirect trackpad event. */
 +  WM_EVENT_IS_TOUCH_PINCH = (1 << 5),
 +  /** Interrupted native pointer gesture: release ownership without confirmation. */
@@ -124750,8 +124793,7 @@ index 17ad7db..f42ff4c 100644
 +  WM_EVENT_IS_DIRECT_TOOL = (1 << 7),
 +  /** Actual Finger packet; never inferred from missing tablet data. */
 +  WM_EVENT_IS_DIRECT_FINGER = (1 << 8),
- };
--ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_FORCE_DRAG_THRESHOLD);
++};
 +ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_IS_DIRECT_FINGER);
  
  struct wmTabletData {
@@ -125103,6 +125145,10 @@ index 17ad7db..f42ff4c 100644
    ReportList *reports;
  };
  
++#ifdef WITH_APPLE_CROSSPLATFORM
++enum class eWMOperatorIDUse : uint8_t { Unknown, NotUsed, Used };
++#endif
++
  struct wmOperatorType {
    /** Text for UI, undo (should not exceed #OP_MAX_TYPENAME). */
    const char *name;
@@ -125233,6 +125279,9 @@ index 17ad7db..f42ff4c 100644
    short flag;
 +  /** Runtime registration identity; zero for unregistered/dummy types. */
 +  uint64_t ipad_lifetime_id;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  eWMOperatorIDUse (*ipad_id_use)(const wmOperator *op, const ID *id);
++#endif
  };
  
  /**
@@ -132544,7 +132593,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8749 @@
+@@ -1,6918 +1,8914 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -132589,12 +132638,12 @@ index 46a8fef..86d574b 100644
  #include "BLI_string_utf8.h"
  #include "BLI_timer.h"
  #include "BLI_utildefines.h"
- 
++
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include "GHOST_ProjectImport-api.hh"
 +#  include "GHOST_NavigationIOS.hh"
 +#endif
-+
+ 
  #include "BKE_context.hh"
  #include "BKE_customdata.hh"
  #include "BKE_global.hh"
@@ -135424,6 +135473,8 @@ index 46a8fef..86d574b 100644
      wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
      wmOperator *op = handler->op;
      wmOperatorType *ot = op->type;
+-
+-    if (!wm_operator_check_locked_interface(C, ot)) {
 +    bool ipad_pencil_owner_teardown_admitted = false;
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial && event &&
@@ -135436,8 +135487,7 @@ index 46a8fef..86d574b 100644
 +#else
 +    UNUSED_VARS(ipad_pencil_owner_teardown);
 +#endif
- 
--    if (!wm_operator_check_locked_interface(C, ot)) {
++
 +    if (!wm_operator_check_locked_interface(C, ot) && !ipad_pencil_owner_teardown_admitted) {
        /* Interface is locked and operator is not allowed to run,
         * nothing to do in this case. */
@@ -136013,6 +136063,171 @@ index 46a8fef..86d574b 100644
 +    if (attempt == 255) return false;
 +  }
 +  return G_MAIN == bmain;
++}
++
++static ID *wm_ipad_pencil_paint_image_find(Main *bmain, const uint64_t image_uid)
++{
++  if (!bmain || !image_uid) {
++    return nullptr;
++  }
++  LISTBASE_FOREACH (ID *, id, &bmain->images) {
++    if (id->session_uid == image_uid) {
++      return id;
++    }
++  }
++  return nullptr;
++}
++
++bool WM_event_ipad_pencil_paint_image_teardown(Main *bmain, const uint64_t image_uid)
++{
++  if (!bmain || G_MAIN != bmain || !image_uid) {
++    return false;
++  }
++
++  for (int attempt = 0; attempt < 256; attempt++) {
++    ID *image = wm_ipad_pencil_paint_image_find(bmain, image_uid);
++    if (!image || G_MAIN != bmain) {
++      return false;
++    }
++
++    wmWindowManager *owner_wm = nullptr;
++    wmWindow *owner_win = nullptr;
++    uint64_t owner_scene_uid = 0;
++    uint64_t owner_object_uid = 0;
++    uint64_t owner_lifetime = 0;
++    bool owner_found = false;
++    bool owner_refused = false;
++
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        auto inspect = [&](ListBase *handlers, const bool modal) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            auto *handler = reinterpret_cast<wmEventHandler_Op *>(base);
++            if (!handler->ipad_pencil_paint_serial) {
++              continue;
++            }
++            const uint64_t tagged_mode = handler->ipad_pencil_owner_values[9];
++            if (handler->ipad_pencil_paint_mode != OB_MODE_TEXTURE_PAINT &&
++                tagged_mode != uint64_t(OB_MODE_TEXTURE_PAINT))
++            {
++              continue;
++            }
++            if (handler->ipad_pencil_paint_mode != OB_MODE_TEXTURE_PAINT ||
++                tagged_mode != uint64_t(OB_MODE_TEXTURE_PAINT) ||
++                !handler->ipad_pencil_operator_lifetime ||
++                !handler->ipad_pencil_owner_values[6] ||
++                !handler->ipad_pencil_owner_values[7] || !modal ||
++                !wm_ipad_pencil_paint_handler_registered(win, handler) ||
++                !handler->op->type->ipad_id_use)
++            {
++              owner_refused = true;
++              return;
++            }
++
++            const eWMOperatorIDUse use = handler->op->type->ipad_id_use(handler->op, image);
++            if (use == eWMOperatorIDUse::Unknown) {
++              owner_refused = true;
++              return;
++            }
++            if (use == eWMOperatorIDUse::Used && !owner_found) {
++              owner_wm = wm;
++              owner_win = win;
++              owner_scene_uid = handler->ipad_pencil_owner_values[6];
++              owner_object_uid = handler->ipad_pencil_owner_values[7];
++              owner_lifetime = handler->ipad_pencil_operator_lifetime;
++              owner_found = true;
++            }
++          }
++        };
++        inspect(&win->handlers, false);
++        if (owner_refused) {
++          return false;
++        }
++        inspect(&win->modalhandlers, true);
++        if (owner_refused) {
++          return false;
++        }
++      }
++    }
++
++    if (!owner_found) {
++      return true;
++    }
++    if (!owner_wm || !owner_win || !owner_scene_uid || !owner_object_uid ||
++        G_MAIN != bmain)
++    {
++      return false;
++    }
++
++    /* The shared owner teardown cancels the first handler matching its
++     * scene/object criteria. Ensure that is the exact operator whose typed
++     * image-use callback admitted this teardown. */
++    wmEventHandler_Op *first_matching_owner = nullptr;
++    LISTBASE_FOREACH (wmEventHandler *, base, &owner_win->modalhandlers) {
++      if (base->type != WM_HANDLER_TYPE_OP) {
++        continue;
++      }
++      auto *candidate = reinterpret_cast<wmEventHandler_Op *>(base);
++      if (!candidate->ipad_pencil_paint_serial ||
++          candidate->ipad_pencil_owner_values[6] != owner_scene_uid ||
++          candidate->ipad_pencil_owner_values[7] != owner_object_uid)
++      {
++        continue;
++      }
++      first_matching_owner = candidate;
++      break;
++    }
++    if (!first_matching_owner ||
++        first_matching_owner->ipad_pencil_operator_lifetime != owner_lifetime ||
++        !wm_ipad_pencil_paint_handler_registered(owner_win, first_matching_owner))
++    {
++      return false;
++    }
++
++    bContext *owner_C = CTX_create();
++    if (!owner_C) {
++      return false;
++    }
++    CTX_data_main_set(owner_C, bmain);
++    CTX_wm_manager_set(owner_C, owner_wm);
++    CTX_wm_window_set(owner_C, owner_win);
++    WM_event_ipad_pencil_paint_owner_teardown(
++        owner_C, owner_win, nullptr, nullptr, owner_scene_uid, owner_object_uid);
++    CTX_free(owner_C);
++
++    /* No old Image/window/handler pointer survives native Cancel callbacks. */
++    if (G_MAIN != bmain || !wm_ipad_pencil_paint_image_find(bmain, image_uid)) {
++      return false;
++    }
++    bool same_owner_remains = false;
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        auto inspect = [&](ListBase *handlers) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++            if (handler->ipad_pencil_paint_serial &&
++                handler->ipad_pencil_operator_lifetime == owner_lifetime)
++            {
++              same_owner_remains = true;
++              return;
++            }
++          }
++        };
++        inspect(&win->handlers);
++        inspect(&win->modalhandlers);
++      }
++    }
++    if (same_owner_remains) {
++      return false;
++    }
++  }
++  return false;
 +}
 +
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, const uint64_t brush_uid)
@@ -137643,13 +137858,13 @@ index 46a8fef..86d574b 100644
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
- 
++
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (screen && area && ED_ipad_panels_enabled(screen)) {
 +    return ED_area_find_region_xy_visual(area, RGN_TYPE_ANY, xy);
 +  }
 +#endif
-+
+ 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
        if (BLI_rcti_isect_pt_v(&region->winrct, xy)) {
@@ -138243,7 +138458,7 @@ index 46a8fef..86d574b 100644
            }
          }
        }
- 
++
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      /* Existing popup and modal handlers keep priority. The panel service also
 +       * owns an in-progress resize when the pointer leaves the handle rectangle. */
@@ -138257,7 +138472,7 @@ index 46a8fef..86d574b 100644
 +        action |= WM_HANDLER_BREAK | WM_HANDLER_HANDLED;
 +      }
 +#endif
-+
+ 
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
  
@@ -169962,13 +170177,18 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/makesrna/intern/rna_main_api.cc
 --- a/source/blender/makesrna/intern/rna_main_api.cc
 +++ b/source/blender/makesrna/intern/rna_main_api.cc
-@@ -27,4 +27,5 @@
+@@ -26,6 +26,7 @@
+ #  include "BKE_collection.hh"
  #  include "BKE_curve.hh"
  #  include "BKE_curves.h"
 +#  include "BKE_global.hh"
  #  include "BKE_displist.h"
  #  include "BKE_gpencil_legacy.h"
-@@ -109,2 +113,315 @@
+ #  include "BKE_grease_pencil.hh"
+@@ -105,6 +106,362 @@
+   BLI_strncpy(r_name, name, MAX_ID_NAME - 2);
+   BLI_str_utf8_invalid_strip(r_name, strlen(r_name));
+ }
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +#    include "wm_event_system.hh"
 +static bool rna_Main_brush_remove_guard(Main *bmain,
@@ -170002,6 +170222,49 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +    return false;
 +  }
 +  id_ptr->data = live_brush;
++  return true;
++}
++
++static bool rna_Main_image_remove_guard(Main *bmain,
++                                         ReportList *reports,
++                                         PointerRNA *id_ptr,
++                                         const bool do_unlink)
++{
++  if (!bmain || !id_ptr || !id_ptr->data) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Image removal");
++    return false;
++  }
++  if (G_MAIN != bmain) {
++    return true;
++  }
++  ID *id = static_cast<ID *>(id_ptr->data);
++  if ((id->tag & ID_TAG_NO_MAIN) || GS(id->name) != ID_IM ||
++      (!do_unlink && ID_REAL_USERS(id) > 0))
++  {
++    return true;
++  }
++  const uint64_t image_uid = id->session_uid;
++  if (!image_uid || !WM_event_ipad_pencil_paint_image_teardown(bmain, image_uid)) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Image removal");
++    return false;
++  }
++  if (G_MAIN != bmain) {
++    id_ptr->invalidate();
++    return false;
++  }
++
++  ID *live_image = nullptr;
++  LISTBASE_FOREACH (ID *, candidate, &bmain->images) {
++    if (candidate->session_uid == image_uid) {
++      live_image = candidate;
++      break;
++    }
++  }
++  if (!live_image) {
++    id_ptr->invalidate();
++    return false;
++  }
++  id_ptr->data = live_image;
 +  return true;
 +}
 +
@@ -170185,7 +170448,7 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +  BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Mesh removal");
 +  return false;
 +}
-
++
 +static bool rna_Main_object_remove_guard(Main *bmain,
 +                                         ReportList *reports,
 +                                         PointerRNA *id_ptr,
@@ -170282,11 +170545,17 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +  return true;
 +}
 +#  endif
-+
+ 
  static void rna_Main_ID_remove(Main *bmain,
-@@ -125,1 +442,10 @@
+                                ReportList *reports,
+@@ -122,6 +479,17 @@
+                 id->name + 2);
+     return;
+   }
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
++  id = static_cast<ID *>(id_ptr->data);
++  if (!rna_Main_image_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
 +  if (!rna_Main_mesh_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
@@ -170295,3 +170564,65 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +#  endif
 +
    if (do_unlink) {
+     BKE_id_delete(bmain, id);
+     id_ptr->invalidate();
+diff --git a/source/blender/editors/sculpt_paint/paint_intern.hh b/source/blender/editors/sculpt_paint/paint_intern.hh
+--- a/source/blender/editors/sculpt_paint/paint_intern.hh
++++ b/source/blender/editors/sculpt_paint/paint_intern.hh
+@@ -332,6 +332,8 @@
+                           void *ps);
+ void paint_2d_gradient_fill(
+     const bContext *C, Brush *br, const float mouse_init[2], const float mouse_final[2], void *ps);
++bool paint_proj_stroke_uses_image(void *ps_handle, const Image *image, bool *r_known);
++
+ void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int mode);
+ void paint_proj_stroke(const bContext *C,
+                        void *ps_handle_p,
+diff --git a/source/blender/editors/sculpt_paint/paint_image_proj.cc b/source/blender/editors/sculpt_paint/paint_image_proj.cc
+--- a/source/blender/editors/sculpt_paint/paint_image_proj.cc
++++ b/source/blender/editors/sculpt_paint/paint_image_proj.cc
+@@ -6000,6 +6000,44 @@
+   ps->dither = settings->imapaint.dither;
+ }
+ 
++bool paint_proj_stroke_uses_image(void *ps_handle_p, const Image *image, bool *r_known)
++{
++  if (r_known) {
++    *r_known = false;
++  }
++  if (!ps_handle_p || !image || !r_known) {
++    return false;
++  }
++
++  const ProjStrokeHandle *ps_handle = static_cast<const ProjStrokeHandle *>(ps_handle_p);
++  /* Clone cursor picking holds no ProjPaintState or direct Image pointer. */
++  if (ps_handle->is_clone_cursor_pick) {
++    *r_known = true;
++    return false;
++  }
++  if (ps_handle->ps_views_tot <= 0 ||
++      ps_handle->ps_views_tot > int(sizeof(ps_handle->ps_views) / sizeof(ps_handle->ps_views[0])))
++  {
++    return false;
++  }
++
++  bool used = false;
++  for (int i = 0; i < ps_handle->ps_views_tot; i++) {
++    const ProjPaintState *ps = ps_handle->ps_views[i];
++    if (!ps || ps->image_tot < 0 || (ps->image_tot > 0 && !ps->projImages)) {
++      return false;
++    }
++    used |= ps->stencil_ima == image || ps->canvas_ima == image || ps->clone_ima == image ||
++            ps->reproject_image == image;
++    for (int image_i = 0; image_i < ps->image_tot; image_i++) {
++      used |= ps->projImages[image_i].ima == image;
++    }
++  }
++
++  *r_known = true;
++  return used;
++}
++
+ void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int mode)
+ {
+   ProjStrokeHandle *ps_handle;
