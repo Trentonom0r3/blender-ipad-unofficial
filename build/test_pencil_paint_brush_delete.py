@@ -18,6 +18,7 @@ BRUSH_DIRECT_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_brush_tear
 BRUSH_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(")
 RNA_MAIN_API = changed_source(RNA_MAIN_API_PATH)
 RNA_BRUSH_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_brush_remove_guard(")
+RNA_OBJECT_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_object_remove_guard(")
 
 
 def patch_section(path):
@@ -260,6 +261,177 @@ int main(){
         self.assertIn("id_ptr->data = live_brush", body)
         self.assertIn("id->tag & ID_TAG_NO_MAIN", body)
         self.assertLess(body.index("ID_TAG_NO_MAIN"), body.index(helper))
+
+        object_helper = "WM_event_ipad_pencil_paint_mode_exit(bmain, scene, object)"
+        object_guard = "rna_Main_object_remove_guard(bmain, reports, id_ptr, do_unlink)"
+        self.assertIn(object_helper, body)
+        self.assertIn("handler->ipad_pencil_owner_values[7] == object_uid", body)
+        self.assertIn("id_ptr->data = live_object", body)
+        self.assertLess(body.index(object_guard), body.index("if (do_unlink) {"))
+        self.assertLess(body.index("if (G_MAIN != bmain) {\n    return true;"), body.index(object_guard))
+        self.assertLess(body.index("id_ptr->data = live_object"), body.index("if (!mode_exit_succeeded)"))
+
+    def test_python_collection_object_removal_retires_or_refuses_live_owner(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(
+            OBJECT_REMOVE_CPP + RNA_OBJECT_REMOVE_GUARD + r"""
+int main()
+{
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=11;
+    Object object; object.session_uid=101; object.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&ptr.data==&object&&reports.errors==0);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=12;
+    Object object; object.session_uid=102; object.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    mode_exit_allowed=false;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&reports.errors==1&&ptr.data==&object);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=13;
+    Object old_object; old_object.session_uid=103; old_object.mode=OB_MODE_SCULPT;
+    Object replacement; replacement.session_uid=103; replacement.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&old_object; PointerRNA ptr{&old_object}; ReportList reports;
+    replacement_object=&replacement;
+    replace_object_during_exit=true;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(ptr.data==&replacement&&main.objects.first==&replacement);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=131;
+    Object old_object; old_object.session_uid=1310; old_object.mode=OB_MODE_SCULPT;
+    Object replacement; replacement.session_uid=1310; replacement.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&old_object; PointerRNA ptr{&old_object}; ReportList reports;
+    replacement_object=&replacement;
+    replace_object_during_exit=true; mode_exit_allowed=false;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(ptr.data==&replacement&&main.objects.first==&replacement&&reports.errors==1);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Object object; object.session_uid=104;
+    main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    wmWindowManager wm; wmWindow win; wmEventHandler_Op owner;
+    main.wm.first=&wm; wm.windows.first=&win; win.modalhandlers.first=&owner;
+    owner.type=WM_HANDLER_TYPE_OP; owner.ipad_pencil_paint_serial=1;
+    owner.ipad_pencil_owner_values[7]=104;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&reports.errors==1&&ptr.data==&object);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=15;
+    Object object; object.session_uid=105; object.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    wmWindowManager wm; wmWindow win; wmEventHandler_Op owner;
+    main.wm.first=&wm; wm.windows.first=&win; win.modalhandlers.first=&owner;
+    owner.type=WM_HANDLER_TYPE_OP; owner.ipad_pencil_paint_serial=2;
+    owner.ipad_pencil_owner_values[7]=105;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&reports.errors==1&&ptr.data==&object);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Object object; object.session_uid=106;
+    main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    wmWindowManager wm; wmWindow win; wmEventHandler_Op owner;
+    main.wm.first=&wm; wm.windows.first=&win; win.modalhandlers.first=&owner;
+    owner.type=WM_HANDLER_TYPE_OP; owner.ipad_pencil_paint_serial=3;
+    owner.ipad_pencil_owner_values[7]=999;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&ptr.data==&object&&reports.errors==0);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=17;
+    Object object; object.session_uid=107; object.mode=OB_MODE_SCULPT;
+    main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&reports.errors==1);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Object object; object.session_uid=108;
+    object.tag=ID_TAG_NO_MAIN; PointerRNA ptr{&object}; ReportList reports;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&ptr.data==&object&&reports.errors==0);
+  }
+  {
+    reset(); Main main; Main unrelated_main; G_MAIN=&unrelated_main;
+    Object object; object.session_uid=1081; object.mode=OB_MODE_SCULPT;
+    PointerRNA ptr{&object}; ReportList reports;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&ptr.data==&object&&reports.errors==0);
+  }
+  {
+    reset(); Main main; Main replaced_main; G_MAIN=&main; Scene scene; scene.session_uid=1082;
+    Object object; object.session_uid=1082; object.mode=OB_MODE_SCULPT;
+    main.scenes.first=&scene; main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    replace_global_main_during_exit=&replaced_main;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&ptr.invalidated&&ptr.data==nullptr&&reports.errors==1);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Object object; object.session_uid=109; object.users=2;
+    main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    assert(rna_Main_object_remove_guard(&main,&reports,&ptr,false));
+    assert(mode_exit_calls==0&&ptr.data==&object&&reports.errors==0);
+  }
+  {
+    reset(); Main main; G_MAIN=&main; Scene scene; scene.session_uid=19;
+    Object object; object.mode=OB_MODE_SCULPT; main.scenes.first=&scene;
+    main.objects.first=&object; PointerRNA ptr{&object}; ReportList reports;
+    assert(!rna_Main_object_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&reports.errors==1);
+  }
+}
+""")
+
+
+OBJECT_REMOVE_CPP = r"""
+#include <cassert>
+#include <cstdint>
+constexpr int ID_TAG_NO_MAIN=4, ID_OB=2, RPT_ERROR=3, WM_HANDLER_TYPE_OP=1;
+constexpr int OB_MODE_SCULPT=1<<0, OB_MODE_VERTEX_PAINT=1<<1,
+              OB_MODE_WEIGHT_PAINT=1<<2, OB_MODE_TEXTURE_PAINT=1<<3;
+static int active_idcode=ID_OB;
+#define GS(name) active_idcode
+#define ID_REAL_USERS(id) ((id)->users)
+struct ID { ID *next=nullptr; uint64_t session_uid=0; int tag=0,users=0; char name[66]="OBObject"; };
+struct Scene : ID {};
+struct Object : ID { ID &id; int mode=0; Object():id(*this){} };
+struct ListBase { void *first=nullptr; };
+struct wmEventHandler { wmEventHandler *next=nullptr; int type=0; };
+struct wmEventHandler_Op : wmEventHandler {
+  uint64_t ipad_pencil_paint_serial=0;
+  uint64_t ipad_pencil_owner_values[19]{};
+};
+struct wmWindow { wmWindow *next=nullptr; ListBase handlers,modalhandlers; };
+struct wmWindowManager { wmWindowManager *next=nullptr; ListBase windows; };
+struct Main { ListBase brushes,objects,scenes,wm; };
+struct ReportList { int errors=0; };
+struct PointerRNA { void *data=nullptr; bool invalidated=false; void invalidate(){data=nullptr;invalidated=true;} };
+static Main *G_MAIN=nullptr;
+#define LISTBASE_FOREACH(type,item,list) \
+  for(type item=static_cast<type>((list)->first);item;item=static_cast<type>(item->next))
+static int mode_exit_calls=0;
+static bool mode_exit_allowed=true,replace_object_during_exit=false;
+static Main *replace_global_main_during_exit=nullptr;
+static Object *replacement_object=nullptr;
+static void remove_object(Main *main,Object *object){
+  ID *previous=nullptr,*current=static_cast<ID*>(main->objects.first);
+  while(current&&current!=static_cast<ID*>(object)){previous=current;current=current->next;}
+  if(current){if(previous)previous->next=current->next;else main->objects.first=current->next;current->next=nullptr;}
+}
+void BKE_report(ReportList *reports,int,const char*){if(reports)++reports->errors;}
+bool WM_event_ipad_pencil_paint_mode_exit(Main *main,Scene *scene,Object *object){
+  ++mode_exit_calls;assert(main==G_MAIN&&scene);
+  if(replace_object_during_exit){const uint64_t uid=object->session_uid;remove_object(main,object);
+    replacement_object->session_uid=uid;main->objects.first=replacement_object;}
+  if(replace_global_main_during_exit)G_MAIN=replace_global_main_during_exit;
+  return mode_exit_allowed;
+}
+static void reset(){mode_exit_calls=0;mode_exit_allowed=true;replace_object_during_exit=false;replacement_object=nullptr;replace_global_main_during_exit=nullptr;active_idcode=ID_OB;}
+"""
 
 
 RNA_REMOVE_CPP = r"""

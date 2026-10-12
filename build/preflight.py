@@ -118,15 +118,16 @@ def check_patch(patch: str, files: list[tuple[str, bool]], source_loader) -> Non
 
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(verify_new_file_is_absent, new_files))
-        # New BLI and WM includes must exist at their actual exported paths in
+        # New BLI, BKE, and WM includes must exist at their exported paths in
         # the pin. WM exports its root; gizmo headers require the gizmo/ prefix.
         added_headers = set(re.findall(
-            r'^\+\s*#\s*include "(BLI_[A-Za-z0-9_]+\.hh?|(?:gizmo/)?WM_[A-Za-z0-9_]+\.hh?)"',
+            r'^\+\s*#\s*include "((?:BLI|BKE)_[A-Za-z0-9_]+\.hh?|(?:gizmo/)?WM_[A-Za-z0-9_]+\.hh?)"',
             patch, re.MULTILINE))
         changed_paths = {path for path, _ in files}
-        dependencies = sorted(
-            'source/blender/' + ('blenlib/' if header.startswith('BLI_') else 'windowmanager/') + header
-            for header in added_headers)
+        dependencies = sorted('source/blender/' + (
+            'blenlib/' if header.startswith('BLI_') else
+            'blenkernel/' if header.startswith('BKE_') else
+            'windowmanager/') + header for header in added_headers)
         dependencies = [path for path in dependencies if path not in changed_paths]
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(source_loader, dependencies))

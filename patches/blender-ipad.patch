@@ -169962,7 +169962,13 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/makesrna/intern/rna_main_api.cc
 --- a/source/blender/makesrna/intern/rna_main_api.cc
 +++ b/source/blender/makesrna/intern/rna_main_api.cc
-@@ -109,1 +109,37 @@
+@@ -27,4 +27,5 @@
+ #  include "BKE_curve.hh"
+ #  include "BKE_curves.h"
++#  include "BKE_global.hh"
+ #  include "BKE_displist.h"
+ #  include "BKE_gpencil_legacy.h"
+@@ -109,1 +110,133 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +static bool rna_Main_brush_remove_guard(Main *bmain,
 +                                        ReportList *reports,
@@ -169997,12 +170003,110 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +  id_ptr->data = live_brush;
 +  return true;
 +}
++
++static bool rna_Main_object_remove_guard(Main *bmain,
++                                         ReportList *reports,
++                                         PointerRNA *id_ptr,
++                                         const bool do_unlink)
++{
++  if (!bmain || !id_ptr || !id_ptr->data) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++    return false;
++  }
++  /* Pencil modal owners only belong to Blender's live application Main. */
++  if (G_MAIN != bmain) {
++    return true;
++  }
++  ID *id = static_cast<ID *>(id_ptr->data);
++  /* Preserve native ownership and outside-Main behavior. */
++  if ((id->tag & ID_TAG_NO_MAIN) || GS(id->name) != ID_OB ||
++      (!do_unlink && ID_REAL_USERS(id) > 0))
++  {
++    return true;
++  }
++  const uint64_t object_uid = id->session_uid;
++  if (!object_uid) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++    return false;
++  }
++
++  Object *object = reinterpret_cast<Object *>(id);
++  const int paint_modes = OB_MODE_SCULPT | OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT |
++                          OB_MODE_TEXTURE_PAINT;
++  bool mode_exit_succeeded = true;
++  if (object->mode & paint_modes) {
++    Scene *scene = static_cast<Scene *>(bmain->scenes.first);
++    if (!scene) {
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++      return false;
++    }
++    mode_exit_succeeded = WM_event_ipad_pencil_paint_mode_exit(bmain, scene, object);
++  }
++  /* The native Cancel callback may delete or replace the Object. Do not read
++   * the old ID/PointerRNA target again; reacquire from Main by its stable UID. */
++  if (G_MAIN != bmain) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++    id_ptr->invalidate();
++    return false;
++  }
++  Object *live_object = nullptr;
++  LISTBASE_FOREACH (Object *, candidate, &bmain->objects) {
++    if (candidate->id.session_uid == object_uid) {
++      live_object = candidate;
++      break;
++    }
++  }
++  if (!live_object) {
++    id_ptr->invalidate();
++    return false;
++  }
++  id_ptr->data = live_object;
++  if (!mode_exit_succeeded) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++    return false;
++  }
++
++  bool owner_remains = false;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      auto inspect_handlers = [&](ListBase *handlers) {
++        LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++          if (base->type != WM_HANDLER_TYPE_OP) {
++            continue;
++          }
++          const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++          if (handler->ipad_pencil_paint_serial &&
++              handler->ipad_pencil_owner_values[7] == object_uid)
++          {
++            owner_remains = true;
++            return;
++          }
++        }
++      };
++      inspect_handlers(&win->handlers);
++      inspect_handlers(&win->modalhandlers);
++      if (owner_remains) {
++        break;
++      }
++    }
++    if (owner_remains) {
++      break;
++    }
++  }
++  if (owner_remains) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Object removal");
++    return false;
++  }
++  return true;
++}
 +#  endif
 +
  static void rna_Main_ID_remove(Main *bmain,
-@@ -125,1 +161,6 @@
+@@ -125,1 +258,8 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
++  id = static_cast<ID *>(id_ptr->data);
++  if (!rna_Main_object_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
 +#  endif
 +

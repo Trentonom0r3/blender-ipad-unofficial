@@ -1,3 +1,9 @@
+## Current source candidate — Python Object removal owner guard — 2026-10-11
+
+`bpy.data.objects.remove()` uses the shared `rna_Main_ID_remove` path, which can unlink or free its Object without passing through the native UI delete hooks. The Apple-only guard now retires paint-mode Pencil owners before that path, reacquires the Object by session UID after native callbacks, refuses if the Main changes, teardown refuses, or an owner remains, and preserves removal behavior for non-active Mains. The preflight now checks added BKE headers at their pinned paths.
+
+Validation on this exact candidate: **359/359** host tests, focused Brush/Object removal **6/6**, **118-file** pinned offline preflight, online pinned-header fetch, and diff hygiene. This is source and host evidence only: no native build, IPA, or device behavior for the candidate. Next commit and push the exact source, run one native iOS Release, verify the downloaded IPA and compiled deletion call path, then continue the original-owner lifecycle audit. Latest package remains `f00c480` / run `38194863513`.
+
 ## Verified cross-window Pencil owner cleanup - 2026-10-11
 
 Exact source **e435ec311f8b2657969ce58a8e295f540eb24047** passed the fork's hosted preflight and native iOS Release in [run 38155628823](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38155628823). Shared `ED_area_exit` now scans manager windows, skips null active screens, finds the target area in a live screen, then runs the existing strict owner teardown before native area/region exit. If no active screen contains the area, the current context-window fallback remains. This covers the foreign-window `ED_area_swapspace` path without calling the unsafe pinned finder on a null screen.

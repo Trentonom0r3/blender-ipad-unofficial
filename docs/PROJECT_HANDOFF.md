@@ -1,3 +1,9 @@
+## Current source candidate — Python Object removal owner guard — 2026-10-11
+
+The pinned `BlendDataObjects.remove` binding calls the generic `rna_Main_ID_remove` function. That path can delete or free an Object without the native Outliner hook. The Apple-only guard now retires any paint-mode Pencil owner before unlink/free, reacquires the Object by session UID after callbacks, and refuses if the Main changes, native mode teardown fails, or an owner remains. Calls against another Main retain Blender's ordinary removal behavior. The pin-checked `BKE_global.hh` dependency is explicit.
+
+Validation on this source: **359/359** host tests, focused Brush/Object removal **6/6**, **118-file** exact offline preflight, online pinned-header verification, and `git diff --check` pass. The current source/package boundary remains distinct: there is no iOS build, IPA, compiled deletion audit, or device acceptance for this candidate yet. Exact LF patch SHA256 is `68c3eb6aa389d91a1a2ec9868f8d2aec610ff68e43685dc5d1cd237a6888c3f1`. Latest verified IPA remains `f00c480` / run `38194863513`.
+
 ## Verified Python Brush removal lease guard — 2026-10-11
 
 Exact source `f00c4800c8d1648289ac1f40d105047857261825` passed hosted preflight and native iOS Release in [run 38194863513](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38194863513). The downloaded IPA is **248,608,144 bytes**, SHA256 `a283d536a2973e2c1120d7cd3af8044402c9175eeadee98b70007c8f9e002925`, artifact `11723706918`. Its full **3,368-entry CRC**, arm64/iPhoneOS 5.0.0 app, exact packaged UI/default Blender header, pinned native tools, all129 icons, and nine-action Base/native-only More Tools contract pass.

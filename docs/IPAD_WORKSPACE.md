@@ -1,3 +1,9 @@
+## Current source candidate — generic Python Object removal owner guard — 2026-10-11
+
+`bpy.data.objects.remove()` binds to Blender's generic `rna_Main_ID_remove`; it does not use the native UI deletion hook. The Apple-only guard now retires paint-mode Pencil owners before that generic unlink/free, reacquires the Object by stable session UID after native callbacks, and refuses a changed Main, failed cancellation, or any owner still registered. Other Main databases keep normal behavior. The global header is checked against the exact pinned Blender revision.
+
+Validation: **359/359** host tests, focused Brush/Object removal **6/6**, **118-file** pinned offline preflight, and diff hygiene pass. This remains unbuilt source/host evidence. Latest verified package remains `f00c480` / run `38194863513`; no device behavior is claimed for this candidate. Next, build this exact source once and inspect the downloaded full IPA and compiled deletion ordering.
+
 ## Current checkpoint — object deletion owner cleanup — 2026-10-11
 
 Verified source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed native iOS Release and full IPA verification in run [38169232285](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38169232285). The 248,606,296-byte IPA has SHA256 `62336f41020b09159739fc0b9513554e696e9ee0068c22fbe537d59a87e6c094` (artifact `11713269730`). Full CRC, arm64/iPhoneOS bundle, exact UI/default Blender header, pinned tool inventory and 129-icon checks pass.

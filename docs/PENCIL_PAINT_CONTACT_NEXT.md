@@ -1,3 +1,9 @@
+## Generic Python Object removal owner guard — source candidate — 2026-10-11
+
+`BlendDataObjects.remove` bypasses the native UI deletion callbacks and reaches shared `rna_Main_ID_remove`. The Apple-only guard now runs strict paint-mode owner teardown before generic Object unlink/free, reacquires the live Object by UID after callbacks, and refuses on Main replacement, cancellation failure, or a remaining matching handler. It leaves non-active Main removals alone. Added `BKE_global.hh` is verified against pinned Blender source and cached for offline preflight.
+
+Validation: the full host suite passes **359/359**, focused Brush/Object deletion **6/6**, and the exact pinned **118-file** offline preflight and diff check pass. This is not an iOS compile, IPA, or device acceptance. Canonical LF patch SHA256: `68c3eb6aa389d91a1a2ec9868f8d2aec610ff68e43685dc5d1cd237a6888c3f1`. Next commit and push this coherent source/test change, build exactly once, verify the complete IPA and compiled call order, then continue the remaining owner lifecycle audit.
+
 ## Workspace tool change owner retirement — 2026-10-11
 
 Exact source `5d0e4f97b4a147aaaf85c6bc17648d3005970886` adds a pre-unlink guard to `WM_toolsystem_ref_set_from_runtime`. A different ToolRef ID must first retire every matching same-workspace/space/mode Pencil owner through Blender's strict native Cancel path. The scan restarts after callbacks and refuses if teardown fails, context/workspace/ToolRef identity changes, a foreign manager has an owner, or a callback selects another tool. Same-ID updates remain untouched. Native mode Cancel may finish partial work or have mode-specific effects; it is not a general rollback guarantee.
