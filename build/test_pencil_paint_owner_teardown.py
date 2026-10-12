@@ -81,7 +81,8 @@ CPP_PRELUDE = r'''
 struct bContext; struct wmWindow; struct wmWindowManager; struct ScrArea;
 struct ARegion; struct wmOperator; struct wmEvent; struct wmEventHandler_Op; struct Scene;
 void WM_event_ipad_pencil_paint_owner_teardown(
-    bContext *, wmWindow *, const ScrArea *, const ARegion *, uint64_t scene_uid = 0, uint64_t object_uid = 0);
+    bContext *, wmWindow *, const ScrArea *, const ARegion *, uint64_t scene_uid = 0, uint64_t object_uid = 0,
+    uint64_t brush_uid = 0);
 struct ListBase { void *first=nullptr; };
 struct ID { uint64_t session_uid=17; };
 struct rcti { int xmin=10,ymin=20,xmax=110,ymax=120; };
@@ -298,6 +299,7 @@ struct Fixture {
     handler.ipad_pencil_paint_mode=OB_MODE_SCULPT;handler.ipad_pencil_paint_serial=44;
     handler.ipad_pencil_owner_values[5]=17;handler.ipad_pencil_owner_values[6]=53;
     handler.ipad_pencil_owner_values[7]=67;handler.ipad_pencil_owner_values[9]=OB_MODE_SCULPT;
+    handler.ipad_pencil_owner_values[16]=91;
     handler.ipad_pencil_owner_values[17]=81;handler.ipad_pencil_owner_values[18]=82;
     std::copy_n("builtin_brush.Draw", sizeof("builtin_brush.Draw"),
                 handler.ipad_pencil_owner_tool);
@@ -357,6 +359,14 @@ int main(){
     WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,53,67);
     assert(g_cancel_calls==1&&g_cancel_context_correct==1);
     assert(f.handler.op==nullptr&&f.handler.head.freed);
+  }
+  {
+    /* Brush UID is a pre-free match only; it is never part of normal owner admission. */
+    Fixture f;
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,0,0,92);
+    assert(g_cancel_calls==0&&f.window.modalhandlers.first==&f.handler.head);
+    WM_event_ipad_pencil_paint_owner_teardown(&f.C,&f.window,nullptr,nullptr,0,0,91);
+    assert(g_cancel_calls==1&&g_cancel_context_correct==1);
   }
   {
     /* A global object removal ignores only the scene dimension, not identity. */
@@ -913,6 +923,12 @@ int main()
         self.assertLess(region_exit.index(region_hook), region_exit.index('region->runtime->type->exit'))
         self.assertLess(region_exit.index(region_hook), region_exit.index('region->runtime->visible = false'))
         self.assertIn('void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,', API)
+
+    def test_brush_uid_is_captured_for_destruction_only(self):
+        bind = function(WM, 'static void wm_ipad_pencil_paint_modal_handler_bind(')
+        self.assertIn('handler->ipad_pencil_owner_values[16] = owner.values[16]', bind)
+        self.assertNotIn('owner_values[16]', OWNER_MATCH)
+        self.assertIn('owner_brush_uid && handler->ipad_pencil_owner_values[16]', OWNER_TEARDOWN)
 
     def test_area_and_region_replacement_routes_through_owner_exit_before_free(self):
         """Guard the destruction entrypoints that must run the live-owner hook."""
