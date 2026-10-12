@@ -169936,3 +169936,13 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +#endif
          BKE_id_multi_tagged_delete(bmain);
          WM_event_add_notifier(C, NC_OBJECT, nullptr);
+@@ -3092,3 +3098,9 @@
+       BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
+       outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
++        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        return OPERATOR_CANCELLED;
++      }
++#endif
+       BKE_id_multi_tagged_delete(bmain);

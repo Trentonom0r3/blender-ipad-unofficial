@@ -153,7 +153,7 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
     def test_tagged_brush_owners_retire_across_windows_and_fail_closed(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP)
 
-    def test_every_generic_outliner_delete_retires_before_free(self):
+    def test_every_outliner_delete_retires_before_free(self):
         edit = patch_section(OUTLINER_EDIT_PATH)
         tools = patch_section(OUTLINER_TOOLS_PATH)
         api = patch_section(WM_API_PATH)
@@ -162,14 +162,63 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
         self.assertNotIn('#include "WM_event_system.hh"', tools)
         click_delete = edit.split("@@ -601,2 +602,8", 1)[1].split("@@ -2387,3", 1)[0]
         purge_delete = edit.split("@@ -2385,5 +2392,11", 1)[1]
-        delete_branch = tools.split("@@ -2958,4 +2959,10", 1)[1]
+        delete_branch = tools.split("@@ -2958,4 +2959,10", 1)[1].split("@@ ", 1)[0]
+        library_delete = tools.split("@@ -3092,3 +3098,9", 1)[1]
         helper = "WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)"
-        for body in (click_delete, purge_delete, delete_branch):
+        for body in (click_delete, purge_delete, delete_branch, library_delete):
             new_source = "\n".join(line[1:] for line in body.splitlines()
                                     if line.startswith(("+", " ")) and not line.startswith("+++"))
             self.assertLess(new_source.index(helper), new_source.index("BKE_id_multi_tagged_delete(bmain);"))
             self.assertIn("BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false)", new_source)
             self.assertIn("return OPERATOR_CANCELLED", new_source)
+
+    def test_library_delete_runs_the_guard_before_free_and_undo(self):
+        section = patch_section(OUTLINER_TOOLS_PATH)
+        hunk = section.split("@@ -3092,3 +3098,9 @@", 1)[1]
+        body = "\n".join(
+            line[1:] for line in hunk.splitlines()
+            if line.startswith((" ", "+")) and not line.startswith("+++")
+        )
+        cpp = r"""
+#include <cassert>
+#define WITH_APPLE_CROSSPLATFORM
+constexpr int ID_TAG_DOIT=1, OPERATOR_CANCELLED=-1, id_delete_tag_fn=1;
+struct Main {};
+struct bContext {};
+struct wmOperator { void *reports=nullptr; };
+struct Scene {};
+struct SpaceOutliner {};
+static Main main_data;
+static bContext context;
+static wmOperator operation;
+static Scene scene_data;
+static SpaceOutliner outliner;
+static int calls[16], call_count=0;
+static bool allow_teardown=true;
+void BKE_main_id_tag_all(Main*,int,bool){calls[call_count++]=1;}
+void outliner_do_libdata_operation(bContext*,void*,Scene*,SpaceOutliner*,int){calls[call_count++]=2;}
+bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main*){
+  calls[call_count++]=3;return allow_teardown;
+}
+void BKE_id_multi_tagged_delete(Main*){calls[call_count++]=4;}
+void ED_undo_push(bContext*,const char*){calls[call_count++]=5;}
+static int run_library_delete(){
+  Main *bmain=&main_data;bContext *C=&context;wmOperator *op=&operation;
+  Scene *scene=&scene_data;SpaceOutliner *space_outliner=&outliner;
+""" + body + r"""
+  ED_undo_push(C,"Delete Library");
+  return 0;
+}
+int main(){
+  allow_teardown=true;call_count=0;
+  assert(run_library_delete()==0);
+  assert(call_count==5&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==4&&calls[4]==5);
+  allow_teardown=false;call_count=0;
+  assert(run_library_delete()==OPERATOR_CANCELLED);
+  assert(call_count==4&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==1);
+}
+"""
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(cpp)
 
 
 if __name__ == "__main__":
