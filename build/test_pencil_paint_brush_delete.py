@@ -19,6 +19,7 @@ BRUSH_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_tagged_brushes_te
 RNA_MAIN_API = changed_source(RNA_MAIN_API_PATH)
 RNA_BRUSH_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_brush_remove_guard(")
 RNA_OBJECT_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_object_remove_guard(")
+RNA_MESH_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_mesh_remove_guard(")
 
 
 def patch_section(path):
@@ -387,6 +388,22 @@ int main()
 """)
 
 
+    def test_python_collection_mesh_guard_runs_before_force_delete(self):
+        section = patch_section(RNA_MAIN_API_PATH)
+        body = "\n".join(
+            line[1:] for line in section.splitlines()
+            if line.startswith(("+", " ")) and not line.startswith("+++")
+        )
+        self.assertIn('+#    include "wm_event_system.hh"', section)
+        self.assertIn("handler->ipad_pencil_owner_values[8] != mesh_uid", body)
+        self.assertIn("WM_event_ipad_pencil_paint_mode_exit(bmain, owner_scene, owner_object)", body)
+        guard = "rna_Main_mesh_remove_guard(bmain, reports, id_ptr, do_unlink)"
+        self.assertLess(body.index(guard), body.index("if (do_unlink) {"))
+        self.assertLess(body.index("id_ptr->data = live_mesh"), body.index("if (do_unlink) {"))
+
+    def test_python_collection_mesh_removal_retires_each_live_owner(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(MESH_REMOVE_CPP)
+
 OBJECT_REMOVE_CPP = r"""
 #include <cassert>
 #include <cstdint>
@@ -433,6 +450,198 @@ bool WM_event_ipad_pencil_paint_mode_exit(Main *main,Scene *scene,Object *object
 static void reset(){mode_exit_calls=0;mode_exit_allowed=true;replace_object_during_exit=false;replacement_object=nullptr;replace_global_main_during_exit=nullptr;active_idcode=ID_OB;}
 """
 
+
+MESH_REMOVE_CPP = r"""
+#include <cassert>
+#include <cstdint>
+#include <initializer_list>
+constexpr int ID_ME=4, ID_TAG_NO_MAIN=8, RPT_ERROR=3, WM_HANDLER_TYPE_OP=1;
+constexpr int OB_MODE_SCULPT=1<<0, OB_MODE_VERTEX_PAINT=1<<1,
+              OB_MODE_WEIGHT_PAINT=1<<2, OB_MODE_TEXTURE_PAINT=1<<3;
+static int active_idcode=ID_ME;
+#define GS(name) active_idcode
+#define ID_REAL_USERS(id) ((id)->users)
+#define ELEM(value,a,b,c,d) ((value)==(a)||(value)==(b)||(value)==(c)||(value)==(d))
+struct ID { ID *next=nullptr; uint64_t session_uid=0; int tag=0,users=0; char name[66]="MEmesh"; };
+struct Scene : ID { ID &id; Scene():id(*this){} };
+struct Object : ID { ID &id; ID *data=nullptr; int mode=0; Object():id(*this){} };
+struct ListBase { void *first=nullptr; };
+struct wmEventHandler { wmEventHandler *next=nullptr; int type=0; };
+struct wmEventHandler_Op : wmEventHandler {
+  uint64_t ipad_pencil_paint_serial=0, ipad_pencil_operator_lifetime=0;
+  int ipad_pencil_paint_mode=0; uint64_t ipad_pencil_owner_values[19]{};
+};
+struct wmWindow { wmWindow *next=nullptr; int runtime=1; ListBase handlers,modalhandlers; };
+struct wmWindowManager { wmWindowManager *next=nullptr; ListBase windows; };
+struct Main { ListBase meshes,objects,scenes,wm; };
+struct ReportList { int errors=0; };
+struct PointerRNA { void *data=nullptr; bool invalidated=false; void invalidate(){data=nullptr;invalidated=true;} };
+static Main *G_MAIN=nullptr;
+#define LISTBASE_FOREACH(type,item,list) \
+  for(type item=static_cast<type>((list)->first);item;item=static_cast<type>(item->next))
+static int mode_exit_calls=0;
+static bool mode_exit_allowed=true,leave_owner_registered=false,delete_mesh_during_exit=false;
+static Main *replace_global_main_during_exit=nullptr;
+static void unlink_handler(ListBase &list,wmEventHandler *target){
+  wmEventHandler *previous=nullptr,*current=static_cast<wmEventHandler*>(list.first);
+  while(current&&current!=target){previous=current;current=current->next;}
+  if(current){if(previous)previous->next=current->next;else list.first=current->next;current->next=nullptr;}
+}
+static void unlink_mesh(Main *main,ID *target){
+  ID *previous=nullptr,*current=static_cast<ID*>(main->meshes.first);
+  while(current&&current!=target){previous=current;current=current->next;}
+  if(current){if(previous)previous->next=current->next;else main->meshes.first=current->next;current->next=nullptr;}
+}
+void BKE_report(ReportList *reports,int,const char*){if(reports)++reports->errors;}
+bool WM_event_ipad_pencil_paint_mode_exit(Main *main,Scene *scene,Object *object){
+  ++mode_exit_calls;assert(main==G_MAIN&&scene&&object);
+  if(!mode_exit_allowed)return false;
+  const uint64_t object_uid=object->id.session_uid;
+  const int mode=object->mode&(OB_MODE_SCULPT|OB_MODE_VERTEX_PAINT|OB_MODE_WEIGHT_PAINT|OB_MODE_TEXTURE_PAINT);
+  if(!leave_owner_registered){
+    LISTBASE_FOREACH(wmWindowManager*,wm,&main->wm) LISTBASE_FOREACH(wmWindow*,win,&wm->windows) {
+      for(ListBase *handlers:{&win->handlers,&win->modalhandlers})
+        for(auto *base=static_cast<wmEventHandler*>(handlers->first);base;){
+          auto *next=base->next;
+          if(base->type==WM_HANDLER_TYPE_OP){
+            auto *owner=reinterpret_cast<wmEventHandler_Op*>(base);
+            if(owner->ipad_pencil_paint_serial&&owner->ipad_pencil_owner_values[7]==object_uid&&
+               owner->ipad_pencil_paint_mode==mode)unlink_handler(*handlers,base);
+          }
+          base=next;
+        }
+    }
+  }
+  if(delete_mesh_during_exit)unlink_mesh(main,static_cast<ID*>(main->meshes.first));
+  if(replace_global_main_during_exit)G_MAIN=replace_global_main_during_exit;
+  return true;
+}
+static void add_owner(wmWindow &win,wmEventHandler_Op &owner,uint64_t mesh_uid,
+                      uint64_t scene_uid,uint64_t object_uid,uint64_t lifetime,int mode,
+                      bool modal=true){
+  owner.type=WM_HANDLER_TYPE_OP;owner.ipad_pencil_paint_serial=1;
+  owner.ipad_pencil_operator_lifetime=lifetime;owner.ipad_pencil_paint_mode=mode;
+  owner.ipad_pencil_owner_values[6]=scene_uid;owner.ipad_pencil_owner_values[7]=object_uid;
+  owner.ipad_pencil_owner_values[8]=mesh_uid;owner.ipad_pencil_owner_values[9]=uint64_t(mode);
+  ListBase &list=modal?win.modalhandlers:win.handlers;
+  owner.next=static_cast<wmEventHandler*>(list.first);list.first=&owner;
+}
+static void reset(){
+  mode_exit_calls=0;mode_exit_allowed=true;leave_owner_registered=false;
+  delete_mesh_during_exit=false;replace_global_main_during_exit=nullptr;active_idcode=ID_ME;
+}
+""" + RNA_MESH_REMOVE_GUARD + r"""
+int main(){
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=10;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=500;main.meshes.first=&mesh;
+    Object object;object.session_uid=100;object.mode=OB_MODE_SCULPT;object.data=&mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,500,10,100,20,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&!win.modalhandlers.first&&ptr.data==&mesh&&!reports.errors);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=11;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=501;main.meshes.first=&mesh;
+    Object object;object.session_uid=101;object.mode=OB_MODE_SCULPT;object.data=&mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,501,11,101,21,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;mode_exit_allowed=false;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&win.modalhandlers.first==&owner&&ptr.data==&mesh&&reports.errors==1);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=12;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=502;main.meshes.first=&mesh;
+    ID other_mesh;other_mesh.session_uid=900;
+    Object object;object.session_uid=102;object.mode=OB_MODE_SCULPT;object.data=&other_mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,502,12,102,22,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&win.modalhandlers.first==&owner&&reports.errors==1);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=120;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=5020;main.meshes.first=&mesh;
+    Object object;object.session_uid=1020;object.mode=OB_MODE_SCULPT;object.data=&mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,5020,120,1020,220,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;leave_owner_registered=true;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&win.modalhandlers.first==&owner&&reports.errors==1);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=13;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=503;main.meshes.first=&mesh;
+    Object first;first.session_uid=103;first.mode=OB_MODE_SCULPT;first.data=&mesh;
+    Object second;second.session_uid=104;second.mode=OB_MODE_WEIGHT_PAINT;second.data=&mesh;
+    first.next=&second;main.objects.first=&first;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op a,b;add_owner(win,a,503,13,103,23,OB_MODE_SCULPT);
+    add_owner(win,b,503,13,104,24,OB_MODE_WEIGHT_PAINT);
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==2&&!win.modalhandlers.first&&!reports.errors);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=14;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=504;main.meshes.first=&mesh;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op unrelated;add_owner(win,unrelated,999,14,105,25,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&win.modalhandlers.first==&unrelated&&!reports.errors);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=15;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=505;main.meshes.first=&mesh;
+    Object object;object.session_uid=106;object.mode=OB_MODE_SCULPT;object.data=&mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,505,15,106,26,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;delete_mesh_during_exit=true;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&!ptr.data&&ptr.invalidated&&reports.errors==0);
+  }
+  {
+    reset();Main main;Main replaced;G_MAIN=&main;Scene scene;scene.session_uid=16;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=506;main.meshes.first=&mesh;
+    Object object;object.session_uid=107;object.mode=OB_MODE_SCULPT;object.data=&mesh;main.objects.first=&object;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,506,16,107,27,OB_MODE_SCULPT);
+    PointerRNA ptr{&mesh};ReportList reports;replace_global_main_during_exit=&replaced;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==1&&ptr.invalidated&&!ptr.data&&reports.errors==1);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=17;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=507;mesh.tag=ID_TAG_NO_MAIN;main.meshes.first=&mesh;
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,true)&&mode_exit_calls==0);
+  }
+  {
+    reset();Main main;G_MAIN=&main;ID mesh;mesh.session_uid=508;mesh.users=3;
+    main.meshes.first=&mesh;PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,false)&&mode_exit_calls==0);
+  }
+  {
+    reset();Main main;Main other;G_MAIN=&other;ID mesh;mesh.session_uid=509;
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(rna_Main_mesh_remove_guard(&main,&reports,&ptr,true)&&mode_exit_calls==0);
+  }
+  {
+    reset();Main main;G_MAIN=&main;Scene scene;scene.session_uid=18;main.scenes.first=&scene;
+    ID mesh;mesh.session_uid=510;main.meshes.first=&mesh;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(win,owner,510,18,999,28,OB_MODE_SCULPT,false);
+    PointerRNA ptr{&mesh};ReportList reports;
+    assert(!rna_Main_mesh_remove_guard(&main,&reports,&ptr,true));
+    assert(mode_exit_calls==0&&win.handlers.first==&owner&&reports.errors==1);
+  }
+}
+"""
 
 RNA_REMOVE_CPP = r"""
 #include <cassert>
