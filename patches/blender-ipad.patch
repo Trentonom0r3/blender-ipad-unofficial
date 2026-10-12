@@ -161524,6 +161524,13 @@ index c680cef..c680cef 100644
 +    }
 +#endif
      BKE_id_multi_tagged_delete(bmain);
+@@ -4190,5 +4190,4 @@
+   if (act_base) {
+     /* active base was changed */
+     base_activate(C, act_base);
+-    view_layer->basact = act_base;
+   }
+
 diff --git a/source/blender/editors/scene/scene_edit.cc b/source/blender/editors/scene/scene_edit.cc
 index 1b2b5ae..ded945f 100644
 --- a/source/blender/editors/scene/scene_edit.cc
@@ -162731,3 +162738,54 @@ diff --git a/source/blender/makesrna/intern/rna_layer.cc b/source/blender/makesr
      if (basact_test != nullptr) {
        view_layer->basact = basact_test;
      }
+
+diff --git a/source/blender/editors/object/object_select.cc b/source/blender/editors/object/object_select.cc
+--- a/source/blender/editors/object/object_select.cc
++++ b/source/blender/editors/object/object_select.cc
+@@ -113,6 +113,45 @@ void base_activate(bContext *C, Base *base)
+ {
+   Scene *scene = CTX_data_scene(C);
+   ViewLayer *view_layer = CTX_data_view_layer(C);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  Main *bmain = CTX_data_main(C);
++  if (scene == nullptr || view_layer == nullptr) {
++    return;
++  }
++  StructRNA *layer_objects_type = RNA_struct_find("LayerObjects");
++  if (layer_objects_type == nullptr) {
++    return;
++  }
++  PointerRNA layer_objects = RNA_pointer_create_discrete(
++      &scene->id, layer_objects_type, view_layer);
++  PropertyRNA *active_property = RNA_struct_find_property(&layer_objects, "active");
++  if (active_property == nullptr) {
++    return;
++  }
++  PointerRNA active_value{};
++  if (base != nullptr) {
++    if (base->object == nullptr) {
++      return;
++    }
++    active_value = RNA_id_pointer_create(&base->object->id);
++  }
++  ReportList reports;
++  BKE_reports_init(&reports, RPT_STORE);
++  RNA_property_pointer_set(&layer_objects, active_property, active_value, &reports);
++  const bool refused = BKE_reports_contain(&reports, RPT_ERROR);
++  BKE_reports_free(&reports);
++  if (refused) {
++    return;
++  }
++#else
+   view_layer->basact = base;
+-  base_active_refresh(CTX_data_main(C), scene, view_layer);
++#endif
++  base_active_refresh(
++#ifdef WITH_APPLE_CROSSPLATFORM
++      bmain,
++#else
++      CTX_data_main(C),
++#endif
++      scene,
++      view_layer);
+ }

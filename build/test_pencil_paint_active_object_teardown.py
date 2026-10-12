@@ -3,11 +3,68 @@ from test_compact_shelf import function
 import test_ipad_panels
 from test_touch_extrude import changed_source
 import unittest
+import re
 
 
 RNA = changed_source('source/blender/makesrna/intern/rna_layer.cc')
 HELPER = function(RNA, 'static bool rna_LayerObjects_active_object_teardown(')
 SETTER = function(RNA, 'static void rna_LayerObjects_active_object_set(')
+SELECT = changed_source('source/blender/editors/object/object_select.cc')
+BASE_ACTIVATE = function(SELECT, 'void base_activate(')
+OBJECT_ADD = changed_source('source/blender/editors/object/object_add.cc')
+
+NATIVE_MOCKS = r"""
+struct StructRNA {};
+struct PropertyRNA {};
+static StructRNA layer_objects_type;
+static PropertyRNA active_property;
+static bool missing_layer_objects_type=false;
+static bool missing_active_property=false;
+static int refresh_calls=0;
+static int rna_set_calls=0;
+
+static Scene *CTX_data_scene(const bContext *C){return C&&C->win?C->win->scene:nullptr;}
+static ViewLayer *CTX_data_view_layer(const bContext *C){return C&&C->win?C->win->view_layer:nullptr;}
+static Main *CTX_data_main(const bContext *C){return C?C->main:nullptr;}
+static StructRNA *RNA_struct_find(const char *identifier) {
+  return !missing_layer_objects_type&&STREQ(identifier,"LayerObjects") ? &layer_objects_type : nullptr;
+}
+static PointerRNA RNA_pointer_create_discrete(ID *owner,StructRNA *,void *data) {
+  void *owner_data=owner;
+  if(G_MAIN) LISTBASE_FOREACH(Scene *,scene,&G_MAIN->scenes) if(&scene->id==owner) {
+    owner_data=scene;
+    break;
+  }
+  return PointerRNA{owner_data,data};
+}
+static PropertyRNA *RNA_struct_find_property(PointerRNA *ptr,const char *identifier) {
+  return ptr&&ptr->owner_id&&ptr->data&&!missing_active_property&&STREQ(identifier,"active") ?
+             &active_property : nullptr;
+}
+static Object *object_from_id(ID *id) {
+  if(!G_MAIN||!id)return nullptr;
+  LISTBASE_FOREACH(Object *,object,&G_MAIN->objects) if(&object->id==id)return object;
+  return nullptr;
+}
+static PointerRNA RNA_id_pointer_create(ID *id) {
+  return PointerRNA{nullptr,object_from_id(id)};
+}
+static void BKE_reports_init(ReportList *reports,int) { reports->message.clear(); }
+static bool BKE_reports_contain(ReportList *reports,int) {
+  return reports&&!reports->message.empty();
+}
+static void BKE_reports_free(ReportList *) {}
+static void RNA_property_pointer_set(
+    PointerRNA *ptr,PropertyRNA *property,PointerRNA value,ReportList *reports) {
+  assert(ptr&&property==&active_property);
+  ++rna_set_calls;
+  rna_LayerObjects_active_object_set(ptr,value,reports);
+}
+static void base_active_refresh(Main *main,Scene *scene,ViewLayer *layer) {
+  assert(main==G_MAIN&&scene&&layer);
+  ++refresh_calls;
+}
+"""
 
 
 CPP = r"""
@@ -48,7 +105,7 @@ struct bContext { Main *main=nullptr; wmWindowManager *wm=nullptr; wmWindow *win
 struct PointerRNA { void *owner_id=nullptr; void *data=nullptr; };
 struct ReportList { std::string message; };
 static Main *G_MAIN=nullptr;
-constexpr int WM_HANDLER_TYPE_OP=7, RPT_ERROR=2;
+constexpr int WM_HANDLER_TYPE_OP=7, RPT_ERROR=2, RPT_STORE=1;
 
 static int BLI_findindex(const ListBase *list,const void *target) {
   int index=0;
@@ -122,7 +179,7 @@ bool WM_event_ipad_pencil_paint_owner_teardown(
 
 static thread_local bool rna_layer_pencil_active_teardown_in_progress=false;
 #define WITH_APPLE_CROSSPLATFORM
-""" + HELPER + chr(10) + SETTER + r"""
+""" + HELPER + chr(10) + SETTER + chr(10) + NATIVE_MOCKS + chr(10) + BASE_ACTIVATE + r"""
 
 static void append(ListBase &list,Link *item) {
   item->next=list.first;list.first=item;
@@ -145,6 +202,7 @@ static void setup(Main &main,Scene &scene,ViewLayer &layer,Object &old_object,Ob
   win.next=nullptr;main.wm.first=&wm;
   refuse_teardown=false;teardown_calls=0;teardown_scene_uid=teardown_object_uid=0;
   teardown_behavior=0;callback_object=nullptr;
+  refresh_calls=0;rna_set_calls=0;missing_layer_objects_type=false;missing_active_property=false;
 }
 int main() {
   {
@@ -251,6 +309,100 @@ int main() {
     assert(layer.basact==&new_base&&teardown_calls==0);
     G_MAIN=&main;
   }
+
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow first,second;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,first);
+    second.scene=&scene;second.view_layer=&layer;first.next=&second;wm.windows.first=&first;
+    wmEventHandler_Op first_owner,second_owner;
+    add_owner(first,first_owner,100,200,81);add_owner(second,second_owner,100,200,82);
+    bContext context{&main,&wm,&first};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&new_base&&teardown_calls==2&&refresh_calls==1&&rna_set_calls==1);
+    assert(!first.modalhandlers.first&&!second.modalhandlers.first);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    wmEventHandler_Op owner;add_owner(win,owner,100,200,83);refuse_teardown=true;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&old_base&&win.modalhandlers.first==&owner);
+    assert(teardown_calls==1&&refresh_calls==0&&rna_set_calls==1);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer,other_layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win,other_win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    std::snprintf(other_layer.name,sizeof(other_layer.name),"%s","LayerB");
+    layer.next=&other_layer;other_win.scene=&scene;other_win.view_layer=&other_layer;
+    win.next=&other_win;wm.windows.first=&win;
+    wmEventHandler_Op owner;add_owner(other_win,owner,100,200,84);
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&new_base&&refresh_calls==1&&teardown_calls==0);
+    assert(other_win.modalhandlers.first==&owner);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    wmEventHandler_Op owner;add_owner(win,owner,100,200,85);
+    bContext context{&main,&wm,&win};
+    base_activate(&context,nullptr);
+    assert(layer.basact==nullptr&&!win.modalhandlers.first);
+    assert(teardown_calls==1&&refresh_calls==1);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object,foreign_object;Base old_base,new_base,foreign_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    foreign_object.id.session_uid=202;foreign_base.object=&foreign_object;
+    new_object.next=&foreign_object;foreign_object.next=nullptr;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&foreign_base);
+    assert(layer.basact==&old_base&&refresh_calls==0&&teardown_calls==0);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    wmEventHandler_Op owner;add_owner(win,owner,100,200,86);
+    teardown_behavior=1;callback_object=&new_object;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&new_base&&refresh_calls==0&&teardown_calls==1);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    missing_active_property=true;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&old_base&&refresh_calls==0&&rna_set_calls==0);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,new_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,new_base,wm,win);
+    missing_layer_objects_type=true;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&new_base);
+    assert(layer.basact==&old_base&&refresh_calls==0&&rna_set_calls==0);
+  }
+  {
+    Main main;Scene scene;ViewLayer layer;Object old_object,new_object;Base old_base,bad_base;
+    wmWindowManager wm;wmWindow win;
+    setup(main,scene,layer,old_object,new_object,old_base,bad_base,wm,win);
+    bad_base.object=nullptr;
+    bContext context{&main,&wm,&win};
+    base_activate(&context,&bad_base);
+    assert(layer.basact==&old_base&&refresh_calls==0&&rna_set_calls==0);
+  }
+
 }
 """
 
@@ -258,6 +410,22 @@ int main() {
 class PencilActiveObjectTeardownTests(unittest.TestCase):
     def test_actual_rna_setter_retires_only_matching_live_owners_before_mutation(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP)
+
+    def test_actual_native_base_activation_uses_guarded_rna_and_refreshes_only_on_success(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP)
+
+    def test_object_creation_does_not_repeat_a_refused_native_active_object_write(self):
+        block = re.search(
+            r'if \(act_base\) \{(?P<body>.*?)\n  \}',
+            OBJECT_ADD,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(block)
+        self.assertIn('base_activate(C, act_base);', block.group('body'))
+        self.assertNotIn('view_layer->basact = act_base;', block.group('body'))
+
+    def test_non_apple_native_active_write_remains_available(self):
+        self.assertIn('#else\n  view_layer->basact = base;\n#endif', BASE_ACTIVATE)
 
     def test_runtime_headers_expose_global_main_and_event_handler_layout(self):
         self.assertIn('#  include "BKE_global.hh"', RNA)
