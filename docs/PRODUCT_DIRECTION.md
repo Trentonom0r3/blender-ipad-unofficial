@@ -1,10 +1,12 @@
-## Current source checkpoint — object deletion owner teardown — 2026-10-11
+## Verified Python ID-removal guard IPA — 2026-10-12
 
-Verified source `13b7c7c6058cf6b4b1cd66d7ef38bbc9eeae959c` completed native iOS Release and full downloaded IPA verification in run [38169232285](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38169232285). The IPA is 248,606,296 bytes, SHA256 `62336f41020b09159739fc0b9513554e696e9ee0068c22fbe537d59a87e6c094`, artifact `11713269730`. Its full CRC covers 3,368 entries; the arm64/iPhoneOS bundle, exact interaction UI, default Blender header, pinned native tools and all 129 icons pass.
+Exact source commit 7c3dd5a2e87687a12cdacab5b72c03d67bcd1556 passed the hosted preflight and native iOS Release in [run 38206592220](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38206592220). The downloaded IPA is 248,612,483 bytes, SHA256 62e248dc1bf7314c42a334fa195dc42ef4b761267ef4943c40afabda54cc7e4b; artifact 11727299478.
 
-The compiled executable confirms matching scene/object owner teardown before current-scene unlink and before global tagged-object deletion, with strict scene/object UID filters preserved. The compiled HUD launch/context restoration and first-layout initialization audit also passes. Host suite **343/343**, focused owner/object tests **14/14**, and exact pinned preflight **109 files** pass. This is source/host/package evidence, not device paint acceptance. Continue the Pencil-first contact/lifecycle work while preserving the accepted ring, full native headers, compact lower-left controls and owner guards.
+The full 3,368-entry CRC, arm64/iPhoneOS 5.0.0 app, exact packaged interaction UI and default Blender header, pinned native tool definitions, all 129 icon assets, and nine-action Base/native-only More Tools contract pass. The compiled ARM64 binary UUID 07B3CBCF-260A-32BD-80F5-381D16758DB6 passes the bounded HUD owner-restoration and first-layout initialization audit. Disassembly of rna_Main_ID_remove shows the Brush teardown and paint-mode exit paths before native ID delete/free; wpaint_cancel retains its native generic paint-cancel tail call.
 
-# Product direction and decisions
+The full host suite passed 362/362, the focused ID-removal fixture 9/9, the 118-file pinned preflight, and diff checks. Canonical LF patch SHA256 8b270365ab04d0e1001156846573ed39ac5284b8d740484679cdef6a0f04ebe4; focused fixture SHA256 2f7569fdb85cb277ae1d4b6bbeed7a225fea04414099a4fea0db11c754c48433. Reports: output/ui-preview/pencil-paint-contact/run-38206592220/verification.json, output/ui-preview/pencil-paint-contact/binary-38206592220/audit.json, and the downloaded executable at output/ui-preview/pencil-paint-contact/binary-38206592220/Blender.
+
+This is source, host, compiled-shape, and package evidence; this exact revision has no new device acceptance. The earlier “opens to the interface” confirmation belongs to a different build. Continue the original-owner teardown and mode-specific paint completion/disposal audit. Preserve the exact nine Base choices and accepted ring behavior, full native Blender bars, compact left-corner panels, native history/input and ownership guards, and all untracked evidence.
 
 ## Current source checkpoint - 2026-10-11
 
