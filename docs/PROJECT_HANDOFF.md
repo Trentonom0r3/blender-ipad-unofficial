@@ -1,3 +1,9 @@
+## Active source candidate — safe Texture Paint Image removal — 2026-10-12
+
+Commit `d54eb2eacacd1e80e6a3d521f4560f17d7881932` adds an Apple-only guard to generic `bpy.data.images.remove()` so a live Texture Paint Pencil stroke cannot keep using an Image after RNA unlinks/frees it. The registered `PAINT_OT_image_paint` callback proves Image use from typed live stroke state; projection painting checks stencil, canvas, clone, reproject, and projected-image references. Unknown `ImagePaintMode` state fails closed. Teardown requires the first matching registered handler to have the same operator lifetime as the proven Image user, then reacquires Main/Image by UID and refuses if either changes or a matching owner remains.
+
+Validation for the exact source: full host suite **368/368**, focused Image-removal fixture **6/6**, and **120-file** pinned offline preflight pass. The hosted follow-up preflight on `562bc0e` also runs all six cases and passes. Exact native iOS Release is in progress in [run 38216370142](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38216370142); its source SHA is confirmed as `d54eb2e`. No new IPA or device behavior is established yet. After completion, download the full artifact, run `build/verify_compact_ipa.py` against `d54eb2e`, and inspect the compiled Image teardown path before updating this section. Preserve all existing local evidence and the exact Pencil ring/header/HUD/input/history contracts. Continue the unfinished original-owner and mode-specific paint lifecycle work after this increment.
+
 ## Verified Python ID-removal guard IPA — 2026-10-12
 
 Exact source commit 7c3dd5a2e87687a12cdacab5b72c03d67bcd1556 passed the hosted preflight and native iOS Release in [run 38206592220](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38206592220). The downloaded IPA is 248,612,483 bytes, SHA256 62e248dc1bf7314c42a334fa195dc42ef4b761267ef4943c40afabda54cc7e4b; artifact 11727299478.
