@@ -1,4 +1,10 @@
-## Verified Python ID-removal guard IPA — 2026-10-12
+## Current unbuilt candidate — native tagged Image deletion — 2026-10-12
+
+The Python Image-removal guard does not intercept four Outliner/orphan-purge routes that call `BKE_id_multi_tagged_delete` directly. The Apple-only overlay now snapshots tagged Image session UIDs and retires strict matching Pencil paint owners before these destructive calls. It reacquires Images after each native Cancel callback, rejects zero/duplicate UIDs and any Main, owner, membership, or tag mutation, and refuses newly tagged Images. Each caller clears pending delete tags on refusal; orphan purge also performs its cleanup. Brush teardown remains ordered before Image teardown.
+
+The new connected native fixture exercises actual helper behavior for non-tagged Images, multiple owners, callback removal/untag/add-tag, Main replacement and malformed UIDs. Outliner checks cover all four native delete sites; the existing Brush fixture now executes Image guard success/refusal and verifies deletion and Undo occur only after both teardown stages succeed. Full host suite **370/370**, focused Image/Brush suites **11/11**, exact **120-file** pinned offline preflight and diff check pass. This is source/host evidence only: this candidate has no native build, IPA, or device acceptance. Latest verified IPA remains `d54eb2e` / run `38216370142`. Next commit/push this coherent source and test correction, build that exact revision once, inspect native failures, verify the downloaded full IPA and compiled Image teardown ordering, then continue original-owner/mode-specific paint lifecycle work. Preserve accepted ring, default Blender bars, left-corner controls, and all ownership/history/input guards.
+
+## Previous verified Python ID-removal guard IPA — 2026-10-12
 
 Exact source commit 7c3dd5a2e87687a12cdacab5b72c03d67bcd1556 passed the hosted preflight and native iOS Release in [run 38206592220](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38206592220). The downloaded IPA is 248,612,483 bytes, SHA256 62e248dc1bf7314c42a334fa195dc42ef4b761267ef4943c40afabda54cc7e4b; artifact 11727299478.
 

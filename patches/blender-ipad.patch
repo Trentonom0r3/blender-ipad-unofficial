@@ -121557,7 +121557,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2332 @@
+@@ -1,2303 +1,2333 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -122273,6 +122273,7 @@ index e5a618f..0abebf2 100644
 +                                               uint64_t owner_object_uid = 0,
 +                                               uint64_t owner_brush_uid = 0);
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);
++bool WM_event_ipad_pencil_paint_tagged_images_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, uint64_t brush_uid);
 +bool WM_event_ipad_pencil_paint_image_teardown(Main *bmain, uint64_t image_uid);
 +bool WM_event_ipad_pencil_paint_mode_exit(bContext *C);
@@ -132593,7 +132594,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8914 @@
+@@ -1,6918 +1,8944 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -136233,6 +136234,36 @@ index 46a8fef..86d574b 100644
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, const uint64_t brush_uid)
 +{
 +  return wm_ipad_pencil_paint_brush_uid_teardown(bmain, brush_uid);
++}
++
++bool WM_event_ipad_pencil_paint_tagged_images_teardown(Main *bmain)
++{
++  if (!bmain || G_MAIN != bmain) return false;
++  std::vector<uint64_t> image_uids;
++  LISTBASE_FOREACH (ID *, id, &bmain->images) {
++    if (!(id->tag & ID_TAG_DOIT)) continue;
++    if (!id->session_uid ||
++        std::find(image_uids.begin(), image_uids.end(), id->session_uid) != image_uids.end())
++    {
++      return false;
++    }
++    image_uids.push_back(id->session_uid);
++  }
++  for (const uint64_t image_uid : image_uids) {
++    if (!WM_event_ipad_pencil_paint_image_teardown(bmain, image_uid) || G_MAIN != bmain) {
++      return false;
++    }
++    ID *image = wm_ipad_pencil_paint_image_find(bmain, image_uid);
++    if (!image || !(image->tag & ID_TAG_DOIT)) return false;
++  }
++  LISTBASE_FOREACH (ID *, id, &bmain->images) {
++    if ((id->tag & ID_TAG_DOIT) &&
++        std::find(image_uids.begin(), image_uids.end(), id->session_uid) == image_uids.end())
++    {
++      return false;
++    }
++  }
++  return G_MAIN == bmain;
 +}
 +
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain)
@@ -170123,23 +170154,32 @@ index cb54db7..2055383 100644
 diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/blender/editors/space_outliner/outliner_edit.cc
 --- a/source/blender/editors/space_outliner/outliner_edit.cc
 +++ b/source/blender/editors/space_outliner/outliner_edit.cc
-@@ -601,2 +602,8 @@ static wmOperatorStatus outliner_id_delete_invoke(bContext *C,
+@@ -601,2 +602,12 @@ static wmOperatorStatus outliner_id_delete_invoke(bContext *C,
 -  BKE_id_multi_tagged_delete(bmain);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
 +    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 +    return OPERATOR_CANCELLED;
 +  }
++  if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
++    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    return OPERATOR_CANCELLED;
++  }
 +#endif
 +  BKE_id_multi_tagged_delete(bmain);
    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
-@@ -2385,5 +2392,11 @@ static wmOperatorStatus outliner_orphans_purge_exec(bContext *C, wmOperator *op)
+@@ -2385,5 +2392,16 @@ static wmOperatorStatus outliner_orphans_purge_exec(bContext *C, wmOperator *op)
    }
 -
 -  BKE_id_multi_tagged_delete(bmain);
 -
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
++    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    outliner_orphans_purge_cleanup(op);
++    return OPERATOR_CANCELLED;
++  }
++  if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
 +    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 +    outliner_orphans_purge_cleanup(op);
 +    return OPERATOR_CANCELLED;
@@ -170152,7 +170192,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -2958,4 +2959,10 @@
+@@ -2958,4 +2959,14 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -170160,14 +170200,22 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 +          return OPERATOR_CANCELLED;
 +        }
++        if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
++          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++          return OPERATOR_CANCELLED;
++        }
 +#endif
          BKE_id_multi_tagged_delete(bmain);
          WM_event_add_notifier(C, NC_OBJECT, nullptr);
-@@ -3092,3 +3098,9 @@
+@@ -3092,3 +3098,13 @@
        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
        outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
++        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        return OPERATOR_CANCELLED;
++      }
++      if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
 +        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 +        return OPERATOR_CANCELLED;
 +      }
