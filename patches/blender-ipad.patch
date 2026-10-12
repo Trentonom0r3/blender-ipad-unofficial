@@ -162915,11 +162915,21 @@ diff --git a/source/blender/editors/object/object_select.cc b/source/blender/edi
 diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makesrna/intern/rna_object.cc
 --- a/source/blender/makesrna/intern/rna_object.cc
 +++ b/source/blender/makesrna/intern/rna_object.cc
-@@ -303,0 +304 @@
+@@ -303,1 +303,2 @@
 +#  include "BLI_listbase.h"
-@@ -320,0 +322 @@
+ #  include "BLI_math_matrix.h"
+@@ -318,6 +319,7 @@
+ #  include "BKE_key.hh"
+ #  include "BKE_layer.hh"
+ #  include "BKE_library.hh"
 +#  include "BKE_main.hh"
-@@ -513,0 +516,41 @@
+ #  include "BKE_light_linking.h"
+ #  include "BKE_material.hh"
+ #  include "BKE_mesh.hh"
+@@ -512,10 +514,118 @@
+   return RNA_id_pointer_create(reinterpret_cast<ID *>(ob->data));
+ }
+-
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static Object *rna_Object_main_find_by_uid(Main *bmain, const uint64_t session_uid)
@@ -162961,13 +162971,17 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +
 +static thread_local bool rna_object_data_pencil_teardown_in_progress = false;
 +#endif
-@@ -535,0 +579,66 @@
++
+ static void rna_Object_data_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
+ {
+   Object *ob = static_cast<Object *>(ptr->data);
+   ID *id = static_cast<ID *>(value.data);
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  Main *owner_main = G_MAIN;
 +  const uint64_t object_uid = ob->id.session_uid;
 +  const bool object_is_in_main = owner_main && rna_Object_main_contains_pointer(owner_main, ob);
-+  if (id != static_cast<ID *>(ob->data) && object_is_in_main) {
++  if (!(ob->mode & OB_MODE_EDIT) && id != static_cast<ID *>(ob->data) && object_is_in_main) {
 +    if (!object_uid || rna_Object_main_find_by_uid(owner_main, object_uid) != ob) {
 +      BKE_report(reports, RPT_ERROR, "Active Pencil paint refused ambiguous object identity");
 +      return;
@@ -163028,3 +163042,8 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +    id = live_new_data;
 +  }
 +#endif
++
+-
++
+   if (ob->mode & OB_MODE_EDIT) {
+     return;

@@ -1,8 +1,11 @@
 """Execute the Object.data RNA guard and native cross-window Pencil owner retirement."""
 from test_compact_shelf import function
 import test_ipad_panels
-from test_touch_extrude import changed_source
+from test_touch_extrude import PIN_ROOT, changed_source
 import unittest
+from pathlib import Path
+import subprocess
+import tempfile
 
 WM = changed_source("source/blender/windowmanager/intern/wm_event_system.cc")
 RNA = changed_source("source/blender/makesrna/intern/rna_object.cc")
@@ -248,6 +251,51 @@ class PencilObjectDataTeardownTests(unittest.TestCase):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(
             HARNESS.replace("/* ACTUAL_SOURCE */", actual)
         )
+
+    def test_exact_patch_applies_guard_inside_native_setter(self):
+        repo = Path(__file__).resolve().parents[1]
+        patch = (repo / "patches/blender-ipad.patch").read_text(encoding="utf-8")
+        marker = "diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makesrna/intern/rna_object.cc\n"
+        self.assertEqual(patch.count(marker), 1)
+        section_start = patch.index(marker)
+        section_end = patch.find("\ndiff --git ", section_start + len(marker))
+        section = patch[section_start:] if section_end < 0 else patch[section_start:section_end + 1]
+        rel = Path("source/blender/makesrna/intern/rna_object.cc")
+        with tempfile.TemporaryDirectory(prefix="ipad-rna-object-patch-") as temporary:
+            checkout = Path(temporary)
+            target = checkout / rel
+            target.parent.mkdir(parents=True)
+            target.write_bytes((PIN_ROOT / rel).read_bytes())
+            initialized = subprocess.run(["git", "init", "-q"], cwd=checkout, capture_output=True)
+            self.assertEqual(initialized.returncode, 0, initialized.stderr.decode("utf-8", "replace"))
+            applied = subprocess.run(
+                ["git", "apply", "--whitespace=error-all", "-"],
+                cwd=checkout,
+                input=section.encode("utf-8"),
+                capture_output=True,
+            )
+            self.assertEqual(applied.returncode, 0, applied.stderr.decode("utf-8", "replace"))
+            source = target.read_text(encoding="utf-8")
+        setter_start = source.index("static void rna_Object_data_set(")
+        setter_open = source.index("{", setter_start)
+        depth = 0
+        setter_end = None
+        for index in range(setter_open, len(source)):
+            if source[index] == "{":
+                depth += 1
+            elif source[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    setter_end = index
+                    break
+        guard = source.index("WM_event_ipad_pencil_paint_object_teardown(owner_main, object_uid)", setter_start)
+        native_assignment = source.index("BKE_mesh_assign_object", setter_start)
+        helper = source.index("static Object *rna_Object_main_find_by_uid")
+        self.assertIsNotNone(setter_end)
+        self.assertLess(helper, setter_start)
+        self.assertLess(setter_start, guard)
+        self.assertLess(guard, native_assignment)
+        self.assertLess(native_assignment, setter_end)
 
     def test_actual_object_data_setter_retires_matching_owners_before_native_change(self):
         self._run()
