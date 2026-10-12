@@ -162455,6 +162455,20 @@ diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editor
 diff --git a/source/blender/makesrna/intern/rna_layer.cc b/source/blender/makesrna/intern/rna_layer.cc
 --- a/source/blender/makesrna/intern/rna_layer.cc
 +++ b/source/blender/makesrna/intern/rna_layer.cc
+@@ -32,9 +32,11 @@
+ #  include "RNA_access.hh"
+-
++
++#  include "BKE_global.hh"
+ #  include "BKE_idprop.hh"
+ #  include "BKE_layer.hh"
+ #  include "BKE_mesh.hh"
+ #  include "BKE_node.hh"
+ #  include "BKE_scene.hh"
++#  include "wm_event_system.hh"
+-
++
+ #  include "NOD_composite.hh"
 @@ -72,3 +72,225 @@
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM

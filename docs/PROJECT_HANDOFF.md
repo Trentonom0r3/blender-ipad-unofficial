@@ -1,3 +1,11 @@
+## Active-object teardown native compile correction - 2026-10-12
+
+The Apple-only RNA active-object setter guard was added in commit `f4532603fa7c437db2db30ffe7a15ba3a4c0b8ae`, but native Release run [38285943690](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38285943690) failed in `rna_layer.cc`: the new runtime code lacked `BKE_global.hh` for `G_MAIN` and `wm_event_system.hh` for `wmEventHandler` / `WM_HANDLER_TYPE_OP`. This correction adds both runtime headers and a focused regression assertion for them.
+
+After the correction, the connected setter fixture passes **3/3**, offline preflight applies to **123 pinned files**, and `git diff --check` passes. This is still source/host evidence only until an exact-source replacement native Release, full downloaded IPA verification, and compiled teardown-before-`basact` mutation audit pass. Preserve the previous verified package provenance and all ring, header, corner-HUD, input, lifetime, and history behavior.
+
+---
+
 ## Screen-switch owner teardown — exact IPA verified — 2026-10-12
 
 The owner-safe screen transition now has a consistent internal API: `screen_change_prepare` returns `bool` in both its pinned `screen_intern.hh` declaration and implementation. `ED_screen_change` stops when owner teardown or native screen exit refuses. The exact compiled path calls `WM_event_ipad_pencil_paint_owner_teardown`, branches on refusal, and reaches popup-handler removal and `ED_screen_exit` only after success.

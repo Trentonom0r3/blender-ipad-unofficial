@@ -259,6 +259,10 @@ class PencilActiveObjectTeardownTests(unittest.TestCase):
     def test_actual_rna_setter_retires_only_matching_live_owners_before_mutation(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(CPP)
 
+    def test_runtime_headers_expose_global_main_and_event_handler_layout(self):
+        self.assertIn('#  include "BKE_global.hh"', RNA)
+        self.assertIn('#  include "wm_event_system.hh"', RNA)
+
     def test_rna_setter_uses_existing_context_free_owner_teardown_api(self):
         self.assertIn('WM_event_ipad_pencil_paint_owner_teardown(', HELPER)
         self.assertIn('rna_LayerObjects_active_object_teardown(', SETTER)
