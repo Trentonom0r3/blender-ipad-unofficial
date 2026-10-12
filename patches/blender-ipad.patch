@@ -170322,12 +170322,177 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
  #  include "BKE_displist.h"
  #  include "BKE_gpencil_legacy.h"
  #  include "BKE_grease_pencil.hh"
-@@ -105,6 +106,362 @@
+@@ -105,6 +106,527 @@
    BLI_strncpy(r_name, name, MAX_ID_NAME - 2);
    BLI_str_utf8_invalid_strip(r_name, strlen(r_name));
  }
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +#    include "wm_event_system.hh"
++static bool rna_Main_scene_remove_guard(Main *bmain,
++                                       ReportList *reports,
++                                       PointerRNA *id_ptr,
++                                       const bool do_unlink)
++{
++  if (!bmain || !id_ptr || !id_ptr->data) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++    return false;
++  }
++  if (G_MAIN != bmain) {
++    return true;
++  }
++  ID *id = static_cast<ID *>(id_ptr->data);
++  if ((id->tag & ID_TAG_NO_MAIN) || GS(id->name) != ID_SCE ||
++      (!do_unlink && ID_REAL_USERS(id) > 0))
++  {
++    return true;
++  }
++  const uint64_t scene_uid = id->session_uid;
++  if (!scene_uid) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++    return false;
++  }
++
++  for (int attempt = 0; attempt < 256; attempt++) {
++    if (G_MAIN != bmain) {
++      id_ptr->invalidate();
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    Scene *live_scene = nullptr;
++    LISTBASE_FOREACH (Scene *, candidate, &bmain->scenes) {
++      if (candidate->id.session_uid != scene_uid) {
++        continue;
++      }
++      if (live_scene) {
++        BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++        return false;
++      }
++      live_scene = candidate;
++    }
++    if (!live_scene) {
++      id_ptr->invalidate();
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    id_ptr->data = &live_scene->id;
++
++    wmWindowManager *owner_wm = nullptr;
++    wmWindow *owner_win = nullptr;
++    uint64_t owner_lifetime = 0;
++    bool owner_found = false;
++    bool owner_refused = false;
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        auto inspect = [&](ListBase *handlers, const bool modal) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++            if (!handler->ipad_pencil_paint_serial ||
++                handler->ipad_pencil_owner_values[6] != scene_uid)
++            {
++              continue;
++            }
++            if (!modal || !win->runtime || !handler->ipad_pencil_operator_lifetime) {
++              owner_refused = true;
++              return;
++            }
++            if (!owner_found) {
++              owner_wm = wm;
++              owner_win = win;
++              owner_lifetime = handler->ipad_pencil_operator_lifetime;
++              owner_found = true;
++            }
++          }
++        };
++        inspect(&win->handlers, false);
++        inspect(&win->modalhandlers, true);
++        if (owner_refused) {
++          break;
++        }
++      }
++      if (owner_refused) {
++        break;
++      }
++    }
++    if (owner_refused) {
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    if (!owner_found) {
++      return true;
++    }
++    if (!owner_wm || !owner_win || !owner_lifetime || G_MAIN != bmain) {
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++
++    bContext *owner_C = CTX_create();
++    if (!owner_C) {
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    CTX_data_main_set(owner_C, bmain);
++    CTX_wm_manager_set(owner_C, owner_wm);
++    CTX_wm_window_set(owner_C, owner_win);
++    WM_event_ipad_pencil_paint_owner_teardown(owner_C, owner_win, nullptr, nullptr, scene_uid);
++    CTX_free(owner_C);
++
++    /* Cancel callbacks may change Main, remove the Scene, or replace its owner.
++     * Re-resolve every decision by value before the generic RNA free path. */
++    if (G_MAIN != bmain) {
++      id_ptr->invalidate();
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    live_scene = nullptr;
++    LISTBASE_FOREACH (Scene *, candidate, &bmain->scenes) {
++      if (candidate->id.session_uid != scene_uid) {
++        continue;
++      }
++      if (live_scene) {
++        id_ptr->invalidate();
++        BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++        return false;
++      }
++      live_scene = candidate;
++    }
++    if (!live_scene) {
++      id_ptr->invalidate();
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++    id_ptr->data = &live_scene->id;
++
++    bool owner_lifetime_remains = false;
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        auto inspect = [&](ListBase *handlers) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++            if (handler->ipad_pencil_operator_lifetime == owner_lifetime) {
++              owner_lifetime_remains = true;
++              return;
++            }
++          }
++        };
++        inspect(&win->handlers);
++        inspect(&win->modalhandlers);
++      }
++    }
++    if (owner_lifetime_remains) {
++      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++      return false;
++    }
++  }
++  BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Scene removal");
++  return false;
++}
++
 +static bool rna_Main_brush_remove_guard(Main *bmain,
 +                                        ReportList *reports,
 +                                        PointerRNA *id_ptr,
@@ -170685,7 +170850,7 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
  
  static void rna_Main_ID_remove(Main *bmain,
                                 ReportList *reports,
-@@ -122,6 +479,17 @@
+@@ -122,6 +644,19 @@
                  id->name + 2);
      return;
    }
@@ -170697,6 +170862,8 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +  if (!rna_Main_mesh_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
 +  if (!rna_Main_object_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
++  id = static_cast<ID *>(id_ptr->data);
++  if (!rna_Main_scene_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);
 +#  endif
 +
