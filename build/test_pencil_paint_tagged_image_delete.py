@@ -12,11 +12,6 @@ WM_PATH = "source/blender/windowmanager/intern/wm_event_system.cc"
 OUTLINER_EDIT_PATH = "source/blender/editors/space_outliner/outliner_edit.cc"
 OUTLINER_TOOLS_PATH = "source/blender/editors/space_outliner/outliner_tools.cc"
 PATCH = (Path(__file__).resolve().parents[1] / "patches/blender-ipad.patch").read_text(encoding="utf-8")
-PINNED_OUTLINER_TOOLS = (
-    Path(__file__).resolve().parents[1]
-    / ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e"
-    / OUTLINER_TOOLS_PATH
-).read_text(encoding="utf-8")
 
 WM_SOURCE = changed_source(WM_PATH)
 IMAGE_FIND = function(WM_SOURCE, "static ID *wm_ipad_pencil_paint_image_find(")
@@ -25,9 +20,6 @@ TAGGED_IMAGE_TEARDOWN = function(
 )
 OUTLINER_EDIT_SOURCE = changed_source(OUTLINER_EDIT_PATH)
 OUTLINER_TOOLS_SOURCE = changed_source(OUTLINER_TOOLS_PATH)
-OVERRIDE_IMAGE_GUARD = function(
-    OUTLINER_TOOLS_SOURCE, "static bool id_override_clear_single_ipad_image_owners("
-)
 
 
 TAGGED_IMAGE_CPP = r"""
@@ -133,84 +125,6 @@ int main(){
 """
 
 
-OVERRIDE_IMAGE_GUARD_CPP = r"""
-#include <cassert>
-#include <cstdint>
-#include <vector>
-struct ID { ID *next=nullptr;uint64_t session_uid=0;char name[2]={'O','\0'}; };
-struct ListBase { void *first=nullptr; };
-struct Main { ListBase images; };
-struct ImageRoots { std::vector<ID*> values; const std::vector<ID*>& keys() const{return values;} };
-struct OutlinerLibOverrideData { ImageRoots id_hierarchy_roots; };
-template<class T> struct Vector:std::vector<T>{void append(const T&v){this->push_back(v);}};
-template<class T> struct Set{
-  std::vector<T> values;
-  bool contains(const T&v)const{for(const T&x:values)if(x==v)return true;return false;}
-  void add(const T&v){values.push_back(v);}
-};
-static Main *G_MAIN=nullptr;
-constexpr char ID_IM='I';
-#define GS(name) ((name)[0])
-#define LISTBASE_FOREACH(type,item,list) \
-  for(type item=static_cast<type>((list)->first);item;item=item->next)
-static std::vector<uint64_t> calls;
-static uint64_t fail_uid=0,remove_uid=0;
-static Main *replace_main=nullptr;
-static void unlink_image(Main &main,uint64_t uid){
-  ID *prev=nullptr,*item=static_cast<ID*>(main.images.first);
-  while(item&&item->session_uid!=uid){prev=item;item=item->next;}
-  assert(item);
-  if(prev)prev->next=item->next;else main.images.first=item->next;
-  item->next=nullptr;
-}
-bool WM_event_ipad_pencil_paint_image_teardown(Main *main,uint64_t uid){
-  calls.push_back(uid);
-  if(uid==fail_uid)return false;
-  if(uid==remove_uid)unlink_image(*main,uid);
-  if(replace_main)G_MAIN=replace_main;
-  return true;
-}
-""" + OVERRIDE_IMAGE_GUARD + r"""
-static void reset(Main &main){G_MAIN=&main;calls.clear();fail_uid=remove_uid=0;replace_main=nullptr;}
-int main(){
-  {
-    Main main;ID object;OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&object};reset(main);
-    assert(id_override_clear_single_ipad_image_owners(&main,data));assert(calls.empty());
-  }
-  {
-    Main main;ID a,b,object;a.name[0]=b.name[0]=ID_IM;a.session_uid=1;b.session_uid=2;
-    a.next=&b;main.images.first=&a;OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&a,&object,&b};reset(main);
-    assert(id_override_clear_single_ipad_image_owners(&main,data));assert((calls==std::vector<uint64_t>{1,2}));
-  }
-  {
-    Main main;ID a,b;a.name[0]=b.name[0]=ID_IM;a.session_uid=3;b.session_uid=4;
-    a.next=&b;main.images.first=&a;OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&a,&b};reset(main);fail_uid=4;
-    assert(!id_override_clear_single_ipad_image_owners(&main,data));assert((calls==std::vector<uint64_t>{3,4}));
-  }
-  {
-    Main main,other;ID a;a.name[0]=ID_IM;a.session_uid=5;main.images.first=&a;
-    OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&a};reset(main);replace_main=&other;
-    assert(!id_override_clear_single_ipad_image_owners(&main,data));assert(G_MAIN==&other);assert(calls.size()==1);
-  }
-  {
-    Main main;ID a,b;a.name[0]=b.name[0]=ID_IM;a.session_uid=6;b.session_uid=7;
-    a.next=&b;main.images.first=&a;OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&a,&b};reset(main);remove_uid=6;
-    assert(!id_override_clear_single_ipad_image_owners(&main,data));assert((calls==std::vector<uint64_t>{6}));
-  }
-  {
-    Main main;ID a,b;a.name[0]=b.name[0]=ID_IM;a.session_uid=8;b.session_uid=8;
-    OutlinerLibOverrideData data;data.id_hierarchy_roots.values={&a,&b};reset(main);
-    assert(!id_override_clear_single_ipad_image_owners(&main,data));assert(calls.empty());
-  }
-  {
-    Main main;ID a;a.name[0]=ID_IM;a.session_uid=0;OutlinerLibOverrideData data;
-    data.id_hierarchy_roots.values={&a};reset(main);
-    assert(!id_override_clear_single_ipad_image_owners(&main,data));assert(calls.empty());
-  }
-}
-"""
-
-
 class PencilPaintTaggedImageDeleteTests(unittest.TestCase):
     def test_tagged_image_owner_teardown_reacquires_and_fails_closed(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(TAGGED_IMAGE_CPP)
@@ -244,49 +158,6 @@ class PencilPaintTaggedImageDeleteTests(unittest.TestCase):
                 self.assertLess(reset_tags, cancel)
                 self.assertLess(cancel, delete)
                 previous_delete = delete
-
-    def test_generic_library_override_image_teardown_precedes_remap_and_delete(self):
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(OVERRIDE_IMAGE_GUARD_CPP)
-        helper_start = OUTLINER_TOOLS_SOURCE.index(
-            "static bool id_override_clear_single_ipad_image_owners("
-        )
-        function_start = OUTLINER_TOOLS_SOURCE.index(
-            "static bool id_override_library_clear_single_process("
-        )
-        self.assertLess(helper_start, function_start)
-        guard = OUTLINER_TOOLS_SOURCE.index(
-            "id_override_clear_single_ipad_image_owners(bmain, data)", function_start
-        )
-        view_layer = OUTLINER_TOOLS_SOURCE.index("ViewLayer *view_layer = CTX_data_view_layer(C);", function_start)
-        self.assertLess(function_start, guard)
-        self.assertLess(guard, view_layer)
-
-        patch_start = PATCH.index("diff --git a/source/blender/editors/space_outliner/outliner_tools.cc")
-        patch_end = PATCH.index("diff --git ", patch_start + 1)
-        patch_section = PATCH[patch_start:patch_end]
-        patch_guard = patch_section.index("id_override_clear_single_ipad_image_owners(bmain, data)")
-        hunk_start = patch_section.rfind("@@ -", 0, patch_guard)
-        hunk = patch_section[hunk_start:patch_section.index("\n", hunk_start)]
-        original_guard_line = int(re.match(r"@@ -(\d+),", hunk).group(1))
-        pinned_function = PINNED_OUTLINER_TOOLS.index(
-            "static void id_override_library_clear_single_process("
-        )
-        remap = PINNED_OUTLINER_TOOLS.index("BKE_libblock_remap(", pinned_function)
-        deletion = PINNED_OUTLINER_TOOLS.index("BKE_id_delete(bmain, id)", remap)
-        native_remap_line = PINNED_OUTLINER_TOOLS[:remap].count("\n") + 1
-        self.assertLess(original_guard_line, native_remap_line)
-        self.assertLess(remap, deletion)
-
-        caller = OUTLINER_TOOLS_SOURCE.index("if (!id_override_library_clear_single_process(")
-        self.assertIn("return OPERATOR_CANCELLED;", OUTLINER_TOOLS_SOURCE[caller:])
-        native_call = PINNED_OUTLINER_TOOLS.index(
-            "id_override_library_clear_single_process(C, op->reports, override_data);"
-        )
-        undo_push = PINNED_OUTLINER_TOOLS.index(
-            'ED_undo_push(C, "Clear Overridden Data")', native_call
-        )
-        self.assertLess(native_call, undo_push)
-
 
 if __name__ == "__main__":
     unittest.main()

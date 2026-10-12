@@ -1,6 +1,14 @@
-## Direct Object Convert mutation guard — source candidate
+## Pending Outliner override-clear teardown — 2026-10-12
 
-The remaining selected-object conversion path can replace object data directly in `object_convert_exec`, bypassing the RNA setter. The new Apple-only preflight stores only selected Object UIDs/types/mode bits across strict cross-window paint-owner teardown, reacquires the current selected bases, and refuses any context or identity change before scene/data mutation. Host source fixture and pinned-source preflight pass; the exact native build and downloaded IPA audit are still pending. After that, continue the original-owner terminal/disposal contract without reusing native operator or Brush pointers.
+The selected override-clear operation can remap/delete an arbitrary hierarchy, so the Apple path now retires all live Pencil paint owners in the active Main before that native work. It snapshots root/reference identities, hierarchy-map values, all windows, and the invoking Outliner context; after each cancellation callback it verifies the same identities remain. Malformed or non-modal leases, refusal, re-entrancy that cannot be drained, or changed Main/root/reference/context/window aborts before remapping. The former Image-only special case is replaced by type-agnostic root protection.
+
+The connected fixture covers multiple owner windows, owner re-entry, Object/Image/Brush roots and refusal/replacement/removal paths. Current evidence: full host suite **392/392**, focused fixtures **2/2 Outliner**, **2/2 Image deletion**, **9/9 Outliner delete**, offline pinned preflight **125 files**, and clean `git diff --check`. Patch SHA256 `523cf3ba72a885d72c0aa3c2811f53f408f18e9d514a49121b3caa9ad285cea2`. Native compile/package/device verification is still pending; do not infer that cleanup is device-accepted from host tests.
+
+## Verified Object Convert paint-owner teardown IPA — 2026-10-12
+
+The selected-object conversion route is now guarded before `object_convert_exec` replaces data, closing the direct C++ bypass of the protected RNA setter. Host suite **391/391**, focused fixture **3/3**, pinned preflight **125 files**, exact native iOS Release, and full downloaded IPA verification pass for commit `249ab0c31c9ad5961da73166a8198b87069c596d` / run `38312806123`. The package passes all **3,368** CRC entries, arm64/iPhoneOS bundle, full interaction UI/default Blender header, native tools and **129** icons. Compiled disassembly confirms teardown-before-mutation and the refusal branch; it is not full WM or device behavior. IPA SHA256: `e344ea3c2812413d4171765674661b47f62231d1366267a6d6711389db42d2bc`; binary UUID `F99EF09E-8034-385D-B229-18EB927FB4E5`. Reports: `output/ui-preview/pencil-object-convert-teardown/`.
+
+Continue the original-owner terminal/disposal contract without reusing native operator or Brush pointers. This exact revision has no device paint acceptance.
 
 ## Guarded native active-object selection — exact IPA verified — 2026-10-12
 
