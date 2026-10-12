@@ -162452,3 +162452,268 @@ diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editor
  /**
   * redraws: uses defines from `stime->redraws`
   * \param enable: 1 - forward on, -1 - backwards on, 0 - off.
+diff --git a/source/blender/makesrna/intern/rna_layer.cc b/source/blender/makesrna/intern/rna_layer.cc
+--- a/source/blender/makesrna/intern/rna_layer.cc
++++ b/source/blender/makesrna/intern/rna_layer.cc
+@@ -72,3 +72,225 @@
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Retire a live Pencil paint owner before this RNA setter changes its active
++ * object. The RNA callback has no bContext, so rebuild one only from a
++ * registered window that still presents the exact Scene and View Layer. */
++static thread_local bool rna_layer_pencil_active_teardown_in_progress = false;
++
++static bool rna_LayerObjects_active_object_teardown(Scene *scene,
++                                                     ViewLayer *view_layer,
++                                                     Object *old_object,
++                                                     Object *new_object)
++{
++  if (old_object == new_object || old_object == nullptr) {
++    return true;
++  }
++  if (!scene || !view_layer || rna_layer_pencil_active_teardown_in_progress) {
++    return false;
++  }
++  Main *bmain = G_MAIN;
++  /* A non-active Main has no registered iPad window owner; keep ordinary
++   * background/file-loading RNA edits on Blender's native path. */
++  if (!bmain || BLI_findindex(&bmain->scenes, scene) == -1) {
++    return true;
++  }
++  if (BLI_findindex(&scene->view_layers, view_layer) == -1 ||
++      BLI_findindex(&bmain->objects, old_object) == -1 ||
++      (new_object && BLI_findindex(&bmain->objects, new_object) == -1))
++  {
++    return false;
++  }
++
++  const uint64_t scene_uid = scene->id.session_uid;
++  const uint64_t old_object_uid = old_object->id.session_uid;
++  const uint64_t new_object_uid = new_object ? new_object->id.session_uid : 0;
++  if (!scene_uid || !old_object_uid || (new_object && !new_object_uid)) {
++    return false;
++  }
++  char view_layer_name[sizeof(view_layer->name)];
++  STRNCPY_UTF8(view_layer_name, view_layer->name);
++
++  struct ReentrancyGuard {
++    bool &active;
++    explicit ReentrancyGuard(bool &active_) : active(active_) { active = true; }
++    ~ReentrancyGuard() { active = false; }
++  } reentrancy_guard(rna_layer_pencil_active_teardown_in_progress);
++
++  auto original_context_still_live = [&]() {
++    if (G_MAIN != bmain) {
++      return false;
++    }
++    Scene *live_scene = nullptr;
++    LISTBASE_FOREACH (Scene *, candidate, &bmain->scenes) {
++      if (candidate == scene) {
++        if (candidate->id.session_uid != scene_uid) {
++          return false;
++        }
++        live_scene = candidate;
++        break;
++      }
++    }
++    if (!live_scene) {
++      return false;
++    }
++    ViewLayer *live_layer = nullptr;
++    LISTBASE_FOREACH (ViewLayer *, candidate, &live_scene->view_layers) {
++      if (candidate == view_layer) {
++        if (!STREQ(candidate->name, view_layer_name)) {
++          return false;
++        }
++        live_layer = candidate;
++        break;
++      }
++    }
++    if (!live_layer) {
++      return false;
++    }
++    Object *live_old_object = nullptr;
++    LISTBASE_FOREACH (Object *, candidate, &bmain->objects) {
++      if (candidate == old_object) {
++        if (candidate->id.session_uid != old_object_uid) {
++          return false;
++        }
++        live_old_object = candidate;
++        break;
++      }
++    }
++    if (!live_old_object) {
++      return false;
++    }
++    Object *live_new_object = nullptr;
++    if (new_object) {
++      LISTBASE_FOREACH (Object *, candidate, &bmain->objects) {
++        if (candidate == new_object) {
++          if (candidate->id.session_uid != new_object_uid) {
++            return false;
++          }
++          live_new_object = candidate;
++          break;
++        }
++      }
++      if (!live_new_object) {
++        return false;
++      }
++    }
++    BKE_view_layer_synced_ensure(live_scene, live_layer);
++    return BKE_view_layer_active_object_get(live_layer) == live_old_object &&
++           (!live_new_object || BKE_view_layer_base_find(live_layer, live_new_object) != nullptr);
++  };
++
++  for (int attempt = 0; attempt < 256; attempt++) {
++    if (!original_context_still_live()) {
++      return false;
++    }
++    wmWindowManager *owner_wm = nullptr;
++    wmWindow *owner_win = nullptr;
++    uint64_t owner_wm_uid = 0;
++    int owner_winid = 0;
++    bool refused = false;
++
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        auto inspect = [&](ListBase *handlers, const bool modal) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++            if (!handler->ipad_pencil_paint_serial ||
++                handler->ipad_pencil_owner_values[6] != scene_uid ||
++                handler->ipad_pencil_owner_values[7] != old_object_uid)
++            {
++              continue;
++            }
++            const uint64_t owner_layer = handler->ipad_pencil_owner_values[10];
++            if (!owner_layer) {
++              refused = true;
++              return;
++            }
++            if (owner_layer != uintptr_t(view_layer)) {
++              continue;
++            }
++            if (WM_window_get_active_scene(win) != scene ||
++                WM_window_get_active_view_layer(win) != view_layer)
++            {
++              refused = true;
++              return;
++            }
++            if (!modal || !win->runtime || !handler->ipad_pencil_operator_lifetime) {
++              refused = true;
++              return;
++            }
++            if (!owner_win) {
++              owner_wm = wm;
++              owner_win = win;
++              owner_wm_uid = wm->id.session_uid;
++              owner_winid = win->winid;
++            }
++          }
++        };
++        inspect(&win->handlers, false);
++        inspect(&win->modalhandlers, true);
++      }
++    }
++    if (refused) {
++      return false;
++    }
++    if (!owner_win) {
++      return true;
++    }
++
++    bContext *owner_C = CTX_create();
++    if (!owner_C) {
++      return false;
++    }
++    CTX_data_main_set(owner_C, bmain);
++    CTX_wm_manager_set(owner_C, owner_wm);
++    CTX_wm_window_set(owner_C, owner_win);
++    const bool teardown_succeeded = WM_event_ipad_pencil_paint_owner_teardown(
++        owner_C, owner_win, nullptr, nullptr, scene_uid, old_object_uid);
++    CTX_free(owner_C);
++    if (!teardown_succeeded || !original_context_still_live()) {
++      return false;
++    }
++
++    /* Never dereference a window held across cancellation. Reacquire it by
++     * pointer identity and window ID, then reject a stale matching handler even
++     * if a callback switched that window to another View Layer. */
++    bool matching_owner_remains = false;
++    if (G_MAIN != bmain) {
++      return false;
++    }
++    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++      if (wm != owner_wm || wm->id.session_uid != owner_wm_uid) {
++        continue;
++      }
++      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++        if (win != owner_win || win->winid != owner_winid) {
++          continue;
++        }
++        auto inspect = [&](ListBase *handlers) {
++          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++            if (base->type != WM_HANDLER_TYPE_OP) {
++              continue;
++            }
++            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++            matching_owner_remains |=
++                handler->ipad_pencil_paint_serial &&
++                handler->ipad_pencil_owner_values[6] == scene_uid &&
++                handler->ipad_pencil_owner_values[7] == old_object_uid;
++          }
++        };
++        inspect(&win->handlers);
++        inspect(&win->modalhandlers);
++      }
++    }
++    if (matching_owner_remains) {
++      return false;
++    }
++  }
++  return false;
++}
++#endif
+ static PointerRNA rna_LayerObjects_active_object_get(PointerRNA *ptr)
+ {
+   const Scene *scene = (Scene *)ptr->owner_id;
+@@ -84,10 +306,35 @@
+ {
+   const Scene *scene = (Scene *)ptr->owner_id;
+   ViewLayer *view_layer = (ViewLayer *)ptr->data;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  Main *bmain = G_MAIN;
++  if (bmain && BLI_findindex(&bmain->scenes, scene) != -1) {
++    if (BLI_findindex(&scene->view_layers, view_layer) == -1) {
++      BKE_reportf(reports,
++                  RPT_ERROR,
++                  "Active Pencil paint prevented safe active object change");
++      return;
++    }
++    BKE_view_layer_synced_ensure(scene, view_layer);
++    Object *new_object = static_cast<Object *>(value.data);
++    if (!new_object || BKE_view_layer_base_find(view_layer, new_object) != nullptr) {
++      Object *old_object = BKE_view_layer_active_object_get(view_layer);
++      if (!rna_LayerObjects_active_object_teardown(
++              const_cast<Scene *>(scene), view_layer, old_object, new_object))
++      {
++        BKE_reportf(reports,
++                    RPT_ERROR,
++                    "Active Pencil paint prevented safe active object change");
++        return;
++      }
++    }
++  }
++#endif
+   if (value.data) {
+     Object *ob = static_cast<Object *>(value.data);
+     BKE_view_layer_synced_ensure(scene, view_layer);
+     Base *basact_test = BKE_view_layer_base_find(view_layer, ob);
++
+     if (basact_test != nullptr) {
+       view_layer->basact = basact_test;
+     }
