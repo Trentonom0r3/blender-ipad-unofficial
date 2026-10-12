@@ -3,10 +3,11 @@ import unittest
 
 from test_compact_shelf import function
 from test_pencil_paint_contact_lease import cpp_block
+from test_pencil_paint_view_layer_teardown import patched_window_source
 from test_touch_extrude import changed_source
 
 
-WINDOW = changed_source('source/blender/windowmanager/intern/wm_window.cc')
+WINDOW = patched_window_source()
 GHOST_PROC = function(WINDOW, 'static bool ghost_event_proc(')
 DEACTIVATION = cpp_block(GHOST_PROC, 'case GHOST_kEventWindowDeactivate:')
 ACTIVATION = cpp_block(GHOST_PROC, 'case GHOST_kEventWindowActivate:')

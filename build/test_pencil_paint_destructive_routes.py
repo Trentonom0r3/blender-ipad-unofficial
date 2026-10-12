@@ -8,6 +8,7 @@ import re
 import unittest
 
 from test_compact_shelf import function
+from test_pencil_paint_view_layer_teardown import patched_window_source
 from test_touch_extrude import changed_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -92,7 +93,7 @@ class PencilPaintDestructiveRouteTests(unittest.TestCase):
         hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
         self.assertLess(setup.index(hook), setup.index('WM_event_remove_handlers(C, &win->modalhandlers);'))
 
-        window = changed_source('source/blender/windowmanager/intern/wm_window.cc')
+        window = patched_window_source()
         close = function(window, 'void wm_window_close(')
         self.assertLess(close.index(hook), close.index('BLI_remlink(&wm->windows, win);'))
         self.assertLess(close.index(hook), close.index('WM_event_remove_handlers(C, &win->modalhandlers);'))
