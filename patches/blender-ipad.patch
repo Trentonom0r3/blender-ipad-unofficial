@@ -74071,6 +74071,14 @@ index 14913f2..cfc5c2a 100644
    data->end_time = data->start_time + seconds;
    data->draw_callback = WM_draw_cb_activate(win, area_animate_highlight_cb, data);
  }
+diff --git a/source/blender/editors/screen/screen_intern.hh b/source/blender/editors/screen/screen_intern.hh
+--- a/source/blender/editors/screen/screen_intern.hh
++++ b/source/blender/editors/screen/screen_intern.hh
+@@ -151,2 +151,2 @@
+-void screen_change_prepare(
++bool screen_change_prepare(
+     bScreen *screen_old, bScreen *screen_new, Main *bmain, bContext *C, wmWindow *win);
+
 diff --git a/source/blender/editors/screen/screen_edit.cc b/source/blender/editors/screen/screen_edit.cc
 --- a/source/blender/editors/screen/screen_edit.cc
 +++ b/source/blender/editors/screen/screen_edit.cc

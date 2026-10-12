@@ -7,7 +7,7 @@ active pinned-source overlay. This is not target UIKit or device evidence.
 import unittest
 import re
 from test_compact_shelf import function
-from test_touch_extrude import changed_source
+from test_touch_extrude import PATCH_TEXT, changed_source
 import test_pencil_paint_contact_lease as lease
 import test_ipad_panels
 import test_pencil_paint_view_layer_teardown as view_layer_teardown
@@ -718,6 +718,16 @@ int main()
 """
 
 class PencilPaintOwnerTeardownTests(unittest.TestCase):
+    def test_screen_change_prepare_declaration_matches_checked_definition(self):
+        marker = ('diff --git a/source/blender/editors/screen/screen_intern.hh '
+                  'b/source/blender/editors/screen/screen_intern.hh\n')
+        self.assertIn(marker, PATCH_TEXT)
+        header = PATCH_TEXT.split(marker, 1)[1].split('diff --git ', 1)[0]
+        self.assertIn('-void screen_change_prepare(', header)
+        self.assertIn('+bool screen_change_prepare(', header)
+        self.assertIn('bool screen_change_prepare(', SCREEN)
+        self.assertIn('if (!screen_change_prepare(', SCREEN)
+
     def test_workspace_and_layout_changes_retire_original_owner_before_context_mutation(self):
         self.assertIn('wm_window_ipad_pencil_paint_owner_teardown(wm, target.context.win)',
                       WORKSPACE_CHANGE)
