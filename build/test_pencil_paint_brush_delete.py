@@ -191,8 +191,8 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
         self.assertNotIn('#include "WM_event_system.hh"', tools)
         click_delete = edit.split("@@ -601,2 +602,16", 1)[1].split("@@ -2385,5 +2392,20", 1)[0]
         purge_delete = edit.split("@@ -2385,5 +2392,20", 1)[1]
-        delete_branch = tools.split("@@ -2958,4 +2959,18", 1)[1].split("@@ -3092,3 +3098,17", 1)[0]
-        library_delete = tools.split("@@ -3092,3 +3098,17", 1)[1]
+        delete_branch = tools.split("@@ -2958,4 +3002,18", 1)[1].split("@@ -3092,3 +3155,17", 1)[0]
+        library_delete = tools.split("@@ -3092,3 +3155,17", 1)[1]
         helper = "WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)"
         for body in (click_delete, purge_delete, delete_branch, library_delete):
             new_source = "\n".join(line[1:] for line in body.splitlines()
@@ -204,7 +204,7 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
 
     def test_library_delete_runs_the_guard_before_free_and_undo(self):
         section = patch_section(OUTLINER_TOOLS_PATH)
-        hunk = section.split("@@ -3092,3 +3098,17 @@", 1)[1]
+        hunk = section.split("@@ -3092,3 +3155,17 @@", 1)[1]
         body = "\n".join(
             line[1:] for line in hunk.splitlines()
             if line.startswith((" ", "+")) and not line.startswith("+++")

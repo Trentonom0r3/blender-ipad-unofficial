@@ -170204,7 +170204,73 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -2958,4 +2959,18 @@
+@@ -1430,0 +1431,37 @@
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static bool id_override_clear_single_ipad_image_owners(
++    Main *bmain, const OutlinerLibOverrideData &data)
++{
++  if (!bmain || G_MAIN != bmain) return false;
++  struct ImageTarget {
++    ID *id;
++    uint64_t uid;
++  };
++  Set<uint64_t> image_uids;
++  Vector<ImageTarget> images;
++  for (auto &&id : data.id_hierarchy_roots.keys()) {
++    if (GS(id->name) != ID_IM) continue;
++    const uint64_t uid = id->session_uid;
++    if (!uid || image_uids.contains(uid)) return false;
++    image_uids.add(uid);
++    images.append({id, uid});
++  }
++  for (const ImageTarget &target : images) {
++    if (!WM_event_ipad_pencil_paint_image_teardown(bmain, target.uid) || G_MAIN != bmain) {
++      return false;
++    }
++    for (const ImageTarget &expected : images) {
++      ID *live_image = nullptr;
++      LISTBASE_FOREACH (ID *, image, &bmain->images) {
++        if (image->session_uid == expected.uid) {
++          live_image = image;
++          break;
++        }
++      }
++      if (live_image != expected.id) return false;
++    }
++  }
++  return G_MAIN == bmain;
++}
++#endif
+@@ -1432,7 +1469,10 @@
+-static void id_override_library_clear_single_process(bContext *C,
++static bool id_override_library_clear_single_process(bContext *C,
+                                                      ReportList * /*reports*/,
+                                                      OutlinerLibOverrideData &data)
+ {
+   Main *bmain = CTX_data_main(C);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!id_override_clear_single_ipad_image_owners(bmain, data)) return false;
++#endif
+   ViewLayer *view_layer = CTX_data_view_layer(C);
+   Scene *scene = CTX_data_scene(C);
+@@ -1487,2 +1527,3 @@
+-  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
++  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
++  return true;
+ }
+@@ -1924,5 +1965,7 @@
+           false);
+-
++
+-      id_override_library_clear_single_process(C, op->reports, override_data);
++      if (!id_override_library_clear_single_process(C, op->reports, override_data)) {
++        return OPERATOR_CANCELLED;
++      }
+-
++
+       ED_undo_push(C, "Clear Overridden Data");
+@@ -2958,4 +3002,18 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -170223,7 +170289,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +#endif
          BKE_id_multi_tagged_delete(bmain);
          WM_event_add_notifier(C, NC_OBJECT, nullptr);
-@@ -3092,3 +3098,17 @@
+@@ -3092,3 +3155,17 @@
        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
        outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
