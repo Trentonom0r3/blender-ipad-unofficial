@@ -161609,10 +161609,13 @@ index 13c67db..a678996 100644
  /** #WM_HANDLER_TYPE_DROPBOX. */
  struct wmEventHandler_Dropbox {
 diff --git a/source/blender/editors/object/object_add.cc b/source/blender/editors/object/object_add.cc
-index c680cef..c680cef 100644
+index 26ff6e0..71c3243 100644
 --- a/source/blender/editors/object/object_add.cc
 +++ b/source/blender/editors/object/object_add.cc
-@@ -2206,1 +2206,16 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+@@ -68,1 +68,2 @@
++#include "BKE_global.hh"
+ #include "BKE_grease_pencil.hh"
+@@ -2206,1 +2207,16 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static void object_delete_ipad_pencil_paint_owner_teardown(
 +    bContext *C, wmWindowManager *wm, Scene *scene, const Object *object)
@@ -161629,14 +161632,14 @@ index c680cef..c680cef 100644
 +#endif
 +
  static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
-@@ -2256,3 +2271,6 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+@@ -2256,3 +2272,6 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
      else {
        /* Object is used in multiple scenes. Delete the object from the current scene only. */
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      object_delete_ipad_pencil_paint_owner_teardown(C, wm, scene, ob);
 +#endif
        base_free_and_unlink_no_indirect_check(bmain, scene, ob);
-@@ -2269,2 +2287,9 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+@@ -2269,2 +2288,9 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
    if (tagged_count > 0) {
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    LISTBASE_FOREACH (Object *, object, &bmain->objects) {
@@ -161646,7 +161649,126 @@ index c680cef..c680cef 100644
 +    }
 +#endif
      BKE_id_multi_tagged_delete(bmain);
-@@ -4190,5 +4190,4 @@
+@@ -3985,1 +4011,105 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct ObjectConvertIPadSelectionSnapshot {
++  uint64_t object_uid;
++  short object_type;
++  bool paint_mode;
++};
++
++static thread_local bool object_convert_ipad_owner_preflight_active = false;
++
++static bool object_convert_ipad_context_is_live(bContext *C,
++                                                 Main *bmain,
++                                                 Scene *scene,
++                                                 ViewLayer *view_layer,
++                                                 wmWindowManager *wm,
++                                                 wmWindow *win)
++{
++  if (!C || !bmain || G_MAIN != bmain || (wm == nullptr) != (win == nullptr)) return false;
++  if (wm && (BLI_findindex(&bmain->wm, wm) == -1 || BLI_findindex(&wm->windows, win) == -1)) return false;
++  if (CTX_wm_manager(C) != wm || CTX_wm_window(C) != win || CTX_data_main(C) != bmain) return false;
++  if (!scene || BLI_findindex(&bmain->scenes, scene) == -1 || !view_layer ||
++      BLI_findindex(&scene->view_layers, view_layer) == -1) return false;
++  return CTX_data_scene(C) == scene && CTX_data_view_layer(C) == view_layer;
++}
++
++/* Object Convert edits selected object data directly, outside rna_Object_data_set.
++ * Retire selected live paint owners from their original windows, then reacquire the
++ * selection before the first conversion mutation. */
++static bool object_convert_ipad_paint_owners_prepare(
++    bContext *C,
++    Main *bmain,
++    Scene *scene,
++    ViewLayer *view_layer,
++    Vector<PointerRNA> &selected_editable_bases,
++    ReportList *reports)
++{
++  if (object_convert_ipad_owner_preflight_active) {
++    BKE_report(reports, RPT_ERROR, "Object conversion refused during Pencil owner teardown");
++    return false;
++  }
++  wmWindowManager *wm = CTX_wm_manager(C);
++  wmWindow *win = CTX_wm_window(C);
++  if (!object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win)) {
++    BKE_report(reports, RPT_ERROR, "Object conversion refused a changed Pencil context");
++    return false;
++  }
++
++  Vector<ObjectConvertIPadSelectionSnapshot> selected_snapshot;
++  selected_snapshot.reserve(selected_editable_bases.size());
++  for (const PointerRNA &ptr : selected_editable_bases) {
++    const Base *base = static_cast<const Base *>(ptr.data);
++    const Object *object = base ? base->object : nullptr;
++    if (!object || !object->id.session_uid) {
++      BKE_report(reports, RPT_ERROR, "Object conversion refused an ambiguous selected object");
++      return false;
++    }
++    const ObjectConvertIPadSelectionSnapshot snapshot{
++        object->id.session_uid, object->type, bool(object->mode & OB_MODE_ALL_PAINT)};
++    for (const ObjectConvertIPadSelectionSnapshot &prior : selected_snapshot) {
++      if (prior.object_uid == snapshot.object_uid) {
++        BKE_report(reports, RPT_ERROR, "Object conversion refused duplicate selected object identity");
++        return false;
++      }
++    }
++    selected_snapshot.append(snapshot);
++  }
++
++  selected_editable_bases.clear();
++  struct ReentrancyGuard {
++    ReentrancyGuard() { object_convert_ipad_owner_preflight_active = true; }
++    ~ReentrancyGuard() { object_convert_ipad_owner_preflight_active = false; }
++  } reentrancy_guard;
++
++  for (const ObjectConvertIPadSelectionSnapshot &snapshot : selected_snapshot) {
++    if (snapshot.paint_mode &&
++        !WM_event_ipad_pencil_paint_object_teardown(bmain, snapshot.object_uid))
++    {
++      BKE_report(reports, RPT_ERROR, "Object conversion could not retire the Pencil paint owner");
++      return false;
++    }
++    if (!object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win)) {
++      BKE_report(reports, RPT_ERROR, "Object conversion context changed during Pencil owner teardown");
++      return false;
++    }
++  }
++
++  CTX_data_selected_editable_bases(C, &selected_editable_bases);
++  if (selected_editable_bases.size() != selected_snapshot.size()) {
++    BKE_report(reports, RPT_ERROR, "Object conversion selection changed during Pencil owner teardown");
++    return false;
++  }
++  for (int index = 0; index < int(selected_editable_bases.size()); index++) {
++    const Base *base = static_cast<const Base *>(selected_editable_bases[index].data);
++    const Object *object = base ? base->object : nullptr;
++    const ObjectConvertIPadSelectionSnapshot &snapshot = selected_snapshot[index];
++    if (!object || object->id.session_uid != snapshot.object_uid || object->type != snapshot.object_type) {
++      BKE_report(reports, RPT_ERROR, "Object conversion selection changed during Pencil owner teardown");
++      selected_editable_bases.clear();
++      return false;
++    }
++  }
++  return object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win);
++}
++#endif
++
+ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
+@@ -4005,1 +4135,12 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!object_convert_ipad_paint_owners_prepare(
++          C, bmain, scene, view_layer, selected_editable_bases, op->reports))
++  {
++    return OPERATOR_CANCELLED;
++  }
++  /* Owner teardown can update paint mode/context state. Reacquire the evaluated
++   * graph only after the original selection/context has been validated. */
++  depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
++#endif
++
+   /* don't forget multiple users! */
+@@ -4190,5 +4331,4 @@
    if (act_base) {
      /* active base was changed */
      base_activate(C, act_base);

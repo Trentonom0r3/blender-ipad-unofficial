@@ -1,3 +1,7 @@
+## Direct Object Convert mutation guard — source candidate
+
+The remaining selected-object conversion path can replace object data directly in `object_convert_exec`, bypassing the RNA setter. The new Apple-only preflight stores only selected Object UIDs/types/mode bits across strict cross-window paint-owner teardown, reacquires the current selected bases, and refuses any context or identity change before scene/data mutation. Host source fixture and pinned-source preflight pass; the exact native build and downloaded IPA audit are still pending. After that, continue the original-owner terminal/disposal contract without reusing native operator or Brush pointers.
+
 ## Guarded native active-object selection — exact IPA verified — 2026-10-12
 
 The Apple base_activate() path now writes the active object through the existing LayerObjects.active RNA setter, which retires a matching live Pencil paint owner before changing ViewLayer::basact. A missing RNA owner/property, invalid Base, teardown refusal, or reported native error returns before active refresh. Object creation no longer repeats the former direct write after base_activate(), so it cannot bypass a refusal. The non-Apple native assignment is unchanged.
