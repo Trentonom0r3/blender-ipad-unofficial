@@ -169968,10 +169968,8 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +#  include "BKE_global.hh"
  #  include "BKE_displist.h"
  #  include "BKE_gpencil_legacy.h"
-@@ -101,0 +102,3 @@
-+#  ifdef WITH_APPLE_CROSSPLATFORM
-+#    include "wm_event_system.hh"
-+#  endif
+@@ -101,0 +102,1 @@
++#  include "wm_event_system.hh"
 @@ -109,2 +113,314 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +static bool rna_Main_brush_remove_guard(Main *bmain,

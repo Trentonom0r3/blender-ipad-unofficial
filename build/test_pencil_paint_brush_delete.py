@@ -394,7 +394,7 @@ int main()
             line[1:] for line in section.splitlines()
             if line.startswith(("+", " ")) and not line.startswith("+++")
         )
-        self.assertIn('+#    include "wm_event_system.hh"', section)
+        self.assertIn('@@ -101,0 +102,1 @@\n+#  include "wm_event_system.hh"', section)
         self.assertIn("handler->ipad_pencil_owner_values[8] != mesh_uid", body)
         self.assertIn("WM_event_ipad_pencil_paint_mode_exit(bmain, owner_scene, owner_object)", body)
         guard = "rna_Main_mesh_remove_guard(bmain, reports, id_ptr, do_unlink)"
