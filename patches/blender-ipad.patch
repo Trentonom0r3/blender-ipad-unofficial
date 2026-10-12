@@ -170154,33 +170154,45 @@ index cb54db7..2055383 100644
 diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/blender/editors/space_outliner/outliner_edit.cc
 --- a/source/blender/editors/space_outliner/outliner_edit.cc
 +++ b/source/blender/editors/space_outliner/outliner_edit.cc
-@@ -601,2 +602,12 @@ static wmOperatorStatus outliner_id_delete_invoke(bContext *C,
+@@ -36,2 +36,3 @@
+ #include "BKE_blendfile.hh"
++#include "BKE_global.hh"
+ #include "BKE_context.hh"
+@@ -601,2 +602,16 @@ static wmOperatorStatus outliner_id_delete_invoke(bContext *C,
 -  BKE_id_multi_tagged_delete(bmain);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
-+    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    if (G_MAIN == bmain) {
++      BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    }
 +    return OPERATOR_CANCELLED;
 +  }
 +  if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
-+    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    if (G_MAIN == bmain) {
++      BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    }
 +    return OPERATOR_CANCELLED;
 +  }
 +#endif
 +  BKE_id_multi_tagged_delete(bmain);
    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
-@@ -2385,5 +2392,16 @@ static wmOperatorStatus outliner_orphans_purge_exec(bContext *C, wmOperator *op)
+@@ -2385,5 +2392,20 @@ static wmOperatorStatus outliner_orphans_purge_exec(bContext *C, wmOperator *op)
    }
 -
 -  BKE_id_multi_tagged_delete(bmain);
 -
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
-+    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    if (G_MAIN == bmain) {
++      BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    }
 +    outliner_orphans_purge_cleanup(op);
 +    return OPERATOR_CANCELLED;
 +  }
 +  if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
-+    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    if (G_MAIN == bmain) {
++      BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++    }
 +    outliner_orphans_purge_cleanup(op);
 +    return OPERATOR_CANCELLED;
 +  }
@@ -170192,31 +170204,39 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -2958,4 +2959,14 @@
+@@ -2958,4 +2959,18 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +        if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
-+          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++          if (G_MAIN == bmain) {
++            BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++          }
 +          return OPERATOR_CANCELLED;
 +        }
 +        if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
-+          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++          if (G_MAIN == bmain) {
++            BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++          }
 +          return OPERATOR_CANCELLED;
 +        }
 +#endif
          BKE_id_multi_tagged_delete(bmain);
          WM_event_add_notifier(C, NC_OBJECT, nullptr);
-@@ -3092,3 +3098,13 @@
+@@ -3092,3 +3098,17 @@
        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
        outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      if (!WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)) {
-+        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        if (G_MAIN == bmain) {
++          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        }
 +        return OPERATOR_CANCELLED;
 +      }
 +      if (!WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)) {
-+        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        if (G_MAIN == bmain) {
++          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
++        }
 +        return OPERATOR_CANCELLED;
 +      }
 +#endif

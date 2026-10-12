@@ -144,6 +144,7 @@ class PencilPaintTaggedImageDeleteTests(unittest.TestCase):
                 reset_tags = source.index("BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false)", guard_branch)
                 cancel = source.index("return OPERATOR_CANCELLED;", guard_branch)
                 self.assertLess(guard_branch, reset_tags)
+                self.assertIn("if (G_MAIN == bmain)", source[guard_branch:reset_tags])
                 self.assertLess(reset_tags, cancel)
                 self.assertLess(cancel, delete)
                 previous_delete = delete

@@ -186,23 +186,25 @@ class PencilPaintBrushDeleteTests(unittest.TestCase):
         tools = patch_section(OUTLINER_TOOLS_PATH)
         api = patch_section(WM_API_PATH)
         self.assertIn("bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);", api)
+        self.assertIn('+#include "BKE_global.hh"', edit)
         self.assertNotIn('#include "WM_event_system.hh"', edit)
         self.assertNotIn('#include "WM_event_system.hh"', tools)
-        click_delete = edit.split("@@ -601,2 +602,12", 1)[1].split("@@ -2385,5 +2392,16", 1)[0]
-        purge_delete = edit.split("@@ -2385,5 +2392,16", 1)[1]
-        delete_branch = tools.split("@@ -2958,4 +2959,14", 1)[1].split("@@ -3092,3 +3098,13", 1)[0]
-        library_delete = tools.split("@@ -3092,3 +3098,13", 1)[1]
+        click_delete = edit.split("@@ -601,2 +602,16", 1)[1].split("@@ -2385,5 +2392,20", 1)[0]
+        purge_delete = edit.split("@@ -2385,5 +2392,20", 1)[1]
+        delete_branch = tools.split("@@ -2958,4 +2959,18", 1)[1].split("@@ -3092,3 +3098,17", 1)[0]
+        library_delete = tools.split("@@ -3092,3 +3098,17", 1)[1]
         helper = "WM_event_ipad_pencil_paint_tagged_brushes_teardown(bmain)"
         for body in (click_delete, purge_delete, delete_branch, library_delete):
             new_source = "\n".join(line[1:] for line in body.splitlines()
                                     if line.startswith(("+", " ")) and not line.startswith("+++"))
             self.assertLess(new_source.index(helper), new_source.index("BKE_id_multi_tagged_delete(bmain);"))
             self.assertIn("BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false)", new_source)
+            self.assertIn("if (G_MAIN == bmain)", new_source)
             self.assertIn("return OPERATOR_CANCELLED", new_source)
 
     def test_library_delete_runs_the_guard_before_free_and_undo(self):
         section = patch_section(OUTLINER_TOOLS_PATH)
-        hunk = section.split("@@ -3092,3 +3098,13 @@", 1)[1]
+        hunk = section.split("@@ -3092,3 +3098,17 @@", 1)[1]
         body = "\n".join(
             line[1:] for line in hunk.splitlines()
             if line.startswith((" ", "+")) and not line.startswith("+++")
@@ -224,13 +226,17 @@ static SpaceOutliner outliner;
 static int calls[16], call_count=0;
 static bool allow_teardown=true;
 static bool allow_image_teardown=true;
-void BKE_main_id_tag_all(Main*,int,bool){calls[call_count++]=1;}
+static bool replace_main_on_image_teardown=false;
+static Main replacement_main;
+static Main *G_MAIN=&main_data;
+void BKE_main_id_tag_all(Main *main,int,bool){assert(main==G_MAIN);calls[call_count++]=1;}
 void outliner_do_libdata_operation(bContext*,void*,Scene*,SpaceOutliner*,int){calls[call_count++]=2;}
 bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main*){
   calls[call_count++]=3;return allow_teardown;
 }
 bool WM_event_ipad_pencil_paint_tagged_images_teardown(Main*){
-  calls[call_count++]=4;return allow_image_teardown;
+  if(replace_main_on_image_teardown)G_MAIN=&replacement_main;
+  calls[call_count++]=4;return allow_image_teardown&&G_MAIN==&main_data;
 }
 void BKE_id_multi_tagged_delete(Main*){calls[call_count++]=5;}
 void ED_undo_push(bContext*,const char*){calls[call_count++]=6;}
@@ -242,15 +248,18 @@ static int run_library_delete(){
   return 0;
 }
 int main(){
-  allow_teardown=true;allow_image_teardown=true;call_count=0;
+  G_MAIN=&main_data;allow_teardown=true;allow_image_teardown=true;replace_main_on_image_teardown=false;call_count=0;
   assert(run_library_delete()==0);
   assert(call_count==6&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==4&&calls[4]==5&&calls[5]==6);
-  allow_teardown=false;call_count=0;
+  G_MAIN=&main_data;allow_teardown=false;call_count=0;
   assert(run_library_delete()==OPERATOR_CANCELLED);
   assert(call_count==4&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==1);
-  allow_teardown=true;allow_image_teardown=false;call_count=0;
+  G_MAIN=&main_data;allow_teardown=true;allow_image_teardown=false;call_count=0;
   assert(run_library_delete()==OPERATOR_CANCELLED);
   assert(call_count==5&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==4&&calls[4]==1);
+  G_MAIN=&main_data;allow_image_teardown=true;replace_main_on_image_teardown=true;call_count=0;
+  assert(run_library_delete()==OPERATOR_CANCELLED);
+  assert(call_count==4&&calls[0]==1&&calls[1]==2&&calls[2]==3&&calls[3]==4&&G_MAIN==&replacement_main);
 }
 """
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(cpp)
