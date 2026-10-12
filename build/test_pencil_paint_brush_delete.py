@@ -10,9 +10,14 @@ WM_PATH = "source/blender/windowmanager/intern/wm_event_system.cc"
 OUTLINER_EDIT_PATH = "source/blender/editors/space_outliner/outliner_edit.cc"
 OUTLINER_TOOLS_PATH = "source/blender/editors/space_outliner/outliner_tools.cc"
 WM_API_PATH = "source/blender/windowmanager/WM_api.hh"
+RNA_MAIN_API_PATH = "source/blender/makesrna/intern/rna_main_api.cc"
 PATCH = (Path(__file__).resolve().parents[1] / "patches/blender-ipad.patch").read_text(encoding="utf-8")
 WM = changed_source(WM_PATH)
+BRUSH_UID_TEARDOWN = function(WM, "static bool wm_ipad_pencil_paint_brush_uid_teardown(")
+BRUSH_DIRECT_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_brush_teardown(")
 BRUSH_TEARDOWN = function(WM, "bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(")
+RNA_MAIN_API = changed_source(RNA_MAIN_API_PATH)
+RNA_BRUSH_REMOVE_GUARD = function(RNA_MAIN_API, "static bool rna_Main_brush_remove_guard(")
 
 
 def patch_section(path):
@@ -91,7 +96,7 @@ void WM_event_ipad_pencil_paint_owner_teardown(
   }
 }
 
-""" + BRUSH_TEARDOWN + r"""
+""" + BRUSH_UID_TEARDOWN + "\n" + BRUSH_DIRECT_TEARDOWN + "\n" + BRUSH_TEARDOWN + r"""
 
 static void add_owner(wmWindow &win,wmEventHandler_Op &owner,uint64_t brush_uid,uint64_t lifetime){
   owner.type=WM_HANDLER_TYPE_OP;owner.ipad_pencil_paint_serial=1;
@@ -114,6 +119,21 @@ int main(){
     assert(!a.modalhandlers.first&&!b.modalhandlers.first);
     assert(unrelated.modalhandlers.first==&unrelated_owner);
     assert((first.tag&ID_TAG_DOIT)&&(second.tag&ID_TAG_DOIT));
+  }
+  {
+    /* Direct bpy.data collection removal is scoped by Brush UID; it does not
+     * consume unrelated Outliner ID_TAG_DOIT work. */
+    Main main;G_MAIN=&main;
+    ID tagged{nullptr,707,ID_TAG_DOIT},direct{nullptr,808,0};
+    tagged.next=&direct;main.brushes.first=&tagged;
+    wmWindowManager wm;main.wm.first=&wm;wmWindow win;wm.windows.first=&win;
+    wmEventHandler_Op tagged_owner,direct_owner;
+    add_owner(win,tagged_owner,707,70);add_owner(win,direct_owner,808,80);
+    teardown_calls=0;refuse_teardown=false;reenter_teardown=false;
+    assert(WM_event_ipad_pencil_paint_brush_teardown(&main,808));
+    assert(teardown_calls==1&&torn_brushes[0]==808&&torn_windows[0]==&win);
+    assert(win.modalhandlers.first==&tagged_owner);
+    assert((tagged.tag&ID_TAG_DOIT)&&!(direct.tag&ID_TAG_DOIT));
   }
   {
     /* A tagged delete cannot proceed if the only matching owner is outside the
@@ -219,6 +239,118 @@ int main(){
 }
 """
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(cpp)
+
+    def test_python_collection_removal_retires_brush_before_either_free_path(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(RNA_REMOVE_CPP)
+
+    def test_python_collection_removal_reacquires_brush_after_native_callback(self):
+        source = patch_section(RNA_MAIN_API_PATH)
+        body = "\n".join(
+            line[1:] for line in source.splitlines()
+            if line.startswith((" ", "+")) and not line.startswith("+++")
+        )
+        helper = "WM_event_ipad_pencil_paint_brush_teardown(bmain, brush_uid)"
+        self.assertIn("GS(id->name) != ID_BR", body)
+        self.assertIn("!do_unlink && ID_REAL_USERS(id) > 0", body)
+        self.assertIn(helper, body)
+        guard_call = "rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)"
+        self.assertLess(body.index(guard_call), body.index("if (do_unlink) {"))
+        self.assertIn("id = static_cast<ID *>(id_ptr->data)", body)
+        self.assertIn("candidate->session_uid == brush_uid", body)
+        self.assertIn("id_ptr->data = live_brush", body)
+
+
+RNA_REMOVE_CPP = r"""
+#include <cassert>
+#include <cstdint>
+#include <vector>
+#define WITH_APPLE_CROSSPLATFORM
+constexpr int ID_BR=1, ID_OB=2, RPT_ERROR=3;
+constexpr int NC_WINDOW=5, LIB_ID_FREE_NO_USER_REFCOUNT=1, LIB_ID_FREE_NO_UI_USER=2;
+static int active_idcode=ID_BR;
+#define GS(name) active_idcode
+#define ID_REAL_USERS(id) ((id)->users)
+struct ID { ID *next=nullptr; uint64_t session_uid=0; int tag=0, users=0; char name[66]="BRBrush"; };
+struct ListBase { void *first=nullptr; };
+struct Main { ListBase brushes; };
+struct ReportList { int errors=0; };
+struct PointerRNA { void *data=nullptr; bool invalidated=false; void invalidate(){data=nullptr;invalidated=true;} };
+#define LISTBASE_FOREACH(type,item,list) \
+  for(type item=static_cast<type>((list)->first);item;item=item->next)
+static std::vector<int> calls;
+static bool allow_teardown=true,delete_during_teardown=false;
+static int last_free_flags=-1;
+static void remove_id(Main *main,ID *target){
+  ID *previous=nullptr,*current=static_cast<ID*>(main->brushes.first);
+  while(current&&current!=target){previous=current;current=current->next;}
+  if(current){if(previous)previous->next=current->next;else main->brushes.first=current->next;current->next=nullptr;}
+}
+void BKE_report(ReportList *reports,int,const char*){if(reports)++reports->errors;}
+void BKE_id_delete(Main *main,ID *id){calls.push_back(2);remove_id(main,id);}
+void BKE_id_free_ex(Main *main,ID *id,int flags,bool){calls.push_back(3);last_free_flags=flags;remove_id(main,id);}
+void WM_main_add_notifier(int,void*){calls.push_back(4);}
+bool WM_event_ipad_pencil_paint_brush_teardown(Main *main,uint64_t uid){
+  calls.push_back(1);
+  if(delete_during_teardown){
+    for(ID *candidate=static_cast<ID*>(main->brushes.first);candidate;candidate=candidate->next)
+      if(candidate->session_uid==uid){BKE_id_delete(main,candidate);break;}
+    return true;
+  }
+  return allow_teardown;
+}
+""" + RNA_BRUSH_REMOVE_GUARD + r"""
+static void run_remove(Main *bmain,ReportList *reports,PointerRNA *ptr,
+                       bool do_unlink,bool do_id_user,bool do_ui_user){
+  ID *id=static_cast<ID*>(ptr->data);
+  if(!rna_Main_brush_remove_guard(bmain,reports,ptr,do_unlink))return;
+  id=static_cast<ID*>(ptr->data);
+  if(do_unlink){BKE_id_delete(bmain,id);ptr->invalidate();WM_main_add_notifier(NC_WINDOW,nullptr);}
+  else if(ID_REAL_USERS(id)<=0){
+    const int flag=(do_id_user?0:LIB_ID_FREE_NO_USER_REFCOUNT)|
+                   (do_ui_user?0:LIB_ID_FREE_NO_UI_USER);
+    BKE_id_free_ex(bmain,id,flag,true);ptr->invalidate();
+  }
+  else BKE_report(reports,RPT_ERROR,"Brush still has users");
+}
+static void reset(){calls.clear();allow_teardown=true;delete_during_teardown=false;last_free_flags=-1;active_idcode=ID_BR;}
+int main(){
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=11;main.brushes.first=&brush;PointerRNA ptr{&brush};
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert((calls==std::vector<int>{1,2,4})&&ptr.invalidated&&!main.brushes.first);
+  }
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=22;brush.users=0;main.brushes.first=&brush;PointerRNA ptr{&brush};
+    run_remove(&main,&reports,&ptr,false,false,false);
+    assert((calls==std::vector<int>{1,3})&&last_free_flags==3&&ptr.invalidated&&!main.brushes.first);
+  }
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=33;main.brushes.first=&brush;PointerRNA ptr{&brush};allow_teardown=false;
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert((calls==std::vector<int>{1})&&reports.errors==1&&!ptr.invalidated&&main.brushes.first==&brush);
+  }
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=44;main.brushes.first=&brush;PointerRNA ptr{&brush};delete_during_teardown=true;
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert((calls==std::vector<int>{1,2})&&ptr.invalidated&&!main.brushes.first);
+  }
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=55;brush.users=2;main.brushes.first=&brush;PointerRNA ptr{&brush};
+    run_remove(&main,&reports,&ptr,false,true,true);
+    assert(calls.empty()&&reports.errors==1&&main.brushes.first==&brush);
+  }
+  {
+    reset();Main main;ReportList reports;ID other;other.session_uid=66;main.brushes.first=&other;PointerRNA ptr{&other};active_idcode=ID_OB;
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert((calls==std::vector<int>{2,4})&&ptr.invalidated&&!main.brushes.first);
+  }
+  {
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=0;main.brushes.first=&brush;PointerRNA ptr{&brush};
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert(calls.empty()&&reports.errors==1&&main.brushes.first==&brush);
+  }
+}
+"""
 
 
 if __name__ == "__main__":

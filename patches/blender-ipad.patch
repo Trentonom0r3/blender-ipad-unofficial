@@ -121517,7 +121517,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 index e5a618f..0abebf2 100644
 --- a/source/blender/windowmanager/WM_api.hh
 +++ b/source/blender/windowmanager/WM_api.hh
-@@ -1,2303 +1,2330 @@
+@@ -1,2303 +1,2331 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -122233,6 +122233,7 @@ index e5a618f..0abebf2 100644
 +                                               uint64_t owner_object_uid = 0,
 +                                               uint64_t owner_brush_uid = 0);
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);
++bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, uint64_t brush_uid);
 +bool WM_event_ipad_pencil_paint_mode_exit(bContext *C);
 +bool WM_event_ipad_pencil_paint_mode_exit(Main *bmain, Scene *scene, Object *ob);
 +#endif
@@ -132543,7 +132544,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 index 46a8fef..86d574b 100644
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,8738 @@
+@@ -1,6918 +1,8749 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -135922,19 +135923,12 @@ index 46a8fef..86d574b 100644
 +  }
 +}
 +
-+/* Before Outliner deletes tagged Brush IDs, retire every matching modal owner.
-+ * The handler keeps only the Brush session UID captured at stroke admission;
-+ * that UID is used for destruction matching, never for live-owner comparison
-+ * (Alt-Smooth and other native callbacks may change the current Brush). */
-+bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain)
++/* Before freeing a Brush ID, find paint owners by the session UID captured at
++ * stroke admission. Native callbacks may change the live Brush, so this UID is
++ * used only to locate the owner that must be retired. */
++static bool wm_ipad_pencil_paint_brush_uid_teardown(Main *bmain, const uint64_t brush_uid)
 +{
-+  if (!bmain || G_MAIN != bmain) return false;
-+  std::vector<uint64_t> brush_uids;
-+  LISTBASE_FOREACH (ID *, id, &bmain->brushes) {
-+    if ((id->tag & ID_TAG_DOIT) && id->session_uid) {
-+      brush_uids.push_back(id->session_uid);
-+    }
-+  }
++  if (!bmain || G_MAIN != bmain || !brush_uid) return false;
 +
 +  auto find_owner = [&](const uint64_t brush_uid,
 +                        wmWindowManager **r_wm,
@@ -135981,44 +135975,62 @@ index 46a8fef..86d574b 100644
 +    return false;
 +  };
 +
-+  for (const uint64_t brush_uid : brush_uids) {
-+    for (int attempt = 0; attempt < 256; attempt++) {
-+      if (G_MAIN != bmain) return false;
-+      wmWindowManager *owner_wm = nullptr;
-+      wmWindow *owner_win = nullptr;
-+      wmEventHandler_Op *owner_handler = nullptr;
-+      bool refused = false;
-+      if (!find_owner(brush_uid, &owner_wm, &owner_win, &owner_handler, &refused)) {
-+        if (refused) return false;
-+        break;
-+      }
-+      const uint64_t owner_lifetime = owner_handler->ipad_pencil_operator_lifetime;
-+      if (!owner_lifetime) return false;
-+
-+      bContext *owner_C = CTX_create();
-+      if (!owner_C) return false;
-+      CTX_data_main_set(owner_C, bmain);
-+      CTX_wm_manager_set(owner_C, owner_wm);
-+      CTX_wm_window_set(owner_C, owner_win);
-+      WM_event_ipad_pencil_paint_owner_teardown(
-+          owner_C, owner_win, nullptr, nullptr, 0, 0, brush_uid);
-+      CTX_free(owner_C);
-+      if (G_MAIN != bmain) return false;
-+
-+      /* Re-scan from Main after callbacks: no old window or handler pointer is
-+       * read again. A replacement owner is retired on the next iteration; a
-+       * refused owner with the same lifetime fails closed before ID deletion. */
-+      wmWindowManager *remaining_wm = nullptr;
-+      wmWindow *remaining_win = nullptr;
-+      wmEventHandler_Op *remaining_handler = nullptr;
-+      refused = false;
-+      if (!find_owner(brush_uid, &remaining_wm, &remaining_win, &remaining_handler, &refused)) {
-+        if (refused) return false;
-+        break;
-+      }
-+      if (remaining_handler->ipad_pencil_operator_lifetime == owner_lifetime) return false;
-+      if (attempt == 255) return false;
++  for (int attempt = 0; attempt < 256; attempt++) {
++    if (G_MAIN != bmain) return false;
++    wmWindowManager *owner_wm = nullptr;
++    wmWindow *owner_win = nullptr;
++    wmEventHandler_Op *owner_handler = nullptr;
++    bool refused = false;
++    if (!find_owner(brush_uid, &owner_wm, &owner_win, &owner_handler, &refused)) {
++      if (refused) return false;
++      break;
 +    }
++    const uint64_t owner_lifetime = owner_handler->ipad_pencil_operator_lifetime;
++    if (!owner_lifetime) return false;
++
++    bContext *owner_C = CTX_create();
++    if (!owner_C) return false;
++    CTX_data_main_set(owner_C, bmain);
++    CTX_wm_manager_set(owner_C, owner_wm);
++    CTX_wm_window_set(owner_C, owner_win);
++    WM_event_ipad_pencil_paint_owner_teardown(
++        owner_C, owner_win, nullptr, nullptr, 0, 0, brush_uid);
++    CTX_free(owner_C);
++    if (G_MAIN != bmain) return false;
++
++    /* Re-scan from Main after callbacks: no old window or handler pointer is
++     * read again. A replacement owner is retired on the next iteration; a
++     * refused owner with the same lifetime fails closed before ID deletion. */
++    wmWindowManager *remaining_wm = nullptr;
++    wmWindow *remaining_win = nullptr;
++    wmEventHandler_Op *remaining_handler = nullptr;
++    refused = false;
++    if (!find_owner(brush_uid, &remaining_wm, &remaining_win, &remaining_handler, &refused)) {
++      if (refused) return false;
++      break;
++    }
++    if (remaining_handler->ipad_pencil_operator_lifetime == owner_lifetime) return false;
++    if (attempt == 255) return false;
++  }
++  return G_MAIN == bmain;
++}
++
++bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, const uint64_t brush_uid)
++{
++  return wm_ipad_pencil_paint_brush_uid_teardown(bmain, brush_uid);
++}
++
++bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain)
++{
++  if (!bmain || G_MAIN != bmain) return false;
++  std::vector<uint64_t> brush_uids;
++  LISTBASE_FOREACH (ID *, id, &bmain->brushes) {
++    if ((id->tag & ID_TAG_DOIT) && id->session_uid) {
++      brush_uids.push_back(id->session_uid);
++    }
++  }
++  for (const uint64_t brush_uid : brush_uids) {
++    if (!wm_ipad_pencil_paint_brush_uid_teardown(bmain, brush_uid)) return false;
 +  }
 +  return G_MAIN == bmain;
 +}
@@ -169946,3 +169958,49 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +      }
 +#endif
        BKE_id_multi_tagged_delete(bmain);
+
+diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/makesrna/intern/rna_main_api.cc
+--- a/source/blender/makesrna/intern/rna_main_api.cc
++++ b/source/blender/makesrna/intern/rna_main_api.cc
+@@ -109,1 +109,34 @@
++#  ifdef WITH_APPLE_CROSSPLATFORM
++static bool rna_Main_brush_remove_guard(Main *bmain,
++                                        ReportList *reports,
++                                        PointerRNA *id_ptr,
++                                        const bool do_unlink)
++{
++  ID *id = static_cast<ID *>(id_ptr->data);
++  if (GS(id->name) != ID_BR || (!do_unlink && ID_REAL_USERS(id) > 0)) {
++    return true;
++  }
++  const uint64_t brush_uid = id->session_uid;
++  if (!brush_uid || !WM_event_ipad_pencil_paint_brush_teardown(bmain, brush_uid)) {
++    BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe Brush removal");
++    return false;
++  }
++  /* Teardown runs native callbacks. Reacquire by stable identity before the
++   * original RNA removal path dereferences the Brush or frees its ID. */
++  ID *live_brush = nullptr;
++  LISTBASE_FOREACH (ID *, candidate, &bmain->brushes) {
++    if (candidate->session_uid == brush_uid) {
++      live_brush = candidate;
++      break;
++    }
++  }
++  if (!live_brush) {
++    id_ptr->invalidate();
++    return false;
++  }
++  id_ptr->data = live_brush;
++  return true;
++}
++#  endif
++
+ static void rna_Main_ID_remove(Main *bmain,
+@@ -125,1 +158,6 @@
++#  ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
++  id = static_cast<ID *>(id_ptr->data);
++#  endif
++
+   if (do_unlink) {
