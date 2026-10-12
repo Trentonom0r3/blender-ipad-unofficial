@@ -1,4 +1,12 @@
-## Verified Python ID-removal guard IPA — 2026-10-12
+## Verified owner-safe View Layer and Workspace IPA — 2026-10-12
+
+Exact source commit `fd1ae95b22b65ec961619a216485fd45d0655af6` passed the hosted preflight and native iOS Release in [run 38244877860](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38244877860). The full host suite passed **374/374**, the connected View Layer/Workspace fixture passed with parent/child refusal and re-entrant owner cases, and pinned offline preflight applied to **120 source files**. Canonical LF patch SHA256: `2c6d113e61b9f2b4d40db1338eb1722221d08d8d8bc1986e7a1b421c48b521fd`.
+
+Artifact `11746676527` contains the downloaded **248,611,695-byte** IPA (SHA256 `c626ee25058da8f6c4ca00e3fe1f05dee3e61f869e9f6491efb309dd47798988`). Full **3,368-entry** CRC, arm64/iPhoneOS 5.0.0 bundle, entire packaged interaction UI/default Blender bars/toolbar, pinned native tool definitions and all **129** native tool icons pass. Compiled ARM64 binary UUID `E76754CF-B422-362F-BBA8-1BA474297452` passes the bounded HUD owner-restoration/first-layout audit and native Weight Paint cleanup callback audit. The compiled View Layer/Workspace setters call strict Pencil owner teardown before native mutation and revalidate context after callbacks; the helper reconstructs fresh context, invokes the strict owner teardown, and checks the saved context/remaining owner. This is bounded compiled call-order evidence, not device paint acceptance.
+
+Reports: `output/ui-preview/pencil-paint-contact/run-38244877860/verification.json`, `binary-38244877860/launch-audit/audit.json`, `binary-38244877860/weight-cancel-38244877860.asm`, and `binary-38244877860/view-context/`. The verifier’s retired Next-drag/current-tool-options flags are expected false under the accepted collapsed-corner and exact nine-action Base design. This exact revision has no new device acceptance; the prior “opens to the interface” reply was for a different build. Continue the original-owner loss and mode-specific paint completion/disposal audit, preserving all accepted ring, HUD, native-header, input and history behavior.
+
+## Previous verified Python ID-removal guard IPA — 2026-10-12
 
 Exact source commit 7c3dd5a2e87687a12cdacab5b72c03d67bcd1556 passed the hosted preflight and native iOS Release in [run 38206592220](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38206592220). The downloaded IPA is 248,612,483 bytes, SHA256 62e248dc1bf7314c42a334fa195dc42ef4b761267ef4943c40afabda54cc7e4b; artifact 11727299478.
 
