@@ -169962,7 +169962,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/makesrna/intern/rna_main_api.cc
 --- a/source/blender/makesrna/intern/rna_main_api.cc
 +++ b/source/blender/makesrna/intern/rna_main_api.cc
-@@ -109,1 +109,34 @@
+@@ -109,1 +109,37 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +static bool rna_Main_brush_remove_guard(Main *bmain,
 +                                        ReportList *reports,
@@ -169970,7 +169970,10 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +                                        const bool do_unlink)
 +{
 +  ID *id = static_cast<ID *>(id_ptr->data);
-+  if (GS(id->name) != ID_BR || (!do_unlink && ID_REAL_USERS(id) > 0)) {
++  /* Preserve the native outside-Main error path and pointer lifetime below. */
++  if ((id->tag & ID_TAG_NO_MAIN) || GS(id->name) != ID_BR ||
++      (!do_unlink && ID_REAL_USERS(id) > 0))
++  {
 +    return true;
 +  }
 +  const uint64_t brush_uid = id->session_uid;
@@ -169997,7 +170000,7 @@ diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/mak
 +#  endif
 +
  static void rna_Main_ID_remove(Main *bmain,
-@@ -125,1 +158,6 @@
+@@ -125,1 +161,6 @@
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!rna_Main_brush_remove_guard(bmain, reports, id_ptr, do_unlink)) return;
 +  id = static_cast<ID *>(id_ptr->data);

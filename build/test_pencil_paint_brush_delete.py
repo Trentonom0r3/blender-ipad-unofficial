@@ -258,6 +258,8 @@ int main(){
         self.assertIn("id = static_cast<ID *>(id_ptr->data)", body)
         self.assertIn("candidate->session_uid == brush_uid", body)
         self.assertIn("id_ptr->data = live_brush", body)
+        self.assertIn("id->tag & ID_TAG_NO_MAIN", body)
+        self.assertLess(body.index("ID_TAG_NO_MAIN"), body.index(helper))
 
 
 RNA_REMOVE_CPP = r"""
@@ -265,7 +267,7 @@ RNA_REMOVE_CPP = r"""
 #include <cstdint>
 #include <vector>
 #define WITH_APPLE_CROSSPLATFORM
-constexpr int ID_BR=1, ID_OB=2, RPT_ERROR=3;
+constexpr int ID_BR=1, ID_OB=2, ID_TAG_NO_MAIN=4, RPT_ERROR=3;
 constexpr int NC_WINDOW=5, LIB_ID_FREE_NO_USER_REFCOUNT=1, LIB_ID_FREE_NO_UI_USER=2;
 static int active_idcode=ID_BR;
 #define GS(name) active_idcode
@@ -304,6 +306,7 @@ static void run_remove(Main *bmain,ReportList *reports,PointerRNA *ptr,
   ID *id=static_cast<ID*>(ptr->data);
   if(!rna_Main_brush_remove_guard(bmain,reports,ptr,do_unlink))return;
   id=static_cast<ID*>(ptr->data);
+  if(id->tag&ID_TAG_NO_MAIN){BKE_report(reports,RPT_ERROR,"ID is outside Main");return;}
   if(do_unlink){BKE_id_delete(bmain,id);ptr->invalidate();WM_main_add_notifier(NC_WINDOW,nullptr);}
   else if(ID_REAL_USERS(id)<=0){
     const int flag=(do_id_user?0:LIB_ID_FREE_NO_USER_REFCOUNT)|
@@ -343,6 +346,14 @@ int main(){
     reset();Main main;ReportList reports;ID other;other.session_uid=66;main.brushes.first=&other;PointerRNA ptr{&other};active_idcode=ID_OB;
     run_remove(&main,&reports,&ptr,true,true,true);
     assert((calls==std::vector<int>{2,4})&&ptr.invalidated&&!main.brushes.first);
+  }
+  {
+    /* Keep Blender's original outside-Main report and live RNA pointer; do not
+     * run a Brush teardown or invalidate the pointer for an out-of-Main ID. */
+    reset();Main main;ReportList reports;ID brush;brush.session_uid=67;brush.tag=ID_TAG_NO_MAIN;
+    main.brushes.first=nullptr;PointerRNA ptr{&brush};
+    run_remove(&main,&reports,&ptr,true,true,true);
+    assert(calls.empty()&&reports.errors==1&&!ptr.invalidated&&ptr.data==&brush&&!main.brushes.first);
   }
   {
     reset();Main main;ReportList reports;ID brush;brush.session_uid=0;main.brushes.first=&brush;PointerRNA ptr{&brush};
