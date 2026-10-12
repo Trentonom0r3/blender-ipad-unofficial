@@ -32,10 +32,11 @@ using GHOST_TEventType = int;
 constexpr int GHOST_kEventWindowDeactivate = 1;
 std::vector<int> g_order;
 #define WITH_APPLE_CROSSPLATFORM
-void WM_event_ipad_pencil_paint_owner_teardown(
+bool WM_event_ipad_pencil_paint_owner_teardown(
     bContext *, wmWindow *, const ScrArea *, const ARegion *)
 {
   g_order.push_back(1);
+  return true;
 }
 void wm_window_update_eventstate_modifiers_clear(
     wmWindowManager *, wmWindow *, uint64_t)
@@ -48,7 +49,7 @@ void wm_event_add_ghostevent(
   g_order.push_back(3);
 }
 
-void execute_deactivation_case()
+bool execute_deactivation_case()
 {
   bContext *C = nullptr;
   wmWindowManager manager;
@@ -64,10 +65,11 @@ void execute_deactivation_case()
   }
   assert((g_order == std::vector<int>{1, 2, 3}));
   assert(!window.active);
+  return false;
 }
 #undef WITH_APPLE_CROSSPLATFORM
 
-int main() { execute_deactivation_case(); }
+int main() { assert(!execute_deactivation_case()); }
 '''
 
 

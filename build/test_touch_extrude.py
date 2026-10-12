@@ -1,17 +1,127 @@
-"""Compile shipped transaction and macro terminal code, including failure ownership."""
+"""Compile native overlay behavior from complete pinned files plus patch hunks."""
+from functools import lru_cache
 from pathlib import Path
+import re
 import unittest
 import test_ipad_panels
 
 
+ROOT = Path(__file__).resolve().parents[1]
+PATCH_PATH = ROOT / "patches" / "blender-ipad.patch"
+PATCH_TEXT = PATCH_PATH.read_text(encoding="utf-8")
+WORKFLOW_PATH = ROOT / ".github" / "workflows" / "build-ipa.yml"
+PIN_ROOT = ROOT / ".cache" / "preflight" / re.search(
+    r"^  BLENDER_COMMIT: ([0-9a-f]{40})\s*$",
+    WORKFLOW_PATH.read_text(encoding="utf-8"),
+    re.MULTILINE,
+).group(1)
+
+
+@lru_cache(maxsize=None)
 def changed_source(path):
-    patch = (Path(__file__).resolve().parents[1] / 'patches/blender-ipad.patch').read_text(encoding='utf-8')
-    section = patch.split(f'diff --git a/{path} b/{path}\n', 1)[1].split('diff --git ', 1)[0]
-    return '\n'.join(line[1:] for line in section.splitlines()
-                     if line.startswith((' ', '+')) and not line.startswith('+++'))
+    """Apply this path's unified-diff hunks to its exact cached pinned source.
+
+    Returning only context present in the patch made callers silently compile
+    truncated C++ files/functions when a candidate used compact hunks. Rebuild
+    the complete file so source-executing tests exercise the same overlay no
+    matter how much surrounding context its patch happens to carry.
+    """
+    marker = f"diff --git a/{path} b/{path}\n"
+    section = PATCH_TEXT.split(marker, 1)[1].split("diff --git ", 1)[0]
+    if "\n--- /dev/null\n" in "\n" + section:
+        base_lines = []
+    else:
+        base_path = PIN_ROOT / path
+        if not base_path.is_file():
+            raise FileNotFoundError(f"missing cached pinned source for {path}")
+        base_lines = base_path.read_text(encoding="utf-8").splitlines(keepends=True)
+
+    output = []
+    source_index = 0
+    lines = section.splitlines(keepends=True)
+    index = 0
+    while index < len(lines):
+        header = re.match(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", lines[index])
+        if not header:
+            index += 1
+            continue
+
+        old_start = int(header.group(1))
+        old_count = int(header.group(2) or "1")
+        new_count = int(header.group(4) or "1")
+        old_lines = []
+        new_lines = []
+        old_seen = new_seen = 0
+        index += 1
+
+        while old_seen < old_count or new_seen < new_count:
+            if index >= len(lines):
+                raise ValueError(f"truncated patch hunk for {path}")
+            line = lines[index]
+            index += 1
+            if line.startswith("\\ No newline at end of file"):
+                continue
+            if line == "\n":
+                prefix, content = " ", "\n"
+            elif not line:
+                raise ValueError(f"malformed patch line for {path}")
+            else:
+                prefix, content = line[0], line[1:]
+            if prefix == " ":
+                if old_seen >= old_count or new_seen >= new_count:
+                    raise ValueError(f"patch context exceeds hunk counts for {path}")
+                old_lines.append(content)
+                new_lines.append(content)
+                old_seen += 1
+                new_seen += 1
+            elif prefix == "-":
+                if old_seen >= old_count:
+                    raise ValueError(f"patch removal exceeds hunk counts for {path}")
+                old_lines.append(content)
+                old_seen += 1
+            elif prefix == "+":
+                if new_seen >= new_count:
+                    raise ValueError(f"patch addition exceeds hunk counts for {path}")
+                new_lines.append(content)
+                new_seen += 1
+            else:
+                raise ValueError(f"unexpected patch line in {path}: {line[:80]!r}")
+
+        if len(old_lines) != old_count or len(new_lines) != new_count:
+            raise ValueError(f"patch hunk counts do not match for {path}")
+        expected = old_start - 1 if old_count else old_start
+        if old_count:
+            # The pinned preflight accepts a small number of upstream hunks at
+            # an offset. Match the complete old-side hunk near its advertised
+            # line, rejecting ties instead of silently compiling the wrong
+            # repeated snippet.
+            low = max(source_index, expected - 64)
+            high = min(len(base_lines) - old_count, expected + 64)
+            candidates = [pos for pos in range(low, high + 1)
+                          if base_lines[pos:pos + old_count] == old_lines]
+            if not candidates:
+                raise ValueError(f"patch context does not match pinned source for {path}")
+            distances = [abs(pos - expected) for pos in candidates]
+            nearest = min(distances)
+            matches = [pos for pos, distance in zip(candidates, distances)
+                       if distance == nearest]
+            if len(matches) != 1:
+                raise ValueError(f"ambiguous patch context in pinned source for {path}")
+            hunk_start = matches[0]
+        else:
+            hunk_start = min(max(source_index, expected), len(base_lines))
+        if hunk_start < source_index:
+            raise ValueError(f"overlapping patch hunks for {path}")
+        output.extend(base_lines[source_index:hunk_start])
+        output.extend(new_lines)
+        source_index = hunk_start + old_count
+
+    output.extend(base_lines[source_index:])
+    return "".join(output)
 
 
 class TouchExtrudeTests(unittest.TestCase):
+
     def test_full_snapshot_success_cancel_and_replaced_owners(self):
         source = changed_source('source/blender/editors/mesh/editmesh_extrude.cc')
         transaction = source.split('/* The macro owns these independent', 1)[1].split('#endif', 1)[0]

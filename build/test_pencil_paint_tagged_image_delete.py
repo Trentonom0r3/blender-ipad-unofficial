@@ -216,7 +216,17 @@ class PencilPaintTaggedImageDeleteTests(unittest.TestCase):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(TAGGED_IMAGE_CPP)
 
     def test_every_native_tagged_delete_site_guards_images_before_free(self):
-        sites = ((OUTLINER_EDIT_SOURCE, 2), (OUTLINER_TOOLS_SOURCE, 2))
+        object_batch = function(
+            OUTLINER_TOOLS_SOURCE, "static void outliner_batch_delete_object_hierarchy("
+        )
+        self.assertIn("LISTBASE_FOREACH (Object *, ob_iter, &bmain->objects)", object_batch)
+        self.assertIn("if ((ob_iter->id.tag & ID_TAG_DOIT) == 0)", object_batch)
+        self.assertIn("BKE_id_multi_tagged_delete(bmain);", object_batch)
+        # This shared helper only consumes IDs tagged by the preceding
+        # object-hierarchy walk. Audit it separately from generic UI deletions,
+        # which can remove Brush/Image datablocks and require UID teardown.
+        ui_deletions = OUTLINER_TOOLS_SOURCE.replace(object_batch, "")
+        sites = ((OUTLINER_EDIT_SOURCE, 2), (ui_deletions, 2))
         self.assertEqual(PATCH.count("WM_event_ipad_pencil_paint_tagged_images_teardown(bmain)"), 4)
         for source, expected_sites in sites:
             deletions = [match.start() for match in re.finditer("BKE_id_multi_tagged_delete\\(bmain\\)", source)]

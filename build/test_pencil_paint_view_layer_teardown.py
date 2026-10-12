@@ -119,7 +119,7 @@ void CTX_data_scene_set(bContext *context, Scene *scene)
   context->scene = scene;
   g_events.push_back(2);
 }
-void WM_event_ipad_pencil_paint_owner_teardown(
+bool WM_event_ipad_pencil_paint_owner_teardown(
     bContext *context, wmWindow *window, void *, void *)
 {
   assert(context->window == window);
@@ -127,6 +127,7 @@ void WM_event_ipad_pencil_paint_owner_teardown(
   assert(window->scene == g_old_scene);
   ++g_teardowns;
   g_events.push_back(1);
+  return true;
 }
 Scene *WM_window_get_active_scene(const wmWindow *window) { return window->scene; }
 ViewLayer *BKE_view_layer_find(Scene *scene, const char *name)
@@ -233,7 +234,7 @@ void CTX_wm_manager_set(bContext *context, wmWindowManager *manager)
   context->manager = manager;
 }
 void CTX_wm_window_set(bContext *context, wmWindow *window) { context->window = window; }
-void WM_event_ipad_pencil_paint_owner_teardown(bContext *context,
+bool WM_event_ipad_pencil_paint_owner_teardown(bContext *context,
                                                wmWindow *window,
                                                const void *,
                                                const void *)
@@ -243,6 +244,7 @@ void WM_event_ipad_pencil_paint_owner_teardown(bContext *context,
   assert(STREQ(window->view_layer_name, g_target->name));
   g_torn_down.push_back(window->id);
   g_events.push_back(1);
+  return true;
 }
 void view_layer_remove_unset_nodetrees(Main *, Scene *, ViewLayer *)
 {
@@ -339,7 +341,7 @@ class PencilPaintViewLayerTeardownTests(unittest.TestCase):
                 direct_calls.append((path.relative_to(pinned_sources).as_posix(),
                                      source.count('WM_window_ensure_active_view_layer(win);')))
         self.assertEqual(direct_calls, [('blender/editors/screen/screen_edit.cc', 1)])
-        teardown = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
+        teardown = 'if (!WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr))'
         scene_write = 'win->scene = scene;'
         fallback = 'WM_window_ensure_active_view_layer(win);'
         self.assertLess(SCENE_CHANGE_FALLBACK_PREFIX.index(teardown),

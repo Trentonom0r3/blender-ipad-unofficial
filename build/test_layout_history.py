@@ -35,7 +35,7 @@ class LayoutHistoryTests(unittest.TestCase):
             ['static wmOperatorStatus working_swap_exec'])
         capture = function.index('if (!ED_ipad_panels_layout_checkpoint_capture(C, "Before Swap"))')
         cancel = function.index('return OPERATOR_CANCELLED;', capture)
-        mutation = function.index('ED_area_swapspace(C, source, model.areas[target]);')
+        mutation = function.index('if (!ED_area_swapspace(C, source, model.areas[target]))')
         self.assertLess(capture, cancel)
         self.assertLess(cancel, mutation)
 

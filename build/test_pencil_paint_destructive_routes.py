@@ -57,46 +57,49 @@ class PencilPaintDestructiveRouteTests(unittest.TestCase):
         self.assertIn('LISTBASE_FOREACH (ScrArea *, area, &screen->areabase)', region_registered)
         self.assertIn('uintptr_t(area) != handler->ipad_pencil_area', region_registered)
 
-        region_exit = function(SCREEN, 'void ED_region_exit(')
-        region_teardown = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, region);'
+        region_exit = function(SCREEN, 'bool ED_region_exit(')
+        region_teardown = 'if (!WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, region))'
         self.assertLess(region_exit.index(region_teardown),
                         region_exit.index('region->runtime->type->exit'))
         self.assertLess(region_exit.index(region_teardown),
                         region_exit.index('WM_event_modal_handler_region_replace'))
 
-        area_exit = function(SCREEN, 'void ED_area_exit(')
-        area_teardown = 'WM_event_ipad_pencil_paint_owner_teardown(C, paint_owner_win, area, nullptr);'
+        area_exit = function(SCREEN, 'bool ED_area_exit(')
+        area_teardown = 'if (!screen_ipad_paint_owner_teardown_area(C, area))'
         self.assertLess(area_exit.index(area_teardown),
                         area_exit.index('WM_event_modal_handler_area_replace'))
         self.assertLess(area_exit.index(area_teardown), area_exit.index('area->type->exit'))
 
         pullout = function(SCREEN_OPS, 'static wmOperatorStatus area_join_modal(')
-        pullout_teardown = 'WM_event_ipad_pencil_paint_owner_teardown(C, jd->win1, jd->sa1, nullptr);'
+        pullout_teardown = 'if (!WM_event_ipad_pencil_paint_owner_teardown(C, jd->win1, jd->sa1, nullptr))'
         self.assertLess(pullout.index(pullout_teardown),
                         pullout.index('WM_event_modal_handler_region_replace(jd->win1'))
 
     def test_all_pinned_area_removals_flow_through_the_reviewed_exit(self):
-        screen_delarea = function(SCREEN, 'static void screen_delarea(')
-        self.assertLess(screen_delarea.index('ED_area_exit(C, area);'),
+        screen_delarea = function(SCREEN, 'static bool screen_delarea(')
+        self.assertLess(screen_delarea.index('if (!ED_area_exit(C, area))'),
                         screen_delarea.index('BKE_screen_area_free(area);'))
-        area_newspace = function(changed_source(AREA_PATH), 'void ED_area_newspace(')
-        self.assertLess(area_newspace.index('ED_area_exit(C, area);'),
+        area_newspace = function(changed_source(AREA_PATH), 'bool ED_area_newspace(')
+        self.assertLess(area_newspace.index('if (!ED_area_exit(C, area))'),
                         area_newspace.index('area->spacetype = type;'))
-        swapspace = function(changed_source(AREA_PATH), 'void ED_area_swapspace(')
+        swapspace = function(changed_source(AREA_PATH), 'bool ED_area_swapspace(')
         self.assertEqual(calls(swapspace, 'ED_area_exit'), 2)
-        self.assertLess(swapspace.index('ED_area_exit(C, sa2);'),
+        self.assertLess(swapspace.index('ED_area_exit(C, sa2)'),
                         swapspace.index('ED_area_data_copy(sa1, sa2, true);'))
 
     def test_file_read_and_window_close_retire_before_modal_list_destruction(self):
         files = changed_source('source/blender/windowmanager/intern/wm_files.cc')
         setup = function(files, 'static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(')
-        hook = 'WM_event_ipad_pencil_paint_owner_teardown(C, win, nullptr, nullptr);'
-        self.assertLess(setup.index(hook), setup.index('WM_event_remove_handlers(C, &win->modalhandlers);'))
+        file_guard = 'if (!wm_file_read_setup_wm_owner_teardown(C, bmain))'
+        self.assertLess(setup.index(file_guard), setup.index('WM_jobs_kill_all(wm);'))
+        file_guard_source = function(files, 'static bool wm_file_read_setup_wm_owner_teardown(')
+        self.assertIn('WM_event_ipad_pencil_paint_owner_teardown(', file_guard_source)
 
         window = patched_window_source()
         close = function(window, 'void wm_window_close(')
-        self.assertLess(close.index(hook), close.index('BLI_remlink(&wm->windows, win);'))
-        self.assertLess(close.index(hook), close.index('WM_event_remove_handlers(C, &win->modalhandlers);'))
+        owner_guard = 'WM_event_ipad_pencil_paint_owner_teardown(C, candidate, nullptr, nullptr)'
+        self.assertLess(close.index(owner_guard), close.index('BLI_remlink(&wm->windows, win);'))
+        self.assertLess(close.index(owner_guard), close.index('WM_event_remove_handlers(C, &win->modalhandlers)'))
 
     def test_native_modal_handler_bulk_removal_callers_remain_bounded(self):
         # Blender's low-level API frees without a cancel callback. Scan every

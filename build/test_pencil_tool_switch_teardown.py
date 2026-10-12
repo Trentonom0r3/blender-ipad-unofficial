@@ -102,7 +102,7 @@ void append(ListBase *list,wmEventHandler *node) {
   while(tail->next) tail=tail->next;
   tail->next=node;
 }
-void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,wmWindow *win,
+bool WM_event_ipad_pencil_paint_owner_teardown(bContext *C,wmWindow *win,
                                                const ScrArea *area,void *) {
   wmEventHandler *previous=nullptr;
   auto *base=static_cast<wmEventHandler *>(win->modalhandlers.first);
@@ -133,6 +133,7 @@ void WM_event_ipad_pencil_paint_owner_teardown(bContext *C,wmWindow *win,
     tool_ref_changed_on_cancel=nullptr;
   }
   if(replace_context_window) C->win=replace_context_window;
+  return !refuse_cancel;
 }
 
 HELPERS
