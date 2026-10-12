@@ -748,6 +748,8 @@ class PencilPaintOwnerTeardownTests(unittest.TestCase):
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('BLI_remlink(&wm->windows, win);'))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('WM_event_remove_handlers(C, &win->handlers)'))
         self.assertLess(WINDOW_CLOSE.index(owner_teardown), WINDOW_CLOSE.index('WM_event_remove_handlers(C, &win->modalhandlers)'))
+        self.assertIn('if (BLI_findindex(&wm->windows, iter_win) != -1)', WINDOW_CLOSE)
+        self.assertNotIn('BLI_findlink(&wm->windows, iter_win)', WINDOW_CLOSE)
         self.assertIn('if (!C || !win)', OWNER_TEARDOWN)
         self.assertIn('if (!win->runtime)', OWNER_TEARDOWN)
         self.assertIn('owner_context_copy = CTX_copy(C)', OWNER_TEARDOWN)

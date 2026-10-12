@@ -149659,7 +149659,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
        wm_window_close(C, wm, iter_win);
 -    }
 -  }
-+      if (BLI_findlink(&wm->windows, iter_win)) {
++      if (BLI_findindex(&wm->windows, iter_win) != -1) {
 +        return;
 +      }
 +    }
