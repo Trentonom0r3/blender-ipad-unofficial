@@ -161778,41 +161778,148 @@ index 26ff6e0..71c3243 100644
 @@ -68,1 +68,2 @@
 +#include "BKE_global.hh"
  #include "BKE_grease_pencil.hh"
-@@ -2206,1 +2207,16 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
+@@ -2206,1 +2207,131 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+static void object_delete_ipad_pencil_paint_owner_teardown(
-+    bContext *C, wmWindowManager *wm, Scene *scene, const Object *object)
++struct ObjectDeleteIPadSelectionSnapshot {
++  uint64_t object_uid;
++  short object_type;
++  int object_mode;
++  int real_users;
++  int extra_users;
++  bool indirectly_linked;
++  bool user_deletable;
++  bool indirectly_used;
++};
++
++static bool object_delete_ipad_owner_preflight_active = false;
++
++static bool object_convert_ipad_context_is_live(bContext *C,
++                                                 Main *bmain,
++                                                 Scene *scene,
++                                                 ViewLayer *view_layer,
++                                                 wmWindowManager *wm,
++                                                 wmWindow *win);
++
++static bool object_delete_ipad_selection_snapshot(
++    bContext *C, Main *bmain, Vector<ObjectDeleteIPadSelectionSnapshot> &r_snapshot)
 +{
-+  if (!C || !wm || !object) {
-+    return;
++  r_snapshot.clear();
++  bool valid = true;
++  CTX_DATA_BEGIN (C, Object *, object, selected_objects) {
++    if (!object || !object->id.session_uid) {
++      valid = false;
++      continue;
++    }
++    const int real_users = ID_REAL_USERS(object);
++    const int extra_users = ID_EXTRA_USERS(object);
++    const bool indirectly_linked = (object->id.tag & ID_TAG_INDIRECT) != 0;
++    const bool user_deletable = indirectly_linked ||
++                                BKE_lib_override_library_id_is_user_deletable(bmain, &object->id);
++    const bool indirectly_used = !indirectly_linked && real_users <= 1 && extra_users == 0 &&
++                                 BKE_library_ID_is_indirectly_used(bmain, object);
++    const ObjectDeleteIPadSelectionSnapshot snapshot{object->id.session_uid,
++                                                     object->type,
++                                                     object->mode,
++                                                     real_users,
++                                                     extra_users,
++                                                     indirectly_linked,
++                                                     user_deletable,
++                                                     indirectly_used};
++    for (const ObjectDeleteIPadSelectionSnapshot &prior : r_snapshot) {
++      if (prior.object_uid == snapshot.object_uid) {
++        valid = false;
++        break;
++      }
++    }
++    if (valid) {
++      r_snapshot.append(snapshot);
++    }
 +  }
-+  const uint64_t scene_uid = scene ? scene->id.session_uid : 0;
-+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+    WM_event_ipad_pencil_paint_owner_teardown(
-+        C, win, nullptr, nullptr, scene_uid, object->id.session_uid);
++  CTX_DATA_END;
++  return valid;
++}
++
++static bool object_delete_ipad_selection_matches(
++    bContext *C, Main *bmain, const Vector<ObjectDeleteIPadSelectionSnapshot> &expected)
++{
++  Vector<ObjectDeleteIPadSelectionSnapshot> current;
++  if (!object_delete_ipad_selection_snapshot(C, bmain, current) ||
++      current.size() != expected.size())
++  {
++    return false;
 +  }
++  for (int i = 0; i < int(expected.size()); i++) {
++    const ObjectDeleteIPadSelectionSnapshot &a = expected[i];
++    const ObjectDeleteIPadSelectionSnapshot &b = current[i];
++    if (a.object_uid != b.object_uid || a.object_type != b.object_type ||
++        a.object_mode != b.object_mode || a.real_users != b.real_users ||
++        a.extra_users != b.extra_users || a.indirectly_linked != b.indirectly_linked ||
++        a.user_deletable != b.user_deletable || a.indirectly_used != b.indirectly_used)
++    {
++      return false;
++    }
++  }
++  return true;
++}
++
++static bool object_delete_ipad_paint_owners_prepare(bContext *C,
++                                                    Main *bmain,
++                                                    Scene *scene,
++                                                    ViewLayer *view_layer,
++                                                    wmWindowManager *wm,
++                                                    wmWindow *win,
++                                                    ReportList *reports)
++{
++  if (object_delete_ipad_owner_preflight_active ||
++      !object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win))
++  {
++    BKE_report(reports, RPT_ERROR, "Object deletion refused a changed Pencil paint context");
++    return false;
++  }
++
++  Vector<ObjectDeleteIPadSelectionSnapshot> selected_snapshot;
++  if (!object_delete_ipad_selection_snapshot(C, bmain, selected_snapshot)) {
++    BKE_report(reports, RPT_ERROR, "Object deletion refused an ambiguous selection");
++    return false;
++  }
++
++  struct ReentrancyGuard {
++    ReentrancyGuard() { object_delete_ipad_owner_preflight_active = true; }
++    ~ReentrancyGuard() { object_delete_ipad_owner_preflight_active = false; }
++  } reentrancy_guard;
++
++  for (const ObjectDeleteIPadSelectionSnapshot &snapshot : selected_snapshot) {
++    if (snapshot.indirectly_linked || !snapshot.user_deletable || snapshot.indirectly_used)
++    {
++      continue;
++    }
++    if (!WM_event_ipad_pencil_paint_object_teardown(bmain, snapshot.object_uid)) {
++      BKE_report(reports, RPT_ERROR, "Object deletion could not retire the Pencil paint owner");
++      return false;
++    }
++    if (!object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win) ||
++        !object_delete_ipad_selection_matches(C, bmain, selected_snapshot))
++    {
++      BKE_report(reports, RPT_ERROR, "Object deletion selection changed during Pencil teardown");
++      return false;
++    }
++  }
++  return object_convert_ipad_context_is_live(C, bmain, scene, view_layer, wm, win) &&
++         object_delete_ipad_selection_matches(C, bmain, selected_snapshot);
 +}
 +#endif
 +
  static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
-@@ -2256,3 +2272,6 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
-     else {
-       /* Object is used in multiple scenes. Delete the object from the current scene only. */
+@@ -2220,1 +2351,8 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+      object_delete_ipad_pencil_paint_owner_teardown(C, wm, scene, ob);
++  if (!object_delete_ipad_paint_owners_prepare(
++          C, bmain, scene, CTX_data_view_layer(C), wm, CTX_wm_window(C), op->reports))
++  {
++    return OPERATOR_CANCELLED;
++  }
 +#endif
-       base_free_and_unlink_no_indirect_check(bmain, scene, ob);
-@@ -2269,2 +2288,9 @@ static wmOperatorStatus object_delete_exec(bContext *C, wmOperator *op)
-   if (tagged_count > 0) {
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+    LISTBASE_FOREACH (Object *, object, &bmain->objects) {
-+      if (object->id.tag & ID_TAG_DOIT) {
-+        object_delete_ipad_pencil_paint_owner_teardown(C, wm, nullptr, object);
-+      }
-+    }
-+#endif
-     BKE_id_multi_tagged_delete(bmain);
-@@ -3985,1 +4011,105 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
+   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
+@@ -3985,1 +4123,105 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +struct ObjectConvertIPadSelectionSnapshot {
 +  uint64_t object_uid;

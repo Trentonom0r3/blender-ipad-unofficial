@@ -190,6 +190,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_paint_active_object_teardown.py -v
       - name: Pencil owner teardown before object conversion
         run: python3 -m unittest discover -s build -p test_pencil_object_convert_teardown.py -v
+      - name: Refuse Object Delete before freeing an active Pencil paint owner
+        run: python3 -m unittest discover -s build -p test_pencil_paint_object_delete.py -v
       - name: Fail closed on Pencil owner context-switch refusal
         run: python3 -m unittest discover -s build -p test_pencil_paint_window_context_switch.py -v
       - name: Native wmEvent allocation and synthetic-contact provenance
