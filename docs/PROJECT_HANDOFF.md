@@ -1,3 +1,47 @@
+## Verified Mesh storage Pencil-owner IPA - 2026-10-13
+
+Exact source `23596e309faf99fabf44d95e762dbb37271c9a43` passed hosted preflight,
+native iOS Release and complete downloaded IPA verification in
+[run 38407989371](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38407989371).
+Eight live Mesh RNA consumers now retire registered Pencil paint owners before
+original/evaluated storage writes, cache dirtiness or tagging, then validate
+fresh typed Mesh/Library/override inputs after the completed WM drain. Shared
+absence queries preserve evaluated UID-zero and seven formerly context-free
+APIs. Native admission/defaults/results and original strict cancellation context
+remain; existing ID guards and all accepted UI/input/history paths are preserved.
+
+Full **431/431** host tests (**376.523s**), connected **17/17**, **129-file**
+pinned preflight/diff and independent final source/literal UI reviews pass.
+Canonical LF patch SHA256:
+`df6aa0eb51bd9bf2cb861bac31278ebeb7ca36df8992ba5d0976b14b9bf8f747`.
+The earlier430 pass is superseded by the actual null-C/null-Main correction.
+Six selected sources change;123 prior sections/all seven Python/ring/HUD/default
+bars/tools/icons/geometry remain exact. Preserved native widget evidence applies.
+
+Artifact **11823256681** holds the **248,626,344-byte** IPA, SHA256
+`31a28ba60093e33caca6d82b1fcd13b36e6605d4dfeb291eb14906004a46acd9`.
+Full **3,368-entry** CRC, arm64/iPhoneOS5.0.0, whole exact packaged UI/default
+bars/toolbar/pinned tools/all **129** icons/exact nine Base/native-only More Tools
+pass. UUID `B733DC80-03E0-3E0C-A7C5-F94903C90A76` passes preserved bounded HUD
+launch and Weight cleanup. Root eight false-return traces and independent actual
+wrapper forwarding/fresh Mesh/query review pass. Null-output WM query branch
+`0x100b51864` excludes context creation/native teardown; exported strict path
+restores original C/Main. These are bounded compiled findings, not complete
+WM/UIKit/global CFG or device execution. **No device acceptance for this IPA.**
+
+Reports: `output/ui-preview/pencil-mesh-storage/source-verification.json`,
+`ipa-38407989371/verification.json` and
+`binary-38407989371/{compiled-consumer-refusal-audit,independent-compiled-review}.json`.
+Watcher95401 finished exit0; no live verifier or unchanged rebuild is needed.
+
+Next material pointer-setter/outer-RNA-caller audit is in `material-next-audit.json`.
+No corrective material source exists. Fixed setter ABI lacks C/Main; direct slot
+state, nullable values, native admission, shared original-owner context policy and
+Debug/Python enclosing caller lifetime all need connected proof. WM inner drains
+may cancel replacement owners; RNA revalidates inputs after completed drains.
+Outer256 attempts do not bound all callbacks/global reentrancy or roll back native
+effects. Preserve every accepted UX/lifetime guard; full personal goal unfinished.
+
 ## Mesh storage Pencil-owner source validated - 2026-10-13
 
 Eight live Mesh RNA APIs now guard original/evaluated storage before native

@@ -1,5 +1,5 @@
 {
-  "status": "source_host_review_passed_native_build_pending",
+  "status": "source_host_native_package_bounded_compiled_passed",
   "base_source": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019",
   "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
   "patch_sha256": "df6aa0eb51bd9bf2cb861bac31278ebeb7ca36df8992ba5d0976b14b9bf8f747",
@@ -76,12 +76,44 @@
   ],
   "limits": [
     "NativeCancel/storage/allocation/depsgraph effects remain instrumented fixture boundaries",
-    "Source/native-widget preservation only; native build/package pending, no device acceptance",
     "No generic Cancel rollback or global reentrancy bound claim",
     "CTX_data_main null-C behavior is modeled from pinned dispatcher/getter; actual generated argument prefix executes but full native RNA caller does not",
     "WM_teardown inner loop can cancel replacement owners; RNA values revalidate after completed WM_next drain, not each inner callback",
     "Outer256 attempts do not bound all cancellations/global reentrancy termination; eventual refusal does not roll back native callback effects",
-    "Final full431 logic passed before comment-only boundary clarification; preflight/diff after clarification passed"
+    "Final full431 logic passed before comment-only boundary clarification; preflight/diff after clarification passed",
+    "Native compile/package/bounded binary checks passed, no new device acceptance or global CFG/WM/UIKit proof"
   ],
-  "device_acceptance": false
+  "device_acceptance": false,
+  "source": "23596e309faf99fabf44d95e762dbb37271c9a43",
+  "native_run": {
+    "conclusion": "success",
+    "headSha": "23596e309faf99fabf44d95e762dbb37271c9a43",
+    "status": "completed",
+    "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38407989371"
+  },
+  "package": {
+    "artifact_id": 11823256681,
+    "bytes": 248626344,
+    "sha256": "31a28ba60093e33caca6d82b1fcd13b36e6605d4dfeb291eb14906004a46acd9",
+    "entries": 3368,
+    "arm64_ios": true,
+    "report": "ipa-38407989371/verification.json"
+  },
+  "compiled": {
+    "status": "passed_bounded_consumer_wrapper_query",
+    "binary_uuid": "B733DC80-03E0-3E0C-A7C5-F94903C90A76",
+    "consumer_false_paths": "binary-38407989371/compiled-consumer-refusal-audit.json",
+    "independent": "binary-38407989371/independent-compiled-review.json",
+    "launch": "binary-38407989371/launch-audit/audit.json",
+    "weight_cleanup": "binary-38407989371/weight-cancel-compiled.json",
+    "no_cancel_query_branch": "0x100b51864",
+    "CTX_create_excluded": "0x100b518f4",
+    "native_teardown_excluded": "0x100b51940"
+  },
+  "watcher": {
+    "session": 95401,
+    "script": ".cache/watch-mesh-storage-build.py",
+    "log": ".cache/mesh-storage-build-watch.log",
+    "status": "completed_exit0"
+  }
 }

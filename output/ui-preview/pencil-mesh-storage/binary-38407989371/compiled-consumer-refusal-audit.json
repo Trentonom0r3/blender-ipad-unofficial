@@ -1,0 +1,381 @@
+{
+  "status": "passed_bounded_false_return_paths",
+  "source": "23596e309faf99fabf44d95e762dbb37271c9a43",
+  "run": 38407989371,
+  "binary_uuid": "B733DC80-03E0-3E0C-A7C5-F94903C90A76",
+  "binary_sha256": "609065cd4c522a55946260a128a280d0dd4826ab2e660da66280722d8a32dcfc",
+  "consumers": {
+    "MeshVertices_add_call": {
+      "symbol": "__ZL21MeshVertices_add_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c448",
+      "failure_branch": "0x10133c44c",
+      "failure_target": "0x10133c460",
+      "return": "0x10133c470",
+      "failure_trace": [
+        {
+          "pc": "0x10133c460",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c464",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c468",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c46c",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c470",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c450",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "MeshEdges_add_call": {
+      "symbol": "__ZL18MeshEdges_add_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c4f0",
+      "failure_branch": "0x10133c4f4",
+      "failure_target": "0x10133c508",
+      "return": "0x10133c518",
+      "failure_trace": [
+        {
+          "pc": "0x10133c508",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c50c",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c510",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c514",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c518",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c4f8",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "MeshLoops_add_call": {
+      "symbol": "__ZL18MeshLoops_add_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c598",
+      "failure_branch": "0x10133c59c",
+      "failure_target": "0x10133c5b0",
+      "return": "0x10133c5c0",
+      "failure_trace": [
+        {
+          "pc": "0x10133c5b0",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c5b4",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c5b8",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c5bc",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c5c0",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c5a0",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "MeshPolygons_add_call": {
+      "symbol": "__ZL21MeshPolygons_add_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c640",
+      "failure_branch": "0x10133c644",
+      "failure_target": "0x10133c658",
+      "return": "0x10133c668",
+      "failure_trace": [
+        {
+          "pc": "0x10133c658",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c65c",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c660",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c664",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c668",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c648",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "Mesh_clear_geometry_call": {
+      "symbol": "__ZL24Mesh_clear_geometry_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c26c",
+      "failure_branch": "0x10133c270",
+      "failure_target": "0x10133c2ac",
+      "return": "0x10133c2bc",
+      "failure_trace": [
+        {
+          "pc": "0x10133c2ac",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c2b0",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c2b4",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c2b8",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c2bc",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c274",
+        "ins": [
+          "ldr",
+          "x19, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "Mesh_validate_call": {
+      "symbol": "__ZL18Mesh_validate_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c310",
+      "failure_branch": "0x10133c314",
+      "failure_target": "0x10133c32c",
+      "return": "0x10133c348",
+      "failure_trace": [
+        {
+          "pc": "0x10133c32c",
+          "op": "mov",
+          "args": "w0, #0x0"
+        },
+        {
+          "pc": "0x10133c330",
+          "op": "strb",
+          "args": "w0, [x23, #0x10]"
+        },
+        {
+          "pc": "0x10133c334",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x40]"
+        },
+        {
+          "pc": "0x10133c338",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c33c",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c340",
+          "op": "ldp",
+          "args": "x24, x23, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c344",
+          "op": "add",
+          "args": "sp, sp, #0x50"
+        },
+        {
+          "pc": "0x10133c348",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c318",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "Mesh_validate_material_indices_call": {
+      "symbol": "__ZL35Mesh_validate_material_indices_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "guard": "0x10133c390",
+      "failure_branch": "0x10133c394",
+      "failure_target": "0x10133c3a4",
+      "return": "0x10133c3bc",
+      "failure_trace": [
+        {
+          "pc": "0x10133c3a4",
+          "op": "mov",
+          "args": "w0, #0x0"
+        },
+        {
+          "pc": "0x10133c3a8",
+          "op": "strb",
+          "args": "w0, [x21]"
+        },
+        {
+          "pc": "0x10133c3ac",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133c3b0",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133c3b4",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133c3b8",
+          "op": "add",
+          "args": "sp, sp, #0x40"
+        },
+        {
+          "pc": "0x10133c3bc",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133c398",
+        "ins": [
+          "ldr",
+          "x0, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    },
+    "__ZL15rna_Mesh_updateP4Mesh": {
+      "symbol": "__ZL15rna_Mesh_updateP4MeshP4MainP8bContextP10ReportListbb",
+      "guard": "0x10133b8d8",
+      "failure_branch": "0x10133b8dc",
+      "failure_target": "0x10133bdb0",
+      "return": "0x10133bdc4",
+      "failure_trace": [
+        {
+          "pc": "0x10133bdb0",
+          "op": "ldp",
+          "args": "x29, x30, [sp, #0x40]"
+        },
+        {
+          "pc": "0x10133bdb4",
+          "op": "ldp",
+          "args": "x20, x19, [sp, #0x30]"
+        },
+        {
+          "pc": "0x10133bdb8",
+          "op": "ldp",
+          "args": "x22, x21, [sp, #0x20]"
+        },
+        {
+          "pc": "0x10133bdbc",
+          "op": "ldp",
+          "args": "x24, x23, [sp, #0x10]"
+        },
+        {
+          "pc": "0x10133bdc0",
+          "op": "add",
+          "args": "sp, sp, #0x50"
+        },
+        {
+          "pc": "0x10133bdc4",
+          "op": "ret",
+          "args": ""
+        }
+      ],
+      "fresh_mesh_load_after_guard": {
+        "pc": "0x10133b8e0",
+        "ins": [
+          "ldr",
+          "x20, [sp, #0x8]"
+        ]
+      },
+      "scope": "Direct compiled false-return path contains no calls, returns before later native mutation. Earlier add Edit/zero delegation relies on pinned admission; validator result store expected."
+    }
+  },
+  "limits": [
+    "False-return paths only, not whole native/UIKit/WM/allocator or device proof",
+    "Independent forwarding/export/sharedWMabsence review separate",
+    "No rollback/globalreentry claim"
+  ],
+  "device_acceptance": false
+}

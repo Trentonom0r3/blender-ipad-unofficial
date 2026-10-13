@@ -1,0 +1,125 @@
+{
+  "status": "passed_bounded_independent_compiled_review",
+  "source": "23596e309faf99fabf44d95e762dbb37271c9a43",
+  "run": "38407989371",
+  "binary_uuid": "B733DC80-03E0-3E0C-A7C5-F94903C90A76",
+  "binary_sha256": "609065cd4c522a55946260a128a280d0dd4826ab2e660da66280722d8a32dcfc",
+  "method": "Independently read ARM64 instructions, re-disassemble the exact executable with LLVM, match all nine existing wrapper/export ASM instruction maps, and inspect exact update/WM/strict-helper ranges. Missing source callback symbols are compiler inlining, not guard absence.",
+  "findings": [],
+  "consumers": [
+    {
+      "api": "MeshVertices.add",
+      "guard": "0x10133c448",
+      "refusal": "0x10133c44c -> 0x10133c460",
+      "return": "0x10133c470",
+      "fresh_mesh": "0x10133c450: ldr x0,[sp,#8]",
+      "native": "0x10133c45c: ED_mesh_verts_add",
+      "admission_native_tail": "0x10133c428"
+    },
+    {
+      "api": "MeshEdges.add",
+      "guard": "0x10133c4f0",
+      "refusal": "0x10133c4f4 -> 0x10133c508",
+      "return": "0x10133c518",
+      "fresh_mesh": "0x10133c4f8: ldr x0,[sp,#8]",
+      "native": "0x10133c504: ED_mesh_edges_add",
+      "admission_native_tail": "0x10133c4d0"
+    },
+    {
+      "api": "MeshLoops.add",
+      "guard": "0x10133c598",
+      "refusal": "0x10133c59c -> 0x10133c5b0",
+      "return": "0x10133c5c0",
+      "fresh_mesh": "0x10133c5a0: ldr x0,[sp,#8]",
+      "native": "0x10133c5ac: ED_mesh_loops_add",
+      "admission_native_tail": "0x10133c578"
+    },
+    {
+      "api": "MeshPolygons.add",
+      "guard": "0x10133c640",
+      "refusal": "0x10133c644 -> 0x10133c658",
+      "return": "0x10133c668",
+      "fresh_mesh": "0x10133c648: ldr x0,[sp,#8]",
+      "native": "0x10133c654: ED_mesh_faces_add",
+      "admission_native_tail": "0x10133c620"
+    },
+    {
+      "api": "Mesh.clear_geometry",
+      "guard": "0x10133c26c",
+      "refusal": "0x10133c270 -> 0x10133c2ac",
+      "return": "0x10133c2bc",
+      "fresh_mesh": "0x10133c274: ldr x19,[sp,#8]; 0x10133c278 mov x0,x19",
+      "native": "0x10133c27c: BKE_mesh_clear_geometry_and_metadata",
+      "later_calls": [
+        "0x10133c288 BKE_animdata_free",
+        "0x10133c290 mesh_ensure_required_data_layers",
+        "0x10133c29c DEG_id_tag_update",
+        "0x10133c2a8 WM_main_add_notifier"
+      ]
+    },
+    {
+      "api": "Mesh.validate",
+      "guard": "0x10133c310",
+      "refusal": "0x10133c314 -> 0x10133c32c",
+      "return": "0x10133c348",
+      "fresh_mesh": "0x10133c318: ldr x0,[sp,#8]",
+      "native": "0x10133c324: BKE_mesh_validate",
+      "result": "Refusal sets w0=0 at 0x10133c32c; native result and refusal share byte output 0x10133c330."
+    },
+    {
+      "api": "Mesh.validate_material_indices",
+      "guard": "0x10133c390",
+      "refusal": "0x10133c394 -> 0x10133c3a4",
+      "return": "0x10133c3bc",
+      "fresh_mesh": "0x10133c398: ldr x0,[sp,#8]",
+      "native": "0x10133c39c: BKE_mesh_validate_material_indices",
+      "result": "Refusal sets w0=0 at 0x10133c3a4; native result and refusal share byte output 0x10133c3a8."
+    },
+    {
+      "api": "Mesh.update",
+      "actual_symbol": "__ZL15rna_Mesh_updateP4MeshP4MainP8bContextP10ReportListbb",
+      "guard": "0x10133b8d8",
+      "refusal": "0x10133b8dc -> 0x10133bdb0",
+      "return": "0x10133bdc4",
+      "fresh_mesh": "0x10133b8e0: ldr x20,[sp,#8]",
+      "native": "0x10133b90c mesh_calc_edges; 0x10133b9c0 BKE_mesh_tessface_clear",
+      "later_calls": [
+        "0x10133bd9c DEG_id_tag_update",
+        "0x10133bdac WM_event_add_notifier"
+      ],
+      "cache": "Guard refusal jumps beyond all inlined cache dirty/allocation branches, including 0x10133b9b8, 0x10133ba98, 0x10133bb70, 0x10133bc48, 0x10133bd90."
+    }
+  ],
+  "generated_argument_forwarding": {
+    "add_wrappers": "Incoming C x0 saved x21; incoming reports x1 saved x19; CTX_data_main(C) result transferred x1; x0 restored from x21, x2 points to sp+8 fresh-ID slot, x3 from x19 at each guard. Native calls use fresh slot, reports x19 and count x20.",
+    "clear_wrapper": "C x20 and reports x19; CTX_data_main result x1; guard x0=x20, x2=sp+8,x3=x19.",
+    "validate_wrapper": "C x22 and reports x21; CTX_data_main result x1; guard x0=x22,x2=sp+8,x3=x21. Native verbose/clean_customdata remain saved w19/w20.",
+    "material_validator_wrapper": "C x20 and reports x19; CTX_data_main result x1; guard x0=x20,x2=sp+8,x3=x19.",
+    "update_wrapper": "0x10133c19c gets Main from original C; 0x10133c1a0-1b4 forward x0=mesh,x1=Main,x2=C(saved x20),x3=reports(saved x19),x4/x5=boolean parameters before tail at 0x10133c1c8. Actual callback preserves Main x1 and reports x3 when setting x0=C and x2=sp+8 before guard.",
+    "add_early_admission": "CMP count, CCMP edit_mesh with NZCV #0 when count is zero, and B.EQ select the guard only for nonzero count and no edit_mesh. Other cases tail into native admission. Actual ED_mesh_verts_add 0x101c63234 checks edit_mesh before report tail 0x101c63274; zero count check follows at 0x101c6327c."
+  },
+  "export_absence_before_capture": {
+    "global": "llvm-nm gives _G at 0x106d74028. Pinned BKE_global.hh starts Global with Main *main and defines G_MAIN=(G).main; ADRP/add/ldr 0x101265f20-28 reads that exact address.",
+    "fallback": "ORR x8,x0,x1 at 0x101265f1c and CSEL x8,x1,x9,ne at 0x101265f30 select G.main only when original C and Main are both null.",
+    "query": "0x101265f80-94 save original C x20/Main x21/ID-slot x22/operation x23, set x1=owner_main and x2=0; call WM_next at 0x101265f98 before strict capture.",
+    "strict_original_arguments": "After query, 0x101265f9c-fa4 restore operation/Main/ID-slot, 0x101265fac restores original C. False at 0x101265fb0 reaches 0x101265f44 and strict call 0x101265f5c with original arguments. True reaches return without entering strict identity capture."
+  },
+  "wm_null_output_no_cancel": {
+    "output_identity": "Incoming x2 saved x24 at 0x100b51440, saved sp+0x10 at 0x100b51528 and restored 0x100b51840 (or stays x24 on empty-manager path).",
+    "admission": "0x100b51458-6c reject null/non-active Main; 0x100b51470-80 allow null C and otherwise validate CTX_data_main. Context-manager membership is checked at 0x100b514d0 and context unchanged at 0x100b51514/0x100b51848. Operator handler type/serial, native registration/lifetime and duplicate owner refusal remain at 0x100b517a4-0x100b51828.",
+    "branch": "Found owner w26 becomes 1 at 0x100b517cc/0x100b51824. 0x100b51854 CMP x24,0; 0x100b51858 CSET w8,eq; 0x100b5185c EOR w21,w26,1; 0x100b51860 ORR w8,w8,w21; 0x100b51864 TBNZ w8,0 to 0x100b51b00. Thus null output bypasses cancellation and returns !found_owner through ordinary cleanup and 0x100b516f4 AND w0,w21,1.",
+    "excluded_calls": "CTX_create is later at 0x100b518f4, strict native owner teardown at 0x100b51940 and CTX_free at 0x100b5194c. Null-output query cannot reach those calls after owner scan."
+  },
+  "strict_fresh_identity": "After nonnull-output WM drain at 0x101266380, UID lookup 0x1012663f4 is followed by address comparison 0x101266404 and current ID name-type comparison 0x101266414. Library UID lookup 0x101266440 is followed by address comparison 0x10126644c and explicit ID_LI type check 0x101266460. Override-state match remains at 0x10126648c; fresh primary ID writes to caller slot at 0x101266498. These reads occur after the completed drain.",
+  "preserved_recorded_compiled_audits": {
+    "launch": "launch-audit/audit.json status passed; exact UUID/SHA256 match independently verified executable",
+    "weight_cancel": "weight-cancel-compiled.json status passed; recorded native wpaint_cancel at 0x101dc5000 loads customdata x2 and tail-calls paint_stroke_cancel at 0x101dc5004"
+  },
+  "limits": [
+    "Bounded guard refusal, argument forwarding, fresh-ID reload and null-output absence-query call-order review. No complete global CFG/reentrancy/termination proof.",
+    "WM can retire replacement owners within one drain; strict RNA identities revalidate after that completed drain.",
+    "No complete WM/UIKit execution, native cancellation rollback, GPU cache effect or device acceptance proof.",
+    "Production source, native build and package were not changed or rebuilt by this review."
+  ],
+  "device_acceptance": false
+}
