@@ -1,0 +1,39 @@
+{
+  "status": "read_only_primary_source_audit_no_correction",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "family": [
+    "Object.active_material",
+    "MaterialSlot.material"
+  ],
+  "sources": {
+    "setters": "rna_object.cc1115-1125/1344-1354",
+    "material": "material.cc1121-1216 blob1d2f0cf4e5bc2fee76f360a26fa3d814b1b367bc",
+    "numeric_slot": "rna_object.cc1302-1305/1472-1479",
+    "fixed_setter_ABI": "makesrna.cc1257-1264 PropPointerSetFunc(PointerRNA*,PointerRNA,ReportList*)",
+    "context_update_late": "rna_access.cc2439-2450",
+    "Debug_outer_caller": "rna_access.cc4501-4513/4529/4539/4559",
+    "Python_report_boundary": "bpy_rna.cc2082-2087/2207-2208"
+  },
+  "invalidation": "BKE_object_material_assign mutates/refcounts and tags Object geometry/CoW/relations; no immediate Material ID free. Shared DATA slots/dependencies defeat ObjectUID-only owner filtering.",
+  "native_admission": [
+    "No Edit-mode or same-value no-op",
+    "actcol0 clamps to slot1 and may grow arrays",
+    "act>MAXMAT/unsupported storage native rejection",
+    "BKE_MAT_ASSIGN_EXISTING link bit matters",
+    "Nullable Material, pointer setter does not call custom poll",
+    "Avoid BKE_object_material_get capture; it mutates totcol consistency",
+    "active_material_index has separate NO_DEG_UPDATE/index/notifier semantics; no geometry invalidation proved"
+  ],
+  "next_requirements": [
+    "Preserve fixed pointer-setter ABI; context flags only reach late update",
+    "Shared registered WM owner/original context producer policy; do not borrow replacement context or add another scanner",
+    "Fresh typed Object/backing data/incoming nullable Material/old slot/Library/override identities plus numeric slot/index/actcol/count/link-bit/direct arrays",
+    "Enclosing Debug RNA pointer caller captures old/new IDs before setter and reads afterward: setter refusal alone is not whole-frame proof",
+    "WM inner drain can cancel replacement owners; outer caller revalidation happens after complete drain, not each inner native callback",
+    "Finish current Mesh8 native package first; no partial material helper milestone"
+  ],
+  "reviewer": "material_owner_next_review",
+  "source_correction": false,
+  "tests_run": false,
+  "native_device_proof": false
+}

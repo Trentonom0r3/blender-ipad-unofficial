@@ -1,0 +1,87 @@
+{
+  "status": "source_host_review_passed_native_build_pending",
+  "base_source": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "df6aa0eb51bd9bf2cb861bac31278ebeb7ca36df8992ba5d0976b14b9bf8f747",
+  "fixture_sha256": "bc08a11c46c0bd2f058f23bf7e20f3c7b9b4ed853523b82ccc7c224b0b042031",
+  "consumers": [
+    "MeshVertices.add",
+    "MeshEdges.add",
+    "MeshLoops.add",
+    "MeshPolygons.add",
+    "Mesh.update",
+    "Mesh.clear_geometry",
+    "Mesh.validate",
+    "Mesh.validate_material_indices"
+  ],
+  "behavior": "Retire all registered native Pencil paint owners in activeMain before storage/cache/tag mutations, reconstruct typed Mesh/Library/override values after each completed WM drain, then native semantics. No-owner query preserves evaluated Mesh UID0 without callbacks.",
+  "absence_query": "Actual WM_next nullable-output scan preserves original context/WM/window/list/type/lifetime admission. True only on proved absence; owner found refuses before CTX_create/native Cancel. Nonnull executable body and original full ID helper unchanged.",
+  "scope": {
+    "changed_sources": [
+      "source/blender/windowmanager/WM_api.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source/blender/makesrna/RNA_access.hh",
+      "source/blender/makesrna/intern/rna_ID.cc",
+      "source/blender/makesrna/intern/rna_mesh.cc",
+      "source/blender/makesrna/intern/rna_mesh_api.cc"
+    ],
+    "overlay_files": 129,
+    "prior_exact_sections": 123,
+    "python_sections_unchanged": 7,
+    "ring_hud_header_geometry_unchanged": true
+  },
+  "tests": {
+    "mesh_connected": {
+      "passed": 17,
+      "seconds": 13.955
+    },
+    "earlier_rna": {
+      "passed": 15,
+      "seconds": 12.568
+    },
+    "wm_scan": {
+      "passed": 6,
+      "seconds": 2.1
+    },
+    "full": {
+      "passed": 431,
+      "seconds": 376.523,
+      "log": ".cache/mesh-storage-full-tests-final.log",
+      "session": 90417,
+      "status": "passed"
+    },
+    "pinned_preflight": {
+      "status": "passed",
+      "files": 129
+    },
+    "diff_check": "passed",
+    "superseded_full": {
+      "passed": 430,
+      "seconds": 375.613,
+      "log": ".cache/mesh-storage-full-tests.log",
+      "session": 70964,
+      "status": "passed_superseded_by_true_null_context_source_fix"
+    }
+  },
+  "independent_reviews": {
+    "native": "mesh_native_review PASS, initial evaluatedUID0 finding corrected; strict noCancel query dominance/reconstructed six source changes verified; actual null-C/nullMain boundary corrected, strict cancellation retainsoriginalMain/C; nested-loop audit found documentation boundary only, comments corrected",
+    "literal_ui": "mesh_literal_ui_review finalPASS at ceb3af4409a0b1f5ce69509046d29ad726cc66caf0dac8856734325f4969f29f, six selected sections/123 prior exact, all7Python exact"
+  },
+  "native_admission": [
+    "Four add methods preserve native Edit errors before zero-count no-op; noCancel for rejected/noop",
+    "Validators preserve native false/true/defaults; false cannot prove no mutation",
+    "Default update guarded before cache dirtiness/CoW tagging, exact edge conditions remain",
+    "No added Edit guard for clear/validators; disabledremove registrations remain #if0; update_gpu_tag unchanged",
+    "Actual generated nullC gives null implicitMain: seven previously context-free APIs admit only after shared global owner-absence query, no borrowed cancellation; update historically requiresvalidC; noactiveMain refuses"
+  ],
+  "limits": [
+    "NativeCancel/storage/allocation/depsgraph effects remain instrumented fixture boundaries",
+    "Source/native-widget preservation only; native build/package pending, no device acceptance",
+    "No generic Cancel rollback or global reentrancy bound claim",
+    "CTX_data_main null-C behavior is modeled from pinned dispatcher/getter; actual generated argument prefix executes but full native RNA caller does not",
+    "WM_teardown inner loop can cancel replacement owners; RNA values revalidate after completed WM_next drain, not each inner callback",
+    "Outer256 attempts do not bound all cancellations/global reentrancy termination; eventual refusal does not roll back native callback effects",
+    "Final full431 logic passed before comment-only boundary clarification; preflight/diff after clarification passed"
+  ],
+  "device_acceptance": false
+}

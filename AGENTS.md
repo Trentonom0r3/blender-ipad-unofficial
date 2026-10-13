@@ -1,3 +1,30 @@
+## Mesh storage Pencil-owner source validated - 2026-10-13
+
+Eight live Mesh RNA APIs now guard original/evaluated storage before native
+writes, cache dirtiness, tagging or validation: four collection-add methods,
+clear_geometry, update and both validators. The shared registered-owner WM scan
+supports a callback-free absence query; evaluated UID-zero and seven native
+null-context APIs retain no-owner behavior. Strict cancellation uses original
+arguments, followed by fresh typed Mesh/Library/override validation. Native
+Edit-error-before-zero, validator defaults/results and update edge conditions
+remain; disabled remover registrations and update_gpu_tag are untouched.
+
+Full **431/431** host checks passed in **376.523 seconds**, connected Mesh checks
+**17/17**, and **129-file** pinned preflight/diff checks pass. Independent native
+and literal UI reviews resolved both no-owner ABI findings before build. All
+seven Python sections, ring/HUD/default bars/inventories/icons are unchanged.
+Canonical LF patch SHA256:
+`df6aa0eb51bd9bf2cb861bac31278ebeb7ca36df8992ba5d0976b14b9bf8f747`.
+Report: `output/ui-preview/pencil-mesh-storage/source-verification.json`.
+
+This source is not yet built or device accepted; latest verified IPA remains
+ed4d911/run38366690317. One exact native build/full IPA/compiled-consumer audit
+is next. WM can retire replacement owners within one drain; RNA values are
+revalidated after the completed drain. Outer256 attempts are not a global
+reentrancy bound, and refusal does not roll back native callback effects.
+Material setter/outer RNA caller ownership is a separate next audit, without
+corrective source. Full personal Pencil-first goal remains unfinished.
+
 ## Verified direct ID remap/localization IPA - 2026-10-13
 
 Exact source `ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019` passed hosted preflight,
