@@ -8,7 +8,12 @@ from test_touch_extrude import changed_source
 
 
 OUTLINER_TOOLS_PATH = "source/blender/editors/space_outliner/outliner_tools.cc"
+WM_API_PATH = "source/blender/windowmanager/WM_api.hh"
+WM_SOURCE_PATH = "source/blender/windowmanager/intern/wm_event_system.cc"
+WM_SOURCE = changed_source(WM_SOURCE_PATH)
+WM_OWNER_NEXT = function(WM_SOURCE, "bool WM_event_ipad_pencil_paint_owner_teardown_next(")
 OUTLINER_SOURCE = changed_source(OUTLINER_TOOLS_PATH)
+WM_API_SOURCE = changed_source(WM_API_PATH)
 OVERRIDE_GUARD = function(
     OUTLINER_SOURCE, "static bool id_override_clear_single_ipad_paint_owners("
 )
@@ -217,6 +222,48 @@ static bool WM_event_ipad_pencil_paint_owner_teardown(
   }
   return true;
 }
+static bool WM_event_ipad_pencil_paint_owner_teardown_next(
+    bContext *C,Main *main,bool *did_teardown){
+  if(did_teardown)*did_teardown=false;
+  if(!C||!main||!did_teardown||G_MAIN!=main||C->main!=main||!C->wm||!C->win||
+     BLI_findindex(&main->wm,C->wm)==-1)return false;
+  bool invoking_window_live=false;
+  for(auto *win=static_cast<wmWindow*>(C->wm->windows.first);win;win=win->next)
+    if(win==C->win)invoking_window_live=true;
+  if(!invoking_window_live)return false;
+  wmWindowManager *owner_wm=nullptr;wmWindow *owner_win=nullptr;
+  for(auto *wm=static_cast<wmWindowManager*>(main->wm.first);wm;wm=wm->next){
+    for(auto *win=static_cast<wmWindow*>(wm->windows.first);win;win=win->next){
+      bool owner_in_window=false;
+      auto inspect=[&](ListBase &list,bool modal){
+        for(auto *base=static_cast<wmEventHandler*>(list.first);base;base=base->next){
+          if(base->type!=WM_HANDLER_TYPE_OP)continue;
+          auto *handler=reinterpret_cast<wmEventHandler_Op*>(base);
+          if(!handler->ipad_pencil_paint_serial)continue;
+          if(!modal||!win->runtime||!handler->ipad_pencil_operator_lifetime||owner_in_window)
+            return false;
+          owner_in_window=true;
+        }
+        return true;
+      };
+      if(!inspect(win->handlers,false)||!inspect(win->modalhandlers,true))return false;
+      if(owner_in_window&&!owner_win){owner_wm=wm;owner_win=win;}
+    }
+  }
+  if(!owner_win)return true;
+  bContext *owner_C=CTX_create();
+  CTX_data_main_set(owner_C,main);CTX_wm_manager_set(owner_C,owner_wm);CTX_wm_window_set(owner_C,owner_win);
+  const bool ok=WM_event_ipad_pencil_paint_owner_teardown(owner_C,owner_win,nullptr,nullptr);
+  CTX_free(owner_C);
+  if(!ok||G_MAIN!=main||C->main!=main||C->wm==nullptr||
+     BLI_findindex(&main->wm,C->wm)==-1||C->win==nullptr)return false;
+  invoking_window_live=false;
+  for(auto *win=static_cast<wmWindow*>(C->wm->windows.first);win;win=win->next)
+    if(win==C->win)invoking_window_live=true;
+  if(!invoking_window_live)return false;
+  *did_teardown=true;
+  return true;
+}
 """ + OVERRIDE_GUARD + r"""
 static void reset(Main &main, OutlinerLibOverrideData &data, bContext &C,
                   wmWindowManager &wm, wmWindow &win, ID &reference, ID &root,
@@ -288,6 +335,17 @@ int main() {
   {
     Main main;OutlinerLibOverrideData data;bContext C;wmWindowManager wm;wmWindow win;
     ID reference,root;IDOverrideLibrary override;reset(main,data,C,wm,win,reference,root,override);
+    wmEventHandler_Op first,second;first.type=second.type=WM_HANDLER_TYPE_OP;
+    first.ipad_pencil_paint_serial=7;first.ipad_pencil_operator_lifetime=70;
+    second.ipad_pencil_paint_serial=8;second.ipad_pencil_operator_lifetime=80;
+    append_handler(win.modalhandlers,&first);append_handler(win.modalhandlers,&second);
+    assert(!id_override_clear_single_ipad_paint_owners(&C,&main,data));
+    assert(teardown_calls==0&&win.modalhandlers.first==&first);
+    cleanup_context(C);
+  }
+  {
+    Main main;OutlinerLibOverrideData data;bContext C;wmWindowManager wm;wmWindow win;
+    ID reference,root;IDOverrideLibrary override;reset(main,data,C,wm,win,reference,root,override);
     wmEventHandler_Op owner;owner.type=WM_HANDLER_TYPE_OP;owner.ipad_pencil_paint_serial=7;
     owner.ipad_pencil_operator_lifetime=70;append_handler(win.modalhandlers,&owner);
     refuse_teardown=true;
@@ -320,14 +378,19 @@ int main() {
     cleanup_context(C);
   }
   {
-    Main main;OutlinerLibOverrideData data;bContext C;wmWindowManager wm;wmWindow win;
+    Main main;OutlinerLibOverrideData data;bContext C;wmWindowManager wm,wm2;wmWindow win,win2;
     ID reference,root;IDOverrideLibrary override;
     reset(main,data,C,wm,win,reference,root,override);
-    wmEventHandler_Op owner;owner.type=WM_HANDLER_TYPE_OP;owner.ipad_pencil_paint_serial=7;
-    owner.ipad_pencil_operator_lifetime=70;append_handler(win.modalhandlers,&owner);
+    wm2.id.session_uid=12;wm2.windows.first=&win2;wm2.next=nullptr;
+    win2.winid=120;win2.owner_wm=&wm2;wm.next=&wm2;
+    wmEventHandler_Op owner,second;owner.type=second.type=WM_HANDLER_TYPE_OP;
+    owner.ipad_pencil_paint_serial=7;owner.ipad_pencil_operator_lifetime=70;
+    second.ipad_pencil_paint_serial=8;second.ipad_pencil_operator_lifetime=80;
+    append_handler(win.modalhandlers,&owner);append_handler(win2.modalhandlers,&second);
     remove_root=true;
     assert(!id_override_clear_single_ipad_paint_owners(&C,&main,data));
     assert(teardown_calls==1&&!data.id_hierarchy_roots.values.empty());
+    assert(win2.modalhandlers.first==&second);
     cleanup_context(C);
   }
   {
@@ -370,13 +433,160 @@ int main() {
     wmEventHandler_Op first,second;first.type=second.type=WM_HANDLER_TYPE_OP;
     first.ipad_pencil_paint_serial=7;first.ipad_pencil_operator_lifetime=70;
     append_handler(win.modalhandlers,&first);
-    wmWindowManager wm2;wmWindow win2;wm2.id.session_uid=8;wm2.windows.first=&win2;
-    win2.winid=80;win2.owner_wm=&wm2;wm.next=&wm2;spawn_window=&win2;respawn_owner=true;
+    wmWindowManager wm2,wm3;wmWindow win2,win3;
+    wm2.id.session_uid=8;wm2.windows.first=&win2;wm2.next=&wm3;
+    wm3.id.session_uid=9;wm3.windows.first=&win3;
+    win2.winid=80;win2.owner_wm=&wm2;win3.winid=90;win3.owner_wm=&wm3;
+    wm.next=&wm2;spawn_window=&win3;respawn_owner=true;
     second.type=WM_HANDLER_TYPE_OP;second.ipad_pencil_paint_serial=8;
     second.ipad_pencil_operator_lifetime=80;append_handler(win2.modalhandlers,&second);
     assert(id_override_clear_single_ipad_paint_owners(&C,&main,data));
-    assert(teardown_calls==2&&!win.modalhandlers.first&&!win2.modalhandlers.first);
+    assert(teardown_calls==3&&!win.modalhandlers.first&&!win2.modalhandlers.first&&!win3.modalhandlers.first);
     cleanup_context(C);
+  }
+}
+"""
+
+
+WM_OWNER_NEXT_CPP = r"""
+#include <cassert>
+#include <cstdint>
+struct ListBase { void *first=nullptr; };
+struct ID { uint32_t session_uid=0; };
+struct Main { ListBase wm; };
+struct wmWindowManager;
+struct wmWindow;
+struct wmEventHandler { wmEventHandler *next=nullptr; int type=0; };
+struct wmEventHandler_Op : wmEventHandler {
+  uint64_t ipad_pencil_paint_serial=0, ipad_pencil_operator_lifetime=0;
+  bool registered=true;
+};
+struct wmWindow {
+  wmWindow *next=nullptr; int winid=0; void *runtime=nullptr;
+  ListBase handlers,modalhandlers;
+};
+struct wmWindowManager { wmWindowManager *next=nullptr; ID id; ListBase windows; };
+struct ScrArea {};
+struct ARegion {};
+struct bContext {
+  Main *main=nullptr; wmWindowManager *wm=nullptr; wmWindow *win=nullptr;
+  ScrArea *area=nullptr; ARegion *region=nullptr;
+};
+static Main *G_MAIN=nullptr;
+enum { WM_HANDLER_TYPE_OP=7 };
+#define LISTBASE_FOREACH(type,item,list) \
+  for(type item=static_cast<type>((list)->first);item;item=item->next)
+static Main *CTX_data_main(const bContext *C){return C->main;}
+static wmWindowManager *CTX_wm_manager(const bContext *C){return C->wm;}
+static wmWindow *CTX_wm_window(const bContext *C){return C->win;}
+static ScrArea *CTX_wm_area(const bContext *C){return C->area;}
+static ARegion *CTX_wm_region(const bContext *C){return C->region;}
+static int BLI_findindex(const ListBase *list,const void *target){
+  int i=0;
+  for(auto *wm=static_cast<wmWindowManager*>(list->first);wm;wm=wm->next,++i) {
+    if(wm==target)return i;
+  }
+  return -1;
+}
+static void CTX_data_main_set(bContext *C,Main *x){C->main=x;}
+static void CTX_wm_manager_set(bContext *C,wmWindowManager *x){C->wm=x;}
+static void CTX_wm_window_set(bContext *C,wmWindow *x){C->win=x;}
+static bool g_cancel_ok=true,g_change_context=false,g_replace_main=false,g_spawn=false;
+static int g_cancel_calls=0,g_context_allocs=0,g_context_frees=0;
+static bContext *CTX_create(){++g_context_allocs;return new bContext;}
+static void CTX_free(bContext *C){++g_context_frees;delete C;}
+static bContext *g_original=nullptr;static Main *g_other_main=nullptr;static ScrArea g_replacement_area;
+static wmWindow *g_spawn_window=nullptr;static wmEventHandler_Op g_spawned;
+static bool wm_ipad_pencil_paint_handler_registered(wmWindow *win,wmEventHandler_Op *h){
+  return win&&win->runtime&&h&&h->registered;
+}
+static bool WM_event_ipad_pencil_paint_owner_teardown(
+    bContext *C,wmWindow *win,const ScrArea *,const ARegion *){
+  assert(C&&C->main==G_MAIN&&C->win==win);
+  ++g_cancel_calls;if(!g_cancel_ok)return false;
+  auto *prev=static_cast<wmEventHandler*>(nullptr);
+  auto *item=static_cast<wmEventHandler*>(win->modalhandlers.first);
+  while(item){auto *next=item->next;
+    if(item->type==WM_HANDLER_TYPE_OP&&
+       reinterpret_cast<wmEventHandler_Op*>(item)->ipad_pencil_paint_serial){
+      if(prev)prev->next=next;else win->modalhandlers.first=next;item->next=nullptr;break;
+    }
+    prev=item;item=next;
+  }
+  if(g_change_context)g_original->area=&g_replacement_area;
+  if(g_replace_main)G_MAIN=g_other_main;
+  if(g_spawn){g_spawn=false;assert(g_spawn_window);g_spawned.type=WM_HANDLER_TYPE_OP;
+    g_spawned.ipad_pencil_paint_serial=90;g_spawned.ipad_pencil_operator_lifetime=900;
+    auto *tail=static_cast<wmEventHandler*>(g_spawn_window->modalhandlers.first);
+    if(!tail)g_spawn_window->modalhandlers.first=&g_spawned;
+    else{while(tail->next)tail=tail->next;tail->next=&g_spawned;}}
+  return true;
+}
+""" + WM_OWNER_NEXT + r"""
+static void link(wmEventHandler_Op &h,ListBase &list,uint64_t serial,uint64_t life){
+  h.type=WM_HANDLER_TYPE_OP;h.ipad_pencil_paint_serial=serial;
+  h.ipad_pencil_operator_lifetime=life;auto *tail=static_cast<wmEventHandler*>(list.first);
+  if(!tail)list.first=&h;else{while(tail->next)tail=tail->next;tail->next=&h;}
+}
+static void reset(Main &main,wmWindowManager &wm1,wmWindow &w1,bContext &C){
+  wm1.id.session_uid=1;wm1.windows.first=&w1;w1.winid=10;w1.runtime=&w1;
+  wm1.next=nullptr;main.wm.first=&wm1;G_MAIN=&main;C={&main,&wm1,&w1,nullptr,nullptr};
+  g_cancel_ok=true;g_change_context=g_replace_main=g_spawn=false;g_cancel_calls=0;
+  g_context_allocs=g_context_frees=0;g_original=&C;g_other_main=nullptr;g_spawn_window=nullptr;g_spawned={};
+}
+int main(){
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    bool did=true;assert(WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0&&g_context_allocs==0);
+  }
+  {
+    Main m;wmWindowManager wm1,wm2;wmWindow w1,w2;bContext C;reset(m,wm1,w1,C);
+    wm1.next=&wm2;wm2.id.session_uid=2;wm2.windows.first=&w2;w2.winid=20;w2.runtime=&w2;
+    wmEventHandler_Op owner;link(owner,w2.modalhandlers,7,70);bool did=false;
+    assert(WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(did&&g_cancel_calls==1&&!w2.modalhandlers.first);
+    assert(g_context_allocs==1&&g_context_frees==1);
+  }
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    wmEventHandler_Op a,b;link(a,win.modalhandlers,1,11);link(b,win.modalhandlers,2,22);
+    bool did=false;assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0&&win.modalhandlers.first==&a);
+  }
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    wmEventHandler_Op owner;link(owner,win.modalhandlers,1,11);owner.registered=false;bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0);
+  }
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    wmEventHandler_Op owner;link(owner,win.handlers,1,11);bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0);
+  }
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    wmEventHandler_Op owner;link(owner,win.modalhandlers,1,11);g_cancel_ok=false;bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==1&&win.modalhandlers.first==&owner);
+  }
+  {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    wmEventHandler_Op owner;link(owner,win.modalhandlers,1,11);g_change_context=true;bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==1&&C.area==&g_replacement_area);
+  }
+  {
+    Main m;wmWindowManager wm1,wm2,wm3;wmWindow w1,w2,w3;bContext C;reset(m,wm1,w1,C);
+    wm1.next=&wm2;wm2.id.session_uid=2;wm2.windows.first=&w2;w2.winid=20;w2.runtime=&w2;
+    wm2.next=&wm3;wm3.id.session_uid=3;wm3.windows.first=&w3;w3.winid=30;w3.runtime=&w3;
+    wmEventHandler_Op owner;link(owner,w2.modalhandlers,1,11);g_spawn=true;g_spawn_window=&w3;
+    bool did=false;assert(WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did)&&did);
+    assert(g_cancel_calls==1&&w3.modalhandlers.first==&g_spawned);
+    assert(WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did)&&did);
+    assert(g_cancel_calls==2&&!w3.modalhandlers.first);
   }
 }
 """
@@ -385,6 +595,19 @@ int main() {
 class PencilPaintOutlinerOverrideClearTests(unittest.TestCase):
     def test_override_owner_preflight_executes_native_context_and_refusal_paths(self):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(OVERRIDE_GUARD_CPP)
+
+    def test_wm_owner_next_executes_registered_one_at_a_time_scan(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(WM_OWNER_NEXT_CPP)
+
+    def test_outliner_uses_narrow_wm_owner_api(self):
+        self.assertIn(
+            "bool WM_event_ipad_pencil_paint_owner_teardown_next(\n    bContext *C, Main *bmain, bool *r_did_teardown);",
+            WM_API_SOURCE,
+        )
+        self.assertIn("WM_event_ipad_pencil_paint_owner_teardown_next(C, bmain, &did_teardown)",
+                      OVERRIDE_GUARD)
+        self.assertNotIn("wmEventHandler", OVERRIDE_GUARD)
+        self.assertNotIn("WM_event_system.hh", OUTLINER_SOURCE)
 
     def test_override_preflight_runs_before_remap_delete_and_undo_push(self):
         self.assertLess(

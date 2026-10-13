@@ -117424,7 +117424,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  struct MenuType;
  struct PointerRNA;
  struct PropertyRNA;
-@@ -701,6 +703,23 @@
+@@ -701,6 +703,25 @@
                                  void *user_data,
                                  bool postpone);
  void WM_event_remove_handlers_by_area(ListBase *handlers, const ScrArea *area);
@@ -117437,6 +117437,8 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 +                                               uint64_t owner_scene_uid = 0,
 +                                               uint64_t owner_object_uid = 0,
 +                                               uint64_t owner_brush_uid = 0);
++bool WM_event_ipad_pencil_paint_owner_teardown_next(
++    bContext *C, Main *bmain, bool *r_did_teardown);
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_tagged_images_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, uint64_t brush_uid);
@@ -117448,7 +117450,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  void WM_event_free_ui_handler_all(bContext *C,
                                    ListBase *handlers,
                                    wmUIHandlerFunc handle_fn,
-@@ -740,7 +759,7 @@
+@@ -740,7 +761,7 @@
  /**
   * Called on exit or remove area, only here call cancel callback.
   */
@@ -117457,7 +117459,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  
  wmEventHandler_Dropbox *WM_event_add_dropbox_handler(ListBase *handlers, ListBase *dropboxes);
  
-@@ -956,6 +975,14 @@
+@@ -956,6 +977,14 @@
  
  /* Operator API. */
  
@@ -117472,7 +117474,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  void WM_operator_free(wmOperator *op);
  void WM_operator_free_all_after(wmWindowManager *wm, wmOperator *op);
  /**
-@@ -1528,6 +1555,10 @@
+@@ -1528,6 +1557,10 @@
   * Context checked on having screen, window and area.
   */
  wmGesture *WM_gesture_new(wmWindow *window, const ARegion *region, const wmEvent *event, int type);
@@ -126185,7 +126187,7 @@ index 3bcd482..f86d507 100644
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,9145 @@
+@@ -1,6918 +1,9265 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -129658,6 +129660,126 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +  }
 +  return true;
 +}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Drain one registered paint owner at a time. Keeping the window-manager list
++ * traversal here avoids exposing private event-handler types to editor code;
++ * the caller can revalidate the IDs/context after each native Cancel callback. */
++bool WM_event_ipad_pencil_paint_owner_teardown_next(
++    bContext *C, Main *bmain, bool *r_did_teardown)
++{
++  if (r_did_teardown) *r_did_teardown = false;
++  if (!C || !bmain || !r_did_teardown || G_MAIN != bmain || CTX_data_main(C) != bmain) {
++    return false;
++  }
++  wmWindowManager *context_wm = CTX_wm_manager(C);
++  wmWindow *context_win = CTX_wm_window(C);
++  ScrArea *context_area = CTX_wm_area(C);
++  ARegion *context_region = CTX_wm_region(C);
++  if (!context_wm || !context_win || BLI_findindex(&bmain->wm, context_wm) == -1) return false;
++  auto context_unchanged = [&]() {
++    if (G_MAIN != bmain || CTX_data_main(C) != bmain || CTX_wm_manager(C) != context_wm ||
++        CTX_wm_window(C) != context_win || CTX_wm_area(C) != context_area ||
++        CTX_wm_region(C) != context_region || BLI_findindex(&bmain->wm, context_wm) == -1)
++    {
++      return false;
++    }
++    bool window_registered = false;
++    LISTBASE_FOREACH (wmWindow *, win, &context_wm->windows) {
++      if (win == context_win) {
++        window_registered = true;
++        break;
++      }
++    }
++    return window_registered;
++  };
++  if (!context_unchanged()) return false;
++
++  struct OwnerIdentity {
++    wmWindowManager *wm;
++    uint32_t wm_uid;
++    wmWindow *win;
++    int winid;
++    uint64_t lifetime;
++  } owner{};
++  bool found_owner = false;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      bool found_in_window = false;
++      auto inspect = [&](ListBase *handlers, const bool modal) {
++        LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++          if (base->type != WM_HANDLER_TYPE_OP) continue;
++          wmEventHandler_Op *handler = reinterpret_cast<wmEventHandler_Op *>(base);
++          if (!handler->ipad_pencil_paint_serial) continue;
++          if (!modal || !win->runtime || !handler->ipad_pencil_operator_lifetime ||
++              !wm_ipad_pencil_paint_handler_registered(win, handler) || found_in_window)
++          {
++            return false;
++          }
++          found_in_window = true;
++          if (!found_owner) {
++            owner = {wm, wm->id.session_uid, win, win->winid,
++                     handler->ipad_pencil_operator_lifetime};
++            found_owner = true;
++          }
++        }
++        return true;
++      };
++      if (!inspect(&win->handlers, false) || !inspect(&win->modalhandlers, true)) return false;
++    }
++  }
++  if (!context_unchanged()) return false;
++  if (!found_owner) return true;
++  if (!owner.wm_uid || !owner.winid || !owner.lifetime) return false;
++
++  wmWindowManager *live_wm = nullptr;
++  wmWindow *live_win = nullptr;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    if (wm != owner.wm) continue;
++    if (wm->id.session_uid != owner.wm_uid) return false;
++    live_wm = wm;
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      if (win != owner.win) continue;
++      if (win->winid != owner.winid || !win->runtime) return false;
++      live_win = win;
++      break;
++    }
++    break;
++  }
++  if (!live_wm || !live_win) return false;
++
++  bContext *owner_C = CTX_create();
++  if (!owner_C) return false;
++  CTX_data_main_set(owner_C, bmain);
++  CTX_wm_manager_set(owner_C, live_wm);
++  CTX_wm_window_set(owner_C, live_win);
++  const bool teardown_succeeded = WM_event_ipad_pencil_paint_owner_teardown(
++      owner_C, live_win, nullptr, nullptr);
++  CTX_free(owner_C);
++  if (!teardown_succeeded || !context_unchanged()) return false;
++
++  bool owner_lifetime_remains = false;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      auto inspect = [&](ListBase *handlers) {
++        LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
++          if (base->type != WM_HANDLER_TYPE_OP) continue;
++          const wmEventHandler_Op *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++          if (handler->ipad_pencil_operator_lifetime == owner.lifetime) {
++            owner_lifetime_remains = true;
++            return;
++          }
++        }
++      };
++      inspect(&win->handlers);
++      inspect(&win->modalhandlers);
++    }
++  }
++  if (owner_lifetime_remains) return false;
++  *r_did_teardown = true;
++  return true;
++}
++#endif
 +
 +/* Retire every live Pencil paint owner for an Object before its backing data is
 + * replaced. The Object UID is only a lookup key: each native callback runs in
@@ -161928,7 +162050,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_edit.cc b/source/ble
 diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/blender/editors/space_outliner/outliner_tools.cc
 --- a/source/blender/editors/space_outliner/outliner_tools.cc
 +++ b/source/blender/editors/space_outliner/outliner_tools.cc
-@@ -1429,10 +1429,206 @@
+@@ -1429,10 +1429,109 @@
    }
  }
 -
@@ -161961,23 +162083,8 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +    const uint32_t reference_uid = reference->session_uid;
 +    if (!uid || !reference_uid || root_uids.contains(uid)) return false;
 +    root_uids.add(uid);
-+    roots.append({id, uid, GS(id->name), reference, reference_uid, GS(reference->name), root_data});
-+  }
-+
-+  struct WindowIdentity {
-+    wmWindowManager *wm;
-+    uint32_t wm_uid;
-+    wmWindow *win;
-+    int winid;
-+  };
-+  Vector<WindowIdentity> windows;
-+  for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
-+       wm = wm->next)
-+  {
-+    if (!wm->id.session_uid) return false;
-+    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+      windows.append({wm, wm->id.session_uid, win, win->winid});
-+    }
++    roots.append({id, uid, short(GS(id->name)), reference, reference_uid,
++                  short(GS(reference->name)), root_data});
 +  }
 +
 +  wmWindowManager *context_wm = CTX_wm_manager(C);
@@ -161997,36 +162104,6 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +    {
 +      return false;
 +    }
-+
-+    bool context_window_registered = false;
-+    for (const WindowIdentity &expected : windows) {
-+      if (expected.wm == context_wm && expected.win == context_win) {
-+        context_window_registered = true;
-+        break;
-+      }
-+    }
-+    if (!context_window_registered) return false;
-+
-+    int live_window_count = 0;
-+    for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
-+         wm = wm->next)
-+    {
-+      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+        live_window_count++;
-+        bool matched = false;
-+        for (const WindowIdentity &expected : windows) {
-+          if (expected.wm == wm && expected.win == win) {
-+            if (expected.wm_uid != wm->id.session_uid || expected.winid != win->winid) {
-+              return false;
-+            }
-+            matched = true;
-+            break;
-+          }
-+        }
-+        if (!matched) return false;
-+      }
-+    }
-+    if (live_window_count != int(windows.size())) return false;
 +
 +    if (data.id_hierarchy_roots.size() != roots.size()) return false;
 +    for (const RootSnapshot &root : roots) {
@@ -162062,65 +162139,13 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +  if (roots.is_empty()) return true;
 +
 +  for (int attempt = 0; attempt < 256; attempt++) {
-+    struct OwnerWindow {
-+      wmWindowManager *wm;
-+      wmWindow *win;
-+      uint64_t lifetime;
-+    };
-+    Vector<OwnerWindow> owners;
-+    for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
-+         wm = wm->next)
++    bool did_teardown = false;
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(C, bmain, &did_teardown) ||
++        !unchanged())
 +    {
-+      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+        auto inspect = [&](ListBase *handlers, const bool modal) {
-+          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
-+            if (base->type != WM_HANDLER_TYPE_OP) continue;
-+            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
-+            if (!handler->ipad_pencil_paint_serial) continue;
-+            if (!modal || !win->runtime || !handler->ipad_pencil_operator_lifetime) {
-+              return false;
-+            }
-+            owners.append({wm, win, handler->ipad_pencil_operator_lifetime});
-+          }
-+          return true;
-+        };
-+        if (!inspect(&win->handlers, false) || !inspect(&win->modalhandlers, true)) return false;
-+      }
++      return false;
 +    }
-+    if (!unchanged()) return false;
-+    if (owners.is_empty()) return true;
-+
-+    const OwnerWindow owner = owners.first();
-+    bContext *owner_C = CTX_create();
-+    if (!owner_C) return false;
-+    CTX_data_main_set(owner_C, bmain);
-+    CTX_wm_manager_set(owner_C, owner.wm);
-+    CTX_wm_window_set(owner_C, owner.win);
-+    const bool teardown_succeeded = WM_event_ipad_pencil_paint_owner_teardown(
-+        owner_C, owner.win, nullptr, nullptr);
-+    CTX_free(owner_C);
-+    if (!teardown_succeeded || !unchanged()) return false;
-+
-+    bool owner_lifetime_remains = false;
-+    for (wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first); wm;
-+         wm = wm->next)
-+    {
-+      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-+        auto inspect = [&](ListBase *handlers) {
-+          LISTBASE_FOREACH (wmEventHandler *, base, handlers) {
-+            if (base->type != WM_HANDLER_TYPE_OP) continue;
-+            const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
-+            if (handler->ipad_pencil_operator_lifetime == owner.lifetime) {
-+              owner_lifetime_remains = true;
-+              return;
-+            }
-+          }
-+        };
-+        inspect(&win->handlers);
-+        inspect(&win->modalhandlers);
-+      }
-+    }
-+    if (owner_lifetime_remains) return false;
++    if (!did_teardown) return true;
 +  }
 +  return false;
 +}
@@ -162137,12 +162162,12 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +#endif
    ViewLayer *view_layer = CTX_data_view_layer(C);
    Scene *scene = CTX_data_scene(C);
-@@ -1487,2 +1683,3 @@
+@@ -1487,2 +1586,3 @@
 -  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
 +  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
 +  return true;
  }
-@@ -1924,5 +2121,7 @@
+@@ -1924,5 +2024,7 @@
            false);
 -
 +
@@ -162153,7 +162178,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 -
 +
        ED_undo_push(C, "Clear Overridden Data");
-@@ -2958,4 +3158,18 @@
+@@ -2958,4 +3060,18 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -162172,7 +162197,7 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +#endif
          BKE_id_multi_tagged_delete(bmain);
          WM_event_add_notifier(C, NC_OBJECT, nullptr);
-@@ -3092,3 +3311,17 @@
+@@ -3092,3 +3208,17 @@
        BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
        outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
 +#ifdef WITH_APPLE_CROSSPLATFORM
