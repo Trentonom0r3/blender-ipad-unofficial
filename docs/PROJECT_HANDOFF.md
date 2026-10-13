@@ -1,20 +1,28 @@
-## Current source candidate — Outliner override hierarchy owner teardown — 2026-10-12
+## Verified Outliner override hierarchy owner teardown — 2026-10-13
 
-The Outliner library-override Resync, Resync Enforce, and Delete Hierarchy
-operations now run the existing strict Main-scoped Pencil paint-owner preflight
-before native ID mutation. A refusal or changed owner context/root returns
-Cancelled before the operation's Undo push. The exact source-executing affected
-suites pass 15/15 (focused override fixture 6/6); the full host suite passes
-399/399. Offline pinned preflight applies to 125 source files, and the diff
-whitespace check is clean. Canonical LF patch SHA256:
-d21fe67bef10457b1018ae13bea199360d9632dd6f32491e046e6abf12970ee2.
+Exact source `b7f21c15bdfe3eaa33ddc9d5e420c3804e618934` passed hosted preflight
+and native iOS Release in [run 38341051875](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38341051875).
+The focused Outliner/Brush-deletion suites passed 15/15 (override fixture 6/6),
+the full host suite passed 399/399, and pinned offline preflight applied to 125
+source files. Canonical LF patch SHA256:
+`d21fe67bef10457b1018ae13bea199360d9632dd6f32491e046e6abf12970ee2`.
 
-This candidate has not been built or packaged. The previous verified IPA remains
-source 2d659eaf / run 38333209890; no device acceptance applies to this change.
-Direct Python RNA override methods remain a separate audit item. Next, commit
-and push this coherent source, run one native iOS Release, and verify the full
-downloaded IPA and preserved launch/native UI contract. Continue original-owner
-paint loss and mode-specific completion/disposal work afterward.
+Downloaded artifact `11787192641` contains the full **248,628,912-byte** IPA,
+SHA256 `400a9936630dd5316cfa55890e312ec14484b4b8e60f8062b5293686d0ef1e29`.
+The complete **3,368-entry** CRC, arm64/iPhoneOS 5.0.0 bundle, entire packaged
+interaction UI/default Blender header, pinned native tool definitions and all
+**129** native icons pass. Binary UUID `F45830FA-E087-318F-B144-956A1564CF59`
+passes the compiled first-frame HUD launch audit. Compiled call-order review
+shows the hierarchy guard and refusal branch before resync/delete, and the
+Resync/Enforce result checks before `ED_undo_push`.
+
+Reports and disassembly are under
+`output/ui-preview/pencil-paint-contact/run-38341051875/` and
+`output/ui-preview/pencil-paint-contact/binary-38341051875/`. This exact package
+has **no new device acceptance**; the earlier launch confirmation is for a
+different revision. Direct Python RNA override methods remain a separate audit
+item. Continue original-owner paint loss and mode-specific completion/disposal
+work without reusing stale operator, Brush, or Undo pointers.
 
 ## Verified Object Delete Pencil-owner preflight IPA — 2026-10-12
 
