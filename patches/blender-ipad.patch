@@ -162315,6 +162315,43 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +  DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
 +  return true;
  }
+@@ -1538,3 +1638,3 @@
+-static void id_override_library_resync_hierarchy_process(bContext *C,
++static bool id_override_library_resync_hierarchy_process(bContext *C,
+                                                          ReportList *reports,
+                                                          OutlinerLibOverrideData &data)
+@@ -1547,3 +1647,7 @@
+   report.reports = reports;
+-
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!id_override_clear_single_ipad_paint_owners(C, bmain, data)) return false;
++#endif
++
+   for (auto &&id_hierarchy_root : data.id_hierarchy_roots.keys()) {
+@@ -1559,2 +1663,3 @@
+   WM_event_add_notifier(C, NC_WINDOW, nullptr);
++  return true;
+ }
+@@ -1581,3 +1686,3 @@
+-static void id_override_library_delete_hierarchy_process(bContext *C,
++static bool id_override_library_delete_hierarchy_process(bContext *C,
+                                                          ReportList * /*reports*/,
+                                                          OutlinerLibOverrideData &data)
+@@ -1585,3 +1690,7 @@
+   Main *bmain = CTX_data_main(C);
+-
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!id_override_clear_single_ipad_paint_owners(C, bmain, data)) return false;
++#endif
++
+   for (auto &&id_hierarchy_root : data.id_hierarchy_roots.keys()) {
+@@ -1588,3 +1697,4 @@
+     BKE_lib_override_library_delete(bmain, id_hierarchy_root);
+   }
++  return true;
+ }
 @@ -1924,5 +2024,7 @@
            false);
 -
@@ -162326,6 +162363,30 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 -
 +
        ED_undo_push(C, "Clear Overridden Data");
+@@ -1949,3 +2061,5 @@
+-      id_override_library_resync_hierarchy_process(C, op->reports, override_data);
+-
++      if (!id_override_library_resync_hierarchy_process(C, op->reports, override_data)) {
++        return OPERATOR_CANCELLED;
++      }
++
+       ED_undo_push(C, "Resync Overridden Data Hierarchy");
+@@ -1972,3 +2086,5 @@
+-      id_override_library_resync_hierarchy_process(C, op->reports, override_data);
+-
++      if (!id_override_library_resync_hierarchy_process(C, op->reports, override_data)) {
++        return OPERATOR_CANCELLED;
++      }
++
+       ED_undo_push(C, "Resync Overridden Data Hierarchy Enforce");
+@@ -1996,3 +2112,5 @@
+-      id_override_library_delete_hierarchy_process(C, op->reports, override_data);
+-
++      if (!id_override_library_delete_hierarchy_process(C, op->reports, override_data)) {
++        return OPERATOR_CANCELLED;
++      }
++
+       ED_undo_push(C, "Delete Overridden Data Hierarchy");
 @@ -2958,4 +3060,18 @@
          BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
          outliner_do_libdata_operation(C, op->reports, scene, space_outliner, id_delete_tag_fn);
@@ -162363,7 +162424,6 @@ diff --git a/source/blender/editors/space_outliner/outliner_tools.cc b/source/bl
 +      }
 +#endif
        BKE_id_multi_tagged_delete(bmain);
-
 diff --git a/source/blender/makesrna/intern/rna_main_api.cc b/source/blender/makesrna/intern/rna_main_api.cc
 --- a/source/blender/makesrna/intern/rna_main_api.cc
 +++ b/source/blender/makesrna/intern/rna_main_api.cc

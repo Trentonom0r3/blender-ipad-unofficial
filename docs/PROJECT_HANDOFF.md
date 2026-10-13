@@ -1,3 +1,21 @@
+## Current source candidate — Outliner override hierarchy owner teardown — 2026-10-12
+
+The Outliner library-override Resync, Resync Enforce, and Delete Hierarchy
+operations now run the existing strict Main-scoped Pencil paint-owner preflight
+before native ID mutation. A refusal or changed owner context/root returns
+Cancelled before the operation's Undo push. The exact source-executing affected
+suites pass 15/15 (focused override fixture 6/6); the full host suite passes
+399/399. Offline pinned preflight applies to 125 source files, and the diff
+whitespace check is clean. Canonical LF patch SHA256:
+d21fe67bef10457b1018ae13bea199360d9632dd6f32491e046e6abf12970ee2.
+
+This candidate has not been built or packaged. The previous verified IPA remains
+source 2d659eaf / run 38333209890; no device acceptance applies to this change.
+Direct Python RNA override methods remain a separate audit item. Next, commit
+and push this coherent source, run one native iOS Release, and verify the full
+downloaded IPA and preserved launch/native UI contract. Continue original-owner
+paint loss and mode-specific completion/disposal work afterward.
+
 ## Verified Object Delete Pencil-owner preflight IPA — 2026-10-12
 
 Exact source `2d659eafbc0f923e0eca0f7f63c61faa155a9304` passed hosted preflight in [run 38332967407](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38332967407) and native iOS Release in [run 38333209890](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38333209890). The Apple-only `OBJECT_OT_delete` path now snapshots selected Object identities as session UIDs and values, retires matching live Pencil paint owners before any delete tag, scene unlink, or global ID deletion, and revalidates Main/window/Scene/View Layer plus the complete selection after each native cancellation callback. Refusal, ambiguous identities, reentrancy, or changed context/selection cancels the delete. No Object pointer crosses a callback; other platform behavior and Blender's native successful delete path remain unchanged.

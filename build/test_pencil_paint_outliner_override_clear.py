@@ -20,6 +20,12 @@ OVERRIDE_GUARD = function(
 OVERRIDE_PROCESS = function(
     OUTLINER_SOURCE, "static bool id_override_library_clear_single_process("
 )
+RESYNC_PROCESS = function(
+    OUTLINER_SOURCE, "static bool id_override_library_resync_hierarchy_process("
+)
+DELETE_PROCESS = function(
+    OUTLINER_SOURCE, "static bool id_override_library_delete_hierarchy_process("
+)
 
 
 OVERRIDE_GUARD_CPP = r"""
@@ -112,6 +118,7 @@ struct ViewLayer {};
 struct Main { ListBase wm; std::vector<ID *> ids; };
 struct OutlinerLibOverrideData {
   Map<ID *, Vector<OutlinerLiboverrideDataIDRoot>> id_hierarchy_roots;
+  bool do_resync_hierarchy_enforce = false;
 };
 struct bContext {
   Main *main = nullptr;
@@ -448,6 +455,83 @@ int main() {
 """
 
 
+
+OVERRIDE_PROCESS_CPP = OVERRIDE_GUARD_CPP.split("int main()", 1)[0] + r"""
+#define WITH_APPLE_CROSSPLATFORM
+struct ReportList {};
+struct BlendFileReadReport { ReportList *reports = nullptr; };
+enum { NC_WINDOW = 1 };
+static int g_resync_calls = 0, g_delete_calls = 0, g_notifier_calls = 0;
+static bool g_expected_enforce = false;
+static void BKE_lib_override_library_resync(Main *, Scene *, ViewLayer *, ID *root,
+                                             void *, bool enforce,
+                                             BlendFileReadReport *report) {
+  assert(root == root_id && report && report->reports);
+  assert(enforce == g_expected_enforce);
+  ++g_resync_calls;
+}
+static void BKE_lib_override_library_delete(Main *, ID *root) {
+  assert(root == root_id);
+  ++g_delete_calls;
+}
+static void WM_event_add_notifier(bContext *, int type, void *) {
+  assert(type == NC_WINDOW);
+  ++g_notifier_calls;
+}
+""" + RESYNC_PROCESS + "\n" + DELETE_PROCESS + r"""
+static void add_owner(wmWindow &win, wmEventHandler_Op &owner) {
+  owner.type = WM_HANDLER_TYPE_OP;
+  owner.ipad_pencil_paint_serial = 7;
+  owner.ipad_pencil_operator_lifetime = 70;
+  append_handler(win.modalhandlers, &owner);
+}
+int main() {
+  {
+    Main main; OutlinerLibOverrideData data; bContext C;
+    wmWindowManager wm; wmWindow win; ID reference, root; IDOverrideLibrary over;
+    reset(main, data, C, wm, win, reference, root, over);
+    ReportList reports; g_resync_calls = g_delete_calls = g_notifier_calls = 0;
+    g_expected_enforce = false;
+    assert(id_override_library_resync_hierarchy_process(&C, &reports, data));
+    assert(g_resync_calls == 1 && g_notifier_calls == 1 && teardown_calls == 0);
+    data.do_resync_hierarchy_enforce = true;
+    g_expected_enforce = true;
+    assert(id_override_library_resync_hierarchy_process(&C, &reports, data));
+    assert(g_resync_calls == 2 && g_notifier_calls == 2 && teardown_calls == 0);
+    assert(id_override_library_delete_hierarchy_process(&C, &reports, data));
+    assert(g_delete_calls == 1 && teardown_calls == 0);
+    cleanup_context(C);
+  }
+  {
+    Main main; OutlinerLibOverrideData data; bContext C;
+    wmWindowManager wm; wmWindow win; ID reference, root; IDOverrideLibrary over;
+    reset(main, data, C, wm, win, reference, root, over);
+    ReportList reports; wmEventHandler_Op owner; add_owner(win, owner);
+    refuse_teardown = true;
+    g_resync_calls = g_delete_calls = g_notifier_calls = 0;
+    assert(!id_override_library_resync_hierarchy_process(&C, &reports, data));
+    assert(!id_override_library_delete_hierarchy_process(&C, &reports, data));
+    assert(teardown_calls == 2 && win.modalhandlers.first == &owner);
+    assert(g_resync_calls == 0 && g_delete_calls == 0 && g_notifier_calls == 0);
+    cleanup_context(C);
+  }
+  {
+    Main main; OutlinerLibOverrideData data; bContext C;
+    wmWindowManager wm; wmWindow win; ID reference, root; IDOverrideLibrary over;
+    reset(main, data, C, wm, win, reference, root, over);
+    ReportList reports; wmEventHandler_Op owner; add_owner(win, owner);
+    change_original_context = true;
+    g_resync_calls = g_delete_calls = g_notifier_calls = 0;
+    assert(!id_override_library_resync_hierarchy_process(&C, &reports, data));
+    assert(teardown_calls == 1 && !win.modalhandlers.first);
+    assert(g_resync_calls == 0 && g_notifier_calls == 0);
+    cleanup_context(C);
+  }
+}
+"""
+
+
+
 WM_OWNER_NEXT_CPP = r"""
 #include <cassert>
 #include <cstdint>
@@ -640,6 +724,30 @@ class PencilPaintOutlinerOverrideClearTests(unittest.TestCase):
                       OVERRIDE_GUARD)
         self.assertNotIn("wmEventHandler", OVERRIDE_GUARD)
         self.assertNotIn("WM_event_system.hh", OUTLINER_SOURCE)
+
+    def test_resync_and_delete_processes_retire_owners_before_native_mutation(self):
+        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(OVERRIDE_PROCESS_CPP)
+
+    def test_resync_and_delete_refusal_cancels_before_undo(self):
+        cases = (
+            ("id_override_library_resync_hierarchy_process", 2),
+            ("id_override_library_delete_hierarchy_process", 1),
+        )
+        for name, expected in cases:
+            calls = []
+            needle = f"if (!{name}(C, op->reports, override_data))"
+            start = 0
+            while True:
+                call = OUTLINER_SOURCE.find(needle, start)
+                if call < 0:
+                    break
+                cancel = OUTLINER_SOURCE.index("return OPERATOR_CANCELLED;", call)
+                undo = OUTLINER_SOURCE.index("ED_undo_push(C,", call)
+                self.assertLess(call, cancel)
+                self.assertLess(cancel, undo)
+                calls.append(call)
+                start = undo + 1
+            self.assertEqual(len(calls), expected)
 
     def test_override_preflight_runs_before_remap_delete_and_undo_push(self):
         self.assertLess(

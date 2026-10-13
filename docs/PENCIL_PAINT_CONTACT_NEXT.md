@@ -1,3 +1,25 @@
+## Outliner override resync/delete owner guard — 2026-10-12
+
+The existing Main-scoped Pencil paint-owner preflight now also protects Outliner
+library-override hierarchy resync (including Enforce) and hierarchy deletion.
+Those native operations can replace or free IDs reachable from an active paint
+context. The operator cancels before resync/delete and before its Undo push if a
+paint owner refuses teardown or if callback validation finds that the original
+Main, window/context, selected roots, or override references changed. Non-Apple
+behavior remains the native path.
+
+The focused source-executing Outliner tests pass **6/6**; both affected suites
+pass **15/15**, and the full host suite passes **399/399**. Offline pinned
+preflight applies to **125 source files**, and git diff --check is clean.
+Canonical LF patch SHA256 is
+d21fe67bef10457b1018ae13bea199360d9632dd6f32491e046e6abf12970ee2; focused
+fixture SHA256 is cda9d5508e2f2f23e4e89bffdb7edeebc5454e100c0f39e1cfd258f6a9e7b489.
+This is native source/fixture evidence, not a live paint stroke, Python RNA
+override method, iOS UI, or device test. No native build or IPA exists for this
+increment; the prior verified package remains 2d659eaf / run 38333209890.
+Continue the original-owner loss and mode-specific completion/disposal audit;
+direct RNA override methods remain a separately scoped route.
+
 ## Connected Pencil paint dispatch fixture — 2026-10-12
 
 `build/test_pencil_paint_pipeline.py` now executes the production Begin dispatch
