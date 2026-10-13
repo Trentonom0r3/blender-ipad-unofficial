@@ -126187,7 +126187,7 @@ index 3bcd482..f86d507 100644
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,9265 @@
+@@ -1,6918 +1,9306 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -129695,6 +129695,26 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +  };
 +  if (!context_unchanged()) return false;
 +
++  struct ManagerIdentity {
++    uintptr_t address;
++    uint32_t uid;
++  };
++  std::vector<ManagerIdentity> managers;
++  struct WindowIdentity {
++    uintptr_t wm_address;
++    uint32_t wm_uid;
++    uintptr_t win_address;
++    int winid;
++  };
++  std::vector<WindowIdentity> windows;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    if (!wm->id.session_uid) return false;
++    managers.push_back({uintptr_t(wm), wm->id.session_uid});
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      windows.push_back({uintptr_t(wm), wm->id.session_uid, uintptr_t(win), win->winid});
++    }
++  }
++
 +  struct OwnerIdentity {
 +    wmWindowManager *wm;
 +    uint32_t wm_uid;
@@ -129757,6 +129777,27 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +      owner_C, live_win, nullptr, nullptr);
 +  CTX_free(owner_C);
 +  if (!teardown_succeeded || !context_unchanged()) return false;
++
++  size_t manager_index = 0;
++  size_t window_index = 0;
++  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
++    if (manager_index >= managers.size()) return false;
++    const ManagerIdentity &expected_manager = managers[manager_index++];
++    if (expected_manager.address != uintptr_t(wm) || expected_manager.uid != wm->id.session_uid) {
++      return false;
++    }
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      if (window_index >= windows.size()) return false;
++      const WindowIdentity &expected = windows[window_index++];
++      if (expected.wm_address != uintptr_t(wm) || expected.wm_uid != wm->id.session_uid ||
++          expected.win_address != uintptr_t(win) || expected.winid != win->winid)
++      {
++        return false;
++      }
++    }
++  }
++  if (manager_index != managers.size()) return false;
++  if (window_index != windows.size()) return false;
 +
 +  bool owner_lifetime_remains = false;
 +  LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {

@@ -451,6 +451,7 @@ int main() {
 WM_OWNER_NEXT_CPP = r"""
 #include <cassert>
 #include <cstdint>
+#include <vector>
 struct ListBase { void *first=nullptr; };
 struct ID { uint32_t session_uid=0; };
 struct Main { ListBase wm; };
@@ -492,11 +493,14 @@ static void CTX_data_main_set(bContext *C,Main *x){C->main=x;}
 static void CTX_wm_manager_set(bContext *C,wmWindowManager *x){C->wm=x;}
 static void CTX_wm_window_set(bContext *C,wmWindow *x){C->win=x;}
 static bool g_cancel_ok=true,g_change_context=false,g_replace_main=false,g_spawn=false;
+static bool g_remove_foreign_window=false,g_remove_foreign_manager=false;
 static int g_cancel_calls=0,g_context_allocs=0,g_context_frees=0;
 static bContext *CTX_create(){++g_context_allocs;return new bContext;}
 static void CTX_free(bContext *C){++g_context_frees;delete C;}
 static bContext *g_original=nullptr;static Main *g_other_main=nullptr;static ScrArea g_replacement_area;
-static wmWindow *g_spawn_window=nullptr;static wmEventHandler_Op g_spawned;
+static wmWindow *g_spawn_window=nullptr;static wmWindowManager *g_remove_wm=nullptr;
+static Main *g_remove_manager_main=nullptr;static wmWindowManager *g_remove_manager=nullptr;
+static wmWindow *g_remove_window=nullptr;static wmEventHandler_Op g_spawned;
 static bool wm_ipad_pencil_paint_handler_registered(wmWindow *win,wmEventHandler_Op *h){
   return win&&win->runtime&&h&&h->registered;
 }
@@ -520,6 +524,14 @@ static bool WM_event_ipad_pencil_paint_owner_teardown(
     auto *tail=static_cast<wmEventHandler*>(g_spawn_window->modalhandlers.first);
     if(!tail)g_spawn_window->modalhandlers.first=&g_spawned;
     else{while(tail->next)tail=tail->next;tail->next=&g_spawned;}}
+  if(g_remove_foreign_window){g_remove_foreign_window=false;assert(g_remove_wm&&g_remove_window);
+    auto *prev=static_cast<wmWindow*>(nullptr);auto *item=static_cast<wmWindow*>(g_remove_wm->windows.first);
+    while(item&&item!=g_remove_window){prev=item;item=item->next;}assert(item);
+    if(prev)prev->next=item->next;else g_remove_wm->windows.first=item->next;item->next=nullptr;}
+  if(g_remove_foreign_manager){g_remove_foreign_manager=false;assert(g_remove_manager_main&&g_remove_manager);
+    auto *prev=static_cast<wmWindowManager*>(nullptr);auto *item=static_cast<wmWindowManager*>(g_remove_manager_main->wm.first);
+    while(item&&item!=g_remove_manager){prev=item;item=item->next;}assert(item);
+    if(prev)prev->next=item->next;else g_remove_manager_main->wm.first=item->next;item->next=nullptr;}
   return true;
 }
 """ + WM_OWNER_NEXT + r"""
@@ -531,7 +543,10 @@ static void link(wmEventHandler_Op &h,ListBase &list,uint64_t serial,uint64_t li
 static void reset(Main &main,wmWindowManager &wm1,wmWindow &w1,bContext &C){
   wm1.id.session_uid=1;wm1.windows.first=&w1;w1.winid=10;w1.runtime=&w1;
   wm1.next=nullptr;main.wm.first=&wm1;G_MAIN=&main;C={&main,&wm1,&w1,nullptr,nullptr};
-  g_cancel_ok=true;g_change_context=g_replace_main=g_spawn=false;g_cancel_calls=0;
+  g_cancel_ok=true;g_change_context=g_replace_main=g_spawn=false;
+  g_remove_foreign_window=g_remove_foreign_manager=false;g_cancel_calls=0;
+  g_remove_wm=nullptr;g_remove_window=nullptr;
+  g_remove_manager_main=nullptr;g_remove_manager=nullptr;
   g_context_allocs=g_context_frees=0;g_original=&C;g_other_main=nullptr;g_spawn_window=nullptr;g_spawned={};
 }
 int main(){
@@ -577,6 +592,23 @@ int main(){
     wmEventHandler_Op owner;link(owner,win.modalhandlers,1,11);g_change_context=true;bool did=false;
     assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
     assert(!did&&g_cancel_calls==1&&C.area==&g_replacement_area);
+  }
+  {
+    Main m;wmWindowManager wm1,wm2,wm3;wmWindow w1,w2,w3;bContext C;reset(m,wm1,w1,C);
+    wm1.next=&wm2;wm2.id.session_uid=2;wm2.windows.first=&w2;w2.winid=20;w2.runtime=&w2;
+    wm2.next=&wm3;wm3.id.session_uid=3;wm3.windows.first=&w3;w3.winid=30;w3.runtime=&w3;
+    wmEventHandler_Op owner;link(owner,w2.modalhandlers,1,11);
+    g_remove_foreign_window=true;g_remove_wm=&wm3;g_remove_window=&w3;bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==1&&!w2.modalhandlers.first&&!wm3.windows.first);
+  }
+  {
+    Main m;wmWindowManager wm1,wm2,wm3;wmWindow w1,w2;bContext C;reset(m,wm1,w1,C);
+    wm1.next=&wm2;wm2.id.session_uid=2;wm2.windows.first=&w2;w2.winid=20;w2.runtime=&w2;
+    wm2.next=&wm3;wm3.id.session_uid=3;wmEventHandler_Op owner;link(owner,w2.modalhandlers,1,11);
+    g_remove_foreign_manager=true;g_remove_manager_main=&m;g_remove_manager=&wm3;bool did=false;
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==1&&!w2.modalhandlers.first&&wm2.next==nullptr);
   }
   {
     Main m;wmWindowManager wm1,wm2,wm3;wmWindow w1,w2,w3;bContext C;reset(m,wm1,w1,C);
