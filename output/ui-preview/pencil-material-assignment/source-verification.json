@@ -1,5 +1,5 @@
 {
-  "status": "source_host_independent_passed_not_native_built",
+  "status": "source_host_independent_passed_hosted_preflight_passed_native_in_progress",
   "base_source": "23596e309faf99fabf44d95e762dbb37271c9a43",
   "canonical_lf_patch_sha256": "3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637",
   "scope": [
@@ -73,10 +73,25 @@
     "Executed Python report/update blocks use interpreter models",
     "No UIKit/GPU/device proof; refusal does not undo callback effects; outer attempt counter not a global bound"
   ],
-  "native_build": null,
+  "native_build": {
+    "run": 38449639043,
+    "dispatched_once": true,
+    "hosted_preflight": "passed",
+    "native_status": "in_progress",
+    "observed_at_utc": "2026-10-13T19:05:00Z",
+    "active_step": "Fetch Blender source at the pinned commit (with LFS)",
+    "active_step_started_at": "2026-10-13T19:02:38Z",
+    "watcher_session": 12430,
+    "watcher_script": ".cache/watch-material-assignment-build.py",
+    "watcher_log": ".cache/material-assignment-build-watch.log",
+    "package_verified": false,
+    "compiled_review": "pending binary"
+  },
   "device_acceptance": false,
   "fixtures": {
     "build\\test_pencil_material_assign_owner_teardown.py": "7d62e985d0eafb0247faa99161885c99c3827a2b6db54f32ee50f9a63bb41c15",
     "build\\tests\\pinned_material_assign.inc.cc": "b4a17d68f6347c5a79f5890f1723ed16aaa0582cfc827754423e4ecc83dc36d0"
-  }
+  },
+  "production_source": "50359ad320904382fa967da426f7ccc0f9159016",
+  "next_read_only_audit": "material-collection-next-audit.json"
 }

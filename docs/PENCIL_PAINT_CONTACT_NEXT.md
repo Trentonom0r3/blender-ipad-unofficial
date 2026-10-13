@@ -1,3 +1,25 @@
+## Material assignment exact build pending - 2026-10-13 19:05 UTC
+
+Production source `50359ad320904382fa967da426f7ccc0f9159016` is committed,
+pushed and building once in run38449639043. Hosted preflight passed. Native
+job progressed from overlay checkout to pinned Blender/LFS fetch at19:02:38UTC;
+no failed step is reported. Watcher12430 remains responsible for exact full IPA,
+preserved compiled HUD launch/Weight cleanup and actual material/outer/Python/WM
+disassembly. Do not dispatch another build while this one is pending.
+
+Source452/452, connected21/21,131-file preflight and independent source reviews
+are complete. No new native compilation, material IPA, compiled consumer review
+or device acceptance is claimed. Latest fully verified IPA remains
+23596e3/run38407989371. This checkpoint changes documentation/evidence only.
+
+Read-only next-family audit: `output/ui-preview/pencil-material-assignment/material-collection-next-audit.json`.
+Four live shared IDMaterials routes append/pop/clear/indexed assignment replace
+material arrays, indices or evaluated storage underneath retained projection
+paint. Fixed indexed ABI and Python borrowed false/return frames require connected
+producer/outer ownership; preserve native nullable/default/error/count behavior.
+No corrective collection source or tests exist. Finish current native/package/
+compiled verification first. Full personal Pencil-first goal remains unfinished.
+
 ## Material assignment Pencil-owner source validated - 2026-10-13
 
 Actual Object.active_material and MaterialSlot.material now have connected
@@ -25,8 +47,8 @@ Native cancellation/allocation/depsgraph and Python interpreter are bounded
 fixture models. Refusal does not roll back callbacks or prove a global bound.
 
 This coherent source is not yet native built or device accepted. Latest verified
-IPA remains23596e3/run38407989371. Next commit/push this exact source, build once,
-verify the full downloaded IPA and inspect actual material/outer/Python/WM
+IPA remains23596e3/run38407989371. Source50359ad is now pushed/building once;
+verify its full downloaded IPA and inspect actual material/outer/Python/WM
 compiled consumers plus preserved HUD launch/Weight cleanup. Full personal
 Pencil-first goal remains unfinished; preserve all evidence and private reports.
 

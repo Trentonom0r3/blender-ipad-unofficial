@@ -1,0 +1,62 @@
+{
+  "status": "read_only_next_family_no_corrective_source_or_tests",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "reviewer": "material_wm_policy",
+  "routes": {
+    "IDMaterials.append": {
+      "rna_lines": "rna_ID.cc1540-1546;2049-2053",
+      "native_lines": "material.cc596-617",
+      "effects": "replace array, increment refcount, synchronize dependent Objects, tag ID/relations",
+      "semantics": "required but nullable Material; no native MAXMAT admission check"
+    },
+    "IDMaterials.pop": {
+      "rna_lines": "rna_ID.cc1548-1574;2055-2061",
+      "native_lines": "material.cc620-655",
+      "effects": "shift/reallocate/free array, decrement refcount, remove material indices, tag",
+      "semantics": "default index -1; normalize negatives; out-of-range before mutation; null removed slot can be successful; final-slot synchronization differs"
+    },
+    "IDMaterials.clear": {
+      "rna_lines": "rna_ID.cc1576-1583;2063-2065",
+      "native_lines": "material.cc658-678",
+      "effects": "free array, decrement refcounts, synchronize Objects, clear indices, tag",
+      "semantics": "empty clear still has native effects; index clear is Mesh/legacy Curve only"
+    },
+    "materials[index] = value": {
+      "rna_lines": "rna_ID.cc1524-1538",
+      "effects": "BKE_id_material_assign with slot/refcount/synchronization/geometry/relations",
+      "semantics": "invalid key returns false"
+    }
+  },
+  "live_collections": [
+    "Mesh",
+    "legacy Curve",
+    "MetaBall",
+    "Curves",
+    "PointCloud",
+    "Volume",
+    "modern Grease Pencil"
+  ],
+  "cache_exposure": {
+    "primary": "paint_image_proj.cc453,469-470,578-580,4073-4094",
+    "finding": "Projection paint retains evaluated material-index spans and a copied Material pointer array allocated from original Object totcol. Later lookup bounds against live totcol. Append can increase that count past the retained allocation; pop/clear can replace index storage/evaluation.",
+    "limit": "Refcount decrement does not establish immediate Material ID freeing."
+  },
+  "outer_contract": [
+    "Append/clear FUNC_USE_MAIN; pop MAIN|REPORTS; no current C forwarding",
+    "Python method reports checked before return conversion; popped Material conversion retains ownership obligations",
+    "Indexed assignment fixed context/report-free ABI; Python false branch reads collection length again",
+    "Cancellation requires proved enclosing producer ownership; setter-only callbacks cannot safely retain borrowed target/value/frame"
+  ],
+  "next_proof": [
+    "Reuse existing all-Main registered-owner WM scan",
+    "Typed fresh data ID/Library/override and physical arrays/counts/participants/incoming/index",
+    "Drain before BKE_objects_materials_sync_length_all acquires Main lock",
+    "Preserve nullable values, exact default/error/return semantics and native count behavior"
+  ],
+  "deferred_scalar_routes": [
+    "MeshPolygon.material_index writable attribute",
+    "Spline.material_index including Edit NURBs",
+    "TextCharacterFormat.material_index"
+  ],
+  "prerequisite": "Finish 50359ad native/package/compiled verification before coding this family"
+}
