@@ -1,5 +1,5 @@
 {
-  "status": "source_validated_before_exact_native_build",
+  "status": "source_native_package_bounded_compiled_verified",
   "base_verified_source": "28c88308f92f9bd59045ad0da9b45426a0160dfe",
   "evidence_HEAD": "5cfe2f1",
   "canonical_patch_sha256": "409547c9b5fc115dc4f89623b2df649a3cf6a239ce00265b5f1911c4d5ae0c62",
@@ -32,13 +32,32 @@
     "log": ".cache/rna-remap-local-full-tests.log",
     "cause": "CRLF overlay bytes caused raw git apply128 in unchanged blank context70883; preflight normalizedLF; repaired canonicalLF and affectedrawapply3tests pass"
   },
-  "candidate_native_build": null,
-  "candidate_IPA": null,
+  "candidate_native_build": {
+    "source": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019",
+    "run": 38366690317,
+    "status": "success",
+    "watcher_session": 84868,
+    "watcher_status": "completed_exit_0"
+  },
+  "candidate_IPA": {
+    "artifact": 11798091045,
+    "bytes": 248628246,
+    "sha256": "6d32d8be810bcd682af9e53b657081c0ab204d63fa700a396187bd855e307c1e",
+    "entries": 3368,
+    "whole_UI/native_tools/icons": "pass"
+  },
   "device_acceptance": null,
   "scope": "Actual user_remap and linked-only make_local, fresh name types and optional preexisting newid; preserves original native result/cleanup/nonApple/nonactiveMain/local metadata behavior",
   "limits": [
     "Native cancellation/ID operations are fixture boundaries",
-    "Source and host checks do not prove full native WM/UIKit or device behavior",
-    "Exact candidate native build/IPA remains pending"
-  ]
+    "Bounded disassembly is not complete semantic/native WM/UIKit execution",
+    "No device acceptance for this exact package"
+  ],
+  "compiled": {
+    "uuid": "E8566332-08BF-3760-AFF3-1C8B6EA2E3D9",
+    "HUD_launch": "pass",
+    "Weight_cleanup": "pass",
+    "seven_RNA_effective_consumers": "bounded_calls_branches_pass",
+    "independent_review": "pass"
+  }
 }

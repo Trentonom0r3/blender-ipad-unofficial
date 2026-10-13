@@ -1,3 +1,48 @@
+## Verified direct ID remap/localization IPA - 2026-10-13
+
+Exact source `ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019` passed hosted preflight,
+native iOS Release and full downloaded IPA verification in [run 38366690317](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38366690317).
+Actual `ID.user_remap` and linked-only `ID.make_local` retire registered Pencil
+paint owners before native remap/localization, then revalidate ID/Library types
+and the existing newid relation. Native return/target-tag cleanup, local metadata,
+non-active Main/no-owner/non-Apple behavior remain. The five earlier guarded
+RNA mutation routes retain their ownership checks; only rna_ID.cc changes among
+126 native overlay sections, with all Python/ring/HUD/default bars unchanged.
+
+Validation: **414/414** full host tests in **360.237 seconds**, connected RNA
+**15/15**, affected raw-patch ViewLayer **3/3**, **126-file** pinned preflight,
+diff hygiene and independent native/literal UI review pass. Canonical LF patch
+SHA256 `409547c9b5fc115dc4f89623b2df649a3cf6a239ce00265b5f1911c4d5ae0c62`.
+The failed396/5import run remains separately recorded: Windows CRLF conversion
+broke raw git apply; canonical LF and `.gitattributes` repair checkout behavior.
+Corrected full log `.cache/rna-remap-local-full-tests-2.log` passed.
+
+Artifact **11798091045** contains the **248,628,246-byte** IPA, SHA256
+`6d32d8be810bcd682af9e53b657081c0ab204d63fa700a396187bd855e307c1e`.
+Full **3,368-entry** CRC, arm64/iPhoneOS5.0.0, whole exact packaged interaction
+UI/default Blender header/toolbar, pinned native tool definitions/all **129**
+icons, exact nine-action Base/native-only More Tools pass. Binary UUID
+`E8566332-08BF-3760-AFF3-1C8B6EA2E3D9` passes preserved compiled HUD launch and
+Weight cleanup. Independent compiled review confirms seven effective consumers
+refuse before native mutation; linked localization also skips cleanup. LLVM
+inlines user_remap into its generated wrapper and removes unused local
+arguments; actual wrappers forward context correctly. Fresh ID/Library type
+checks remain compiled. These are bounded findings, not complete WM/UIKit or
+device execution. **No device acceptance for this exact package.**
+
+Reports under `output/ui-preview/pencil-rna-override/`:
+`remap-local-source-checkpoint.json`, `ipa-38366690317/verification.json`, and
+`binary-38366690317/{compiled-rna-remap-guard-audit,independent-compiled-review}.json`.
+Watcher84868 completed exit0. No live verifier or unchanged rebuild is needed.
+
+Next confirmed source family is same-Mesh-ID storage invalidation: clear_geometry
+and four collection-add methods free/reallocate data beneath active stroke
+caches. Default Mesh.update also has a proved evaluated-cache invalidation chain;
+it must be guarded before cache dirtiness/tagging, even with unchanged IDs. Read the
+bounded next audit/primary pin cache before implementation; preserve native
+zero-count/Edit/no-owner/foreign-Main/platform semantics, fresh target ownership
+and mode-specific Cancel/history. Full personal Pencil-first goal unfinished.
+
 ## Verified direct RNA override owner guard - 2026-10-13
 
 Exact source `28c88308f92f9bd59045ad0da9b45426a0160dfe` passed hosted preflight,

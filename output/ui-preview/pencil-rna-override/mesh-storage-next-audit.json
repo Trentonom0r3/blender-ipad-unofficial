@@ -1,0 +1,54 @@
+{
+  "status": "read_only_direct_and_evaluated_storage_gaps_proved_guard_policy_review_pending",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_correction": false,
+  "current_build": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019/run38366690317",
+  "confirmed_routes": [
+    "Mesh.clear_geometry -> BKE_mesh_clear_geometry_and_metadata -> mesh_clear_geometry",
+    "MeshVertices.add -> ED_mesh_verts_add -> mesh_add_verts",
+    "MeshEdges.add -> ED_mesh_edges_add -> mesh_add_edges",
+    "MeshLoops.add -> ED_mesh_loops_add -> mesh_add_loops",
+    "MeshPolygons.add -> ED_mesh_faces_add -> mesh_add_faces"
+  ],
+  "native_admission": [
+    "Four ED add methods reject Edit mode before storage mutation",
+    "Four inner add methods return on zero length; preserve zero-count no-cancel behavior",
+    "Do not infer the same Edit-mode rejection for clear_geometry: its native RNA callback currently has no report/context argument"
+  ],
+  "same_ID_consumer_evidence": [
+    "Sculpt eval preserves PBVH/vwpaint while ss.cache live and assumes stable topology",
+    "Weight precomputed_weight allocated at startup vertex count; later loops current vertex count; dvert_prev old node indexing",
+    "Vertex retains color buffers/texture projection spans across stroke"
+  ],
+  "owners": "Current WM modal compares fresh numeric context/Mesh ID/ToolSettings/Paint values, not topology allocation lifetime",
+  "update_scope": {
+    "edge_rebuild_condition": "calc_edges || ((mesh->faces_num || mesh->totface_legacy) && mesh->edges_num==0)",
+    "default_update": "Proved source chain: normal cache dirtiness + zero-tag explicit CoW -> Object UberEval -> mesh_data_update -> free owned eval/deform meshes while projection spans persist; modifier-owned Displace result is concrete no-sharing example",
+    "material_changes": "Native BKE_object_material_assign tags geometry/eval/relations for active_material and MaterialSlot.material. RNA slot update itself tags TRANSFORM; active_material_index remains distinct. No immediate Material ID free claimed.",
+    "update_gpu_tag": "Draw cache tagging only in inspected native source"
+  },
+  "primary_blobs": {
+    "rna_mesh_api.cc": "024cb9013c734b9bb85ae4e92e4b697aaa8dae95",
+    "rna_mesh.cc": "bb54e91168eae6fcd68ae676794124f80ba3c99b",
+    "editors/mesh/mesh_data.cc": "1baaf55900650236ffbe7a1e00c0be161d90e1e5",
+    "blenkernel/intern/mesh.cc": "7025728115131c12e189ca601ac6dd68b71fad60"
+  },
+  "local_cache": ".cache/pinned-paint-storage/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "review_scope": "Independent exact-pin read-only native cache/eval/scheduler proof and fixture plan; final guard scope still under review",
+  "limits": [
+    "Source reachability/ownership evidence only, no future production correction/fixture execution/native package/device acceptance",
+    "Do not rely on next modal packet to cancel after evaluated storage already freed",
+    "No new detached scanner or blanket cancellation for GPU-tag-only calls"
+  ],
+  "consumer_lines": {
+    "projection": "paint_image_proj.cc4055-4103 spans;4502/6090 once-per-stroke;5885-5887 cached steps;1733-1735 delayed normal reads",
+    "update": "rna_mesh_api.cc216-222",
+    "tag": "depsgraph_tag.cc455-476 explicit CoW/all-components-exceptAnimation",
+    "relations": "deg_builder_relations.cc2594-2597",
+    "eval": "object_update.cc128-151/294-298;mesh_data_update.cc1117-1148/free1128",
+    "free": "object.cc1637-1642/1651-1654",
+    "concrete_modifier": "MOD_displace.cc405-417;mesh_data_update.cc372/384/1001-1002;modifier.cc915-928",
+    "scheduler": "wm.cc592-604;wm_event_system.cc492-545/563/817;scene.cc2499-2523"
+  },
+  "guard_scope_question": "TargetMeshUID filtering alone is not established safe for dependent evaluated meshes in modifier graph. Review conservative all-activeMain-owner drain using existing WM_next; retain foreignMain/noOwner behavior."
+}

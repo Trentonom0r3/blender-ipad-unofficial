@@ -1,0 +1,296 @@
+{
+  "status": "bounded_calls_branches_pass",
+  "source": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019",
+  "run": 38366690317,
+  "binary_uuid": "E8566332-08BF-3760-AFF3-1C8B6EA2E3D9",
+  "callbacks": {
+    "rna_ID_override_create": {
+      "effective_symbol": "__ZL22rna_ID_override_createP2IDP4MainP8bContextb",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126b468",
+      "immediate_refusal_branch": "0x10126b46c",
+      "refusal_target": "0x10126b414",
+      "decoded_refusal_nodes": 6,
+      "ordinary_returns": [
+        "0x10126b428"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [],
+      "unsupported_terminal_edges": [],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126b4bc",
+          "callee": "__Z19BKE_main_id_tag_allP4Mainib"
+        },
+        {
+          "pc": "0x10126b4d4",
+          "callee": "__Z39BKE_lib_override_library_create_from_idP4MainP2IDb"
+        },
+        {
+          "pc": "0x10126b4f4",
+          "callee": "__Z19BKE_main_id_tag_allP4Mainib"
+        },
+        {
+          "pc": "0x10126b504",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        },
+        {
+          "pc": "0x10126b510",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        }
+      ]
+    },
+    "rna_ID_override_hierarchy_create": {
+      "effective_symbol": "__ZL32rna_ID_override_hierarchy_createP2IDP4MainP8bContextP5SceneP9ViewLayerS0_b",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126b5c8",
+      "immediate_refusal_branch": "0x10126b5cc",
+      "refusal_target": "0x10126b610",
+      "decoded_refusal_nodes": 14,
+      "ordinary_returns": [
+        "0x10126b640"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [
+        {
+          "pc": "0x10126b6b0",
+          "callee": "_zlibVersion+0x104b5f43c"
+        }
+      ],
+      "unsupported_terminal_edges": [
+        "0x10126b6b0"
+      ],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126b650",
+          "callee": "__Z19BKE_main_id_tag_allP4Mainib"
+        },
+        {
+          "pc": "0x10126b680",
+          "callee": "__Z31BKE_lib_override_library_createP4MainP5SceneP9ViewLayerP7LibraryP2IDS8_S8_PS8_b"
+        },
+        {
+          "pc": "0x10126b698",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        },
+        {
+          "pc": "0x10126b6a4",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        }
+      ]
+    },
+    "rna_ID_override_library_reset": {
+      "effective_symbol": "__ZL29rna_ID_override_library_resetP2IDP17IDOverrideLibraryP4MainP8bContextP10ReportListbb",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126b858",
+      "immediate_refusal_branch": "0x10126b85c",
+      "refusal_target": "0x10126b8a4",
+      "decoded_refusal_nodes": 5,
+      "ordinary_returns": [
+        "0x10126b8b4"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [],
+      "unsupported_terminal_edges": [],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126b8cc",
+          "callee": "__Z33BKE_lib_override_library_id_resetP4MainP2IDb"
+        },
+        {
+          "pc": "0x10126b8d8",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        },
+        {
+          "pc": "0x10126b880",
+          "callee": "__Z43BKE_lib_override_library_id_hierarchy_resetP4MainP2IDb"
+        }
+      ]
+    },
+    "rna_ID_override_library_destroy": {
+      "effective_symbol": "__ZL31rna_ID_override_library_destroyP2IDP17IDOverrideLibraryP4MainP8bContextP10ReportListb",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126b93c",
+      "immediate_refusal_branch": "0x10126b940",
+      "refusal_target": "0x10126b984",
+      "decoded_refusal_nodes": 5,
+      "ordinary_returns": [
+        "0x10126b994"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [],
+      "unsupported_terminal_edges": [],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126b9b8",
+          "callee": "__Z18BKE_libblock_remapP4MainPvS1_i"
+        },
+        {
+          "pc": "0x10126b9c4",
+          "callee": "__Z13BKE_id_deleteP4MainPv"
+        },
+        {
+          "pc": "0x10126b9d0",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        },
+        {
+          "pc": "0x10126b960",
+          "callee": "__Z31BKE_lib_override_library_deleteP4MainP2ID"
+        }
+      ]
+    },
+    "rna_ID_override_library_resync": {
+      "effective_symbol": "__ZL30rna_ID_override_library_resyncP2IDP17IDOverrideLibraryP4MainP8bContextP10ReportListP5SceneP9ViewLayerP10Collectionbb",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126ba50",
+      "immediate_refusal_branch": "0x10126ba54",
+      "refusal_target": "0x10126ba9c",
+      "decoded_refusal_nodes": 12,
+      "ordinary_returns": [
+        "0x10126bac4"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [
+        {
+          "pc": "0x10126bb24",
+          "callee": "_zlibVersion+0x104b5f43c"
+        }
+      ],
+      "unsupported_terminal_edges": [
+        "0x10126bb24"
+      ],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126bb18",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        },
+        {
+          "pc": "0x10126bb08",
+          "callee": "__Z31BKE_lib_override_library_resyncP4MainP5SceneP9ViewLayerP2IDP10CollectionbP19BlendFileReadReport"
+        }
+      ]
+    },
+    "rna_ID_user_remap": {
+      "effective_symbol": "__ZL18ID_user_remap_callP8bContextP10ReportListP10PointerRNAP13ParameterList",
+      "inlined_in_generated_wrapper": true,
+      "guard_call": "0x10126c198",
+      "immediate_refusal_branch": "0x10126c19c",
+      "refusal_target": "0x10126c1d4",
+      "decoded_refusal_nodes": 12,
+      "ordinary_returns": [
+        "0x10126c1fc"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [
+        {
+          "pc": "0x10126c200",
+          "callee": "_zlibVersion+0x104b5f43c"
+        }
+      ],
+      "unsupported_terminal_edges": [
+        "0x10126c200"
+      ],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126c1c4",
+          "callee": "__Z18BKE_libblock_remapP4MainPvS1_i"
+        },
+        {
+          "pc": "0x10126c1d0",
+          "callee": "__Z20WM_main_add_notifierjPv"
+        }
+      ]
+    },
+    "rna_ID_make_local": {
+      "effective_symbol": "__ZL17rna_ID_make_localP2IDP4MainP8bContextbbb",
+      "inlined_in_generated_wrapper": false,
+      "guard_call": "0x10126b728",
+      "immediate_refusal_branch": "0x10126b72c",
+      "refusal_target": "0x10126b74c",
+      "decoded_refusal_nodes": 15,
+      "ordinary_returns": [
+        "0x10126b7f0"
+      ],
+      "known_ID_mutation_or_notifier_calls_on_refusal": [],
+      "other_refusal_calls": [
+        {
+          "pc": "0x10126b750",
+          "callee": "__ZL17rna_ID_make_localP2IDP4MainP8bContextbbb+0x110"
+        },
+        {
+          "pc": "0x10126b7f4",
+          "callee": "_zlibVersion+0x104b5f43c"
+        }
+      ],
+      "unsupported_terminal_edges": [
+        "0x10126b7f4"
+      ],
+      "native_mutation_calls": [
+        {
+          "pc": "0x10126b770",
+          "callee": "__Z35BKE_lib_override_library_make_localP4MainP2ID"
+        },
+        {
+          "pc": "0x10126b78c",
+          "callee": "__Z21BKE_lib_id_make_localP4MainP2IDi"
+        },
+        {
+          "pc": "0x10126b7a0",
+          "callee": "__Z27BKE_id_newptr_and_tag_clearP2ID"
+        },
+        {
+          "pc": "0x10126b7c0",
+          "callee": "__Z35BKE_lib_override_library_make_localP4MainP2ID"
+        }
+      ]
+    }
+  },
+  "helper": {
+    "symbol": "__ZL27rna_ID_paint_owner_teardownP8bContextP4MainPP2IDS5_iPP5ScenePP9ViewLayerP10ReportListPKc",
+    "direct_calls": [
+      {
+        "pc": "0x1012744b8",
+        "callee": "__Z11BKE_reportfP10ReportList11eReportTypePKcz"
+      },
+      {
+        "pc": "0x1012746bc",
+        "callee": "__ZZL27rna_ID_paint_owner_teardownP8bContextP4MainPP2IDS5_iPP5ScenePP9ViewLayerP10ReportListPKcENK3$_0clES4_"
+      },
+      {
+        "pc": "0x101274818",
+        "callee": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb"
+      },
+      {
+        "pc": "0x10127488c",
+        "callee": "__Z29BKE_libblock_find_session_uidP4Mainsj"
+      },
+      {
+        "pc": "0x1012748d8",
+        "callee": "__Z29BKE_libblock_find_session_uidP4Mainsj"
+      },
+      {
+        "pc": "0x101274924",
+        "callee": "__ZL29rna_ID_override_state_matchesP4MainP2IDRK18RnaIDOverrideState"
+      },
+      {
+        "pc": "0x101274a4c",
+        "callee": "__Z11BKE_reportfP10ReportList11eReportTypePKcz"
+      },
+      {
+        "pc": "0x101274a6c",
+        "callee": "_zlibVersion+0x104b5f43c"
+      }
+    ]
+  },
+  "device_acceptance": false,
+  "limits": [
+    "Effective callback/wrapper direct call and refusal CFG only; no complete native execution/WM/UIKit/device proof",
+    "Unsupported external canary termination edges recorded, not emulated",
+    "Mangled local signatures are not argument ABI proof: LLVM specializes unused args; independent actual generated wrapper review required"
+  ],
+  "independent_review": {
+    "status": "pass",
+    "report": "independent-compiled-review.json",
+    "scope": "Seven actual wrapper/context/guard refusal paths; specialized/inlined args; fresh ID/Library type checks"
+  }
+}

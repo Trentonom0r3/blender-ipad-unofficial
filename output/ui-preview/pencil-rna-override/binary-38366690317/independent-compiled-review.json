@@ -1,0 +1,128 @@
+{
+  "status": "pass_bounded_manual_compiled_review",
+  "reviewer": "compiled_remap_review",
+  "source": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019",
+  "run": 38366690317,
+  "binary_uuid": "E8566332-08BF-3760-AFF3-1C8B6EA2E3D9",
+  "binary_sha256": "8889edf6d4ddbcd06be4c4caf3e6fbf178e6730da8e66564a7c4d08d93fd680e",
+  "helper": {
+    "unique_selected_symbol": "__ZL27rna_ID_paint_owner_teardownP8bContextP4MainPP2IDS5_iPP5ScenePP9ViewLayerP10ReportListPKc",
+    "start": "0x101274454",
+    "strict_native_teardown_next": "0x101274818",
+    "direct_identity_type_check": "0x1012748a4..0x1012748b0",
+    "direct_library_type_check": "0x1012748f0..0x101274900",
+    "outlined_identity_type_check": "0x101274b58..0x101274b64",
+    "outlined_library_type_check": "0x101274bac..0x101274bb8",
+    "fresh_override_state_match": "0x101274924",
+    "view_layer_reacquire_loop": "0x101274974..0x101274994"
+  },
+  "callbacks": {
+    "rna_ID_override_create": {
+      "effective_function": "rna_ID_override_create",
+      "guard": "0x10126b468",
+      "refusal_branch": "0x10126b46c",
+      "refusal_target": "0x10126b414",
+      "ordinary_return": "0x10126b428",
+      "first_mutation": "0x10126b4bc",
+      "wrapper": "ID_override_create_call",
+      "wrapper_context_forward": "0x10126c05c: x2 <- x19 <- entry x0",
+      "context_into_helper": "0x10126b44c: x0 <- x21 <- callback x2"
+    },
+    "rna_ID_override_hierarchy_create": {
+      "effective_function": "rna_ID_override_hierarchy_create",
+      "guard": "0x10126b5c8",
+      "refusal_branch": "0x10126b5cc",
+      "refusal_target": "0x10126b610",
+      "ordinary_return": "0x10126b640",
+      "first_mutation": "0x10126b650",
+      "wrapper": "ID_override_hierarchy_create_call",
+      "wrapper_context_forward": "0x10126c0b8: x2 <- x19 <- entry x0",
+      "context_into_helper": "0x10126b5bc: x0 <- x19 <- callback x2"
+    },
+    "rna_ID_override_library_reset": {
+      "effective_function": "rna_ID_override_library_reset",
+      "guard": "0x10126b858",
+      "refusal_branch": "0x10126b85c",
+      "refusal_target": "0x10126b8a4",
+      "ordinary_return": "0x10126b8b4",
+      "native_mutation_calls": [
+        "0x10126b880",
+        "0x10126b8cc"
+      ],
+      "wrapper": "IDOverrideLibrary_reset_call",
+      "wrapper_context_forward": "0x10126c4fc: x2 <- x20 <- entry x0",
+      "context_into_helper": "0x10126b83c: x0 <- x8 <- callback x2",
+      "optimization": "Unused IDOverrideLibrary argument removed from actual local ABI"
+    },
+    "rna_ID_override_library_destroy": {
+      "effective_function": "rna_ID_override_library_destroy",
+      "guard": "0x10126b93c",
+      "refusal_branch": "0x10126b940",
+      "refusal_target": "0x10126b984",
+      "ordinary_return": "0x10126b994",
+      "native_mutation_calls": [
+        "0x10126b960",
+        "0x10126b9b8",
+        "0x10126b9c4"
+      ],
+      "wrapper": "IDOverrideLibrary_destroy_call",
+      "wrapper_context_forward": "0x10126c550: x2 <- x20 <- entry x0",
+      "context_into_helper": "0x10126b920: x0 <- x8 <- callback x2",
+      "optimization": "Unused IDOverrideLibrary argument removed from actual local ABI"
+    },
+    "rna_ID_override_library_resync": {
+      "effective_function": "rna_ID_override_library_resync",
+      "guard": "0x10126ba50",
+      "refusal_branch": "0x10126ba54",
+      "refusal_target": "0x10126ba9c",
+      "ordinary_return": "0x10126bac4",
+      "first_mutation": "0x10126bb08",
+      "wrapper": "IDOverrideLibrary_resync_call",
+      "wrapper_context_forward": "0x10126c5c8: x3 <- x20 <- entry x0",
+      "context_into_helper": "0x10126ba34: x0 <- callback x3"
+    },
+    "rna_ID_user_remap": {
+      "effective_function": "ID_user_remap_call",
+      "optimization": "Callback body inlined into generated wrapper; no standalone rna_ID_user_remap symbol",
+      "guard": "0x10126c198",
+      "refusal_branch": "0x10126c19c",
+      "refusal_target": "0x10126c1d4",
+      "ordinary_return": "0x10126c1fc",
+      "first_mutation": "0x10126c1c4",
+      "notifier": "0x10126c1d0",
+      "fresh_args": "0x10126c1a0",
+      "fresh_distinct_and_type_checks": [
+        "0x10126c1a4",
+        "0x10126c1b4"
+      ],
+      "context_into_helper": "0x10126c180: x0 <- x20 <- wrapper entry x0"
+    },
+    "rna_ID_make_local": {
+      "effective_function": "rna_ID_make_local",
+      "guard": "0x10126b728",
+      "refusal_branch": "0x10126b72c",
+      "refusal_target": "0x10126b74c",
+      "ordinary_return": "0x10126b7f0",
+      "null_return": "0x10126b74c: x21 <- 0; 0x10126b7dc: x0 <- x21",
+      "native_localization": "0x10126b78c",
+      "cleanup": "0x10126b7a0",
+      "fresh_linked_and_newid_checks": [
+        "0x10126b738",
+        "0x10126b744"
+      ],
+      "local_metadata_branch": "0x10126b6e8 branches to 0x10126b754 without helper",
+      "wrapper": "ID_make_local_call",
+      "wrapper_context_forward": "0x10126c238: x2 <- x19 <- entry x0",
+      "context_into_helper": "0x10126b710: x0 <- x8 <- callback x2",
+      "optimization": "Unused clear_proxy removed from actual local ABI; x3 is clear_liboverride and x4 is clear_asset_data despite original mangled signature"
+    }
+  },
+  "known_id_mutation_or_cleanup_on_guard_refusal": [],
+  "actual_generated_wrapper_context_forwarding": "All seven effective consumers pass the original entry context to the selected helper, through their actual optimized local ABI or inlined body.",
+  "device_acceptance": false,
+  "limits": [
+    "Bounded decoded direct call and branch review only; no complete WM, UIKit, allocator, ID semantics, native cancellation execution, launch, or device proof.",
+    "Stack-canary mismatch edges leave the local decoded symbol to an external termination stub; no semantic execution of that external stub was proved.",
+    "Outer 256-attempt counter does not establish a global reentrancy bound."
+  ]
+}
