@@ -559,6 +559,12 @@ struct bContext {
 };
 static Main *G_MAIN=nullptr;
 enum { WM_HANDLER_TYPE_OP=7 };
+enum class eIPadPencilPaintOwnerContextPolicy : uint8_t {
+  CallerContext, MaterialAssignmentOriginal,
+};
+bool WM_event_ipad_pencil_paint_owner_teardown_next(
+    bContext *, Main *, bool *,
+    eIPadPencilPaintOwnerContextPolicy = eIPadPencilPaintOwnerContextPolicy::CallerContext);
 #define LISTBASE_FOREACH(type,item,list) \
   for(type item=static_cast<type>((list)->first);item;item=item->next)
 static Main *CTX_data_main(const bContext *C){return C->main;}
@@ -729,9 +735,11 @@ class PencilPaintOutlinerOverrideClearTests(unittest.TestCase):
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(WM_OWNER_NEXT_CPP)
 
     def test_outliner_uses_narrow_wm_owner_api(self):
-        self.assertIn(
-            "bool WM_event_ipad_pencil_paint_owner_teardown_next(\n    bContext *C, Main *bmain, bool *r_did_teardown);",
+        self.assertIn("enum class eIPadPencilPaintOwnerContextPolicy : uint8_t", WM_API_SOURCE)
+        self.assertRegex(
             WM_API_SOURCE,
+            r"eIPadPencilPaintOwnerContextPolicy policy\s*=\s*"
+            r"eIPadPencilPaintOwnerContextPolicy::CallerContext\);",
         )
         self.assertIn("WM_event_ipad_pencil_paint_owner_teardown_next(C, bmain, &did_teardown)",
                       OVERRIDE_GUARD)

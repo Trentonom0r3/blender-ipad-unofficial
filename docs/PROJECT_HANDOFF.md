@@ -1,3 +1,35 @@
+## Material assignment Pencil-owner source validated - 2026-10-13
+
+Actual Object.active_material and MaterialSlot.material now have connected
+ownership admission. Explicit Python conversion snapshots target/value storage,
+retires registered original native paint owners, then revalidates typed IDs and
+physical slot arrays before the ordinary Debug/set/update frame. Native UI,
+direct setters and unconditional RNA updates only query absence, avoiding
+cancellation callbacks in borrowed UI frames. Every explicit material drain has
+a recursion barrier, including nonnull contexts; existing Mesh/ID default policy
+retains null-context owner refusal. Native no-owner behavior and C++17 ABI remain.
+
+Final **452/452** host tests (**318.399s**), connected **21/21** (**25.951s**),
+retained Mesh17/17, shared WM6/6, **131-file** pinned preflight/diff and independent
+native/outer/literal UI reviews pass. The earlier450 full check precedes the
+corrected native MAXMAT model and two final admission tests. Portable tracked
+primary material bodies execute with ignored source caches unavailable.
+Canonical LF patch SHA256:
+3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637.
+
+Four prior sections change and two are added;125 remain exact. All seven
+interaction Python and39 GHOST/interface/HUD/View3D sections are unchanged.
+Every accepted nine-Base/More Tools/icon/native-bar/browsing/corner design remains.
+Report: output/ui-preview/pencil-material-assignment/source-verification.json.
+Native cancellation/allocation/depsgraph and Python interpreter are bounded
+fixture models. Refusal does not roll back callbacks or prove a global bound.
+
+This coherent source is not yet native built or device accepted. Latest verified
+IPA remains23596e3/run38407989371. Next commit/push this exact source, build once,
+verify the full downloaded IPA and inspect actual material/outer/Python/WM
+compiled consumers plus preserved HUD launch/Weight cleanup. Full personal
+Pencil-first goal remains unfinished; preserve all evidence and private reports.
+
 ## Verified Mesh storage Pencil-owner IPA - 2026-10-13
 
 Exact source `23596e309faf99fabf44d95e762dbb37271c9a43` passed hosted preflight,

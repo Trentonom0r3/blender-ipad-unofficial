@@ -117424,7 +117424,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  struct MenuType;
  struct PointerRNA;
  struct PropertyRNA;
-@@ -701,6 +703,27 @@
+@@ -701,6 +703,37 @@
                                  void *user_data,
                                  bool postpone);
  void WM_event_remove_handlers_by_area(ListBase *handlers, const ScrArea *area);
@@ -117439,8 +117439,18 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 +                                               uint64_t owner_brush_uid = 0);
 +/** A null output queries proved owner absence without cancelling any owner.
 + * Non-null output drains the selected owner window and reports teardown. */
++enum class eIPadPencilPaintOwnerContextPolicy : uint8_t {
++  CallerContext,
++  MaterialAssignmentOriginal,
++};
++/* Only the explicit Python material producer may request an original registered
++ * owner context without a caller context. Null output always queries absence. */
 +bool WM_event_ipad_pencil_paint_owner_teardown_next(
-+    bContext *C, Main *bmain, bool *r_did_teardown);
++    bContext *C,
++    Main *bmain,
++    bool *r_did_teardown,
++    eIPadPencilPaintOwnerContextPolicy policy =
++        eIPadPencilPaintOwnerContextPolicy::CallerContext);
 +bool WM_event_ipad_pencil_paint_tagged_brushes_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_tagged_images_teardown(Main *bmain);
 +bool WM_event_ipad_pencil_paint_brush_teardown(Main *bmain, uint64_t brush_uid);
@@ -117452,7 +117462,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  void WM_event_free_ui_handler_all(bContext *C,
                                    ListBase *handlers,
                                    wmUIHandlerFunc handle_fn,
-@@ -740,7 +763,7 @@
+@@ -740,7 +773,7 @@
  /**
   * Called on exit or remove area, only here call cancel callback.
   */
@@ -117461,7 +117471,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
 
  wmEventHandler_Dropbox *WM_event_add_dropbox_handler(ListBase *handlers, ListBase *dropboxes);
 
-@@ -956,6 +979,14 @@
+@@ -956,6 +989,14 @@
 
  /* Operator API. */
 
@@ -117476,7 +117486,7 @@ diff --git a/source/blender/windowmanager/WM_api.hh b/source/blender/windowmanag
  void WM_operator_free(wmOperator *op);
  void WM_operator_free_all_after(wmWindowManager *wm, wmOperator *op);
  /**
-@@ -1528,6 +1559,10 @@
+@@ -1528,6 +1569,10 @@
   * Context checked on having screen, window and area.
   */
  wmGesture *WM_gesture_new(wmWindow *window, const ARegion *region, const wmEvent *event, int type);
@@ -126738,7 +126748,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          properties = &tool_properties;
          use_last_properties = false;
        }
-@@ -2787,8 +3161,1065 @@
+@@ -2787,8 +3161,1093 @@
    return WM_HANDLER_BREAK;
  }
 
@@ -127031,9 +127041,21 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 + * window-manager traversal here avoids exposing private handler types;
 + * callers revalidate input IDs/context after the completed native drain. */
 +bool WM_event_ipad_pencil_paint_owner_teardown_next(
-+    bContext *C, Main *bmain, bool *r_did_teardown)
++    bContext *C,
++    Main *bmain,
++    bool *r_did_teardown,
++    const eIPadPencilPaintOwnerContextPolicy policy)
 +{
++  /* An original-context material drain cannot recursively admit mutation while
++   * a native cancellation callback still owns its enclosing operator frame. */
++  static bool original_material_drain_active = false;
 +  if (r_did_teardown) *r_did_teardown = false;
++  if (original_material_drain_active ||
++      (policy != eIPadPencilPaintOwnerContextPolicy::CallerContext &&
++       policy != eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal))
++  {
++    return false;
++  }
 +  if (!bmain || G_MAIN != bmain ||
 +      (C && CTX_data_main(C) != bmain))
 +  {
@@ -127125,7 +127147,13 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +   * inventory and registered-owner checks above still apply, but this mode
 +   * must never create a context or call a native cancellation callback. */
 +  if (!r_did_teardown) return false;
-+  if (!context_wm || !context_win || !context_unchanged()) return false;
++  const bool original_material_context =
++      !C && policy == eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal;
++  if ((!original_material_context && (!context_wm || !context_win)) ||
++      !context_unchanged())
++  {
++    return false;
++  }
 +  if (!owner.wm_uid || !owner.winid || !owner.lifetime) return false;
 +
 +  wmWindowManager *live_wm = nullptr;
@@ -127144,6 +127172,16 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +  }
 +  if (!live_wm || !live_win) return false;
 +
++  struct OriginalMaterialDrainScope {
++    bool &active;
++    const bool enabled;
++    ~OriginalMaterialDrainScope()
++    {
++      if (enabled) active = false;
++    }
++  } original_scope{original_material_drain_active,
++                   policy == eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal};
++  if (original_scope.enabled) original_material_drain_active = true;
 +  bContext *owner_C = CTX_create();
 +  if (!owner_C) return false;
 +  CTX_data_main_set(owner_C, bmain);
@@ -127804,7 +127842,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    LISTBASE_FOREACH (bScreen *, screen, &G_MAIN->screens) {
      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
        if (area->spacetype == SPACE_FILE) {
-@@ -2817,6 +4248,311 @@
+@@ -2817,6 +4276,311 @@
 
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -128116,7 +128154,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -2836,6 +4572,15 @@
+@@ -2836,6 +4600,15 @@
        sfile->op = handler->op;
 
        ED_fileselect_set_params_from_userdef(sfile);
@@ -128132,7 +128170,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        action = WM_HANDLER_BREAK;
        break;
-@@ -2985,6 +4730,12 @@
+@@ -2985,6 +4758,12 @@
          }
 
          if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
@@ -128145,7 +128183,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            wm_operator_free_for_fileselect(handler->op);
          }
        }
-@@ -3423,6 +5174,35 @@
+@@ -3423,6 +5202,35 @@
                                                  wmEvent *event,
                                                  ListBase *handlers)
  {
@@ -128181,7 +128219,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    const bool do_debug_handler =
        (G.debug & G_DEBUG_HANDLERS) &&
        /* Comment this out to flood the console! (if you really want to test). */
-@@ -3449,6 +5229,16 @@
+@@ -3449,6 +5257,16 @@
    {
      handler_base_next = handler_base->next;
 
@@ -128198,7 +128236,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      /* During this loop, UI handlers for nested menus can tag multiple handlers free. */
      if (handler_base->flag & WM_HANDLER_DO_FREE) {
        /* Pass. */
-@@ -3469,6 +5259,26 @@
+@@ -3469,6 +5287,26 @@
          wmEventHandler_Keymap *handler = (wmEventHandler_Keymap *)handler_base;
          wmEventHandler_KeymapResult km_result;
          WM_event_get_keymaps_from_handler(wm, win, handler, &km_result);
@@ -128225,7 +128263,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          eHandlerActionFlag action_iter = WM_HANDLER_CONTINUE;
          /* Compute in advance, as event may be freed on WM_HANDLER_BREAK. */
          const bool event_is_timer = ISTIMER(event->type);
-@@ -3609,6 +5419,9 @@
+@@ -3609,6 +5447,9 @@
      wm_cursor_arrow_move(CTX_wm_window(C), event);
    }
 
@@ -128235,7 +128273,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    /* Do some extra sanity checking before returning the action. */
    wm_event_handler_return_value_check(C, event, action);
    return action;
-@@ -3808,6 +5621,24 @@
+@@ -3808,6 +5649,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -128260,7 +128298,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +5653,12 @@
+@@ -3822,6 +5681,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -128273,7 +128311,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4093,6 +5930,142 @@
+@@ -4093,6 +5958,142 @@
    return wm_event_do_region_handlers(C, event, region_hovered);
  }
 
@@ -128416,7 +128454,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  void wm_event_do_handlers(bContext *C)
  {
    wmWindowManager *wm = CTX_wm_manager(C);
-@@ -4119,6 +6092,13 @@
+@@ -4119,6 +6120,13 @@
 
      wmEvent *event;
      while ((event = static_cast<wmEvent *>(win->runtime->event_queue.first))) {
@@ -128430,7 +128468,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        eHandlerActionFlag action = WM_HANDLER_CONTINUE;
 
        /* Force handling drag if a key is pressed even if the drag threshold has not been met.
-@@ -4177,6 +6157,33 @@
+@@ -4177,6 +6185,33 @@
 
        CTX_wm_window_set(C, win);
 
@@ -128464,7 +128502,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #ifdef WITH_XR_OPENXR
        if (event->type == EVT_XR_ACTION) {
          wm_event_handle_xrevent(C, wm, win, event);
-@@ -4209,6 +6216,26 @@
+@@ -4209,6 +6244,26 @@
        wm_region_mouse_co(C, event);
 
        /* First we do priority handlers, modal + some limited key-maps. */
@@ -128491,7 +128529,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        action |= wm_handlers_do(C, event, &win->modalhandlers);
 
        /* File-read case. */
-@@ -4226,6 +6253,20 @@
+@@ -4226,6 +6281,20 @@
            }
          }
        }
@@ -128512,7 +128550,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
-@@ -4247,6 +6288,15 @@
+@@ -4247,6 +6316,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -128528,7 +128566,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -4328,6 +6378,27 @@
+@@ -4328,6 +6406,27 @@
        /* Un-link and free here, Blender-quit then frees all. */
        BLI_remlink(&win->runtime->event_queue, event);
        wm_event_free_last_handled(win, event);
@@ -128556,7 +128594,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      }
 
      /* Only add mouse-move when the event queue was read entirely. */
-@@ -4352,6 +6423,9 @@
+@@ -4352,6 +6451,9 @@
 
    /* End GPU render boundary. Certain event handlers require GPU usage. */
    GPU_render_end();
@@ -128566,7 +128604,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  }
 
  /** \} */
-@@ -4617,11 +6691,86 @@
+@@ -4617,11 +6719,86 @@
  }
  #endif
 
@@ -128653,7 +128691,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    wmEventHandler_Op *handler = MEM_callocN<wmEventHandler_Op>(__func__);
    handler->head.type = WM_HANDLER_TYPE_OP;
 
-@@ -4642,6 +6791,12 @@
+@@ -4642,6 +6819,12 @@
                                                             -1;
 
    wm_handler_operator_insert(win, handler);
@@ -128666,7 +128704,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (op->type->modalkeymap) {
      WM_window_status_area_tag_redraw(win);
-@@ -5059,6 +7214,19 @@
+@@ -5059,6 +7242,19 @@
                                             void *user_data,
                                             const eWM_EventHandlerFlag flag)
  {
@@ -128686,7 +128724,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    wmEventHandler_UI *handler = MEM_callocN<wmEventHandler_UI>(__func__);
    handler->head.type = WM_HANDLER_TYPE_UI;
    handler->handle_fn = handle_fn;
-@@ -5736,7 +7904,9 @@
+@@ -5736,7 +7932,9 @@
     * them for better performance. */
    if (event_last && event_last->type == MOUSEMOVE) {
      event_last->type = INBETWEEN_MOUSEMOVE;
@@ -128697,7 +128735,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    }
 
    wmEvent *event_new = wm_event_add_intern(win, event);
-@@ -5768,6 +7938,9 @@
+@@ -5768,6 +7966,9 @@
      memset(&tevent, 0x0, sizeof(tevent));
    }
 
@@ -128707,7 +128745,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    tevent.type = MOUSEMOVE;
    tevent.val = KM_NOTHING;
    copy_v2_v2_int(tevent.prev_xy, tevent.xy);
-@@ -5784,7 +7957,9 @@
+@@ -5784,7 +7985,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -128718,7 +128756,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -5920,6 +8095,149 @@
+@@ -5920,6 +8123,149 @@
      return;
    }
 
@@ -128868,7 +128906,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    /**
     * Having both, \a event and \a event_state, can be highly confusing to work with,
     * but is necessary for our current event system, so let's clear things up a bit:
-@@ -5936,6 +8254,16 @@
+@@ -5936,6 +8282,16 @@
    /* Initialize and copy state (only mouse x y and modifiers). */
    event = *event_state;
    event.flag = (eWM_EventFlag)0;
@@ -128885,7 +128923,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    /**
     * Always support accessing the last key press/release. This is set from `win->eventstate`,
-@@ -5990,6 +8318,25 @@
+@@ -5990,6 +8346,25 @@
 
        wm_stereo3d_mouse_offset_apply(win, event.xy);
        wm_tablet_data_from_ghost(&cd->tablet, &event.tablet);
@@ -128911,7 +128949,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        event.type = MOUSEMOVE;
        event.val = KM_NOTHING;
-@@ -6002,7 +8349,8 @@
+@@ -6002,7 +8377,8 @@
 
        /* Also add to other window if event is there, this makes overdraws disappear nicely. */
        /* It remaps mouse-coord to other window in event. */
@@ -128921,7 +128959,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        if (win_other) {
          wmEvent event_other = *win_other->eventstate;
 
-@@ -6032,6 +8380,9 @@
+@@ -6032,6 +8408,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -128931,7 +128969,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +8456,30 @@
+@@ -6105,6 +8484,30 @@
        }
        break;
      }
@@ -128962,7 +129000,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +8506,27 @@
+@@ -6131,6 +8534,27 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -128990,7 +129028,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +8539,8 @@
+@@ -6143,7 +8567,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -129000,7 +129038,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        if (win_other) {
          wmEvent event_other = *win_other->eventstate;
 
-@@ -6160,6 +8557,8 @@
+@@ -6160,6 +8585,8 @@
          event_other.type = event.type;
          event_other.val = event.val;
          event_other.tablet = event.tablet;
@@ -156911,22 +156949,37 @@ diff --git a/source/blender/editors/object/object_select.cc b/source/blender/edi
 diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makesrna/intern/rna_object.cc
 --- a/source/blender/makesrna/intern/rna_object.cc
 +++ b/source/blender/makesrna/intern/rna_object.cc
-@@ -303,1 +303,2 @@
+@@ -286,6 +286,9 @@
+ #ifdef RNA_RUNTIME
+
+ #  include <algorithm>
++#  include <vector>
++#  include <tuple>
++#  include <cstdint>
+
+ #  include <fmt/format.h>
+
+@@ -300,6 +303,7 @@
+ #  include "DNA_material_types.h"
+ #  include "DNA_node_types.h"
+
 +#  include "BLI_listbase.h"
  #  include "BLI_math_matrix.h"
-@@ -318,6 +319,7 @@
+ #  include "BLI_math_vector.h"
+
+@@ -318,6 +322,8 @@
  #  include "BKE_key.hh"
  #  include "BKE_layer.hh"
  #  include "BKE_library.hh"
++#  include "BKE_report.hh"
 +#  include "BKE_main.hh"
  #  include "BKE_light_linking.h"
  #  include "BKE_material.hh"
  #  include "BKE_mesh.hh"
-@@ -512,10 +514,118 @@
+@@ -512,10 +518,118 @@
    return RNA_id_pointer_create(reinterpret_cast<ID *>(ob->data));
  }
--
-+
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static Object *rna_Object_main_find_by_uid(Main *bmain, const uint64_t session_uid)
 +{
@@ -157039,10 +157092,308 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +  }
 +#endif
 +
--
-+
+
    if (ob->mode & OB_MODE_EDIT) {
      return;
+@@ -1112,10 +1226,281 @@
+   return RNA_id_pointer_create(reinterpret_cast<ID *>(ma));
+ }
+
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct RnaMaterialIDIdentity {
++  uintptr_t address = 0;
++  uint32_t uid = 0;
++  short type = 0;
++  bool operator==(const RnaMaterialIDIdentity &other) const
++  {
++    return std::tie(address, uid, type) == std::tie(other.address, other.uid, other.type);
++  }
++};
++
++struct RnaMaterialIDState {
++  RnaMaterialIDIdentity id, library, reference, hierarchy_root;
++  uintptr_t override_address = 0;
++  int override_flag = 0;
++  int extern_tag = 0;
++  bool operator==(const RnaMaterialIDState &other) const
++  {
++    return std::tie(id, library, reference, hierarchy_root, override_address, override_flag, extern_tag) ==
++           std::tie(other.id, other.library, other.reference, other.hierarchy_root,
++                    other.override_address, other.override_flag, other.extern_tag);
++  }
++};
++
++/* First prove list membership by numeric address; never read a saved ID before
++ * it is freshly found in this Main. A session UID also rejects address reuse. */
++static ID *rna_material_id_find(Main *bmain, const uintptr_t address)
++{
++  ID *result = nullptr;
++  int matches = 0;
++  ID *id;
++  FOREACH_MAIN_ID_BEGIN (bmain, id) {
++    if (uintptr_t(id) == address) {
++      result = id;
++      matches++;
++    }
++  }
++  FOREACH_MAIN_ID_END;
++  return matches == 1 ? result : nullptr;
++}
++
++static bool rna_material_identity_capture(Main *bmain,
++                                           const uintptr_t address,
++                                           RnaMaterialIDIdentity *r_identity)
++{
++  *r_identity = {};
++  if (!address) return true;
++  ID *id = rna_material_id_find(bmain, address);
++  if (!id || !id->session_uid) return false;
++  r_identity->address = address;
++  r_identity->uid = id->session_uid;
++  r_identity->type = GS(id->name);
++  return true;
++}
++
++static bool rna_material_state_capture(Main *bmain,
++                                       const uintptr_t address,
++                                       RnaMaterialIDState *r_state)
++{
++  *r_state = {};
++  if (!rna_material_identity_capture(bmain, address, &r_state->id)) return false;
++  if (!address) return true;
++  ID *id = rna_material_id_find(bmain, address);
++  if (!id || !rna_material_identity_capture(bmain, uintptr_t(id->lib), &r_state->library) ||
++      (r_state->library.address && r_state->library.type != ID_LI))
++  {
++    return false;
++  }
++  r_state->extern_tag = id->tag & ID_TAG_EXTERN;
++  if (id->override_library) {
++    r_state->override_address = uintptr_t(id->override_library);
++    r_state->override_flag = id->override_library->flag;
++    if (!rna_material_identity_capture(bmain,
++                                       uintptr_t(id->override_library->reference),
++                                       &r_state->reference) ||
++        !rna_material_identity_capture(bmain,
++                                       uintptr_t(id->override_library->hierarchy_root),
++                                       &r_state->hierarchy_root))
++    {
++      return false;
++    }
++  }
++  return true;
++}
++
++struct RnaMaterialAssignState {
++  RnaMaterialIDState object, data, incoming;
++  short object_type = 0, actcol = 0, object_count = 0, data_count = 0;
++  uintptr_t object_array = 0, data_array = 0, bits_array = 0;
++  std::vector<RnaMaterialIDState> object_materials, data_materials;
++  std::vector<char> bits;
++  bool operator==(const RnaMaterialAssignState &other) const
++  {
++    return std::tie(object, data, incoming, object_type, actcol, object_count, data_count,
++                    object_array, data_array, bits_array, object_materials, data_materials, bits) ==
++           std::tie(other.object, other.data, other.incoming, other.object_type, other.actcol,
++                    other.object_count, other.data_count, other.object_array, other.data_array,
++                    other.bits_array, other.object_materials, other.data_materials, other.bits);
++  }
++};
++
++static short rna_material_data_type(const short object_type)
++{
++  switch (object_type) {
++    case OB_MESH: return ID_ME;
++    case OB_CURVES_LEGACY:
++    case OB_FONT:
++    case OB_SURF: return ID_CU_LEGACY;
++    case OB_MBALL: return ID_MB;
++    case OB_CURVES: return ID_CV;
++    case OB_POINTCLOUD: return ID_PT;
++    case OB_VOLUME: return ID_VO;
++    case OB_GREASE_PENCIL: return ID_GP;
++    default: return 0;
++  }
++}
++
++/* Snapshot physical arrays directly. The ordinary material getter can clamp
++ * Object.totcol and hide a Grease Pencil material; it is not a pure capture. */
++static bool rna_material_assign_capture(Main *bmain,
++                                        const uintptr_t object_address,
++                                        const uintptr_t material_address,
++                                        RnaMaterialAssignState *r_state)
++{
++  *r_state = {};
++  if (!rna_material_state_capture(bmain, object_address, &r_state->object) ||
++      r_state->object.id.type != ID_OB ||
++      !rna_material_state_capture(bmain, material_address, &r_state->incoming) ||
++      (material_address && r_state->incoming.id.type != ID_MA))
++  {
++    return false;
++  }
++  Object *object = reinterpret_cast<Object *>(rna_material_id_find(bmain, object_address));
++  if (!object) return false;
++  r_state->object_type = object->type;
++  if (!rna_material_state_capture(bmain, uintptr_t(object->data), &r_state->data) ||
++      !r_state->data.id.address ||
++      r_state->data.id.type != rna_material_data_type(object->type))
++  {
++    return false;
++  }
++  short *data_count = BKE_id_material_len_p(reinterpret_cast<ID *>(object->data));
++  Material ***data_array = BKE_id_material_array_p(reinterpret_cast<ID *>(object->data));
++  if (!data_count || !data_array || object->totcol < 0 || object->totcol > MAXMAT ||
++      *data_count < 0 || *data_count > MAXMAT ||
++      (object->totcol && (!object->mat || !object->matbits)) ||
++      (*data_count && !*data_array))
++  {
++    return false;
++  }
++  r_state->actcol = object->actcol;
++  r_state->object_count = object->totcol;
++  r_state->data_count = *data_count;
++  r_state->object_array = uintptr_t(object->mat);
++  r_state->bits_array = uintptr_t(object->matbits);
++  r_state->data_array = uintptr_t(*data_array);
++  for (int i = 0; i < object->totcol; i++) {
++    RnaMaterialIDState state;
++    if (!rna_material_state_capture(bmain, uintptr_t(object->mat[i]), &state) ||
++        (state.id.address && state.id.type != ID_MA))
++    {
++      return false;
++    }
++    r_state->object_materials.push_back(state);
++    r_state->bits.push_back(object->matbits[i]);
++  }
++  for (int i = 0; i < *data_count; i++) {
++    RnaMaterialIDState state;
++    if (!rna_material_state_capture(bmain, uintptr_t((*data_array)[i]), &state) ||
++        (state.id.address && state.id.type != ID_MA))
++    {
++      return false;
++    }
++    r_state->data_materials.push_back(state);
++  }
++  return true;
++}
++
++/* Neither this gate nor direct setters introduce callbacks in borrowed UI
++ * frames. It also blocks reentrant writes during the explicit original drain. */
++static bool rna_material_assign_owner_absent(ReportList *reports)
++{
++  if (G_MAIN &&
++      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr))
++  {
++    return true;
++  }
++  if (reports) BKE_report(reports, RPT_ERROR, "Material assignment was refused while a Pencil paint owner is active");
++  return false;
++}
++#endif
++
++bool RNA_object_material_assign_paint_owner_teardown(bContext *C,
++                                                     PointerRNA *ptr,
++                                                     PointerRNA value,
++                                                     const bool is_slot,
++                                                     ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  Main *bmain = G_MAIN;
++  if (bmain && WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, bmain, nullptr)) {
++    return true;
++  }
++  const auto refuse = [&]() {
++    if (reports) BKE_report(reports, RPT_ERROR, "Material assignment was refused: Pencil owner or material inputs changed");
++    return false;
++  };
++  if (!bmain || !ptr || !ptr->owner_id ||
++      ptr->type != (is_slot ? &RNA_MaterialSlot : &RNA_Object) ||
++      (!is_slot && ptr->data != ptr->owner_id) ||
++      (value.data && (value.type != &RNA_Material || value.owner_id != value.data)) ||
++      (!value.data && value.owner_id))
++  {
++    return refuse();
++  }
++  const uintptr_t object_address = uintptr_t(ptr->owner_id);
++  const uintptr_t material_address = uintptr_t(value.data);
++  const uintptr_t slot_address = uintptr_t(ptr->data);
++  if (is_slot && (slot_address < object_address ||
++                  slot_address - object_address >= MAXMAT))
++  {
++    return refuse();
++  }
++  if ((!is_slot && !ptr->ancestors.is_empty()) ||
++      (is_slot && ptr->ancestors.size() > 1))
++  {
++    return refuse();
++  }
++  for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
++    if (ancestor.type != &RNA_Object || uintptr_t(ancestor.data) != object_address) {
++      return refuse();
++    }
++  }
++  if (!value.ancestors.is_empty()) return refuse();
++  RnaMaterialAssignState state;
++  if (!rna_material_assign_capture(bmain, object_address, material_address, &state) ||
++      (is_slot && slot_address - object_address >= uintptr_t(state.object_count)))
++  {
++    return refuse();
++  }
++  for (int attempt = 0; attempt < 256; attempt++) {
++    bool did_teardown = false;
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(
++            C,
++            bmain,
++            &did_teardown,
++            eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal))
++    {
++      return refuse();
++    }
++    if (!did_teardown) return true;
++    if (G_MAIN != bmain) return refuse();
++    RnaMaterialAssignState fresh;
++    if (!rna_material_assign_capture(bmain, object_address, material_address, &fresh) ||
++        !(fresh == state))
++    {
++      return refuse();
++    }
++  }
++  return refuse();
++#else
++  UNUSED_VARS(C, ptr, value, is_slot, reports);
++  return true;
++#endif
++}
++
+ static void rna_Object_active_material_set(PointerRNA *ptr,
+                                            PointerRNA value,
+-                                           ReportList * /*reports*/)
+-{
++                                           ReportList *reports)
++{
++  UNUSED_VARS(reports);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_material_assign_owner_absent(reports)) return;
++#endif
+   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
+
+   DEG_id_tag_update(static_cast<ID *>(value.data), 0);
+@@ -1343,8 +1728,12 @@
+
+ static void rna_MaterialSlot_material_set(PointerRNA *ptr,
+                                           PointerRNA value,
+-                                          ReportList * /*reports*/)
+-{
++                                          ReportList *reports)
++{
++  UNUSED_VARS(reports);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_material_assign_owner_absent(reports)) return;
++#endif
+   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
+   int index = rna_MaterialSlot_index(ptr);
+
 diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/intern/rna_ID.cc
 --- a/source/blender/makesrna/intern/rna_ID.cc
 +++ b/source/blender/makesrna/intern/rna_ID.cc
@@ -157574,11 +157925,24 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA_access.hh
 --- a/source/blender/makesrna/RNA_access.hh
 +++ b/source/blender/makesrna/RNA_access.hh
-@@ -30,6 +30,15 @@
+@@ -30,6 +30,28 @@
  struct ReportList;
  struct Scene;
  struct bContext;
 +
++/* Exact shipped material pointer properties. The explicit Python producer has
++ * a report/exception boundary; ordinary UI/set/update paths only query absence. */
++bool RNA_property_is_material_assignment(PropertyRNA *prop);
++bool RNA_property_material_assign_paint_owner_teardown(bContext *C,
++                                                       PointerRNA *ptr,
++                                                       PropertyRNA *prop,
++                                                       PointerRNA value,
++                                                       ReportList *reports);
++bool RNA_object_material_assign_paint_owner_teardown(bContext *C,
++                                                     PointerRNA *ptr,
++                                                     PointerRNA value,
++                                                     bool is_slot,
++                                                     ReportList *reports);
 +/** Retire registered Pencil paint owners before native ID/storage mutation.
 + * Reacquires the input ID after each completed WM drain; non-active Mains and
 + * non-Apple builds preserve their native no-owner path. */
@@ -157829,3 +158193,159 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
    RNA_def_function_ui_description(
        func,
        "Validate material indices of polygons, return True when the mesh has had "
+diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makesrna/intern/rna_access.cc
+--- a/source/blender/makesrna/intern/rna_access.cc
++++ b/source/blender/makesrna/intern/rna_access.cc
+@@ -70,6 +70,61 @@
+
+ #include "rna_access_internal.hh"
+ #include "rna_internal.hh"
++
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++extern void Object_active_material_set(PointerRNA *, PointerRNA, ReportList *);
++extern void MaterialSlot_material_set(PointerRNA *, PointerRNA, ReportList *);
++
++static int rna_material_assignment_profile(PropertyRNA *prop)
++{
++  if (!prop || prop->magic != RNA_MAGIC || prop->type != PROP_POINTER) return 0;
++  const PointerPropertyRNA *pprop = reinterpret_cast<PointerPropertyRNA *>(prop);
++  if (pprop->set == Object_active_material_set) return 1;
++  if (pprop->set == MaterialSlot_material_set) return 2;
++  return 0;
++}
++
++static bool rna_material_assignment_owner_absent(PropertyRNA *prop, ReportList *reports)
++{
++  if (!rna_material_assignment_profile(prop)) return true;
++  if (G_MAIN &&
++      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr))
++  {
++    return true;
++  }
++  if (reports) BKE_report(reports, RPT_ERROR, "Material assignment was refused while a Pencil paint owner is active");
++  return false;
++}
++#endif
++
++bool RNA_property_is_material_assignment(PropertyRNA *prop)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return rna_material_assignment_profile(rna_ensure_property(prop)) != 0;
++#else
++  UNUSED_VARS(prop);
++  return false;
++#endif
++}
++
++bool RNA_property_material_assign_paint_owner_teardown(bContext *C,
++                                                       PointerRNA *ptr,
++                                                       PropertyRNA *prop,
++                                                       PointerRNA value,
++                                                       ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int profile = rna_material_assignment_profile(rna_ensure_property(prop));
++  if (profile) {
++    return RNA_object_material_assign_paint_owner_teardown(
++        C, ptr, value, profile == 2, reports);
++  }
++#else
++  UNUSED_VARS(C, ptr, prop, value, reports);
++#endif
++  return true;
++}
+
+ static CLG_LogRef LOG = {"rna.access"};
+
+@@ -2431,6 +2486,11 @@
+ {
+   const bool is_rna = (prop->magic == RNA_MAGIC);
+   prop = rna_ensure_property(prop);
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* UI callers can update after a void setter refusal. Do not tag/evaluate its
++   * data through that fallback while the same paint owner is still registered. */
++  if (!rna_material_assignment_owner_absent(prop, nullptr)) return;
++#endif
+
+   if (is_rna) {
+     if (prop->update) {
+@@ -4487,6 +4547,12 @@
+                   ptr_value.type->identifier);
+       return;
+     }
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* Borrowed native UI frames do not own a callback boundary. Refuse before
++     * Debug getters retain old/new IDs; Python explicitly prepares beforehand. */
++    if (!rna_material_assignment_owner_absent(prop, reports)) return;
++#endif
+
+ #ifndef NDEBUG
+     /* NOTE: By design, it can be safely assumed that both old and new ID pointers are valid when
+diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/intern/bpy_rna.cc
+--- a/source/blender/python/intern/bpy_rna.cc
++++ b/source/blender/python/intern/bpy_rna.cc
+@@ -1625,6 +1625,10 @@
+ static int pyrna_py_to_prop(
+     PointerRNA *ptr, PropertyRNA *prop, void *data, PyObject *value, const char *error_prefix)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  std::optional<PointerRNA> material_assign_target;
++  bContext *material_assign_context = nullptr;
++#endif
+   /* XXX hard limits should be checked here. */
+   const int type = RNA_property_type(prop);
+
+@@ -2079,8 +2083,28 @@
+           if ((param == nullptr) || RNA_struct_is_a(param->ptr->type, ptr_type)) {
+             ReportList reports;
+             BKE_reports_init(&reports, RPT_STORE);
+-            RNA_property_pointer_set(
+-                ptr, prop, (param == nullptr) ? PointerRNA_NULL : *param->ptr, &reports);
++#ifdef WITH_APPLE_CROSSPLATFORM
++            if (RNA_property_is_material_assignment(prop)) {
++              material_assign_context = BPY_context_get();
++              material_assign_target.emplace(*ptr);
++              const PointerRNA material_value =
++                  (param == nullptr) ? PointerRNA_NULL : *param->ptr;
++              ptr = &*material_assign_target;
++              const bool prepared = RNA_property_material_assign_paint_owner_teardown(
++                  material_assign_context, ptr, prop, material_value, &reports);
++              if (BPY_context_get() != material_assign_context) {
++                BKE_report(&reports, RPT_ERROR, "Material assignment was refused: Python context changed");
++              }
++              else if (prepared) {
++                RNA_property_pointer_set(ptr, prop, material_value, &reports);
++              }
++            }
++            else
++#endif
++            {
++              RNA_property_pointer_set(
++                  ptr, prop, (param == nullptr) ? PointerRNA_NULL : *param->ptr, &reports);
++            }
+             const int err = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
+             if (err == -1) {
+               Py_XDECREF(value_new);
+@@ -2205,7 +2229,19 @@
+
+   /* Run RNA property functions. */
+   if (RNA_property_update_check(prop)) {
+-    RNA_property_update(BPY_context_get(), ptr, prop);
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (material_assign_target) {
++      if (BPY_context_get() != material_assign_context) {
++        PyErr_SetString(PyExc_RuntimeError, "Material assignment context changed before update");
++        return -1;
++      }
++      RNA_property_update(material_assign_context, ptr, prop);
++    }
++    else
++#endif
++    {
++      RNA_property_update(BPY_context_get(), ptr, prop);
++    }
+   }
+
+   return 0;

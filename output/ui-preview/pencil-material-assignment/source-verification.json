@@ -1,0 +1,82 @@
+{
+  "status": "source_host_independent_passed_not_native_built",
+  "base_source": "23596e309faf99fabf44d95e762dbb37271c9a43",
+  "canonical_lf_patch_sha256": "3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637",
+  "scope": [
+    "Object.active_material",
+    "MaterialSlot.material",
+    "explicit Python conversion preflight",
+    "generic RNA pointer Debug frame and late update",
+    "shared WM original registered-owner policy"
+  ],
+  "source": {
+    "overlay_sections": 131,
+    "existing_changed": 4,
+    "new": 2,
+    "unchanged_prior": 125,
+    "interaction_python_sections_unchanged": 7,
+    "ghost_interface_hud_view3d_sections_unchanged": 39,
+    "cpp_standard": 17
+  },
+  "validation": {
+    "full": {
+      "passed": 452,
+      "seconds": 318.399,
+      "log": ".cache/material-assignment-full-tests-final.log"
+    },
+    "focused": {
+      "passed": 21,
+      "seconds": 25.951,
+      "log": ".cache/material-assign-connected-tests-final.log"
+    },
+    "prior_full": {
+      "passed": 450,
+      "seconds": 312.945,
+      "log": ".cache/material-assignment-full-tests.log",
+      "scope": "Pre-final native MAXMAT model and two admission tests; superseded"
+    },
+    "shared_wm": {
+      "passed": 6,
+      "seconds": 2.222
+    },
+    "retained_mesh": {
+      "passed": 17,
+      "seconds": 12.171
+    },
+    "offline_pinned_preflight_files": 131,
+    "diff_check": "passed",
+    "portable_primary_bodies": "passed with ignored material.cc and DNA_material_types.h unavailable"
+  },
+  "native_primary": {
+    "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "material_blob": "1d2f0cf4e5bc2fee76f360a26fa3d814b1b367bc",
+    "tracked_data": "build/tests/pinned_material_assign.inc.cc",
+    "native_MAXMAT": "DNA_material_types.h255: (32767 - 1)"
+  },
+  "independent_review": {
+    "native": "material_wm_policy: final bounded source review passed after query/reentrancy/C++17 corrections",
+    "outer_and_literal_ui": "material_outer_review: latest Python/report/Debug/update/direct frames and exact preserved native UI passed",
+    "reviewed_patch_sha256": "3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637"
+  },
+  "connected_contract": [
+    "Only explicit Python report-bearing conversion drains; owned target/value copies persist through saved-context late update",
+    "Generic UI/set/update and direct generated setters only query absence before getter/tag/write; no native Cancel in borrowed UI frames",
+    "Both nonnull and null C explicit material drains use original-material scope; caller checks remain for nonnull C; existing default null-C owner refusal remains",
+    "Initial absence is context-free; native no-owner/null/same-value/Edit/slot-zero/growth/link/admission/body behavior preserved",
+    "Fresh Main membership before saved numeric ID dereference; typed Object/backing data/nullable Material and physical arrays/counts/bits/actcol/Library/override recaptured after completed drain",
+    "Nested queries/assignments refuse while original material cancellation owns the frame"
+  ],
+  "fixture_boundaries": [
+    "Native cancellation and Main/context models",
+    "Allocator, material length synchronization and dependency graph effects",
+    "Generated setter adapters model makesrna forwarding",
+    "Executed Python report/update blocks use interpreter models",
+    "No UIKit/GPU/device proof; refusal does not undo callback effects; outer attempt counter not a global bound"
+  ],
+  "native_build": null,
+  "device_acceptance": false,
+  "fixtures": {
+    "build\\test_pencil_material_assign_owner_teardown.py": "7d62e985d0eafb0247faa99161885c99c3827a2b6db54f32ee50f9a63bb41c15",
+    "build\\tests\\pinned_material_assign.inc.cc": "b4a17d68f6347c5a79f5890f1723ed16aaa0582cfc827754423e4ecc83dc36d0"
+  }
+}
