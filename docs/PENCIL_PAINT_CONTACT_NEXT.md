@@ -1,3 +1,28 @@
+## Connected Pencil paint dispatch fixture — 2026-10-12
+
+`build/test_pencil_paint_pipeline.py` now executes the production Begin dispatch
+scope and modal-handler binder, GHOST button constructor, WM contact-queue and
+button-conversion slices, modal admission/interruption/cancelled-contact guards,
+and the native `paint_stroke_modal` release branch. Its three compiled cases
+cover a normal contact through native stroke completion, interruption followed
+by an old queued lift while a replacement stroke is active, and binder refusal
+for an unregistered handler or macro child. The registered non-macro case checks
+the frozen contact, screen/area/region, tool/paint owner values and native
+operator/type lifetime copied into the handler.
+
+Validation on this test-only change: the focused fixture passes **3/3**, the full
+host suite passes **397/397**, the offline pinned preflight applies to **125
+source files**, and `git diff --check` is clean. The fixture explicitly models
+valid ticket/context/owner capture, native cancellation callback and WM scheduling;
+it does not execute UIKit delivery, the live GHOST queue/WM event loop, brush
+allocation/geometry, target GPU compositing or iPad behavior. Production source
+and the latest verified IPA are unchanged, so no native rebuild is warranted.
+
+Continue the original-owner-loss and mode-specific completion/disposal audit.
+Keep native Cancel semantics separate from rollback, and preserve every accepted
+ring, HUD, header, input, owner and history guard. This checkpoint is source/host
+evidence only; the full personal iPad goal remains unfinished.
+
 ## Verified Object Delete Pencil-owner preflight IPA — 2026-10-12
 
 Exact source `2d659eafbc0f923e0eca0f7f63c61faa155a9304` passed hosted preflight in [run 38332967407](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38332967407) and native iOS Release in [run 38333209890](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38333209890). The Apple-only `OBJECT_OT_delete` path now snapshots selected Object identities as session UIDs and values, retires matching live Pencil paint owners before any delete tag, scene unlink, or global ID deletion, and revalidates Main/window/Scene/View Layer plus the complete selection after each native cancellation callback. Refusal, ambiguous identities, reentrancy, or changed context/selection cancels the delete. No Object pointer crosses a callback; other platform behavior and Blender's native successful delete path remain unchanged.
