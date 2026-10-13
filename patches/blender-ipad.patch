@@ -126187,7 +126187,7 @@ index 3bcd482..f86d507 100644
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -1,6918 +1,9306 @@
+@@ -1,6918 +1,9313 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -129669,29 +129669,35 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +    bContext *C, Main *bmain, bool *r_did_teardown)
 +{
 +  if (r_did_teardown) *r_did_teardown = false;
-+  if (!C || !bmain || !r_did_teardown || G_MAIN != bmain || CTX_data_main(C) != bmain) {
++  if (!bmain || !r_did_teardown || G_MAIN != bmain ||
++      (C && CTX_data_main(C) != bmain))
++  {
 +    return false;
 +  }
-+  wmWindowManager *context_wm = CTX_wm_manager(C);
-+  wmWindow *context_win = CTX_wm_window(C);
-+  ScrArea *context_area = CTX_wm_area(C);
-+  ARegion *context_region = CTX_wm_region(C);
-+  if (!context_wm || !context_win || BLI_findindex(&bmain->wm, context_wm) == -1) return false;
++  wmWindowManager *context_wm = C ? CTX_wm_manager(C) : nullptr;
++  wmWindow *context_win = C ? CTX_wm_window(C) : nullptr;
++  ScrArea *context_area = C ? CTX_wm_area(C) : nullptr;
++  ARegion *context_region = C ? CTX_wm_region(C) : nullptr;
++  if ((context_win && !context_wm) ||
++      (context_wm && BLI_findindex(&bmain->wm, context_wm) == -1))
++  {
++    return false;
++  }
 +  auto context_unchanged = [&]() {
-+    if (G_MAIN != bmain || CTX_data_main(C) != bmain || CTX_wm_manager(C) != context_wm ||
-+        CTX_wm_window(C) != context_win || CTX_wm_area(C) != context_area ||
-+        CTX_wm_region(C) != context_region || BLI_findindex(&bmain->wm, context_wm) == -1)
++    if (G_MAIN != bmain ||
++        (C && (CTX_data_main(C) != bmain || CTX_wm_manager(C) != context_wm ||
++               CTX_wm_window(C) != context_win || CTX_wm_area(C) != context_area ||
++               CTX_wm_region(C) != context_region)) ||
++        (context_wm && BLI_findindex(&bmain->wm, context_wm) == -1))
 +    {
 +      return false;
 +    }
-+    bool window_registered = false;
++    if (!context_win) return true;
++    if (!context_wm) return false;
 +    LISTBASE_FOREACH (wmWindow *, win, &context_wm->windows) {
-+      if (win == context_win) {
-+        window_registered = true;
-+        break;
-+      }
++      if (win == context_win) return true;
 +    }
-+    return window_registered;
++    return false;
 +  };
 +  if (!context_unchanged()) return false;
 +
@@ -129750,6 +129756,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +  }
 +  if (!context_unchanged()) return false;
 +  if (!found_owner) return true;
++  if (!context_wm || !context_win || !context_unchanged()) return false;
 +  if (!owner.wm_uid || !owner.winid || !owner.lifetime) return false;
 +
 +  wmWindowManager *live_wm = nullptr;
@@ -163558,3 +163565,435 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +
    if (ob->mode & OB_MODE_EDIT) {
      return;
+diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/intern/rna_ID.cc
+--- a/source/blender/makesrna/intern/rna_ID.cc
++++ b/source/blender/makesrna/intern/rna_ID.cc
+@@ -202,6 +202,13 @@
+
+ #ifdef RNA_RUNTIME
+
++#  ifdef WITH_APPLE_CROSSPLATFORM
++#    include <cstdint>
++#    include "DNA_layer_types.h"
++#    include "DNA_scene_types.h"
++#    include "BKE_context.hh"
++#  endif
++
+ #  include "DNA_anim_types.h"
+
+ #  include "BLI_listbase.h"
+@@ -779,13 +786,257 @@
+   WM_main_add_notifier(NC_ID | NA_EDITED, nullptr);
+ }
+
+-static ID *rna_ID_override_create(ID *id, Main *bmain, bool remap_local_usages)
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct RnaIDOverrideIdentity {
++  uintptr_t address = 0;
++  uint32_t session_uid = 0;
++  short idcode = 0;
++  uintptr_t library_address = 0;
++  uint32_t library_uid = 0;
++};
++
++static bool rna_ID_override_identity_capture(ID *id, RnaIDOverrideIdentity *r_identity)
++{
++  if (!id || !r_identity || !id->session_uid) {
++    return false;
++  }
++  if (id->lib && !id->lib->id.session_uid) {
++    return false;
++  }
++  *r_identity = {uintptr_t(id),
++                 id->session_uid,
++                 short(GS(id->name)),
++                 uintptr_t(id->lib),
++                 id->lib ? id->lib->id.session_uid : 0};
++  return true;
++}
++
++static bool rna_ID_override_identity_resolve(Main *bmain,
++                                             const RnaIDOverrideIdentity &identity,
++                                             ID **r_id)
++{
++  if (!bmain || !r_id || !identity.session_uid || !identity.idcode) {
++    return false;
++  }
++  ID *id = BKE_libblock_find_session_uid(bmain, identity.idcode, identity.session_uid);
++  if (!id || uintptr_t(id) != identity.address ||
++      uintptr_t(id->lib) != identity.library_address)
++  {
++    return false;
++  }
++  if (identity.library_address) {
++    ID *library = BKE_libblock_find_session_uid(bmain, ID_LI, identity.library_uid);
++    if (!library || uintptr_t(library) != identity.library_address) {
++      return false;
++    }
++  }
++  *r_id = id;
++  return true;
++}
++
++struct RnaIDOverrideState {
++  uintptr_t address = 0;
++  int flag = 0;
++  RnaIDOverrideIdentity reference;
++  RnaIDOverrideIdentity hierarchy_root;
++};
++
++static bool rna_ID_override_state_capture(ID *id, RnaIDOverrideState *r_state)
++{
++  if (!id || !r_state) return false;
++  *r_state = {};
++  if (!id->override_library) return true;
++  r_state->address = uintptr_t(id->override_library);
++  r_state->flag = id->override_library->flag;
++  return (!id->override_library->reference ||
++          rna_ID_override_identity_capture(id->override_library->reference, &r_state->reference)) &&
++         (!id->override_library->hierarchy_root ||
++          rna_ID_override_identity_capture(id->override_library->hierarchy_root,
++                                           &r_state->hierarchy_root));
++}
++
++static bool rna_ID_override_state_matches(Main *bmain, ID *id, const RnaIDOverrideState &state)
++{
++  if (!id || uintptr_t(id->override_library) != state.address) return false;
++  if (!state.address) return true;
++  if (id->override_library->flag != state.flag ||
++      uintptr_t(id->override_library->reference) != state.reference.address ||
++      uintptr_t(id->override_library->hierarchy_root) != state.hierarchy_root.address)
++  {
++    return false;
++  }
++  ID *live_id = nullptr;
++  return (!state.reference.address ||
++          rna_ID_override_identity_resolve(bmain, state.reference, &live_id)) &&
++         (!state.hierarchy_root.address ||
++          rna_ID_override_identity_resolve(bmain, state.hierarchy_root, &live_id));
++}
++
++static bool rna_ID_override_view_layer_reacquire(Scene *scene,
++                                                 const uintptr_t address,
++                                                 ViewLayer **r_view_layer)
++{
++  if (!r_view_layer) {
++    return false;
++  }
++  if (!address) {
++    *r_view_layer = nullptr;
++    return true;
++  }
++  if (!scene) {
++    return false;
++  }
++  LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
++    if (uintptr_t(view_layer) == address) {
++      *r_view_layer = view_layer;
++      return true;
++    }
++  }
++  return false;
++}
++#endif
++
++/* RNA library-override operations can remap active IDs or reset/remove their
++ * hierarchy without passing through the guarded Outliner operators. Drain only
++ * registered native paint owners from the active Main, then reacquire every ID
++ * input by type/session UID before allowing the operation to continue. */
++static bool rna_ID_override_paint_owner_teardown(bContext *C,
++                                                 Main *bmain,
++                                                 ID **r_id,
++                                                 ID **related_ids,
++                                                 const int related_id_count,
++                                                 Scene **r_scene,
++                                                 ViewLayer **r_view_layer,
++                                                 ReportList *reports,
++                                                 const char *operation)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!bmain || !r_id || !*r_id || related_id_count < 0 || related_id_count > 2 ||
++      (related_id_count && !related_ids))
++  {
++    if (reports) {
++      BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid identity", operation);
++    }
++    return false;
++  }
++  /* A non-active Main has no registered WM paint owner that can reference it. */
++  if (bmain != G_MAIN) {
++    return true;
++  }
++
++  RnaIDOverrideState override_state;
++  if (!rna_ID_override_state_capture(*r_id, &override_state)) {
++    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid override owner", operation);
++    return false;
++  }
++  RnaIDOverrideIdentity identities[4]{};
++  int id_count = 0;
++  const auto capture_id = [&](ID *id) {
++    if (id_count >= 4 || !rna_ID_override_identity_capture(id, &identities[id_count])) {
++      return false;
++    }
++    id_count++;
++    return true;
++  };
++  if (!capture_id(*r_id)) {
++    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid ID", operation);
++    return false;
++  }
++  int scene_index = -1;
++  if (r_scene) {
++    if (!*r_scene) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: missing scene", operation);
++      return false;
++    }
++    scene_index = id_count;
++    if (!capture_id(reinterpret_cast<ID *>(*r_scene))) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid scene", operation);
++      return false;
++    }
++  }
++  const uintptr_t view_layer_address = r_view_layer ? uintptr_t(*r_view_layer) : 0;
++  if (view_layer_address && scene_index < 0) {
++    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: view layer has no scene", operation);
++    return false;
++  }
++  const int related_start = id_count;
++  for (int i = 0; i < related_id_count; i++) {
++    if (related_ids[i] == nullptr) {
++      if (id_count >= 4) return false;
++      identities[id_count++] = {};
++    }
++    else if (!capture_id(related_ids[i])) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid related ID", operation);
++      return false;
++    }
++  }
++
++  for (int attempt = 0; attempt < 256; attempt++) {
++    bool did_teardown = false;
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(C, bmain, &did_teardown)) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: paint owner could not be retired", operation);
++      return false;
++    }
++    if (!did_teardown) {
++      return true;
++    }
++
++    ID *ids[4]{};
++    for (int i = 0; i < id_count; i++) {
++      if (!identities[i].address) continue;
++      if (!identities[i].session_uid) {
++        if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: incomplete identity", operation);
++        return false;
++      }
++      ID *live_id = nullptr;
++      if (!rna_ID_override_identity_resolve(bmain, identities[i], &live_id)) {
++        if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: an ID changed during paint cancellation", operation);
++        return false;
++      }
++      ids[i] = live_id;
++    }
++    if (!rna_ID_override_state_matches(bmain, ids[0], override_state)) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: override owner changed during paint cancellation", operation);
++      return false;
++    }
++    *r_id = ids[0];
++    if (scene_index >= 0) {
++      *r_scene = reinterpret_cast<Scene *>(ids[scene_index]);
++    }
++    for (int i = 0; i < related_id_count; i++) {
++      related_ids[i] = ids[related_start + i];
++    }
++    if (r_view_layer &&
++        !rna_ID_override_view_layer_reacquire(
++            r_scene ? *r_scene : nullptr, view_layer_address, r_view_layer))
++    {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: view layer changed during paint cancellation", operation);
++      return false;
++    }
++  }
++  if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: too many paint owners", operation);
++  return false;
++#else
++  UNUSED_VARS(C, bmain, r_id, related_ids, related_id_count, r_scene, r_view_layer, reports, operation);
++  return true;
++#endif
++}
++
++static ID *rna_ID_override_create(ID *id, Main *bmain, bContext *C, bool remap_local_usages)
+ {
+   if (!ID_IS_OVERRIDABLE_LIBRARY(id)) {
+     return nullptr;
+   }
+
+   if (remap_local_usages) {
++    ID *live_id = id;
++    if (!rna_ID_override_paint_owner_teardown(
++            C, bmain, &live_id, nullptr, 0, nullptr, nullptr, nullptr, "creation"))
++    {
++      return nullptr;
++    }
++    id = live_id;
++    if (!ID_IS_OVERRIDABLE_LIBRARY(id)) return nullptr;
+     BKE_main_id_tag_all(bmain, ID_TAG_DOIT, true);
+   }
+
+@@ -812,6 +1063,7 @@
+
+ static ID *rna_ID_override_hierarchy_create(ID *id,
+                                             Main *bmain,
++                                            bContext *C,
+                                             Scene *scene,
+                                             ViewLayer *view_layer,
+                                             ID *id_instance_hint,
+@@ -820,6 +1072,17 @@
+   if (!ID_IS_OVERRIDABLE_LIBRARY(id)) {
+     return nullptr;
+   }
++
++  ID *live_id = id;
++  ID *related_ids[] = {id_instance_hint};
++  if (!rna_ID_override_paint_owner_teardown(
++          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, nullptr, "hierarchy creation"))
++  {
++    return nullptr;
++  }
++  id = live_id;
++  id_instance_hint = related_ids[0];
++  if (!ID_IS_OVERRIDABLE_LIBRARY(id)) return nullptr;
+
+   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
+
+@@ -872,6 +1135,7 @@
+ static void rna_ID_override_library_reset(ID *id,
+                                           IDOverrideLibrary * /*override_library*/,
+                                           Main *bmain,
++                                          bContext *C,
+                                           ReportList *reports,
+                                           bool do_hierarchy,
+                                           bool set_system_override)
+@@ -881,6 +1145,18 @@
+     return;
+   }
+
++  ID *live_id = id;
++  if (!rna_ID_override_paint_owner_teardown(
++          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "reset"))
++  {
++    return;
++  }
++  id = live_id;
++  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
++    BKE_reportf(reports, RPT_ERROR, "ID '%s' is no longer an override", id->name);
++    return;
++  }
++
+   if (do_hierarchy) {
+     BKE_lib_override_library_id_hierarchy_reset(bmain, id, set_system_override);
+   }
+@@ -894,6 +1170,7 @@
+ static void rna_ID_override_library_destroy(ID *id,
+                                             IDOverrideLibrary * /*override_library*/,
+                                             Main *bmain,
++                                            bContext *C,
+                                             ReportList *reports,
+                                             bool do_hierarchy)
+ {
+@@ -902,6 +1179,18 @@
+     return;
+   }
+
++  ID *live_id = id;
++  if (!rna_ID_override_paint_owner_teardown(
++          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "destroy"))
++  {
++    return;
++  }
++  id = live_id;
++  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
++    BKE_reportf(reports, RPT_ERROR, "ID '%s' is no longer an override", id->name);
++    return;
++  }
++
+   if (do_hierarchy) {
+     BKE_lib_override_library_delete(bmain, id);
+   }
+@@ -916,6 +1205,7 @@
+ static bool rna_ID_override_library_resync(ID *id,
+                                            IDOverrideLibrary *override_library,
+                                            Main *bmain,
++                                           bContext *C,
+                                            ReportList *reports,
+                                            Scene *scene,
+                                            ViewLayer *view_layer,
+@@ -935,6 +1225,22 @@
+         id->name);
+     return false;
+   }
++
++  const uintptr_t override_library_address = uintptr_t(override_library);
++  ID *live_id = id;
++  ID *related_ids[] = {reinterpret_cast<ID *>(override_resync_residual_storage)};
++  if (!rna_ID_override_paint_owner_teardown(
++          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, reports, "resync"))
++  {
++    return false;
++  }
++  id = live_id;
++  override_resync_residual_storage = reinterpret_cast<Collection *>(related_ids[0]);
++  if (uintptr_t(id->override_library) != override_library_address) {
++    BKE_reportf(reports, RPT_ERROR, "Library override resync was refused: override changed during paint cancellation");
++    return false;
++  }
++  override_library = id->override_library;
+
+   ID *id_root = do_whole_hierarchy ? override_library->hierarchy_root : id;
+   BlendFileReadReport bf_reports = {};
+@@ -2120,7 +2426,7 @@
+   func = RNA_def_function(srna, "reset", "rna_ID_override_library_reset");
+   RNA_def_function_ui_description(func,
+                                   "Reset this override to match again its linked reference ID");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
+   RNA_def_boolean(
+       func,
+       "do_hierarchy",
+@@ -2136,7 +2442,7 @@
+   func = RNA_def_function(srna, "destroy", "rna_ID_override_library_destroy");
+   RNA_def_function_ui_description(
+       func, "Delete this override ID and remap its usages to its linked reference ID instead");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
+   RNA_def_boolean(func,
+                   "do_hierarchy",
+                   true,
+@@ -2147,7 +2453,7 @@
+   func = RNA_def_function(srna, "resync", "rna_ID_override_library_resync");
+   RNA_def_function_ui_description(
+       func, "Resync the data-block and its sub-hierarchy, or the whole hierarchy if requested");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID | FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
+   parm = RNA_def_boolean(
+       func, "success", false, "Success", "Whether the resync process was successful or not");
+   RNA_def_function_return(func, parm);
+@@ -2491,7 +2797,7 @@
+   RNA_def_function_ui_description(func,
+                                   "Create an overridden local copy of this linked data-block (not "
+                                   "supported for all data-blocks)");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_CONTEXT);
+   parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
+   RNA_def_function_return(func, parm);
+   RNA_def_boolean(func,
+@@ -2506,7 +2812,7 @@
+       func,
+       "Create an overridden local copy of this linked data-block, and most of its dependencies "
+       "when it is a Collection or and Object");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_CONTEXT);
+   parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the root ID");
+   RNA_def_function_return(func, parm);
+   parm = RNA_def_pointer(

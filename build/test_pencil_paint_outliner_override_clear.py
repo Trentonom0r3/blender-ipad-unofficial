@@ -640,6 +640,19 @@ int main(){
     assert(!did&&g_cancel_calls==0&&g_context_allocs==0);
   }
   {
+    Main m;wmWindowManager wm;wmWindow win;bContext C;reset(m,wm,win,C);
+    C.wm=nullptr;C.win=nullptr;bool did=true;
+    assert(WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0&&g_context_allocs==0);
+    assert(WM_event_ipad_pencil_paint_owner_teardown_next(nullptr,&m,&did));
+    assert(!did&&g_cancel_calls==0&&g_context_allocs==0);
+    wmEventHandler_Op owner;link(owner,win.modalhandlers,1,11);
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(&C,&m,&did));
+    assert(!did&&g_cancel_calls==0&&win.modalhandlers.first==&owner);
+    assert(!WM_event_ipad_pencil_paint_owner_teardown_next(nullptr,&m,&did));
+    assert(!did&&g_cancel_calls==0&&win.modalhandlers.first==&owner);
+  }
+  {
     Main m;wmWindowManager wm1,wm2;wmWindow w1,w2;bContext C;reset(m,wm1,w1,C);
     wm1.next=&wm2;wm2.id.session_uid=2;wm2.windows.first=&w2;w2.winid=20;w2.runtime=&w2;
     wmEventHandler_Op owner;link(owner,w2.modalhandlers,7,70);bool did=false;

@@ -1,0 +1,28 @@
+{
+  "status": "source_validated_awaiting_exact_native_build",
+  "canonical_patch_sha256": "b4503c6317bc0c58e8f44fdfc8cd62e535954d7b9957f3d17c9c6bbd87397536",
+  "actual_callback_tests": 9,
+  "wm_scan_tests": 6,
+  "pinned_preflight_source_files": 126,
+  "diff_check": "pass",
+  "independent_native_review": "pass",
+  "literal_ui_review": "all7 Python sections unchanged; native ring/HUD source unchanged",
+  "full_suite": {
+    "status": "pass",
+    "tests": 408,
+    "seconds": 359.433,
+    "log": ".cache/rna-override-full-tests.log"
+  },
+  "native_build": null,
+  "new_ipa": null,
+  "device_acceptance": null,
+  "scope": "Five actual direct RNA override mutation callbacks and context-free no-owner native behavior",
+  "next_source_routes": [
+    "rna_ID_user_remap",
+    "linked branch of rna_ID_make_local"
+  ],
+  "limits": [
+    "Native Cancel and ID operations modeled at fixture boundaries",
+    "No global reentrancy, UIKit, full native override execution or device proof"
+  ]
+}

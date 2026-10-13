@@ -1,3 +1,44 @@
+## Direct Python RNA override owner guard — current source candidate — 2026-10-13
+
+The candidate connects the strict registered Pencil paint-owner scan to actual
+`override_create(remap_local_usages=True)`, `override_hierarchy_create`, override
+`reset`, `destroy`, and `resync` callbacks. Native cancellation occurs before
+ID tags, remapping, deletion, reset, or resync. Every callback reconstructs its
+ID inputs by type/session UID/address and verifies linked Library, override
+pointer/flag/reference/root, Scene, View Layer, and invoking context after
+cancellation. Null optional hierarchy hints/resync arguments retain native
+semantics. Context-free RNA calls proceed when no paint owner exists; a live
+owner without a valid invoking UI context refuses before cancellation.
+Non-active Mains and non-Apple behavior retain their original native route.
+Creation without remapping and metadata-only operations remain unchanged.
+
+Connected callback tests pass **9/9**, including the exact pinned makesrna
+implicit-argument excerpt and registration-derived callback types. The actual
+WM one-owner scan suite passes **6/6**; pinned offline preflight applies to
+**126 source files**; diff hygiene passes. Independent native and literal UI
+reviews passed. All seven production Python sections and the ring/HUD UI match
+the previously verified source exactly. The full host suite passed **408/408** in 359.433 seconds
+(`.cache/rna-override-full-tests.log`). There is no new native build or IPA yet. The prior
+verified source/package remains `b7f21c1` / run 38341051875.
+
+Native cancellation and ID mutation APIs are modeled fixture boundaries; the
+checks do not prove UIKit timing, full native override internals, or device
+acceptance. The outer attempt counter does not establish a global reentrancy
+bound: the examined native cancellation paths do not reacquire a tagged owner,
+and actual binding requires a genuine admitted Begin in the matching dispatch
+context. Preserve the native mode-specific Cancel/history behavior.
+
+Next adjacent audit is concrete: direct `rna_ID_user_remap` writes ID usages
+through raw BKE remapping (including window Scene and Object/data references),
+bypassing guarded setters. Linked `rna_ID_make_local` can also create a copy and
+remap mixed users. These two routes are **not corrected by this candidate**.
+Guard after native input admission and before their remapping, reconstruct
+fresh inputs, retain existing result/newid cleanup and exact native behavior.
+Pure local override metadata clearing has no established paint-owner-loss bug.
+Finish this candidate's full checks, commit/push, exact native build and complete
+IPA/compiled audits before changing its overlay again. Keep the full personal
+Pencil-first goal active and preserve all existing artifacts and UI constraints.
+
 ## Verified Outliner override hierarchy owner teardown — 2026-10-13
 
 Exact source `b7f21c15bdfe3eaa33ddc9d5e420c3804e618934` passed hosted preflight
