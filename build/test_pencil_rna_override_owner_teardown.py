@@ -20,10 +20,11 @@ HELPERS = RNA[HELPER_START:RNA.index("static ID *rna_ID_override_create(", HELPE
 CALLBACK_NAMES = (
     "rna_ID_override_create", "rna_ID_override_hierarchy_create",
     "rna_ID_override_library_reset", "rna_ID_override_library_destroy",
-    "rna_ID_override_library_resync",
+    "rna_ID_override_library_resync", "rna_ID_user_remap", "rna_ID_make_local",
 )
-CALLBACKS = [function(RNA, "static " + ("ID *" if i < 2 else "void " if i < 4 else "bool ") + name + "(")
-             for i, name in enumerate(CALLBACK_NAMES)]
+CALLBACK_RETURNS = ("ID *", "ID *", "void ", "void ", "bool ", "void ", "ID *")
+CALLBACKS = [function(RNA, "static " + result + name + "(")
+             for result, name in zip(CALLBACK_RETURNS, CALLBACK_NAMES)]
 
 # Reuse the strict scan fixture's context/list/native Cancel boundary, then
 # execute its exact production helper together with the real RNA consumers.
@@ -32,15 +33,16 @@ PREFIX = PREFIX.replace("#include <vector>", "#include <vector>\n#include <algor
 PREFIX = PREFIX.replace("struct ID { uint32_t session_uid=0; };", r"""
 enum ID_Type { ID_OB='O' | ('B'<<8), ID_SCE='S' | ('C'<<8),
                ID_LI='L' | ('I'<<8), ID_GR='G' | ('R'<<8) };
-enum { ID_TAG_EXTERN=1<<2 };
+enum { ID_TAG_EXTERN=1<<2, ID_TAG_NEW=1<<1 };
 struct Library;
 struct IDOverrideLibrary;
 struct ID {
   char name[3]={'O','B',0}; uint32_t session_uid=0;
   Library *lib=nullptr; IDOverrideLibrary *override_library=nullptr;
-  int tag=ID_TAG_EXTERN;
+  int tag=ID_TAG_EXTERN;ID *newid=nullptr;
+  short fixture_list_type=short(ID_OB);
   ID(ID_Type type=ID_OB,uint32_t uid=0):session_uid(uid) {
-    name[0]=char(int(type)&255);name[1]=char(int(type)>>8);
+    name[0]=char(int(type)&255);name[1]=char(int(type)>>8);fixture_list_type=short(type);
   }
 };
 struct Library { ID id{ID_LI,0}; };
@@ -49,6 +51,7 @@ static ID_Type GS(const char *name) {
   return ID_Type(static_cast<unsigned char>(name[0]) |
                  (static_cast<unsigned char>(name[1])<<8));
 }
+#define ID_IS_LINKED(id) ((id)->lib != nullptr)
 #define ID_IS_OVERRIDABLE_LIBRARY(id) ((id)->lib && ((id)->tag & ID_TAG_EXTERN))
 #define ID_IS_OVERRIDE_LIBRARY_REAL(id) ((id)->override_library && (id)->override_library->reference)
 """)
@@ -62,12 +65,15 @@ struct ReportList { int errors=0; };
 struct BlendFileReadReport { ReportList *reports=nullptr; };
 enum { RPT_ERROR=1,RPT_ERROR_INVALID_INPUT=2,LIBOVERRIDE_FLAG_NO_HIERARCHY=1,
        ID_TAG_DOIT=1,ID_REMAP_SKIP_INDIRECT_USAGE=1,NC_ID=1,NA_ADDED=2,
-       NC_WM=4,ND_LIB_OVERRIDE_CHANGED=8 };
+       NC_WM=4,ND_LIB_OVERRIDE_CHANGED=8,NC_WINDOW=16,ID_REMAP_SKIP_NEVER_NULL_USAGE=32,
+       LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR=64 };
 static void BKE_reportf(ReportList *reports,int,const char*,...) {
   assert(reports);++reports->errors;
 }
 static ID *BKE_libblock_find_session_uid(Main *main,short type,uint32_t uid) {
-  for (ID *id:main->ids) if (int(GS(id->name))==type && id->session_uid==uid) return id;
+  // Native lookup chooses the fixed typed Main list, then matches the UID.
+  // Mutating name bytes must not silently change which list owns the ID.
+  for (ID *id:main->ids) if (id->fixture_list_type==type && id->session_uid==uid) return id;
   return nullptr;
 }
 """)
@@ -77,6 +83,10 @@ PREFIX = PREFIX.replace("  return true;\n}\n", "  if(g_cancel_hook)g_cancel_hook
 NATIVE = r"""
 static int g_writes=0,g_tags=0,g_notifiers=0,g_reset_single=0,g_reset_hierarchy=0;
 static int g_remaps=0,g_deletes=0,g_resyncs=0,g_creates=0,g_hierarchy_creates=0;
+static int g_make_locals=0,g_metadata_locals=0,g_newptr_clears=0,g_make_local_flags=0;
+static int g_remap_flags=0,g_last_notifier=0;
+static bool g_make_local_copy=true;
+static ID *g_expected_remap=nullptr,*g_last_new_id=nullptr,*g_last_cleared=nullptr;
 static bool g_allow_owner=false,g_last_system=false,g_last_enforce=false,g_last_editable=false;
 static ID *g_result_id=nullptr,*g_last_id=nullptr,*g_last_hint=nullptr;
 static Scene *g_last_scene=nullptr;static ViewLayer *g_last_layer=nullptr;
@@ -117,8 +127,23 @@ static void BKE_lib_override_library_id_reset(Main *main,ID *id,bool system) {
 static void BKE_lib_override_library_delete(Main *main,ID *id) {
   native_write(main,id);++g_deletes;
 }
-static void BKE_libblock_remap(Main *main,ID *id,ID *reference,int) {
-  assert(reference==id->override_library->reference);native_write(main,id);++g_remaps;
+static void BKE_libblock_remap(Main *main,ID *id,ID *reference,int flags) {
+  assert(reference==(g_expected_remap ? g_expected_remap : id->override_library->reference));
+  native_write(main,id);++g_remaps;g_last_new_id=reference;g_remap_flags=flags;
+}
+static void BKE_lib_id_make_local(Main *main,ID *id,int flags) {
+  native_write(main,id);++g_make_locals;g_make_local_flags=flags;
+  if(g_make_local_copy)id->newid=g_result_id;
+  else id->lib=nullptr;
+}
+static void BKE_lib_override_library_make_local(Main *main,ID *id) {
+  assert(main&&id);++g_metadata_locals;id->override_library=nullptr;
+}
+static void BKE_id_newptr_and_tag_clear(ID *id) {
+  // Pinned BKE_id_newptr_and_tag_clear clears the target's NEW tag, not
+  // self's tag, and has no state write when the old newid is null.
+  assert(id);++g_newptr_clears;g_last_cleared=id;
+  if(id->newid){id->newid->tag &= ~ID_TAG_NEW;id->newid=nullptr;}
 }
 static void BKE_id_delete(Main *main,ID *id) {native_write(main,id);++g_deletes;}
 static bool BKE_lib_override_library_resync(Main *main,Scene *scene,ViewLayer *layer,
@@ -126,7 +151,7 @@ static bool BKE_lib_override_library_resync(Main *main,Scene *scene,ViewLayer *l
   assert(reports&&reports->reports);native_write(main,root);++g_resyncs;
   g_last_scene=scene;g_last_layer=layer;g_last_residual=residual;g_last_enforce=enforce;return true;
 }
-static void WM_main_add_notifier(int,void*) {++g_notifiers;}
+static void WM_main_add_notifier(int event,void*) {++g_notifiers;g_last_notifier=event;}
 """
 
 TEST_SUPPORT = r"""
@@ -152,6 +177,9 @@ struct Fixture {
               &scene.id,&residual.id};foreign.ids=main.ids;
     g_writes=g_tags=g_notifiers=g_reset_single=g_reset_hierarchy=0;
     g_remaps=g_deletes=g_resyncs=g_creates=g_hierarchy_creates=0;
+    g_make_locals=g_metadata_locals=g_newptr_clears=g_make_local_flags=0;
+    g_remap_flags=g_last_notifier=0;g_make_local_copy=true;
+    g_expected_remap=g_last_new_id=g_last_cleared=nullptr;
     g_allow_owner=false;g_result_id=&created;g_last_id=g_last_hint=nullptr;
     g_last_scene=nullptr;g_last_layer=nullptr;g_last_residual=nullptr;
   }
@@ -169,7 +197,8 @@ static Fixture *g_fixture=nullptr;
 enum Mutation {None,RemoveID,IDUID,IDType,LinkedLibrary,LibraryUID,RemoveLibrary,
   OverrideAddress,OverrideFlag,OverrideReference,ReferenceUID,RemoveReference,
   OverrideRoot,RootUID,RemoveRoot,ClearOverride,ClearReference,SceneUID,RemoveScene,
-  RemoveLayer,ResidualUID,HintUID,Overridable,Context,MainReplace};
+  RemoveLayer,ResidualUID,HintUID,HintType,HintLibrary,RemoveHint,
+  LibraryType,NewptrNull,NewptrChanged,NewptrUID,UnlinkPrimary,Overridable,Context,MainReplace};
 static Mutation g_mutation=None;
 static void mutation_hook() {
   Fixture &f=*g_fixture;
@@ -197,6 +226,14 @@ static void mutation_hook() {
     case RemoveLayer:f.scene.view_layers.first=nullptr;break;
     case ResidualUID:++f.residual.id.session_uid;break;
     case HintUID:++f.hint.session_uid;break;
+    case HintType:f.hint.name[0]='Z';break;
+    case HintLibrary:f.hint.lib=&f.other_library;break;
+    case RemoveHint:remove(&f.hint);break;
+    case LibraryType:f.library.id.name[0]='Z';break;
+    case NewptrNull:f.linked.newid=nullptr;break;
+    case NewptrChanged:f.linked.newid=&f.hint;break;
+    case NewptrUID:++f.root.session_uid;break;
+    case UnlinkPrimary:f.linked.lib=nullptr;break;
     case Overridable:f.linked.tag &= ~ID_TAG_EXTERN;break;
     case Context:f.C.region=reinterpret_cast<ARegion*>(uintptr_t(123));break;
     case MainReplace:G_MAIN=&f.foreign;break;
@@ -213,7 +250,7 @@ static void assert_no_write(const Fixture &f) {
 
 
 def source_with_main(main):
-    # The fixtures compile all five actual consumers each time. Taking volatile
+    # The fixtures compile all seven actual consumers each time. Taking volatile
     # addresses prevents the compiler from discarding consumers absent in this
     # case, while preserving -Werror for source signature/narrowing mistakes.
     anchors = "static void fixture_emit_consumers(){\n" + "\n".join(
@@ -406,11 +443,167 @@ int main() {
   rna_ID_override_library_destroy(&f.overridden,&f.override,&f.main,nullptr,&f.reports,false);
   assert(rna_ID_override_library_resync(&f.overridden,&f.override,&f.main,nullptr,&f.reports,
                       &f.scene,nullptr,nullptr,false,false));
+  g_expected_remap=&f.hint;
+  rna_ID_user_remap(&f.linked,&f.main,nullptr,&f.hint);
+  assert(rna_ID_make_local(&f.linked,&f.main,nullptr,true,false,true)==&f.created);
+  assert(g_make_locals==1&&g_newptr_clears==1&&g_last_new_id==&f.hint);
   assert(g_cancel_calls==0&&has_owner(&f.main)&&g_creates==1&&g_hierarchy_creates==1&&
-         g_reset_hierarchy==1&&g_remaps==1&&g_deletes==1&&g_resyncs==1&&f.reports.errors==0);
+         g_reset_hierarchy==1&&g_remaps==2&&g_deletes==1&&g_resyncs==1&&f.reports.errors==0);
 }
 """).replace("#define WITH_APPLE_CROSSPLATFORM\n", "")
         test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source)
+
+    def test_user_remap_preserves_native_type_admission_and_context_free_success(self):
+        self.run_cpp(r"""
+int main() {
+  for(int admission=0;admission<2;++admission) {
+    Fixture f;f.add_owner();
+    ID *new_id=admission==0?&f.linked:&f.hint;
+    if(admission==1)f.hint.name[0]='G',f.hint.name[1]='R';
+    rna_ID_user_remap(&f.linked,&f.main,&f.C,new_id);
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_writes==0&&g_notifiers==0);
+  }
+  for(int context=0;context<3;++context) {
+    Fixture f;bContext *C=context==0?nullptr:&f.C;
+    if(context==1)f.C.wm=nullptr,f.C.win=nullptr;
+    if(context==2)f.add_owner(true);
+    g_expected_remap=&f.hint;
+    rna_ID_user_remap(&f.linked,&f.main,C,&f.hint);
+    assert(g_remaps==1&&g_last_id==&f.linked&&g_last_new_id==&f.hint);
+    assert(g_remap_flags==(ID_REMAP_SKIP_INDIRECT_USAGE|ID_REMAP_SKIP_NEVER_NULL_USAGE));
+    assert(g_notifiers==1&&g_last_notifier==NC_WINDOW&&!has_owner(&f.main));
+    assert(g_cancel_calls==(context==2?2:0));
+  }
+  {
+    Fixture f;f.add_owner();g_expected_remap=&f.hint;
+    rna_ID_user_remap(&f.linked,&f.foreign,nullptr,&f.hint);
+    assert(g_remaps==1&&g_cancel_calls==0&&has_owner(&f.main));
+  }
+}
+""")
+
+    def test_user_remap_refuses_stale_source_target_and_missing_owner_context(self):
+        self.run_cpp(r"""
+int main() {
+  for(Mutation mutation:{RemoveID,IDUID,IDType,LinkedLibrary,LibraryUID,LibraryType,
+                         RemoveLibrary,HintUID,HintType,HintLibrary,RemoveHint,Context,MainReplace}) {
+    Fixture f;f.add_owner(true);mutate(f,mutation);g_expected_remap=&f.hint;
+    rna_ID_user_remap(&f.linked,&f.main,&f.C,&f.hint);
+    assert(g_cancel_calls==1&&g_remaps==0&&g_writes==0&&g_notifiers==0);
+    assert(f.second.modalhandlers.first==&f.other_owner);
+  }
+  for(int refusal=0;refusal<3;++refusal) {
+    Fixture f;f.add_owner();g_expected_remap=&f.hint;bContext *C=&f.C;
+    if(refusal==0)C=nullptr;
+    if(refusal==1)f.C.wm=nullptr,f.C.win=nullptr;
+    if(refusal==2)g_cancel_ok=false;
+    rna_ID_user_remap(&f.linked,&f.main,C,&f.hint);
+    assert(g_cancel_calls==(refusal==2?1:0)&&has_owner(&f.main));
+    assert(g_remaps==0&&g_writes==0&&g_notifiers==0);
+  }
+}
+""")
+
+    def test_linked_make_local_uses_fresh_native_result_and_clears_newptr_once(self):
+        self.run_cpp(r"""
+int main() {
+  for(int copy=0;copy<2;++copy) {
+    for(int cleanup=0;cleanup<2;++cleanup) {
+      Fixture f;f.add_owner(true);g_make_local_copy=bool(copy);
+      f.linked.tag|=ID_TAG_NEW;f.created.tag|=ID_TAG_NEW;
+      if(cleanup)f.created.override_library=&f.override;
+      ID *result=rna_ID_make_local(&f.linked,&f.main,&f.C,false,bool(cleanup),bool(cleanup));
+      assert(result==(copy?&f.created:&f.linked));
+      assert(g_make_locals==1&&g_cancel_calls==2&&!has_owner(&f.main));
+      assert(g_make_local_flags==(cleanup?LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR:0));
+      assert(g_newptr_clears==1&&g_last_cleared==&f.linked&&f.linked.newid==nullptr);
+      assert(f.linked.tag&ID_TAG_NEW);
+      if(copy)assert((f.created.tag&ID_TAG_NEW)==0);
+      assert(g_metadata_locals==(copy&&cleanup?1:0));
+      if(copy&&cleanup)assert(f.created.override_library==nullptr);
+    }
+  }
+  for(int context=0;context<2;++context) {
+    Fixture f;bContext *C=context?&f.C:nullptr;
+    if(context)f.C.wm=nullptr,f.C.win=nullptr;
+    assert(rna_ID_make_local(&f.linked,&f.main,C,true,false,false)==&f.created);
+    assert(g_cancel_calls==0&&g_make_locals==1&&g_make_local_flags==0&&g_newptr_clears==1);
+  }
+  {
+    Fixture f;f.add_owner();
+    assert(rna_ID_make_local(&f.linked,&f.foreign,nullptr,true,false,true)==&f.created);
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_make_locals==1&&g_newptr_clears==1);
+  }
+}
+""")
+
+    def test_linked_make_local_preexisting_newid_is_rebound_or_refused_before_cleanup(self):
+        self.run_cpp(r"""
+int main() {
+  {
+    Fixture f;f.add_owner();f.linked.newid=&f.root;f.linked.tag|=ID_TAG_NEW;
+    assert(rna_ID_make_local(&f.linked,&f.main,&f.C,true,false,false)==&f.created);
+    assert(g_cancel_calls==1&&g_make_locals==1&&g_newptr_clears==1&&f.linked.newid==nullptr);
+    assert(g_last_cleared==&f.linked&&g_result_id==&f.created&&f.root.session_uid==203);
+  }
+  for(Mutation mutation:{NewptrNull,NewptrChanged,NewptrUID,UnlinkPrimary}) {
+    Fixture f;f.add_owner(true);f.linked.newid=&f.root;f.linked.tag|=ID_TAG_NEW;
+    mutate(f,mutation);
+    assert(!rna_ID_make_local(&f.linked,&f.main,&f.C,true,true,true));
+    const bool early=mutation==NewptrUID||mutation==UnlinkPrimary;
+    assert(g_cancel_calls==(early?1:2)&&g_make_locals==0&&g_newptr_clears==0&&g_metadata_locals==0);
+    assert(f.linked.tag&ID_TAG_NEW);
+    assert(bool(f.second.modalhandlers.first)==early);
+  }
+  {
+    Fixture f;f.add_owner();assert(f.linked.newid==nullptr);mutate(f,NewptrChanged);
+    assert(!rna_ID_make_local(&f.linked,&f.main,&f.C,true,false,false));
+    assert(g_cancel_calls==1&&g_make_locals==0&&g_newptr_clears==0&&f.linked.newid==&f.hint);
+  }
+}
+""")
+
+    def test_make_local_local_metadata_branch_does_not_cancel_paint(self):
+        self.run_cpp(r"""
+int main() {
+  {
+    Fixture f;f.add_owner();f.overridden.tag|=ID_TAG_NEW;
+    assert(rna_ID_make_local(&f.overridden,&f.main,nullptr,false,false,false)==&f.overridden);
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_make_locals==0&&g_metadata_locals==1);
+    assert(f.overridden.override_library==nullptr&&g_newptr_clears==1);
+  }
+  {
+    Fixture f;f.add_owner();f.root.newid=&f.created;f.created.override_library=&f.override;
+    assert(rna_ID_make_local(&f.root,&f.main,nullptr,true,true,true)==&f.created);
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_make_locals==0&&g_metadata_locals==1);
+    assert(g_newptr_clears==1&&f.root.newid==nullptr&&f.created.override_library==nullptr);
+  }
+}
+""")
+
+    def test_linked_make_local_refuses_changes_before_native_data_or_cleanup(self):
+        self.run_cpp(r"""
+int main() {
+  for(Mutation mutation:{RemoveID,IDUID,IDType,LinkedLibrary,LibraryUID,LibraryType,
+                         RemoveLibrary,Context,MainReplace}) {
+    Fixture f;f.add_owner(true);mutate(f,mutation);
+    f.linked.newid=&f.root;f.linked.tag|=ID_TAG_NEW;
+    assert(!rna_ID_make_local(&f.linked,&f.main,&f.C,true,true,true));
+    assert(g_cancel_calls==1&&g_make_locals==0&&g_newptr_clears==0&&g_metadata_locals==0);
+    assert(f.linked.newid==&f.root&&(f.linked.tag&ID_TAG_NEW));
+    assert(f.second.modalhandlers.first==&f.other_owner);
+  }
+  for(int refusal=0;refusal<3;++refusal) {
+    Fixture f;f.add_owner();bContext *C=&f.C;
+    if(refusal==0)C=nullptr;
+    if(refusal==1)f.C.wm=nullptr,f.C.win=nullptr;
+    if(refusal==2)g_cancel_ok=false;
+    assert(!rna_ID_make_local(&f.linked,&f.main,C,true,false,false));
+    assert(g_cancel_calls==(refusal==2?1:0)&&has_owner(&f.main));
+    assert(g_make_locals==0&&g_newptr_clears==0&&g_metadata_locals==0);
+  }
+}
+""")
 
     def test_pinned_generator_and_registration_match_real_callback_types(self):
         fixture = Path(__file__).parent / "tests/pencil_rna_function_call_order.cc"
@@ -423,6 +616,8 @@ int main() {
             "reset": (CALLBACK_NAMES[2], "void", "IDOverrideLibrary*"),
             "destroy": (CALLBACK_NAMES[3], "void", "IDOverrideLibrary*"),
             "resync": (CALLBACK_NAMES[4], "bool", "IDOverrideLibrary*"),
+            "user_remap": (CALLBACK_NAMES[5], "void", "ID*"),
+            "make_local": (CALLBACK_NAMES[6], "ID*", "ID*"),
         }
         flag_bits = {"FUNC_USE_SELF_ID": 1, "FUNC_NO_SELF": 2, "FUNC_USE_SELF_TYPE": 4,
                      "FUNC_USE_MAIN": 8, "FUNC_USE_CONTEXT": 16, "FUNC_USE_REPORTS": 32}

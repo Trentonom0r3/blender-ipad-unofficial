@@ -1,0 +1,44 @@
+{
+  "status": "source_validated_before_exact_native_build",
+  "base_verified_source": "28c88308f92f9bd59045ad0da9b45426a0160dfe",
+  "evidence_HEAD": "5cfe2f1",
+  "canonical_patch_sha256": "409547c9b5fc115dc4f89623b2df649a3cf6a239ce00265b5f1911c4d5ae0c62",
+  "focused_tests": {
+    "status": "pass",
+    "count": 15,
+    "seconds": 12.38
+  },
+  "affected_raw_patch_ViewLayer_tests": {
+    "status": "pass",
+    "count": 3,
+    "seconds": 1.28
+  },
+  "preflight": {
+    "status": "pass",
+    "pinned_source_files": 126
+  },
+  "native_review": "pass",
+  "literal_UI_review": "all126sections compared: only rna_ID.cc changes;7Python/ring/HUD/defaultbars exact verified28c8830",
+  "full_suite": {
+    "status": "pass",
+    "tests": 414,
+    "seconds": 360.237,
+    "log": ".cache/rna-remap-local-full-tests-2.log"
+  },
+  "previous_full_suite": {
+    "status": "fail",
+    "tests": 396,
+    "errors": 5,
+    "log": ".cache/rna-remap-local-full-tests.log",
+    "cause": "CRLF overlay bytes caused raw git apply128 in unchanged blank context70883; preflight normalizedLF; repaired canonicalLF and affectedrawapply3tests pass"
+  },
+  "candidate_native_build": null,
+  "candidate_IPA": null,
+  "device_acceptance": null,
+  "scope": "Actual user_remap and linked-only make_local, fresh name types and optional preexisting newid; preserves original native result/cleanup/nonApple/nonactiveMain/local metadata behavior",
+  "limits": [
+    "Native cancellation/ID operations are fixture boundaries",
+    "Source and host checks do not prove full native WM/UIKit or device behavior",
+    "Exact candidate native build/IPA remains pending"
+  ]
+}

@@ -163582,7 +163582,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
  #  include "DNA_anim_types.h"
 
  #  include "BLI_listbase.h"
-@@ -779,13 +786,257 @@
+@@ -779,13 +786,259 @@
    WM_main_add_notifier(NC_ID | NA_EDITED, nullptr);
  }
 
@@ -163601,7 +163601,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +  if (!id || !r_identity || !id->session_uid) {
 +    return false;
 +  }
-+  if (id->lib && !id->lib->id.session_uid) {
++  if (id->lib && (!id->lib->id.session_uid || GS(id->lib->id.name) != ID_LI)) {
 +    return false;
 +  }
 +  *r_identity = {uintptr_t(id),
@@ -163621,13 +163621,15 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +  }
 +  ID *id = BKE_libblock_find_session_uid(bmain, identity.idcode, identity.session_uid);
 +  if (!id || uintptr_t(id) != identity.address ||
++      short(GS(id->name)) != identity.idcode ||
 +      uintptr_t(id->lib) != identity.library_address)
 +  {
 +    return false;
 +  }
 +  if (identity.library_address) {
 +    ID *library = BKE_libblock_find_session_uid(bmain, ID_LI, identity.library_uid);
-+    if (!library || uintptr_t(library) != identity.library_address) {
++    if (!library || uintptr_t(library) != identity.library_address ||
++        GS(library->name) != ID_LI) {
 +      return false;
 +    }
 +  }
@@ -163697,26 +163699,26 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +}
 +#endif
 +
-+/* RNA library-override operations can remap active IDs or reset/remove their
++/* RNA ID mutation operations can remap active IDs or reset/remove their
 + * hierarchy without passing through the guarded Outliner operators. Drain only
 + * registered native paint owners from the active Main, then reacquire every ID
 + * input by type/session UID before allowing the operation to continue. */
-+static bool rna_ID_override_paint_owner_teardown(bContext *C,
-+                                                 Main *bmain,
-+                                                 ID **r_id,
-+                                                 ID **related_ids,
-+                                                 const int related_id_count,
-+                                                 Scene **r_scene,
-+                                                 ViewLayer **r_view_layer,
-+                                                 ReportList *reports,
-+                                                 const char *operation)
++static bool rna_ID_paint_owner_teardown(bContext *C,
++                                       Main *bmain,
++                                       ID **r_id,
++                                       ID **related_ids,
++                                       const int related_id_count,
++                                       Scene **r_scene,
++                                       ViewLayer **r_view_layer,
++                                       ReportList *reports,
++                                       const char *operation)
 +{
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!bmain || !r_id || !*r_id || related_id_count < 0 || related_id_count > 2 ||
 +      (related_id_count && !related_ids))
 +  {
 +    if (reports) {
-+      BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid identity", operation);
++      BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: invalid identity", operation);
 +    }
 +    return false;
 +  }
@@ -163727,7 +163729,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +
 +  RnaIDOverrideState override_state;
 +  if (!rna_ID_override_state_capture(*r_id, &override_state)) {
-+    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid override owner", operation);
++    if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: invalid override owner", operation);
 +    return false;
 +  }
 +  RnaIDOverrideIdentity identities[4]{};
@@ -163740,24 +163742,24 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +    return true;
 +  };
 +  if (!capture_id(*r_id)) {
-+    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid ID", operation);
++    if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: invalid ID", operation);
 +    return false;
 +  }
 +  int scene_index = -1;
 +  if (r_scene) {
 +    if (!*r_scene) {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: missing scene", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: missing scene", operation);
 +      return false;
 +    }
 +    scene_index = id_count;
 +    if (!capture_id(reinterpret_cast<ID *>(*r_scene))) {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid scene", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: invalid scene", operation);
 +      return false;
 +    }
 +  }
 +  const uintptr_t view_layer_address = r_view_layer ? uintptr_t(*r_view_layer) : 0;
 +  if (view_layer_address && scene_index < 0) {
-+    if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: view layer has no scene", operation);
++    if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: view layer has no scene", operation);
 +    return false;
 +  }
 +  const int related_start = id_count;
@@ -163767,7 +163769,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +      identities[id_count++] = {};
 +    }
 +    else if (!capture_id(related_ids[i])) {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: invalid related ID", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: invalid related ID", operation);
 +      return false;
 +    }
 +  }
@@ -163775,7 +163777,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +  for (int attempt = 0; attempt < 256; attempt++) {
 +    bool did_teardown = false;
 +    if (!WM_event_ipad_pencil_paint_owner_teardown_next(C, bmain, &did_teardown)) {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: paint owner could not be retired", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: paint owner could not be retired", operation);
 +      return false;
 +    }
 +    if (!did_teardown) {
@@ -163786,18 +163788,18 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +    for (int i = 0; i < id_count; i++) {
 +      if (!identities[i].address) continue;
 +      if (!identities[i].session_uid) {
-+        if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: incomplete identity", operation);
++        if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: incomplete identity", operation);
 +        return false;
 +      }
 +      ID *live_id = nullptr;
 +      if (!rna_ID_override_identity_resolve(bmain, identities[i], &live_id)) {
-+        if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: an ID changed during paint cancellation", operation);
++        if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: an ID changed during paint cancellation", operation);
 +        return false;
 +      }
 +      ids[i] = live_id;
 +    }
 +    if (!rna_ID_override_state_matches(bmain, ids[0], override_state)) {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: override owner changed during paint cancellation", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: override owner changed during paint cancellation", operation);
 +      return false;
 +    }
 +    *r_id = ids[0];
@@ -163811,11 +163813,11 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +        !rna_ID_override_view_layer_reacquire(
 +            r_scene ? *r_scene : nullptr, view_layer_address, r_view_layer))
 +    {
-+      if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: view layer changed during paint cancellation", operation);
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: view layer changed during paint cancellation", operation);
 +      return false;
 +    }
 +  }
-+  if (reports) BKE_reportf(reports, RPT_ERROR, "Library override %s was refused: too many paint owners", operation);
++  if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: too many paint owners", operation);
 +  return false;
 +#else
 +  UNUSED_VARS(C, bmain, r_id, related_ids, related_id_count, r_scene, r_view_layer, reports, operation);
@@ -163831,7 +163833,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 
    if (remap_local_usages) {
 +    ID *live_id = id;
-+    if (!rna_ID_override_paint_owner_teardown(
++    if (!rna_ID_paint_owner_teardown(
 +            C, bmain, &live_id, nullptr, 0, nullptr, nullptr, nullptr, "creation"))
 +    {
 +      return nullptr;
@@ -163841,7 +163843,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
      BKE_main_id_tag_all(bmain, ID_TAG_DOIT, true);
    }
 
-@@ -812,6 +1063,7 @@
+@@ -812,6 +1065,7 @@
 
  static ID *rna_ID_override_hierarchy_create(ID *id,
                                              Main *bmain,
@@ -163849,14 +163851,14 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                              Scene *scene,
                                              ViewLayer *view_layer,
                                              ID *id_instance_hint,
-@@ -820,6 +1072,17 @@
+@@ -820,6 +1074,17 @@
    if (!ID_IS_OVERRIDABLE_LIBRARY(id)) {
      return nullptr;
    }
 +
 +  ID *live_id = id;
 +  ID *related_ids[] = {id_instance_hint};
-+  if (!rna_ID_override_paint_owner_teardown(
++  if (!rna_ID_paint_owner_teardown(
 +          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, nullptr, "hierarchy creation"))
 +  {
 +    return nullptr;
@@ -163867,7 +163869,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 
    BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 
-@@ -872,6 +1135,7 @@
+@@ -872,6 +1137,7 @@
  static void rna_ID_override_library_reset(ID *id,
                                            IDOverrideLibrary * /*override_library*/,
                                            Main *bmain,
@@ -163875,12 +163877,12 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                            ReportList *reports,
                                            bool do_hierarchy,
                                            bool set_system_override)
-@@ -881,6 +1145,18 @@
+@@ -881,6 +1147,18 @@
      return;
    }
 
 +  ID *live_id = id;
-+  if (!rna_ID_override_paint_owner_teardown(
++  if (!rna_ID_paint_owner_teardown(
 +          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "reset"))
 +  {
 +    return;
@@ -163894,7 +163896,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    if (do_hierarchy) {
      BKE_lib_override_library_id_hierarchy_reset(bmain, id, set_system_override);
    }
-@@ -894,6 +1170,7 @@
+@@ -894,6 +1172,7 @@
  static void rna_ID_override_library_destroy(ID *id,
                                              IDOverrideLibrary * /*override_library*/,
                                              Main *bmain,
@@ -163902,12 +163904,12 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                              ReportList *reports,
                                              bool do_hierarchy)
  {
-@@ -902,6 +1179,18 @@
+@@ -902,6 +1181,18 @@
      return;
    }
 
 +  ID *live_id = id;
-+  if (!rna_ID_override_paint_owner_teardown(
++  if (!rna_ID_paint_owner_teardown(
 +          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "destroy"))
 +  {
 +    return;
@@ -163921,7 +163923,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    if (do_hierarchy) {
      BKE_lib_override_library_delete(bmain, id);
    }
-@@ -916,6 +1205,7 @@
+@@ -916,6 +1207,7 @@
  static bool rna_ID_override_library_resync(ID *id,
                                             IDOverrideLibrary *override_library,
                                             Main *bmain,
@@ -163929,7 +163931,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                             ReportList *reports,
                                             Scene *scene,
                                             ViewLayer *view_layer,
-@@ -935,6 +1225,22 @@
+@@ -935,6 +1227,22 @@
          id->name);
      return false;
    }
@@ -163937,7 +163939,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +  const uintptr_t override_library_address = uintptr_t(override_library);
 +  ID *live_id = id;
 +  ID *related_ids[] = {reinterpret_cast<ID *>(override_resync_residual_storage)};
-+  if (!rna_ID_override_paint_owner_teardown(
++  if (!rna_ID_paint_owner_teardown(
 +          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, reports, "resync"))
 +  {
 +    return false;
@@ -163952,7 +163954,54 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 
    ID *id_root = do_whole_hierarchy ? override_library->hierarchy_root : id;
    BlendFileReadReport bf_reports = {};
-@@ -2120,7 +2426,7 @@
+@@ -1091,9 +1399,19 @@
+   id->us = 0; /* don't save */
+ }
+
+-static void rna_ID_user_remap(ID *id, Main *bmain, ID *new_id)
++static void rna_ID_user_remap(ID *id, Main *bmain, bContext *C, ID *new_id)
+ {
+   if ((GS(id->name) == GS(new_id->name)) && (id != new_id)) {
++    ID *related_ids[] = {new_id};
++    if (!rna_ID_paint_owner_teardown(
++            C, bmain, &id, related_ids, 1, nullptr, nullptr, nullptr, "user remap"))
++    {
++      return;
++    }
++    new_id = related_ids[0];
++    if (GS(id->name) != GS(new_id->name) || id == new_id) {
++      return;
++    }
+     /* For now, do not allow remapping data in linked data from here... */
+     BKE_libblock_remap(
+         bmain, id, new_id, ID_REMAP_SKIP_INDIRECT_USAGE | ID_REMAP_SKIP_NEVER_NULL_USAGE);
+@@ -1102,10 +1420,23 @@
+   }
+ }
+
+-static ID *rna_ID_make_local(
+-    ID *self, Main *bmain, bool /*clear_proxy*/, bool clear_liboverride, bool clear_asset_data)
++static ID *rna_ID_make_local(ID *self,
++                             Main *bmain,
++                             bContext *C,
++                             bool /*clear_proxy*/,
++                             bool clear_liboverride,
++                             bool clear_asset_data)
+ {
+   if (ID_IS_LINKED(self)) {
++    ID *related_ids[] = {self->newid};
++    if (!rna_ID_paint_owner_teardown(
++            C, bmain, &self, related_ids, 1, nullptr, nullptr, nullptr, "make local"))
++    {
++      return nullptr;
++    }
++    if (!ID_IS_LINKED(self) || self->newid != related_ids[0]) {
++      return nullptr;
++    }
+     int flags = 0;
+     if (clear_asset_data) {
+       flags |= LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR;
+@@ -2120,7 +2451,7 @@
    func = RNA_def_function(srna, "reset", "rna_ID_override_library_reset");
    RNA_def_function_ui_description(func,
                                    "Reset this override to match again its linked reference ID");
@@ -163961,7 +164010,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(
        func,
        "do_hierarchy",
-@@ -2136,7 +2442,7 @@
+@@ -2136,7 +2467,7 @@
    func = RNA_def_function(srna, "destroy", "rna_ID_override_library_destroy");
    RNA_def_function_ui_description(
        func, "Delete this override ID and remap its usages to its linked reference ID instead");
@@ -163970,7 +164019,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(func,
                    "do_hierarchy",
                    true,
-@@ -2147,7 +2453,7 @@
+@@ -2147,7 +2478,7 @@
    func = RNA_def_function(srna, "resync", "rna_ID_override_library_resync");
    RNA_def_function_ui_description(
        func, "Resync the data-block and its sub-hierarchy, or the whole hierarchy if requested");
@@ -163979,7 +164028,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_boolean(
        func, "success", false, "Success", "Whether the resync process was successful or not");
    RNA_def_function_return(func, parm);
-@@ -2491,7 +2797,7 @@
+@@ -2491,7 +2822,7 @@
    RNA_def_function_ui_description(func,
                                    "Create an overridden local copy of this linked data-block (not "
                                    "supported for all data-blocks)");
@@ -163988,7 +164037,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
    RNA_def_function_return(func, parm);
    RNA_def_boolean(func,
-@@ -2506,7 +2812,7 @@
+@@ -2506,7 +2837,7 @@
        func,
        "Create an overridden local copy of this linked data-block, and most of its dependencies "
        "when it is a Collection or and Object");
@@ -163997,3 +164046,21 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the root ID");
    RNA_def_function_return(func, parm);
    parm = RNA_def_pointer(
+@@ -2539,7 +2870,7 @@
+   func = RNA_def_function(srna, "user_remap", "rna_ID_user_remap");
+   RNA_def_function_ui_description(
+       func, "Replace all usage in the .blend file of this ID by new given one");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_CONTEXT);
+   parm = RNA_def_pointer(func, "new_id", "ID", "", "New ID to use");
+   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
+
+@@ -2548,7 +2879,7 @@
+       func,
+       "Make this data-block local, return local one "
+       "(may be a copy of the original, in case it is also indirectly used)");
+-  RNA_def_function_flag(func, FUNC_USE_MAIN);
++  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_CONTEXT);
+   parm = RNA_def_boolean(func, "clear_proxy", true, "", "Deprecated, has no effect");
+   parm = RNA_def_boolean(func,
+                          "clear_liboverride",

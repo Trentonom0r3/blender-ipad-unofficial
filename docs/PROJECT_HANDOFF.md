@@ -1,3 +1,30 @@
+## Validated direct remap/localization source candidate - 2026-10-13
+
+Authoritative patch and connected RNA fixture guard actual `rna_ID_user_remap`
+and only linked `rna_ID_make_local` before raw BKE mutation. Shared helper is
+`rna_ID_paint_owner_teardown`; explicit fresh ID/Library types correct the
+previous stronger fixture model. Optional existing newid is captured/reacquired
+and changed relation refuses before localization or cleanup. Native return,
+target-tag/newid cleanup, non-Apple/non-active Main and local metadata semantics
+remain unchanged. No ring/HUD/Python UI section changed.
+
+Focused **15/15**, independent production/literal UI review, **126-file** pinned
+preflight and diff checks pass at canonical LF patch SHA256
+`409547c9b5fc115dc4f89623b2df649a3cf6a239ce00265b5f1911c4d5ae0c62`.
+The previous full run failed396tests/5imports: Windows text output converted the
+overlay to CRLF, making raw git apply reject empty context lines. LF bytes are
+restored and affected ViewLayer3/3 pass; `.gitattributes` preserves LF checkout.
+That failed log remains `.cache/rna-remap-local-full-tests.log`.
+
+The complete stable-source rerun passed **414/414** in **360.237 seconds**,
+log `.cache/rna-remap-local-full-tests-2.log`; session 70093 completed exit0.
+Independent native and literal UI reviews pass on the exact final source. Source checkpoint:
+`output/ui-preview/pencil-rna-override/remap-local-source-checkpoint.json`.
+No native build/IPA/device evidence exists for this candidate. Latest fully
+verified package remains **28c8830 / run 38346442695** below. Finish actual
+checks, commit/push coherent exact source, build once and verify the downloaded
+full IPA/compiled consumers. Keep the full goal unfinished and preserve artifacts.
+
 ## Verified direct RNA override owner guard - 2026-10-13
 
 Exact source `28c88308f92f9bd59045ad0da9b45426a0160dfe` passed hosted preflight,
