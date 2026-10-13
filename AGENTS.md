@@ -1,3 +1,49 @@
+## Verified direct RNA override owner guard - 2026-10-13
+
+Exact source `28c88308f92f9bd59045ad0da9b45426a0160dfe` passed hosted preflight,
+native iOS Release and full package verification in [run 38346442695](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38346442695).
+Actual override create-with-remapping, hierarchy create, reset, destroy and
+resync callbacks retire registered Pencil paint owners before native ID
+mutation, then reconstruct ID/Library/override/Scene/View Layer values.
+Context-free no-owner calls, optional null arguments, non-active Mains and
+non-Apple behavior retain native semantics. All seven production Python UI
+sections, ring/HUD geometry and native Blender bars are unchanged.
+
+The full host suite passed **408/408**, connected RNA checks **9/9**, WM scan
+checks **6/6**, and **126-file** pinned preflight/diff checks. Independent source,
+literal UI and compiled reviews pass. Canonical LF patch SHA256:
+`b4503c6317bc0c58e8f44fdfc8cd62e535954d7b9957f3d17c9c6bbd87397536`.
+
+Artifact `11788893218` contains the downloaded **248,624,850-byte** IPA, SHA256
+`9353fa9bc0fa4b6d67121bfd7fa1ce2327e3732b1dbc6d748a744b0df2c0de92`.
+Complete **3,368-entry** CRC, arm64/iPhoneOS 5.0.0, whole exact interaction UI,
+default header/toolbar, pinned tool definitions/all **129** icons and exact
+nine-action Base/native-only More Tools pass. Binary UUID
+`64F849FF-CBB4-3D85-8654-A528BFFD1C28` passes compiled HUD launch and Weight
+cleanup checks. All five actual RNA guard refusal branches reach ordinary
+returns before native mutation. Generated wrappers forward context correctly,
+including LLVM's optimized reset/destroy arguments. The primary helper's
+strict WM teardown and fresh UID/Library/override/ViewLayer call shapes were
+independently inspected. These are bounded disassembly findings, not complete
+WM/UIKit execution, launch, or iPad paint acceptance.
+
+Reports in `output/ui-preview/pencil-rna-override/`: `source-verification.json`,
+`ipa-38346442695/verification.json`, and
+`binary-38346442695/compiled-rna-guard-audit.json`. Watcher session 87133
+completed successfully; no live verifier or unchanged rebuild is needed.
+There is **no device acceptance for this exact package**. Native cancellation
+and ID mutation are modeled fixture boundaries; the outer attempt counter
+does not prove a global reentrancy bound.
+
+Next coherent source increment: actual `rna_ID_user_remap` and only the linked
+branch of `rna_ID_make_local` bypass guarded RNA setters while remapping usages.
+Guard after native input admission, revalidate fresh typed identities/Library,
+preserve result/newid cleanup and native metadata-only local behavior. Native
+UID lookup selects a typed list but does not recheck current ID name type;
+add that explicit check and correct the fixture's stronger lookup model.
+Preserve all accepted UI/input/history/launch guards and local evidence.
+The full personal Pencil-first goal remains active and unfinished.
+
 ## Verified Object Delete Pencil-owner preflight IPA — 2026-10-12
 
 Exact source `2d659eafbc0f923e0eca0f7f63c61faa155a9304` passed hosted preflight in [run 38332967407](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38332967407) and native iOS Release in [run 38333209890](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38333209890). The Apple-only `OBJECT_OT_delete` path now snapshots selected Object identities as session UIDs and values, retires matching live Pencil paint owners before any delete tag, scene unlink, or global ID deletion, and revalidates Main/window/Scene/View Layer plus the complete selection after each native cancellation callback. Refusal, ambiguous identities, reentrancy, or changed context/selection cancels the delete. No Object pointer crosses a callback; other platform behavior and Blender's native successful delete path remain unchanged.

@@ -1,43 +1,48 @@
-## Direct Python RNA override owner guard — current source candidate — 2026-10-13
+## Verified direct RNA override owner guard - 2026-10-13
 
-The candidate connects the strict registered Pencil paint-owner scan to actual
-`override_create(remap_local_usages=True)`, `override_hierarchy_create`, override
-`reset`, `destroy`, and `resync` callbacks. Native cancellation occurs before
-ID tags, remapping, deletion, reset, or resync. Every callback reconstructs its
-ID inputs by type/session UID/address and verifies linked Library, override
-pointer/flag/reference/root, Scene, View Layer, and invoking context after
-cancellation. Null optional hierarchy hints/resync arguments retain native
-semantics. Context-free RNA calls proceed when no paint owner exists; a live
-owner without a valid invoking UI context refuses before cancellation.
-Non-active Mains and non-Apple behavior retain their original native route.
-Creation without remapping and metadata-only operations remain unchanged.
+Exact source `28c88308f92f9bd59045ad0da9b45426a0160dfe` passed hosted preflight,
+native iOS Release and full package verification in [run 38346442695](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38346442695).
+Actual override create-with-remapping, hierarchy create, reset, destroy and
+resync callbacks retire registered Pencil paint owners before native ID
+mutation, then reconstruct ID/Library/override/Scene/View Layer values.
+Context-free no-owner calls, optional null arguments, non-active Mains and
+non-Apple behavior retain native semantics. All seven production Python UI
+sections, ring/HUD geometry and native Blender bars are unchanged.
 
-Connected callback tests pass **9/9**, including the exact pinned makesrna
-implicit-argument excerpt and registration-derived callback types. The actual
-WM one-owner scan suite passes **6/6**; pinned offline preflight applies to
-**126 source files**; diff hygiene passes. Independent native and literal UI
-reviews passed. All seven production Python sections and the ring/HUD UI match
-the previously verified source exactly. The full host suite passed **408/408** in 359.433 seconds
-(`.cache/rna-override-full-tests.log`). There is no new native build or IPA yet. The prior
-verified source/package remains `b7f21c1` / run 38341051875.
+The full host suite passed **408/408**, connected RNA checks **9/9**, WM scan
+checks **6/6**, and **126-file** pinned preflight/diff checks. Independent source,
+literal UI and compiled reviews pass. Canonical LF patch SHA256:
+`b4503c6317bc0c58e8f44fdfc8cd62e535954d7b9957f3d17c9c6bbd87397536`.
 
-Native cancellation and ID mutation APIs are modeled fixture boundaries; the
-checks do not prove UIKit timing, full native override internals, or device
-acceptance. The outer attempt counter does not establish a global reentrancy
-bound: the examined native cancellation paths do not reacquire a tagged owner,
-and actual binding requires a genuine admitted Begin in the matching dispatch
-context. Preserve the native mode-specific Cancel/history behavior.
+Artifact `11788893218` contains the downloaded **248,624,850-byte** IPA, SHA256
+`9353fa9bc0fa4b6d67121bfd7fa1ce2327e3732b1dbc6d748a744b0df2c0de92`.
+Complete **3,368-entry** CRC, arm64/iPhoneOS 5.0.0, whole exact interaction UI,
+default header/toolbar, pinned tool definitions/all **129** icons and exact
+nine-action Base/native-only More Tools pass. Binary UUID
+`64F849FF-CBB4-3D85-8654-A528BFFD1C28` passes compiled HUD launch and Weight
+cleanup checks. All five actual RNA guard refusal branches reach ordinary
+returns before native mutation. Generated wrappers forward context correctly,
+including LLVM's optimized reset/destroy arguments. The primary helper's
+strict WM teardown and fresh UID/Library/override/ViewLayer call shapes were
+independently inspected. These are bounded disassembly findings, not complete
+WM/UIKit execution, launch, or iPad paint acceptance.
 
-Next adjacent audit is concrete: direct `rna_ID_user_remap` writes ID usages
-through raw BKE remapping (including window Scene and Object/data references),
-bypassing guarded setters. Linked `rna_ID_make_local` can also create a copy and
-remap mixed users. These two routes are **not corrected by this candidate**.
-Guard after native input admission and before their remapping, reconstruct
-fresh inputs, retain existing result/newid cleanup and exact native behavior.
-Pure local override metadata clearing has no established paint-owner-loss bug.
-Finish this candidate's full checks, commit/push, exact native build and complete
-IPA/compiled audits before changing its overlay again. Keep the full personal
-Pencil-first goal active and preserve all existing artifacts and UI constraints.
+Reports in `output/ui-preview/pencil-rna-override/`: `source-verification.json`,
+`ipa-38346442695/verification.json`, and
+`binary-38346442695/compiled-rna-guard-audit.json`. Watcher session 87133
+completed successfully; no live verifier or unchanged rebuild is needed.
+There is **no device acceptance for this exact package**. Native cancellation
+and ID mutation are modeled fixture boundaries; the outer attempt counter
+does not prove a global reentrancy bound.
+
+Next coherent source increment: actual `rna_ID_user_remap` and only the linked
+branch of `rna_ID_make_local` bypass guarded RNA setters while remapping usages.
+Guard after native input admission, revalidate fresh typed identities/Library,
+preserve result/newid cleanup and native metadata-only local behavior. Native
+UID lookup selects a typed list but does not recheck current ID name type;
+add that explicit check and correct the fixture's stronger lookup model.
+Preserve all accepted UI/input/history/launch guards and local evidence.
+The full personal Pencil-first goal remains active and unfinished.
 
 ## Verified Outliner override resync/delete owner guard — 2026-10-13
 

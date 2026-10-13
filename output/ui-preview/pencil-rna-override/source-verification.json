@@ -1,5 +1,5 @@
 {
-  "status": "source_validated_awaiting_exact_native_build",
+  "status": "source_native_package_bounded_compiled_verified",
   "canonical_patch_sha256": "b4503c6317bc0c58e8f44fdfc8cd62e535954d7b9957f3d17c9c6bbd87397536",
   "actual_callback_tests": 9,
   "wm_scan_tests": 6,
@@ -13,8 +13,20 @@
     "seconds": 359.433,
     "log": ".cache/rna-override-full-tests.log"
   },
-  "native_build": null,
-  "new_ipa": null,
+  "native_build": {
+    "run": 38346442695,
+    "source": "28c88308f92f9bd59045ad0da9b45426a0160dfe",
+    "status": "success",
+    "watcher_session": 87133,
+    "watcher_status": "completed_exit_0"
+  },
+  "new_ipa": {
+    "artifact": 11788893218,
+    "bytes": 248624850,
+    "sha256": "9353fa9bc0fa4b6d67121bfd7fa1ce2327e3732b1dbc6d748a744b0df2c0de92",
+    "entries": 3368,
+    "report": "output/ui-preview/pencil-rna-override/ipa-38346442695/verification.json"
+  },
   "device_acceptance": null,
   "scope": "Five actual direct RNA override mutation callbacks and context-free no-owner native behavior",
   "next_source_routes": [
@@ -24,5 +36,12 @@
   "limits": [
     "Native Cancel and ID operations modeled at fixture boundaries",
     "No global reentrancy, UIKit, full native override execution or device proof"
-  ]
+  ],
+  "compiled": {
+    "uuid": "64F849FF-CBB4-3D85-8654-A528BFFD1C28",
+    "hud_launch": "pass",
+    "weight_cleanup": "pass",
+    "RNA_guard_refusal": "bounded_calls_branches_pass",
+    "independent_review": "pass"
+  }
 }
