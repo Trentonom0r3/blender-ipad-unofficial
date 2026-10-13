@@ -35,13 +35,15 @@ Reports under `output/ui-preview/pencil-rna-override/`:
 `binary-38366690317/{compiled-rna-remap-guard-audit,independent-compiled-review}.json`.
 Watcher84868 completed exit0. No live verifier or unchanged rebuild is needed.
 
-Next confirmed source family is same-Mesh-ID storage invalidation: clear_geometry
-and four collection-add methods free/reallocate data beneath active stroke
-caches. Default Mesh.update also has a proved evaluated-cache invalidation chain;
-it must be guarded before cache dirtiness/tagging, even with unchanged IDs. Read the
-bounded next audit/primary pin cache before implementation; preserve native
-zero-count/Edit/no-owner/foreign-Main/platform semantics, fresh target ownership
-and mode-specific Cancel/history. Full personal Pencil-first goal unfinished.
+Next confirmed source family has eight live Mesh APIs: clear_geometry, four
+collection-add methods, update and two validators. They can replace original or
+evaluated data beneath cached paint spans despite unchanged Mesh IDs. The remove
+registration hits are inside #if0; do not expose them. Reuse the existing strict
+all-active-Main owner drain: Mesh UID filtering misses dependent Shrinkwrap
+evaluation. Preserve add Edit-error/zero admission and validator native results;
+validate can delete CustomData then return false. No corrective Mesh source or
+future test execution exists yet. Read mesh-storage-next-audit.json/primary pin
+before connected implementation. Full personal Pencil-first goal unfinished.
 
 ## Verified direct RNA override owner guard - 2026-10-13
 

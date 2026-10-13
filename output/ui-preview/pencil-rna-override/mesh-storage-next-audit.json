@@ -1,5 +1,5 @@
 {
-  "status": "read_only_direct_and_evaluated_storage_gaps_proved_guard_policy_review_pending",
+  "status": "read_only_direct_and_evaluated_storage_gaps_proved_eight_live_API_guard_plan",
   "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
   "production_correction": false,
   "current_build": "ed4d9110e26d6e437e65ff7f4cd8dbd93e9a2019/run38366690317",
@@ -8,12 +8,19 @@
     "MeshVertices.add -> ED_mesh_verts_add -> mesh_add_verts",
     "MeshEdges.add -> ED_mesh_edges_add -> mesh_add_edges",
     "MeshLoops.add -> ED_mesh_loops_add -> mesh_add_loops",
-    "MeshPolygons.add -> ED_mesh_faces_add -> mesh_add_faces"
+    "MeshPolygons.add -> ED_mesh_faces_add -> mesh_add_faces",
+    "Mesh.update -> normal/cache dirtiness + zero-tag explicit CoW -> Object UberEval -> evaluated-cache free",
+    "Mesh.validate -> writable CustomData/positions/edges/corners + array repair",
+    "Mesh.validate_material_indices -> writable material_index + repair/tag"
   ],
   "native_admission": [
     "Four ED add methods reject Edit mode before storage mutation",
     "Four inner add methods return on zero length; preserve zero-count no-cancel behavior",
-    "Do not infer the same Edit-mode rejection for clear_geometry: its native RNA callback currently has no report/context argument"
+    "Do not infer the same Edit-mode rejection for clear_geometry: its native RNA callback currently has no report/context argument",
+    "MeshVertices.remove and MeshEdges.remove registrations are #if0 BMESH_TODO; do not expose or treat as active RNA",
+    "Validators have no native Edit-mode rejection; retain native boolean results/defaults",
+    "validate can delete CustomData then return false because later array-validation result overwrites changed; false cannot prove no mutation",
+    "validate_material_indices acquires writable material_index before conditional repair; preserve native finish/boolean/tag semantics"
   ],
   "same_ID_consumer_evidence": [
     "Sculpt eval preserves PBVH/vwpaint while ss.cache live and assumes stable topology",
@@ -31,10 +38,11 @@
     "rna_mesh_api.cc": "024cb9013c734b9bb85ae4e92e4b697aaa8dae95",
     "rna_mesh.cc": "bb54e91168eae6fcd68ae676794124f80ba3c99b",
     "editors/mesh/mesh_data.cc": "1baaf55900650236ffbe7a1e00c0be161d90e1e5",
-    "blenkernel/intern/mesh.cc": "7025728115131c12e189ca601ac6dd68b71fad60"
+    "blenkernel/intern/mesh.cc": "7025728115131c12e189ca601ac6dd68b71fad60",
+    "mesh_validate.cc": "3402ad7d9c221cc4ac66e693855e59b54017469d"
   },
   "local_cache": ".cache/pinned-paint-storage/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
-  "review_scope": "Independent exact-pin read-only native cache/eval/scheduler proof and fixture plan; final guard scope still under review",
+  "review_scope": "Independent read-only exact-pin native cache/eval/scheduler and disabled-registration review; no new correction or future fixture execution.",
   "limits": [
     "Source reachability/ownership evidence only, no future production correction/fixture execution/native package/device acceptance",
     "Do not rely on next modal packet to cancel after evaluated storage already freed",
@@ -48,7 +56,18 @@
     "eval": "object_update.cc128-151/294-298;mesh_data_update.cc1117-1148/free1128",
     "free": "object.cc1637-1642/1651-1654",
     "concrete_modifier": "MOD_displace.cc405-417;mesh_data_update.cc372/384/1001-1002;modifier.cc915-928",
-    "scheduler": "wm.cc592-604;wm_event_system.cc492-545/563/817;scene.cc2499-2523"
+    "scheduler": "wm.cc592-604;wm_event_system.cc492-545/563/817;scene.cc2499-2523",
+    "validate": "mesh_validate.cc1023-1075;customdata changed overwritten863",
+    "material_indices": "mesh_validate.cc1131-1153"
   },
-  "guard_scope_question": "TargetMeshUID filtering alone is not established safe for dependent evaluated meshes in modifier graph. Review conservative all-activeMain-owner drain using existing WM_next; retain foreignMain/noOwner behavior."
+  "guard_scope_question": "Resolved conservative policy: reuse existing WM_event_ipad_pencil_paint_owner_teardown_next to drain all registered owners in active Main; Mesh UID-only filtering misses dependent modifier evaluation.",
+  "dependency_counterexample": "Texture Paint Object A/Mesh A enabled Shrinkwrap targets Object T/Mesh B. Mesh B geometry -> T geometry -> A modifier -> A geometry eval may free A evaluated paint spans despite distinct captured Mesh UID.",
+  "next_connected_tests": [
+    "Execute eight actual RNA consumers and real registered WM drain; refuse before writes/tagging/native callbacks",
+    "Fresh typed Mesh/Library/override reacquisition after every Cancel; deletion/remap/replacement/foreign Main/no owner/platform cases",
+    "Preserve four addmethods Edit-error-before-zero no-op and exact native defaults/returns",
+    "Generated wrapper actual implicit ABI argument order and direct ED adapter registration; all actual native methods retain fresh Mesh pointers",
+    "Default update guard before cache dirtiness, edge conditions and explicit CoW tag; validators false result remains distinct from no mutation"
+  ],
+  "checkpoint": "Oct13 ordinary usage92%; verified source ed4d911, later247fe28 evidence. Future Mesh production correction has not been written."
 }
