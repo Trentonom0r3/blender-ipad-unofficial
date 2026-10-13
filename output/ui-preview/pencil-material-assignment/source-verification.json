@@ -1,5 +1,5 @@
 {
-  "status": "source_host_independent_passed_hosted_preflight_passed_native_in_progress",
+  "status": "source_host_native_package_independent_bounded_compiled_passed",
   "base_source": "23596e309faf99fabf44d95e762dbb37271c9a43",
   "canonical_lf_patch_sha256": "3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637",
   "scope": [
@@ -77,15 +77,20 @@
     "run": 38449639043,
     "dispatched_once": true,
     "hosted_preflight": "passed",
-    "native_status": "in_progress",
+    "native_status": "success",
     "observed_at_utc": "2026-10-13T19:05:00Z",
     "active_step": "Fetch Blender source at the pinned commit (with LFS)",
     "active_step_started_at": "2026-10-13T19:02:38Z",
     "watcher_session": 12430,
     "watcher_script": ".cache/watch-material-assignment-build.py",
     "watcher_log": ".cache/material-assignment-build-watch.log",
-    "package_verified": false,
-    "compiled_review": "pending binary"
+    "package_verified": true,
+    "compiled_review": "passed independently; bounded native and outer branches/arguments",
+    "watcher_status": "completed exit0",
+    "artifact": 11843160113,
+    "ipa_bytes": 248637163,
+    "ipa_sha256": "99c20b8f911426f293ed0a160d97d6b0027a4b690d93ecb7fd13eae728812797",
+    "binary_uuid": "C235AF01-CF55-34FD-B0E6-383B140282BC"
   },
   "device_acceptance": false,
   "fixtures": {
@@ -93,5 +98,11 @@
     "build\\tests\\pinned_material_assign.inc.cc": "b4a17d68f6347c5a79f5890f1723ed16aaa0582cfc827754423e4ecc83dc36d0"
   },
   "production_source": "50359ad320904382fa967da426f7ccc0f9159016",
-  "next_read_only_audit": "material-collection-next-audit.json"
+  "next_read_only_audit": "material-collection-next-audit.json",
+  "compiled_reports": [
+    "binary-38449639043/compiled-native-review.json",
+    "binary-38449639043/independent-compiled-outer-review.json",
+    "binary-38449639043/launch-audit/audit.json",
+    "binary-38449639043/weight-cancel-compiled.json"
+  ]
 }

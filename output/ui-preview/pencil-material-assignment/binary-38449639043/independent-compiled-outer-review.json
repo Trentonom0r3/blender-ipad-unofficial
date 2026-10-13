@@ -1,0 +1,296 @@
+{
+  "status": "passed_bounded_actual_compiled_outer_review",
+  "run": "38449639043",
+  "production_source": "50359ad320904382fa967da426f7ccc0f9159016",
+  "canonical_lf_patch_sha256": "3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637",
+  "binary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-assignment\\binary-38449639043\\Blender",
+    "uuid": "C235AF01-CF55-34FD-B0E6-383B140282BC",
+    "sha256": "cdbe12cef3e6ab19c9d6945de4a17eefeb02648c181ddbc52b4f07f848c96db9",
+    "bytes": 160336368,
+    "architecture": "thin ARM64 Mach-O",
+    "configuration": "native iOS Release; Debug-only pointer getter/refcount block excluded"
+  },
+  "method": {
+    "reviewer": "independent compiled_material_outer subagent",
+    "tools": [
+      "build/audit_hud_macho.py symbols/disassemble/successors/macho_uuid",
+      "C:/Program Files/LLVM/bin/llvm-nm.exe",
+      "C:/Program Files/LLVM/bin/llvm-objdump.exe"
+    ],
+    "regenerated_instruction_stream_matches_existing": {
+      "RNA_property_pointer_set": true,
+      "rna_property_update": true,
+      "pyrna_py_to_prop": true,
+      "RNA_property_material_assign_paint_owner_teardown": true
+    },
+    "source_comparison_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05",
+    "source_sha256": {
+      "source/blender/makesrna/intern/rna_access.cc": "fc58ba3f4453f6671ce26bea1f38aedc281206b0471d23cb03eabfca6d0e6df3",
+      "source/blender/python/intern/bpy_rna.cc": "33c2183220299cccdbec5f26767bcaf5511796382fc2bbc99e1904a1b4b13489"
+    },
+    "source_verification": "output/ui-preview/pencil-material-assignment/source-verification.json",
+    "original_call_index": "material-call-sites.json",
+    "note": "Existing disassembly was independently regenerated from the exact binary, not accepted from call-index labels alone. Symbol aliases and inlined checks were resolved using addresses and instructions.",
+    "cfg_noreturn_imports": {
+      "0x104b612e0": "___stack_chk_fail",
+      "0x104b5ebb0": "__Unwind_Resume",
+      "resolution": "llvm-objdump --macho --indirect-symbols; these imported no-return calls are terminal in the local refusal CFG check"
+    }
+  },
+  "symbol_ranges": {
+    "RNA_property_pointer_set": {
+      "start": "0x101255124",
+      "end_exclusive": "0x1012555c4",
+      "symbol": "__Z24RNA_property_pointer_setP10PointerRNAP11PropertyRNAS_P10ReportList",
+      "instruction_count": 296
+    },
+    "rna_property_update": {
+      "start": "0x10124fd00",
+      "end_exclusive": "0x1012500b4",
+      "symbol": "__ZL19rna_property_updateP8bContextP4MainP5SceneP10PointerRNAP11PropertyRNA",
+      "instruction_count": 237
+    },
+    "pyrna_py_to_prop": {
+      "start": "0x1014ff9dc",
+      "end_exclusive": "0x101500dfc",
+      "symbol": "__ZL16pyrna_py_to_propP10PointerRNAP11PropertyRNAPvP7_objectPKc",
+      "instruction_count": 1288
+    },
+    "RNA_property_material_assign_paint_owner_teardown": {
+      "start": "0x10124a400",
+      "end_exclusive": "0x10124a618",
+      "symbol": "__Z49RNA_property_material_assign_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAS1_P10ReportList",
+      "instruction_count": 134
+    },
+    "PointerRNA-copy": {
+      "start": "0x10124a618",
+      "end_exclusive": "0x10124a6d4",
+      "symbol": "__ZN10PointerRNAC1ERKS_",
+      "instruction_count": 47
+    },
+    "optional-emplace": {
+      "start": "0x101505a80",
+      "end_exclusive": "0x101505b70",
+      "symbol": "__ZNSt3__18optionalI10PointerRNAE7emplaceB8ne190102IJRS1_EvEES4_DpOT_",
+      "instruction_count": 60
+    },
+    "RNA_property_update-wrapper": {
+      "start": "0x10124fcb0",
+      "end_exclusive": "0x10124fd00",
+      "symbol": "__Z19RNA_property_updateP8bContextP10PointerRNAP11PropertyRNA",
+      "instruction_count": 20
+    },
+    "BPy_reports_to_error": {
+      "start": "0x1014ee2b8",
+      "end_exclusive": "0x1014ee32c",
+      "symbol": "__Z20BPy_reports_to_errorP10ReportListP7_objectb",
+      "instruction_count": 29
+    }
+  },
+  "findings": [],
+  "obligations": {
+    "generic_pointer_setter_refuses_before_custom_setter": {
+      "status": "passed",
+      "profile": "0x101255254..0x101255284 checks RNA magic -1, pointer type 5 and exact generated Object_active_material_set 0x1013fc924 / MaterialSlot_material_set 0x101402988 function addresses. The helper/profile check is inlined.",
+      "query_call": "0x1012552a4 -> WM_event_ipad_pencil_paint_owner_teardown_next 0x100b51420",
+      "arguments": {
+        "x0": "null C",
+        "x1": "G_MAIN loaded from G at 0x106d74028",
+        "x2": "null retired output",
+        "w3": "0 default policy"
+      },
+      "refusal_branch": "0x1012552a8 tbz w0,#0 -> 0x1012554d4; null G_MAIN at 0x101255294 uses the same refusal block",
+      "refusal_effect": "With null reports, returns through 0x101255394..0x1012553c8. With reports, tail-calls BKE_report at 0x10125551c after restoring the frame. No generated-setter dispatch, getter, or native refcount write lies on that refusal continuation.",
+      "blocked_custom_dispatch": "0x10125535c blr x22; after query success only",
+      "bounded_cfg_check": {
+        "refusal_reachable_instructions": 34,
+        "unresolved_indirect_transfers": [],
+        "custom_dispatch_reachable": false
+      },
+      "debug_limit": "The reviewed Release body contains no old-ID getter or Debug old/new refcount block. The materialized rna_access.cc guard at line4554 precedes #ifndef NDEBUG line4557 and getter line4567. This establishes source ordering for Debug only; no compiled Debug binary was reviewed."
+    },
+    "generic_update_refuses_before_later_native_update": {
+      "status": "passed",
+      "profile": "0x10124fda0..0x10124fdc8 resolves exact material setter identity before native updates",
+      "query_call": "0x10124fdf0 -> 0x100b51420; x0=null, x1=G_MAIN, x2=null, w3=0",
+      "refusal_branch": "0x10124fe00 cbz w8 -> 0x1012500a0; null G_MAIN 0x10124fdd8 uses same return",
+      "refusal_effect": "0x1012500a0..0x1012500b0 restores frame and returns, with no calls.",
+      "later_native_consumers": [
+        "update callback blr x8 at 0x10124fe4c or context/property variant 0x10124fef0",
+        "WM_main_add_notifier 0x10124fe68",
+        "WM_msg_publish_rna 0x10124fe80",
+        "later depsgraph tagging including 0x101250094"
+      ],
+      "bounded_cfg_check": {
+        "refusal_reachable_instructions": 5,
+        "unresolved_indirect_transfers": []
+      }
+    },
+    "query_calls_do_not_cancel_in_borrowed_frames": {
+      "status": "passed_bounded",
+      "wm_range": {
+        "start": "0x100b51420",
+        "end_exclusive": "0x100b51c3c"
+      },
+      "output_argument_trace": "Entry saves incoming x2 in x24 at 0x100b51484; 0x100b51534 saves x24 at [sp,#0x28]. At 0x100b5187c..0x100b51890, null saved output forces tbnz -> cleanup/return 0x100b51a88 before native teardown.",
+      "excluded_after_null_output_gate": [
+        "CTX_create 0x100b5194c",
+        "strict WM_event_ipad_pencil_paint_owner_teardown 0x100b51998"
+      ],
+      "limit": "This is a local proof of the null-output query gate and these later direct calls, not a proof of all WM lifetimes or complete transitive behavior."
+    },
+    "python_preparation_owns_target_and_value_storage": {
+      "status": "passed",
+      "admission": "data==null branches reach 0x101500734 (typed param) or 0x1015009a0 (None); existing RNA_struct_is_a check at 0x101500740 precedes material preparation. None selects PointerRNA_NULL at 0x106d9deb8.",
+      "reports": "ReportList at sp+0x30 initialized with RPT_STORE=2 at 0x1015009b0",
+      "material_profile": "RNA_property_is_material_assignment called 0x1015009b8; false uses ordinary generic assignment path",
+      "saved_context": "BPY_context_get 0x1015009c0 saved in x20",
+      "target_copy": "optional<PointerRNA>::emplace at 0x1015009d0 copies original x21 target into x29-0xd0; engaged byte is x29-0x78",
+      "value_copy": "PointerRNA copy constructor 0x1015009ec copies nullable param/PointerRNA_NULL into sp+0x170; 0x1015009f8 copies it to by-value helper argument sp+0x118",
+      "copy_implementation": "0x10124a618 copies owner/type/data fields and duplicates ancestor vector elements; optional emplace 0x101505a80 likewise copies fields/vector and sets engaged byte at 0x101505b3c",
+      "preparation_call": "0x101500a10 -> RNA_property_material_assign_paint_owner_teardown 0x10124a400 with x0=saved C, x1=x29-0xd0 owned target, x2=prop, x3=sp+0x118 owned by-value value, x4=sp+0x30 reports",
+      "profile_forwarder": "At 0x10124a598..0x10124a5b8 the forwarder sets w3=(setter != Object_active_material_set), forwards saved C/target/owned value/reports to RNA_object_material_assign_paint_owner_teardown 0x1013faf78",
+      "storage_limit": "Owning PointerRNA and ancestor-vector storage prevents borrowing a Python wrapper across the drain; it does not retain or reference-count the Blender IDs themselves. Native helper admission/revalidation is a separate connected obligation."
+    },
+    "python_prepared_result_context_and_reports_precede_late_update": {
+      "status": "passed",
+      "post_drain_context": "After preparation, BPY_context_get 0x101500a20 compared to saved x20 at 0x101500a24. Mismatch reports RPT_ERROR at 0x101500a3c and skips assignment.",
+      "prepared_result": "Prepared result saved at 0x101500a14; cbz w21 at 0x101500c68 skips assignment on false.",
+      "assignment": "Only equal-context plus prepared=true path copies material_value to sp+0xc0 at 0x101500c74 and calls RNA_property_pointer_set at 0x101500c88 with x0=x29-0xd0, x1=prop, x2=owned value, x3=reports.",
+      "post_assignment_target": "After value-copy cleanup, 0x101500c9c sets x21 to x29-0xd0 for the remaining outer function; target storage remains engaged until normal/error exit 0x10150093c..0x10150095c.",
+      "report_error_gate": "BPy_reports_to_error at 0x101500cb4 uses reports, PyExc_RuntimeError and free=true. Returned -1 branches at 0x101500cbc to 0x101500ce0 and error exit 0x101500938, skipping RNA_property_update_check/update.",
+      "report_helper": "0x1014ee2b8..0x1014ee32c obtains RPT_ERROR reports, frees report storage when requested, sets PyErr if an error string exists and returns -1 for that case.",
+      "value_new_cleanup_order": "0x101500cc0..0x101500cdc performs existing Py_XDECREF(value_new) after reports, then reaches common late-update block at 0x1014ffae4.",
+      "late_context_gate": "RNA_property_update_check 0x1014ffae8; engaged optional check 0x1014ffaf0..0x1014ffaf8; material BPY_context_get at 0x1014ffafc compared to saved x20 at 0x1014ffb00. Mismatch sets RuntimeError and returns -1; equal proceeds to update.",
+      "late_update_arguments": "0x1014ffd0c..0x1014ffd18 calls RNA_property_update with x0=saved x20 C, x1=x21=owned target, x2=x19 prop.",
+      "update_wrapper": "0x10124fcb0..0x10124fd00 loads Main/Scene from saved C and tail-calls actual rna_property_update with x0=C, x1=Main, x2=Scene, x3=owned target, x4=prop.",
+      "alias_resolution": [
+        [
+          "0x100013e10",
+          "__ZN10PointerRNAD1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN18PropertyPointerRNAD1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_10PointCloudENS_5PointEXadL_Z23PointCloud_points_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z22PointCloud_points_nextS4_EEXadL_Z21PointCloud_points_endS4_EEXadL_ZNS1_29PointCloud_points_length_wrapES6_EEXadL_ZNS1_28PointCloud_points_empty_wrapES6_EEXadL_ZNS1_33PointCloud_points_lookup_int_wrapES6_iS6_EEXadL_ZNS1_36PointCloud_points_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_11PreferencesENS_10ThemeStyleEXadL_Z27Preferences_ui_styles_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z26Preferences_ui_styles_nextS4_EEXadL_Z25Preferences_ui_styles_endS4_EEXadL_ZNS1_33Preferences_ui_styles_length_wrapES6_EEXadL_ZNS1_32Preferences_ui_styles_empty_wrapES6_EEXadL_ZNS1_37Preferences_ui_styles_lookup_int_wrapES6_iS6_EEXadL_ZNS1_40Preferences_ui_styles_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_11PreferencesENS_5ThemeEXadL_Z24Preferences_themes_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z23Preferences_themes_nextS4_EEXadL_Z22Preferences_themes_endS4_EEXadL_ZNS1_30Preferences_themes_length_wrapES6_EEXadL_ZNS1_29Preferences_themes_empty_wrapES6_EEXadL_ZNS1_34Preferences_themes_lookup_int_wrapES6_iS6_EEXadL_ZNS1_37Preferences_themes_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_12RenderResultENS_11RenderLayerEXadL_Z25RenderResult_layers_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z24RenderResult_layers_nextS4_EEXadL_Z23RenderResult_layers_endS4_EEXadL_ZNS1_31RenderResult_layers_length_wrapES6_EEXadL_ZNS1_30RenderResult_layers_empty_wrapES6_EEXadL_ZNS1_35RenderResult_layers_lookup_int_wrapES6_iS6_EEXadL_ZNS1_38RenderResult_layers_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_14ParticleSystemENS_13ChildParticleEXadL_Z36ParticleSystem_child_particles_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z35ParticleSystem_child_particles_nextS4_EEXadL_Z34ParticleSystem_child_particles_endS4_EEXadL_ZNS1_42ParticleSystem_child_particles_length_wrapES6_EEXadL_ZNS1_41ParticleSystem_child_particles_empty_wrapES6_EEXadL_ZNS1_46ParticleSystem_child_particles_lookup_int_wrapES6_iS6_EEXadL_ZNS1_49ParticleSystem_child_particles_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_14ParticleSystemENS_8ParticleEXadL_Z30ParticleSystem_particles_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z29ParticleSystem_particles_nextS4_EEXadL_Z28ParticleSystem_particles_endS4_EEXadL_ZNS1_36ParticleSystem_particles_length_wrapES6_EEXadL_ZNS1_35ParticleSystem_particles_empty_wrapES6_EEXadL_ZNS1_40ParticleSystem_particles_lookup_int_wrapES6_iS6_EEXadL_ZNS1_43ParticleSystem_particles_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_15MeshUVLoopLayerENS_10MeshUVLoopEXadL_Z26MeshUVLoopLayer_data_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z25MeshUVLoopLayer_data_nextS4_EEXadL_Z24MeshUVLoopLayer_data_endS4_EEXadL_ZNS1_32MeshUVLoopLayer_data_length_wrapES6_EEXadL_ZNS1_31MeshUVLoopLayer_data_empty_wrapES6_EEXadL_ZNS1_36MeshUVLoopLayer_data_lookup_int_wrapES6_iS6_EEXadL_ZNS1_39MeshUVLoopLayer_data_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_15MeshUVLoopLayerENS_18BoolAttributeValueEXadL_Z36MeshUVLoopLayer_edge_selection_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z35MeshUVLoopLayer_edge_selection_nextS4_EEXadL_Z34MeshUVLoopLayer_edge_selection_endS4_EEXadL_ZNS1_42MeshUVLoopLayer_edge_selection_length_wrapES6_EEXadL_ZNS1_41MeshUVLoopLayer_edge_selection_empty_wrapES6_EEXadL_ZNS1_46MeshUVLoopLayer_edge_selection_lookup_int_wrapES6_iS6_EEXadL_ZNS1_49MeshUVLoopLayer_edge_selection_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_15MeshUVLoopLayerENS_18BoolAttributeValueEXadL_Z38MeshUVLoopLayer_vertex_selection_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z37MeshUVLoopLayer_vertex_selection_nextS4_EEXadL_Z36MeshUVLoopLayer_vertex_selection_endS4_EEXadL_ZNS1_44MeshUVLoopLayer_vertex_selection_length_wrapES6_EEXadL_ZNS1_43MeshUVLoopLayer_vertex_selection_empty_wrapES6_EEXadL_ZNS1_48MeshUVLoopLayer_vertex_selection_lookup_int_wrapES6_iS6_EEXadL_ZNS1_51MeshUVLoopLayer_vertex_selection_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_15MeshUVLoopLayerENS_20Float2AttributeValueEXadL_Z24MeshUVLoopLayer_uv_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z23MeshUVLoopLayer_uv_nextS4_EEXadL_Z22MeshUVLoopLayer_uv_endS4_EEXadL_ZNS1_30MeshUVLoopLayer_uv_length_wrapES6_EEXadL_ZNS1_29MeshUVLoopLayer_uv_empty_wrapES6_EEXadL_ZNS1_34MeshUVLoopLayer_uv_lookup_int_wrapES6_iS6_EEXadL_ZNS1_37MeshUVLoopLayer_uv_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_4MeshENS_15MeshNormalValueEXadL_Z25Mesh_corner_normals_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z24Mesh_corner_normals_nextS4_EEXadL_Z23Mesh_corner_normals_endS4_EEXadL_ZNS1_31Mesh_corner_normals_length_wrapES6_EEXadL_ZNS1_30Mesh_corner_normals_empty_wrapES6_EEXadL_ZNS1_35Mesh_corner_normals_lookup_int_wrapES6_iS6_EEXadL_ZNS1_38Mesh_corner_normals_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_4MeshENS_15MeshNormalValueEXadL_Z25Mesh_vertex_normals_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z24Mesh_vertex_normals_nextS4_EEXadL_Z23Mesh_vertex_normals_endS4_EEXadL_ZNS1_31Mesh_vertex_normals_length_wrapES6_EEXadL_ZNS1_30Mesh_vertex_normals_empty_wrapES6_EEXadL_ZNS1_35Mesh_vertex_normals_lookup_int_wrapES6_iS6_EEXadL_ZNS1_38Mesh_vertex_normals_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_4MeshENS_15MeshNormalValueEXadL_Z26Mesh_polygon_normals_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z25Mesh_polygon_normals_nextS4_EEXadL_Z24Mesh_polygon_normals_endS4_EEXadL_ZNS1_32Mesh_polygon_normals_length_wrapES6_EEXadL_ZNS1_31Mesh_polygon_normals_empty_wrapES6_EEXadL_ZNS1_36Mesh_polygon_normals_lookup_int_wrapES6_iS6_EEXadL_ZNS1_39Mesh_polygon_normals_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_4MeshENS_15ReadOnlyIntegerEXadL_Z33Mesh_loop_triangle_polygons_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z32Mesh_loop_triangle_polygons_nextS4_EEXadL_Z31Mesh_loop_triangle_polygons_endS4_EEXadL_ZNS1_39Mesh_loop_triangle_polygons_length_wrapES6_EEXadL_ZNS1_38Mesh_loop_triangle_polygons_empty_wrapES6_EEXadL_ZNS1_43Mesh_loop_triangle_polygons_lookup_int_wrapES6_iS6_EEXadL_ZNS1_46Mesh_loop_triangle_polygons_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_4MeshENS_19MeshSkinVertexLayerEXadL_Z24Mesh_skin_vertices_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z23Mesh_skin_vertices_nextS4_EEXadL_Z22Mesh_skin_vertices_endS4_EEXadL_ZNS1_30Mesh_skin_vertices_length_wrapES6_EEXadL_ZNS1_29Mesh_skin_vertices_empty_wrapES6_EEXadL_ZNS1_34Mesh_skin_vertices_lookup_int_wrapES6_iS6_EEXadL_ZNS1_37Mesh_skin_vertices_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_5ImageENS_15ImagePackedFileEXadL_Z24Image_packed_files_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z23Image_packed_files_nextS4_EEXadL_Z22Image_packed_files_endS4_EEXadL_ZNS1_30Image_packed_files_length_wrapES6_EEXadL_ZNS1_29Image_packed_files_empty_wrapES6_EEXadL_ZNS1_34Image_packed_files_lookup_int_wrapES6_iS6_EEXadL_ZNS1_37Image_packed_files_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_5SceneENS_24TransformOrientationSlotEXadL_Z39Scene_transform_orientation_slots_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z38Scene_transform_orientation_slots_nextS4_EEXadL_Z37Scene_transform_orientation_slots_endS4_EEXadL_ZNS1_45Scene_transform_orientation_slots_length_wrapES6_EEXadL_ZNS1_44Scene_transform_orientation_slots_empty_wrapES6_EEXadL_ZNS1_49Scene_transform_orientation_slots_lookup_int_wrapES6_iS6_EEXadL_ZNS1_52Scene_transform_orientation_slots_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_6ObjectENS_12MaterialSlotEXadL_Z27Object_material_slots_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z26Object_material_slots_nextS4_EEXadL_Z25Object_material_slots_endS4_EEXadL_ZNS1_33Object_material_slots_length_wrapES6_EEXadL_ZNS1_32Object_material_slots_empty_wrapES6_EEXadL_ZNS1_37Object_material_slots_lookup_int_wrapES6_iS6_EEXadL_ZNS1_40Object_material_slots_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_8MaterialENS_5ImageEXadL_Z35Material_texture_paint_images_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z34Material_texture_paint_images_nextS4_EEXadL_Z33Material_texture_paint_images_endS4_EEXadL_ZNS1_41Material_texture_paint_images_length_wrapES6_EEXadL_ZNS1_40Material_texture_paint_images_empty_wrapES6_EEXadL_ZNS1_45Material_texture_paint_images_lookup_int_wrapES6_iS6_EEXadL_ZNS1_48Material_texture_paint_images_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_8ParticleENS_15ParticleHairKeyEXadL_Z24Particle_hair_keys_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z23Particle_hair_keys_nextS4_EEXadL_Z22Particle_hair_keys_endS4_EEXadL_ZNS1_30Particle_hair_keys_length_wrapES6_EEXadL_ZNS1_29Particle_hair_keys_empty_wrapES6_EEXadL_ZNS1_34Particle_hair_keys_lookup_int_wrapES6_iS6_EEXadL_ZNS1_37Particle_hair_keys_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_9BlendDataENS_3KeyEXadL_Z26BlendData_shape_keys_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z25BlendData_shape_keys_nextS4_EEXadL_Z24BlendData_shape_keys_endS4_EEXadL_ZNS1_32BlendData_shape_keys_length_wrapES6_EEXadL_ZNS1_31BlendData_shape_keys_empty_wrapES6_EEXadL_ZNS1_36BlendData_shape_keys_lookup_int_wrapES6_iS6_EEXadL_ZNS1_39BlendData_shape_keys_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_9DepsgraphENS_23DepsgraphObjectInstanceEXadL_Z32Depsgraph_object_instances_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z31Depsgraph_object_instances_nextS4_EEXadL_Z30Depsgraph_object_instances_endS4_EEXadL_ZNS1_38Depsgraph_object_instances_length_wrapES6_EEXadL_ZNS1_37Depsgraph_object_instances_empty_wrapES6_EEXadL_ZNS1_42Depsgraph_object_instances_lookup_int_wrapES6_iS6_EEXadL_ZNS1_45Depsgraph_object_instances_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_9DepsgraphENS_2IDEXadL_Z19Depsgraph_ids_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z18Depsgraph_ids_nextS4_EEXadL_Z17Depsgraph_ids_endS4_EEXadL_ZNS1_25Depsgraph_ids_length_wrapES6_EEXadL_ZNS1_24Depsgraph_ids_empty_wrapES6_EEXadL_ZNS1_29Depsgraph_ids_lookup_int_wrapES6_iS6_EEXadL_ZNS1_32Depsgraph_ids_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN2BL13CollectionRefINS_9DepsgraphENS_6ObjectEXadL_Z23Depsgraph_objects_beginP26CollectionPropertyIteratorP10PointerRNAEEXadL_Z22Depsgraph_objects_nextS4_EEXadL_Z21Depsgraph_objects_endS4_EEXadL_ZNS1_29Depsgraph_objects_length_wrapES6_EEXadL_ZNS1_28Depsgraph_objects_empty_wrapES6_EEXadL_ZNS1_33Depsgraph_objects_lookup_int_wrapES6_iS6_EEXadL_ZNS1_36Depsgraph_objects_lookup_string_wrapES6_PKcS6_EENS_26DefaultCollectionFunctionsEED1Ev"
+        ],
+        [
+          "0x100013e10",
+          "__ZN7blender2ed12sculpt_paint18FillToolTargetInfoD1Ev"
+        ]
+      ],
+      "alias_note": "LLVM labels 0x100013e10 as FillToolTargetInfoD1Ev, but llvm-nm defines PointerRNAD1Ev at the identical folded address. The body only frees external ancestor storage if it differs from the embedded buffer; it is PointerRNA cleanup at these call sites, not paint-target cleanup."
+    }
+  },
+  "supplemental_assembly": [
+    "independent-outer-PointerRNA-copy.asm",
+    "independent-outer-optional-emplace.asm",
+    "independent-outer-RNA_property_update-wrapper.asm",
+    "independent-outer-BPy_reports_to_error.asm",
+    "independent-outer-WM-query.asm"
+  ],
+  "limits": [
+    "Exact Release binary and bounded material outer/Python paths only; no compiled Debug configuration was reviewed.",
+    "Direct guard/refusal/argument/storage/order review, not exhaustive whole-program CFG, native callback execution, or all Python conversions.",
+    "Does not establish full transitive WM/UIKit/global lifetime correctness, ID retention, rollback, or a global callback/reentrancy bound.",
+    "Native material consumer and fresh-state validation details are reviewed independently by the connected native/WM audit.",
+    "No production source edits, no new build dispatch, no iPad/Pencil/GPU execution or device acceptance claims."
+  ],
+  "device_acceptance": false
+}

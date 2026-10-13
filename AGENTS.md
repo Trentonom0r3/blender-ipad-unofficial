@@ -1,3 +1,39 @@
+## Verified material assignment Pencil-owner IPA - 2026-10-13
+
+Exact production `50359ad320904382fa967da426f7ccc0f9159016` passed hosted
+preflight, native iOS Release and complete downloaded verification in
+[run38449639043](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38449639043).
+Object.active_material and MaterialSlot.material now protect registered Pencil
+paint storage through explicit owned Python preparation; borrowed native UI/set/
+update frames only query absence. Native no-owner semantics and all UI remain.
+
+Artifact11843160113 contains248637163-byte IPA, SHA256
+99c20b8f911426f293ed0a160d97d6b0027a4b690d93ecb7fd13eae728812797.
+Full3368-entry CRC, arm64/iPhoneOS5.0.0, whole exact interaction UI/default
+Blender bars/toolbar/pinned tools/all129 icons/exact nine Base/native-only More
+Tools pass. BinaryUUID C235AF01-CF55-34FD-B0E6-383B140282BC passes preserved HUD
+launch/Weight cleanup and independent actual compiled native/outer reviews.
+Setter refusal precedes tagging/writes; typed recapture follows completed WM
+drain; actual default/original policy, null-output query and nested guard branches
+pass. Python copies precede preparation, context/report gates precede assignment
+and late update. Release excludes Debug getters; their ordering is source-only.
+External calls, native Cancel internals, deep equality/exception/global CFG and
+UIKit/device behavior are outside this bounded compiled proof.
+
+Final452/452 host checks, connected21/21,131-file preflight/diff and independent
+source/native/literal UI reviews passed. Patch SHA256 remains
+3708a0b15a15862c261e5254ce70736a54e956e302b3032da7ed6ebbf8cf9637.
+Watcher12430 completed exit0; no live verifier or unchanged rebuild is needed.
+No new device acceptance. Reports: output/ui-preview/pencil-material-assignment/
+source-verification.json, ipa-38449639043/verification.json and
+binary-38449639043/{compiled-native-review,independent-compiled-outer-review}.json.
+
+Next source family is shared IDMaterials append/pop/clear/indexed assignment;
+read material-collection-next-audit.json and the leading working checkpoint.
+Explicit Python producers must own inputs before cancellation; native callbacks
+remain absence-only. Preserve nullable/default/error/count/return semantics and
+actual shared Object synchronization. Full personal Pencil-first goal unfinished.
+
 ## Material assignment exact build pending - 2026-10-13 19:05 UTC
 
 Production source `50359ad320904382fa967da426f7ccc0f9159016` is committed,

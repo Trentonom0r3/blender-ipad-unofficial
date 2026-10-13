@@ -1,0 +1,563 @@
+{
+  "status": "passed_bounded_compiled_native_review",
+  "production_source": "50359ad320904382fa967da426f7ccc0f9159016",
+  "run": 38449639043,
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-assignment\\binary-38449639043\\Blender",
+  "binary_uuid": "C235AF01-CF55-34FD-B0E6-383B140282BC",
+  "binary_sha256": "cdbe12cef3e6ab19c9d6945de4a17eefeb02648c181ddbc52b4f07f848c96db9",
+  "method": "Independent exact text-symbol selection by equality, next-distinct-address bounds, LLVM ARM64 disassembly via build/audit_hud_macho.py, instruction assertions and intraprocedural successor walks from selected refusal branches; manual register/stack argument and branch review. Names select scopes, never establish the contract.",
+  "symbols": {
+    "Object_active_material_set": {
+      "symbol": "__Z26Object_active_material_setP10PointerRNAS_P10ReportList",
+      "start": "0x1013fc924",
+      "end_exclusive": "0x1013fcabc",
+      "instruction_count": 102,
+      "asm": "independent-Object_active_material_set.asm"
+    },
+    "MaterialSlot_material_set": {
+      "symbol": "__Z25MaterialSlot_material_setP10PointerRNAS_P10ReportList",
+      "start": "0x101402988",
+      "end_exclusive": "0x101402b1c",
+      "instruction_count": 101,
+      "asm": "independent-MaterialSlot_material_set.asm"
+    },
+    "RNA_object_material_assign_paint_owner_teardown": {
+      "symbol": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList",
+      "start": "0x1013faf78",
+      "end_exclusive": "0x1013fb398",
+      "instruction_count": 264,
+      "asm": "independent-RNA_object_material_assign_paint_owner_teardown.asm"
+    },
+    "rna_material_assign_capture": {
+      "symbol": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState",
+      "start": "0x1013fb398",
+      "end_exclusive": "0x1013fb7b8",
+      "instruction_count": 264,
+      "asm": "independent-rna_material_assign_capture.asm"
+    },
+    "rna_material_state_capture": {
+      "symbol": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+      "start": "0x101405c08",
+      "end_exclusive": "0x101405f24",
+      "instruction_count": 199,
+      "asm": "independent-rna_material_state_capture.asm"
+    },
+    "rna_material_data_type": {
+      "symbol": "__ZL22rna_material_data_types",
+      "start": "0x101405f24",
+      "end_exclusive": "0x101405fb0",
+      "instruction_count": 35,
+      "asm": "independent-rna_material_data_type.asm"
+    },
+    "RnaMaterialAssignState_equal": {
+      "symbol": "__ZNK22RnaMaterialAssignStateeqERKS_",
+      "start": "0x1013fb7b8",
+      "end_exclusive": "0x1013fb8b0",
+      "instruction_count": 62,
+      "asm": "independent-RnaMaterialAssignState_equal.asm"
+    },
+    "WM_event_ipad_pencil_paint_owner_teardown_next": {
+      "symbol": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+      "start": "0x100b51420",
+      "end_exclusive": "0x100b51c3c",
+      "instruction_count": 519,
+      "asm": "independent-WM_event_ipad_pencil_paint_owner_teardown_next.asm"
+    },
+    "WM_context_unchanged": {
+      "symbol": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+      "start": "0x100b51c3c",
+      "end_exclusive": "0x100b51d6c",
+      "instruction_count": 76,
+      "asm": "independent-WM_context_unchanged.asm"
+    }
+  },
+  "findings": [],
+  "generated_setters": [
+    {
+      "setter": "Object_active_material_set",
+      "status": "passed",
+      "query_call": "0x1013fc9f0",
+      "arguments": {
+        "C": 0,
+        "Main": "fresh load of G_MAIN",
+        "did_teardown_output": 0,
+        "policy": 0
+      },
+      "argument_instructions": [
+        {
+          "pc": "0x1013fc9e4",
+          "instruction": "mov x0, #0x0"
+        },
+        {
+          "pc": "0x1013fc9e8",
+          "instruction": "mov x2, #0x0"
+        },
+        {
+          "pc": "0x1013fc9ec",
+          "instruction": "mov w3, #0x0"
+        }
+      ],
+      "refusal_branch": {
+        "pc": "0x1013fc9f4",
+        "instruction": "tbz w0, #0x0, 0x1013fca24 <__Z26Object_active_material_setP10PointerRNAS_P10ReportList+0x100>"
+      },
+      "refusal_trace": {
+        "start": "0x1013fca24",
+        "visited": 38,
+        "calls": [
+          {
+            "pc": "0x1013fca38",
+            "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+            "address": "0x1003ca47c"
+          },
+          {
+            "pc": "0x1013fca48",
+            "target": "_MEM_freeN",
+            "address": "0x100ae425c"
+          },
+          {
+            "pc": "0x1013fca80",
+            "target": "_zlibVersion+0x104b612e0",
+            "address": "0x104b612e0"
+          },
+          {
+            "pc": "0x1013fca8c",
+            "target": "__ZN7blender6VectorIxLx4ENS_16GuardedAllocatorEED1Ev",
+            "address": "0x1000144cc"
+          },
+          {
+            "pc": "0x1013fca94",
+            "target": "_zlibVersion+0x104b5ebb0",
+            "address": "0x104b5ebb0"
+          },
+          {
+            "pc": "0x1013fcaa4",
+            "target": "___clang_call_terminate",
+            "address": "0x1000144bc"
+          },
+          {
+            "pc": "0x1013fcab0",
+            "target": "__ZN7blender2ed12sculpt_paint18FillToolTargetInfoD1Ev",
+            "address": "0x100013e10"
+          },
+          {
+            "pc": "0x1013fcab8",
+            "target": "_zlibVersion+0x104b5ebb0",
+            "address": "0x104b5ebb0"
+          }
+        ],
+        "ordinary_returns": [
+          "0x1013fca7c"
+        ],
+        "external_terminal_sites": [],
+        "unsupported_transfers": [
+          "0x1013fcab8"
+        ]
+      },
+      "unreachable_material_write_call": "0x1013fca1c",
+      "unreachable_DEG_tag_call": "0x1013fca04",
+      "scope": "Generated setter ordinary refusal path; reports, vector cleanup and stack-failure/exception helpers are not modeled. The overapproximated stack-failure fallthrough can enter exception landing pads and end at an external unwinder call; this unsupported endpoint does not establish exception semantics."
+    },
+    {
+      "setter": "MaterialSlot_material_set",
+      "status": "passed",
+      "query_call": "0x101402a54",
+      "arguments": {
+        "C": 0,
+        "Main": "fresh load of G_MAIN",
+        "did_teardown_output": 0,
+        "policy": 0
+      },
+      "argument_instructions": [
+        {
+          "pc": "0x101402a48",
+          "instruction": "mov x0, #0x0"
+        },
+        {
+          "pc": "0x101402a4c",
+          "instruction": "mov x2, #0x0"
+        },
+        {
+          "pc": "0x101402a50",
+          "instruction": "mov w3, #0x0"
+        }
+      ],
+      "refusal_branch": {
+        "pc": "0x101402a58",
+        "instruction": "tbz w0, #0x0, 0x101402a84 <__Z25MaterialSlot_material_setP10PointerRNAS_P10ReportList+0xfc>"
+      },
+      "refusal_trace": {
+        "start": "0x101402a84",
+        "visited": 38,
+        "calls": [
+          {
+            "pc": "0x101402a98",
+            "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+            "address": "0x1003ca47c"
+          },
+          {
+            "pc": "0x101402aa8",
+            "target": "_MEM_freeN",
+            "address": "0x100ae425c"
+          },
+          {
+            "pc": "0x101402ae0",
+            "target": "_zlibVersion+0x104b612e0",
+            "address": "0x104b612e0"
+          },
+          {
+            "pc": "0x101402aec",
+            "target": "__ZN7blender6VectorIxLx4ENS_16GuardedAllocatorEED1Ev",
+            "address": "0x1000144cc"
+          },
+          {
+            "pc": "0x101402af4",
+            "target": "_zlibVersion+0x104b5ebb0",
+            "address": "0x104b5ebb0"
+          },
+          {
+            "pc": "0x101402b04",
+            "target": "___clang_call_terminate",
+            "address": "0x1000144bc"
+          },
+          {
+            "pc": "0x101402b10",
+            "target": "__ZN7blender2ed12sculpt_paint18FillToolTargetInfoD1Ev",
+            "address": "0x100013e10"
+          },
+          {
+            "pc": "0x101402b18",
+            "target": "_zlibVersion+0x104b5ebb0",
+            "address": "0x104b5ebb0"
+          }
+        ],
+        "ordinary_returns": [
+          "0x101402adc"
+        ],
+        "external_terminal_sites": [],
+        "unsupported_transfers": [
+          "0x101402b18"
+        ]
+      },
+      "unreachable_material_write_call": "0x101402a7c",
+      "unreachable_DEG_tag_call": null,
+      "scope": "Generated setter ordinary refusal path; reports, vector cleanup and stack-failure/exception helpers are not modeled. The overapproximated stack-failure fallthrough can enter exception landing pads and end at an external unwinder call; this unsupported endpoint does not establish exception semantics."
+    }
+  ],
+  "typed_recapture_after_completed_drain": {
+    "status": "passed",
+    "initial_query": {
+      "call": "0x1013fafcc",
+      "C": 0,
+      "out": 0,
+      "policy": 0,
+      "success_returns_true_before_typed_snapshot": true
+    },
+    "initial_capture_call": "0x1013fb1bc",
+    "drain_call": {
+      "pc": "0x1013fb1f4",
+      "C": "entry x0 preserved in x20",
+      "Main": "saved G_MAIN x21",
+      "out": "sp+0x15f",
+      "policy": 1
+    },
+    "post_drain": "Call returns; false result refuses. did flag false returns true. did true compares current G_MAIN with saved x21, constructs separate fresh state at sp, then capture is called with saved numeric object address x22/material address x23. Fresh capture failure or equality false refuses before retry.",
+    "fresh_capture_call": "0x1013fb2cc",
+    "equality_call": "0x1013fb2dc",
+    "loop": "w25=256 at 0x1013fb1dc; decremented only after successful fresh recapture/equality at 0x1013fb2ec; exhaustion refuses.",
+    "typed_and_storage_evidence": [
+      {
+        "scope": "rna_material_assign_capture",
+        "pcs": [
+          "0x1013fb4cc",
+          "0x1013fb4d4",
+          "0x1013fb4e0",
+          "0x1013fb4f0",
+          "0x1013fb508"
+        ],
+        "evidence": "Captured Object type compared with immediate 0x424f; nonnull incoming Material compared with 0x414d, refusal on mismatch."
+      },
+      {
+        "scope": "rna_material_assign_capture",
+        "pcs": [
+          "0x1013fb518",
+          "0x1013fb544",
+          "0x1013fb560",
+          "0x1013fb568",
+          "0x1013fb56c"
+        ],
+        "evidence": "Main ID lists traversed, saved numeric object address compared, matches counted, exactly one/nonzero selected object required before object fields read."
+      },
+      {
+        "scope": "rna_material_assign_capture",
+        "pcs": [
+          "0x1013fb580",
+          "0x1013fb588",
+          "0x1013fb598",
+          "0x1013fb59c",
+          "0x1013fb5a0"
+        ],
+        "evidence": "Backing data independently captured; nonnull data and data ID type matching object-type dispatch required."
+      },
+      {
+        "scope": "rna_material_assign_capture",
+        "pcs": [
+          "0x1013fb5a8",
+          "0x1013fb5b4",
+          "0x1013fb5c0",
+          "0x1013fb5c4",
+          "0x1013fb5cc",
+          "0x1013fb5d4",
+          "0x1013fb5dc",
+          "0x1013fb5e0",
+          "0x1013fb608",
+          "0x1013fb624"
+        ],
+        "evidence": "Native material length/array access followed by null checks, unsigned count bounds 32766, nonempty Object mat/matbits and data-array requirements."
+      },
+      {
+        "scope": "rna_material_assign_capture",
+        "pcs": [
+          "0x1013fb628",
+          "0x1013fb658",
+          "0x1013fb6e8",
+          "0x1013fb6f8",
+          "0x1013fb790",
+          "0x1013fb7a0"
+        ],
+        "evidence": "Actcol/counts/physical Object/data/bits array addresses stored; each physical Object/data material independently captured and nonnull entries type checked against 0x414d."
+      },
+      {
+        "scope": "rna_material_state_capture",
+        "pcs": [
+          "0x101405c88",
+          "0x101405ca8",
+          "0x101405cb4",
+          "0x101405cc8",
+          "0x101405d68",
+          "0x101405d88",
+          "0x101405d94",
+          "0x101405db0",
+          "0x101405db8",
+          "0x101405dc8",
+          "0x101405ddc",
+          "0x101405e24",
+          "0x101405eb0"
+        ],
+        "evidence": "Main membership counted before saved numeric ID read; nonzero session UID plus current name-type read. Library similarly found and compared to 0x494c. Override pointer/flag/extern bit and independently found reference/hierarchy-root identities are captured."
+      },
+      {
+        "scope": "RnaMaterialAssignState_equal",
+        "pcs": [
+          "0x1013fb7c4",
+          "0x1013fb808",
+          "0x1013fb868",
+          "0x1013fb86c",
+          "0x1013fb888",
+          "0x1013fb890"
+        ],
+        "evidence": "Pointers to both snapshots for ID states, type/actcol/counts/array addresses/material vectors are assembled and fed to tuple comparator, false short-circuits; bits vector size then contents compared. Deep standard tuple/vector equality implementation is outside this review."
+      }
+    ],
+    "instruction_assertions": [
+      {
+        "pc": "0x1013fb1f0",
+        "instruction": "mov w3, #0x1"
+      },
+      {
+        "pc": "0x1013fb1f4",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      },
+      {
+        "pc": "0x1013fb1f8",
+        "instruction": "tbz w0, #0x0, 0x1013fb310 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x398>"
+      },
+      {
+        "pc": "0x1013fb1fc",
+        "instruction": "ldrb w8, [sp, #0x15f]"
+      },
+      {
+        "pc": "0x1013fb204",
+        "instruction": "b.ne 0x1013fb360 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3e8>"
+      },
+      {
+        "pc": "0x1013fb210",
+        "instruction": "b.ne 0x1013fb310 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x398>"
+      },
+      {
+        "pc": "0x1013fb2cc",
+        "instruction": "bl 0x1013fb398 <__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState>"
+      },
+      {
+        "pc": "0x1013fb2d0",
+        "instruction": "cbz w0, 0x1013fb32c <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3b4>"
+      },
+      {
+        "pc": "0x1013fb2dc",
+        "instruction": "bl 0x1013fb7b8 <__ZNK22RnaMaterialAssignStateeqERKS_>"
+      },
+      {
+        "pc": "0x1013fb2e0",
+        "instruction": "tbz w0, #0x0, 0x1013fb32c <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3b4>"
+      },
+      {
+        "pc": "0x1013fb2f0",
+        "instruction": "b.ne 0x1013fb1e0 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x268>"
+      }
+    ]
+  },
+  "shared_WM": {
+    "status": "passed",
+    "exact_selector_resolution": "Exported exact mangled function 0x100b51420..0x100b51c3c; lambda and length-error helpers excluded from root selection.",
+    "policy_mapping": "WM_api.hh enum uses CallerContext=0, MaterialAssignmentOriginal=1; direct setter/query call instructions pass 0; explicit material helper drain passes 1.",
+    "null_output_query": {
+      "saved_argument": "entry x2->x24 at 0x100b51484; saved sp+0x28 at 0x100b51534",
+      "branch": "0x100b5187c..0x100b51890 OR null-output predicate with inverse-found-owner; null output forces cleanup without context creation or teardown. No-owner returns true; owner-found query returns false.",
+      "forced_branch_trace": {
+        "start": "0x100b51a88",
+        "visited": 16,
+        "calls": [
+          {
+            "pc": "0x100b51a90",
+            "target": "_zlibVersion+0x104b6113c",
+            "address": "0x104b6113c"
+          },
+          {
+            "pc": "0x100b51a9c",
+            "target": "_zlibVersion+0x104b6113c",
+            "address": "0x104b6113c"
+          }
+        ],
+        "ordinary_returns": [
+          "0x100b5172c"
+        ],
+        "external_terminal_sites": [],
+        "unsupported_transfers": []
+      }
+    },
+    "CallerContext_vs_MaterialAssignmentOriginal": "0x100b51894..0x100b518b4 bypasses caller wm/window requirements only for policy1 AND saved C=null. Policy0 always requires captured wm and win; policy1 with nonnull C still requires them. Both routes call context_unchanged after scan and before cancellation.",
+    "context_revalidation": "Exact lambda compares current G_MAIN and, for nonnull original C, CTX_data_main/manager/window/area/region with saved values; checks manager membership and current window membership. Calls before scan 0x100b5152c, after scan 0x100b5186c, before cancellation 0x100b518bc and after completed native teardown/CTX_free 0x100b519b0.",
+    "native_teardown_arguments": {
+      "pc": "0x100b51998",
+      "C": "fresh CTX_create result x25",
+      "window": "revalidated registered owner x23",
+      "x2_area": 0,
+      "x3_region": 0,
+      "x4_scene_uid": 0,
+      "x5_object_uid": 0,
+      "x6_brush_uid": 0
+    },
+    "native_teardown_preparation": "Fresh context receives saved Main (0x100b51960), live registered manager (0x100b5196c) and window (0x100b51978), independently of caller C. Native call returns before CTX_free and post-call revalidation.",
+    "nested_Cancel_barrier": {
+      "guard_address": "0x107edf7f0",
+      "read": "0x100b51460",
+      "true_branch": "0x100b51464->0x100b5170c",
+      "set": "policy1 only at 0x100b51948 before CTX_create/native teardown, independent of C",
+      "clear": [
+        "0x100b51b90 normal/false result cleanup",
+        "0x100b51bd4 exception landing pad"
+      ],
+      "forced_active_trace": {
+        "start": "0x100b5170c",
+        "visited": 9,
+        "calls": [],
+        "ordinary_returns": [
+          "0x100b5172c"
+        ],
+        "external_terminal_sites": [],
+        "unsupported_transfers": []
+      },
+      "effect": "Nested invocation while material original drain is active returns false before CTX getters, owner scan, fresh context creation or another native Cancel."
+    },
+    "post_completed_drain": "Native false or changed context refuses; compiled manager/window identity inventory and retired-lifetime checks follow the completed native call before out=true at 0x100b51ba4. This review does not prove behavior inside native WM cancellation callbacks.",
+    "instruction_assertions": [
+      {
+        "pc": "0x100b51454",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51458",
+        "instruction": "b.hi 0x100b5170c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2ec>"
+      },
+      {
+        "pc": "0x100b51460",
+        "instruction": "ldrb w8, [x8, #0x7f0]"
+      },
+      {
+        "pc": "0x100b51464",
+        "instruction": "tbnz w8, #0x0, 0x100b5170c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2ec>"
+      },
+      {
+        "pc": "0x100b5187c",
+        "instruction": "ldr x8, [sp, #0x28]"
+      },
+      {
+        "pc": "0x100b51890",
+        "instruction": "tbnz w8, #0x0, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      },
+      {
+        "pc": "0x100b51894",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51898",
+        "instruction": "b.ne 0x100b518a4 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x484>"
+      },
+      {
+        "pc": "0x100b518a0",
+        "instruction": "cbz x8, 0x100b518b8 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x498>"
+      },
+      {
+        "pc": "0x100b518ac",
+        "instruction": "cbz x8, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      },
+      {
+        "pc": "0x100b518b4",
+        "instruction": "cbz x8, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      },
+      {
+        "pc": "0x100b5193c",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51940",
+        "instruction": "b.ne 0x100b5194c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x52c>"
+      },
+      {
+        "pc": "0x100b51948",
+        "instruction": "strb w8, [x28, #0x7f0]"
+      },
+      {
+        "pc": "0x100b5194c",
+        "instruction": "bl 0x1000b1128 <__Z10CTX_createv>"
+      },
+      {
+        "pc": "0x100b51998",
+        "instruction": "bl 0x100b500ac <__Z41WM_event_ipad_pencil_paint_owner_teardownP8bContextP8wmWindowPK7ScrAreaPK7ARegionyyy>"
+      },
+      {
+        "pc": "0x100b519a4",
+        "instruction": "bl 0x1000b11c8 <__Z8CTX_freeP8bContext>"
+      },
+      {
+        "pc": "0x100b51b90",
+        "instruction": "strb wzr, [x28, #0x7f0]"
+      },
+      {
+        "pc": "0x100b51bd4",
+        "instruction": "strb wzr, [x28, #0x7f0]"
+      }
+    ]
+  },
+  "limits": [
+    "Bounded compiled instruction/call/argument evidence, not execution or full semantic/global-CFG proof.",
+    "Ordinary refusal reachability treats calls as returning and follows both conditional successors. Native reports, allocation, exceptions and external call internals are not modeled.",
+    "Snapshot type and physical storage capture bodies were inspected; deeply instantiated standard tuple/vector equality code is outside the reviewed scope.",
+    "The internal native drain may retire replacement owners. Outer 256 retries do not globally bound callbacks or reentrancy.",
+    "Native Cancel is not rollback of painted values; refusal does not undo callback effects.",
+    "No UIKit/GPU/device execution, interactive Pencil paint acceptance, or real device acceptance is claimed.",
+    "Existing package/HUD/Weight evidence is separate; Python producer and generic RNA outer consumers are independently reviewed in another report."
+  ],
+  "device_acceptance": false,
+  "production_edits": false
+}
