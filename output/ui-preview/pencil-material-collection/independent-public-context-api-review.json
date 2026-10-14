@@ -1,0 +1,35 @@
+{
+  "status": "passed_independent_narrow_public_api_correction_review",
+  "reviewer": "collection_outer_finish",
+  "failed_native_source": "1acf7bc4e6dc04fb2981daf9017e62702badea49",
+  "failed_run": "38607779778",
+  "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
+  "root_cause": "rna_access.cc uses BPY_context_get under WITH_PYTHON but its existing public BPY_extern.hh include did not declare that getter; native compiler stopped at the undeclared identifier.",
+  "correction": "Publish bContext *BPY_context_get(); beside public BPY_context_set, documenting initialized Python context and caller-held GIL. No body, consumer, ownership guard or behavior changes.",
+  "checks": [
+    "Pinned private bpy_capi_utils.hh46 already declares struct bContext *BPY_context_get();. Struct-key spelling names the same previously forward-declared global type.",
+    "Pinned bpy_interface.cc255 defines global C++ bContext *BPY_context_get() and returns bpy_context_module->ptr->data; no static, namespace, extern-C or export/calling-convention mismatch.",
+    "bpy_interface.cc already includes both private bpy_capi_utils.hh and public BPY_extern.hh. Compatible duplicate declarations are legal C++17 and require no definition change.",
+    "rna_access.cc already includes BPY_extern.hh under WITH_PYTHON; its getter call is also nested under WITH_PYTHON. Makesrna INC exports ../../python under WITH_PYTHON, not python/intern.",
+    "Non-Python builds keep the getter call compiled out. Publishing the declaration unconditionally matches the existing public setter API shape and introduces no non-Python use or link dependency.",
+    "The actual new consumer is the explicit Python-owned method producer, running with an initialized interpreter and its GIL. The public precondition comment reflects the existing global module pointer contract.",
+    "Independent actual-header Clang C++17 syntax probe: unpatched pinned public header fails with undeclared BPY_context_get; candidate public header passes -Wall -Wextra -Werror -pedantic.",
+    "Candidate syntax probe includes the exact private redeclaration, exact bContext *(*)() static assertion and a matching definition, proving declaration/type compatibility without private include paths.",
+    "All 131 prior overlay sections are byte-exact to failed source 1acf7bc. Only the public header section is added; ring/UI/native bars, producer/context/receipt/Cancel/Undo behavior and ownership guards are unchanged."
+  ],
+  "literal_preservation": {
+    "base_sections": 131,
+    "candidate_sections": 132,
+    "changed_prior_sections": [],
+    "added_sections": [
+      "source/blender/python/BPY_extern.hh"
+    ],
+    "all_previous_source_sections_byte_exact": true
+  },
+  "unresolved_findings": [],
+  "boundaries": [
+    "The independent syntax probe uses a minimal BLI_sys_types typedef stub and does not compile full Blender/Python or link the existing Python library.",
+    "Source inspection establishes existing definition/linkage compatibility; one corrected exact native build and full downloaded IPA/compiled verification remain required.",
+    "This is no device, UIKit, Python interpreter lifetime, global reentrancy or rollback proof. Prior bounded source/native reviews retain their own scopes."
+  ]
+}

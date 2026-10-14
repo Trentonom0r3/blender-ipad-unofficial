@@ -1,7 +1,7 @@
 {
-  "status": "source_host_independent_passed_exact_native_build_in_progress",
+  "status": "public_api_correction_source_host_review_passed_native_replacement_required",
   "baseline_production": "50359ad320904382fa967da426f7ccc0f9159016",
-  "canonical_lf_patch_sha256": "0080319a51c9e78ac762701f69485ce823d313c6dac47241359070f60c63375f",
+  "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
   "scope": [
     "IDMaterials.append",
     "IDMaterials.pop",
@@ -11,8 +11,8 @@
     "prior Object material full-width state and successful WM absence recapture"
   ],
   "source": {
-    "overlay_sections": 131,
-    "changed_sections": 5,
+    "overlay_sections": 132,
+    "changed_sections": 6,
     "unchanged_sections": 126,
     "packaged_python_sections_unchanged": 7,
     "ghost_interface_hud_view3d_sections_unchanged": 39,
@@ -20,29 +20,35 @@
   },
   "validation": {
     "full": {
-      "passed": 479,
-      "seconds": 340.06,
-      "log": ".cache/material-collection-full-tests-final.log"
+      "passed": 480,
+      "seconds": 314.875,
+      "log": ".cache/material-collection-correction-full-tests.log"
     },
     "collection": {
       "passed": 25,
-      "seconds": 24.38,
-      "log": ".cache/material-collection-connected-fixture-final.log"
+      "seconds": 25.242,
+      "log": ".cache/material-collection-correction-connected.log"
     },
     "retained_assignment": {
       "passed": 23,
-      "seconds": 30.176,
-      "log": ".cache/material-collection-retained-assignment-final.log"
+      "seconds": 26.587,
+      "log": ".cache/material-collection-correction-retained.log"
     },
     "portable_collection": {
       "passed": 25,
       "seconds": 24.895,
       "log": ".cache/material-collection-portable-fixture-final.log"
     },
-    "offline_pinned_preflight_files": 131,
+    "offline_pinned_preflight_files": 132,
     "diff_check": "passed",
     "independent_native_source": "passed",
-    "independent_outer_and_literal_ui_source": "passed"
+    "independent_outer_and_literal_ui_source": "passed",
+    "public_header": {
+      "passed": 1,
+      "seconds": 0.137,
+      "log": ".cache/material-collection-public-api-test.log"
+    },
+    "independent_public_api_review": "passed"
   },
   "connected_contract": [
     "Only explicit owned report-bearing Python producers can drain registered original paint owners. Generic/native bodies query absence after native error/no-op admission.",
@@ -62,24 +68,33 @@
     "The outer256 loop is not a global reentrancy/callback bound. Refusal does not roll back callback effects.",
     "No native build, package or device acceptance for this increment yet."
   ],
-  "native_build": {
-    "run": 38607779778,
-    "source": "1acf7bc4e6dc04fb2981daf9017e62702badea49",
-    "dispatched_once": true,
-    "status": "in_progress",
-    "last_observed_utc": "2026-10-14T17:36:00Z",
-    "hosted_preflight": "in_progress without failed step",
-    "watcher_session": 63982,
-    "watcher_script": ".cache/watch-material-collection-build.py",
-    "watcher_log": ".cache/material-collection-build-watch.log",
-    "compiled_review": "pending native binary",
-    "device_acceptance": false
-  },
   "device_acceptance": false,
   "fixtures": {
     "build/test_pencil_material_collection_owner_teardown.py": "1dc4f0b5e4c13a6093fd476e5b42d6a3dd50846e1f6785ad594012c9b60e95c6",
     "build/tests/pinned_material_collection.inc.cc": "48377b6061e25416b7f5929fd6781a76ecf4d37fa095a88f2233ebba8b47d3b5",
     "build/test_pencil_material_assign_owner_teardown.py": "519f3b3c1049cc563fc7869304fdb3645114c09db2b7742432398a67442e1ebb"
   },
-  "production_source": "1acf7bc4e6dc04fb2981daf9017e62702badea49"
+  "failed_native_build": {
+    "run": 38607779778,
+    "source": "1acf7bc4e6dc04fb2981daf9017e62702badea49",
+    "dispatched_once": true,
+    "status": "failed_native_compile",
+    "last_observed_utc": "2026-10-14T17:36:00Z",
+    "hosted_preflight": "passed",
+    "watcher_session": 63982,
+    "watcher_script": ".cache/watch-material-collection-build.py",
+    "watcher_log": ".cache/material-collection-build-watch.log",
+    "compiled_review": "pending native binary",
+    "device_acceptance": false,
+    "error": "rna_access.cc245: use of undeclared identifier BPY_context_get",
+    "watcher_completed_exit": 1,
+    "failure_log": "output/ui-preview/pencil-material-collection/ipa-38607779778/native-failure.log"
+  },
+  "public_api_correction": {
+    "scope": "Add matching existing BPY_context_get declaration to public BPY_extern.hh. All 131 previous overlay sections are byte-exact. No guard or behavior change.",
+    "fixture": "build/test_pencil_python_context_api.py",
+    "review": "output/ui-preview/pencil-material-collection/independent-public-context-api-review.json",
+    "native_replacement": "not dispatched yet",
+    "device_acceptance": false
+  }
 }

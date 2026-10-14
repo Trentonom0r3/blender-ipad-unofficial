@@ -159038,3 +159038,15 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
 
      /* Return value. */
      if (err != -1) {
+diff --git a/source/blender/python/BPY_extern.hh b/source/blender/python/BPY_extern.hh
+--- a/source/blender/python/BPY_extern.hh
++++ b/source/blender/python/BPY_extern.hh
+@@ -105,6 +105,8 @@
+ [[nodiscard]] bool BPY_context_member_get(bContext *C,
+                                           const char *member,
+                                           bContextDataResult *result);
++/** Current initialized Python context. Callers must hold the Python GIL. */
++bContext *BPY_context_get();
+ void BPY_context_set(bContext *C);
+ /**
+  * Use for updating while a python script runs - in case of file load.

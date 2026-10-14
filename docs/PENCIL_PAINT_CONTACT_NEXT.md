@@ -1,3 +1,24 @@
+## Material collection native declaration correction - 2026-10-14
+
+Original exact run38607779778 at1acf7bc FAILED native Release: rna_access.cc
+used BPY_context_get but its public BPY_extern.hh include lacked the existing
+getter declaration. Hosted preflight passed; no collection IPA exists. Full
+failure log is preserved under pencil-material-collection/ipa-38607779778.
+Watcher63982 completed exit1; never rebuild that unchanged revision.
+
+Corrected source publishes the matching global C++ declaration beside the public
+setter, with initialized-Python/GIL preconditions. All131 previous source sections
+remain byte-exact. Actual-header C++17 regression reproduces old compiler failure
+and passes candidate; independent native/public API review passes. Full480/480
+checks (314.875s), connected25/25, retained23/23,132-file pinned
+preflight and diff check pass. Patch09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488.
+Next commit/push exact correction, build replacement once, verify full IPA and
+actual compiled consumer/outer/context/receipt/guard branches plus HUD launch and
+Weight cleanup. No new native/package/device acceptance is claimed. Latest fully
+verified source remains50359ad/run38449639043. See source-verification.json and
+independent-public-context-api-review.json under pencil-material-collection.
+Full personal goal unfinished; UI/ownership/Cancel/Undo contracts unchanged.
+
 ## Material collection exact build in progress - 2026-10-14
 
 Source `1acf7bc4e6dc04fb2981daf9017e62702badea49` is pushed and building ONCE
