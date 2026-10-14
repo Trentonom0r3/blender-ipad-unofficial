@@ -157095,7 +157095,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 
    if (ob->mode & OB_MODE_EDIT) {
      return;
-@@ -1112,10 +1226,281 @@
+@@ -1112,10 +1226,282 @@
    return RNA_id_pointer_create(reinterpret_cast<ID *>(ma));
  }
 
@@ -157187,7 +157187,8 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +
 +struct RnaMaterialAssignState {
 +  RnaMaterialIDState object, data, incoming;
-+  short object_type = 0, actcol = 0, object_count = 0, data_count = 0;
++  short object_type = 0, data_count = 0;
++  int actcol = 0, object_count = 0;
 +  uintptr_t object_array = 0, data_array = 0, bits_array = 0;
 +  std::vector<RnaMaterialIDState> object_materials, data_materials;
 +  std::vector<char> bits;
@@ -157350,7 +157351,6 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +    {
 +      return refuse();
 +    }
-+    if (!did_teardown) return true;
 +    if (G_MAIN != bmain) return refuse();
 +    RnaMaterialAssignState fresh;
 +    if (!rna_material_assign_capture(bmain, object_address, material_address, &fresh) ||
@@ -157358,6 +157358,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +    {
 +      return refuse();
 +    }
++    if (!did_teardown) return true;
 +  }
 +  return refuse();
 +#else
@@ -157379,7 +157380,384 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
    Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
 
    DEG_id_tag_update(static_cast<ID *>(value.data), 0);
-@@ -1343,8 +1728,12 @@
+@@ -1125,6 +1511,376 @@
+       G_MAIN, ob, static_cast<Material *>(value.data), ob->actcol, BKE_MAT_ASSIGN_EXISTING);
+ }
+
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct RnaMaterialCollectionObjectState {
++  RnaMaterialIDState object;
++  short object_type = 0;
++  int actcol = 0, count = 0;
++  uintptr_t array = 0, bits_array = 0;
++  std::vector<RnaMaterialIDState> materials;
++  std::vector<char> bits;
++  bool operator==(const RnaMaterialCollectionObjectState &other) const
++  {
++    return std::tie(object, object_type, actcol, count, array, bits_array, materials, bits) ==
++           std::tie(other.object, other.object_type, other.actcol, other.count, other.array,
++                    other.bits_array, other.materials, other.bits);
++  }
++};
++
++struct RnaMaterialCollectionState {
++  RnaMaterialIDState data, incoming;
++  short count = 0;
++  int users = 0;
++  uintptr_t array = 0;
++  std::vector<RnaMaterialIDState> materials;
++  std::vector<RnaMaterialCollectionObjectState> objects;
++  bool operator==(const RnaMaterialCollectionState &other) const
++  {
++    return std::tie(data, incoming, count, users, array, materials, objects) ==
++           std::tie(other.data, other.incoming, other.count, other.users, other.array,
++                    other.materials, other.objects);
++  }
++};
++
++static bool rna_material_collection_data_type(const short type)
++{
++  return ELEM(type, ID_ME, ID_CU_LEGACY, ID_MB, ID_CV, ID_PT, ID_VO, ID_GP);
++}
++
++static short rna_material_collection_pointer_type(const StructRNA *type)
++{
++  if (type == &RNA_Mesh) return ID_ME;
++  if (ELEM(type, &RNA_Curve, &RNA_TextCurve, &RNA_SurfaceCurve)) return ID_CU_LEGACY;
++  if (type == &RNA_MetaBall) return ID_MB;
++  if (type == &RNA_Curves) return ID_CV;
++  if (type == &RNA_PointCloud) return ID_PT;
++  if (type == &RNA_Volume) return ID_VO;
++  if (type == &RNA_GreasePencilv3) return ID_GP;
++  return 0;
++}
++
++
++static bool rna_material_collection_target_foreign(Main *bmain, const ID *target)
++{
++  if (!G_MAIN || !bmain || bmain == G_MAIN || !target ||
++      !rna_material_id_find(bmain, uintptr_t(target)))
++  {
++    return false;
++  }
++  bool in_active_main = false;
++  ID *id;
++  FOREACH_MAIN_ID_BEGIN (G_MAIN, id) {
++    if (uintptr_t(id) == uintptr_t(target)) in_active_main = true;
++  }
++  FOREACH_MAIN_ID_END;
++  return !in_active_main;
++}
++
++/* All pointers saved across cancellation are numeric identities. Rebuild physical
++ * arrays from fresh Main membership; ordinary material getters can mutate counts. */
++static bool rna_material_collection_capture(Main *bmain,
++                                             const uintptr_t data_address,
++                                             const uintptr_t incoming_address,
++                                             RnaMaterialCollectionState *r_state)
++{
++  *r_state = {};
++  if (!rna_material_state_capture(bmain, data_address, &r_state->data) ||
++      !rna_material_collection_data_type(r_state->data.id.type) ||
++      !rna_material_state_capture(bmain, incoming_address, &r_state->incoming) ||
++      (incoming_address && r_state->incoming.id.type != ID_MA))
++  {
++    return false;
++  }
++  ID *data = rna_material_id_find(bmain, data_address);
++  if (!data) return false;
++  const short *count = BKE_id_material_len_p(data);
++  Material ***array = BKE_id_material_array_p(data);
++  /* Native append admits MAXMAT + 1 slots. Do not replace its short count
++   * behavior with the Object setter's separate MAXMAT admission. */
++  if (!count || !array || *count < 0 || (*count && !*array)) return false;
++  r_state->count = *count;
++  r_state->users = data->us;
++  r_state->array = uintptr_t(*array);
++  for (int i = 0; i < *count; i++) {
++    RnaMaterialIDState material;
++    if (!rna_material_state_capture(bmain, uintptr_t((*array)[i]), &material) ||
++        (material.id.address && material.id.type != ID_MA))
++    {
++      return false;
++    }
++    r_state->materials.push_back(material);
++  }
++
++  /* The native synchronization traverses all Objects sharing this data,
++   * and uses data->us as an early-stop condition. Preserve its participant set
++   * and order as well as every physical Object slot and link bit. */
++  LISTBASE_FOREACH (Object *, object, &bmain->objects) {
++    if (uintptr_t(object->data) != data_address) continue;
++    RnaMaterialCollectionObjectState participant;
++    if (!rna_material_state_capture(bmain, uintptr_t(object), &participant.object) ||
++        participant.object.id.type != ID_OB ||
++        rna_material_data_type(object->type) != r_state->data.id.type ||
++        object->totcol < 0 ||
++        (object->totcol && (!object->mat || !object->matbits)))
++    {
++      return false;
++    }
++    participant.object_type = object->type;
++    participant.actcol = object->actcol;
++    participant.count = object->totcol;
++    participant.array = uintptr_t(object->mat);
++    participant.bits_array = uintptr_t(object->matbits);
++    for (int i = 0; i < object->totcol; i++) {
++      RnaMaterialIDState material;
++      if (!rna_material_state_capture(bmain, uintptr_t(object->mat[i]), &material) ||
++          (material.id.address && material.id.type != ID_MA))
++      {
++        return false;
++      }
++      participant.materials.push_back(material);
++      participant.bits.push_back(object->matbits[i]);
++    }
++    r_state->objects.push_back(std::move(participant));
++  }
++  return true;
++}
++#endif
++
++/* Generic and direct callers have borrowed enclosing frames. They may query
++ * absence, but must never run cancellation callbacks from these native bodies. */
++bool RNA_id_materials_paint_owner_absent(Main *bmain,
++                                           const ID *target,
++                                           ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (G_MAIN && WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr)) {
++    return true;
++  }
++  /* A foreign Main alone does not prove that the target is foreign. RNA self
++   * and context Main are independent inputs. Check numeric list membership
++   * without dereferencing the borrowed target, including ambiguous membership. */
++  if (rna_material_collection_target_foreign(bmain, target)) return true;
++  if (reports) {
++    BKE_report(reports, RPT_ERROR, "Material collection mutation was refused while a Pencil paint owner is active");
++  }
++  return false;
++#else
++  UNUSED_VARS(bmain, target, reports);
++  return true;
++#endif
++}
++
++bool RNA_id_materials_paint_owner_teardown(bContext *C,
++                                           Main *bmain,
++                                           const PointerRNA *target,
++                                           const uintptr_t incoming_address,
++                                           const eRNAMaterialCollectionOperation operation,
++                                           const int index,
++                                           ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Preserve native evaluated, UID-zero and non-active Main behavior when no
++   * registered owner can retain the storage. Never invent a native Main. */
++  if (RNA_id_materials_paint_owner_absent(bmain, target ? target->owner_id : nullptr, nullptr)) return true;
++  const auto refuse = [&]() {
++    if (reports) {
++      BKE_report(reports, RPT_ERROR, "Material collection mutation was refused: Pencil owner or material inputs changed");
++    }
++    return false;
++  };
++  if (!bmain || bmain != G_MAIN || !target || !target->owner_id ||
++      target->data != target->owner_id || !target->ancestors.is_empty())
++  {
++    return refuse();
++  }
++  const bool is_assign = operation == eRNAMaterialCollectionOperation::Assign;
++  if (!is_assign && operation != eRNAMaterialCollectionOperation::Append &&
++      operation != eRNAMaterialCollectionOperation::Pop &&
++      operation != eRNAMaterialCollectionOperation::Clear)
++  {
++    return refuse();
++  }
++  const short pointer_type = is_assign ? rna_material_collection_pointer_type(target->type) : 0;
++  if ((is_assign && !pointer_type) || (!is_assign && target->type != &RNA_IDMaterials)) {
++    return refuse();
++  }
++  const uintptr_t data_address = uintptr_t(target->owner_id);
++  {
++    ID *data = rna_material_id_find(bmain, data_address);
++    if (!data || !rna_material_collection_data_type(GS(data->name)) ||
++        (is_assign && pointer_type != GS(data->name)))
++    {
++      return refuse();
++    }
++    const short *count = BKE_id_material_len_p(data);
++    if (!count) return refuse();
++    /* Keep native error/no-op admission ahead of any cancellation. In particular,
++     * a successful indexed call can still be an early BKE MAXMAT no-op. */
++    if (is_assign && (index < 0 || index >= *count || index + 1 > MAXMAT)) return true;
++    if (operation == eRNAMaterialCollectionOperation::Pop) {
++      const int64_t normalized = int64_t(index) + (index < 0 ? *count : 0);
++      if (normalized < 0 || normalized >= *count) return true;
++    }
++  }
++  if (operation != eRNAMaterialCollectionOperation::Append && !is_assign && incoming_address) {
++    return refuse();
++  }
++  RnaMaterialCollectionState state;
++  if (!rna_material_collection_capture(bmain, data_address, incoming_address, &state)) {
++    return refuse();
++  }
++  /* No borrowed target, Material, array or return pointer is read below. The
++   * Python producer owns its PointerRNA copies and error/return boundary. */
++  for (int attempt = 0; attempt < 256; attempt++) {
++    bool did_teardown = false;
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(
++            C, bmain, &did_teardown,
++            eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal))
++    {
++      return refuse();
++    }
++    if (G_MAIN != bmain) return refuse();
++    RnaMaterialCollectionState fresh;
++    if (!rna_material_collection_capture(bmain, data_address, incoming_address, &fresh) ||
++        !(fresh == state))
++    {
++      return refuse();
++    }
++    if (!did_teardown) return true;
++  }
++  return refuse();
++#else
++  UNUSED_VARS(C, bmain, target, incoming_address, operation, index, reports);
++  return true;
++#endif
++}
++
++
++/* The implicit Main lookup can call Python context providers. Capture an active
++ * target before that outer lookup and avoid the generated wrapper's later
++ * lookup. The WM guard may repeat context queries while this receipt is live. */
++bool RNA_id_materials_method_paint_owner_teardown(
++    bContext *C,
++    const PointerRNA *target,
++    const uintptr_t incoming_address,
++    const eRNAMaterialCollectionOperation operation,
++    const int index,
++    Main **r_main,
++    ReportList *reports)
++{
++  if (r_main) *r_main = nullptr;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const auto refuse = [&]() {
++    if (reports) {
++      BKE_report(reports, RPT_ERROR, "Material collection mutation was refused: context Main or material inputs changed");
++    }
++    return false;
++  };
++  if (!r_main || !target || !G_MAIN ||
++      operation == eRNAMaterialCollectionOperation::Assign)
++  {
++    return refuse();
++  }
++  const PointerRNA owned_target = *target;
++  const uintptr_t data_address = uintptr_t(owned_target.owner_id);
++  Main *original_main = G_MAIN;
++  const bool initially_absent =
++      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, original_main, nullptr);
++  bool active_target = false;
++  bool invalid_pop = false;
++  RnaMaterialIDIdentity invalid_pop_identity;
++  short invalid_pop_count = 0;
++  RnaMaterialCollectionState state;
++  if (!initially_absent) {
++    /* A native method consumes data, not owner_id. Prove their equality before
++     * using owner membership to admit even a foreign-Main target. */
++    if (owned_target.type != &RNA_IDMaterials ||
++        owned_target.data != owned_target.owner_id ||
++        !owned_target.ancestors.is_empty())
++    {
++      return refuse();
++    }
++    ID *data = rna_material_id_find(original_main, data_address);
++    active_target = data != nullptr;
++    if (active_target) {
++      /* Native pop rejects an invalid index before touching arrays, slots or
++       * material identities. Keep that error even for evaluated UID-zero data
++       * or inconsistent arrays; only the identity and count used by the error
++       * may cross the implicit context lookup. */
++      if (operation == eRNAMaterialCollectionOperation::Pop) {
++        const short type = GS(data->name);
++        const short *count = rna_material_collection_data_type(type) ?
++                                 BKE_id_material_len_p(data) : nullptr;
++        if (!count) return refuse();
++        const int64_t normalized = int64_t(index) + (index < 0 ? *count : 0);
++        if (normalized < 0 || normalized >= *count) {
++          invalid_pop = true;
++          invalid_pop_identity = {data_address, data->session_uid, type};
++          invalid_pop_count = *count;
++        }
++      }
++      if (!invalid_pop &&
++          !rna_material_collection_capture(original_main, data_address, incoming_address, &state))
++      {
++        return refuse();
++      }
++    }
++  }
++
++  Main *bmain = C ? CTX_data_main(C) : nullptr;
++  if (G_MAIN != original_main) return refuse();
++  if (initially_absent) {
++    /* A new owner has no receipt from before the context callback. */
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, original_main, nullptr)) {
++      return refuse();
++    }
++    *r_main = bmain;
++    return true;
++  }
++  if (active_target) {
++    if (bmain != original_main) return refuse();
++    if (invalid_pop) {
++      ID *data = rna_material_id_find(original_main, invalid_pop_identity.address);
++      if (!data || data->session_uid != invalid_pop_identity.uid ||
++          GS(data->name) != invalid_pop_identity.type)
++      {
++        return refuse();
++      }
++      const short *count = BKE_id_material_len_p(data);
++      if (!count || *count != invalid_pop_count) return refuse();
++      /* The native callback will report exactly "Index out of range" without
++       * mutation. It does not need a paint drain or a strict slot receipt. */
++      *r_main = bmain;
++      return true;
++    }
++    RnaMaterialCollectionState fresh;
++    if (!rna_material_collection_capture(original_main, data_address, incoming_address, &fresh) ||
++        !(fresh == state))
++    {
++      return refuse();
++    }
++  }
++  else if (!rna_material_collection_target_foreign(bmain, owned_target.owner_id)) {
++    return refuse();
++  }
++  /* Preserve the caller-context guard. The common helper revalidates fresh
++   * state after every successful WM call, including an absence-only result. */
++  if (!RNA_id_materials_paint_owner_teardown(
++          C, bmain, &owned_target, incoming_address, operation, index, reports))
++  {
++    return false;
++  }
++  *r_main = bmain;
++  return true;
++#else
++  UNUSED_VARS(target, incoming_address, operation, index, reports);
++  if (!r_main) return false;
++  *r_main = C ? CTX_data_main(C) : nullptr;
++  return true;
++#endif
++}
++
+ static int rna_Object_active_material_editable(const PointerRNA *ptr, const char ** /*r_info*/)
+ {
+   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
+@@ -1343,8 +2099,12 @@
 
  static void rna_MaterialSlot_material_set(PointerRNA *ptr,
                                            PointerRNA value,
@@ -157859,7 +158237,63 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
      int flags = 0;
      if (clear_asset_data) {
        flags |= LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR;
-@@ -2120,7 +2480,7 @@
+@@ -1167,6 +1527,9 @@
+   short *totcol = BKE_id_material_len_p(id);
+   Material *mat_id = (Material *)assign_ptr->owner_id;
+   if (totcol && (key >= 0 && key < *totcol)) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++    if (key + 1 <= MAXMAT && !RNA_id_materials_paint_owner_absent(G_MAIN, id, nullptr)) return false;
++#endif
+     BLI_assert(BKE_id_is_in_global_main(id));
+     BLI_assert(BKE_id_is_in_global_main(&mat_id->id));
+     BKE_id_material_assign(G_MAIN, id, mat_id, key + 1);
+@@ -1177,15 +1540,18 @@
+   }
+ }
+
+-static void rna_IDMaterials_append_id(ID *id, Main *bmain, Material *ma)
+-{
++void rna_IDMaterials_append_id(ID *id, Main *bmain, Material *ma)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_id_materials_paint_owner_absent(bmain, id, nullptr)) return;
++#endif
+   BKE_id_material_append(bmain, id, ma);
+
+   WM_main_add_notifier(NC_OBJECT | ND_DRAW, id);
+   WM_main_add_notifier(NC_OBJECT | ND_OB_SHADING, id);
+ }
+
+-static Material *rna_IDMaterials_pop_id(ID *id, Main *bmain, ReportList *reports, int index_i)
++Material *rna_IDMaterials_pop_id(ID *id, Main *bmain, ReportList *reports, int index_i)
+ {
+   Material *ma;
+   short *totcol = BKE_id_material_len_p(id);
+@@ -1199,6 +1565,9 @@
+     return nullptr;
+   }
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_id_materials_paint_owner_absent(bmain, id, reports)) return nullptr;
++#endif
+   ma = BKE_id_material_pop(bmain, id, index_i);
+
+   if (*totcol == totcol_orig) {
+@@ -1213,8 +1582,11 @@
+   return ma;
+ }
+
+-static void rna_IDMaterials_clear_id(ID *id, Main *bmain)
+-{
++void rna_IDMaterials_clear_id(ID *id, Main *bmain)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_id_materials_paint_owner_absent(bmain, id, nullptr)) return;
++#endif
+   BKE_id_material_clear(bmain, id);
+
+   DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
+@@ -2120,7 +2492,7 @@
    func = RNA_def_function(srna, "reset", "rna_ID_override_library_reset");
    RNA_def_function_ui_description(func,
                                    "Reset this override to match again its linked reference ID");
@@ -157868,7 +158302,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(
        func,
        "do_hierarchy",
-@@ -2136,7 +2496,7 @@
+@@ -2136,7 +2508,7 @@
    func = RNA_def_function(srna, "destroy", "rna_ID_override_library_destroy");
    RNA_def_function_ui_description(
        func, "Delete this override ID and remap its usages to its linked reference ID instead");
@@ -157877,7 +158311,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(func,
                    "do_hierarchy",
                    true,
-@@ -2147,7 +2507,7 @@
+@@ -2147,7 +2519,7 @@
    func = RNA_def_function(srna, "resync", "rna_ID_override_library_resync");
    RNA_def_function_ui_description(
        func, "Resync the data-block and its sub-hierarchy, or the whole hierarchy if requested");
@@ -157886,7 +158320,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_boolean(
        func, "success", false, "Success", "Whether the resync process was successful or not");
    RNA_def_function_return(func, parm);
-@@ -2491,7 +2851,7 @@
+@@ -2491,7 +2863,7 @@
    RNA_def_function_ui_description(func,
                                    "Create an overridden local copy of this linked data-block (not "
                                    "supported for all data-blocks)");
@@ -157895,7 +158329,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
    RNA_def_function_return(func, parm);
    RNA_def_boolean(func,
-@@ -2506,7 +2866,7 @@
+@@ -2506,7 +2878,7 @@
        func,
        "Create an overridden local copy of this linked data-block, and most of its dependencies "
        "when it is a Collection or and Object");
@@ -157904,7 +158338,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the root ID");
    RNA_def_function_return(func, parm);
    parm = RNA_def_pointer(
-@@ -2539,7 +2899,7 @@
+@@ -2539,7 +2911,7 @@
    func = RNA_def_function(srna, "user_remap", "rna_ID_user_remap");
    RNA_def_function_ui_description(
        func, "Replace all usage in the .blend file of this ID by new given one");
@@ -157913,7 +158347,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "new_id", "ID", "", "New ID to use");
    RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
-@@ -2548,7 +2908,7 @@
+@@ -2548,7 +2920,7 @@
        func,
        "Make this data-block local, return local one "
        "(may be a copy of the original, in case it is also indirectly used)");
@@ -157925,7 +158359,15 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA_access.hh
 --- a/source/blender/makesrna/RNA_access.hh
 +++ b/source/blender/makesrna/RNA_access.hh
-@@ -30,6 +30,28 @@
+@@ -10,6 +10,7 @@
+  * \ingroup RNA
+  */
+
++#include <cstdint>
+ #include <optional>
+ #include <stdarg.h>
+ #include <string>
+@@ -30,6 +31,60 @@
  struct ReportList;
  struct Scene;
  struct bContext;
@@ -157943,6 +158385,38 @@ diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA
 +                                                     PointerRNA value,
 +                                                     bool is_slot,
 +                                                     ReportList *reports);
++/* Material collections share one original-owner policy. Only explicit Python
++ * producers may drain; native borrowed callers query absence before mutation. */
++enum class eRNAMaterialCollectionOperation { Append, Pop, Clear, Assign };
++bool RNA_id_materials_paint_owner_absent(Main *bmain, const ID *target, ReportList *reports);
++bool RNA_id_materials_paint_owner_teardown(bContext *C,
++                                          Main *bmain,
++                                          const PointerRNA *target,
++                                          uintptr_t incoming_address,
++                                          eRNAMaterialCollectionOperation operation,
++                                          int index,
++                                          ReportList *reports);
++bool RNA_property_is_id_materials_assignment(PropertyRNA *prop);
++bool RNA_property_id_materials_paint_owner_teardown(bContext *C,
++                                                   PointerRNA *target,
++                                                   PropertyRNA *prop,
++                                                   int index,
++                                                   const PointerRNA *value,
++                                                   ReportList *reports);
++bool RNA_function_is_id_materials_mutation(FunctionRNA *func);
++bool RNA_id_materials_method_paint_owner_teardown(bContext *C,
++                                                 const PointerRNA *target,
++                                                 uintptr_t incoming_address,
++                                                 eRNAMaterialCollectionOperation operation,
++                                                 int index,
++                                                 Main **r_main,
++                                                 ReportList *reports);
++bool RNA_function_id_materials_call_owned(bContext *C,
++                                                   PointerRNA *target,
++                                                   FunctionRNA *func,
++                                                   ParameterList *parms,
++                                                   ReportList *reports);
++
 +/** Retire registered Pencil paint owners before native ID/storage mutation.
 + * Reacquires the input ID after each completed WM drain; non-active Mains and
 + * non-Apple builds preserve their native no-owner path. */
@@ -158196,7 +158670,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
 diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makesrna/intern/rna_access.cc
 --- a/source/blender/makesrna/intern/rna_access.cc
 +++ b/source/blender/makesrna/intern/rna_access.cc
-@@ -70,6 +70,61 @@
+@@ -70,6 +70,202 @@
 
  #include "rna_access_internal.hh"
  #include "rna_internal.hh"
@@ -158255,10 +158729,151 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 +#endif
 +  return true;
 +}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct Material;
++extern bool rna_IDMaterials_assign_int(PointerRNA *, int, const PointerRNA *);
++extern void rna_IDMaterials_append_id(ID *, Main *, Material *);
++extern Material *rna_IDMaterials_pop_id(ID *, Main *, ReportList *, int);
++extern void rna_IDMaterials_clear_id(ID *, Main *);
++extern FunctionRNA rna_IDMaterials_append_func;
++extern FunctionRNA rna_IDMaterials_pop_func;
++extern FunctionRNA rna_IDMaterials_clear_func;
++
++static bool rna_id_materials_assignment_profile(PropertyRNA *prop)
++{
++  if (!prop || prop->magic != RNA_MAGIC || prop->type != PROP_COLLECTION) return false;
++  return reinterpret_cast<CollectionPropertyRNA *>(prop)->assignint == rna_IDMaterials_assign_int;
++}
++
++static int rna_id_materials_function_profile(FunctionRNA *func)
++{
++  if (func == &rna_IDMaterials_append_func) return 1;
++  if (func == &rna_IDMaterials_pop_func) return 2;
++  if (func == &rna_IDMaterials_clear_func) return 3;
++  return 0;
++}
++#endif
++
++bool RNA_property_is_id_materials_assignment(PropertyRNA *prop)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return rna_id_materials_assignment_profile(rna_ensure_property(prop));
++#else
++  UNUSED_VARS(prop);
++  return false;
++#endif
++}
++
++bool RNA_property_id_materials_paint_owner_teardown(bContext *C,
++                                                   PointerRNA *target,
++                                                   PropertyRNA *prop,
++                                                   const int index,
++                                                   const PointerRNA *value,
++                                                   ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_id_materials_assignment_profile(rna_ensure_property(prop)) ||
++      RNA_id_materials_paint_owner_absent(G_MAIN, target ? target->owner_id : nullptr, nullptr))
++  {
++    return true;
++  }
++  if (!value || (value->data &&
++                 (value->type != &RNA_Material || value->owner_id != value->data)) ||
++      (!value->data && value->owner_id) || !value->ancestors.is_empty())
++  {
++    if (reports) BKE_report(reports, RPT_ERROR, "Material collection input changed before assignment");
++    return false;
++  }
++  return RNA_id_materials_paint_owner_teardown(
++      C, G_MAIN, target, uintptr_t(value->data), eRNAMaterialCollectionOperation::Assign,
++      index, reports);
++#else
++  UNUSED_VARS(C, target, prop, index, value, reports);
++  return true;
++#endif
++}
++
++bool RNA_function_is_id_materials_mutation(FunctionRNA *func)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return rna_id_materials_function_profile(func) != 0;
++#else
++  UNUSED_VARS(func);
++  return false;
++#endif
++}
++
++bool RNA_function_id_materials_call_owned(bContext *C,
++                                                   PointerRNA *target,
++                                                   FunctionRNA *func,
++                                                   ParameterList *parms,
++                                                   ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int profile = rna_id_materials_function_profile(func);
++  if (!profile) return true;
++  if (!parms || parms->func != func) {
++    if (reports) BKE_report(reports, RPT_ERROR, "Material collection parameters changed");
++    return false;
++  }
++  void *input = nullptr;
++  uintptr_t incoming_address = 0;
++  int index = 0;
++  eRNAMaterialCollectionOperation operation = eRNAMaterialCollectionOperation::Clear;
++  if (profile == 1) {
++    RNA_parameter_get_lookup(parms, "material", &input);
++    if (!input) {
++      if (reports) BKE_report(reports, RPT_ERROR, "Material collection input is missing");
++      return false;
++    }
++    incoming_address = uintptr_t(*static_cast<Material **>(input));
++    operation = eRNAMaterialCollectionOperation::Append;
++  }
++  else if (profile == 2) {
++    RNA_parameter_get_lookup(parms, "index", &input);
++    if (!input) {
++      if (reports) BKE_report(reports, RPT_ERROR, "Material collection index is missing");
++      return false;
++    }
++    index = *static_cast<int *>(input);
++    operation = eRNAMaterialCollectionOperation::Pop;
++  }
++  Main *bmain = nullptr;
++  if (!RNA_id_materials_method_paint_owner_teardown(
++          C, target, incoming_address, operation, index, &bmain, reports))
++  {
++    return false;
++  }
++#  ifdef WITH_PYTHON
++  if (BPY_context_get() != C) {
++    if (reports) BKE_report(reports, RPT_ERROR, "Material collection context changed");
++    return false;
++  }
++#  endif
++  /* The explicit producer has prepared these values. Call the SAME native
++   * bodies without the generated wrapper's second callback-bearing Main query. */
++  ID *id = static_cast<ID *>(target->data);
++  if (profile == 1) {
++    rna_IDMaterials_append_id(id, bmain, reinterpret_cast<Material *>(incoming_address));
++  }
++  else if (profile == 2) {
++    Material *result = rna_IDMaterials_pop_id(id, bmain, reports, index);
++    RNA_parameter_set_lookup(parms, "material", &result);
++  }
++  else {
++    rna_IDMaterials_clear_id(id, bmain);
++  }
++  return true;
++#else
++  UNUSED_VARS(C, target, func, parms, reports);
++  return true;
++#endif
++}
 
  static CLG_LogRef LOG = {"rna.access"};
 
-@@ -2431,6 +2486,11 @@
+@@ -2431,6 +2627,11 @@
  {
    const bool is_rna = (prop->magic == RNA_MAGIC);
    prop = rna_ensure_property(prop);
@@ -158270,7 +158885,7 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 
    if (is_rna) {
      if (prop->update) {
-@@ -4487,6 +4547,12 @@
+@@ -4487,6 +4688,12 @@
                    ptr_value.type->identifier);
        return;
      }
@@ -158349,3 +158964,77 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
    }
 
    return 0;
+@@ -2452,8 +2488,37 @@
+
+   PYRNA_PROP_COLLECTION_ABS_INDEX(-1);
+
+-  if (!RNA_property_collection_assign_int(&self->ptr.value(), self->prop, keynum_abs, ptr)) {
+-    const int len = RNA_property_collection_length(&self->ptr.value(), self->prop);
++  /* The producer owns both RNA values before any native cancellation. Refusal
++   * returns here: the ordinary false branch below reads collection length. */
++  std::optional<PointerRNA> id_materials_target;
++  std::optional<PointerRNA> id_materials_value;
++  PointerRNA *assignment_target = &self->ptr.value();
++  PropertyRNA *assignment_property = self->prop;
++  if (RNA_property_is_id_materials_assignment(assignment_property)) {
++    id_materials_target.emplace(*assignment_target);
++    id_materials_value.emplace(*ptr);
++    assignment_target = &*id_materials_target;
++    ptr = &*id_materials_value;
++    ReportList reports;
++    BKE_reports_init(&reports, RPT_STORE);
++    bContext *C = BPY_context_get();
++    bool prepared = RNA_property_id_materials_paint_owner_teardown(
++        C, assignment_target, assignment_property, int(keynum_abs), ptr, &reports);
++    if (BPY_context_get() != C) {
++      BKE_report(&reports, RPT_ERROR, "Material collection context changed");
++      prepared = false;
++    }
++    const int preparation_error = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
++    if (!prepared || preparation_error == -1) {
++      if (preparation_error != -1) {
++        PyErr_SetString(PyExc_RuntimeError, "Material collection assignment was refused");
++      }
++      return -1;
++    }
++  }
++
++  if (!RNA_property_collection_assign_int(assignment_target, assignment_property, keynum_abs, ptr)) {
++    const int len = RNA_property_collection_length(assignment_target, assignment_property);
+     if (keynum_abs >= len) {
+       PyErr_Format(PyExc_IndexError,
+                    "bpy_prop_collection[index] = value: "
+@@ -6879,9 +6944,32 @@
+     bContext *C = BPY_context_get();
+
+     BKE_reports_init(&reports, RPT_STORE);
+-    RNA_function_call(C, &reports, self_ptr, self_func, &parms);
++    /* Parameter parsing has finished. Own the target before the explicit
++     * producer drain; generated raw _self/input locals do not exist yet. */
++    std::optional<PointerRNA> id_materials_target;
++    bool prepared = true;
++    if (RNA_function_is_id_materials_mutation(self_func)) {
++      id_materials_target.emplace(*self_ptr);
++      self_ptr = &*id_materials_target;
++      prepared = RNA_function_id_materials_call_owned(
++          C, self_ptr, self_func, &parms, &reports);
++      if (BPY_context_get() != C) {
++        BKE_report(&reports, RPT_ERROR, "Material collection context changed");
++        prepared = false;
++      }
++      if (prepared) {
++        funcptr = RNA_pointer_create_discrete(self_ptr->owner_id, &RNA_Function, self_func);
++      }
++    }
++    if (prepared && !id_materials_target) {
++      RNA_function_call(C, &reports, self_ptr, self_func, &parms);
++    }
+
+     err = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
++    if (!prepared && err != -1) {
++      PyErr_SetString(PyExc_RuntimeError, "Material collection operation was refused");
++      err = -1;
++    }
+
+     /* Return value. */
+     if (err != -1) {

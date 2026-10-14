@@ -1,0 +1,48 @@
+{
+  "status": "passed_bounded_independent_outer_and_literal_ui_source_review",
+  "reviewer": "collection_outer_finish",
+  "canonical_lf_patch_sha256": "0080319a51c9e78ac762701f69485ce823d313c6dac47241359070f60c63375f",
+  "production_baseline": "50359ad320904382fa967da426f7ccc0f9159016",
+  "evidence_scope": "Independent read of current materialization, current patch, pinned makesrna/CTX/RNA parameter and Python caller code; not target compilation or device execution. Focused suite still finishing independently.",
+  "actionable_findings": [],
+  "resolved_finding": {
+    "native_self_abi": "The initial direct owned dispatch used owner_id. The reviewed final source now uses static_cast<ID *>(target->data), matching makesrna native _self extraction; active-owner method receipts prove equality before admitting active or foreign Main."
+  },
+  "checks": [
+    "C++17-compatible optional, enum, uintptr_t and explicit equality declarations; no C++20 defaulted comparisons introduced.",
+    "Exact generated FunctionRNA globals identify append/pop/clear; assignint function identity identifies indexed assignment. Names alone do not grant cancellation.",
+    "Only explicit report-bearing Python producers cancel. Generic RNA function caller and native method/indexed bodies remain absence-only, preserving borrowed enclosing frames.",
+    "Indexed assignment copies both PointerRNA values, including owning ancestor storage, before cancellation. Preparation/report/context refusal returns before both assignment and the ordinary false branch collection-length read.",
+    "Method argument parsing and ParameterList allocation finish before the target is copied and cancellation begins. Raw nullable Material parameter bytes and parsed int index are captured before native owner retirement.",
+    "The owned method helper resolves implicit context Main once with the active receipt already captured, rejects changed current Main/context/input, and dispatches the same exported native bodies without a generated-wrapper second context callback.",
+    "Generated ABI is ID* from target.data, Main*, optional ReportList*, followed by Material* or int. Append nullable required input, pop native -1 default/ranges, clear empty effects and null successful pop result remain unchanged.",
+    "RNA_parameter_set_lookup stores the pop Material* in the original output parameter bytes. Reports are converted before pyrna_param_to_py; refusal never converts a stale result. Native id_us_min does not free returned Material IDs.",
+    "Owned method target remains live through function-pointer reconstruction and return conversion. Refusal avoids wrapper rereads. Parameter-list end/free remains unconditional after either success or refusal; these three methods have no dynamic or owning target pointers in ParameterList disposal.",
+    "Invalid-pop light receipts preserve native out-of-range errors without requiring material arrays or positive UID, then recheck typed identity and count after implicit context lookup before native no-write rejection.",
+    "Native no-owner function path derives self from data. Active-owner foreign-Main admission additionally proves owner/data/type/ancestor shape; a foreign context Main alone cannot exempt an active target.",
+    "Non-Apple profile checks return false, leaving ordinary function dispatch and native mutation semantics; Apple context-free generic callbacks cannot invoke Cancel."
+  ],
+  "literal_ui_preservation": {
+    "overlay_sections": 131,
+    "changed_sections": [
+      "source/blender/makesrna/intern/rna_object.cc",
+      "source/blender/makesrna/intern/rna_ID.cc",
+      "source/blender/makesrna/RNA_access.hh",
+      "source/blender/makesrna/intern/rna_access.cc",
+      "source/blender/python/intern/bpy_rna.cc"
+    ],
+    "added_sections": [],
+    "packaged_python_sections": 7,
+    "packaged_python_byte_exact": true,
+    "ghost_interface_hud_view3d_sections": 39,
+    "ghost_interface_hud_view3d_byte_exact": true,
+    "result": "No changes to nine-action Base, native Tools appearance/icons/labels/geometry, remaining-only More Tools, contact browsing/barrel behavior, full default bars, corner placement, or related interaction source."
+  },
+  "boundaries": [
+    "This review does not claim focused/full tests passed, iOS compilation, complete WM/CPython/allocator/exception/global CFG or native cancellation execution.",
+    "Python context-provider callbacks, native cancellation, allocation/refcount/synchronization, depsgraph, full interpreter conversion and device UIKit timing remain external/model boundaries.",
+    "No-owner arbitrary callback deletion remains native pre-existing behavior; the added receipt is scoped to registered paint-owner acquisition and cancellation.",
+    "Outer attempts do not establish global reentrancy termination, and refusal does not roll back callback effects.",
+    "Full personal Pencil-first app goal remains unfinished; exact new native package and compiled obligations are still required."
+  ]
+}

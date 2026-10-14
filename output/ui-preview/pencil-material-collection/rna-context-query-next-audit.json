@@ -1,0 +1,22 @@
+{
+  "status": "read_only_confirmed_seams_no_corrective_ID_source_or_fixtures",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "primary_sources": {
+    "bpy_interface.cc": "blob c8e9b6eedb7b41967589f788810e5a0bc28cfcaa; BPY_context_member_get774-850, PySequence_Fast804-808; failure prints/clears Python exception and returns done=false",
+    "context.cc": "ctx_data_get321-403 dispatches Python/native context providers; ctx_data_pointer_verify418-434 falls through when none succeeds; CTX_data_main1135-1143 can return native C.data.main after a provider callback",
+    "rna_ID.cc": "current internal rna_ID_paint_owner_teardown907-1030; exported RNA_id_paint_owner_teardown1032 onward; unchanged by collection increment"
+  },
+  "confirmed_seams": [
+    "Internal ID guard returns true on !did_teardown before re-resolving saved typed UID/override inputs; successful context query can run callbacks even when no native Cancel occurs.",
+    "Exported shared storage guard performs an initial null-output WM query using supplied nonnull C before strict capture; the absence fast path may therefore execute context provider callbacks before original ID identity is protected.",
+    "Generated FUNC_USE_MAIN wrappers cache raw self/input before their implicit CTX_data_main(C) call. Collection owned dispatcher now closes its own second-lookup gap; other generated consumer frames require separate bounded audit."
+  ],
+  "concrete_callback_candidate": "A custom sequence override for blend_data can execute Python during PySequence_Fast, perform a one-shot owner retirement/input deletion, then raise. PyErr_Print clears the error, done remains false and context lookup can fall back to the unchanged native Main. This is source-backed reachability, not an executed target reproduction.",
+  "next_required_proof": [
+    "Execute actual shared RNA ID helper/export and native consumer with context getter hook that retires owner and changes/deletes/reuses input while WM reports successful absence.",
+    "Prove refusal before every consumer read/write and default-return/native admission behavior, preserving evaluated UID0 and historical null-C paths when absence is genuinely callback-free.",
+    "Audit full generated wrapper/Python/report/cleanup frames and Main/context getter ordering; no detached helper or unproved pointer reload.",
+    "Keep no-owner arbitrary context behavior distinct from the owner-at-entry contract; do not claim generic ID lifetime or global reentrancy proof."
+  ],
+  "current_scope": "Finish material collection full validation, exact native build and package/compiled checks before another source increment. No ID-family correction is included here."
+}

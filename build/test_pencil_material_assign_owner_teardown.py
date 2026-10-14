@@ -60,7 +60,7 @@ MATERIAL_BODIES = "\n".join(function(MATERIAL, signature) for signature in (
 PREFIX = ID_PREFIX.replace("#include <vector>", "#include <vector>\n#include <cstring>\n#include <cstdlib>\n#include <memory>\n#include <unordered_map>\n#include <string>\n#include <optional>")
 PREFIX = PREFIX.replace("enum ID_Type { ID_OB=", "enum ID_Type { ID_MA='M'|('A'<<8), ID_ME='M'|('E'<<8), ID_CU='C'|('U'<<8), ID_CU_LEGACY=ID_CU, ID_GD_LEGACY='G'|('D'<<8), ID_MB='M'|('B'<<8), ID_CV='C'|('V'<<8), ID_PT='P'|('T'<<8), ID_VO='V'|('O'<<8), ID_GP='G'|('P'<<8), ID_NT='N'|('T'<<8), ID_OB=")
 PREFIX = PREFIX.replace("int tag=ID_TAG_EXTERN;ID *newid=nullptr;", "int tag=ID_TAG_EXTERN;int us=10,flag=0;ID *newid=nullptr;")
-PREFIX = PREFIX.replace("static Main *CTX_data_main(const bContext *C){return C->main;}", "static Main *CTX_data_main(const bContext *C){return C?C->main:nullptr;}")
+PREFIX = PREFIX.replace("static Main *CTX_data_main(const bContext *C){return C->main;}", "static void (*g_context_main_hook)()=nullptr;\nstatic Main *CTX_data_main(const bContext *C){if(g_context_main_hook){auto hook=g_context_main_hook;g_context_main_hook=nullptr;hook();}return C?C->main:nullptr;}")
 
 MODEL = MATERIAL_LIMIT + "\n" + r"""
 #define BLI_assert_msg(value,message) assert(value)
@@ -93,7 +93,7 @@ struct Curves {ID id{ID_CV,0};Material **mat=nullptr;short totcol=0;};
 struct PointCloud {ID id{ID_PT,0};Material **mat=nullptr;short totcol=0;};
 struct Volume {ID id{ID_VO,0};Material **mat=nullptr;short totcol=0;};
 struct GreasePencil {ID id{ID_GP,0};Material **material_array=nullptr;short material_array_num=0;};
-struct Object {ID id{ID_OB,0};void *data=nullptr;short type=OB_MESH,totcol=0,actcol=1;
+struct Object {ID id{ID_OB,0};void *data=nullptr;short type=OB_MESH;int totcol=0,actcol=1;
   int mode=0;Material **mat=nullptr;char *matbits=nullptr;};
 struct StructRNA {const char *identifier;bool id=false;StructRNA *base=nullptr;};
 static StructRNA RNA_ID{"ID",true},RNA_Object{"Object",true,&RNA_ID};
@@ -232,7 +232,7 @@ struct Fixture {
     g_cancel_ok=true;g_change_context=g_replace_main=g_spawn=false;
     g_remove_foreign_window=g_remove_foreign_manager=false;g_cancel_calls=0;
     g_context_allocs=g_context_frees=0;g_original=&C;g_other_main=&foreign;
-    g_cancel_hook=nullptr;g_spawn_window=nullptr;g_spawned={};
+    g_cancel_hook=nullptr;g_context_main_hook=nullptr;g_spawn_window=nullptr;g_spawned={};
     library.id.session_uid=100;other_library.id.session_uid=101;
     object.id.session_uid=200;other_object.id.session_uid=201;replacement.id.session_uid=200;
     mesh.id.session_uid=300;other_mesh.id.session_uid=301;
@@ -332,7 +332,8 @@ static void mutate(Fixture &f,Mutation mutation,int after=1){g_fixture=&f;g_muta
 OBJECT_HELPER_START = OBJECT.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, OBJECT.index("struct RnaMaterialIDIdentity"))
 OBJECT_HELPERS = OBJECT[OBJECT_HELPER_START:OBJECT.index("static void rna_Object_active_material_set(")]
 ACCESS_HELPER_START = ACCESS.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, ACCESS.index("static int rna_material_assignment_profile"))
-ACCESS_HELPERS = ACCESS[ACCESS_HELPER_START:ACCESS.index("static CLG_LogRef LOG", ACCESS_HELPER_START)]
+ACCESS_COLLECTION_START = ACCESS.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, ACCESS.index("extern bool rna_IDMaterials_assign_int"))
+ACCESS_HELPERS = ACCESS[ACCESS_HELPER_START:ACCESS_COLLECTION_START]
 MATERIAL_UPDATE = "\n".join(function(OBJECT, signature) for signature in (
     "static void rna_Object_internal_update(", "static void rna_MaterialSlot_update("))
 UPDATE = "\n".join(function(ACCESS, signature) for signature in (
@@ -426,6 +427,27 @@ class PencilMaterialAssignOwnerTeardownTests(unittest.TestCase):
             subprocess.run([compiler, "-std=c++17", "-Wall", "-Wextra", "-Werror", "-pedantic",
                             "-Wno-unused-function", str(test), "-o", str(binary)], cwd=work, check=True)
             subprocess.run([str(binary)], cwd=work, check=True)
+
+    def test_native_int_active_index_change_cannot_wrap_snapshot(self):
+        self.run_cpp(r"""
+int main(){for(bool slot:{false,true}){
+  Fixture f(slot);f.add_owner();g_fixture=&f;
+  g_cancel_hook=[](){g_fixture->object.actcol+=65536;};
+  assert(!f.preflight(&f.C)&&f.reports.errors>0&&g_cancel_calls==1);
+  assert(f.object.actcol==65537);assert_no_native();
+}}
+""")
+
+    def test_context_query_that_retires_owner_still_revalidates_inputs(self):
+        self.run_cpp(r"""
+int main(){for(bool slot:{false,true})for(bool change_uid:{false,true}){
+  Fixture f(slot);f.add_owner();g_fixture=&f;
+  if(change_uid)g_context_main_hook=[](){auto &x=*g_fixture;x.win.modalhandlers.first=nullptr;++x.object.id.session_uid;};
+  else g_context_main_hook=[](){auto &x=*g_fixture;x.win.modalhandlers.first=nullptr;x.object.actcol+=65536;};
+  assert(!f.preflight(&f.C)&&f.reports.errors>0&&g_cancel_calls==0&&!has_owner(&f.main));
+  assert_no_native();
+}}
+""")
 
     def test_native_over_limit_and_unsupported_storage_keep_direct_and_outer_refusal_parity(self):
         for apple in (True, False):

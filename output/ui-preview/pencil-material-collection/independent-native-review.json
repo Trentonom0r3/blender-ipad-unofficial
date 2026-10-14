@@ -1,0 +1,82 @@
+{
+  "status": "pass_no_actionable_source_findings",
+  "reviewer": "independent_final_native_correctness",
+  "review_date": "2026-10-14",
+  "repository": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial",
+  "materialization": "C:/Users/tjerf/AppData/Local/Temp/blender-pencil-rna-mlvacs05",
+  "blender_pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "pinned_material_blob": "1d2f0cf4e5bc2fee76f360a26fa3d814b1b367bc",
+  "patch_sha256": "0080319a51c9e78ac762701f69485ce823d313c6dac47241359070f60c63375f",
+  "latest_verified_production": "50359ad320904382fa967da426f7ccc0f9159016",
+  "latest_verified_run": "38449639043",
+  "findings": [],
+  "inspected_sources": [
+    "source/blender/makesrna/RNA_access.hh",
+    "source/blender/makesrna/intern/rna_access.cc",
+    "source/blender/makesrna/intern/rna_ID.cc",
+    "source/blender/makesrna/intern/rna_object.cc",
+    "source/blender/python/intern/bpy_rna.cc",
+    "source/blender/windowmanager/intern/wm_event_system.cc",
+    "pinned source/blender/makesrna/intern/makesrna.cc",
+    "pinned source/blender/blenkernel/intern/material.cc",
+    "pinned source/blender/blenkernel/intern/context.cc"
+  ],
+  "reviewed_contracts": [
+    {
+      "contract": "Borrowed native mutation gates",
+      "result": "Append/pop/clear/indexed assignment only query registered-owner absence; they do not cancel from borrowed frames. Gates precede native writes, allocations, refcounts, synchronization, tags and notifiers. Native invalid pop reports before the owner gate; invalid indexed assignment returns false. Indexed slot MAXMAT+1 retains the native successful early no-op."
+    },
+    {
+      "contract": "Actual native ABI and method dispatch",
+      "result": "The same append/pop/clear bodies are exported with their existing ID/Main/Material/ReportList/int signatures. FunctionRNA identity selects exactly the three methods; ParameterList input and popped Material pointer output use native lookup/copy conventions. Registration retains FUNC_USE_MAIN, nullable required append, pop index default -1, reports and return. Combined owned dispatch avoids makesrna's later callback-bearing CTX_data_main(C) query. Non-Apple profiling remains false and uses ordinary dispatch."
+    },
+    {
+      "contract": "Prelookup and producer ownership",
+      "result": "Python owns target PointerRNA and indexed value copies before cancellation. Method preparation captures active target/incoming/storage before the implicit context Main lookup, then verifies fresh state. With a registered owner, IDMaterials method data must equal owner_id and have no ancestor chain. Initially absent calls requery absence after lookup and refuse a newly registered owner. Context identity/report refusal precedes ordinary indexed false/length or popped return conversion."
+    },
+    {
+      "contract": "Invalid pop admission",
+      "result": "Prelookup invalid-pop receipt preserves the exact native Index out of range path using fresh Main membership, numeric address, session UID, type and short count. It does not demand unrelated arrays/material identities for a native error-only path, including UID-zero or malformed arrays. A changed receipt refuses before the native callback."
+    },
+    {
+      "contract": "Fresh material storage capture",
+      "result": "Capture reconstructs typed data/Material/Library/override identities, arrays, short data count, data users, and the ordered set of sharing Objects with native-width int counts/active indices, physical Object arrays/materials/link bits. It uses numeric membership before dereference and snapshots direct arrays instead of mutating ordinary getters. Foreign Main bypass requires fresh target membership disjoint from G_MAIN; context Main alone is insufficient."
+    },
+    {
+      "contract": "Completed WM calls and reentrancy",
+      "result": "Explicit drains preserve original caller C and MaterialAssignmentOriginal policy. Every successful WM call is followed by G_MAIN and full input recapture before inspecting did_teardown, including a successful absence return after context callbacks. The existing WM original-material recursion barrier rejects nested absence queries and mutation during native cancellation. Both current collection and retained assignment helper follow this ordering."
+    },
+    {
+      "contract": "Pinned count/default/native side effects",
+      "result": "Actual pinned BKE bodies retain append without a MAXMAT clamp, nullable refcounts, negative pop normalization, null-slot successful pop, final-slot distinct synchronization, and empty clear side effects. MAXMAT is 32766; short count can be 32767 after append. Indexed key32766/count32767 remains native success with BKE early no-op. Dependent Object synchronization runs after drain and before any new Main lock is acquired."
+    }
+  ],
+  "verified_evidence": {
+    "collection_connected": {
+      "status": "pass",
+      "tests": 25,
+      "seconds": 24.380,
+      "log": ".cache/material-collection-connected-fixture-final.log"
+    },
+    "retained_assignment": {
+      "status": "pass",
+      "tests": 23,
+      "seconds": 30.176,
+      "log": ".cache/material-collection-retained-assignment-final.log"
+    },
+    "pinned_preflight": {
+      "status": "pass",
+      "files": 131,
+      "log": ".cache/material-collection-preflight-final.log"
+    },
+    "git_diff_check": "pass",
+    "full_host_suite": "pending; root records the eventual outcome separately"
+  },
+  "proof_boundaries": [
+    "Independent source and bounded host-fixture review, not a new native iOS build, packaged IPA, compiled-consumer or device acceptance claim.",
+    "Actual tracked pinned material bodies and actual changed RNA/WM/producer source execute in fixtures; native cancellation, Main/context providers, allocation, refcount/freeing, geometry/depsgraph effects and Python conversion remain instrumented boundaries.",
+    "No-owner native baseline, including arbitrary context-provider behavior, is preserved; this is not a generic ID lifetime proof. Null G_MAIN conservatively refuses Apple mutation.",
+    "256 outer drain attempts do not prove a global reentrancy/callback bound, and refusal does not roll back callback effects.",
+    "External native calls, complete exception/global CFG behavior, UIKit and iPad interaction remain outside this review."
+  ]
+}

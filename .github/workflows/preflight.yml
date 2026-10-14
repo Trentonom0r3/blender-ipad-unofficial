@@ -184,6 +184,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_mesh_storage_owner_teardown.py -v
       - name: Material assignment and enclosing RNA Pencil-owner admission
         run: python3 -m unittest discover -s build -p test_pencil_material_assign_owner_teardown.py -v
+      - name: Material collection native storage and owned Python producers
+        run: python3 -m unittest discover -s build -p test_pencil_material_collection_owner_teardown.py -v
       - name: Pencil paint Scene removal lifecycle
         run: python3 -m unittest discover -s build -p test_pencil_paint_scene_remove.py -v
       - name: Pencil paint owner teardown before native mode exit

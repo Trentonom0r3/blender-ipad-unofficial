@@ -1,3 +1,38 @@
+## Material collection Pencil-owner source validated - 2026-10-14
+
+Four live IDMaterials routes now connect native append/pop/clear/indexed storage
+mutation to explicit owned Python producer preparation. Generic native callbacks
+remain absence-only, preserving borrowed enclosing frames. Method preparation
+receipts active inputs before the implicit context Main lookup and calls the SAME
+native bodies without a generated-wrapper second lookup. Fresh typed physical
+state is checked after every successful WM query/drain, including no-Cancel returns.
+Foreign Main cannot exempt active data. Invalid Pop keeps its native error before
+full storage capture; nullable/default/return/count32767/empty-clear behavior and
+actual Main/Object synchronization semantics remain. Prior Object int widths and
+successful-query recapture are corrected with retained regressions.
+
+Full **479/479** host checks (**340.060s**), connected **25/25**
+(**24.380s**), retained material assignment **23/23** (**30.176s**), portable
+cache-unavailable **25/25** (**24.895s**), **131-file** pinned preflight/diff and
+independent final native/outer/literal UI reviews pass. Earlier red collection
+logs are fixture extraction/model/expectation corrections, not completed passes.
+Canonical LF patch SHA256:
+0080319a51c9e78ac762701f69485ce823d313c6dac47241359070f60c63375f.
+
+Only five production sections change;126 remain exact, including all seven
+interaction Python and39 GHOST/interface/HUD/View3D sections. No accepted ring,
+header, icon, geometry, selection, editor or corner design changes. Source report:
+output/ui-preview/pencil-material-collection/source-verification.json.
+
+This source is not yet native built or device accepted. Latest completely verified
+IPA remains50359ad/run38449639043. Next commit/push coherent source, build exactly
+once and verify full downloaded IPA/arm64/whole native UI/icons plus actual compiled
+four-consumer/owned-method/context/refusal/pop-result branches and preserved HUD
+launch/Weight cleanup. Source/model/package/device evidence stay separate. Initial
+no-owner arbitrary context callbacks retain native semantics; null G_MAIN refusal
+is conservative, and UID-zero error receipts are bounded to no mutation. No global
+reentrancy/rollback claim. Full personal Pencil-first goal remains unfinished.
+
 ## Verified material assignment Pencil-owner IPA - 2026-10-13
 
 Exact production `50359ad320904382fa967da426f7ccc0f9159016` passed hosted
