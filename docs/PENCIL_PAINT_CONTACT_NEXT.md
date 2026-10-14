@@ -1,3 +1,21 @@
+## Corrected material collection exact build pending - 2026-10-14
+
+Corrected source01e2b1a60797bead82d251fedac6bcd41e332be9 is pushed and
+building ONCE in run38612413567. Exact head confirmed. Watcher50592/script
+.cache/watch-material-collection-build.py/log
+.cache/material-collection-build-watch-38612413567.log owns waiting, full IPA
+download/verification, preserved compiled HUD launch/Weight cleanup and initial
+actual collection/native/outer/receipt disassembly. Inspect this SAME build and
+process before replacing it. Full480/480 host checks314.875s, connected25,
+retained23, public header1,132-file preflight/diff and narrow independent review
+pass. Original38607779778@1acf7bc failed undeclared BPY_context_get; correction
+adds only the matching public declaration, with all131 prior sections unchanged.
+No collection native compile/IPA/device acceptance yet. Finish exact replacement
+and actual independent compiled consumer/outer/receipt review before next source
+increment. Latest fully verified package50359ad/run38449639043 remains available.
+Next read-only context-query characterization has10 source-executing cases;
+no corrective ID-family source is included. Full personal goal unfinished.
+
 ## Material collection native declaration correction - 2026-10-14
 
 Original exact run38607779778 at1acf7bc FAILED native Release: rna_access.cc
