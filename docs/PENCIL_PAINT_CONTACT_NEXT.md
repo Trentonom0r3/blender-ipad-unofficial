@@ -1,3 +1,23 @@
+## Material collection exact build in progress - 2026-10-14
+
+Source `1acf7bc4e6dc04fb2981daf9017e62702badea49` is pushed and building ONCE
+in run38607779778. Last observed17:36UTC: hosted preflight in progress with no
+failed step. Watcher63982 (.cache/watch-material-collection-build.py and log)
+owns waiting, exact full IPA download, preserved HUD launch/Weight cleanup and
+actual collection/native/outer/receipt disassembly. Inspect this SAME build and
+live verifier before replacement. Do not claim a collection IPA yet or rebuild
+unchanged50359ad. Current HEAD after this checkpoint is documentation only.
+
+All479 host tests/25 connected/23 retained/portable25/131-file preflight and
+independent final native/outer/literal UI reviews passed at patch0080319a.
+No collection native/package/device acceptance exists yet. Latest fully verified
+IPA remains50359ad/run38449639043. Full personal Pencil-first goal unfinished.
+
+Read-only next audit rna-context-query-next-audit.json records older shared RNA
+ID/storage guards returning on successful absence before fresh input recapture,
+and callback-bearing initial queries. No corrective ID-family source is included.
+Finish this exact build/package/compiled verification before another source increment.
+
 ## Material collection Pencil-owner source validated - 2026-10-14
 
 Four live IDMaterials routes now connect native append/pop/clear/indexed storage

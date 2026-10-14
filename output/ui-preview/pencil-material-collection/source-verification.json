@@ -1,5 +1,5 @@
 {
-  "status": "source_host_independent_passed_not_native_built",
+  "status": "source_host_independent_passed_exact_native_build_in_progress",
   "baseline_production": "50359ad320904382fa967da426f7ccc0f9159016",
   "canonical_lf_patch_sha256": "0080319a51c9e78ac762701f69485ce823d313c6dac47241359070f60c63375f",
   "scope": [
@@ -62,11 +62,24 @@
     "The outer256 loop is not a global reentrancy/callback bound. Refusal does not roll back callback effects.",
     "No native build, package or device acceptance for this increment yet."
   ],
-  "native_build": null,
+  "native_build": {
+    "run": 38607779778,
+    "source": "1acf7bc4e6dc04fb2981daf9017e62702badea49",
+    "dispatched_once": true,
+    "status": "in_progress",
+    "last_observed_utc": "2026-10-14T17:36:00Z",
+    "hosted_preflight": "in_progress without failed step",
+    "watcher_session": 63982,
+    "watcher_script": ".cache/watch-material-collection-build.py",
+    "watcher_log": ".cache/material-collection-build-watch.log",
+    "compiled_review": "pending native binary",
+    "device_acceptance": false
+  },
   "device_acceptance": false,
   "fixtures": {
     "build/test_pencil_material_collection_owner_teardown.py": "1dc4f0b5e4c13a6093fd476e5b42d6a3dd50846e1f6785ad594012c9b60e95c6",
     "build/tests/pinned_material_collection.inc.cc": "48377b6061e25416b7f5929fd6781a76ecf4d37fa095a88f2233ebba8b47d3b5",
     "build/test_pencil_material_assign_owner_teardown.py": "519f3b3c1049cc563fc7869304fdb3645114c09db2b7742432398a67442e1ebb"
-  }
+  },
+  "production_source": "1acf7bc4e6dc04fb2981daf9017e62702badea49"
 }
