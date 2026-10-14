@@ -1,5 +1,5 @@
 {
-  "status": "public_api_correction_source_host_review_passed_native_replacement_required",
+  "status": "corrected_source_host_review_passed_exact_native_replacement_in_progress",
   "baseline_production": "50359ad320904382fa967da426f7ccc0f9159016",
   "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
   "scope": [
@@ -94,7 +94,19 @@
     "scope": "Add matching existing BPY_context_get declaration to public BPY_extern.hh. All 131 previous overlay sections are byte-exact. No guard or behavior change.",
     "fixture": "build/test_pencil_python_context_api.py",
     "review": "output/ui-preview/pencil-material-collection/independent-public-context-api-review.json",
-    "native_replacement": "not dispatched yet",
+    "native_replacement": "38612413567 at01e2b1a, building once",
+    "device_acceptance": false
+  },
+  "production_source": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "native_build": {
+    "run": 38612413567,
+    "source": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+    "status": "in_progress",
+    "dispatched_once": true,
+    "watcher_session": 50592,
+    "watcher_log": ".cache/material-collection-build-watch-38612413567.log",
+    "watcher_script": ".cache/watch-material-collection-build.py",
+    "compiled_review": "pending exact native binary",
     "device_acceptance": false
   }
 }
