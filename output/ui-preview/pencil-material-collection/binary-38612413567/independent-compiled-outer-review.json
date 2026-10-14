@@ -1,0 +1,239 @@
+{
+  "status": "passed_bounded_actual_compiled_outer_review",
+  "run": "38612413567",
+  "production_source": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
+  "binary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-collection\\binary-38612413567\\Blender",
+    "uuid": "95364C2C-56D6-3812-9371-F27D1F362BEC",
+    "sha256": "d52ba68dd1d3c8fbec26210ef29f6a8da8a5b3aad28ddab28e202c9c8b98a495",
+    "bytes": 160356048,
+    "architecture": "thin ARM64 Mach-O",
+    "configuration": "native iOS Release"
+  },
+  "method": {
+    "reviewer": "independent collection_outer_finish subagent",
+    "regeneration": "All reviewed instruction streams independently regenerated from this exact binary with llvm-nm and llvm-objdump, not accepted from watcher call names alone.",
+    "aliases": "Indexed helper is inlined into pyrna_prop_collection_ass_subscript. Mutable/const optional emplace aliases share address0x101507f08. Main pyrna_param_to_py selected separately from its cold clone. Imported strcmp/memcpy/stack-check/unwind stubs resolved with Mach-O indirect-symbol table.",
+    "cfg_scope": "Selected local refusal continuations overapproximate conditional branches and model known no-return imports. Calls are external boundaries; no interprocedural heap/exception proof."
+  },
+  "symbol_ranges": {
+    "pyrna_func_call": {
+      "start": "0x101505504",
+      "end_exclusive": "0x101505e38",
+      "instruction_count": 589
+    },
+    "pyrna_prop_collection_ass_subscriptP": {
+      "start": "0x10150d1e0",
+      "end_exclusive": "0x10150d658",
+      "instruction_count": 286
+    },
+    "RNA_function_id_materials_call_owned": {
+      "start": "0x10124a958",
+      "end_exclusive": "0x10124ab70",
+      "instruction_count": 134
+    },
+    "RNA_id_materials_method_paint_owner_teardown": {
+      "start": "0x1013fd14c",
+      "end_exclusive": "0x1013fd784",
+      "instruction_count": 398
+    },
+    "RNA_property_id_materials_paint_owner_teardown": {
+      "start": "0x10124a77c",
+      "end_exclusive": "0x10124a92c",
+      "instruction_count": 108
+    },
+    "RNA_function_is_id_materials_mutation": {
+      "start": "0x10124a92c",
+      "end_exclusive": "0x10124a958",
+      "instruction_count": 11
+    },
+    "RNA_property_is_id_materials_assignment": {
+      "start": "0x10124a6d4",
+      "end_exclusive": "0x10124a77c",
+      "instruction_count": 42
+    },
+    "RNA_property_collection_assign_int": {
+      "start": "0x101257a38",
+      "end_exclusive": "0x101257ab8",
+      "instruction_count": 32
+    },
+    "BPy_reports_to_error": {
+      "start": "0x1014f05b0",
+      "end_exclusive": "0x1014f0624",
+      "instruction_count": 29
+    },
+    "RNA_parameter_list_free": {
+      "start": "0x10125dc48",
+      "end_exclusive": "0x10125dd70",
+      "instruction_count": 74
+    },
+    "RNA_parameter_set_lookup": {
+      "start": "0x10124ac4c",
+      "end_exclusive": "0x10124accc",
+      "instruction_count": 32
+    },
+    "RNA_parameter_set": {
+      "start": "0x10125dedc",
+      "end_exclusive": "0x10125e18c",
+      "instruction_count": 172
+    },
+    "RNA_parameter_get_lookup": {
+      "start": "0x10124ab70",
+      "end_exclusive": "0x10124ac4c",
+      "instruction_count": 55
+    },
+    "PointerRNAC1": {
+      "start": "0x10124a618",
+      "end_exclusive": "0x10124a6d4",
+      "instruction_count": 47
+    },
+    "optional-emplace": {
+      "start": "0x101507f08",
+      "end_exclusive": "0x101507ff8",
+      "instruction_count": 60
+    },
+    "BPY_context_get": {
+      "start": "0x1014f2ce8",
+      "end_exclusive": "0x1014f2cfc",
+      "instruction_count": 5
+    },
+    "pyrna_param_to_py": {
+      "start": "0x10150eedc",
+      "end_exclusive": "0x10150f594",
+      "instruction_count": 430
+    },
+    "RNA_pointer_create_discrete": {
+      "start": "0x10124b31c",
+      "end_exclusive": "0x10124b388",
+      "instruction_count": 27
+    }
+  },
+  "findings": [],
+  "obligations": {
+    "exact_method_identity": {
+      "status": "passed",
+      "evidence": "0x10124a92c..a954 compares exact data addresses: append0x1066664a0, pop0x106666450, clear0x106666770, independently resolved by llvm-nm."
+    },
+    "indexed_owned_values_before_prepare": {
+      "status": "passed",
+      "evidence": "Containing function0x10150d1e0: optional emplace calls0x10150d384/390 copy target tosp+a8 and value tosp+48; prepare0x10150d3bc receives those addresses, index and saved PropertyRNA. After preparation, actual BPY context comparison0x10150d3c4..3e4 and report conversion0x10150d3fc precede native assignment0x10150d428. Accepted pointers are rebound to owned stack values at0x10150d410/414. Refusal gate0x10150d40c goes tod570 before assignment and false-branch length0x10150d548.",
+      "refusal_check": {
+        "start": "0x10150d570",
+        "instruction_states": 42,
+        "normal_return_sites": [
+          "0x10150d53c"
+        ],
+        "calls": {
+          "0x10150d584": "_PyErr_SetString",
+          "0x10150d588": "__ZL35pyrna_prop_collection_ass_subscriptP15BPy_PropertyRNAP7_objectS2_+0x3bc",
+          "0x10150d5c0": "_MEM_freeN",
+          "0x10150d5e4": "_MEM_freeN",
+          "0x10150d5e8": "__ZL35pyrna_prop_collection_ass_subscriptP15BPy_PropertyRNAP7_objectS2_+0x328",
+          "0x10150d600": "_zlibVersion+0x104b63920"
+        },
+        "unresolved_indirect_transfers": [],
+        "required_cleanup_on_all_bounded_normal_returns": false
+      }
+    },
+    "owned_copy_storage": {
+      "status": "passed_bounded",
+      "evidence": "optional-emplace0x101507f48..fbc copies the three pointer fields and ancestor range into destination inline/allocated storage, then marks engaged atfC4. PointerRNA-copy0x10124a630..a6a4 has the same owned range copy. Allocation helper is an identical-code-folded Vector alias; allocator internals are outside this review. Copies do not hold ID reference counts."
+    },
+    "method_owned_producer_and_generic_bypass": {
+      "status": "passed",
+      "evidence": "Parameter parsing ends before0x101505974. Context saved tox24; optional target emplace0x1015059a4 precedes direct owned dispatcher0x1015059bc. Post-dispatch BPY context compare0x1015059c4..9e4 forces refusal on mismatch. Success reconstructs funcptr from owned target0x101505ae8..b8c. Engaged flag atsp+188 is tested at0x101505b98 and branches tobb4, skipping generic RNA_function_call0x101505bb0. Generic unrelated functions retain original call."
+    },
+    "dispatcher_preparation_before_native_body": {
+      "status": "passed",
+      "evidence": "Native input pointer bytes/index are read before helper0x10124aad0. Helper false0x10124aad4 returns without native calls. BPY_context_get0x10124aad8 must compare equal to saved C before target.data load0x10124ab04. Pop: Main fromsp+10 tox1, reports tox2, original index tox3; append/clear use the same helper-produced Main. Data comes from PointerRNA+0x10, not owner_id. There is no second CTX_data_main call in this dispatcher.",
+      "helper_false_check": {
+        "start": "0x10124a9ec",
+        "instruction_states": 8,
+        "normal_return_sites": [
+          "0x10124aa08"
+        ],
+        "calls": {},
+        "unresolved_indirect_transfers": [],
+        "required_cleanup_on_all_bounded_normal_returns": false
+      },
+      "context_mismatch_check": {
+        "start": "0x10124aae4",
+        "instruction_states": 17,
+        "normal_return_sites": [
+          "0x10124aa08"
+        ],
+        "calls": {
+          "0x10124a9e4": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "0x10124aaf0": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x1f4",
+          "0x10124ab50": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x88"
+        },
+        "unresolved_indirect_transfers": [],
+        "required_cleanup_on_all_bounded_normal_returns": false
+      }
+    },
+    "single_implicit_Main_lookup_and_receipt_order": {
+      "status": "passed_bounded",
+      "evidence": "Actual method helper has exactly one direct CTX_data_main call site0x1013fd320. Owned target copy/initial callback-free query0x1013fd278 precede it; active full capture0x1013fd3e0 or invalid-pop numeric receipt0x1013fd434..450 reaches the query. Current Main is compared afterward0x1013fd45c..46c. Initial absence is rechecked0x1013fd554; active input recapture/equality0x1013fd694/a4 precedes common drain0x1013fd5f0. Invalid-pop typed UID/type/count checks0x1013fd57c..5b8 return Main without cancellation. Deep capture/equality/WM semantics belong to separate native review."
+    },
+    "pop_output_storage_and_reports_before_conversion": {
+      "status": "passed",
+      "evidence": "Native pop return is stored atsp+8 at0x10124ab24 and passed by address to RNA_parameter_set_lookup0x10124ab38. Lookup tails to RNA_parameter_set, whose ordinary output path copies the parameter size with resolved memcpy stub0x104b64634. Actual generated IDMaterials_pop_call stores Material* to raw ParameterList bytes+8 at0x10126dc08 after reading index at+0, confirming native layout. BPy_reports_to_error0x101505bcc precedes all pyrna_param_to_py calls0x101505c54/c8c. Its compiled csetm return is exactly0/-1; the observed bics/csinc gate sends prepared=false/report0 toerrorc64 or report-1 directly tocleanupca8. No refused result conversion occurs."
+    },
+    "nullable_pop_conversion": {
+      "status": "passed_bounded",
+      "evidence": "Actual pyrna_param_to_py pointer branch0x10150f240..28c reads raw returned ID pointer and constructs RNA ID. It checks newptr.data at0x10150f470/474: nonnull calls pyrna_struct_CreatePyObject; null uses Py_None address0x106c52718 and increments its reference. No claim is made about full interpreter/ID wrapper internals."
+    },
+    "normal_refusal_cleanup": {
+      "status": "passed_bounded",
+      "evidence": "Method normal success/refusal exits converge through optional target release after conversion/error, native RNA_parameter_list_end0x101505cd8 and RNA_parameter_list_free0x101505ce0 before final return. Indexed error/success releases both owned optional ancestor arrays0x10150d5a0..5e8. Parameter-list free traverses static function metadata, frees only owning collection/thick/dynamic parameter storage where flagged, and always releases the parameter buffer. These three methods retain raw nonowning ID-pointer/int parameters.",
+      "method_refusal_without_report": {
+        "start": "0x101505c64",
+        "instruction_states": 53,
+        "normal_return_sites": [
+          "0x101505d58"
+        ],
+        "calls": {
+          "0x101505c70": "_PyErr_SetString",
+          "0x101505c7c": "__ZL15pyrna_func_callP15BPy_FunctionRNAP7_objectS2_+0x7a4",
+          "0x101505cc8": "_MEM_freeN",
+          "0x101505cd8": "__Z22RNA_parameter_list_endP17ParameterIterator",
+          "0x101505ce0": "__Z23RNA_parameter_list_freeP13ParameterList",
+          "0x101505d1c": "_MEM_freeN",
+          "0x101505dac": "_zlibVersion+0x104b63920"
+        },
+        "unresolved_indirect_transfers": [],
+        "required_cleanup_on_all_bounded_normal_returns": true
+      },
+      "method_report_error": {
+        "start": "0x101505ca8",
+        "instruction_states": 46,
+        "normal_return_sites": [
+          "0x101505d58"
+        ],
+        "calls": {
+          "0x101505cc8": "_MEM_freeN",
+          "0x101505cd8": "__Z22RNA_parameter_list_endP17ParameterIterator",
+          "0x101505ce0": "__Z23RNA_parameter_list_freeP13ParameterList",
+          "0x101505d1c": "_MEM_freeN",
+          "0x101505dac": "_zlibVersion+0x104b63920"
+        },
+        "unresolved_indirect_transfers": [],
+        "required_cleanup_on_all_bounded_normal_returns": true
+      }
+    },
+    "public_context_getter_compiled": {
+      "status": "passed_bounded",
+      "evidence": "Actual BPY_context_get0x1014f2ce8..cf8 is five instructions loading bpy_context_module at0x106da59e8 and current pointer at+0x20, then returning. The public declaration correction resolved the real native compile failure without introducing a context callback or changing getter behavior."
+    }
+  },
+  "boundaries": [
+    "No device acceptance, UIKit timing, GPU interaction, full CPython interpreter/GIL/module initialization, allocator/ID lifetime, exception-unwind, complete interprocedural WM/Cancel or global CFG proof.",
+    "Selected local refusal CFG traversals treat native calls as returning external boundaries and resolve imported no-return stubs; they do not model callback reentry or heap changes inside those calls.",
+    "Deep typed snapshot equality, native BKE mutation/admission and strict WM context/drain behavior are separately reviewed by the native reviewer; this report establishes outer compiled call/argument/order/refusal/return/cleanup obligations.",
+    "Initially absent-to-absent arbitrary context-provider deletion remains native baseline outside the new registered-owner receipt; no broad no-owner ID-lifetime claim.",
+    "Native cleanup on normal success/refusal is reviewed; exception allocation failures and all asynchronous interruption paths are not execution-tested here.",
+    "Outer attempt counters do not establish global reentrancy termination, refusal does not roll back callback effects, and generic Cancel is not rollback."
+  ],
+  "device_acceptance": false
+}

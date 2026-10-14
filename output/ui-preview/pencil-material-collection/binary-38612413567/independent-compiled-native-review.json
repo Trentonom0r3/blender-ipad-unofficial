@@ -1,0 +1,1541 @@
+{
+  "status": "passed_bounded_actual_compiled_native_review",
+  "reviewer": "independent_final_native_correctness",
+  "production_source": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "run": "38612413567",
+  "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
+  "binary": {
+    "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-collection\\binary-38612413567\\Blender",
+    "binary_uuid": "95364C2C-56D6-3812-9371-F27D1F362BEC",
+    "binary_bytes": 160356048,
+    "binary_sha256": "d52ba68dd1d3c8fbec26210ef29f6a8da8a5b3aad28ddab28e202c9c8b98a495"
+  },
+  "method": {
+    "tools": [
+      "build/audit_hud_macho.py symbols/disassemble/successors/macho_uuid",
+      "C:/Program Files/LLVM/bin/llvm-nm.exe",
+      "C:/Program Files/LLVM/bin/llvm-objdump.exe"
+    ],
+    "scope_selection": "Independently regenerated exact text-symbol instruction streams from the downloaded binary, using equality-selected mangled names and next distinct text addresses. Helper names select scopes only; conclusions below follow actual instructions, arguments and branches.",
+    "verification": "Manual register/stack and branch review plus local successor walks for all four owner-refusal exits and pop error path. Independent reachability tests show fresh capture/equality dominate the did_teardown load from each selected successful-WM continuation.",
+    "scope_index": "independent-native-scope-index.json",
+    "additional_scope_index": "independent-native-additional-scope-index.json",
+    "branch_checks": "independent-native-branch-checks.json",
+    "extract_script": "independent-native-extract.py",
+    "resolved_imports": {
+      "0x104b6377c": "operator delete(void*)",
+      "0x104b637a0": "operator new(size_t)",
+      "0x104b64628": "memcmp",
+      "0x104b64634": "memcpy",
+      "0x104b611f0": "__Unwind_Resume"
+    },
+    "import_resolution": "llvm-objdump --macho --indirect-symbols on this exact binary"
+  },
+  "findings": [],
+  "four_native_consumers": [
+    {
+      "route": "append",
+      "status": "passed",
+      "evidence": [
+        {
+          "pc": "0x101267000",
+          "instruction": "mov x0, x1"
+        },
+        {
+          "pc": "0x101267004",
+          "instruction": "mov x1, x19"
+        },
+        {
+          "pc": "0x101267008",
+          "instruction": "mov x2, #0x0"
+        },
+        {
+          "pc": "0x10126700c",
+          "instruction": "bl 0x1013fbf20 <__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList>"
+        },
+        {
+          "pc": "0x101267010",
+          "instruction": "cbz w0, 0x101267048 <__Z25rna_IDMaterials_append_idP2IDP4MainP8Material+0x64>"
+        },
+        {
+          "pc": "0x101267020",
+          "instruction": "bl 0x10024f9b4 <__Z22BKE_id_material_appendP4MainP2IDP8Material>"
+        },
+        {
+          "pc": "0x10126702c",
+          "instruction": "bl 0x100b4d83c <__Z20WM_main_add_notifierjPv>"
+        },
+        {
+          "pc": "0x101267044",
+          "instruction": "b 0x100b4d83c <__Z20WM_main_add_notifierjPv>"
+        },
+        {
+          "pc": "0x101267054",
+          "instruction": "ret "
+        }
+      ],
+      "interpretation": "Main/id/null reports feed the absence-only gate. Its false branch goes directly to an epilogue return; BKE append and both notifiers occur only on the successful branch. No cancellation is introduced in this borrowed native body.",
+      "refusal_trace": {
+        "start": "0x101267048",
+        "visited_instructions": 4,
+        "calls": [],
+        "returns": [
+          "0x101267054"
+        ],
+        "external_tail_transfers": []
+      }
+    },
+    {
+      "route": "pop",
+      "status": "passed",
+      "evidence": [
+        {
+          "pc": "0x101267080",
+          "instruction": "ldrsh w23, [x0]"
+        },
+        {
+          "pc": "0x101267084",
+          "instruction": "and w8, w23, w22, asr #31"
+        },
+        {
+          "pc": "0x101267088",
+          "instruction": "adds w22, w8, w22"
+        },
+        {
+          "pc": "0x10126708c",
+          "instruction": "b.mi 0x1012670dc <__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0x84>"
+        },
+        {
+          "pc": "0x101267094",
+          "instruction": "b.ge 0x1012670dc <__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0x84>"
+        },
+        {
+          "pc": "0x1012670a8",
+          "instruction": "bl 0x1013fbf20 <__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList>"
+        },
+        {
+          "pc": "0x1012670ac",
+          "instruction": "cbz w0, 0x1012670f0 <__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0x98>"
+        },
+        {
+          "pc": "0x1012670c0",
+          "instruction": "bl 0x10024fd10 <__Z19BKE_id_material_popP4MainP2IDi>"
+        },
+        {
+          "pc": "0x1012670cc",
+          "instruction": "b.ne 0x101267108 <__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0xb0>"
+        },
+        {
+          "pc": "0x1012670ec",
+          "instruction": "bl 0x1003ca47c <__Z10BKE_reportP10ReportList11eReportTypePKc>"
+        },
+        {
+          "pc": "0x1012670f0",
+          "instruction": "mov x0, #0x0"
+        },
+        {
+          "pc": "0x101267114",
+          "instruction": "bl 0x1008d9764 <__Z17DEG_id_tag_updateP2IDj>"
+        },
+        {
+          "pc": "0x101267130",
+          "instruction": "mov x0, x20"
+        }
+      ],
+      "interpretation": "Signed short count and sign-dependent negative-index normalization precede invalid-index report/zero return. Valid indices query absence using original Main/id/reports. Gate refusal returns null before BKE pop, geometry tag or notifiers. Post-pop success tests count change, not the Material pointer, preserving a successful null removed slot.",
+      "refusal_trace": {
+        "start": "0x1012670f0",
+        "visited_instructions": 6,
+        "calls": [],
+        "returns": [
+          "0x101267104"
+        ],
+        "external_tail_transfers": []
+      },
+      "invalid_index_trace": {
+        "start": "0x1012670dc",
+        "visited_instructions": 11,
+        "calls": [
+          {
+            "pc": "0x1012670ec",
+            "instruction": "bl 0x1003ca47c <__Z10BKE_reportP10ReportList11eReportTypePKc>"
+          }
+        ],
+        "returns": [
+          "0x101267104"
+        ],
+        "external_tail_transfers": []
+      }
+    },
+    {
+      "route": "clear",
+      "status": "passed",
+      "evidence": [
+        {
+          "pc": "0x10126714c",
+          "instruction": "mov x0, x1"
+        },
+        {
+          "pc": "0x101267150",
+          "instruction": "mov x1, x19"
+        },
+        {
+          "pc": "0x101267154",
+          "instruction": "mov x2, #0x0"
+        },
+        {
+          "pc": "0x101267158",
+          "instruction": "bl 0x1013fbf20 <__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList>"
+        },
+        {
+          "pc": "0x10126715c",
+          "instruction": "cbz w0, 0x101267198 <__Z24rna_IDMaterials_clear_idP2IDP4Main+0x60>"
+        },
+        {
+          "pc": "0x101267168",
+          "instruction": "bl 0x10024ff70 <__Z21BKE_id_material_clearP4MainP2ID>"
+        },
+        {
+          "pc": "0x101267174",
+          "instruction": "bl 0x1008d9764 <__Z17DEG_id_tag_updateP2IDj>"
+        },
+        {
+          "pc": "0x101267180",
+          "instruction": "bl 0x100b4d83c <__Z20WM_main_add_notifierjPv>"
+        },
+        {
+          "pc": "0x101267194",
+          "instruction": "b 0x100b4d83c <__Z20WM_main_add_notifierjPv>"
+        },
+        {
+          "pc": "0x1012671a0",
+          "instruction": "ret "
+        }
+      ],
+      "interpretation": "Absence gate precedes native clear/tag/notifiers; false goes directly to return. There is no new empty-count admission shortcut.",
+      "refusal_trace": {
+        "start": "0x101267198",
+        "visited_instructions": 3,
+        "calls": [],
+        "returns": [
+          "0x1012671a0"
+        ],
+        "external_tail_transfers": []
+      }
+    },
+    {
+      "route": "indexed assignment",
+      "status": "passed",
+      "evidence": [
+        {
+          "pc": "0x101266f70",
+          "instruction": "tbnz w20, #0x1f, 0x101266fd4 <__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x90>"
+        },
+        {
+          "pc": "0x101266f74",
+          "instruction": "cbz x8, 0x101266fd4 <__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x90>"
+        },
+        {
+          "pc": "0x101266f78",
+          "instruction": "ldrsh w8, [x8]"
+        },
+        {
+          "pc": "0x101266f80",
+          "instruction": "b.le 0x101266fd0 <__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x8c>"
+        },
+        {
+          "pc": "0x101266f88",
+          "instruction": "mov w8, #0x7ffd"
+        },
+        {
+          "pc": "0x101266f94",
+          "instruction": "cmp w20, w8"
+        },
+        {
+          "pc": "0x101266f98",
+          "instruction": "b.hi 0x101266fb0 <__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x6c>"
+        },
+        {
+          "pc": "0x101266fa8",
+          "instruction": "bl 0x1013fbf20 <__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList>"
+        },
+        {
+          "pc": "0x101266fac",
+          "instruction": "cbz w0, 0x101266fd4 <__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x90>"
+        },
+        {
+          "pc": "0x101266fb4",
+          "instruction": "add w8, w20, #0x1"
+        },
+        {
+          "pc": "0x101266fb8",
+          "instruction": "sxth w3, w8"
+        },
+        {
+          "pc": "0x101266fc4",
+          "instruction": "bl 0x100251444 <__Z22BKE_id_material_assignP4MainP2IDP8Materials>"
+        },
+        {
+          "pc": "0x101266fc8",
+          "instruction": "mov w0, #0x1"
+        }
+      ],
+      "interpretation": "Negative key/null count/out-of-range return false. For key<=32765 the owner gate precedes BKE assign; its false return is preserved through the epilogue. Key32766/count32767 skips the gate and calls BKE with signed-short act32767, which the actual BKE entry immediately returns from, preserving native successful no-op admission.",
+      "refusal_trace": {
+        "start": "0x101266fd4",
+        "visited_instructions": 4,
+        "calls": [],
+        "returns": [
+          "0x101266fe0"
+        ],
+        "external_tail_transfers": []
+      }
+    }
+  ],
+  "native_count_behavior": {
+    "status": "passed_bounded",
+    "BKE_assign_noop_evidence": [
+      {
+        "pc": "0x10025145c",
+        "instruction": "mov w8, #0x7fff"
+      },
+      {
+        "pc": "0x100251460",
+        "instruction": "cmp w3, w8"
+      },
+      {
+        "pc": "0x100251464",
+        "instruction": "b.ne 0x100251480 <__Z22BKE_id_material_assignP4MainP2IDP8Materials+0x3c>"
+      },
+      {
+        "pc": "0x10025147c",
+        "instruction": "ret "
+      }
+    ],
+    "BKE_assign_noop_trace": {
+      "start": "0x100251468",
+      "visited_instructions": 6,
+      "calls": [],
+      "returns": [
+        "0x10025147c"
+      ],
+      "external_tail_transfers": []
+    },
+    "BKE_append_evidence": [
+      {
+        "pc": "0x10024fab8",
+        "instruction": "ldrsh x8, [x20, x23]"
+      },
+      {
+        "pc": "0x10024fad0",
+        "instruction": "add x0, x8, #0x1"
+      },
+      {
+        "pc": "0x10024fadc",
+        "instruction": "blr x9"
+      },
+      {
+        "pc": "0x10024fb1c",
+        "instruction": "ldrsh x8, [x20, x23]"
+      },
+      {
+        "pc": "0x10024fb20",
+        "instruction": "add w9, w8, #0x1"
+      },
+      {
+        "pc": "0x10024fb24",
+        "instruction": "strh w9, [x20, x23]"
+      },
+      {
+        "pc": "0x10024fb28",
+        "instruction": "str x21, [x22, x8, lsl #3]"
+      },
+      {
+        "pc": "0x10024fb30",
+        "instruction": "bl 0x1002265f8 <__Z10id_us_plusP2ID>"
+      },
+      {
+        "pc": "0x10024fb3c",
+        "instruction": "bl 0x10024fb78 <__Z37BKE_objects_materials_sync_length_allP4MainP2ID>"
+      }
+    ],
+    "interpretation": "Actual append loads the short count, allocates count+1, writes the increment through strh, stores the incoming pointer and performs native refcount/synchronization. No MAXMAT admission clamp occurs in this bounded actual function. This preserves count32767 behavior; it does not claim safety for pathological repeated append beyond the native short range."
+  },
+  "common_collection_receipt": {
+    "status": "passed",
+    "borrowed_absence_arguments": [
+      {
+        "pc": "0x1013fbf3c",
+        "instruction": "ldr x8, [x8]"
+      },
+      {
+        "pc": "0x1013fbf48",
+        "instruction": "mov x0, #0x0"
+      },
+      {
+        "pc": "0x1013fbf50",
+        "instruction": "mov x1, x8"
+      },
+      {
+        "pc": "0x1013fbf54",
+        "instruction": "mov x2, #0x0"
+      },
+      {
+        "pc": "0x1013fbf58",
+        "instruction": "mov w3, #0x0"
+      },
+      {
+        "pc": "0x1013fbf5c",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      }
+    ],
+    "original_c_and_drain_arguments": [
+      {
+        "pc": "0x1013fc0e8",
+        "instruction": "mov x21, x1"
+      },
+      {
+        "pc": "0x1013fc0ec",
+        "instruction": "mov x22, x0"
+      },
+      {
+        "pc": "0x1013fc2f0",
+        "instruction": "bl 0x1013fc684 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState>"
+      },
+      {
+        "pc": "0x1013fc300",
+        "instruction": "strb wzr, [sp, #0xf7]"
+      },
+      {
+        "pc": "0x1013fc304",
+        "instruction": "add x2, sp, #0xf7"
+      },
+      {
+        "pc": "0x1013fc308",
+        "instruction": "mov x0, x22"
+      },
+      {
+        "pc": "0x1013fc30c",
+        "instruction": "mov x1, x21"
+      },
+      {
+        "pc": "0x1013fc310",
+        "instruction": "mov w3, #0x1"
+      },
+      {
+        "pc": "0x1013fc314",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      }
+    ],
+    "successful_call_and_recapture": [
+      {
+        "pc": "0x1013fc318",
+        "instruction": "tbz w0, #0x0, 0x1013fc43c <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x388>"
+      },
+      {
+        "pc": "0x1013fc31c",
+        "instruction": "ldr x8, [x28]"
+      },
+      {
+        "pc": "0x1013fc320",
+        "instruction": "cmp x8, x21"
+      },
+      {
+        "pc": "0x1013fc324",
+        "instruction": "b.ne 0x1013fc43c <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x388>"
+      },
+      {
+        "pc": "0x1013fc3b4",
+        "instruction": "bl 0x1013fc684 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState>"
+      },
+      {
+        "pc": "0x1013fc3b8",
+        "instruction": "cbz w0, 0x1013fc45c <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3a8>"
+      },
+      {
+        "pc": "0x1013fc3c4",
+        "instruction": "bl 0x1013fcfb4 <__ZNK26RnaMaterialCollectionStateeqERKS_>"
+      },
+      {
+        "pc": "0x1013fc3c8",
+        "instruction": "tbz w0, #0x0, 0x1013fc45c <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3a8>"
+      },
+      {
+        "pc": "0x1013fc3cc",
+        "instruction": "ldrb w8, [sp, #0xf7]"
+      },
+      {
+        "pc": "0x1013fc3d0",
+        "instruction": "tbz w8, #0x0, 0x1013fc47c <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3c8>"
+      },
+      {
+        "pc": "0x1013fc3dc",
+        "instruction": "subs w25, w25, #0x1"
+      },
+      {
+        "pc": "0x1013fc3e0",
+        "instruction": "b.ne 0x1013fc300 <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x24c>"
+      }
+    ],
+    "interpretation": "Initial absence uses C=null, G_MAIN, null did-output, policy0. Explicit drain preserves original input C in x22 and Main in x21, passes a real stack bool output and policy1. After every successful WM call, G_MAIN is compared, physical receipt is freshly captured and equality must succeed before the did-output byte is read. Thus did=false cannot bypass recapture. Retried drain is bounded by the emitted256 loop.",
+    "ordering_check": {
+      "success_continuation": "0x1013fc31c",
+      "did_teardown_load": "0x1013fc3cc",
+      "capture_call": "0x1013fc3b4",
+      "equality_call": "0x1013fc3c4",
+      "capture_and_equality_dominate_did_load_from_success_continuation": true,
+      "method": "intraprocedural reachability with each call PC blocked; all direct branch successors included"
+    }
+  },
+  "method_receipt_before_and_after_Main": {
+    "status": "passed",
+    "prelookup_shape_and_capture": [
+      {
+        "pc": "0x1013fd268",
+        "instruction": "mov x0, #0x0"
+      },
+      {
+        "pc": "0x1013fd270",
+        "instruction": "mov x2, #0x0"
+      },
+      {
+        "pc": "0x1013fd274",
+        "instruction": "mov w3, #0x0"
+      },
+      {
+        "pc": "0x1013fd278",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      },
+      {
+        "pc": "0x1013fd33c",
+        "instruction": "b.ne 0x1013fd35c <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x210>"
+      },
+      {
+        "pc": "0x1013fd340",
+        "instruction": "ldur x8, [x29, #-0xb0]"
+      },
+      {
+        "pc": "0x1013fd348",
+        "instruction": "cmp x8, x9"
+      },
+      {
+        "pc": "0x1013fd34c",
+        "instruction": "b.ne 0x1013fd35c <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x210>"
+      },
+      {
+        "pc": "0x1013fd350",
+        "instruction": "ldp x8, x9, [x29, #-0xa8]"
+      },
+      {
+        "pc": "0x1013fd354",
+        "instruction": "cmp x8, x9"
+      },
+      {
+        "pc": "0x1013fd380",
+        "instruction": "bl 0x1013fc580 <__ZL20rna_material_id_findP4Mainm>"
+      },
+      {
+        "pc": "0x1013fd3d0",
+        "instruction": "add x3, sp, #0x110"
+      },
+      {
+        "pc": "0x1013fd3d4",
+        "instruction": "mov x0, x25"
+      },
+      {
+        "pc": "0x1013fd3d8",
+        "instruction": "mov x1, x21"
+      },
+      {
+        "pc": "0x1013fd3dc",
+        "instruction": "ldr x2, [sp, #0x28]"
+      },
+      {
+        "pc": "0x1013fd3e0",
+        "instruction": "bl 0x1013fc684 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState>"
+      },
+      {
+        "pc": "0x1013fd3e4",
+        "instruction": "tbz w0, #0x0, 0x1013fd418 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x2cc>"
+      },
+      {
+        "pc": "0x1013fd320",
+        "instruction": "bl 0x1000b4c78 <__Z13CTX_data_mainPK8bContext>"
+      }
+    ],
+    "postlookup_regular_receipt": [
+      {
+        "pc": "0x1013fd464",
+        "instruction": "ldr x8, [x8]"
+      },
+      {
+        "pc": "0x1013fd468",
+        "instruction": "cmp x8, x25"
+      },
+      {
+        "pc": "0x1013fd46c",
+        "instruction": "b.eq 0x1013fd540 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x3f4>"
+      },
+      {
+        "pc": "0x1013fd564",
+        "instruction": "cmp x21, x25"
+      },
+      {
+        "pc": "0x1013fd568",
+        "instruction": "b.ne 0x1013fd470 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x324>"
+      },
+      {
+        "pc": "0x1013fd694",
+        "instruction": "bl 0x1013fc684 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState>"
+      },
+      {
+        "pc": "0x1013fd698",
+        "instruction": "cbz w0, 0x1013fd6d4 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x588>"
+      },
+      {
+        "pc": "0x1013fd6a4",
+        "instruction": "bl 0x1013fcfb4 <__ZNK26RnaMaterialCollectionStateeqERKS_>"
+      },
+      {
+        "pc": "0x1013fd6a8",
+        "instruction": "tbz w0, #0x0, 0x1013fd6d4 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x588>"
+      },
+      {
+        "pc": "0x1013fd6b4",
+        "instruction": "b 0x1013fd5d4 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x488>"
+      },
+      {
+        "pc": "0x1013fd5d8",
+        "instruction": "mov x0, x24"
+      },
+      {
+        "pc": "0x1013fd5dc",
+        "instruction": "mov x1, x21"
+      },
+      {
+        "pc": "0x1013fd5f0",
+        "instruction": "bl 0x1013fc0b4 <__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList>"
+      }
+    ],
+    "initially_absent_requery": [
+      {
+        "pc": "0x1013fd540",
+        "instruction": "cbz w27, 0x1013fd560 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x414>"
+      },
+      {
+        "pc": "0x1013fd544",
+        "instruction": "mov x0, #0x0"
+      },
+      {
+        "pc": "0x1013fd548",
+        "instruction": "mov x1, x25"
+      },
+      {
+        "pc": "0x1013fd54c",
+        "instruction": "mov x2, #0x0"
+      },
+      {
+        "pc": "0x1013fd550",
+        "instruction": "mov w3, #0x0"
+      },
+      {
+        "pc": "0x1013fd554",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      },
+      {
+        "pc": "0x1013fd558",
+        "instruction": "tbz w0, #0x0, 0x1013fd470 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x324>"
+      }
+    ],
+    "invalid_pop_receipt": [
+      {
+        "pc": "0x1013fd3b0",
+        "instruction": "ldrsh x8, [x0]"
+      },
+      {
+        "pc": "0x1013fd3bc",
+        "instruction": "csel x9, x8, xzr, lt"
+      },
+      {
+        "pc": "0x1013fd3c0",
+        "instruction": "adds x9, x9, w10, sxtw"
+      },
+      {
+        "pc": "0x1013fd3c4",
+        "instruction": "b.mi 0x1013fd434 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x2e8>"
+      },
+      {
+        "pc": "0x1013fd3cc",
+        "instruction": "b.ge 0x1013fd434 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x2e8>"
+      },
+      {
+        "pc": "0x1013fd43c",
+        "instruction": "ldr w8, [x26, #0x144]"
+      },
+      {
+        "pc": "0x1013fd440",
+        "instruction": "stp w9, w8, [sp]"
+      },
+      {
+        "pc": "0x1013fd57c",
+        "instruction": "bl 0x1013fc580 <__ZL20rna_material_id_findP4Mainm>"
+      },
+      {
+        "pc": "0x1013fd588",
+        "instruction": "ldr w8, [x0, #0x144]"
+      },
+      {
+        "pc": "0x1013fd590",
+        "instruction": "cmp w8, w10"
+      },
+      {
+        "pc": "0x1013fd594",
+        "instruction": "b.ne 0x1013fd6b8 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x56c>"
+      },
+      {
+        "pc": "0x1013fd598",
+        "instruction": "ldrh w8, [x0, #0x28]"
+      },
+      {
+        "pc": "0x1013fd59c",
+        "instruction": "cmp w8, w9, uxth"
+      },
+      {
+        "pc": "0x1013fd5a0",
+        "instruction": "b.ne 0x1013fd6b8 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x56c>"
+      },
+      {
+        "pc": "0x1013fd5a4",
+        "instruction": "bl 0x10024f460 <__Z21BKE_id_material_len_pP2ID>"
+      },
+      {
+        "pc": "0x1013fd5ac",
+        "instruction": "ldrh w8, [x0]"
+      },
+      {
+        "pc": "0x1013fd5b4",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1013fd5b8",
+        "instruction": "b.ne 0x1013fd6f8 <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x5ac>"
+      }
+    ],
+    "interpretation": "With a registered owner, exact IDMaterials type, data==owner and empty ancestry are enforced. Fresh active membership and complete regular receipt capture precede the sole explicit CTX_data_main call at0x1013fd320. Regular active state is recaptured/equal after lookup and Main checks, before common drain. Initially absent calls requery absence after lookup. Invalid pop keeps its distinct signed-index/light numeric address-UID-type-count receipt; changed receipts refuse before native error-only dispatch."
+  },
+  "typed_physical_receipts": {
+    "status": "passed_bounded",
+    "fresh_unique_membership": [
+      {
+        "pc": "0x1013fc5cc",
+        "instruction": "cmp x11, x19"
+      },
+      {
+        "pc": "0x1013fc5d0",
+        "instruction": "cinc w9, w9, eq"
+      },
+      {
+        "pc": "0x1013fc5d4",
+        "instruction": "csel x8, x11, x8, eq"
+      },
+      {
+        "pc": "0x1013fc5e4",
+        "instruction": "cmp w9, #0x1"
+      },
+      {
+        "pc": "0x1013fc5e8",
+        "instruction": "csel x0, x8, xzr, eq"
+      }
+    ],
+    "UID_and_type_capture": [
+      {
+        "pc": "0x101407b2c",
+        "instruction": "cmp w9, #0x1"
+      },
+      {
+        "pc": "0x101407b30",
+        "instruction": "b.ne 0x101407d90 <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState+0x304>"
+      },
+      {
+        "pc": "0x101407b38",
+        "instruction": "ldr w9, [x8, #0x144]"
+      },
+      {
+        "pc": "0x101407b3c",
+        "instruction": "cbz w9, 0x101407d8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState+0x300>"
+      },
+      {
+        "pc": "0x101407b44",
+        "instruction": "ldr w9, [x8, #0x144]"
+      },
+      {
+        "pc": "0x101407b48",
+        "instruction": "str w9, [x19, #0x8]"
+      },
+      {
+        "pc": "0x101407b4c",
+        "instruction": "ldrh w8, [x8, #0x28]"
+      },
+      {
+        "pc": "0x101407b50",
+        "instruction": "strh w8, [x19, #0xc]"
+      },
+      {
+        "pc": "0x101407c18",
+        "instruction": "ldr w9, [x8, #0x144]"
+      },
+      {
+        "pc": "0x101407c1c",
+        "instruction": "cbz w9, 0x101407d8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState+0x300>"
+      },
+      {
+        "pc": "0x101407c34",
+        "instruction": "mov w9, #0x494c"
+      },
+      {
+        "pc": "0x101407c38",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x101407c3c",
+        "instruction": "b.ne 0x101407d8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState+0x300>"
+      }
+    ],
+    "material_and_array_checks": [
+      {
+        "pc": "0x1013fc7c4",
+        "instruction": "bl 0x101407a8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState>"
+      },
+      {
+        "pc": "0x1013fc854",
+        "instruction": "bl 0x101407a8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState>"
+      },
+      {
+        "pc": "0x1013fc864",
+        "instruction": "mov w9, #0x414d"
+      },
+      {
+        "pc": "0x1013fc868",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1013fc86c",
+        "instruction": "b.ne 0x1013fcf38 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b4>"
+      },
+      {
+        "pc": "0x1013fc8d4",
+        "instruction": "bl 0x10024f460 <__Z21BKE_id_material_len_pP2ID>"
+      },
+      {
+        "pc": "0x1013fc8e0",
+        "instruction": "bl 0x10024f3b4 <__Z23BKE_id_material_array_pP2ID>"
+      },
+      {
+        "pc": "0x1013fc8f4",
+        "instruction": "ldrsh w8, [x27]"
+      },
+      {
+        "pc": "0x1013fc8f8",
+        "instruction": "tbnz w8, #0x1f, 0x1013fcf38 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b4>"
+      },
+      {
+        "pc": "0x1013fc900",
+        "instruction": "ldr x9, [x28]"
+      },
+      {
+        "pc": "0x1013fc904",
+        "instruction": "cbz x9, 0x1013fcf38 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b4>"
+      },
+      {
+        "pc": "0x1013fc90c",
+        "instruction": "ldr w8, [x26, #0x130]"
+      },
+      {
+        "pc": "0x1013fc910",
+        "instruction": "str w8, [x19, #0xa4]"
+      }
+    ],
+    "participant_state": [
+      {
+        "pc": "0x1013fcad0",
+        "instruction": "ldr x24, [x21, #0x4d8]"
+      },
+      {
+        "pc": "0x1013fcaf8",
+        "instruction": "ldr x8, [x24, #0x238]"
+      },
+      {
+        "pc": "0x1013fcafc",
+        "instruction": "cmp x8, x20"
+      },
+      {
+        "pc": "0x1013fcb00",
+        "instruction": "b.ne 0x1013fcaec <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x468>"
+      },
+      {
+        "pc": "0x1013fcb54",
+        "instruction": "bl 0x101407a8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState>"
+      },
+      {
+        "pc": "0x1013fcc04",
+        "instruction": "ldr w9, [x24, #0x2f0]"
+      },
+      {
+        "pc": "0x1013fcc08",
+        "instruction": "tbnz w9, #0x1f, 0x1013fcf30 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8ac>"
+      },
+      {
+        "pc": "0x1013fcc2c",
+        "instruction": "ldr w8, [x24, #0x2f4]"
+      },
+      {
+        "pc": "0x1013fcc30",
+        "instruction": "stp w8, w9, [sp, #0xc4]"
+      },
+      {
+        "pc": "0x1013fcc34",
+        "instruction": "stp x10, x11, [sp, #0xd0]"
+      },
+      {
+        "pc": "0x1013fcca4",
+        "instruction": "ldr x1, [x8, x28, lsl #3]"
+      },
+      {
+        "pc": "0x1013fccb0",
+        "instruction": "bl 0x101407a8c <__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState>"
+      },
+      {
+        "pc": "0x1013fcccc",
+        "instruction": "b.ne 0x1013fcf30 <__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8ac>"
+      }
+    ],
+    "identity_equality": [
+      {
+        "pc": "0x101408228",
+        "instruction": "cmp x8, x9"
+      },
+      {
+        "pc": "0x10140822c",
+        "instruction": "b.ne 0x101408314 <__ZNK18RnaMaterialIDStateeqERKS_+0xf4>"
+      },
+      {
+        "pc": "0x101408230",
+        "instruction": "ldr w8, [x0, #0x8]"
+      },
+      {
+        "pc": "0x101408238",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x10140823c",
+        "instruction": "b.ne 0x101408314 <__ZNK18RnaMaterialIDStateeqERKS_+0xf4>"
+      },
+      {
+        "pc": "0x101408240",
+        "instruction": "ldrh w8, [x0, #0xc]"
+      },
+      {
+        "pc": "0x101408248",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x10140824c",
+        "instruction": "b.ne 0x101408314 <__ZNK18RnaMaterialIDStateeqERKS_+0xf4>"
+      },
+      {
+        "pc": "0x1014082e8",
+        "instruction": "cmp x8, x9"
+      },
+      {
+        "pc": "0x1014082ec",
+        "instruction": "b.ne 0x101408314 <__ZNK18RnaMaterialIDStateeqERKS_+0xf4>"
+      },
+      {
+        "pc": "0x1014082f8",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1014082fc",
+        "instruction": "b.ne 0x101408314 <__ZNK18RnaMaterialIDStateeqERKS_+0xf4>"
+      }
+    ],
+    "interpretation": "Numeric fresh Main membership must be unique before dereferencing target IDs; nonzero UID and saved ID type enter receipts. Library type18764/0x494c and Material type16717/0x414d comparisons are actual instructions. Direct short count/array/user fields and ordered sharing Object physical slots/bits are captured. Actual equality compares numeric address/UID/type and override fields; physical collection/Object scalar and vector checks remain emitted. This is bounded instruction inspection, not a proof of all external allocation/ID effects."
+  },
+  "foreign_Main_membership": {
+    "status": "passed",
+    "evidence": [
+      {
+        "pc": "0x1013fbfd0",
+        "instruction": "ldr x8, [x19]"
+      },
+      {
+        "pc": "0x1013fbfe0",
+        "instruction": "cmp x8, x0"
+      },
+      {
+        "pc": "0x1013fbfe4",
+        "instruction": "b.eq 0x1013fc09c <__ZL38rna_material_collection_target_foreignP4MainPK2ID+0xf0>"
+      },
+      {
+        "pc": "0x1013fc024",
+        "instruction": "cmp x12, x10"
+      },
+      {
+        "pc": "0x1013fc028",
+        "instruction": "cinc w9, w9, eq"
+      },
+      {
+        "pc": "0x1013fc040",
+        "instruction": "cmp w9, #0x1"
+      },
+      {
+        "pc": "0x1013fc044",
+        "instruction": "b.ne 0x1013fc09c <__ZL38rna_material_collection_target_foreignP4MainPK2ID+0xf0>"
+      },
+      {
+        "pc": "0x1013fc058",
+        "instruction": "bl 0x10023e238 <__Z18BKE_main_lists_getR4Main>"
+      },
+      {
+        "pc": "0x1013fc080",
+        "instruction": "cmp x10, x20"
+      },
+      {
+        "pc": "0x1013fc084",
+        "instruction": "cset w11, eq"
+      },
+      {
+        "pc": "0x1013fc088",
+        "instruction": "orr w8, w11, w8"
+      },
+      {
+        "pc": "0x1013fc098",
+        "instruction": "eor w10, w8, #0x1"
+      }
+    ],
+    "interpretation": "A different context Main alone is insufficient. Actual code counts target-address membership in supplied Main and requires exactly one, then scans G_MAIN and returns the inverse of any active membership. Method shape also requires data==owner before this bypass while an owner exists."
+  },
+  "retained_Object_int_widths_and_query_order": {
+    "status": "passed",
+    "capture_widths": [
+      {
+        "pc": "0x1013fbbe8",
+        "instruction": "ldr w10, [x24, #0x2f0]"
+      },
+      {
+        "pc": "0x1013fbc48",
+        "instruction": "ldr w9, [x24, #0x2f4]"
+      },
+      {
+        "pc": "0x1013fbc4c",
+        "instruction": "str w9, [x19, #0xf4]"
+      },
+      {
+        "pc": "0x1013fbc50",
+        "instruction": "ldr w9, [x24, #0x2f0]"
+      },
+      {
+        "pc": "0x1013fbc54",
+        "instruction": "str w9, [x19, #0xf8]"
+      }
+    ],
+    "equality_pointer_fields": [
+      {
+        "pc": "0x1013fbdf4",
+        "instruction": "add x10, x0, #0xf4"
+      },
+      {
+        "pc": "0x1013fbdf8",
+        "instruction": "add x11, x0, #0xf8"
+      },
+      {
+        "pc": "0x1013fbe10",
+        "instruction": "stp x10, x11, [sp, #0x90]"
+      },
+      {
+        "pc": "0x1013fbe3c",
+        "instruction": "add x11, x1, #0xf4"
+      },
+      {
+        "pc": "0x1013fbe40",
+        "instruction": "add x12, x1, #0xf8"
+      },
+      {
+        "pc": "0x1013fbe68",
+        "instruction": "stp x11, x12, [sp, #0x28]"
+      }
+    ],
+    "actual_int_comparisons": [
+      {
+        "pc": "0x1014081c8",
+        "instruction": "ldr w8, [x8]"
+      },
+      {
+        "pc": "0x1014081d0",
+        "instruction": "ldr w9, [x9]"
+      },
+      {
+        "pc": "0x1014081d4",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1014081d8",
+        "instruction": "b.ne 0x101408210 <__ZNSt3__113__tuple_equalILm7EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_RKsRKiSA_S8_RKmSC_SC_RKNS_6vectorIS4_NS_9allocatorIS4_EEEESI_RKNSD_IcNSE_IcEEEEEEESN_EEbRKT_RKT0_+0xa8>"
+      },
+      {
+        "pc": "0x1014081e0",
+        "instruction": "ldr w8, [x8]"
+      },
+      {
+        "pc": "0x1014081e8",
+        "instruction": "ldr w9, [x9]"
+      },
+      {
+        "pc": "0x1014081ec",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1014081f0",
+        "instruction": "b.ne 0x101408210 <__ZNSt3__113__tuple_equalILm7EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_RKsRKiSA_S8_RKmSC_SC_RKNS_6vectorIS4_NS_9allocatorIS4_EEEESI_RKNSD_IcNSE_IcEEEEEEESN_EEbRKT_RKT0_+0xa8>"
+      }
+    ],
+    "participant_int_comparisons": [
+      {
+        "pc": "0x1014086d0",
+        "instruction": "ldr w8, [x20, #0x54]"
+      },
+      {
+        "pc": "0x1014086d4",
+        "instruction": "ldr w9, [x19, #0x54]"
+      },
+      {
+        "pc": "0x1014086d8",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1014086dc",
+        "instruction": "b.ne 0x101408778 <__ZNK32RnaMaterialCollectionObjectStateeqERKS_+0xdc>"
+      },
+      {
+        "pc": "0x1014086e0",
+        "instruction": "ldr w8, [x20, #0x58]"
+      },
+      {
+        "pc": "0x1014086e4",
+        "instruction": "ldr w9, [x19, #0x58]"
+      },
+      {
+        "pc": "0x1014086e8",
+        "instruction": "cmp w8, w9"
+      },
+      {
+        "pc": "0x1014086ec",
+        "instruction": "b.ne 0x101408778 <__ZNK32RnaMaterialCollectionObjectStateeqERKS_+0xdc>"
+      }
+    ],
+    "query_order": [
+      {
+        "pc": "0x1013fb7e0",
+        "instruction": "ldrsw x9, [sp, #0x260]"
+      },
+      {
+        "pc": "0x1013fb7fc",
+        "instruction": "mov x0, x20"
+      },
+      {
+        "pc": "0x1013fb800",
+        "instruction": "mov x1, x21"
+      },
+      {
+        "pc": "0x1013fb804",
+        "instruction": "mov w3, #0x1"
+      },
+      {
+        "pc": "0x1013fb808",
+        "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+      },
+      {
+        "pc": "0x1013fb810",
+        "instruction": "ldr x8, [x27]"
+      },
+      {
+        "pc": "0x1013fb818",
+        "instruction": "b.ne 0x1013fb928 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3a4>"
+      },
+      {
+        "pc": "0x1013fb8d8",
+        "instruction": "bl 0x1013fb9b0 <__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState>"
+      },
+      {
+        "pc": "0x1013fb8dc",
+        "instruction": "cbz w0, 0x1013fb944 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3c0>"
+      },
+      {
+        "pc": "0x1013fb8e8",
+        "instruction": "bl 0x1013fbdd8 <__ZNK22RnaMaterialAssignStateeqERKS_>"
+      },
+      {
+        "pc": "0x1013fb8ec",
+        "instruction": "tbz w0, #0x0, 0x1013fb944 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3c0>"
+      },
+      {
+        "pc": "0x1013fb8f0",
+        "instruction": "ldrb w8, [sp, #0x167]"
+      },
+      {
+        "pc": "0x1013fb8f4",
+        "instruction": "tbz w8, #0x0, 0x1013fb964 <__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3e0>"
+      }
+    ],
+    "interpretation": "Object.totcol0x2f0 and actcol0x2f4 load/store through32-bit w registers; receipt slots0xf8/0xf4 are forwarded to actual32-bit comparisons. Slot range uses ldrsw rather than ldrsh. Retained helper passes original C/Main/policy1 and recaptures/equal-checks after successful WM before loading did-output.",
+    "ordering_check": {
+      "success_continuation": "0x1013fb810",
+      "did_teardown_load": "0x1013fb8f0",
+      "capture_call": "0x1013fb8d8",
+      "equality_call": "0x1013fb8e8",
+      "capture_and_equality_dominate_did_load_from_success_continuation": true,
+      "method": "intraprocedural reachability with each call PC blocked; all direct branch successors included"
+    }
+  },
+  "shared_WM_relevant_policy_paths": {
+    "status": "passed_bounded",
+    "recursion_and_context_admission": [
+      {
+        "pc": "0x100b51440",
+        "instruction": "mov x22, x3"
+      },
+      {
+        "pc": "0x100b51444",
+        "instruction": "stp x1, x0, [x29, #-0x68]"
+      },
+      {
+        "pc": "0x100b5144c",
+        "instruction": "strb wzr, [x2]"
+      },
+      {
+        "pc": "0x100b51454",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51458",
+        "instruction": "b.hi 0x100b5170c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2ec>"
+      },
+      {
+        "pc": "0x100b51460",
+        "instruction": "ldrb w8, [x8, #0x7f0]"
+      },
+      {
+        "pc": "0x100b51464",
+        "instruction": "tbnz w8, #0x0, 0x100b5170c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2ec>"
+      },
+      {
+        "pc": "0x100b51494",
+        "instruction": "bl 0x1000b4c78 <__Z13CTX_data_mainPK8bContext>"
+      },
+      {
+        "pc": "0x100b51498",
+        "instruction": "cmp x0, x21"
+      },
+      {
+        "pc": "0x100b5149c",
+        "instruction": "b.ne 0x100b51708 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2e8>"
+      }
+    ],
+    "null_output_and_default_policy": [
+      {
+        "pc": "0x100b5187c",
+        "instruction": "ldr x8, [sp, #0x28]"
+      },
+      {
+        "pc": "0x100b51880",
+        "instruction": "cmp x8, #0x0"
+      },
+      {
+        "pc": "0x100b51884",
+        "instruction": "cset w8, eq"
+      },
+      {
+        "pc": "0x100b51888",
+        "instruction": "eor w21, w24, #0x1"
+      },
+      {
+        "pc": "0x100b5188c",
+        "instruction": "orr w8, w8, w21"
+      },
+      {
+        "pc": "0x100b51890",
+        "instruction": "tbnz w8, #0x0, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      },
+      {
+        "pc": "0x100b51894",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51898",
+        "instruction": "b.ne 0x100b518a4 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x484>"
+      },
+      {
+        "pc": "0x100b5189c",
+        "instruction": "ldur x8, [x29, #-0x60]"
+      },
+      {
+        "pc": "0x100b518a0",
+        "instruction": "cbz x8, 0x100b518b8 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x498>"
+      },
+      {
+        "pc": "0x100b518ac",
+        "instruction": "cbz x8, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      },
+      {
+        "pc": "0x100b518b4",
+        "instruction": "cbz x8, 0x100b51a88 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668>"
+      }
+    ],
+    "guarded_original_owner_call": [
+      {
+        "pc": "0x100b51938",
+        "instruction": "mov x26, x22"
+      },
+      {
+        "pc": "0x100b5193c",
+        "instruction": "cmp w22, #0x1"
+      },
+      {
+        "pc": "0x100b51940",
+        "instruction": "b.ne 0x100b5194c <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x52c>"
+      },
+      {
+        "pc": "0x100b51948",
+        "instruction": "strb w8, [x28, #0x7f0]"
+      },
+      {
+        "pc": "0x100b5194c",
+        "instruction": "bl 0x1000b1128 <__Z10CTX_createv>"
+      },
+      {
+        "pc": "0x100b51958",
+        "instruction": "ldur x1, [x29, #-0x68]"
+      },
+      {
+        "pc": "0x100b51960",
+        "instruction": "bl 0x1000b4e38 <__Z17CTX_data_main_setP8bContextP4Main>"
+      },
+      {
+        "pc": "0x100b5196c",
+        "instruction": "bl 0x1000b4954 <__Z18CTX_wm_manager_setP8bContextP15wmWindowManager>"
+      },
+      {
+        "pc": "0x100b51978",
+        "instruction": "bl 0x1000b4964 <__Z17CTX_wm_window_setP8bContextP8wmWindow>"
+      },
+      {
+        "pc": "0x100b51998",
+        "instruction": "bl 0x100b500ac <__Z41WM_event_ipad_pencil_paint_owner_teardownP8bContextP8wmWindowPK7ScrAreaPK7ARegionyyy>"
+      },
+      {
+        "pc": "0x100b519a4",
+        "instruction": "bl 0x1000b11c8 <__Z8CTX_freeP8bContext>"
+      },
+      {
+        "pc": "0x100b519b0",
+        "instruction": "bl 0x100b51c3c <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv>"
+      },
+      {
+        "pc": "0x100b519b4",
+        "instruction": "tbz w0, #0x0, 0x100b51b84 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x764>"
+      },
+      {
+        "pc": "0x100b51b88",
+        "instruction": "cmp w26, #0x1"
+      },
+      {
+        "pc": "0x100b51b90",
+        "instruction": "strb wzr, [x28, #0x7f0]"
+      }
+    ],
+    "context_unchanged": [
+      {
+        "pc": "0x100b51c5c",
+        "instruction": "cmp x8, x9"
+      },
+      {
+        "pc": "0x100b51c60",
+        "instruction": "b.eq 0x100b51c74 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x38>"
+      },
+      {
+        "pc": "0x100b51c80",
+        "instruction": "cbz x0, 0x100b51d08 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0xcc>"
+      },
+      {
+        "pc": "0x100b51c84",
+        "instruction": "bl 0x1000b4c78 <__Z13CTX_data_mainPK8bContext>"
+      },
+      {
+        "pc": "0x100b51c90",
+        "instruction": "cmp x0, x8"
+      },
+      {
+        "pc": "0x100b51c94",
+        "instruction": "b.ne 0x100b51c64 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x28>"
+      },
+      {
+        "pc": "0x100b51cac",
+        "instruction": "cmp x0, x8"
+      },
+      {
+        "pc": "0x100b51cb0",
+        "instruction": "b.ne 0x100b51c64 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x28>"
+      },
+      {
+        "pc": "0x100b51cc8",
+        "instruction": "cmp x0, x8"
+      },
+      {
+        "pc": "0x100b51ccc",
+        "instruction": "b.ne 0x100b51c64 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x28>"
+      },
+      {
+        "pc": "0x100b51ce4",
+        "instruction": "cmp x0, x8"
+      },
+      {
+        "pc": "0x100b51ce8",
+        "instruction": "b.ne 0x100b51c64 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x28>"
+      },
+      {
+        "pc": "0x100b51d00",
+        "instruction": "cmp x0, x8"
+      },
+      {
+        "pc": "0x100b51d04",
+        "instruction": "b.ne 0x100b51c64 <__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x28>"
+      }
+    ],
+    "interpretation": "The global original-material active byte rejects nested scans before context getters. Null did-output takes cleanup/return before CTX_create or native teardown; owner absence determines returned truth. Policy0 retains manager/window admission, while only policy1 with null original C bypasses that UI requirement. Original C/Main are saved and compared by the emitted closure. Policy1 sets the recursion byte before owner context creation, initializes the selected original manager/window/Main, calls native teardown, frees that temporary context and verifies caller context; normal cleanup clears the byte.",
+    "null_output_taken_branch_trace": {
+      "start": "0x100b51a88",
+      "visited_instructions": 16,
+      "calls": [
+        {
+          "pc": "0x100b51a90",
+          "instruction": "bl 0x104b6377c <_zlibVersion+0x104b6377c>"
+        },
+        {
+          "pc": "0x100b51a9c",
+          "instruction": "bl 0x104b6377c <_zlibVersion+0x104b6377c>"
+        }
+      ],
+      "returns": [
+        "0x100b5172c"
+      ],
+      "external_tail_transfers": []
+    },
+    "recursion_taken_branch_trace": {
+      "start": "0x100b5170c",
+      "visited_instructions": 9,
+      "calls": [],
+      "returns": [
+        "0x100b5172c"
+      ],
+      "external_tail_transfers": []
+    }
+  },
+  "owned_dispatch_native_connection": {
+    "status": "passed_bounded",
+    "evidence": [
+      {
+        "pc": "0x10124aa50",
+        "instruction": "ldr w21, [x8]"
+      },
+      {
+        "pc": "0x10124aa94",
+        "instruction": "ldr x22, [x8]"
+      },
+      {
+        "pc": "0x10124aac4",
+        "instruction": "mov x2, x22"
+      },
+      {
+        "pc": "0x10124aad0",
+        "instruction": "bl 0x1013fd14c <__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList>"
+      },
+      {
+        "pc": "0x10124aad4",
+        "instruction": "cbz w0, 0x10124a9ec <__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x94>"
+      },
+      {
+        "pc": "0x10124aad8",
+        "instruction": "bl 0x1014f2ce8 <__Z15BPY_context_getv>"
+      },
+      {
+        "pc": "0x10124aadc",
+        "instruction": "cmp x0, x27"
+      },
+      {
+        "pc": "0x10124aae0",
+        "instruction": "b.eq 0x10124ab04 <__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x1ac>"
+      },
+      {
+        "pc": "0x10124ab04",
+        "instruction": "ldr x0, [x26, #0x10]"
+      },
+      {
+        "pc": "0x10124ab14",
+        "instruction": "ldr x1, [sp, #0x10]"
+      },
+      {
+        "pc": "0x10124ab20",
+        "instruction": "bl 0x101267058 <__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi>"
+      },
+      {
+        "pc": "0x10124ab24",
+        "instruction": "str x0, [sp, #0x8]"
+      },
+      {
+        "pc": "0x10124ab30",
+        "instruction": "add x2, sp, #0x8"
+      },
+      {
+        "pc": "0x10124ab38",
+        "instruction": "bl 0x10124ac4c <__Z24RNA_parameter_set_lookupP13ParameterListPKcPKv>"
+      },
+      {
+        "pc": "0x10124ab54",
+        "instruction": "ldr x1, [sp, #0x10]"
+      },
+      {
+        "pc": "0x10124ab58",
+        "instruction": "mov x2, x22"
+      },
+      {
+        "pc": "0x10124ab5c",
+        "instruction": "bl 0x101266fe4 <__Z25rna_IDMaterials_append_idP2IDP4MainP8Material>"
+      },
+      {
+        "pc": "0x10124ab64",
+        "instruction": "ldr x1, [sp, #0x10]"
+      },
+      {
+        "pc": "0x10124ab68",
+        "instruction": "bl 0x101267138 <__Z24rna_IDMaterials_clear_idP2IDP4Main>"
+      }
+    ],
+    "interpretation": "Parsed int or nullable Material pointer are saved before receipt preparation. The exact existing BPY_context_get definition is called and compared with saved C before dispatch. Successful paths load native self from owned target.data and prepared Main from stack; call the same exported append/pop/clear bodies; pop stores its actual return into ParameterList. This scope contains no second CTX_data_main or generated wrapper dispatch. Full Python producer/report/return-frame review is separate."
+  },
+  "supporting_package_evidence": {
+    "verification": "../ipa-38612413567/verification.json",
+    "launch_audit": "launch-audit/audit.json",
+    "weight_cancel": "weight-cancel-compiled.json",
+    "note": "Exact full IPA and preserved HUD/Weight checks were completed by the existing watcher; this independent report concentrates on native collection/receipt/WM branches."
+  },
+  "boundaries": [
+    "Actual emitted ARM64 from the exact downloaded native iOS Release binary was inspected. This is bounded static compiled evidence, not a runtime or iPad acceptance claim.",
+    "Names and direct calls alone are not treated as proof. Selected ordinary refusal/ordering branches have explicit instruction arguments and local CFG evidence; external native bodies and imports are not recursively proven.",
+    "The local CFG follows ordinary instruction successors and selected branch continuations. It does not model all exception/unwind edges, indirect callbacks, allocation failures or a whole-program CFG.",
+    "Physical identity/equality instruction coverage is bounded; it does not establish a generic ID reference-count lifetime guarantee, all native synchronization internals or global reentrancy/rollback semantics.",
+    "Initial no-owner arbitrary context callback behavior remains native baseline. The separately characterized older shared ID helper query gaps are not corrected or claimed fixed by this material increment.",
+    "The256 outer attempts are not a global callback bound. Refusal does not roll back native callback effects. UIKit, UI comfort, paint completion semantics and device behavior remain unverified.",
+    "No production changes or build dispatch occurred during this independent review."
+  ],
+  "device_acceptance": false
+}

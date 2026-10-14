@@ -1,5 +1,5 @@
 {
-  "status": "corrected_source_host_review_passed_exact_native_replacement_in_progress",
+  "status": "passed_source_host_native_full_package_and_bounded_independent_compiled_reviews",
   "baseline_production": "50359ad320904382fa967da426f7ccc0f9159016",
   "canonical_lf_patch_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
   "scope": [
@@ -66,7 +66,7 @@
     "No active G_MAIN conservatively refuses because global owner absence is unproved; this is not native parity.",
     "UID-zero invalid-Pop identity cannot distinguish identical same-address/zero-UID reuse, but the admitted path performs no mutation.",
     "The outer256 loop is not a global reentrancy/callback bound. Refusal does not roll back callback effects.",
-    "No native build, package or device acceptance for this increment yet."
+    "Native/package/bounded compiled checks pass; no new iPad device acceptance."
   ],
   "device_acceptance": false,
   "fixtures": {
@@ -101,16 +101,37 @@
   "native_build": {
     "run": 38612413567,
     "source": "01e2b1a60797bead82d251fedac6bcd41e332be9",
-    "status": "in_progress",
+    "status": "success",
     "dispatched_once": true,
     "watcher_session": 50592,
     "watcher_log": ".cache/material-collection-build-watch-38612413567.log",
     "watcher_script": ".cache/watch-material-collection-build.py",
-    "compiled_review": "pending exact native binary",
+    "compiled_review": "passed independent native and outer actual binary reviews",
     "device_acceptance": false,
     "hosted_preflight": "passed",
     "last_observed_utc": "2026-10-14T18:16:47Z",
     "native_step": "Configure (iOS, Xcode generator)",
-    "usage_checkpoint": "99 percent five-hour/75 percent weekly; ordinary reset2026-10-14T22:20:03Z; wake17:27Chicago; watcher50592 remains live; independent compiled reviews pending binary"
+    "usage_checkpoint": "99 percent five-hour/75 percent weekly; ordinary reset2026-10-14T22:20:03Z; wake17:27Chicago; watcher50592 remains live; independent compiled reviews pending binary",
+    "watcher_completed_exit": 0
+  },
+  "package": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-collection\\ipa-38612413567\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248644418,
+    "sha256": "5856792faf67edb3c75f75cec704101d87a481b6422192c3c2f78c6f68e0336a",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "artifact_id": 11919104708,
+  "compiled": {
+    "uuid": "95364C2C-56D6-3812-9371-F27D1F362BEC",
+    "binary_sha256": "d52ba68dd1d3c8fbec26210ef29f6a8da8a5b3aad28ddab28e202c9c8b98a495",
+    "native_review": "binary-38612413567/independent-compiled-native-review.json",
+    "outer_review": "binary-38612413567/independent-compiled-outer-review.json",
+    "hud_launch": "passed",
+    "weight_cleanup": "passed",
+    "device_acceptance": false
   }
 }

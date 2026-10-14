@@ -1,0 +1,104 @@
+{
+  "rna_IDMaterials_append_id_owner_refusal": {
+    "start": "0x101267048",
+    "visited_instructions": 4,
+    "calls": [],
+    "returns": [
+      "0x101267054"
+    ],
+    "external_tail_transfers": []
+  },
+  "rna_IDMaterials_pop_id_owner_refusal": {
+    "start": "0x1012670f0",
+    "visited_instructions": 6,
+    "calls": [],
+    "returns": [
+      "0x101267104"
+    ],
+    "external_tail_transfers": []
+  },
+  "rna_IDMaterials_clear_id_owner_refusal": {
+    "start": "0x101267198",
+    "visited_instructions": 3,
+    "calls": [],
+    "returns": [
+      "0x1012671a0"
+    ],
+    "external_tail_transfers": []
+  },
+  "rna_IDMaterials_assign_int_owner_refusal": {
+    "start": "0x101266fd4",
+    "visited_instructions": 4,
+    "calls": [],
+    "returns": [
+      "0x101266fe0"
+    ],
+    "external_tail_transfers": []
+  },
+  "pop_invalid_index": {
+    "start": "0x1012670dc",
+    "visited_instructions": 11,
+    "calls": [
+      {
+        "pc": "0x1012670ec",
+        "instruction": "bl 0x1003ca47c <__Z10BKE_reportP10ReportList11eReportTypePKc>"
+      }
+    ],
+    "returns": [
+      "0x101267104"
+    ],
+    "external_tail_transfers": []
+  },
+  "WM_null_output_branch_taken": {
+    "start": "0x100b51a88",
+    "visited_instructions": 16,
+    "calls": [
+      {
+        "pc": "0x100b51a90",
+        "instruction": "bl 0x104b6377c <_zlibVersion+0x104b6377c>"
+      },
+      {
+        "pc": "0x100b51a9c",
+        "instruction": "bl 0x104b6377c <_zlibVersion+0x104b6377c>"
+      }
+    ],
+    "returns": [
+      "0x100b5172c"
+    ],
+    "external_tail_transfers": []
+  },
+  "WM_active_recursion_branch_taken": {
+    "start": "0x100b5170c",
+    "visited_instructions": 9,
+    "calls": [],
+    "returns": [
+      "0x100b5172c"
+    ],
+    "external_tail_transfers": []
+  },
+  "RNA_id_materials_paint_owner_teardown_successful_query_recapture": {
+    "success_continuation": "0x1013fc31c",
+    "did_teardown_load": "0x1013fc3cc",
+    "capture_call": "0x1013fc3b4",
+    "equality_call": "0x1013fc3c4",
+    "capture_and_equality_dominate_did_load_from_success_continuation": true,
+    "method": "intraprocedural reachability with each call PC blocked; all direct branch successors included"
+  },
+  "RNA_object_material_assign_paint_owner_teardown_successful_query_recapture": {
+    "success_continuation": "0x1013fb810",
+    "did_teardown_load": "0x1013fb8f0",
+    "capture_call": "0x1013fb8d8",
+    "equality_call": "0x1013fb8e8",
+    "capture_and_equality_dominate_did_load_from_success_continuation": true,
+    "method": "intraprocedural reachability with each call PC blocked; all direct branch successors included"
+  },
+  "BKE_assign_MAXMAT32767_equal_return": {
+    "start": "0x100251468",
+    "visited_instructions": 6,
+    "calls": [],
+    "returns": [
+      "0x10025147c"
+    ],
+    "external_tail_transfers": []
+  }
+}

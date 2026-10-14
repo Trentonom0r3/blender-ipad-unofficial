@@ -1,0 +1,2230 @@
+{
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-material-collection\\binary-38612413567\\Blender",
+  "binary_uuid": "95364C2C-56D6-3812-9371-F27D1F362BEC",
+  "binary_bytes": 160356048,
+  "binary_sha256": "d52ba68dd1d3c8fbec26210ef29f6a8da8a5b3aad28ddab28e202c9c8b98a495",
+  "scopes": {
+    "rna_IDMaterials_append_id": {
+      "symbol": "__Z25rna_IDMaterials_append_idP2IDP4MainP8Material",
+      "start": "0x101266fe4",
+      "end_exclusive": "0x101267058",
+      "instruction_count": 29,
+      "calls": [
+        {
+          "pc": "0x10126700c",
+          "opcode": "bl",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+          "address": "0x1013fbf20"
+        },
+        {
+          "pc": "0x101267020",
+          "opcode": "bl",
+          "target": "__Z22BKE_id_material_appendP4MainP2IDP8Material",
+          "address": "0x10024f9b4"
+        },
+        {
+          "pc": "0x10126702c",
+          "opcode": "bl",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        },
+        {
+          "pc": "0x101267044",
+          "opcode": "b",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        }
+      ]
+    },
+    "rna_IDMaterials_pop_id": {
+      "symbol": "__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi",
+      "start": "0x101267058",
+      "end_exclusive": "0x101267138",
+      "instruction_count": 56,
+      "calls": [
+        {
+          "pc": "0x10126707c",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1012670a8",
+          "opcode": "bl",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+          "address": "0x1013fbf20"
+        },
+        {
+          "pc": "0x1012670c0",
+          "opcode": "bl",
+          "target": "__Z19BKE_id_material_popP4MainP2IDi",
+          "address": "0x10024fd10"
+        },
+        {
+          "pc": "0x1012670d8",
+          "opcode": "b",
+          "target": "__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0x8c",
+          "address": "0x1012670e4"
+        },
+        {
+          "pc": "0x1012670ec",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x101267114",
+          "opcode": "bl",
+          "target": "__Z17DEG_id_tag_updateP2IDj",
+          "address": "0x1008d9764"
+        },
+        {
+          "pc": "0x101267120",
+          "opcode": "bl",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        },
+        {
+          "pc": "0x10126712c",
+          "opcode": "bl",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        },
+        {
+          "pc": "0x101267134",
+          "opcode": "b",
+          "target": "__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi+0x9c",
+          "address": "0x1012670f4"
+        }
+      ]
+    },
+    "rna_IDMaterials_clear_id": {
+      "symbol": "__Z24rna_IDMaterials_clear_idP2IDP4Main",
+      "start": "0x101267138",
+      "end_exclusive": "0x1012671a4",
+      "instruction_count": 27,
+      "calls": [
+        {
+          "pc": "0x101267158",
+          "opcode": "bl",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+          "address": "0x1013fbf20"
+        },
+        {
+          "pc": "0x101267168",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_clearP4MainP2ID",
+          "address": "0x10024ff70"
+        },
+        {
+          "pc": "0x101267174",
+          "opcode": "bl",
+          "target": "__Z17DEG_id_tag_updateP2IDj",
+          "address": "0x1008d9764"
+        },
+        {
+          "pc": "0x101267180",
+          "opcode": "bl",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        },
+        {
+          "pc": "0x101267194",
+          "opcode": "b",
+          "target": "__Z20WM_main_add_notifierjPv",
+          "address": "0x100b4d83c"
+        }
+      ]
+    },
+    "rna_IDMaterials_assign_int": {
+      "symbol": "__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_",
+      "start": "0x101266f44",
+      "end_exclusive": "0x101266fe4",
+      "instruction_count": 40,
+      "calls": [
+        {
+          "pc": "0x101266f64",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x101266fa8",
+          "opcode": "bl",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+          "address": "0x1013fbf20"
+        },
+        {
+          "pc": "0x101266fc4",
+          "opcode": "bl",
+          "target": "__Z22BKE_id_material_assignP4MainP2IDP8Materials",
+          "address": "0x100251444"
+        },
+        {
+          "pc": "0x101266fcc",
+          "opcode": "b",
+          "target": "__Z26rna_IDMaterials_assign_intP10PointerRNAiPKS_+0x90",
+          "address": "0x101266fd4"
+        }
+      ]
+    },
+    "RNA_id_materials_paint_owner_absent": {
+      "symbol": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+      "start": "0x1013fbf20",
+      "end_exclusive": "0x1013fbfac",
+      "instruction_count": 35,
+      "calls": [
+        {
+          "pc": "0x1013fbf5c",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fbf70",
+          "opcode": "bl",
+          "target": "__ZL38rna_material_collection_target_foreignP4MainPK2ID",
+          "address": "0x1013fbfac"
+        },
+        {
+          "pc": "0x1013fbf7c",
+          "opcode": "b",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList+0x7c",
+          "address": "0x1013fbf9c"
+        },
+        {
+          "pc": "0x1013fbf94",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        }
+      ]
+    },
+    "RNA_id_materials_paint_owner_teardown": {
+      "symbol": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList",
+      "start": "0x1013fc0b4",
+      "end_exclusive": "0x1013fc4c8",
+      "instruction_count": 261,
+      "calls": [
+        {
+          "pc": "0x1013fc0f8",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x4c",
+          "address": "0x1013fc100"
+        },
+        {
+          "pc": "0x1013fc11c",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fc12c",
+          "opcode": "bl",
+          "target": "__ZL38rna_material_collection_target_foreignP4MainPK2ID",
+          "address": "0x1013fbfac"
+        },
+        {
+          "pc": "0x1013fc138",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x368",
+          "address": "0x1013fc41c"
+        },
+        {
+          "pc": "0x1013fc184",
+          "opcode": "bl",
+          "target": "__ZL36rna_material_collection_pointer_typePK9StructRNA",
+          "address": "0x1013fc4c8"
+        },
+        {
+          "pc": "0x1013fc190",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x34c",
+          "address": "0x1013fc400"
+        },
+        {
+          "pc": "0x1013fc1b0",
+          "opcode": "bl",
+          "target": "__ZL20rna_material_id_findP4Mainm",
+          "address": "0x1013fc580"
+        },
+        {
+          "pc": "0x1013fc1c4",
+          "opcode": "bl",
+          "target": "__ZL33rna_material_collection_data_types",
+          "address": "0x1013fc600"
+        },
+        {
+          "pc": "0x1013fc1e4",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fc210",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x368",
+          "address": "0x1013fc41c"
+        },
+        {
+          "pc": "0x1013fc218",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fc234",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x188",
+          "address": "0x1013fc23c"
+        },
+        {
+          "pc": "0x1013fc2f0",
+          "opcode": "bl",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState",
+          "address": "0x1013fc684"
+        },
+        {
+          "pc": "0x1013fc314",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fc3b4",
+          "opcode": "bl",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState",
+          "address": "0x1013fc684"
+        },
+        {
+          "pc": "0x1013fc3c4",
+          "opcode": "bl",
+          "target": "__ZNK26RnaMaterialCollectionStateeqERKS_",
+          "address": "0x1013fcfb4"
+        },
+        {
+          "pc": "0x1013fc3d8",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fc3f8",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fc3fc",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3a0",
+          "address": "0x1013fc454"
+        },
+        {
+          "pc": "0x1013fc414",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fc450",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fc458",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3d4",
+          "address": "0x1013fc488"
+        },
+        {
+          "pc": "0x1013fc470",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fc478",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3cc",
+          "address": "0x1013fc480"
+        },
+        {
+          "pc": "0x1013fc484",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fc48c",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fc494",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x368",
+          "address": "0x1013fc41c"
+        },
+        {
+          "pc": "0x1013fc498",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3f8",
+          "address": "0x1013fc4ac"
+        },
+        {
+          "pc": "0x1013fc49c",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3f0",
+          "address": "0x1013fc4a4"
+        },
+        {
+          "pc": "0x1013fc4a0",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x3f0",
+          "address": "0x1013fc4a4"
+        },
+        {
+          "pc": "0x1013fc4a8",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList+0x404",
+          "address": "0x1013fc4b8"
+        },
+        {
+          "pc": "0x1013fc4b4",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fc4bc",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fc4c4",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        }
+      ]
+    },
+    "RNA_id_materials_method_paint_owner_teardown": {
+      "symbol": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList",
+      "start": "0x1013fd14c",
+      "end_exclusive": "0x1013fd784",
+      "instruction_count": 398,
+      "calls": [
+        {
+          "pc": "0x1013fd1f8",
+          "opcode": "bl",
+          "target": "__ZN7blender6VectorIZNS_3bke30try_capture_fields_on_geometryENS1_24MutableAttributeAccessorERKNS_2fn12FieldContextENS_4SpanINS_9StringRefEEENS1_10AttrDomainERKNS3_5FieldIbEENS7_INS3_6GFieldEEEE9AddResultLx4ENS_16GuardedAllocatorEE19realloc_to_at_leastEx",
+          "address": "0x1000202b4"
+        },
+        {
+          "pc": "0x1013fd200",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0xe8",
+          "address": "0x1013fd234"
+        },
+        {
+          "pc": "0x1013fd218",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd220",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x3b8",
+          "address": "0x1013fd504"
+        },
+        {
+          "pc": "0x1013fd278",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fd320",
+          "opcode": "bl",
+          "target": "__Z13CTX_data_mainPK8bContext",
+          "address": "0x1000b4c78"
+        },
+        {
+          "pc": "0x1013fd328",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x310",
+          "address": "0x1013fd45c"
+        },
+        {
+          "pc": "0x1013fd370",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd374",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd380",
+          "opcode": "bl",
+          "target": "__ZL20rna_material_id_findP4Mainm",
+          "address": "0x1013fc580"
+        },
+        {
+          "pc": "0x1013fd39c",
+          "opcode": "bl",
+          "target": "__ZL33rna_material_collection_data_types",
+          "address": "0x1013fc600"
+        },
+        {
+          "pc": "0x1013fd3a8",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fd3e0",
+          "opcode": "bl",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState",
+          "address": "0x1013fc684"
+        },
+        {
+          "pc": "0x1013fd3f8",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x304",
+          "address": "0x1013fd450"
+        },
+        {
+          "pc": "0x1013fd410",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd414",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd42c",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd430",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd484",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd4a4",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x390",
+          "address": "0x1013fd4dc"
+        },
+        {
+          "pc": "0x1013fd4c0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fd4d0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fd4d4",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x35c",
+          "address": "0x1013fd4a8"
+        },
+        {
+          "pc": "0x1013fd4e0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fd4f0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fd500",
+          "opcode": "bl",
+          "target": "_MEM_freeN",
+          "address": "0x100ae425c"
+        },
+        {
+          "pc": "0x1013fd554",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fd55c",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x4ac",
+          "address": "0x1013fd5f8"
+        },
+        {
+          "pc": "0x1013fd57c",
+          "opcode": "bl",
+          "target": "__ZL20rna_material_id_findP4Mainm",
+          "address": "0x1013fc580"
+        },
+        {
+          "pc": "0x1013fd5a4",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fd5c0",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x4b0",
+          "address": "0x1013fd5fc"
+        },
+        {
+          "pc": "0x1013fd5cc",
+          "opcode": "bl",
+          "target": "__ZL38rna_material_collection_target_foreignP4MainPK2ID",
+          "address": "0x1013fbfac"
+        },
+        {
+          "pc": "0x1013fd5f0",
+          "opcode": "bl",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList",
+          "address": "0x1013fc0b4"
+        },
+        {
+          "pc": "0x1013fd600",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x340",
+          "address": "0x1013fd48c"
+        },
+        {
+          "pc": "0x1013fd694",
+          "opcode": "bl",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState",
+          "address": "0x1013fc684"
+        },
+        {
+          "pc": "0x1013fd6a4",
+          "opcode": "bl",
+          "target": "__ZNK26RnaMaterialCollectionStateeqERKS_",
+          "address": "0x1013fcfb4"
+        },
+        {
+          "pc": "0x1013fd6b0",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fd6b4",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x488",
+          "address": "0x1013fd5d4"
+        },
+        {
+          "pc": "0x1013fd6cc",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd6d0",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd6e8",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd6f0",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fd6f4",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd70c",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fd710",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x33c",
+          "address": "0x1013fd488"
+        },
+        {
+          "pc": "0x1013fd714",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b63920",
+          "address": "0x104b63920"
+        },
+        {
+          "pc": "0x1013fd718",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x614",
+          "address": "0x1013fd760"
+        },
+        {
+          "pc": "0x1013fd71c",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x614",
+          "address": "0x1013fd760"
+        },
+        {
+          "pc": "0x1013fd720",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x614",
+          "address": "0x1013fd760"
+        },
+        {
+          "pc": "0x1013fd72c",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fd730",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x618",
+          "address": "0x1013fd764"
+        },
+        {
+          "pc": "0x1013fd734",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x614",
+          "address": "0x1013fd760"
+        },
+        {
+          "pc": "0x1013fd738",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x614",
+          "address": "0x1013fd760"
+        },
+        {
+          "pc": "0x1013fd744",
+          "opcode": "bl",
+          "target": "__ZN7blender6VectorIxLx4ENS_16GuardedAllocatorEED1Ev",
+          "address": "0x1000144cc"
+        },
+        {
+          "pc": "0x1013fd74c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        },
+        {
+          "pc": "0x1013fd75c",
+          "opcode": "bl",
+          "target": "___clang_call_terminate",
+          "address": "0x1000144bc"
+        },
+        {
+          "pc": "0x1013fd768",
+          "opcode": "bl",
+          "target": "__ZN26RnaMaterialCollectionStateD1Ev",
+          "address": "0x1013fd0bc"
+        },
+        {
+          "pc": "0x1013fd76c",
+          "opcode": "b",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList+0x628",
+          "address": "0x1013fd774"
+        },
+        {
+          "pc": "0x1013fd778",
+          "opcode": "bl",
+          "target": "__ZN7blender2ed12sculpt_paint18FillToolTargetInfoD1Ev",
+          "address": "0x100013e10"
+        },
+        {
+          "pc": "0x1013fd780",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        }
+      ]
+    },
+    "RNA_function_id_materials_call_owned": {
+      "symbol": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList",
+      "start": "0x10124a958",
+      "end_exclusive": "0x10124ab70",
+      "instruction_count": 134,
+      "calls": [
+        {
+          "pc": "0x10124a9ac",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x94",
+          "address": "0x10124a9ec"
+        },
+        {
+          "pc": "0x10124a9b8",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x78",
+          "address": "0x10124a9d0"
+        },
+        {
+          "pc": "0x10124a9e4",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x10124aa40",
+          "opcode": "bl",
+          "target": "__Z24RNA_parameter_get_lookupP13ParameterListPKcPPv",
+          "address": "0x10124ab70"
+        },
+        {
+          "pc": "0x10124aa58",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x140",
+          "address": "0x10124aa98"
+        },
+        {
+          "pc": "0x10124aa80",
+          "opcode": "bl",
+          "target": "__Z24RNA_parameter_get_lookupP13ParameterListPKcPPv",
+          "address": "0x10124ab70"
+        },
+        {
+          "pc": "0x10124aaa0",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x15c",
+          "address": "0x10124aab4"
+        },
+        {
+          "pc": "0x10124aad0",
+          "opcode": "bl",
+          "target": "__Z44RNA_id_materials_method_paint_owner_teardownP8bContextPK10PointerRNAm31eRNAMaterialCollectionOperationiPP4MainP10ReportList",
+          "address": "0x1013fd14c"
+        },
+        {
+          "pc": "0x10124aad8",
+          "opcode": "bl",
+          "target": "__Z15BPY_context_getv",
+          "address": "0x1014f2ce8"
+        },
+        {
+          "pc": "0x10124aaf0",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x1f4",
+          "address": "0x10124ab4c"
+        },
+        {
+          "pc": "0x10124ab00",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x1f4",
+          "address": "0x10124ab4c"
+        },
+        {
+          "pc": "0x10124ab20",
+          "opcode": "bl",
+          "target": "__Z22rna_IDMaterials_pop_idP2IDP4MainP10ReportListi",
+          "address": "0x101267058"
+        },
+        {
+          "pc": "0x10124ab38",
+          "opcode": "bl",
+          "target": "__Z24RNA_parameter_set_lookupP13ParameterListPKcPKv",
+          "address": "0x10124ac4c"
+        },
+        {
+          "pc": "0x10124ab3c",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x50",
+          "address": "0x10124a9a8"
+        },
+        {
+          "pc": "0x10124ab50",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x88",
+          "address": "0x10124a9e0"
+        },
+        {
+          "pc": "0x10124ab5c",
+          "opcode": "bl",
+          "target": "__Z25rna_IDMaterials_append_idP2IDP4MainP8Material",
+          "address": "0x101266fe4"
+        },
+        {
+          "pc": "0x10124ab60",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x50",
+          "address": "0x10124a9a8"
+        },
+        {
+          "pc": "0x10124ab68",
+          "opcode": "bl",
+          "target": "__Z24rna_IDMaterials_clear_idP2IDP4Main",
+          "address": "0x101267138"
+        },
+        {
+          "pc": "0x10124ab6c",
+          "opcode": "b",
+          "target": "__Z36RNA_function_id_materials_call_ownedP8bContextP10PointerRNAP11FunctionRNAP13ParameterListP10ReportList+0x50",
+          "address": "0x10124a9a8"
+        }
+      ]
+    },
+    "RNA_property_id_materials_paint_owner_teardown": {
+      "symbol": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList",
+      "start": "0x10124a77c",
+      "end_exclusive": "0x10124a92c",
+      "instruction_count": 108,
+      "calls": [
+        {
+          "pc": "0x10124a7d4",
+          "opcode": "b",
+          "target": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList+0x100",
+          "address": "0x10124a87c"
+        },
+        {
+          "pc": "0x10124a7e0",
+          "opcode": "b",
+          "target": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList+0x74",
+          "address": "0x10124a7f0"
+        },
+        {
+          "pc": "0x10124a854",
+          "opcode": "b",
+          "target": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList+0xf0",
+          "address": "0x10124a86c"
+        },
+        {
+          "pc": "0x10124a874",
+          "opcode": "bl",
+          "target": "__Z35RNA_id_materials_paint_owner_absentP4MainPK2IDP10ReportList",
+          "address": "0x1013fbf20"
+        },
+        {
+          "pc": "0x10124a8cc",
+          "opcode": "b",
+          "target": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList+0x15c",
+          "address": "0x10124a8d8"
+        },
+        {
+          "pc": "0x10124a8f4",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x10124a8fc",
+          "opcode": "b",
+          "target": "__Z46RNA_property_id_materials_paint_owner_teardownP8bContextP10PointerRNAP11PropertyRNAiPKS1_P10ReportList+0x104",
+          "address": "0x10124a880"
+        },
+        {
+          "pc": "0x10124a928",
+          "opcode": "b",
+          "target": "__Z37RNA_id_materials_paint_owner_teardownP8bContextP4MainPK10PointerRNAm31eRNAMaterialCollectionOperationiP10ReportList",
+          "address": "0x1013fc0b4"
+        }
+      ]
+    },
+    "rna_material_collection_capture": {
+      "symbol": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState",
+      "start": "0x1013fc684",
+      "end_exclusive": "0x1013fcfb4",
+      "instruction_count": 588,
+      "calls": [
+        {
+          "pc": "0x1013fc738",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fc768",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x11c",
+          "address": "0x1013fc7a0"
+        },
+        {
+          "pc": "0x1013fc784",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fc794",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fc798",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0xe8",
+          "address": "0x1013fc76c"
+        },
+        {
+          "pc": "0x1013fc7a4",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fc7c4",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fc804",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b8",
+          "address": "0x1013fcf3c"
+        },
+        {
+          "pc": "0x1013fc82c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b8",
+          "address": "0x1013fcf3c"
+        },
+        {
+          "pc": "0x1013fc854",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fc87c",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x1013fc88c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x214",
+          "address": "0x1013fc898"
+        },
+        {
+          "pc": "0x1013fc8bc",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x20c",
+          "address": "0x1013fc890"
+        },
+        {
+          "pc": "0x1013fc8d4",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fc8e0",
+          "opcode": "bl",
+          "target": "__Z23BKE_id_material_array_pP2ID",
+          "address": "0x10024f3b4"
+        },
+        {
+          "pc": "0x1013fc93c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x304",
+          "address": "0x1013fc988"
+        },
+        {
+          "pc": "0x1013fc9cc",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fca60",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b637a0",
+          "address": "0x104b637a0"
+        },
+        {
+          "pc": "0x1013fca64",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x3e8",
+          "address": "0x1013fca6c"
+        },
+        {
+          "pc": "0x1013fcaa8",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64634",
+          "address": "0x104b64634"
+        },
+        {
+          "pc": "0x1013fcac0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fcacc",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x2e8",
+          "address": "0x1013fc96c"
+        },
+        {
+          "pc": "0x1013fcae4",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x474",
+          "address": "0x1013fcaf8"
+        },
+        {
+          "pc": "0x1013fcb54",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fcb9c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbb0",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbc8",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbd8",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbe0",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbe8",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcbf0",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x574",
+          "address": "0x1013fcbf8"
+        },
+        {
+          "pc": "0x1013fcc20",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8ac",
+          "address": "0x1013fcf30"
+        },
+        {
+          "pc": "0x1013fcc44",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x5e4",
+          "address": "0x1013fcc68"
+        },
+        {
+          "pc": "0x1013fccb0",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fccf8",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x744",
+          "address": "0x1013fcdc8"
+        },
+        {
+          "pc": "0x1013fcd6c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b637a0",
+          "address": "0x104b637a0"
+        },
+        {
+          "pc": "0x1013fcd70",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x6f4",
+          "address": "0x1013fcd78"
+        },
+        {
+          "pc": "0x1013fcdb0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64634",
+          "address": "0x104b64634"
+        },
+        {
+          "pc": "0x1013fcdc4",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fce1c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b637a0",
+          "address": "0x104b637a0"
+        },
+        {
+          "pc": "0x1013fce24",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x7a8",
+          "address": "0x1013fce2c"
+        },
+        {
+          "pc": "0x1013fce4c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64634",
+          "address": "0x104b64634"
+        },
+        {
+          "pc": "0x1013fce60",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fce64",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x5cc",
+          "address": "0x1013fcc50"
+        },
+        {
+          "pc": "0x1013fceec",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x898",
+          "address": "0x1013fcf1c"
+        },
+        {
+          "pc": "0x1013fcef8",
+          "opcode": "bl",
+          "target": "__ZNSt3__16vectorI32RnaMaterialCollectionObjectStateNS_9allocatorIS1_EEE21__push_back_slow_pathIS1_EEPS1_OT_",
+          "address": "0x10140835c"
+        },
+        {
+          "pc": "0x1013fcf18",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fcf28",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fcf2c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x464",
+          "address": "0x1013fcae8"
+        },
+        {
+          "pc": "0x1013fcf34",
+          "opcode": "bl",
+          "target": "__ZN32RnaMaterialCollectionObjectStateD1Ev",
+          "address": "0x10140831c"
+        },
+        {
+          "pc": "0x1013fcf60",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x8b8",
+          "address": "0x1013fcf3c"
+        },
+        {
+          "pc": "0x1013fcf68",
+          "opcode": "bl",
+          "target": "__ZNKSt3__16vectorIyNS_9allocatorIyEEE20__throw_length_errorB8ne190102Ev",
+          "address": "0x10006bf18"
+        },
+        {
+          "pc": "0x1013fcf6c",
+          "opcode": "bl",
+          "target": "__ZSt28__throw_bad_array_new_lengthB8ne190102v",
+          "address": "0x100067308"
+        },
+        {
+          "pc": "0x1013fcf78",
+          "opcode": "bl",
+          "target": "__ZNKSt3__16vectorIyNS_9allocatorIyEEE20__throw_length_errorB8ne190102Ev",
+          "address": "0x10006bf18"
+        },
+        {
+          "pc": "0x1013fcf7c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x910",
+          "address": "0x1013fcf94"
+        },
+        {
+          "pc": "0x1013fcf88",
+          "opcode": "bl",
+          "target": "__ZNKSt3__16vectorIyNS_9allocatorIyEEE20__throw_length_errorB8ne190102Ev",
+          "address": "0x10006bf18"
+        },
+        {
+          "pc": "0x1013fcf8c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x910",
+          "address": "0x1013fcf94"
+        },
+        {
+          "pc": "0x1013fcf90",
+          "opcode": "bl",
+          "target": "__ZSt28__throw_bad_array_new_lengthB8ne190102v",
+          "address": "0x100067308"
+        },
+        {
+          "pc": "0x1013fcf98",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x91c",
+          "address": "0x1013fcfa0"
+        },
+        {
+          "pc": "0x1013fcf9c",
+          "opcode": "b",
+          "target": "__ZL31rna_material_collection_captureP4MainmmP26RnaMaterialCollectionState+0x91c",
+          "address": "0x1013fcfa0"
+        },
+        {
+          "pc": "0x1013fcfa8",
+          "opcode": "bl",
+          "target": "__ZN32RnaMaterialCollectionObjectStateD1Ev",
+          "address": "0x10140831c"
+        },
+        {
+          "pc": "0x1013fcfb0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        }
+      ]
+    },
+    "RNA_object_material_assign_paint_owner_teardown": {
+      "symbol": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList",
+      "start": "0x1013fb584",
+      "end_exclusive": "0x1013fb9b0",
+      "instruction_count": 267,
+      "calls": [
+        {
+          "pc": "0x1013fb5d8",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fb5e4",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0xb0",
+          "address": "0x1013fb634"
+        },
+        {
+          "pc": "0x1013fb62c",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fb68c",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x114",
+          "address": "0x1013fb698"
+        },
+        {
+          "pc": "0x1013fb6f0",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x17c",
+          "address": "0x1013fb700"
+        },
+        {
+          "pc": "0x1013fb7d0",
+          "opcode": "bl",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState",
+          "address": "0x1013fb9b0"
+        },
+        {
+          "pc": "0x1013fb808",
+          "opcode": "bl",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+          "address": "0x100b51420"
+        },
+        {
+          "pc": "0x1013fb8d8",
+          "opcode": "bl",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState",
+          "address": "0x1013fb9b0"
+        },
+        {
+          "pc": "0x1013fb8e8",
+          "opcode": "bl",
+          "target": "__ZNK22RnaMaterialAssignStateeqERKS_",
+          "address": "0x1013fbdd8"
+        },
+        {
+          "pc": "0x1013fb8fc",
+          "opcode": "bl",
+          "target": "__ZN22RnaMaterialAssignStateD1Ev",
+          "address": "0x1013fbed0"
+        },
+        {
+          "pc": "0x1013fb91c",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fb924",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3ec",
+          "address": "0x1013fb970"
+        },
+        {
+          "pc": "0x1013fb93c",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fb940",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x39c",
+          "address": "0x1013fb920"
+        },
+        {
+          "pc": "0x1013fb958",
+          "opcode": "bl",
+          "target": "__Z10BKE_reportP10ReportList11eReportTypePKc",
+          "address": "0x1003ca47c"
+        },
+        {
+          "pc": "0x1013fb960",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x3e4",
+          "address": "0x1013fb968"
+        },
+        {
+          "pc": "0x1013fb96c",
+          "opcode": "bl",
+          "target": "__ZN22RnaMaterialAssignStateD1Ev",
+          "address": "0x1013fbed0"
+        },
+        {
+          "pc": "0x1013fb974",
+          "opcode": "bl",
+          "target": "__ZN22RnaMaterialAssignStateD1Ev",
+          "address": "0x1013fbed0"
+        },
+        {
+          "pc": "0x1013fb97c",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0xb0",
+          "address": "0x1013fb634"
+        },
+        {
+          "pc": "0x1013fb980",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x410",
+          "address": "0x1013fb994"
+        },
+        {
+          "pc": "0x1013fb984",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x408",
+          "address": "0x1013fb98c"
+        },
+        {
+          "pc": "0x1013fb988",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x408",
+          "address": "0x1013fb98c"
+        },
+        {
+          "pc": "0x1013fb990",
+          "opcode": "b",
+          "target": "__Z47RNA_object_material_assign_paint_owner_teardownP8bContextP10PointerRNAS1_bP10ReportList+0x41c",
+          "address": "0x1013fb9a0"
+        },
+        {
+          "pc": "0x1013fb99c",
+          "opcode": "bl",
+          "target": "__ZN22RnaMaterialAssignStateD1Ev",
+          "address": "0x1013fbed0"
+        },
+        {
+          "pc": "0x1013fb9a4",
+          "opcode": "bl",
+          "target": "__ZN22RnaMaterialAssignStateD1Ev",
+          "address": "0x1013fbed0"
+        },
+        {
+          "pc": "0x1013fb9ac",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        }
+      ]
+    },
+    "rna_material_assign_capture": {
+      "symbol": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState",
+      "start": "0x1013fb9b0",
+      "end_exclusive": "0x1013fbdd8",
+      "instruction_count": 266,
+      "calls": [
+        {
+          "pc": "0x1013fba9c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fbabc",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fbad4",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x1013fbaec",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fbb10",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fbb38",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x1013fbb48",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x1a4",
+          "address": "0x1013fbb54"
+        },
+        {
+          "pc": "0x1013fbb78",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x19c",
+          "address": "0x1013fbb4c"
+        },
+        {
+          "pc": "0x1013fbba0",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fbbb8",
+          "opcode": "bl",
+          "target": "__ZL22rna_material_data_types",
+          "address": "0x101407da8"
+        },
+        {
+          "pc": "0x1013fbbc8",
+          "opcode": "bl",
+          "target": "__Z21BKE_id_material_len_pP2ID",
+          "address": "0x10024f460"
+        },
+        {
+          "pc": "0x1013fbbd4",
+          "opcode": "bl",
+          "target": "__Z23BKE_id_material_array_pP2ID",
+          "address": "0x10024f3b4"
+        },
+        {
+          "pc": "0x1013fbc94",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x314",
+          "address": "0x1013fbcc4"
+        },
+        {
+          "pc": "0x1013fbca0",
+          "opcode": "bl",
+          "target": "__ZNSt3__16vectorI18RnaMaterialIDStateNS_9allocatorIS1_EEE9push_backB8ne190102ERKS1_",
+          "address": "0x101407e34"
+        },
+        {
+          "pc": "0x1013fbcb0",
+          "opcode": "bl",
+          "target": "__ZNSt3__16vectorIcNS_9allocatorIcEEE9push_backB8ne190102ERKc",
+          "address": "0x101407f68"
+        },
+        {
+          "pc": "0x1013fbd08",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fbd24",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x254",
+          "address": "0x1013fbc04"
+        },
+        {
+          "pc": "0x1013fbd44",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x3bc",
+          "address": "0x1013fbd6c"
+        },
+        {
+          "pc": "0x1013fbd50",
+          "opcode": "bl",
+          "target": "__ZNSt3__16vectorI18RnaMaterialIDStateNS_9allocatorIS1_EEE9push_backB8ne190102ERKS1_",
+          "address": "0x101407e34"
+        },
+        {
+          "pc": "0x1013fbdb0",
+          "opcode": "bl",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+          "address": "0x101407a8c"
+        },
+        {
+          "pc": "0x1013fbdcc",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x254",
+          "address": "0x1013fbc04"
+        },
+        {
+          "pc": "0x1013fbdd4",
+          "opcode": "b",
+          "target": "__ZL27rna_material_assign_captureP4MainmmP22RnaMaterialAssignState+0x258",
+          "address": "0x1013fbc08"
+        }
+      ]
+    },
+    "rna_material_state_capture": {
+      "symbol": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+      "start": "0x101407a8c",
+      "end_exclusive": "0x101407da8",
+      "instruction_count": 199,
+      "calls": [
+        {
+          "pc": "0x101407aec",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x101407b60",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x101407bcc",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x101407c88",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x101407d14",
+          "opcode": "bl",
+          "target": "__Z18BKE_main_lists_getR4Main",
+          "address": "0x10023e238"
+        },
+        {
+          "pc": "0x101407d80",
+          "opcode": "b",
+          "target": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState+0x304",
+          "address": "0x101407d90"
+        }
+      ]
+    },
+    "RnaMaterialCollectionStateeq": {
+      "symbol": "__ZNK26RnaMaterialCollectionStateeqERKS_",
+      "start": "0x1013fcfb4",
+      "end_exclusive": "0x1013fd0bc",
+      "instruction_count": 66,
+      "calls": [
+        {
+          "pc": "0x1013fcfd0",
+          "opcode": "bl",
+          "target": "__ZNK18RnaMaterialIDStateeqERKS_",
+          "address": "0x101408220"
+        },
+        {
+          "pc": "0x1013fcfe0",
+          "opcode": "bl",
+          "target": "__ZNK18RnaMaterialIDStateeqERKS_",
+          "address": "0x101408220"
+        },
+        {
+          "pc": "0x1013fd040",
+          "opcode": "bl",
+          "target": "__ZNK18RnaMaterialIDStateeqERKS_",
+          "address": "0x101408220"
+        },
+        {
+          "pc": "0x1013fd080",
+          "opcode": "bl",
+          "target": "__ZNK32RnaMaterialCollectionObjectStateeqERKS_",
+          "address": "0x10140869c"
+        },
+        {
+          "pc": "0x1013fd098",
+          "opcode": "b",
+          "target": "__ZNK26RnaMaterialCollectionStateeqERKS_+0xec",
+          "address": "0x1013fd0a0"
+        },
+        {
+          "pc": "0x1013fd0b8",
+          "opcode": "b",
+          "target": "__ZNK26RnaMaterialCollectionStateeqERKS_+0xec",
+          "address": "0x1013fd0a0"
+        }
+      ]
+    },
+    "RnaMaterialAssignStateeq": {
+      "symbol": "__ZNK22RnaMaterialAssignStateeqERKS_",
+      "start": "0x1013fbdd8",
+      "end_exclusive": "0x1013fbed0",
+      "instruction_count": 62,
+      "calls": [
+        {
+          "pc": "0x1013fbe88",
+          "opcode": "bl",
+          "target": "__ZNSt3__113__tuple_equalILm12EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_RKsRKiSA_S8_RKmSC_SC_RKNS_6vectorIS4_NS_9allocatorIS4_EEEESI_RKNSD_IcNSE_IcEEEEEEESN_EEbRKT_RKT0_",
+          "address": "0x10140803c"
+        },
+        {
+          "pc": "0x1013fbeb0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64628",
+          "address": "0x104b64628"
+        },
+        {
+          "pc": "0x1013fbebc",
+          "opcode": "b",
+          "target": "__ZNK22RnaMaterialAssignStateeqERKS_+0xec",
+          "address": "0x1013fbec4"
+        }
+      ]
+    },
+    "WM_event_ipad_pencil_paint_owner_teardown_next": {
+      "symbol": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy",
+      "start": "0x100b51420",
+      "end_exclusive": "0x100b51d6c",
+      "instruction_count": 595,
+      "calls": [
+        {
+          "pc": "0x100b51494",
+          "opcode": "bl",
+          "target": "__Z13CTX_data_mainPK8bContext",
+          "address": "0x1000b4c78"
+        },
+        {
+          "pc": "0x100b514a4",
+          "opcode": "bl",
+          "target": "__Z14CTX_wm_managerPK8bContext",
+          "address": "0x1000b4200"
+        },
+        {
+          "pc": "0x100b514b4",
+          "opcode": "bl",
+          "target": "__Z13CTX_wm_windowPK8bContext",
+          "address": "0x1000b4218"
+        },
+        {
+          "pc": "0x100b514c4",
+          "opcode": "bl",
+          "target": "__Z11CTX_wm_areaPK8bContext",
+          "address": "0x1000b3ba0"
+        },
+        {
+          "pc": "0x100b514d0",
+          "opcode": "bl",
+          "target": "__Z13CTX_wm_regionPK8bContext",
+          "address": "0x1000b3b88"
+        },
+        {
+          "pc": "0x100b514ec",
+          "opcode": "bl",
+          "target": "__Z13BLI_findindexPK8ListBasePKv",
+          "address": "0x10078ff24"
+        },
+        {
+          "pc": "0x100b514f8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2e8",
+          "address": "0x100b51708"
+        },
+        {
+          "pc": "0x100b5152c",
+          "opcode": "bl",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+          "address": "0x100b51c3c"
+        },
+        {
+          "pc": "0x100b51560",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x150",
+          "address": "0x100b51570"
+        },
+        {
+          "pc": "0x100b515a0",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x144",
+          "address": "0x100b51564"
+        },
+        {
+          "pc": "0x100b515ec",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b637a0",
+          "address": "0x104b637a0"
+        },
+        {
+          "pc": "0x100b515f4",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x1dc",
+          "address": "0x100b515fc"
+        },
+        {
+          "pc": "0x100b51624",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64634",
+          "address": "0x104b64634"
+        },
+        {
+          "pc": "0x100b51630",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51640",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x144",
+          "address": "0x100b51564"
+        },
+        {
+          "pc": "0x100b516b0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b637a0",
+          "address": "0x104b637a0"
+        },
+        {
+          "pc": "0x100b516b8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2a0",
+          "address": "0x100b516c0"
+        },
+        {
+          "pc": "0x100b516e8",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b64634",
+          "address": "0x104b64634"
+        },
+        {
+          "pc": "0x100b516f4",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51704",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x144",
+          "address": "0x100b51564"
+        },
+        {
+          "pc": "0x100b51754",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x448",
+          "address": "0x100b51868"
+        },
+        {
+          "pc": "0x100b51790",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x684",
+          "address": "0x100b51aa4"
+        },
+        {
+          "pc": "0x100b517b8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x3e8",
+          "address": "0x100b51808"
+        },
+        {
+          "pc": "0x100b517d8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x664",
+          "address": "0x100b51a84"
+        },
+        {
+          "pc": "0x100b51834",
+          "opcode": "bl",
+          "target": "__ZL39wm_ipad_pencil_paint_handler_registeredP8wmWindowPK17wmEventHandler_Op",
+          "address": "0x100b50590"
+        },
+        {
+          "pc": "0x100b5184c",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x3e0",
+          "address": "0x100b51800"
+        },
+        {
+          "pc": "0x100b5186c",
+          "opcode": "bl",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+          "address": "0x100b51c3c"
+        },
+        {
+          "pc": "0x100b518bc",
+          "opcode": "bl",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+          "address": "0x100b51c3c"
+        },
+        {
+          "pc": "0x100b5194c",
+          "opcode": "bl",
+          "target": "__Z10CTX_createv",
+          "address": "0x1000b1128"
+        },
+        {
+          "pc": "0x100b51960",
+          "opcode": "bl",
+          "target": "__Z17CTX_data_main_setP8bContextP4Main",
+          "address": "0x1000b4e38"
+        },
+        {
+          "pc": "0x100b5196c",
+          "opcode": "bl",
+          "target": "__Z18CTX_wm_manager_setP8bContextP15wmWindowManager",
+          "address": "0x1000b4954"
+        },
+        {
+          "pc": "0x100b51978",
+          "opcode": "bl",
+          "target": "__Z17CTX_wm_window_setP8bContextP8wmWindow",
+          "address": "0x1000b4964"
+        },
+        {
+          "pc": "0x100b51998",
+          "opcode": "bl",
+          "target": "__Z41WM_event_ipad_pencil_paint_owner_teardownP8bContextP8wmWindowPK7ScrAreaPK7ARegionyyy",
+          "address": "0x100b500ac"
+        },
+        {
+          "pc": "0x100b519a4",
+          "opcode": "bl",
+          "target": "__Z8CTX_freeP8bContext",
+          "address": "0x1000b11c8"
+        },
+        {
+          "pc": "0x100b519b0",
+          "opcode": "bl",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+          "address": "0x100b51c3c"
+        },
+        {
+          "pc": "0x100b51a74",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x768",
+          "address": "0x100b51b88"
+        },
+        {
+          "pc": "0x100b51a80",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x6bc",
+          "address": "0x100b51adc"
+        },
+        {
+          "pc": "0x100b51a90",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51a9c",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51aa0",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x2ec",
+          "address": "0x100b5170c"
+        },
+        {
+          "pc": "0x100b51ab4",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x448",
+          "address": "0x100b51868"
+        },
+        {
+          "pc": "0x100b51ac0",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668",
+          "address": "0x100b51a88"
+        },
+        {
+          "pc": "0x100b51ac4",
+          "opcode": "bl",
+          "target": "__ZNKSt3__16vectorIyNS_9allocatorIyEEE20__throw_length_errorB8ne190102Ev",
+          "address": "0x10006bf18"
+        },
+        {
+          "pc": "0x100b51ac8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7a0",
+          "address": "0x100b51bc0"
+        },
+        {
+          "pc": "0x100b51acc",
+          "opcode": "bl",
+          "target": "__ZSt28__throw_bad_array_new_lengthB8ne190102v",
+          "address": "0x100067308"
+        },
+        {
+          "pc": "0x100b51ad0",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7a0",
+          "address": "0x100b51bc0"
+        },
+        {
+          "pc": "0x100b51af8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x6e4",
+          "address": "0x100b51b04"
+        },
+        {
+          "pc": "0x100b51b10",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x6fc",
+          "address": "0x100b51b1c"
+        },
+        {
+          "pc": "0x100b51b24",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x72c",
+          "address": "0x100b51b4c"
+        },
+        {
+          "pc": "0x100b51b54",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x6f4",
+          "address": "0x100b51b14"
+        },
+        {
+          "pc": "0x100b51b7c",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x6f4",
+          "address": "0x100b51b14"
+        },
+        {
+          "pc": "0x100b51b98",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x668",
+          "address": "0x100b51a88"
+        },
+        {
+          "pc": "0x100b51bb0",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x770",
+          "address": "0x100b51b90"
+        },
+        {
+          "pc": "0x100b51bb4",
+          "opcode": "bl",
+          "target": "__ZNKSt3__16vectorIyNS_9allocatorIyEEE20__throw_length_errorB8ne190102Ev",
+          "address": "0x10006bf18"
+        },
+        {
+          "pc": "0x100b51bb8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7a0",
+          "address": "0x100b51bc0"
+        },
+        {
+          "pc": "0x100b51bbc",
+          "opcode": "bl",
+          "target": "__ZSt28__throw_bad_array_new_lengthB8ne190102v",
+          "address": "0x100067308"
+        },
+        {
+          "pc": "0x100b51bc4",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7a8",
+          "address": "0x100b51bc8"
+        },
+        {
+          "pc": "0x100b51bdc",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7fc",
+          "address": "0x100b51c1c"
+        },
+        {
+          "pc": "0x100b51bf0",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        },
+        {
+          "pc": "0x100b51bf8",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c00",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c04",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c08",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c0c",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c10",
+          "opcode": "b",
+          "target": "__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy+0x7f4",
+          "address": "0x100b51c14"
+        },
+        {
+          "pc": "0x100b51c20",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51c30",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b6377c",
+          "address": "0x104b6377c"
+        },
+        {
+          "pc": "0x100b51c38",
+          "opcode": "bl",
+          "target": "_zlibVersion+0x104b611f0",
+          "address": "0x104b611f0"
+        },
+        {
+          "pc": "0x100b51c84",
+          "opcode": "bl",
+          "target": "__Z13CTX_data_mainPK8bContext",
+          "address": "0x1000b4c78"
+        },
+        {
+          "pc": "0x100b51ca0",
+          "opcode": "bl",
+          "target": "__Z14CTX_wm_managerPK8bContext",
+          "address": "0x1000b4200"
+        },
+        {
+          "pc": "0x100b51cbc",
+          "opcode": "bl",
+          "target": "__Z13CTX_wm_windowPK8bContext",
+          "address": "0x1000b4218"
+        },
+        {
+          "pc": "0x100b51cd8",
+          "opcode": "bl",
+          "target": "__Z11CTX_wm_areaPK8bContext",
+          "address": "0x1000b3ba0"
+        },
+        {
+          "pc": "0x100b51cf4",
+          "opcode": "bl",
+          "target": "__Z13CTX_wm_regionPK8bContext",
+          "address": "0x1000b3b88"
+        },
+        {
+          "pc": "0x100b51d20",
+          "opcode": "bl",
+          "target": "__Z13BLI_findindexPK8ListBasePKv",
+          "address": "0x10078ff24"
+        },
+        {
+          "pc": "0x100b51d60",
+          "opcode": "b",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x2c",
+          "address": "0x100b51c68"
+        },
+        {
+          "pc": "0x100b51d68",
+          "opcode": "b",
+          "target": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv+0x2c",
+          "address": "0x100b51c68"
+        }
+      ]
+    },
+    "WM_lambda_0": {
+      "symbol": "__ZZ46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicyENK3$_0clEv",
+      "start": "0x100b51c3c",
+      "end_exclusive": "0x100b51d6c",
+      "instruction_count": 76
+    }
+  }
+}

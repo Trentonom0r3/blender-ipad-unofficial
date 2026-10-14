@@ -1,3 +1,28 @@
+## Material collection exact IPA verified - 2026-10-14
+
+Production01e2b1a60797bead82d251fedac6bcd41e332be9/run38612413567 passed
+hosted preflight, native iOS Release and complete downloaded IPA verification.
+Artifact11919104708; IPA248644418bytes/SHA256
+5856792faf67edb3c75f75cec704101d87a481b6422192c3c2f78c6f68e0336a.
+Full3368-entry CRC/arm64/iPhoneOS5.0.0/whole exact UI/default Blender bars/
+toolbar/pinned native tools/all129icons/exact9Base/native-only More Tools pass.
+BinaryUUID95364C2C-56D6-3812-9371-F27D1F362BEC passes preserved compiled HUD
+launch/Weight cleanup and independent actual native plus outer compiled reviews.
+Four consumer refusal/native-admission paths, typed material receipts, Object
+int widths/recapture before did=false, relevant sharedWMpolicy and Python owned
+copies/context/report/pop-output/cleanup are bounded verified. Inlined indexed
+assignment and alias/cold conversion scopes were resolved. No global heap/CFG/
+callback/reentrancy/rollback or device proof. Source480/480/connected25/retained23/
+publicheader1/132-file preflight pass. Watcher50592 completed exit0; no rebuild.
+Reports: output/ui-preview/pencil-material-collection/{source-verification.json,
+ipa-38612413567/verification.json,binary-38612413567/independent-compiled-*-review.json}.
+Latest exact IPA has no new device acceptance. Full personal goal unfinished.
+
+Next coherent owner-at-entry context-query increment needs actual ID/Mesh owned
+producer/wrapper protection; helper-only reordering leaves implicit generated
+Main callbacks before capture. Read rna-context-query-next-audit.json and its10-case
+characterization plus the latest outer contract. No corrective next source yet.
+
 ## Corrected material collection exact build pending - 2026-10-14
 
 Corrected source01e2b1a60797bead82d251fedac6bcd41e332be9 is pushed and
