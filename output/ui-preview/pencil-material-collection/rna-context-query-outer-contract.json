@@ -1,0 +1,232 @@
+{
+  "status": "read_only_implementation_contract_no_production_changes",
+  "reviewer": "rna_query_outer_audit",
+  "date": "2026-10-14",
+  "source": "64748eb9ff8bc7abe932d4120006215fc452842a",
+  "production_overlay_sha256": "09f3bdd9db10e3a2dad611669e816e32a2476bf08498d7ca93abe46472a8d488",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "choice": "Preserve owner-retiring Python capability through bounded exact-15 owned dispatch. Conservative owner-present Python refusal is not an acceptable replacement behavior for this increment.",
+  "source_anchors": {
+    "makesrna.cc": "Pinned3274-3288 cache _selfid/_self from PointerRNA;3303-3367 load raw input locals;3406 emits CTX_data_main(C) inside native call;3438-3478 stores exact native c_ret type. PROP_BOOLEAN maps to bool at511-515.",
+    "rna_access.cc": "Current RNA_function_call7452-7461 blindly dispatches func->call; owned material dispatcher193-270 is precedent for exact identity/raw ParameterList/saved Main/direct same native body. RNA_property_collection_type_get5410 copies root PointerRNA and replaces type only.",
+    "bpy_rna.cc": "pyrna_func_call6694 onward owns ParameterList before dispatch; only IDMaterials branch6949-6965 currently owns target and bypasses wrapper. Reports6969 gate return conversion6981-6994; ParameterList cleanup7020-7022 unconditional. No RNA_property_update follows function calls.",
+    "pointer_return": "pyrna_param_to_py6582-6612 raw ID* outputs use RNA_id_pointer_create(result); non-ID outputs may use funcptr.owner_id. PointerRNA copies own ancestors vector storage but do not hold ID references or keep ID alive.",
+    "rna_ID.cc": "Internal guard907-1027 returns !did_teardown before resolve; exported1029-1053 initially queries WM with supplied C. Seven ID native bodies1056-1289/1431-1488 perform initial native admission reads before guard; these reads are already after generated Main query.",
+    "rna_mesh.cc": "79-151 shared bridge and four add bodies;2612/2638/2676/2702 exact method registration with MAIN|CONTEXT|REPORTS and required int count.",
+    "rna_mesh_api.cc": "200-279 four native bodies;389/410/416/430 MAIN|CONTEXT|REPORTS registrations/defaults.",
+    "WM": "wm_event_system.cc3452-3679 actual next helper calls supplied-C CTX_data_main at3468/3483; null C/null output query does not run providers or cancel; default CallerContext null-C owner refusal must remain."
+  },
+  "profiles": [
+    {
+      "function_identity": "rna_ID_override_create_func",
+      "native_signature": "ID *rna_ID_override_create(ID *id, Main *bmain, bContext *C, bool remap_local_usages)",
+      "raw_parameter_inputs": {
+        "remap_local_usages": "bool; default false"
+      },
+      "raw_parameter_output": {
+        "id": "raw ID*"
+      },
+      "native_admission": "ID_IS_OVERRIDABLE_LIBRARY false -> nullptr; only remap_local_usages true retires paint owners/tags all IDs; false native creation remains supported",
+      "owned_target_shape": "discrete ID: owner_id == data; empty ancestors; fresh native ID type must agree with its fixed RNA base/refinement"
+    },
+    {
+      "function_identity": "rna_ID_override_hierarchy_create_func",
+      "native_signature": "ID *rna_ID_override_hierarchy_create(ID *id, Main *bmain, bContext *C, Scene *scene, ViewLayer *view_layer, ID *id_instance_hint, bool do_fully_editable)",
+      "raw_parameter_inputs": {
+        "scene": "raw Scene*; required nonnull",
+        "view_layer": "raw ViewLayer*; optional nullable",
+        "reference": "raw ID*; optional nullable; native id_instance_hint",
+        "do_fully_editable": "bool; default false"
+      },
+      "raw_parameter_output": {
+        "id": "raw ID*"
+      },
+      "native_admission": "ID_IS_OVERRIDABLE_LIBRARY false -> nullptr; when admitted capture scene UID, exact view_layer membership and optional reference before query/drain",
+      "owned_target_shape": "discrete ID: owner_id == data; empty ancestors; fresh native ID type must agree with its fixed RNA base/refinement"
+    },
+    {
+      "function_identity": "rna_IDOverrideLibrary_reset_func",
+      "native_signature": "void rna_ID_override_library_reset(ID *id, IDOverrideLibrary *override_library, Main *bmain, bContext *C, ReportList *reports, bool do_hierarchy, bool set_system_override)",
+      "raw_parameter_inputs": {
+        "do_hierarchy": "bool; default true",
+        "set_system_override": "bool; default false"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Not real override -> exact native report before drain; same native single/hierarchy paths/notifier",
+      "owned_target_shape": "type RNA_IDOverrideLibrary; owner_id is fresh ID; data equals its current override_library; ancestors empty for a proved discrete native pointer or exactly one {fresh ID RNA type, owner ID}; never arbitrary stale ancestor chains"
+    },
+    {
+      "function_identity": "rna_IDOverrideLibrary_destroy_func",
+      "native_signature": "void rna_ID_override_library_destroy(ID *id, IDOverrideLibrary *override_library, Main *bmain, bContext *C, ReportList *reports, bool do_hierarchy)",
+      "raw_parameter_inputs": {
+        "do_hierarchy": "bool; default true"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Not real override -> exact native report before drain; success intentionally deletes target ID, so never reconstruct/read target after same native body returns",
+      "owned_target_shape": "type RNA_IDOverrideLibrary; owner_id is fresh ID; data equals its current override_library; ancestors empty for a proved discrete native pointer or exactly one {fresh ID RNA type, owner ID}; never arbitrary stale ancestor chains"
+    },
+    {
+      "function_identity": "rna_IDOverrideLibrary_resync_func",
+      "native_signature": "bool rna_ID_override_library_resync(ID *id, IDOverrideLibrary *override_library, Main *bmain, bContext *C, ReportList *reports, Scene *scene, ViewLayer *view_layer, Collection *override_resync_residual_storage, bool do_hierarchy_enforce, bool do_whole_hierarchy)",
+      "raw_parameter_inputs": {
+        "scene": "raw Scene*; required nonnull",
+        "view_layer": "raw ViewLayer*; optional nullable",
+        "residual_storage": "raw Collection*; optional nullable",
+        "do_hierarchy_enforce": "bool; default false",
+        "do_whole_hierarchy": "bool; default false"
+      },
+      "raw_parameter_output": {
+        "success": "bool"
+      },
+      "native_admission": "Fresh data must equal ID override pointer before native assert/first hierarchy reads; native missing hierarchy or NO_HIERARCHY produces exact RPT_ERROR_INVALID_INPUT false result; preserve bool return and original native body",
+      "owned_target_shape": "type RNA_IDOverrideLibrary; owner_id is fresh ID; data equals its current override_library; ancestors empty for a proved discrete native pointer or exactly one {fresh ID RNA type, owner ID}; never arbitrary stale ancestor chains"
+    },
+    {
+      "function_identity": "rna_ID_user_remap_func",
+      "native_signature": "void rna_ID_user_remap(ID *id, Main *bmain, bContext *C, ID *new_id)",
+      "raw_parameter_inputs": {
+        "new_id": "raw ID*; required nonnull"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Different native ID types or same ID -> native no-op without drain; otherwise preserve remap flags and notifier",
+      "owned_target_shape": "discrete ID: owner_id == data; empty ancestors; fresh native ID type must agree with its fixed RNA base/refinement"
+    },
+    {
+      "function_identity": "rna_ID_make_local_func",
+      "native_signature": "ID *rna_ID_make_local(ID *self, Main *bmain, bContext *C, bool clear_proxy, bool clear_liboverride, bool clear_asset_data)",
+      "raw_parameter_inputs": {
+        "clear_proxy": "bool; default true; deprecated/native ignored",
+        "clear_liboverride": "bool; default false",
+        "clear_asset_data": "bool; default true"
+      },
+      "raw_parameter_output": {
+        "id": "raw ID*"
+      },
+      "native_admission": "Retire only linked branch as before; capture nullable preexisting newid and reject changed relation; preserve local override metadata clearing, BKE_id_newptr_and_tag_clear order and resulting ID*",
+      "owned_target_shape": "discrete ID: owner_id == data; empty ancestors; fresh native ID type must agree with its fixed RNA base/refinement"
+    },
+    {
+      "function_identity": "rna_MeshVertices_add_func",
+      "native_signature": "void rna_Mesh_vertices_add(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)",
+      "raw_parameter_inputs": {
+        "count": "int; required; native registration 0..INT_MAX"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Native Edit-mode error precedes zero no-op; positive mutation retires all registered owners, not only mesh UID matches",
+      "owned_target_shape": "type RNA_MeshVertices; data == owner_id == fresh Mesh; EMPTY ancestors on normal Python collection method (RNA_property_collection_type_get merely copies root pointer and substitutes type)"
+    },
+    {
+      "function_identity": "rna_MeshEdges_add_func",
+      "native_signature": "void rna_Mesh_edges_add(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)",
+      "raw_parameter_inputs": {
+        "count": "int; required; native registration 0..INT_MAX"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Native Edit-mode error precedes zero no-op; positive mutation retires all registered owners, not only mesh UID matches",
+      "owned_target_shape": "type RNA_MeshEdges; data == owner_id == fresh Mesh; EMPTY ancestors on normal Python collection method (RNA_property_collection_type_get merely copies root pointer and substitutes type)"
+    },
+    {
+      "function_identity": "rna_MeshLoops_add_func",
+      "native_signature": "void rna_Mesh_loops_add(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)",
+      "raw_parameter_inputs": {
+        "count": "int; required; native registration 0..INT_MAX"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Native Edit-mode error precedes zero no-op; positive mutation retires all registered owners, not only mesh UID matches",
+      "owned_target_shape": "type RNA_MeshLoops; data == owner_id == fresh Mesh; EMPTY ancestors on normal Python collection method (RNA_property_collection_type_get merely copies root pointer and substitutes type)"
+    },
+    {
+      "function_identity": "rna_MeshPolygons_add_func",
+      "native_signature": "void rna_Mesh_polygons_add(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)",
+      "raw_parameter_inputs": {
+        "count": "int; required; native registration 0..INT_MAX"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Native Edit-mode error precedes zero no-op; positive mutation retires all registered owners, not only mesh UID matches",
+      "owned_target_shape": "type RNA_MeshPolygons; data == owner_id == fresh Mesh; EMPTY ancestors on normal Python collection method (RNA_property_collection_type_get merely copies root pointer and substitutes type)"
+    },
+    {
+      "function_identity": "rna_Mesh_update_func",
+      "native_signature": "void rna_Mesh_update(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, bool calc_edges, bool calc_edges_loose)",
+      "raw_parameter_inputs": {
+        "calc_edges": "bool; default false",
+        "calc_edges_loose": "bool; default false"
+      },
+      "raw_parameter_output": null,
+      "native_admission": "Default false/false still mutates cache/dirtiness/evaluated state; no false/default no-op exemption; native update historically requires C",
+      "owned_target_shape": "type RNA_Mesh, data == owner_id == fresh typed Mesh; empty ancestors"
+    },
+    {
+      "function_identity": "rna_Mesh_clear_geometry_func",
+      "native_signature": "void rna_Mesh_clear_geometry(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports)",
+      "raw_parameter_inputs": {},
+      "raw_parameter_output": null,
+      "native_admission": "No blanket native Edit rejection; preserve storage/animdata/required-layer/tag/notifier order",
+      "owned_target_shape": "type RNA_Mesh, data == owner_id == fresh typed Mesh; empty ancestors"
+    },
+    {
+      "function_identity": "rna_Mesh_validate_func",
+      "native_signature": "bool rna_Mesh_validate(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, bool verbose, bool clean_customdata)",
+      "raw_parameter_inputs": {
+        "verbose": "bool; default false",
+        "clean_customdata": "bool; default true"
+      },
+      "raw_parameter_output": {
+        "result": "bool"
+      },
+      "native_admission": "False result does not prove no mutation; preserve native validator defaults and exact returned bool",
+      "owned_target_shape": "type RNA_Mesh, data == owner_id == fresh typed Mesh; empty ancestors"
+    },
+    {
+      "function_identity": "rna_Mesh_validate_material_indices_func",
+      "native_signature": "bool rna_Mesh_validate_material_indices(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports)",
+      "raw_parameter_inputs": {},
+      "raw_parameter_output": {
+        "result": "bool"
+      },
+      "native_admission": "No blanket native Edit rejection; preserve exact native bool",
+      "owned_target_shape": "type RNA_Mesh, data == owner_id == fresh typed Mesh; empty ancestors"
+    }
+  ],
+  "connected_order": [
+    "After ordinary Python argument parsing succeeds, before any provider lookup/native generated wrapper, select exact FunctionRNA global identities. Copy target PointerRNA (including owned ancestor vector) into local storage; do not reread self->ptr after cancellation.",
+    "Save initialized BPY_context_get() value (GIL-held pure getter), original G_MAIN and raw ParameterList scalar/pointer numeric values. Existing ParameterList storage remains owned until unconditional cleanup.",
+    "Perform initial WM null-C/null-output absence query. On owner-at-entry active-Main inputs, bind target/related IDs/Scene/override/newid/view-layer membership and native-admission receipt before FIRST CTX_data_main(C). Do not call any native first-read/admission using a stale wrapper-local pointer after provider execution.",
+    "Resolve implicit Main ONCE in this owned producer, then recapture active inputs even if provider removed every owner and no native Cancel occurred. Changed G_MAIN, UID/type/Library/override/relation/scene/view-layer or raw input values refuse before native mutation.",
+    "For actual mutating admitted cases, use existing default CallerContext registered-owner drain. Reconstruct and compare all receipts after EVERY successful WM call, including did_teardown=false, before return. Keep native no-op/error branches from causing unnecessary cancellation.",
+    "Check saved BPY context still current before dispatch. Call SAME exported native bodies with saved Main, current C, fresh resolved pointers and original raw scalar values. Never enter generated FUNC_USE_MAIN wrapper again, because that performs another provider lookup after receipt.",
+    "Borrowed generic RNA_function_call/generated/native routes must be absence-only and callback-free before any relevant old-frame read/query; exact identity selection should prevent bypass of owned producer or recursive cancellation. Do not let native body re-run a strict callback-bearing teardown after owned dispatch.",
+    "Write raw ID*/bool results into original ParameterList slots by fixed property identifiers; preserve native defaults/silent nullptr/false versus preflight report errors. Use bool, not int, for boolean parameter storage.",
+    "Python reports/refusal gate all return conversion. Refresh funcptr from the owned fresh target only when it is still valid and needed. Destroy succeeds with no output and may delete target: skip all post-return target/refinement/ancestor reads. Raw new-ID returns are converted from actual returned ID*, not presumed old target.",
+    "Always free ParameterList metadata/storage. Raw pointer slots and copied ancestor vectors are not ID refcounts and must not trigger disposal through freed targets. Do not add a generic late RNA property update; function bodies already own native tagging/notifiers."
+  ],
+  "native_parity": {
+    "no_owner": "Preserve evaluated UID-zero/no-Main objects and initially absent native behavior; do not force strict active-Main UID receipts or extra Main provider callbacks onto no-owner calls. Initially absent arbitrary callback deletion remains native baseline unless explicitly included in broader proof. A newly acquired owner after initial no-owner query cannot be drained from an unreceipted old input.",
+    "null_context": "Seven formerly context-free Mesh consumers remain callable on proved global absence with null C/implicit Main. Mesh.update historically requires valid C. Default null-C owner-present cancellation refusal remains; do not reuse MaterialAssignmentOriginal policy to broaden these APIs without separate proof.",
+    "foreign_main": "Do not exempt active inputs merely because provider returned a foreign Main. Require fresh numeric target/related membership in returned foreign Main plus disjointness from original active Main before native foreign bypass. Arbitrary foreign-ID provider side effects remain native baseline, not a generic foreign lifetime guarantee.",
+    "non_apple": "All added owned dispatch/profile/admission behavior must be WITH_APPLE_CROSSPLATFORM-gated; leave ordinary native wrappers and ABI unchanged elsewhere.",
+    "uid_zero": "No-owner UID-zero mutations preserve native baseline. Owner-at-entry active-Main mutating cases require fresh resolvable nonzero UID as before. Non-mutating native Edit-error/count-zero/type-mismatch/native no-op admission should not be silently replaced by blanket owner refusal.",
+    "no_ui_change": "All accepted rings/header/icons/geometry/HUD/editors/input unchanged; this is storage/context ownership correction, not a new visible workflow."
+  },
+  "required_connected_tests": [
+    "Run exact Python-dispatch ordering seam plus exact generated wrapper model: owner-at-entry provider removes owner then changes/removes self, related ID, Scene, view layer, override or Library -> refusal before any native admission read/mutation/return conversion; hook second lookup must not execute.",
+    "Run actual internal/exported helper + actual WM_next with did=false after provider hook; fresh input recapture must occur before success. Include callback changes with zero native Cancel.",
+    "Initial generic pre-wrapper absence passes, then actual implicit Main getter acquires a new owner and changes/removes self or related input. Every native first gate refuses without reading old self/override/newid/runtime/native admission, without Cancel and without native write. ParameterList raw result write/cleanup remains safe. Cover initially absent owner staying absent separately as native baseline.",
+    "Cover all15 exact profiles/raw native signatures and output identifiers, no unknown function capture, native no-owner/default/null-C/nonApple/foreign/UID0 paths, partial/empty ancestors, mismatched owner/data, changed raw args, same-value/no-op/Edit-error admission.",
+    "Intentionally delete target in native destroy and ensure no post-native target/funcptr/refinement read, no result conversion, unconditional parameter cleanup. ID creation/make_local returns actual new raw ID*; resync/validators return original bool.",
+    "Keep explicit reentrancy/nested-query refusal, original context identity and no pointer retention across callbacks; refusal does not roll back provider/native Cancel effects. Outer256 attempts are not a global reentrancy bound."
+  ],
+  "boundaries": [
+    "Read-only source audit; no new corrective production or executable regression was added by this reviewer.",
+    "Exact generated ABI inferred from pinned generator, registrations and retained compiled reviews; replacement material compiled review is owned by other reviewers. New target build/compiled15 proof still required after implementation.",
+    "Full Python parsing conversion callbacks precede the proposed producer frontier; this increment does not claim generic arbitrary conversion-callback ID lifetime safety.",
+    "Native allocation/depsgraph/remap/override mutation callbacks, allocator reuse and whole-interpreter/WM/UIKit/device timing are outside this source contract."
+  ],
+  "implementation_grouping": {
+    "map_and_dispatch": "Place exact15 FunctionRNA map and owned dispatcher in rna_ID.cc after the existing seven static ID bodies. Those bodies need not be exported. Export only the eight Mesh bodies from rna_mesh.cc/rna_mesh_api.cc. Public RNA_access API needs exact predicate/owned dispatcher and generic borrowed pre-wrapper absence check.",
+    "first_gate": "Each of all15 native bodies must test callback-free global absence BEFORE any self/override/newid/Mesh runtime/native-admission read. Generic pre-wrapper absence alone cannot handle a provider that acquires a NEW owner and invalidates raw wrapper pointers.",
+    "strict_split": "Keep typed receipt and callback-bearing strict drain separate from native borrowed admission. Only explicit owned producer calls it. Native bodies must never re-enter strict drain after direct owned dispatch.",
+    "borrowed_scope": "A generic owner-present borrowed call can be conservatively refused before wrapper execution; this may suppress native no-op/Edit-error diagnostics in that borrowed case. Exact native admission/error semantics remain required in owned Python dispatch and no-owner borrowed path. Do not claim unchanged owner-present borrowed behavior.",
+    "generated_boundary": "No makesrna generator edit required. Native first-gate refusal protects acquired-owner wrapper case; no-owner-to-no-owner arbitrary deletion remains explicit native-baseline scope, not generic lifetime proof."
+  }
+}

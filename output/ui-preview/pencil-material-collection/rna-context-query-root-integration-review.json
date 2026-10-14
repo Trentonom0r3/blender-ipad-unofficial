@@ -1,0 +1,48 @@
+{
+  "status": "passed_bounded_root_integration_source_review_native_implementation_pending",
+  "reviewer": "collection_outer_finish",
+  "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "baseline_verified_checkpoint": "64748eb9ff8bc7abe932d4120006215fc452842a",
+  "source_basis": "Current materialization only. Active patch has not yet been regenerated for the combined new ID/Mesh native increment.",
+  "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05",
+  "source_sha256": {
+    "source/blender/makesrna/RNA_access.hh": "926d02bed42b28958dd1ab0da5add4ed06854e693f34450f7e29e7781bee2f79",
+    "source/blender/makesrna/intern/rna_access.cc": "24cd41904f36100dc79b0f12cf39c8c661b4659494404793f97bee4cf067954e",
+    "source/blender/python/intern/bpy_rna.cc": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda"
+  },
+  "scope": [
+    "RNA_access.hh three ID-storage integration declarations",
+    "RNA_function_call generic pre-wrapper admission",
+    "pyrna_func_call optional owned ID-storage branch and output/error/cleanup tail",
+    "actual pyrna_param_to_py and RNA_parameter_list_free post-call target usage",
+    "preservation of existing IDMaterials Python branch"
+  ],
+  "checks": [
+    "Three declarations use C++17-compatible existing PointerRNA, FunctionRNA, ParameterList, ReportList and bContext types. Predicate and borrowed admission take const FunctionRNA*. Final native definitions must match these exact declarations.",
+    "Generic RNA_function_call invokes exact-profile callback-free admission before func->call enters generated raw self/input/Main wrapper locals. Reports are forwarded and refusal returns -1. Callback-free implementation and exact fifteen identities still require final native review.",
+    "Python method arguments and ParameterList are already parsed/owned before the new frontier. New branch copies PointerRNA including ancestor storage before owned dispatch, rebinds self_ptr to local optional storage, saves the BPY context and checks it again after dispatch.",
+    "Existing IDMaterials branch remains first and mutually exclusive with the new ID/Mesh branch. Its owned-copy, native dispatcher, BPY-context refusal and fresh parent reconstruction order is retained. Generic RNA_function_call is skipped whenever either optional target is engaged.",
+    "New branch never dereferences self_ptr, self->ptr, target owner or old native result parent after dispatch. It reconstructs funcptr with owner_id=null and static RNA_Function/self_func metadata on success or refusal. Destroy can delete target without this integration rereading it.",
+    "Actual pyrna_param_to_py reads scalar bool from bool parameter storage. Raw ID* outputs use RNA_id_pointer_create(returned ID*), independently of funcptr.owner_id. No function output in the exact contract is a non-ID subdata pointer, collection, enum or dynamic array requiring the old parent.",
+    "RNA_property_pointer_type uses static pointer property metadata unless a custom type_fn exists. The exact selected raw-ID return registrations must retain static ID type and no custom parent-dependent type_fn; final native/profile review remains required.",
+    "Reports/prepared refusal gates precede all output conversion. Generic fallback error text is now Owned RNA operation was refused for both owned profiles; native report diagnostics and ordinary successful material behavior are otherwise unchanged by this integration.",
+    "No late RNA_property_update is added to function calls. Native methods retain tagging/notification ownership.",
+    "Normal tail always ends the parameter iterator and frees ParameterList. Actual free traverses static FunctionRNA parameter metadata and owned storage; bool/int/raw ID pointers are nonowning, so it does not free or dereference destroyed IDs. Optional and funcptr ancestor destructors own vector storage, not ID reference counts.",
+    "The only post-block self_ptr dereference is inside the pre-existing disabled #if0 DEBUG_STRING_FREE print, not compiled behavior. Ordinary cleanup uses parms, iter, ret and err only.",
+    "Null-parent FunctionRNA metadata construction has an existing native precedent in RNA_function_as_string_keywords. It may refine static metadata but carries no pointer to the deleted old target."
+  ],
+  "actionable_findings": [],
+  "required_final_followup": [
+    "Review completed exact fifteen native profile identities, generated ABI/raw bool versus int/output identifiers, native first gate before all self/override/Mesh reads, strict producer receipts and no second implicit Main lookup.",
+    "Execute connected poisoned-target destroy, refusal/report-before-conversion, actual raw ID return and bool output, generic pre-wrapper refusal and owner acquisition during implicit lookup fixtures.",
+    "Run affected/full validation and whole combined patch/literal UI preservation review after source regeneration.",
+    "Perform one exact native build and full IPA/actual compiled native plus outer checks; no compiled or device evidence exists for this new increment."
+  ],
+  "boundaries": [
+    "Native implementation is still in progress. This is a bounded independent review of root integration only, not final all-native/literal review or a passed test claim.",
+    "PointerRNA copies own ancestor vector storage but do not hold IDs alive. Full arbitrary Python parsing/conversion callback safety before the new frontier is outside this increment.",
+    "No proof of full allocator/CPython interpreter/exception/global CFG/WM cancellation/depsgraph/UIKit/device behavior or global reentrancy termination.",
+    "Refusal does not roll back provider or native callback effects; generic Cancel is not rollback.",
+    "Final FunctionRNA identity and output metadata restrictions are essential to the null-parent conversion safety argument and remain pending native implementation review."
+  ]
+}

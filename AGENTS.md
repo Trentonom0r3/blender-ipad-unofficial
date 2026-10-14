@@ -1,3 +1,25 @@
+## Owned ID/Mesh dispatch INCOMPLETE working source - 2026-10-14
+
+Latest verified production remains01e2b1a/run38612413567 (full package and
+independent compiled reviews pass;64748eb evidence only). New exact15 owned
+Python/native dispatch is UNCOMMITTED and NOT ready to build. Source patch
+44a34318a083a571c40005769807b8be694fa22bc3a4a2eee2f2c183b50e81c1
+is regenerated from authoritative Temp/blender-pencil-rna-mlvacs05. Six existing
+source sections change; all other132-overlay sections stay unchanged. RootAPI/
+generic-wrapper/BPY integration, exact15 native map/direct dispatch, active-Main
+first-query receipts, per-successfulWM validation, scoped busy and one-use native
+lease are connected. Focused7/7 pass8.628s;132-file preflight/diff pass ONLY.
+First7 compile errors were fixture thread-macro boundaries, corrected explicitly.
+
+BLOCKING VALIDATION ITEMS: owner-present evaluated/non-Main no-op/Edit admission;
+foreign receipts currently captured AFTERfirstMainquery (not pre-query proof);
+actualPython tail/destroy/generic wrapper seams/old-source failure test incomplete;
+migrated ID/Mesh suites UNRUN and full suite NOT RUN. Do not commit/build candidate
+or claim source validated. Preserve all local source/tests and existing evidence.
+Read output/ui-preview/pencil-rna-owned-dispatch/source-checkpoint.json plus
+pencil-material-collection/rna-context-query-outer-contract.json. No running
+native build/verifier exists; no unchanged rebuild. Full personal goal unfinished.
+
 ## Material collection exact IPA verified - 2026-10-14
 
 Production01e2b1a60797bead82d251fedac6bcd41e332be9/run38612413567 passed
