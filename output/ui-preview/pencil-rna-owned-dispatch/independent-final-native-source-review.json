@@ -1,0 +1,140 @@
+{
+  "status": "passed_bounded_native_literal_source_review_validation_incomplete_do_not_build",
+  "reviewer": "independent_final_native_correctness",
+  "review_date": "2026-10-14",
+  "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "baseline_verified_run": "38612413567",
+  "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "superseded_corrected_candidate_sha256": "a6ef7afb20f1b9bf5463360aec65498c0e83cc5687d7ccf10e09204e0c818f40",
+  "final_delta_from_a6ef7a": "C++17 [[maybe_unused]] on the now Apple-owned-only strict static helper; no behavior or test change.",
+  "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05",
+  "materialized_source_sha256": {
+    "source/blender/makesrna/intern/rna_ID.cc": "63b39443cf049d63fee8a99291017a74d6315ca3e811747af2fafca05bda6685",
+    "source/blender/makesrna/RNA_access.hh": "926d02bed42b28958dd1ab0da5add4ed06854e693f34450f7e29e7781bee2f79",
+    "source/blender/makesrna/intern/rna_mesh.cc": "b117dd6ffa3a8ab5dee64a7fa5f2db3c8cfa92a26492bf86d96fec48202c5151",
+    "source/blender/makesrna/intern/rna_mesh_api.cc": "571f3f0276a8bd62de6aa630882c729827d120121b81890512afeb71670e334e",
+    "source/blender/makesrna/intern/rna_access.cc": "24cd41904f36100dc79b0f12cf39c8c661b4659494404793f97bee4cf067954e",
+    "source/blender/python/intern/bpy_rna.cc": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda"
+  },
+  "actionable_source_findings": [],
+  "contracts_reviewed": [
+    {
+      "scope": "Exact15 native map and public API",
+      "anchors": "rna_ID.cc1476-1884; RNA_access.hh85-104",
+      "result": "All seven existing static ID bodies and eight exported Mesh bodies match the exact FunctionRNA identity map. Public predicate and borrowed admission use const FunctionRNA*. Exact owned public dispatcher matches C/PointerRNA/FunctionRNA/ParameterList/ReportList types. The eight Mesh declarations match real definitions, including raw bool validator returns and int add counts. No runtime name selection or makesrna edit is introduced."
+    },
+    {
+      "scope": "Native first admission gate",
+      "anchors": "rna_ID.cc1092-1472; rna_mesh.cc79-155; rna_mesh_api.cc199-286",
+      "result": "Every selected native body enters callback-free borrowed admission before any ID self/override/newid or Mesh runtime/native-admission field read. Mesh bridge reads only its caller-owned pointer slot before the public gate. Generic RNA_function_call checks exact-profile absence before entering generated wrapper raw locals. A newly acquired owner during an implicit Main lookup therefore refuses at the first native gate before target dereference."
+    },
+    {
+      "scope": "Busy scope and one-use native lease",
+      "anchors": "rna_ID.cc1039-1088,1912-2026",
+      "result": "Thread-local busy state spans initial provider, drain and same-body dispatch. Matching numeric Main/ID plus exact operation consumes the one-use lease before the first native self read. Unmatched/repeated native gates, generic wrappers and recursive owned producers refuse while busy. Scoped cleanup clears lease and busy state; after destroy only lease/scoped value metadata is inspected, never the old target ID."
+    },
+    {
+      "scope": "First Main/copy frontier",
+      "anchors": "bpy_rna.cc6948-6981; rna_ID.cc1919-1973",
+      "result": "After ordinary argument parsing, Python copies target PointerRNA and owned dispatcher copies it again, with numeric raw ParameterList inputs saved before a null-C/null-output owner query. Owner-present active inputs receive typed target/related/Scene/override/newid/view-layer/runtime/native-admission receipts before the first CTX_data_main. Changed Main/context/receipts/raw values refuse before same native body. Initially absent to newly owned refuses without cancellation; initially absent and still absent retains explicitly bounded native baseline."
+    },
+    {
+      "scope": "Corrected zero-add admission",
+      "anchors": "rna_ID.cc1926-1950; rna_mesh.cc93-154",
+      "result": "Owner-present count0 for each of four add profiles requires exact collection RNA type, nonnull data==owner and empty ancestors, then checks saved BPY context and immediately invokes the same native body through a one-use lease. No context provider, cancellation, UID receipt or Main-membership read intervenes. The ordinary native ED wrapper retains Edit-error-before-zero order at this trusted frontier, including evaluated/non-Main inputs. Positive-count non-active/evaluated owner-present cases remain explicitly unsupported."
+    },
+    {
+      "scope": "Corrected foreign/evaluated owner-at-entry refusal",
+      "anchors": "rna_ID.cc1951-1957",
+      "result": "Except the callback-free count0 path, owner-present target absent from original active Main refuses before first CTX_data_main. There is no post-query foreign capture that could bless an address-reused replacement. A target present in active Main with provider-returned foreign Main refuses as well. This deliberately narrows owner-present support; no-owner foreign/evaluated native baseline is retained."
+    },
+    {
+      "scope": "Per-successful-WM typed validation",
+      "anchors": "rna_ID.cc985-1030,1975-2006",
+      "result": "The strict helper reconstructs all saved typed UID/Library/override/Scene/view-layer identities and invokes complete owned shape/raw-argument validation after every successful WM call, before did_teardown=false admission or another cancellation. Receipt changes including target.newid refuse after the first completed call. Explicit producer alone calls strict cancellation with original C and default CallerContext policy; borrowed bodies never call providers or native Cancel."
+    },
+    {
+      "scope": "Native no-op/error/default/return semantics",
+      "anchors": "rna_ID.cc1792-1872 plus original registrations; rna_mesh.cc93-154",
+      "result": "requires_drain preserves real native admission for override-create remap flag, ID overridability, real override reset/destroy, resync hierarchy errors, same-ID/different-type user_remap no-op, linked-only make_local and Mesh Edit/zero adds. Default Mesh update still drains/mutates; validator false remains a genuine native result. Dispatch calls the same bodies without a second generated Main query and preserves static raw ID* output id, raw bool success/result, default parsed bool/int values and nullable inputs."
+    },
+    {
+      "scope": "Python return/cleanup and intentional destroy lifetime",
+      "anchors": "bpy_rna.cc6965-7042; pyrna_param_to_py pointer branch6580 onward; rna_access.cc7245-7271,7323-7375",
+      "result": "Owned storage branch skips generic wrapper call, performs report/context refusal before return conversion and rebuilds FunctionRNA metadata with null parent. Only exact void/bool/raw ID outputs are selected; raw ID outputs construct from returned ID independently of old parent. Actual ParameterIterator.size is native size, with padding applied only to offsets, matching bool rather than int output writes. Normal cleanup ends/frees owned ParameterList using static metadata and does not dereference destroyed IDs. No new late property update is added."
+    },
+    {
+      "scope": "C++17/non-Apple/header hygiene",
+      "anchors": "rna_ID.cc205-216,911,1039-1051; RNA_access.hh85-112",
+      "result": "Required integer/cstring/Main/context/Mesh type declarations are included under the runtime Apple scope. Static ID dispatcher stays after same-TU ID bodies, and exported Mesh ABI declarations match definitions. Non-Apple exact profiling is false and native borrowed gate remains true. The strict static helper became unused on non-Apple; final [[maybe_unused]] is standard C++17 and suppresses only that warning without linkage or behavior changes. Full Blender native compilation is still required."
+    }
+  ],
+  "literal_preservation": {
+    "baseline_sections": 132,
+    "candidate_sections": 132,
+    "changed_sections": [
+      "source/blender/makesrna/intern/rna_ID.cc",
+      "source/blender/makesrna/RNA_access.hh",
+      "source/blender/makesrna/intern/rna_mesh.cc",
+      "source/blender/makesrna/intern/rna_mesh_api.cc",
+      "source/blender/makesrna/intern/rna_access.cc",
+      "source/blender/python/intern/bpy_rna.cc"
+    ],
+    "unchanged_sections": 126,
+    "added_sections": [],
+    "removed_sections": [],
+    "all_packaged_interaction_python_sections_unchanged": true,
+    "packaged_interaction_python_sections": 7,
+    "result": "Only the six listed native/RNA/BPY source sections differ. Every other overlay section is byte-exact to verified production, covering accepted UI/ring/native bars/tools/icons/HUD/GHOST/editor behavior."
+  },
+  "independent_current_checks": {
+    "existing_focused_suite": {
+      "command": "python -m unittest discover -s build -p test_pencil_rna_owned_dispatch.py -v",
+      "passed": 7,
+      "seconds": 9.203,
+      "result": "pass; existing C++17 fixture tests were executed without any code/expectation edits"
+    },
+    "literal_section_comparison": "pass",
+    "git_diff_check": "pass",
+    "preflight": "Existing second preflight log reports132 pinned source files; root owns final post-annotation preflight outcome.",
+    "full_suite": "Root session80551/.cache/rna-id-owned-full-audit-first.log in progress at review; no full pass claimed."
+  },
+  "retained_failure_semantic_audit": [
+    {
+      "cases": "Three ID foreign-Main cases plus one Mesh context3 case",
+      "assessment": "Old fixtures place the same target in active Main and duplicated foreign.ids, then expect native writes while a paint owner exists. Current original-Main/provider equality intentionally refuses. Their old success assertion does not demonstrate a no-owner foreign/evaluated regression. Zero Cancel, owner preserved and zero native writes/tags/cleanup must remain required; separate no-owner foreign positive cases are needed."
+    },
+    {
+      "case": "Preexisting newid NewptrNull/NewptrChanged cancellation count",
+      "assessment": "New per-WM validate_owned detects relation change after first completed cancellation; earlier code waited through both owners before the enclosing relation check. Stronger behavior is exactly one cancellation and retained second owner, preserving zero make_local/newptr/metadata writes. Do not relax those mutation and retained-owner assertions."
+    },
+    {
+      "case": "Generated null-context Mesh test",
+      "assessment": "Current migrated legacy macros route its apparent generated native calls through owned fixture adapters. This is not a direct generated/native test result. The direct borrowed gate now checks global absence without invoking supplied C; C-nonnull/native-Main-null while global absence is proved therefore follows native baseline instead of the earlier conservative context rejection. This direct case still needs an explicit correctly bounded execution; no assertion was changed by this reviewer."
+    }
+  ],
+  "validation_incomplete_and_build_gate": {
+    "status": "not_ready_to_commit_or_build",
+    "retained_results": "Earlier migrated ID11/15 and Mesh15/17 have six failures; do not report them passed.",
+    "new_required_checks": [
+      "Actual pyrna_func_call tail and metadata-only cleanup with destroy of a heap target",
+      "Exact generic RNA_function_call plus generated wrapper acquired-owner/stale-input seam",
+      "Portable historical helper failure baseline",
+      "Four count0 evaluated/non-Main/native Edit-order cases and owner-present target-absent pre-first-query refusal",
+      "Corrected affected retained fixtures, full suite and final132-file preflight"
+    ],
+    "preserved_review_proposal": "output/ui-preview/pencil-rna-owned-dispatch/fixture-migration-review-proposal.json",
+    "automatic_review_block": "Automatic approval review rejected changing failing fixture expectations/undefining callback macros and the proposed Python-tail deletion/model infrastructure, stating these mutations could mask regressions or obscure validation without trusted approval of the exact changes. No rejected test edit or alternate implementation path was applied by this reviewer.",
+    "ownership": "Root will present the concrete reviewed validation proposal for human approval after unaffected work finishes. This source review does not authorize bypassing those rejections."
+  },
+  "boundaries": [
+    "Source review and bounded host fixtures only. No new native build, package, compiled15 or device acceptance exists for this increment.",
+    "The7 existing focused tests do not replace missing actual Python-tail/destroy/generated seam and corrected retained/full validation.",
+    "The two corrected gaps and scoped native contracts have no remaining actionable source finding, but the incomplete validation and automatic-review block remain real delivery gates.",
+    "PointerRNA copies own ancestor metadata, not ID references. Arbitrary parsing/conversion callbacks before the trusted producer frontier and initial no-owner-to-no-owner provider deletion retain explicit native-baseline scope.",
+    "Main/context/ParameterList/Python/native BKE/allocator/WM Cancel effects remain instrumented fixture boundaries; no generic heap lifetime, full exception/global CFG, global reentrancy termination, rollback or UIKit behavior proof.",
+    "Owner-present non-active/evaluated positive-count mutation/Edit diagnostic support is intentionally refused before provider; do not claim complete parity for that case.",
+    "This reviewer made no production or fixture edits and did not dispatch a build."
+  ],
+  "device_acceptance": false
+}

@@ -1,0 +1,72 @@
+{
+  "status": "review_only_unapplied_proposal_automatic_review_rejected_fixture_edits",
+  "candidate_patch_sha256": "a6ef7afb20f1b9bf5463360aec65498c0e83cc5687d7ccf10e09204e0c818f40",
+  "original_execution_patch_sha256": "44a34318a083a571c40005769807b8be694fa22bc3a4a2eee2f2c183b50e81c1",
+  "logs": {
+    "retained_id": ".cache/rna-owned-retained-id-first.log",
+    "retained_mesh": ".cache/rna-owned-retained-mesh-first.log",
+    "focused_7_pass": ".cache/rna-owned-focused-2.log"
+  },
+  "scope": "No rejected edit was applied. This JSON is review material only, not executable code, a fixture override, a passing result, or authorization to build.",
+  "cases": [
+    {
+      "test": "test_creation_without_remap_and_foreign_main_do_not_drain_active_owners",
+      "file": "build/test_pencil_rna_override_owner_teardown.py",
+      "old": "Foreign-Main branch expects override_create == created, native writes1 and reset_single1 while the same target remains in active Main.",
+      "proposal": "Keep remap=false positive case. For the ambiguous active target with provider-returned foreign Main, require nullptr/zero native writes/reset operations, zero Cancel, and active owner preserved. Add a separately proved no-owner foreign positive case.",
+      "evidence": "Current owned dispatcher captures active target before provider and refuses if returned bmain != original_main. No foreign target-only exemption remains."
+    },
+    {
+      "test": "test_linked_make_local_preexisting_newid_is_rebound_or_refused_before_cleanup",
+      "file": "build/test_pencil_rna_override_owner_teardown.py",
+      "old": "NewptrNull/NewptrChanged permit two cancellations before refusal, unlike UID/unlink cases.",
+      "proposal": "Require one cancellation for every changed preexisting newid relation; second owner must remain registered, with no localization or cleanup mutation.",
+      "evidence": "Strict helper validate_owned executes after fresh identity resolution on every successful WM step before did_teardown=false and before a subsequent cancellation."
+    },
+    {
+      "test": "test_linked_make_local_uses_fresh_native_result_and_clears_newptr_once",
+      "file": "build/test_pencil_rna_override_owner_teardown.py",
+      "old": "Final foreign-Main branch expects created result, localization1 and cleanup1 although its target is also active.",
+      "proposal": "Retain no-owner/copy/cleanup result tests. Ambiguous active target plus foreign Main must refuse with no localization/cleanup, zero Cancel and owner preserved.",
+      "evidence": "Same active-target/returned-Main equality guard; positive no-owner branches remain distinct."
+    },
+    {
+      "test": "test_user_remap_preserves_native_type_admission_and_context_free_success",
+      "file": "build/test_pencil_rna_override_owner_teardown.py",
+      "old": "Final foreign-Main branch expects one remap on the active target without draining its owner.",
+      "proposal": "Keep same-ID/type mismatch and no-owner positive cases. Require zero remap for active target combined with a foreign returned Main, zero Cancel, active owner preserved.",
+      "evidence": "Source guards this explicit producer using original active-Main receipt before any native remap; no borrowed fallback cancellation."
+    },
+    {
+      "test": "test_generated_null_context_supplies_null_main_for_seven_formerly_context_free_apis",
+      "file": "build/test_pencil_mesh_storage_owner_teardown.py",
+      "old": "The generated_call test is currently compiled under test-owned adapter macros, so it enters another owned producer rather than the intended direct generated/native callback.",
+      "proposal": "Explicitly restore actual native callback names for this test only (production is untouched). Keep every existing null-context/no-owner/UID-zero/owner-present/null-G_MAIN scenario. Execute those real bodies and investigate the C-nonnull/Main-null baseline before setting its expectation; no scenario should be silently removed.",
+      "evidence": "new test harness legacy_adapters defines test-only #define rna_Mesh_* fixture_owned_rna_Mesh_* before the test body. Existing failure is not yet an interpretable direct native result."
+    },
+    {
+      "test": "test_no_owner_context_free_and_foreign_main_preserve_native_semantics",
+      "file": "build/test_pencil_mesh_storage_owner_teardown.py",
+      "old": "context3 expects native write even though the SAME Mesh target remains in active Main with a paint owner and another Main is supplied.",
+      "proposal": "Preserve all positive no-owner/context-free/evaluated cases. context3 should assert refusal/report, zero writes/cache dirtiness/tags, zero Cancel and preserved owner; add separate no-owner foreign positive proof.",
+      "evidence": "Current owned producer refuses active-target Main mismatch; supplied foreign Main is not target disjointness proof."
+    }
+  ],
+  "new_unfinished_verification": [
+    "Actual pyrna_func_call tail: copy before lookup, report/context gate before return conversion, unconditional ParameterList metadata-only cleanup.",
+    "Intentional native destroy of a heap ID: no old owner/funcptr/refinement read after same native body; void result and metadata disposal remain safe.",
+    "Actual generic RNA_function_call plus generated wrapper model: an owner acquired in Main lookup must be refused at native first gate before stale ID admission read.",
+    "Portable historical strict-helper failure demonstration with original body SHA2560f5b2dd4ce2a46fe4407ec441b608510f3cbd747fbd377e3a4b3445cf3288630; old baseline cache .cache/rna-owned-baseline-strict-helper.cc."
+  ],
+  "automatic_review_rejections": [
+    "The command mutates validation fixtures by rewriting failing expectations and undefining native callbacks, which could mask real regressions rather than establish the required native behavior; the task authorizes fixing tests, not weakening their assertions.",
+    "Despite the justification, this repeats the previously rejected pattern of rewriting failing fixture expectations to refusal/zero-mutation outcomes without trusted user approval of those exact semantic changes; it could mask regressions.",
+    "This complex command rewrites the shared test harness, injects simulated deletion/Python behavior, and changes validation infrastructure after prior fixture-edit rejections; the exact mutations are not authorized by trusted user content and could obscure rather than verify regressions."
+  ],
+  "boundaries": [
+    "Do not apply via another path or regenerate rejected files.",
+    "Existing ID11/15 and Mesh15/17 results are partial runs with six failures, not suite passes.",
+    "The seven focused checks passed only before the latest two source parity corrections; latest candidate focused rerun is still required.",
+    "No source/full/native/package/device acceptance is claimed."
+  ]
+}

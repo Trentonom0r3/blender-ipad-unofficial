@@ -1,3 +1,25 @@
+## Validation edits need explicit approval - 2026-10-15
+
+Candidatefe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127
+is preserved UNCOMMITTED and must NOT be built. Both native gaps from the previous
+checkpoint are corrected; independent bounded native/literal source review passes,
+focused7/7 and132-file preflight/diff pass. Full487 checks368.158s FAILED29errors:
+458passed;23 material-collection fixture compiler errors from missing newly added
+API boundaries, and6 retained ID/Mesh cases needing reviewed migration.
+
+Automatic approval review REJECTED test expectation migrations twice and NEW
+Python/deletion harness additions once, citing insufficient explicit authorization
+and risk of masking regressions. No rejected edit applied. Do not retry through
+another path. Human approval is requested for the concrete review-only proposal:
+output/ui-preview/pencil-rna-owned-dispatch/VALIDATION_CHANGES_FOR_REVIEW.md.
+It includes all six cases, shared material-harness API integration and new
+Python/destroy/generated/portable old-source coverage; preserve original logs.
+After approval finish those tests and full checks/review before any native build.
+Latest fully verified IPA remains01e2b1a/run38612413567; no unchanged rebuild.
+Source-checkpoint.json and independent-final-native-source-review.json record
+exact source and limits. No tester/verifier/build remains running. Full goal
+unfinished, not marked blocked; this is the first turn of this approval blocker.
+
 ## Owned ID/Mesh dispatch INCOMPLETE working source - 2026-10-14
 
 Latest verified production remains01e2b1a/run38612413567 (full package and
