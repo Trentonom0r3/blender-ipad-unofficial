@@ -76,9 +76,9 @@ ED_NAMES = ("ED_mesh_verts_add", "ED_mesh_edges_add", "ED_mesh_loops_add", "ED_m
 ED_CALLBACKS = [function(ED, "void " + name + "(") for name in ED_NAMES]
 PREFIX = ID_PREFIX.replace("#include <vector>", "#include <vector>\n#include <string>").replace("ID_OB='O' | ('B'<<8)", "ID_ME='M' | ('E'<<8), ID_OB='O' | ('B'<<8)")
 # The fixture supplies nullable implicit-Main plumbing for direct native calls.
-# This is modeled input, not execution of pinned CTX_data_main(nullptr): the
-# native getter dereferences C->data.main. Provider/interpreter behavior is outside
-# this direct-callback proof.
+# The nullable result matches the pinned ctx_data_pointer_verify null-C branch,
+# which returns true with null output before provider dispatch. This fixture
+# models the getter; it does not execute the native getter or interpreter.
 PREFIX = PREFIX.replace("static Main *CTX_data_main(const bContext *C){return C->main;}",
                         "static Main *CTX_data_main(const bContext *C){return C?C->main:nullptr;}")
 PREFIX = PREFIX.replace("struct ReportList { int errors=0; };",

@@ -1,0 +1,72 @@
+{
+  "review": "Read-only owned pointer-assignment late-update ABI recommendation",
+  "timestamp_utc": "2026-10-16T05:33:08.724179+00:00",
+  "status": "design_recommendation_only_no_source_test_or_build_change",
+  "production": "196b54ca63a8fa558225479711de2426a83f8c53/run38850540318; checkpointfe34c2e documentation only",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "decision": "Use one bounded owned whole-assignment transaction for EXACT THREE pointer profiles: Object.data, Object.active_material and MaterialSlot.material. Early borrowed absence gates alone do not preserve an owned material origin through later initially-absent context-provider callbacks. Include their owned late-update identity in the same coherent increment, or explicitly leave material late-origin protection deferred; do not claim it fixed by a pre-provider gate. Recommended scope includes allthree.",
+  "actual_tail_and_routes": [
+    {
+      "anchors": "bpy_rna.cc1927-1933,1964-1981,2083-2111,2133-2137,2230-2244",
+      "finding": "Ordinary Object.data ID/None conversion leaves value_new null. The visible Py_XDECREF(value_new) precedes lateupdate but is not a callback for these ordinary selected inputs. Nonnull value_new arises from AnyType Operator/Gizmo conversion or collection conversion; a successful selected exotic conversion has not been demonstrated. Do not allege a cleanup callback for ordinary Object.data. Receipt ownership should nevertheless survive the existing conversion/report/cleanup order without movingDECREF or rereading wrapperstorage."
+    },
+    {
+      "anchors": "rna_access.cc2722-2736; inner2625-2680; context.cc321-403,418-434,1135-1158",
+      "finding": "Public RNA_property_update evaluates both context providers before inner gate; C++ does not specify Main/Scene argument order. The42-scenario probe observes Scene/Main on its compiler only. Owned finish must explicitly sequence provider calls and validate original identity/context after EACH, then enter common update with fresh Main/Scene and originalC without another implicit provider. Dropping C through update_main changes messagebus/context behavior."
+    },
+    {
+      "anchors": "rna_object.cc505-508,3651-3657; exactpin499-501,2894-2897; makesrna.cc4430-4435",
+      "finding": "Known actual RNA registration for rna_Object_data_update is Object.data only; generated property initializer directly embeds the update function, so direct callback invocation can bypass publicRNAupdate gates. This bounded source search found noother registration/call beyonddefinition and Object.data registration in current materialization/exactpin cache. Shared rna_Object_internal_update_data_dependency and impl have unrelated consumers and must not be blanket-gated. A narrow Object.data callback wrapper/body admission is appropriate; wider repository callgraph not claimed."
+    },
+    {
+      "anchors": "rna_object.cc2190-2197,3079-3093,3774-3795",
+      "finding": "rna_MaterialSlot_update is shared by MaterialSlot.link and the two selected material pointerproperties. Do not add a blanket gate to that shared function and silently change link admission. Use pointer-property-specific update wrappers/exact metadata identity for the two selected routes; active_material_index remains separateNO_DEG_UPDATE/notifier-only native semantics."
+    },
+    {
+      "anchors": "interface.cc4439-4486; interface_handlers.cc1888,2869-2876; rna_access.cc4668-4770,2728-2736",
+      "finding": "Native UI/selected-pointer calls and direct generated setters remain borrowed. They must not dispatch callback-bearing owner retirement; exactprofile absence checks belong before generic Debuggetter/refcount capture, native setterDNAreads, publicupdate provider entry, update_main tagging, and narrow direct native update callback. Ownerpresent pre-provider refusal alone does not prove initially-absent pointers survive provider callbacks."
+    }
+  ],
+  "suggested_public_contract": {
+    "type": "Opaque RNAOwnedPointerAssignmentReceipt with a context-free destructor/free operation. Names below are proposed API shapes, not implemented declarations.",
+    "begin": "RNA_property_pointer_assignment_begin_owned(C, const targetPointerRNA, numericPropertyAddress, const valuePointerRNA, reports, receiptOut) -> explicit result enum (Unrelated, NativeBaseline, AppliedOwned, Refused). Begin copies target/value PointerRNA ancestor storage, binds fixed exactprofile and original numeric identities BEFORE provider/cancellation callbacks, performs the all-owner preparation plus SAME native generic setter once under admitted ownership, then records the narrowly expected native postsetter transition while retaining original IDs. Keeping apply insidebegin prevents caller from accidentally rereading original wrapper or calling setter twice afterpreparation.",
+    "finish": "RNA_property_pointer_assignment_finish_owned(C, receipt, reports) -> bool. Called at existing lateupdate position after the existing Python cleanup/report control flow. It consumes exactlyonce; preserves silentreturns and report-based suppression. It validates saved originaltarget/value/context and expected postsetter state beforeprovider execution, obtains Main then Scene in explicit sequence, reconstructs and validates original identities/context/property after EACH provider, checks newly acquired owners beforetagging, then invokes common native rna_property_update(C, freshMain, freshScene, ownedTarget, freshProperty) without another contextlookup. Retain originalC/messagebus/notifier/genericdepsgraph behavior, not update_main substitution.",
+    "free": "RNA_property_pointer_assignment_receipt_free(receipt) noexcept, context-free on allsuccess/error/earlyreturn paths. Free only owned per-call receipt/PointerRNA ancestor allocation and numeric POD records. It must not dereference target/data/Library/Main/Scene/C, call Python/RNA/WM cleanup callbacks, cancel a native operator or rebuild any owner. Prefer RAII at Python caller while retaining opaque allocation boundary.",
+    "result_semantics": "Unrelated follows untouched native path. NativeBaseline explicitly labels preserved no-owner unsupported foreign/evaluated/context cases whose arbitrary callbacks are not covered by the new owned-origin guarantee. AppliedOwned means setter ranexactlyonce and receipt is valid for finish, including native silentEdit/null returns because lateupdate still haseffects. Refused reports/error-suppresses laterupdate; it never claims cancellation or prior native effects were rolledback."
+  },
+  "receipt_and_property_obligations": [
+    "Receipt identities are numeric/value-only, never suspended dereferenceable ID/operator/Brush/Undo pointers. Include original targetObject UID/address/type, olddata and incoming nullabledata/Material IDs and typedname/UID/Library/override relationships, originalMain identity, saved context/window/WM UID/winid and relevant Scene identity. Own PointerRNA ancestor vectors separately and free them without touching pointees.",
+    "At prepare, bind exact fixed property via fresh scoped built-in RNA_Object.data lookup (or the two fixed material lookups), compare incoming numeric PropertyRNA address to fresh result BEFORE dereferencing old metadata. Repeat fresh lookup/numeric identity/profile checks after callbacks; do not trust a retained raw PropertyRNA after registration/context changes. No global field-name allowlist.",
+    "Carry originaltarget identity from begin through finish. Capturing whatever object occupies its old address onlyatfinish would bless replacement. After native setter, resolve original UID/name/Library/override and compare expected relation to incomingdata; do not replace original identity with a fresh arbitrarycapture.",
+    "Do not demand pre/post state bebyteequal where native setter legitimately changes it: Mesh material/modifier reconciliation, Empty clear/assignment, native material slot growth/link state and Curve type adjustment can change fields. Encode narrowly permitted expected postsetter relation/type changes using same originalObject UID and typedincoming IDs; retain refcount/error/native admission behavior.",
+    "Main/Scene providers can mutate/delete targets or acquire/retire owners without a nativeCancel. Revalidation is required even on successful WM didfalse and even when the producer previously drained allowners. No second blind provider lookup after validation.",
+    "Single-use state and scoped recursion refusal must span callback-bearing prepare/finish phases; nested writes/refusal and Python errors must never leave a stale receipt or borrowed frame admitted. Exact pending-scope policy and allocator failure handling require connected tests; no global reentrancy termination proof is assumed."
+  ],
+  "policy_and_baseline": {
+    "recommended_owner_present_policy": "Explicit owned pointer-assignment OriginalRegisteredContext policy on the existing shared all-ownerWMscan, with NONNULL savedC supplied and currentC/Main/window membership validated before/aftercallbacks. It always cancels via freshly reconstructed registered ownercontext, never replacement callercontext. Reuse/rename/extend the narrow materialproducer policy explicitly, not enable it for borrowednativeUI or the defaultMesh/ID helpers.",
+    "null_C": "Ownerpresent/nullC full Pythonowned assignment shouldrefuse explicitly in this bounded increment. Fixed native Object.data setter has noC and must retain direct noowner native behavior. RNA_property_update_main takes explicitMain/Scene and is a different API. Actual pinned ctx_data_pointer_verify(C==null) returns true withnull output, so CTX_data_main/scene returnnull; the stronger claim that these exact getters necessarily dereference null is unsupported by the inspected pin. This does NOT establish a safe complete nullC Pythonupdate (downstream callee contract/messagebus/nativecontext remains separate). Do not invent or broaden one.",
+    "no_owner": "Retain existing native noowner behavior, defaults, evaluated/foreign input semantics wherevalid, fixed setter ABI, exact native data/refcount/type/null/ReportError/silentreturn behavior and nonApple pass-through. Distinguish NativeBaseline from AppliedOwned in evidence and APIresults; no generic allRNA/noowner callback lifetime claim.",
+    "why_all_owners": "Existing full-assignment contract documents direct sameMeshPBVH reset and distinct ObjectT->ShrinkwrapObjectA evaluated-cache-free chain, so ObjectUID-only filtering is insufficient for supported complete assignments. Preserve currentdefaultMesh nullC ownerrefusal and existing WM lookup/lifetime checks."
+  },
+  "evidence": {
+    "existing28": "object-data-outer-characterization.json",
+    "existing42": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-rna-owned-dispatch\\update-provider-frontier-characterization.json",
+    "existing42_sha256": "64d412eb075c0bcff427dd4c7b56701234a566a2bdeaa384ae28a70d30f56e07",
+    "existing42_scope": "42 passed bounded actual-wrapper/provider/helper executions, modeled ctx_data_get/WMendpoint and owner-read/tag suffix; no UAF/full commonupdate/device proof. Includes both existing material profiles plus unprofiled Object.data.",
+    "primary_contract": "object-data-full-assignment-contract.json"
+  },
+  "remaining_design_choices": [
+    "Finalize exact enum/API names and whetherbegin owns apply or uses an unskippable applystage. Preserve one actual native setter call and original Python report/cleanup ordering eitherway.",
+    "Define bounded nativeCurve type transitions and modifiers/material/Armature postsetter state; do not reject legitimate BKE changes by demanding prestate equality or accept arbitrary replacement by capturing atfinish.",
+    "Audit allselected exotic conversion reachability before making any DECREF callback claim. Ordinary Object.data ID/None path is already boundednull.",
+    "Decide exact activeMain/window/Scene support and NativeBaseline fallback for initially-absent foreign/evaluated/nonMain/contextless calls. Do not passunsupported cases as if owned-origin safety wereproved.",
+    "Borrowed initially-absent provider calls remain a native-baseline boundary unless supplied their own callback-free numeric identityreceipt; an early absence gate alone does not solve callback deletion. Explicitly test/refuse/document that boundary rather than label it a full lifetimefix.",
+    "Direct update callback wrappers must not broaden MaterialSlot.link/sharedupdate admission or unrelated Objectdata dependencycallbacks; complete exactgenerated metadata/directcall audit before sourcevalidation.",
+    "Need connected actual Pythonbegin/finish/errorcleanup and native/generic Debug/provider/update_main tests plus current ownership suites before any future sourcebuild. No implementation made here."
+  ],
+  "limits": [
+    "Read-only recommendation and durable report only; no production/test edit or new build.",
+    "Current15 completed source/package/compiled proof stays separate from this future contract.",
+    "No allocator/globalCFG/WMtermination/globalRNA lifetime/Cancelrollback/device guarantee."
+  ]
+}

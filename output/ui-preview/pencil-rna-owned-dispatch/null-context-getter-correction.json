@@ -1,0 +1,52 @@
+{
+  "timestamp_utc": "2026-10-16T05:35:03.608469+00:00",
+  "status": "evidence_correction_only_production_overlay_unchanged",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "correction": "ctx_data_pointer_verify(nullptr) sets output to nullptr and returns true before provider dispatch. CTX_data_main/scene therefore return nullptr without reaching C->data fallback. Earlier stronger null-dereference claims omitted this early return and are withdrawn.",
+  "primary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\blenkernel\\intern\\context.cc",
+    "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "anchors": "context.cc418-434 and1135-1158"
+  },
+  "fragments": {
+    "verify": {
+      "sha256": "fcc2e65ff9837ddea19edd007afcd6b4ed5422e44ab003f42c373ec0f93df297",
+      "source": "static bool ctx_data_pointer_verify(const bContext *C, const char *member, void **pointer)\n{\n  /* if context is nullptr, pointer must be nullptr too and that is a valid return */\n  if (C == nullptr) {\n    *pointer = nullptr;\n    return true;\n  }\n\n  bContextDataResult result;\n  if (ctx_data_get((bContext *)C, member, &result) == CTX_RESULT_OK) {\n    BLI_assert(result.type == CTX_DATA_TYPE_POINTER);\n    *pointer = result.ptr.data;\n    return true;\n  }\n\n  *pointer = nullptr;\n  return false;\n}"
+    },
+    "main": {
+      "sha256": "9edd620127f61045d102060567b81f0f0636c82eec98ae180fa4001eeaedba38",
+      "source": "Main *CTX_data_main(const bContext *C)\n{\n  Main *bmain;\n  if (ctx_data_pointer_verify(C, \"blend_data\", (void **)&bmain)) {\n    return bmain;\n  }\n\n  return C->data.main;\n}"
+    },
+    "scene": {
+      "sha256": "8dcb91664e04592709dd8285658ec35f5c90415b23c3a7a00b267c4fe3360f78",
+      "source": "Scene *CTX_data_scene(const bContext *C)\n{\n  Scene *scene;\n  if (ctx_data_pointer_verify(C, \"scene\", (void **)&scene)) {\n    return scene;\n  }\n\n  return C->data.scene;\n}"
+    }
+  },
+  "executions": [
+    {
+      "optimization": "O0",
+      "exit_code": 0,
+      "output": "PASS exact pinned null-context verify/Main/Scene: no provider dispatch"
+    },
+    {
+      "optimization": "O2",
+      "exit_code": 0,
+      "output": "PASS exact pinned null-context verify/Main/Scene: no provider dispatch"
+    }
+  ],
+  "fixture": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\test_pencil_mesh_storage_owner_teardown.py",
+    "before_sha256": "500c973fc9bd26dcabe1e48c91682246af02c9b29259430ad44a9f5faf17fea3",
+    "after_sha256": "56a39176725f41eef2a24fc3a3e0f98d29ea7b55ca978b63cb1c33efba6e6c98",
+    "python_ast_identical": true,
+    "change": "Python comment only; no C++ source string, assertion, expectation, test name, production or patch change"
+  },
+  "superseded_claims": [
+    "build/test_pencil_mesh_storage_owner_teardown.py previous comment79-81",
+    "independent-final-test-outer-review.json previous stronger getter assertion at46; historical report retained with this addendum"
+  ],
+  "scope": "Executes exact three primary native bodies for null context at O0/O2; model ctx_data_get is an unreachable assertion boundary. Does not execute full Python assignment, native rna_property_update callbacks, Main/Scene storage allocation, interpreter, WM, UIKit or device.",
+  "full_update_policy": "Getter null safety does not establish downstream full-update null-C support. Direct fixed setter, RNA_property_update_main and full owned Python transaction are separate contracts; new owner-present/null-C refusal is a bounded support choice, not a getter-crash workaround.",
+  "production_source": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "production_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127"
+}

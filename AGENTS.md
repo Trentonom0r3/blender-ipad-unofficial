@@ -1,3 +1,25 @@
+## Next pointer-assignment ABI checkpoint - 2026-10-16 UTC
+
+Verified production remains196b54c/run38850540318; no corrective source/build.
+The next coherent scope is EXACT3 pointer profiles: Object.data plus the existing
+Object.active_material and MaterialSlot.material. Read the owned-update ABI
+recommendation and next-checkpoint under pencil-rna-owned-dispatch. Preserve
+original typed identity through prepare/apply-once/finish, explicit Main/Scene
+provider sequencing with validation aftereach, full C/messagebus and borrowed
+pre-provider/Debug/native absence gates. Native postsetter transitions and exact
+direct update wrappers still need completion before implementation.
+
+Evidence correction: pinned ctx_data_pointer_verify(nullptr) returns true/null;
+CTX_data_main/scene return null without fallback. Earlier stronger getter claim
+in the historical outer review/comment is withdrawn by the separate correction
+report. Exact native bodies pass O0/O2. Only a fixture comment changed; PythonAST,
+C++strings/assertions/expectations/production patch are unchanged. Full null-C
+update semantics remain separate; native Mesh.update still needs valid context.
+Independent read-only correction review passes. No unchanged rebuild needed.
+
+Ordinary usage97percent/weekly28percent; next reset09:51:08UTC/4:51AMChicago,
+heartbeat4:58AM.0credits; no redemption. Full goal active and unfinished.
+
 ## Owned ID/Mesh exact IPA verified - 2026-10-16 UTC
 
 Production196b54ca63a8fa558225479711de2426a83f8c53/run38850540318 passed hosted preflight,

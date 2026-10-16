@@ -1,0 +1,8 @@
+{
+  "timestamp_utc": "2026-10-16T05:35:42.086551+00:00",
+  "reviewer": "/root/collection_final_native_review",
+  "status": "independent_read_only_correction_review_passed",
+  "findings": "Two wording corrections: fixture79-81 and historical independent-final-test-outer-review.json46. Exact pin null helper returns true/null before fallback. Assertions unchanged. Preserve historical report with separate addendum. ABI null-C distinction is correctly bounded.",
+  "native_update_exclusion": "Mesh.update reaches WM_event_add_notifier, whose CTX_wm_manager/window require C; current exclusion stays. Null-safe Main/Scene getters do not prove complete null-C update.",
+  "production_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127"
+}
