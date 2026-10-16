@@ -1,5 +1,5 @@
 {
-  "status": "source_validated_exact_native_build_in_progress",
+  "status": "fully_verified_native_package_and_bounded_compiled_reviews",
   "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
   "baseline_verified_run": 38612413567,
   "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
@@ -69,16 +69,43 @@
   "native_build": {
     "run": 38850540318,
     "revision": "196b54ca63a8fa558225479711de2426a83f8c53",
-    "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38850540318",
-    "status": "in_progress_exact_source_confirmed_no_IPA_yet",
+    "status": "fully_verified_native_package_and_bounded_compiled_reviews",
+    "artifact_id": 12025619496,
+    "ipa": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-rna-owned-dispatch\\ipa-38850540318\\Blender-iPad-Unofficial.ipa",
+      "bytes": 248649713,
+      "sha256": "dd4a77d73d5f822186d132fb4755a69f9c0ca81a7164e45b31d00367bc991966",
+      "zip_entries": 3368,
+      "bundle_id": "com.unofficial.blenderipad",
+      "version": "5.0.0",
+      "arm64_ios": true,
+      "full_crc": true
+    },
+    "binary_uuid": "757A71E6-85D1-3C33-BDA6-C52651F82DB8",
+    "binary_sha256": "74a568ed5d072f6943d79b7f546b443d4100506d4fd49f526bc4ea359bff0cea",
+    "reviews": [
+      "binary-38850540318/compiled-native-review.json",
+      "binary-38850540318/compiled-outer-review.json"
+    ],
+    "preserved_launch_audit": "binary-38850540318/launch-audit/audit.json",
+    "preserved_weight_cleanup": "binary-38850540318/weight-cancel-compiled.json",
     "watcher_session": 4755,
-    "watcher_script": ".cache/watch-rna-owned-build.py",
-    "watcher_log": ".cache/rna-owned-build-watch-38850540318.log"
+    "watcher_exit": 0,
+    "scope": "Actual bounded call/branch/argument/native-return/cleanup review; not global CFG, allocator, reentrancy, interpreter, UIKit or device proof.",
+    "device_acceptance": false,
+    "full_goal": "unfinished"
   },
   "device_acceptance": false,
   "full_goal": "unfinished",
   "remaining": [
-    "Finish same exact native build; fix real failures without weakening guards.",
-    "Verify full downloaded IPA and independently inspect actual fifteen compiled native/outer branches plus retained HUD launch and Weight cleanup."
-  ]
+    "Continue full personal Pencil-first goal; this exact IPA has no new device acceptance.",
+    "Read prospective Object.data outer audit and disposable characterization before any next coherent source increment; preserve native admission and enclosing ownership."
+  ],
+  "fixture_canonical_git_sha256": {
+    "build/test_pencil_rna_owned_dispatch.py": "e039d42a0a2bf876a3cdbcc562eaefc58589f53883cfa72646d732c0813395d6",
+    "build/test_pencil_rna_override_owner_teardown.py": "9bd8ce9f5e40e116d7ae05428b555203f00a256066120fd7497b19e31dc020b6",
+    "build/test_pencil_mesh_storage_owner_teardown.py": "500c973fc9bd26dcabe1e48c91682246af02c9b29259430ad44a9f5faf17fea3",
+    "build/test_pencil_material_collection_owner_teardown.py": "aa7672f60fa17e3048e8759ec1d975f29a19fbc8e913ebb0c04eed455da190f6",
+    "build/tests/pinned_rna_owner_prequery_baseline.inc.cc": "bbc62d92c5fda5b6b32832b723e61d34e04460f4a7ea88d3cbfb116d18d3192e"
+  }
 }

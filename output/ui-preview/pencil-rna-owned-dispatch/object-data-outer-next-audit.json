@@ -1,0 +1,90 @@
+{
+  "review": "Independent prospective Object.data enclosing ownership source audit",
+  "timestamp_utc": "2026-10-16T04:50:21.283993+00:00",
+  "status": "Substantiated next connected boundary; read-only audit, no correction or executed regression claim",
+  "source_revision": "5a7deb6f4ad8f74afaa3f8a30dd3859dbc091e83",
+  "exact_pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "materialized_file_sha256": {
+    "source/blender/makesrna/intern/rna_object.cc": "c7c6954d979e85949b82a2c54c832b3af98b6c2996a0610c0a3db818843c4816",
+    "source/blender/makesrna/intern/rna_access.cc": "24cd41904f36100dc79b0f12cf39c8c661b4659494404793f97bee4cf067954e",
+    "source/blender/python/intern/bpy_rna.cc": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c",
+    "source/blender/editors/interface/interface.cc": "66c7c6025231bd4235fbe1ed263273dffac0f8f62935c2bacbd2ad5485590e51",
+    "source/blender/editors/interface/interface_handlers.cc": "e82fb38c9468233561e6bf55907131d27e5fed805571cc09e94cd28f76424450"
+  },
+  "priority": "Current exact run38850540318 native/package/actual compiled15 proof remains first; this audit does not authorize or propose a replacement build.",
+  "native_setter_admission_and_order": [
+    {
+      "anchor": "rna_object.cc:562-630",
+      "finding": "Apple guard reads incoming Object/value, uses G_MAIN membership, and enters teardown only for non-Edit, different data pointer, Object in active Main. It checks unique nonzero Object UID, scoped reentrancy, old/new data ID codes and UIDs, rejects NO_MAIN/zero-UID old or incoming data, and proves old data membership before callback-bearing WM teardown. It reconstructs Object/old/new data after the completed teardown and refuses changed Main, pointer, type, mode or data relation before native mutation."
+    },
+    {
+      "anchor": "rna_object.cc:634-649",
+      "finding": "Native Edit return precedes null-nonempty return, which precedes evaluated/original mismatch report. The current inserted Apple teardown precedes these latter null/error branches; do not silently change this order or claim a new native no-op optimization is already proved."
+    },
+    {
+      "anchor": "rna_object.cc:651-681",
+      "finding": "Empty decrements/clears old data and accepts null or Image; Mesh calls BKE_mesh_assign_object(G_MAIN,...); other supported types adjust users, assign data, synchronize material lengths, then preserve Curve type test/Armature pose rebuild. Exact typef registration/admission remains native."
+    },
+    {
+      "anchor": "rna_object.cc:3651-3657",
+      "finding": "Object.data is PROP_POINTER with custom get/set/typef, EDITABLE|NEVER_UNLINK and rna_Object_data_update. It is not one of the new15 owned function profiles."
+    }
+  ],
+  "actual_callback_boundary": [
+    {
+      "anchor": "wm_event_system.cc:3652-3767",
+      "finding": "Object-specific export selects registered owners whose captured Object UID matches, reconstructs their original Main/WM/window context, calls WM_event_ipad_pencil_paint_owner_teardown, then rescans live membership and remaining owners. This is a callback-bearing cancellation path, not an absence-only query."
+    },
+    {
+      "anchor": "wm_event_system.cc:3266-3387",
+      "finding": "Strict owner retirement reaches actual native wm_handler_operator_call with native cancellation/status/free behavior. Its fresh context/handler checks protect that native dispatch, but do not establish lifetime of a suspended caller's RNA wrappers or Debug old/new IDs."
+    }
+  ],
+  "enclosing_profiles_and_gap": [
+    {
+      "anchor": "rna_access.cc:75-104",
+      "finding": "Exact material pointer profile admits ONLY generated Object_active_material_set and MaterialSlot_material_set identities. Object.data receives true from unrelated-profile pass-through; no material absence-only guard is applied to it."
+    },
+    {
+      "anchor": "rna_access.cc:4668-4766",
+      "finding": "RNA_property_pointer_set Debug captures getter-returned old ID and incoming ID/refcounts before invoking custom setter. It unconditionally invokes getter again and rereads old/new refcounts afterward, before any caller report check. Object.data setter-local post-Cancel recapture/refusal cannot validate these suspended Debug values. Release omits these Debug reads; this audit does not allege a current Release launch failure."
+    },
+    {
+      "anchor": "bpy_rna.cc:2083-2111",
+      "finding": "Owned target/value PointerRNA copies, saved BPY context and preflight exist only for material assignment profiles. Object.data takes ordinary RNA_property_pointer_set using the original wrapper-backed pointer. BPy_reports_to_error runs only after the generic setter returns, too late for Debug postreads."
+    },
+    {
+      "anchor": "bpy_rna.cc:2230-2244",
+      "finding": "Material owned branch checks saved context and updates copied target. Object.data uses original target and current BPY_context_get for late RNA_property_update; setter-local Object/data checks do not validate Python wrapper storage or context through this enclosing tail."
+    },
+    {
+      "anchor": "rna_access.cc:2633; rna_object.cc:445-468,505-508",
+      "finding": "Common update absence guard is material-only. Object.data update reaches dependency relation/geometry tags and native notification using ptr/owner_id, so a fresh setter-local DNA lookup alone is not complete late-update ownership proof."
+    },
+    {
+      "anchor": "interface.cc:4439-4486; interface_handlers.cc:1888,2869-2876",
+      "finding": "Native pointer UI can pass borrowed button or selected-pointer storage to generic pointer set and later RNA update. Existing Number/ring admission is not a generic Object.data producer lease. These source anchors demonstrate caller shapes; they do not prove a particular device interaction currently reaches an invalid object."
+    }
+  ],
+  "conclusion": "A coherent Object.data outer-ownership increment is warranted after current build proof: current native guard does perform callbacks beneath unowned generic Debug/Python/UI frames. This is a source-backed missing enclosing boundary conditional on callback deletion/replacement/wrapper invalidation, not an executed crash or proof that every native Cancel deletes such values.",
+  "existing_test_scope": {
+    "file": "build/test_pencil_object_data_teardown.py",
+    "anchors": "18,58,120,158,255-309",
+    "coverage": "Extracts actual Object setter/Object UID WM code and invokes setter directly; bounded matching-owner, stale-window, different-object/same-pointer/Edit and reentrancy behavior.",
+    "boundary": "Minimal PointerRNA model contains data only. No actual generic RNA_property_pointer_set Debug pre/post reads, Python property-conversion/late-update frame or native UI enclosing lifetime is executed there. Existing tests remain valid for their stated setter/WM scope."
+  },
+  "bounded_next_increment": [
+    "Audit exact Object.data native admission and all relevant owner inventory before choosing a producer policy; preserve unrelated/no-owner/non-Apple/evaluated/foreign-Main/Edit/same-value/null/type/refcount and native operation semantics.",
+    "Use an exact property identity and explicit Python-owned preflight/target-value PointerRNA copies with saved context before generic setter Debug capture. Establish typed fresh Object/backing/incoming data and relevant Library/override relations before and after completed callback-bearing drain.",
+    "Borrowed generic RNA/custom setter/native UI/common update routes should be absence-only before cached getters/refcounts/native tags, rather than canceling underneath their borrowed frames. Do not infer Object-UID filtering covers all dependency-related paint owners without separate source proof.",
+    "Execute connected actual Debug and Release generic pointer setter, Python conversion/report/update and native UI fallback seams with target/old/new data deletion or replacement, wrapper invalidation/context changes, and native admission/no-owner controls. No detached helper-only milestone or rollback claim."
+  ],
+  "explicit_limits": [
+    "No production/test changes or new regression execution in this audit.",
+    "No new device finding, compiled Object.data claim, allocator/global reentrancy termination proof or generic Cancel rollback claim.",
+    "Current15 build remains unchanged; prior material-owned policy is a comparison, not proof of Object.data coverage.",
+    "Object-UID selection is documented as actual existing behavior; dependency-wide invalidation is not asserted by this bounded review."
+  ]
+}

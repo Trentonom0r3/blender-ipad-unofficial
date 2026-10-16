@@ -1,3 +1,30 @@
+## Owned ID/Mesh exact IPA verified - 2026-10-16 UTC
+
+Production196b54ca63a8fa558225479711de2426a83f8c53/run38850540318 passed hosted preflight,
+native iOS Release, downloaded full IPA and independent bounded ACTUAL compiled
+native/outer reviews. Artifact12025619496; IPA248649713bytes;
+SHA256dd4a77d73d5f822186d132fb4755a69f9c0ca81a7164e45b31d00367bc991966.
+Full3368-entry CRC/arm64/iPhoneOS5.0.0/whole exact interactionUI/default bars/
+toolbar/pinned tools/all129icons/exact9Base/native-only More Tools pass.
+BinaryUUID757A71E6-85D1-3C33-BDA6-C52651F82DB8 passes preserved HUD launch/Weight cleanup.
+Actual15 native/generic/owned/Python receipt, first-gate, return and cleanup
+branches are bounded reviewed; aliases/inlining are resolved in review reports.
+This is not global heap/CFG/reentrancy/interpreter/UIKit/device proof. No new
+device acceptance exists. Watcher4755 completedexit0; no unchanged rebuild.
+
+Full494/494 checks361.495s, owned14, retainedID15/Mesh17/material25,132-file
+preflight/diff and independent literal/source/test reviews pass. Human approval
+is fulfilled. Only6native/RNA/BPY sections change;126others/all7UI sections
+remain exact prior verified production. Source/report/model/package/compiled/
+device evidence stay separate. Reports: pencil-rna-owned-dispatch, including
+native-package-verification.json and binary-38850540318/compiled-*-review.json.
+
+Next read-only Object.data outer audit records a callback-bearing setter beneath
+borrowed Debug/Python/UI frames; current15 source does not claim that coverage.
+Read object-data-outer-next-audit.json and any disposable characterization before
+the next coherent source increment. Preserve admission/nullable/native behavior,
+enclosing ownership, all accepted UI and evidence. Full personal goal unfinished.
+
 ## Verified Object Delete Pencil-owner preflight IPA — 2026-10-12
 
 Exact source `2d659eafbc0f923e0eca0f7f63c61faa155a9304` passed hosted preflight in [run 38332967407](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38332967407) and native iOS Release in [run 38333209890](https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38333209890). The Apple-only `OBJECT_OT_delete` path now snapshots selected Object identities as session UIDs and values, retires matching live Pencil paint owners before any delete tag, scene unlink, or global ID deletion, and revalidates Main/window/Scene/View Layer plus the complete selection after each native cancellation callback. Refusal, ambiguous identities, reentrancy, or changed context/selection cancels the delete. No Object pointer crosses a callback; other platform behavior and Blender's native successful delete path remain unchanged.

@@ -1,0 +1,408 @@
+{
+  "status": "passed_bounded_actual_compiled_native_review",
+  "reviewed_utc": "2026-10-16T05:02:50.060171+00:00",
+  "source_commit": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "run": "38850540318",
+  "source_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "binary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-rna-owned-dispatch\\binary-38850540318\\Blender",
+    "uuid": "757A71E6-85D1-3C33-BDA6-C52651F82DB8",
+    "bytes": 160375216,
+    "sha256": "74a568ed5d072f6943d79b7f546b443d4100506d4fd49f526bc4ea359bff0cea"
+  },
+  "findings": [],
+  "scope": "Independent actual ARM64 instructions for exact 15 owned native dispatcher destinations and native/generated consumer gates, native argument/result ABI, bounded refusal continuations. No source/test/build changes.",
+  "method": {
+    "instructions": "Independently extracted with build/audit_hud_macho.py/LLVM objdump; Mesh update and generated scopes additionally bounded using raw Mach-O LC_SYMTAB text symbols.",
+    "dispatch_table": "Decoded actual 15 bytes at VA0x10514b288; target=0x1012680fc+byte*4; source enum values independently compared. See independent-native-jump-table.json.",
+    "anchors_checked": 97,
+    "refusal_walk": "Ordinary direct intraprocedural successor traversal from each recorded refusal target; checks only frame memory on continuation and reports every call/terminal. Native call bodies and exception paths are boundaries.",
+    "artifacts": [
+      "independent-native-scope-index.json",
+      "independent-native-jump-table.json",
+      "independent-native-*.asm",
+      "independent-native-indirect-symbols.txt",
+      "independent-native-branch-anchors.json"
+    ]
+  },
+  "resolved_symbols_and_inlining": {
+    "strcmp_import": {
+      "stub": "0x104b67ed0",
+      "actual_import": "_strcmp",
+      "evidence": "LLVM Mach-O indirect-symbol table entry387725; objdump misleadingly prints _zlibVersion+0x104b67ed0."
+    },
+    "tls_descriptors": [
+      {
+        "va": "0x106d7abc0",
+        "data_symbol": "__ZL27rna_ID_storage_native_lease",
+        "MachO_section_index": 32
+      },
+      {
+        "va": "0x106d7abd8",
+        "data_symbol": "__ZL25rna_ID_storage_owned_busy",
+        "MachO_section_index": 32
+      }
+    ],
+    "tls_note": "The descriptor-mediated blr sites load thread-local lease/busy state; they are not evidence of an arbitrary context provider. Native gates load only numeric Main/ID/op/consumed lease fields before admission, not target ID storage.",
+    "inlining": "Reset and resync have no separate native static text symbol; their actual switch bodies are at0x101268230 and0x101268144. Four ID lease gates and seven generated Mesh consumers are also inlined. The exported Mesh update body is unique at0x10132c9bc; other similarly named update callbacks were excluded.",
+    "private_ABI": "LLVM drops unused private formal C/override/remap arguments despite unchanged mangled source names. Actual dispatcher and generated call sites agree: create(x0ID,x1Main,w2remap); hierarchy(x0ID,x1Main,x2Scene,x3Layer,x4hint,w5editable); user-remap(x0ID,x1Main,x2newID); make-local(x0ID,x1Main,w2clearOverride,w3clearAsset); destroy(x0ID,x1Main,x2C,x3reports,w4hierarchy). No reliance on demangled formal argument count.",
+    "aliases": "No same-address text alias in extracted native scopes. Dispatcher inlining and generated inlining are recorded explicitly."
+  },
+  "borrowed_gate": {
+    "scope": "RNA_id_paint_owner_teardown",
+    "matched_lease": "0x1012668ec..0x101266928 compare Main, numeric ID, exact operation via strcmp; 0x1012669d8 consumes before true return.",
+    "unmatched_busy": "0x10126693c..0x101266960 reports/refuses; never falls through to absence call when busy.",
+    "absence": "Fresh G_MAIN loaded0x10126696c; nullMain refuses. At0x101266988 actual WM_next arguments are x0=0(C),x1=freshMain,x2=0(did output),w3=0(default policy). WM false returns false. No direct CTX_data_main and no target ID-field read.",
+    "boundary": "This proves native call arguments/control ordering; the implementation of the WM helper and provider/receipt/lease producer is reviewed separately by the outer reviewer."
+  },
+  "native_consumers": [
+    {
+      "profile": 1,
+      "name": "OverrideCreate",
+      "scope": "rna_ID_override_create",
+      "gate": "inlined numeric one-use lease OR fresh G_MAIN null-context/null-did absence query",
+      "wm_absence_call": "0x10126e994",
+      "wm_false_branch": "0x10126e998",
+      "refusal_continuation": {
+        "scope": "rna_ID_override_create",
+        "entry": "0x10126ea54",
+        "visited_instructions": 5,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10126ea64"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "lease_consumed_store": "0x10126ea48",
+      "first_target_field_after_absence_gate": "0x10126e99c",
+      "first_target_field_after_lease_gate": "0x10126ea4c",
+      "native_mutation_call": "0x10126e9fc",
+      "result_type": "ID*"
+    },
+    {
+      "profile": 2,
+      "name": "HierarchyCreate",
+      "scope": "rna_ID_override_hierarchy_create",
+      "gate": "inlined numeric one-use lease OR fresh G_MAIN null-context/null-did absence query",
+      "wm_absence_call": "0x10126eb54",
+      "wm_false_branch": "0x10126eb58",
+      "refusal_continuation": {
+        "scope": "rna_ID_override_hierarchy_create",
+        "entry": "0x10126ec14",
+        "visited_instructions": 8,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10126ec30"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "lease_consumed_store": "0x10126ec08",
+      "first_target_field_after_absence_gate": "0x10126eb5c",
+      "first_target_field_after_lease_gate": "0x10126ec0c",
+      "native_mutation_call": "0x10126ebd4",
+      "result_type": "ID*"
+    },
+    {
+      "profile": 3,
+      "name": "Reset",
+      "scope": "rna_ID_storage_native_call",
+      "inlined": true,
+      "gate_call": "0x101268254",
+      "false_branch": "0x101268258",
+      "refusal_continuation": {
+        "scope": "rna_ID_storage_native_call",
+        "entry": "0x1012683e0",
+        "visited_instructions": 8,
+        "calls": [],
+        "terminal_pcs": [
+          "0x1012683fc"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "first_override_field_after_gate": "0x10126825c",
+      "native_mutation_calls": [
+        "0x10126827c",
+        "0x101268420"
+      ],
+      "result_type": "void"
+    },
+    {
+      "profile": 4,
+      "name": "Destroy",
+      "scope": "rna_ID_override_library_destroy",
+      "gate_call": "0x10126ef10",
+      "false_branch": "0x10126ef14",
+      "refusal_continuation": {
+        "scope": "rna_ID_override_library_destroy",
+        "entry": "0x10126ef84",
+        "visited_instructions": 5,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10126ef94"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "first_ID_override_read": "0x10126ef18",
+      "native_delete_calls": [
+        "0x10126ef34",
+        "0x10126ef74"
+      ],
+      "after_native_delete": "0x10126ef38 jumps to notifier at 0x10126ef78; 0x10126ef78..0x10126ef94 contains no ID/override read. Single-ID remap at 0x10126ef68 precedes delete; only saved stack ID is reloaded before delete.",
+      "result_type": "void"
+    },
+    {
+      "profile": 5,
+      "name": "Resync",
+      "scope": "rna_ID_storage_native_call",
+      "inlined": true,
+      "gate_call": "0x101268174",
+      "false_branch": "0x101268178",
+      "refusal_continuation": {
+        "scope": "rna_ID_storage_native_call",
+        "entry": "0x1012683c4",
+        "visited_instructions": 15,
+        "calls": [
+          {
+            "pc": "0x1012683dc",
+            "instruction": "bl 0x10124ac4c <__Z24RNA_parameter_set_lookupP13ParameterListPKcPKv>"
+          }
+        ],
+        "terminal_pcs": [
+          "0x1012683fc"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "first_override_field_after_gate": "0x10126817c",
+      "native_mutation_calls": [
+        "0x1012681cc"
+      ],
+      "result_type": "bool"
+    },
+    {
+      "profile": 6,
+      "name": "UserRemap",
+      "scope": "rna_ID_user_remap",
+      "gate": "inlined numeric one-use lease OR fresh G_MAIN null-context/null-did absence query",
+      "wm_absence_call": "0x10126ecf0",
+      "wm_false_branch": "0x10126ecfc",
+      "refusal_continuation": {
+        "scope": "rna_ID_user_remap",
+        "entry": "0x10126ed50",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10126ed5c"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "lease_consumed_store": "0x10126ed44",
+      "first_target_field_after_absence_gate": "0x10126ed08",
+      "first_target_field_after_lease_gate": "0x10126ed08",
+      "native_mutation_call": "0x10126ed24",
+      "result_type": "void"
+    },
+    {
+      "profile": 7,
+      "name": "MakeLocal",
+      "scope": "rna_ID_make_local",
+      "gate": "inlined numeric one-use lease OR fresh G_MAIN null-context/null-did absence query",
+      "wm_absence_call": "0x10126ee2c",
+      "wm_false_branch": "0x10126ee30",
+      "refusal_continuation": {
+        "scope": "rna_ID_make_local",
+        "entry": "0x10126ee94",
+        "visited_instructions": 6,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10126eea8"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "lease_consumed_store": "0x10126eeb0",
+      "first_target_field_after_absence_gate": "0x10126ee34",
+      "first_target_field_after_lease_gate": "0x10126eeb4",
+      "native_mutation_call": "0x10126ee50",
+      "result_type": "ID*"
+    },
+    {
+      "profile": 8,
+      "name": "VerticesAdd",
+      "scope": "rna_Mesh_vertices_add",
+      "gate_call": "0x10132c870",
+      "false_branch": "0x10132c874",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_vertices_add",
+        "entry": "0x10132c888",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132c894"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132c884",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 9,
+      "name": "EdgesAdd",
+      "scope": "rna_Mesh_edges_add",
+      "gate_call": "0x10132c8c8",
+      "false_branch": "0x10132c8cc",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_edges_add",
+        "entry": "0x10132c8e0",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132c8ec"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132c8dc",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 10,
+      "name": "LoopsAdd",
+      "scope": "rna_Mesh_loops_add",
+      "gate_call": "0x10132c920",
+      "false_branch": "0x10132c924",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_loops_add",
+        "entry": "0x10132c938",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132c944"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132c934",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 11,
+      "name": "PolygonsAdd",
+      "scope": "rna_Mesh_polygons_add",
+      "gate_call": "0x10132c978",
+      "false_branch": "0x10132c97c",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_polygons_add",
+        "entry": "0x10132c990",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132c99c"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132c98c",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 12,
+      "name": "MeshUpdate",
+      "scope": "rna_Mesh_update",
+      "gate_call": "0x10132c9f4",
+      "false_branch": "0x10132c9f8",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_update",
+        "entry": "0x10132cecc",
+        "visited_instructions": 6,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132cee0"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132ca28",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 13,
+      "name": "MeshClear",
+      "scope": "rna_Mesh_clear_geometry",
+      "gate_call": "0x10132cf0c",
+      "false_branch": "0x10132cf10",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_clear_geometry",
+        "entry": "0x10132cf4c",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132cf58"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132cf1c",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "void"
+    },
+    {
+      "profile": 14,
+      "name": "MeshValidate",
+      "scope": "rna_Mesh_validate",
+      "gate_call": "0x10132cf8c",
+      "false_branch": "0x10132cf90",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_validate",
+        "entry": "0x10132cfa8",
+        "visited_instructions": 5,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132cfb8"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132cfa0",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "bool"
+    },
+    {
+      "profile": 15,
+      "name": "MeshValidateMaterials",
+      "scope": "rna_Mesh_validate_material_indices",
+      "gate_call": "0x10132cfe0",
+      "false_branch": "0x10132cfe4",
+      "refusal_continuation": {
+        "scope": "rna_Mesh_validate_material_indices",
+        "entry": "0x10132cff4",
+        "visited_instructions": 4,
+        "calls": [],
+        "terminal_pcs": [
+          "0x10132d000"
+        ],
+        "only_frame_memory_in_continuation": true
+      },
+      "native_storage_call": "0x10132cfec",
+      "pre_gate": "Only argument moves/frame stores/op-address formation; no mesh/ID/runtime field access or native admission call.",
+      "result_type": "bool"
+    }
+  ],
+  "Mesh_update_detail": {
+    "first_mesh_field_read": "0x10132ca04 faces_num; after gate false branch0x10132c9f8",
+    "first_runtime_read": "0x10132ca30 mesh+0x798; after admission",
+    "first_geometry_call": "0x10132ca28 mesh_calc_edges",
+    "refusal": "0x10132cecc..0x10132cee0 is frame restore/ret; no notifier, runtime or mesh read."
+  },
+  "argument_and_output_checks": {
+    "owned_table": "All15 entries resolve to recorded bodies. Counts are 32-bit ldr w4 from args+4; native add exports preserve count and reports for ED calls. Mesh bool args load bytes and use w4/w5 ABI; no bool/int surrogate return adaptation.",
+    "ID_outputs": "Create/hierarchy/make-local x0 pointer stored with str x0,[sp,#0x18] at0x101268344; pointer address x2=sp+0x18 to RNA_parameter_set_lookup at0x1012683dc, key id from actual cstring0x104b762a2.",
+    "bool_outputs": "Validate/material return w0 stored as byte at0x101268328; resync raw w0 saved x20 then byte at0x1012683c8; false resync w20=0 before same byte store. x2=sp+0x17 to setter. Native cstrings result@0x104c1371a and success@0x104c13712 independently decoded.",
+    "generated_ABI": "Generated create/hierarchy/make-local use 64-bit str x0; resync/validators use strb to exact ParameterList slots. Generated wrappers have their original CTX_data_main before borrowed consumer gate; they are not the owned callback path. Complete generic/owned bypass proof belongs to outer review.",
+    "no_second_direct_Main_query": "No direct CTX_data_main call in the owned native dispatcher or any reviewed native consumer body. The actual dispatcher branches/calls same native functions without invoking generated wrappers. This is not a transitive no-callback proof.",
+    "zero_add_native_admission": "Four dispatcher count loads/calls reach the same exported add bodies and existing ED add functions. Native gate precedes ED admission. The outer producer determines trusted count0 frontiers and lease issuance; no alternate count0 mutation body exists in this dispatcher."
+  },
+  "boundaries": [
+    "No global CFG/heap/interpreter/reentrancy/allocator/BKE/depsgraph proof; no device or paint behavior acceptance.",
+    "External native routines, TLS runtime, reports/notifiers, exceptions and generated metadata are not recursively audited.",
+    "Ordinary refusal walks prove these local branches, not arbitrary all-program reachability. Exact profile admission/producer lifetime/receipt/drain/Main-callback validation are separate outer-review obligations.",
+    "This report is independent compiled evidence for the exact binary; source host tests, package CRC/UI/HUD/Weight checks are separately recorded by root."
+  ]
+}

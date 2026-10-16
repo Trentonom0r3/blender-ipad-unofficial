@@ -1,0 +1,249 @@
+{
+  "review": "Independent actual compiled outer15 owned ID/Mesh dispatch review",
+  "timestamp_utc": "2026-10-16T05:00:03.112463+00:00",
+  "status": "passed_bounded_actual_compiled_outer_review",
+  "run": "38850540318",
+  "source": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "binary_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-rna-owned-dispatch\\binary-38850540318\\Blender",
+  "binary_size": 160375216,
+  "binary_sha256": "74a568ed5d072f6943d79b7f546b443d4100506d4fd49f526bc4ea359bff0cea",
+  "binary_uuid": "757A71E6-85D1-3C33-BDA6-C52651F82DB8",
+  "expected_uuid": "757A71E6-85D1-3C33-BDA6-C52651F82DB8",
+  "patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "actionable_findings": [],
+  "actual_checks": [
+    {
+      "scope": "Exact15 profile and generic borrowed entry",
+      "anchors": [
+        "RNA_function_call0x10125e21c-0x10125e294",
+        "absence0x101266a9c-0x101266bdc"
+      ],
+      "result": "Generic wrapper entry tests generated call nonnull, then passes exact FunctionRNA and reports to absence gate before invoking generated wrapper through blr at0x10125e26c. Guard false returns-1 without entering wrapper. Absence helper compares actual FunctionRNA global addresses for exactly15 profiles; unrelated functions returntrue. Matching path checks scoped busy then calls WM_next with x0=0,x2=0,policy0 and activeMain, refusing before wrapper dispatch when not absent. No implicit CTX provider appears on this guard path."
+    },
+    {
+      "scope": "Actual Python-owned branch and lifetime",
+      "anchors": [
+        "pyrna_func_call0x101508558-0x1015085cc",
+        "0x1015086d0-0x101508890",
+        "optional emplace0x10150ac30-0x10150ad04"
+      ],
+      "result": "Existing material branch remains first. Exact15 predicate then emplaces copied PointerRNA at stack0x120, including owner/type/data and a separately populated ancestor vector via actual16-byte copy loop/reserve path, before owned dispatcher. Owned branch receives saved BPYcontext, copiedtarget, staticfunc, ParameterList and reports; after return BPYcontext equality is checked and mismatch reports/refuses. Engaged optional bypasses generic RNA_function_call at0x101508848-870. This is actual bounded copy/call/control flow, not an allocator-pointee or complete interpreter lifetime proof."
+    },
+    {
+      "scope": "Receipt before first context provider",
+      "anchors": [
+        "owned0x101266e54-0x101266f98",
+        "0x101267238-0x101267318",
+        "0x1012673ac-0x101267480",
+        "0x101267680-0x1012676e4"
+      ],
+      "result": "Owned entry checks busy/target/parms func/G_MAIN, sets busy and copies target plus raw argument values before initial null-C/null-output WM absence query. Owner-present normal path proves target activeMain membership and calls typed receipt at0x1012672f0; only its true branch reaches sole CTX_data_main at0x101267210. Post-provider Main and typed receipt equality must hold before requiring drain/native entry. Initially absent path re-queries absence after provider and refuses newly acquired owner rather than cancelling unreceipted inputs. Raw args and parms func are revalidated before final context equality and native lease."
+    },
+    {
+      "scope": "Zero-add native callback-free admission",
+      "anchors": [
+        "owned0x101267238-0x10126727c",
+        "0x101267730-0x10126780c"
+      ],
+      "result": "Owner-present count0 collection-add branch selects exact collectionRNA, checks nonnull data==owner and empty ancestor range, compares currentBPYcontext, then installs same-operation native lease and calls direct native body. This branch bypasses CTX_data_main and callback-bearing drain, preserving bounded native zero/Edit ordering without a foreign/evaluated receipt claim."
+    },
+    {
+      "scope": "Per-successful-WM validation before didfalse",
+      "anchors": [
+        "strict0x101268fa8-0x101268fbc",
+        "0x101269024-0x101269138",
+        "0x10126913c-0x101269158",
+        "validator0x101277f8c-0x101278278"
+      ],
+      "result": "Strict helper calls actual WM_next with original C/Main and did-output/policy0. Failed WM returnsrefusal. Every successfulWM call first reconstructs captured UID/type/Library/override/Scene/ViewLayer state, then invokes concrete owned validator at0x101269138. Only after validatortrue does0x101269140 load didflag and0x101269144 permit didfalse success. Validator checks G_MAIN, ParameterList function, fresh rawarguments equality, complete typed receipt and saved receipt equality. This applies on both didtrue loop and didfalse terminal call. Outer256 loop counter does not bound all inner callbacks or prove global reentrancy termination."
+    },
+    {
+      "scope": "Direct native dispatch and one-use lease",
+      "anchors": [
+        "owned0x101267ae0-0x101267b5c",
+        "zero0x1012677ac-0x101267828",
+        "native dispatcher0x1012680a8-0x101268430",
+        "native lease gate0x1012668a8-0x1012669dc"
+      ],
+      "result": "After final argument/context validation, owned dispatcher stores numeric Main/ID/exact-operation/consumedfalse lease into actual thread-local slot, calls direct native dispatcher, clears slot and checks consumed. No CTX_data_main/generated wrapper is invoked by native dispatcher. Reset/resync have compiler-inlined bodies; other cases call/tailcall same native bodies. Native first gate compares Main/ID/operation and unconsumed lease; strcmp-equivalent matched operation consumes before admission. Otherwise busy refuses or absence-only query runs. Direct dispatcher return/destroy path and owned return perform no target-pointee recapture/read after native call; only lease/owned ancestor allocation/TLS/stack cleanup follows."
+    },
+    {
+      "scope": "Reports, null-parent metadata and safe returns",
+      "anchors": [
+        "Python0x101508704-0x101508890",
+        "0x1015088a4-0x1015089c8",
+        "RNA_pointer_create_discrete0x10124b31c-0x10124b370",
+        "pyrna_param_to_py0x101511ea8-0x101511edc",
+        "0x101511f68-0x101511fb0"
+      ],
+      "result": "After exact15 ownedcall, Python reconstructs FunctionRNA metadata with x0=0 parent and static FunctionRNA x2. Actual RNA_Function refine slot iszero, so metadata construction introduces no ID refinement callback. Reports/prepared errors gate conversion. Actual bool output conversion readsonebyte; three pointer outputs have actual paramflag2/noRNAPTR, null typef and constantRNA_ID, reaching RNA_id_pointer_create from returned ID rather than old parent. Void/destroy uses no returnvalue conversion. Normal cleanup does not reload original Python self wrapper/old target pointer."
+    },
+    {
+      "scope": "Static metadata and ParameterList cleanup",
+      "anchors": [
+        "RNA_parameter_list_free0x10125dc48-0x10125dd60",
+        "RNA_parameter_list_end0x10125de34",
+        "RNA_parameter_set0x10125dedc-0x10125e15c",
+        "rna_parameter_size0x101276f28-0x101276ff8",
+        "Python0x10150896c-0x101508a04"
+      ],
+      "result": "ParameterListfree follows its staticFunction metadata and frees owned parameter/ancestor buffers; actual list-end isret. Actual rawID outputs have noRNAPTR cleanup flag, so cleanup doesnot dereference returned/old IDs. Bool parameter size is1 andrawID size8; padding applies to offsets, while actualcopy uses native size. Python destroys optional owned ancestor storage then ends/frees ParameterList, then functionmetadata storage; no old target-pointee read is present in inspected normal paths. Landingpads also destroy ownedvectors/TLS scope; exception/allocator global correctness is outside this bounded review."
+    }
+  ],
+  "actual_metadata": {
+    "profile_globals": {
+      "_rna_ID_override_create_func": "0x1066620e0",
+      "_rna_ID_override_hierarchy_create_func": "0x106662388",
+      "_rna_IDOverrideLibrary_reset_func": "0x106663f58",
+      "_rna_IDOverrideLibrary_destroy_func": "0x1066642a8",
+      "_rna_IDOverrideLibrary_resync_func": "0x106664450",
+      "_rna_ID_user_remap_func": "0x106662980",
+      "_rna_ID_make_local_func": "0x106662ad0",
+      "_rna_MeshVertices_add_func": "0x1067d59b8",
+      "_rna_MeshEdges_add_func": "0x1067d5e80",
+      "_rna_MeshLoops_add_func": "0x1067d6348",
+      "_rna_MeshPolygons_add_func": "0x1067d6990",
+      "_rna_Mesh_update_func": "0x1067d45b8",
+      "_rna_Mesh_clear_geometry_func": "0x1067d4d20",
+      "_rna_Mesh_validate_func": "0x1067d4d70",
+      "_rna_Mesh_validate_material_indices_func": "0x1067d51c8"
+    },
+    "RNA_Function_refine_slot": "0x0",
+    "return_properties": [
+      {
+        "symbol": "__ZL26rna_ID_override_create_id_",
+        "address": "0x106662130",
+        "property_type": 5,
+        "parameter_flags": 2,
+        "property_flags": 8388736,
+        "typef_slot": "0x0",
+        "encoded_type_slot": "0x2000000665f088",
+        "decoded_format6_type_target": "0x10665f088",
+        "expected_RNA_ID": "0x10665f088"
+      },
+      {
+        "symbol": "__ZL36rna_ID_override_hierarchy_create_id_",
+        "address": "0x1066623d8",
+        "property_type": 5,
+        "parameter_flags": 2,
+        "property_flags": 8388736,
+        "typef_slot": "0x0",
+        "encoded_type_slot": "0x1000000665f088",
+        "decoded_format6_type_target": "0x10665f088",
+        "expected_RNA_ID": "0x10665f088"
+      },
+      {
+        "symbol": "__ZL21rna_ID_make_local_id_",
+        "address": "0x106662f28",
+        "property_type": 5,
+        "parameter_flags": 2,
+        "property_flags": 8388736,
+        "typef_slot": "0x0",
+        "encoded_type_slot": "0x1000000665f088",
+        "decoded_format6_type_target": "0x10665f088",
+        "expected_RNA_ID": "0x10665f088"
+      },
+      {
+        "symbol": "__ZL37rna_IDOverrideLibrary_resync_success_",
+        "address": "0x1066644a0",
+        "property_type": 0,
+        "parameter_flags": 2,
+        "property_flags": 3
+      },
+      {
+        "symbol": "__ZL25rna_Mesh_validate_result_",
+        "address": "0x1067d5070",
+        "property_type": 0,
+        "parameter_flags": 2,
+        "property_flags": 3
+      },
+      {
+        "symbol": "__ZL42rna_Mesh_validate_material_indices_result_",
+        "address": "0x1067d5218",
+        "property_type": 0,
+        "parameter_flags": 2,
+        "property_flags": 3
+      }
+    ],
+    "chained_pointer_formats_observed": [
+      6,
+      6
+    ],
+    "decode_scope": "Pointer type slot targets use observed Mach-O DYLD_CHAINED_PTR_64_OFFSET format6: imagebase plus36-bit target. Zero typef/refine slots are literal zero. No arbitrary chained-bind decoding claim.",
+    "thread_local_symbols": {
+      "__ZL27rna_ID_storage_native_lease": "0x106d7abc0",
+      "__ZL25rna_ID_storage_owned_busy": "0x106d7abd8"
+    }
+  },
+  "aliases_resolved": {
+    "import_stubs": [
+      "0x0000000104b63f10 386376 __Unwind_Resume",
+      "0x0000000104b66640 387178 ___stack_chk_fail",
+      "0x0000000104b67354 387477 _memcpy",
+      "0x0000000104b67ed0 387725 _strcmp",
+      "0x0000000104b67f24 387732 _strlen"
+    ],
+    "ancestor_reserve_alias": "0x1000202b4 has exact symbol Vector<AncestorPointerRNA,2,GuardedAllocator>::realloc_to_at_least in addition to unrelated LLVM-folded aliases. Copy-loop stride16 and actualPointerRNA fields were inspected rather than trusting nearest objdump label.",
+    "misleading_G_label": "adrp/add0x106d7c000+0x28 resolves actual _G, not nearest _build_commit_date label.",
+    "scope": "Resolved exact addresses/nm aliases/indirect symbols; no arbitrary callee-name substring proof."
+  },
+  "retained_evidence": {
+    "independent-BY_context_get.asm": "419875da0722137facfc40fbab54a8e1d17ef3c792a3740a043cd3b8e40f0f48",
+    "independent-native-ID_make_local_call.asm": "2f9a0531063d9291e7f50c82e074a3ed65e02e305d517e66250aaf9b8266c658",
+    "independent-native-ID_override_create_call.asm": "45c283236eb336d6990a77f3255d14e5e6adabf2376f4373a7f2f1a54f863983",
+    "independent-native-ID_override_hierarchy_create_call.asm": "0d762bc90fb7c18c012a0a31957c0d205eac0005452314a1485090a9e7c9a153",
+    "independent-native-ID_user_remap_call.asm": "a272a4a13b7bb1171042ab811c4cdc7abd2b403514b821d06189577d7ad2a84d",
+    "independent-native-IDOverrideLibrary_destroy_call.asm": "4c2fd2c66cd063c23262182644b9bad01d7480504c3e49342f0ed6e9498f7387",
+    "independent-native-IDOverrideLibrary_reset_call.asm": "5baa3d2baf75a34cc9800d41841938095c4c4acd69b8f33ed091b53908d279f5",
+    "independent-native-IDOverrideLibrary_resync_call.asm": "db32c30232352f14afa9364ecdfec596a0a3fc43794f6b906816630e471e8a8e",
+    "independent-native-Mesh_clear_geometry_call.asm": "dd8e3834731a82b6cad11e340507080c7c11fc63516d81dacf24838a3acf35d1",
+    "independent-native-Mesh_update_call.asm": "417bd1501211a0e24d227c588b2f0f877b5a35c0a4616921584b778c73645fff",
+    "independent-native-Mesh_validate_call.asm": "1b68fd5dd14d97fb9211f9732353b315cba9cacd90893400733de679a16b53e4",
+    "independent-native-Mesh_validate_material_indices_call.asm": "39bee727a22eb60f69f870d2f3751cb254ca6729ed3db94ee60ab651d2f08f06",
+    "independent-native-MeshEdges_add_call.asm": "b1b91095dfbd2ad3e7610e86b53e325588c79fff8d13523f0b11935bd7939f83",
+    "independent-native-MeshLoops_add_call.asm": "b929c9e959990f91666929f4dc999cd1241a6fb7f6329d1d5375011b3ee7f798",
+    "independent-native-MeshPolygons_add_call.asm": "ff7cf1228df297902afb0318b91eeb39ac2c046367e052eba6a9fcb2ae28d23d",
+    "independent-native-MeshVertices_add_call.asm": "d1e27fd371d1523c9407382d7121588089fd6a37def9ce79b784c421f6a7bdb8",
+    "independent-native-rna_ID_make_local.asm": "8589f987305dd14b3e0e6d23bfe40391de253a99642426918c1ffa0d9373b45e",
+    "independent-native-rna_ID_override_create.asm": "95f4828c23a1f54ce73a15f78956f1ced03cece2228e7419fb6fa6dbcac9dada",
+    "independent-native-rna_ID_override_hierarchy_create.asm": "fd9dab9073a93fed36a599ded9afbde54818b5fa23942f014eb5c53ff3ba05a9",
+    "independent-native-rna_ID_override_library_destroy.asm": "7b11ec9d9d93c8726da6bf9093230dd40432b45bbfc276b16bcf957614378740",
+    "independent-native-RNA_id_paint_owner_teardown.asm": "d32fc82894adc32032920b533993406278a380b4145f7e721c3deb7768d3ccc5",
+    "independent-native-rna_ID_storage_native_call.asm": "7d2f43dc9aa2254d42c3d2777614446e45aa4cb1b98b8dbc1b33f32fb757b0aa",
+    "independent-native-rna_ID_storage_receipt.asm": "6bda28f5fde043f1b72d08b8bbb36910a980857781979cf7f307d79f317b7a98",
+    "independent-native-rna_ID_storage_requires_drain.asm": "5ae5e1cb9d126c0cc63440225099203fede9544a2083393fa6d3fbba6cb9cc35",
+    "independent-native-rna_ID_user_remap.asm": "af10007181695822b1fbe02cca159ddb87cb99e8246f73ede17edaad70bea7f8",
+    "independent-native-rna_Mesh_clear_geometry.asm": "01af63b5ee418d097de7e4fbf6d4cdcde7325c391217735fc67533323d053b38",
+    "independent-native-rna_Mesh_edges_add.asm": "baa47e57d853b78c9227cf9de08618f6fcae566b08393776f7d525b3d18b4dc7",
+    "independent-native-rna_Mesh_loops_add.asm": "9e1f0a271b9e8bd4761a338d176080bd7f8808aec4ea3fc25d7b794f7f12fb4f",
+    "independent-native-rna_Mesh_polygons_add.asm": "b602b494deb9a1183959407f15060c204070bffca1070b4a48237137399fb4ad",
+    "independent-native-rna_Mesh_update.asm": "61b0fc4b202d83165c0b226978cf9a3d44e041476618dfecf20f205bb48ecc6d",
+    "independent-native-rna_Mesh_validate.asm": "4cb0d434ef4db7df9acbcbe7d618d86b0a378315b010b808d4725f248e4344ea",
+    "independent-native-rna_Mesh_validate_material_indices.asm": "d3993a04c08066da580da2df72c8930adcf8509352027c6e68a9758ddc635aa1",
+    "independent-native-rna_Mesh_vertices_add.asm": "0b607cba17b3b08f5fcbfc099633698f737f131721458238d9fbadb0c34672cc",
+    "independent-optionalI10ointerRNAE7emplace.asm": "7520d88f430a53a9544fa3becd772640f762d615857026968df59f4c896109fd",
+    "independent-owned_validator.asm": "96b50df1eb5831d4ea9963b2805646e82be39811c3f45cc468e74754f1ae1e6b",
+    "independent-pyrna_param_to_py-cold.asm": "8edbd3e91b5d254eb0bcdcd49aa99f738f86c0d0f8ca8a1c064a393912188ea1",
+    "independent-pyrna_param_to_py-main.asm": "30e9239098625b4f07a86d57fa16480664f7b15158a794b48abefcf819409bf4",
+    "independent-pyrna_param_to_py.asm": "8edbd3e91b5d254eb0bcdcd49aa99f738f86c0d0f8ca8a1c064a393912188ea1",
+    "independent-RNA_function_id_storage_call_owned.asm": "80d112c513f1a7673c826418b0fce5c609eec63936098d1d1d3177e7783a2e90",
+    "independent-rna_ID_storage_requires_drain.asm": "e9e772f43ebecf116d1a05cc84aa620f9f52740f063ee877b655768844c19212",
+    "independent-RNA_parameter_list_begin.asm": "f5da548a8b5248b0844877953eadb2f426bdcd5ec36438c7db2201abd524e3ed",
+    "independent-RNA_parameter_list_end.asm": "e776d253373f9217b7c207cb0d72eceddab49145832ab4627fff58b66f034d5b",
+    "independent-RNA_parameter_list_free.asm": "df5c28c8886ab2ac9639a7747d5da9dd129fe5594ff660996d326af55118a206",
+    "independent-RNA_parameter_set.asm": "a1ce3da84ecb735e7fa35dfe23a003c75cfda7708d0bbda7e77ae18f747c3502",
+    "independent-RNA_parameter_set_lookup.asm": "4c357304d03c2493721a681a82d4c76439308fc2956a342229c239e1312ce2fe",
+    "independent-rna_parameter_size.asm": "4157781f5fe926f797822f6c04c613f6cc4ceb0e63343e82f21cdc5feed811e1",
+    "independent-RNA_pointer_create_discrete.asm": "f97e2c4202e1f5a267d8f3e4a56413dd63403e0ee43a5405221e2d764c619fe6",
+    "independent-RNA_property_pointer_type.asm": "06c49e45b4b2243277b5853c9fca123df266008b8cb5f166fabe99d32702ec1e",
+    "independent-storage_arguments.asm": "edac6b0ff32d25502e58f6e27f36ed82b3b52f8d3f251e413272d4d0b510d2c9",
+    "independent-strict-teardown.asm": "e56a120004fd580bdb4e16b0a9cd58502ae861b6bb81f4331f76275b46cdaad5"
+  },
+  "scope_limits": [
+    "This independently reviews actual compiled outer producer/admission/argument/call/report/return/cleanup branches in exact downloaded arm64 binary; companion reviewer owns15 consumer/generated-ABI mutation proof.",
+    "No full allocator/heap/WM/global CFG/reentrancy termination or native Cancel rollback proof. A completed callback may already have effects before refusal.",
+    "Source/fixture/compiled/package/device evidence remain separate. No iPad acceptance or interactive UIKit/modal delivery claim for this exact build.",
+    "Context provider itself, arbitrary user callbacks and all unrelated RNA/Python functions are not globally proved. Object.data prospective gap is separately recorded and is not changed by this increment.",
+    "No production/test/build changes made by this review."
+  ]
+}
