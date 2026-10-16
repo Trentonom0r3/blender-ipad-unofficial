@@ -1,5 +1,5 @@
 {
-  "status": "source_validated_native_build_pending",
+  "status": "source_validated_exact_native_build_in_progress",
   "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
   "baseline_verified_run": 38612413567,
   "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
@@ -66,7 +66,19 @@
     "Approved retained ID/Mesh migrations and fail-fast material-only external API boundary preserve existing native assertions"
   ],
   "boundaries": "Python interpreter/GIL/refinement/ParameterList conversion, generated-wrapper adaptation, allocation/depsgraph/native BKE operations are modeled boundaries. Null-context implicit Main getter is not executed: modeled null-Main arguments reach actual borrowed callbacks. Generic acquired-owner stale numeric tokens cover self/override only; related arguments stay valid. C++ heap deletion is executed, not a full allocator proof. No global reentrancy/rollback/UIKit/device proof.",
-  "native_build": null,
+  "native_build": {
+    "run": 38850540318,
+    "revision": "196b54ca63a8fa558225479711de2426a83f8c53",
+    "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/38850540318",
+    "status": "in_progress_exact_source_confirmed_no_IPA_yet",
+    "watcher_session": 4755,
+    "watcher_script": ".cache/watch-rna-owned-build.py",
+    "watcher_log": ".cache/rna-owned-build-watch-38850540318.log"
+  },
   "device_acceptance": false,
-  "full_goal": "unfinished"
+  "full_goal": "unfinished",
+  "remaining": [
+    "Finish same exact native build; fix real failures without weakening guards.",
+    "Verify full downloaded IPA and independently inspect actual fifteen compiled native/outer branches plus retained HUD launch and Weight cleanup."
+  ]
 }

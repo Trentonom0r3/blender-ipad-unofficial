@@ -1,3 +1,22 @@
+## Owned ID/Mesh exact build in progress - 2026-10-16 UTC
+
+Validated source196b54ca63a8fa558225479711de2426a83f8c53 is committed/pushed
+and building ONCE in run38850540318. Exact build head is confirmed. Watcher
+session4755/.cache/watch-rna-owned-build.py and log
+.cache/rna-owned-build-watch-38850540318.log own waiting, full IPA download,
+package/HUD-launch/Weight checks and initial actual15 native/outer disassembly.
+Inspect SAME run/process before replacing anything. No new native compile,
+IPA or device acceptance exists yet. Full494 checks361.495s, focused14,
+retained ID15/Mesh17/material25,132-file preflight/diff and independent native/
+literal/test/outer reviews pass. Human approval is fulfilled, not pending.
+
+Only6native/RNA/BPY sections change;126others/all7interactionUI are unchanged.
+Final scope-only test labels explicitly distinguish modeled null-Main callback
+arguments from the native implicit getter and poison only self/override tokens.
+No interpreter/global lifetime/rollback/device proof. Latest fully verified
+package remains01e2b1a/run38612413567. Finish current exact native/package and
+actual compiled proof before the next source increment. Full goal unfinished.
+
 ## Owned ID/Mesh dispatch source validated - 2026-10-16 UTC
 
 The human-approved validation proposal is fulfilled. Exact candidate patch
