@@ -1,0 +1,797 @@
+{
+  "title": "Disposable RNA update context-provider frontier characterization",
+  "timestamp_utc": "2026-10-16T05:10:44.178187+00:00",
+  "status": "42 bounded source-executing scenarios passed; prospective boundary evidence only; no corrective source",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_source": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "production_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "scenario_legend": {
+    "0": "No registered owner, no provider mutation",
+    "1": "Initially owned: Main provider retires owner and removes target",
+    "2": "Initially owned: Scene provider retires owner and removes target",
+    "3": "Initially absent: Main provider acquires owner",
+    "4": "Initially absent: Scene provider acquires owner",
+    "5": "Initially owned, no provider mutation",
+    "6": "Initially absent: Main provider removes target without owner acquisition"
+  },
+  "source_files_sha256": {
+    "source/blender/makesrna/intern/rna_access.cc": "24cd41904f36100dc79b0f12cf39c8c661b4659494404793f97bee4cf067954e",
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+  },
+  "actual_source_fragments": {
+    "RNA_property_update": {
+      "sha256": "dfdd2d992507c6a37f5c204c83d364707406b58055766caf64912049e1e254e3",
+      "source": "void RNA_property_update(bContext *C, PointerRNA *ptr, PropertyRNA *prop)\n{\n  rna_property_update(C, CTX_data_main(C), CTX_data_scene(C), ptr, prop);\n}"
+    },
+    "ctx_data_pointer_verify": {
+      "sha256": "fcc2e65ff9837ddea19edd007afcd6b4ed5422e44ab003f42c373ec0f93df297",
+      "source": "static bool ctx_data_pointer_verify(const bContext *C, const char *member, void **pointer)\n{\n  /* if context is nullptr, pointer must be nullptr too and that is a valid return */\n  if (C == nullptr) {\n    *pointer = nullptr;\n    return true;\n  }\n\n  bContextDataResult result;\n  if (ctx_data_get((bContext *)C, member, &result) == CTX_RESULT_OK) {\n    BLI_assert(result.type == CTX_DATA_TYPE_POINTER);\n    *pointer = result.ptr.data;\n    return true;\n  }\n\n  *pointer = nullptr;\n  return false;\n}"
+    },
+    "CTX_data_main_and_scene": {
+      "sha256": "72ede7f01a7e8a9231f264f11705b63053cd77da96e5ef003e71f29e63a4492f",
+      "source": "Main *CTX_data_main(const bContext *C)\n{\n  Main *bmain;\n  if (ctx_data_pointer_verify(C, \"blend_data\", (void **)&bmain)) {\n    return bmain;\n  }\n\n  return C->data.main;\n}\nScene *CTX_data_scene(const bContext *C)\n{\n  Scene *scene;\n  if (ctx_data_pointer_verify(C, \"scene\", (void **)&scene)) {\n    return scene;\n  }\n\n  return C->data.scene;\n}"
+    },
+    "rna_material_assignment_profile": {
+      "sha256": "b1c9f8bd0c6c0f1b0eefdf429087cd54efed9e8132801d96dbc6cb433020acd9",
+      "source": "static int rna_material_assignment_profile(PropertyRNA *prop)\n{\n  if (!prop || prop->magic != RNA_MAGIC || prop->type != PROP_POINTER) return 0;\n  const PointerPropertyRNA *pprop = reinterpret_cast<PointerPropertyRNA *>(prop);\n  if (pprop->set == Object_active_material_set) return 1;\n  if (pprop->set == MaterialSlot_material_set) return 2;\n  return 0;\n}"
+    },
+    "rna_material_assignment_owner_absent": {
+      "sha256": "7d2aa5b9ec9af752f86bad1f7c404bbc5938990c092d4c6635a89ccecde091cc",
+      "source": "static bool rna_material_assignment_owner_absent(PropertyRNA *prop, ReportList *reports)\n{\n  if (!rna_material_assignment_profile(prop)) return true;\n  if (G_MAIN &&\n      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr))\n  {\n    return true;\n  }\n  if (reports) BKE_report(reports, RPT_ERROR, \"Material assignment was refused while a Pencil paint owner is active\");\n  return false;\n}"
+    },
+    "rna_property_update_prefix_before_suffix": {
+      "sha256": "63ec781498ee254171bcd6c8e3f4ab076f9496e2b369b95f659a9340d3401d8a",
+      "source": "static void rna_property_update(\n    bContext *C, Main *bmain, Scene *scene, PointerRNA *ptr, PropertyRNA *prop)\n{\n  const bool is_rna = (prop->magic == RNA_MAGIC);\n  prop = rna_ensure_property(prop);\n#ifdef WITH_APPLE_CROSSPLATFORM\n  /* UI callers can update after a void setter refusal. Do not tag/evaluate its\n   * data through that fallback while the same paint owner is still registered. */\n  if (!rna_material_assignment_owner_absent(prop, nullptr)) return;\n#endif"
+    }
+  },
+  "execution": {
+    "compiler": "C:/Program Files/LLVM/bin/clang++.exe",
+    "language": "C++17",
+    "optimizations": [
+      "O0",
+      "O2"
+    ],
+    "scenarios_each": 21,
+    "exit_status": 0,
+    "workdir": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-update-provider-frontier-9fu7dtrc",
+    "rows": {
+      "O0": [
+        {
+          "profile": "Object.data",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        }
+      ],
+      "O2": [
+        {
+          "profile": "Object.data",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.data",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 0,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "Object.active_material",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 0,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 1,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "retire_owner_remove_target",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 2,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "retire_owner_remove_target",
+            "blend_data",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 3,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "acquire_owner",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 4,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "acquire_owner",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 5,
+          "owner_final": true,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 0,
+          "first_owner_reads": 0,
+          "tombstoned_owner_reads": 0,
+          "modeled_tags": 0,
+          "events": [
+            "scene",
+            "blend_data",
+            "absence_refused"
+          ]
+        },
+        {
+          "profile": "MaterialSlot.material",
+          "scenario": 6,
+          "owner_final": false,
+          "provider_calls": 2,
+          "absence_queries": 1,
+          "suffix_calls": 1,
+          "first_owner_reads": 1,
+          "tombstoned_owner_reads": 1,
+          "modeled_tags": 1,
+          "events": [
+            "scene",
+            "blend_data",
+            "remove_target_without_owner",
+            "absence_passed",
+            "MODELED_SUFFIX"
+          ]
+        }
+      ]
+    }
+  },
+  "observations": [
+    "Actual public RNA_property_update evaluates both actual CTX_data getters before entering the actual inner material absence gate prefix. C++ does not guarantee source left-to-right function argument evaluation; execution events record observed order only.",
+    "A modeled provider retirement/removal makes the later material absence helper pass; its exact identity-only property profile has no target receipt, so the explicitly modeled suffix observes a tombstoned original owner.",
+    "A modeled provider acquisition is refused by both material profiles before the modeled suffix, but both provider callbacks have already executed.",
+    "Object.data is not one of the two actual material profiles: no absence query runs and the modeled suffix proceeds in all scenarios, including owner-present and removed-target scenarios.",
+    "No-owner and owner-present controls preserve current profile behavior. Target removal without an owner is a native-baseline callback frontier outside the existing owner gate, not a claim of broad no-owner safety."
+  ],
+  "boundaries": [
+    "ctx_data_get callback dispatch is modeled. Exact pinned ctx_data_pointer_verify and public CTX_data_main/CTX_data_scene getters execute and fall back to live non-null C data; interpreter/provider recursion is not executed. Null-C calls are not exercised and no null-C full-update claim is made.",
+    "The WM absence endpoint is modeled as registered-owner bool; actual shared WM scan, handler/Brush state, native Cancel and disposal are not executed.",
+    "Only the exact rna_property_update prefix through the Apple material absence gate executes. First-owner read, tag and rest of inner update are expressly modeled, not a proof of full native tagging/depsgraph/notification behavior.",
+    "Target and PointerRNA backing memory is retained and marked with tombstones. No real freed pointer is dereferenced; no allocator UAF, native failure, UIKit timing or device proof is claimed.",
+    "No Object.data setter, generic pointer Debug frame, Python conversion or UI event tail executes in this probe; their separate earlier characterization remains separately scoped.",
+    "No production or tracked test files were edited; no build is requested by this characterization."
+  ]
+}

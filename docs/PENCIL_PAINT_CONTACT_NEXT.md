@@ -19,11 +19,16 @@ remain exact prior verified production. Source/report/model/package/compiled/
 device evidence stay separate. Reports: pencil-rna-owned-dispatch, including
 native-package-verification.json and binary-38850540318/compiled-*-review.json.
 
-Next read-only Object.data outer audit records a callback-bearing setter beneath
-borrowed Debug/Python/UI frames; current15 source does not claim that coverage.
-Read object-data-outer-next-audit.json and any disposable characterization before
-the next coherent source increment. Preserve admission/nullable/native behavior,
-enclosing ownership, all accepted UI and evidence. Full personal goal unfinished.
+Next family is Object.data/full pointer-assignment update ownership; NO corrective
+source or tracked fixture changes exist yet. Read object-data-next-checkpoint.json,
+object-data-full-assignment-contract.json and separate28/42-execution disposable
+characterizations. Same-Mesh assignment resets PBVH; silent Edit/null returns still
+late-tag; cross-object dependencies require all-owner policy. Main/Scene providers
+precede the current inner material gate, including both existing material profiles.
+Resolve owned prepare/late-update ABI and original identity/provider receipts before
+coding; preserve C/messagebus/native semantics and explicit no-owner boundaries.
+These probes retain storage/model suffixes and prove no allocator UAF/device crash.
+Current15 package is fully verified; do not rebuild unchanged. Full goal unfinished.
 
 ## Owned ID/Mesh exact build in progress - 2026-10-16 UTC
 

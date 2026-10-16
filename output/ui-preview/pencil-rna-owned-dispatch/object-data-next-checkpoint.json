@@ -1,0 +1,36 @@
+{
+  "status": "read_only_contract_and_disposable_characterization_no_corrective_source",
+  "baseline_production": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "baseline_verified_run": 38850540318,
+  "baseline_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "contracts": [
+    "object-data-outer-next-audit.json",
+    "object-data-full-assignment-contract.json"
+  ],
+  "characterizations": [
+    {
+      "report": "object-data-outer-characterization.json",
+      "executions": 28,
+      "scope": "Actual setter/generic Debug frame and selected Python/UI tails; retained tombstone storage and explicit native/interpreter boundaries"
+    },
+    {
+      "report": "update-provider-frontier-characterization.json",
+      "executions": 42,
+      "scope": "Actual public update wrapper, context getters and material inner gate prefix; modeled provider/WM/post-gate suffix, observed argument order only"
+    }
+  ],
+  "primary_findings": [
+    "Same-Mesh assignment directly calls multires rebuild and resets sculpt PBVH; pointer equality is not a native no-op.",
+    "Silent Edit/null setter return still reaches Python late geometry/relations update; report errors and native reportless UI differ.",
+    "Cross-object Shrinkwrap/evaluated-Mesh/retained projection spans support all-owner retirement rather than Object UID filtering.",
+    "Main/Scene providers run before the current inner material absence gate; a later absence result can hide owner retirement and stale input.",
+    "Owned late update must carry original input identity, sequence and validate provider callbacks, and retain C/messagebus behavior; borrowed callers need a pre-provider gate."
+  ],
+  "next_required": "Resolve the ABI/policy/support choices in the contract before coding one connected producer/native/Debug/Python/UI/update increment. Cover both existing material profiles honestly if changing their shared provider frontier.",
+  "source_changes": false,
+  "tracked_fixture_changes": false,
+  "new_build": false,
+  "device_acceptance": false,
+  "full_goal": "active_unfinished",
+  "ordinary_usage": "Latest check Oct16 05:17UTC72percent five-hour/24percent weekly; next ordinary reset09:51:08UTC/4:51AMChicago, heartbeat4:58AM;0credits."
+}

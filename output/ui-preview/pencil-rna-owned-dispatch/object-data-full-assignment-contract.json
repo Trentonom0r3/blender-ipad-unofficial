@@ -1,0 +1,198 @@
+{
+  "review": "Object.data full assignment contract addendum",
+  "timestamp_utc": "2026-10-16T05:07:49.165330+00:00",
+  "status": "read_only_primary_source_contract_no_correction_or_new_test_execution",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "current_production": "196b54ca63a8fa558225479711de2426a83f8c53/run38850540318",
+  "production_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "existing_characterization": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-rna-owned-dispatch\\object-data-outer-characterization.json",
+    "sha256": "167feac759d7e1658dc2ad71146443423ad7e1c67b2a9e83feddc8bc4913204d",
+    "scope": "Existing28 Debug/Release retained-storage/tombstone scenarios are read as characterization, not rerun here. Native cancellation/refinement/Python/UI/allocator boundaries remain as its report states."
+  },
+  "verified_hypothesis": [
+    {
+      "anchor": "Pinned bpy_rna.cc2207-2208; current2230-2244; rna_access.cc2722-2736; pinned/current Object.data registration2894-2897/3651-3657",
+      "finding": "Python assignment runs late RNA update whenever pointer conversion/setter produced no error because Object.data has an update callback. The void setter does not signal whether it changed data. Edit and null-nonempty silent returns therefore do not suppress the subsequent relation/geometry update. A same-pointer assignment also continues, and is not a native Mesh no-op."
+    },
+    {
+      "anchor": "Pinned rna_object.cc440-454,499-501; current445-468,505-508; current rna_access.cc2636-2680",
+      "finding": "Object.data callback always calls DEG_relations_tag_update(bmain), DEG_id_tag_update(Object owner,ID_RECALC_GEOMETRY) and native draw notifier. Generic RNA update additionally publishes message bus and tags eligible Object owner SYNC_TO_EVAL|PARAMETERS. Native property flags do not mark Object.data NO_DEG_UPDATE. This whole assignment footprint, not setter pointer-change admission alone, determines paint-owner drain requirements."
+    },
+    {
+      "anchor": "Pinned BKE mesh.cc1587-1608; multires.cc327-337; paint.cc2279-2300",
+      "finding": "BKE_mesh_assign_object only early-returns on nullObject. Even old==incomingMesh it calls multires_force_sculpt_rebuild, decrements/assigns/increments users, syncs materials and tests modifiers. Multires rebuild flushes sculpt updates then calls BKE_sculptsession_free_pbvh when sculpt exists; that resets PBVH/adjacency/boundary/topology caches. Thus same-pointer Mesh assignment has immediate storage effects in addition to late update; treating it as callback-free no-op is incorrect."
+    }
+  ],
+  "native_baseline_matrix": [
+    {
+      "input": "Edit-mode Object",
+      "setter": "Silent return before native assignment/tag-mismatch check. Existing Apple setter skips its direct ObjectUID teardown.",
+      "complete_Python_assignment": "No setter error: lateObject.data update still runs. Not a whole-assignment no-op."
+    },
+    {
+      "input": "Null incoming data on non-Empty",
+      "setter": "Silent return; current Apple setter can already have drained before reaching it because it tests differentdata first.",
+      "complete_Python_assignment": "No setter error: lateupdate still runs. Preserve native silent return and update behavior rather than treating null as an error or zero-effect assignment."
+    },
+    {
+      "input": "Same pointer Mesh",
+      "setter": "No native same-value earlyreturn; BKE effects above. Existing Apple guard skips teardown based on equality.",
+      "complete_Python_assignment": "Lateupdate runs and must be included in owned admission."
+    },
+    {
+      "input": "Same pointer Empty or other supported data",
+      "setter": "Native usercount/clear/reassign/material/Curve/Armature paths still execute; exact type/null branch retained.",
+      "complete_Python_assignment": "Lateupdate runs. Do not add broad same-value skip."
+    },
+    {
+      "input": "Evaluated/original tag mismatch",
+      "setter": "Native RPT_ERROR thenreturn afterEdit/null admission. Current Apple guard can refuse earlier if activeMain target has NO_MAIN/zero-UID input.",
+      "complete_Python_assignment": "BPy_reports_to_error returns-1 before lateupdate. This error boundary does not protect generic Debug postreads already performed, and native UI passes nullreports/updates separately."
+    },
+    {
+      "input": "Wrong Python dynamic pointer type",
+      "setter": "Python conversion/type check errors before setter; generic native pointersetter also has its own baseRNA type check beforeDebug.",
+      "complete_Python_assignment": "No successful conversion/lateupdate. Preserve normal errors, never use a global property-name/type allowlist or impose material-style custompoll behavior."
+    },
+    {
+      "input": "Empty with null or Image",
+      "setter": "Native Empty clears/decrements old value then acceptsnull/Image andincrements allowed incoming.",
+      "complete_Python_assignment": "Nullable semantics and reference-count roundtrip remain; lateupdate follows success."
+    },
+    {
+      "input": "No registered paint owner / nonApple / evaluated or foreign IDs",
+      "setter": "Native fixed ABI and direct G_MAIN BKE calls remain baseline where upstream caller input is valid. No paint-owner recapture/cancellation is needed on proved absence.",
+      "complete_Python_assignment": "Preserve native whole conversion/set/update/refcount behavior on noowner and nonApple paths; do not silently convert foreign/evaluated noowner calls into activeMain-only errors. Owner-present evaluated/nonMain/foreign support is a separate explicit admission decision, not implied by noowner baseline."
+    },
+    {
+      "input": "NullC native update context",
+      "setter": "Context-free setter has no C/Main ABI; native CTX_data_main(nullptr) and CTX_data_scene(nullptr) returnnull via context.cc418-423.",
+      "complete_Python_assignment": "Keep nullC semantics separate from an invented nullable getter model. Whether all downstream update callees tolerate nullMain belongs to exact caller baseline; this addendum does not claim generic null-context update safety."
+    }
+  ],
+  "cross_object_dependency_storage_proof": {
+    "example": "TexturePaint ObjectA retains evaluated MeshA spans; its enabled Shrinkwrap targets distinct ObjectT. Assigning ObjectT.data or its silent-success lateupdate tags T geometry; T need not match the registered owner ObjectA UID.",
+    "chain": [
+      "rna_Object_data_update -> dependency update -> DEG_id_tag_update(T,ID_RECALC_GEOMETRY); depsgraph_tag.cc147-149 maps geometrytag to component.",
+      "MOD_shrinkwrap.cc102-121 adds target transform/GEOMETRY relation. depsgraph_build.cc119-127 maps targetObject component into relation to modifier node. deg_builder_relations.cc937-966 creates that node on ObjectA and links modifier chain to A eval. This is a concrete cross-Object dependency, not equality of Mesh or Object UID.",
+      "object_update.cc294-298 -> BKE_object_handle_data_update128-149 -> mesh_data_update1117-1148 -> BKE_object_free_derived_caches at1128. object.cc1637-1653 frees owned data_eval Mesh andmesh_deform_eval storage before rebuilding.",
+      "paint_image_proj.cc4055-4103 obtains ps.mesh_eval and retains positions/normals/edges/faces/corners/triangles/material-index spans;4502/6090 initialize onceperstroke and5885-5887 reuse ProjPaintState across stroke steps.",
+      "WM loop wm.cc592-604 runs handlers then notifiers then draw; current wm_event_system.cc841 refreshes depsgraphs and516-565 calls BKE_scene_graph_update_tagged for visible layers. Evaluation can occur while modal paint state remains registered, not only at a later stroke packet."
+    ],
+    "conclusion": "Actual pinned source reachability supports draining all registered paint owners in activeMain for supported complete Object.data assignment, rather than only matching ObjectUID. This demonstrates a possible evaluated-storage lifetime break under dependencies; it is not a device repro, deterministic scheduler trace or proof every assignment frees storage."
+  },
+  "existing_policy_assessment": [
+    {
+      "anchor": "current wm_event_system.cc3652-3767,especially3675-3678",
+      "finding": "Existing Object-specific helper filters owner_values[7]==assignedObjectUID and reconstructs original owner context. It correctly handles matching owners in its scope but misses the distinct ObjectA dependency example."
+    },
+    {
+      "anchor": "current wm_event_system.cc3452-3602; WM_api.hh717-728",
+      "finding": "Existing shared WM_next all-owner scan already reconstructs registered owner Main/WM/window for nativeCancel. Default CallerContext with nonnullC requires supplied contextMain/membership and WM/window; nullC owner-present refuses. MaterialAssignmentOriginal is narrowly explicit producer policy permitting nullC original-owner reconstruction and scoped busy state, while retaining nonnullC validation. Both null-output queries remain absence-only and never createcontext/cancel."
+    },
+    {
+      "anchor": "current rna_object.cc1439-1488,1733-1750",
+      "finding": "Material-owned producers own target/value metadata, capture typed state beforedrain, use all-owner original policy and recapture aftercompletedWM beforedidfalse admission. Object.data should reuse this original-owner scan policy deliberately through an appropriately named explicit ownedproducer, not claim raw setter callbacks own borrowed frames. DefaultCallerContext may be sufficient when savedC has provenwindow/WM, but it does not cover context-free producer inputs by itself."
+    }
+  ],
+  "required_connected_frontiers_before_future_source_is_complete": [
+    {
+      "frontier": "Exact property identity",
+      "obligation": "Recognize actual generated Object_data_set identity/static Object.data property. Preserve unrelated property pass-through. Use owned Object PointerRNA and owned nullable incoming PointerRNA/ancestor vectors, saved BPYcontext and static property identity before any new callback-bearing preflight; native getter may create subdivision storage, so do not use it as a read-only receipt constructor."
+    },
+    {
+      "frontier": "Native/generic borrowed setter",
+      "obligation": "Native Object.data body must be callback-free absence-only before DNA self/old/new ID reads. Generic RNA_property_pointer_set must refuse exact Object.data before Debug caches old/new getter/refcounts. A setter-local refusal alone cannot shield enclosing Debug postreads. No callback-bearing cancellation beneath UI/button/selected-pointer frames."
+    },
+    {
+      "frontier": "Full owned assignment admission",
+      "obligation": "Capture typed current Object, direct olddata, nullable incomingdata, Objecttype/mode, IDs/UIDs/name types/Library/override and native relation/refcount-relevant state beforecallback. Use shared all-owner original registered retirement, recapture aftereverycompleted successfulWM includingdidfalse, and refuse changed inputs/context before native semantics. Whole-assignment lateupdate means Edit/null/same-pointer cannot be excluded solely by setter-level no-op checks."
+    },
+    {
+      "frontier": "Late update providers and callbacks",
+      "obligation": "Current RNA_property_update(C,ptr,prop) at2730 evaluates CTX_data_main and CTX_data_scene BEFORE inner rna_property_update guard. Those providers can execute Python/native callbacks(context.cc321-403,1135-1158). An inner absence gate alone is insufficient. Owned whole-assignment/update path must own saved target/context through provider queries, establish/update receipt beforequeries and validate aftertheir callback boundary, or dispatch through already-proved fresh native inputs without another query. Borrowed RNA_property_update and update_main must refuse before relevant provider/owner/tagging reads; include separately called native Object_data_update as needed. Do not introduce a second blind provider lookup after owned preparation."
+    },
+    {
+      "frontier": "Reports/native UI semantics",
+      "obligation": "Preserve native setter errors/silentreturns. Pythonerror stopslateupdate; native UI has a separate unconditional updatepath after voidsetter and no guaranteedreporterror suppression. It must remain protected even if setter refuses. Refusal does not roll back cancellation or a prior native assignment; no atomic-history promise from an errorcode."
+    },
+    {
+      "frontier": "Actual regression scope",
+      "obligation": "Future connected checks need actual generic Debug/Release pointersetter and actual Python conversion/report/lateupdate plus nativeUI update shapes. Cover sameMesh immediatePBVH effect; Edit/null silent-success updates; wrongtype/reporterrors; target/old/new/wrapper/context deletion/replacement; provider callbacks beforeMain/Scene; all-owner distinct-object dependency; newly acquired owner; nested producer; evaluated/foreign/zeroUID/noowner/nonApple and exact native usercount/type/null behavior. Existing28 tombstone cases alone do not prove allocator safety or new correction."
+    }
+  ],
+  "open_design_questions": [
+    "Select explicit producer policy naming/extension for Object.data: reuse shared all-owner original reconstruction without casually broadening MaterialAssignmentOriginal to borrowed generic callers. Retain current Mesh/default nullC refusal.",
+    "Define supported owner-present evaluated/nonMain/foreign input admission before firstprovider; callback-bearing receipts cannot bless a foreign address afterreplacement. Noowner native behavior remains separately required.",
+    "Choose a coherent full owned assignment/update ABI so postsetter Main/Scene callbacks cannot bypass receipt checks or reenter generic borrowed context queries. Typed postassignment state differs from preassignment olddata and must be recaptured without mutatinggetter use.",
+    "Audit exact dynamic Object/data type and getter subdivision behavior plus all property update wrappers/direct generated callers before implementation. This addendum establishes required frontier, not an implementation.",
+    "Current15 final native/compiled checkpoint remainsfirst; no nextsource/build until it is complete."
+  ],
+  "primary_download_manifest": [
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__depsgraph__intern__depsgraph_tag.cc",
+      "source": "source/blender/depsgraph/intern/depsgraph_tag.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/depsgraph/intern/depsgraph_tag.cc",
+      "sha256": "355e3646d01d3af0ca7d7e6ef2d40232fcf7e8d034b15ef126c1a3e01eb19553"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__depsgraph__intern__builder__deg_builder_relations.cc",
+      "source": "source/blender/depsgraph/intern/builder/deg_builder_relations.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/depsgraph/intern/builder/deg_builder_relations.cc",
+      "sha256": "e5261ae0755baefae4d655c3b121041ba77fe5ddd9bfbedfccf4a9d232888c19"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__blenkernel__intern__object_update.cc",
+      "source": "source/blender/blenkernel/intern/object_update.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/object_update.cc",
+      "sha256": "112cada8b8885b4d390f85a7a1335c636f2874ddf05b9a036e13bd2b5cca43a3"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__blenkernel__intern__mesh_data_update.cc",
+      "source": "source/blender/blenkernel/intern/mesh_data_update.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/mesh_data_update.cc",
+      "sha256": "3f3de5379176f6e6cba7ab7db199ab310fd49f1f7a17918bbed87c88eb65ae59"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__blenkernel__intern__object.cc",
+      "source": "source/blender/blenkernel/intern/object.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/object.cc",
+      "sha256": "33e7b41c5b806b9baf2b59d0e5c40cc5db861cd1ee1e5da809368f130254dd2b"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__modifiers__intern__MOD_shrinkwrap.cc",
+      "source": "source/blender/modifiers/intern/MOD_shrinkwrap.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/modifiers/intern/MOD_shrinkwrap.cc",
+      "sha256": "5ba63fe6e570744e430148f69bc2d7dd46a3c7d93c49b8f335b189575284564b"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__blenkernel__intern__paint.cc",
+      "source": "source/blender/blenkernel/intern/paint.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/paint.cc",
+      "sha256": "4b6d2cf5da01ed51509a72a790e1cd12807fbd2f079eb51ac9155e1e0dd604b1"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__depsgraph__intern__depsgraph_build.cc",
+      "source": "source/blender/depsgraph/intern/depsgraph_build.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/depsgraph/intern/depsgraph_build.cc",
+      "sha256": "602cda89313e82d4a59bb7d248c72e155344514e6523fb991536988c93123d57"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-object-data-contract-pin\\source__blender__blenkernel__intern__multires.cc",
+      "source": "source/blender/blenkernel/intern/multires.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/multires.cc",
+      "sha256": "52f9212f46ea92b89335ff5a5b299dd6d470a7ac76dfc4f52e62b6ab46a938a6"
+    }
+  ],
+  "additional_local_primary_sources": [
+    ".cache/pinned-paint-storage/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/mesh.cc",
+    ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc",
+    ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/sculpt_paint/paint_image_proj.cc"
+  ],
+  "limits": [
+    "No production or test edit, corrective build, new executed characterization or device acceptance. Temporary exactpin primary source download only.",
+    "All-owner requirement is supported by specific dependency/evaluated-cache chain, not a claim everydata assignment causesimmediate ID free. SameMesh PBVH reset is separately directsource evidence.",
+    "No allocator/globalCFG/reentrancy termination/global RNA lifetime or genericCancelrollback proof."
+  ]
+}
