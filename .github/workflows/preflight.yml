@@ -178,6 +178,8 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_paint_image_remove.py -v
       - name: Pencil owner teardown before Outliner override clear
         run: python3 -m unittest discover -s build -p test_pencil_paint_outliner_override_clear.py -v
+      - name: Owned ID and Mesh RNA dispatch context lifetime
+        run: python3 -m unittest discover -s build -p test_pencil_rna_owned_dispatch.py -v
       - name: Direct RNA library override Pencil-owner teardown
         run: python3 -m unittest discover -s build -p test_pencil_rna_override_owner_teardown.py -v
       - name: Native Mesh storage mutation Pencil-owner admission

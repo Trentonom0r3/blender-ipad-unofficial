@@ -1,3 +1,36 @@
+## Owned ID/Mesh dispatch source validated - 2026-10-16 UTC
+
+The human-approved validation proposal is fulfilled. Exact candidate patch
+fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127
+passes 494/494 host checks (361.495s), owned Python/native14,
+retained ID15/Mesh17/material25,132-file pinned preflight and diff hygiene.
+Original failed logs and the exact historical failing helper remain preserved.
+All15 native bodies, owned Python/cleanup/destroy and borrowed first gates are
+connected; context-provider identity changes are refused before mutation.
+Only6 native/RNA/BPY overlay sections change;126 sections including all7 UI
+sections remain exact verified production. Accepted ring/HUD/native bars remain.
+
+Source/fixture evidence is bounded: interpreter/generated adapters/BKE/allocator/
+depsgraph boundaries are modeled; native iOS build and compiled review are NEXT.
+Do not call this an IPA or device acceptance. Latest verified package remains
+01e2b1a/run38612413567. See pencil-rna-owned-dispatch/source-verification.json.
+Commit coherent source, build exact revision once, then full IPA/actual compiled
+proof. Full personal goal remains unfinished; never redeem a reset credit.
+
+## Human approved validation updates - 2026-10-15
+
+The human explicitly replied **Approved** to the concrete validation proposal.
+That new authorization resolves the prior automatic-review approval blocker.
+Apply the proposed six retained migrations, material-only API boundary and new
+Python/deletion/generated-wrapper/portable historical-failure coverage. Preserve
+original failing logs and meaningful native behavior assertions; this approval
+does not authorize skipping validation or building unfinished source.
+
+Current production candidate remains fe816827... uncommitted. Source/literal
+review and132-file preflight pass, but full validation is still pending after
+the approved test corrections. Latest verified IPA is01e2b1a/run38612413567.
+The full goal is active again; no new native build is running.
+
 ## Validation edits need explicit approval - 2026-10-15
 
 Candidatefe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127

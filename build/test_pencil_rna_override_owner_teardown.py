@@ -250,20 +250,16 @@ static void assert_no_write(const Fixture &f) {
 
 
 def source_with_main(main):
-    # The fixtures compile all seven actual consumers each time. Taking volatile
-    # addresses prevents the compiler from discarding consumers absent in this
-    # case, while preserving -Werror for source signature/narrowing mistakes.
-    anchors = "static void fixture_emit_consumers(){\n" + "\n".join(
-        f"volatile auto consumer{i}=&{name};(void)consumer{i};"
-        for i, name in enumerate(CALLBACK_NAMES + ("mutate", "assert_no_write", "BKE_libblock_find_session_uid", "WM_event_ipad_pencil_paint_owner_teardown_next"))
-    ) + "\n}\n"
-    main = re.sub(r"int main\(\)\s*\{", "int main(){fixture_emit_consumers();", main, count=1)
-    return PREFIX + WM_OWNER_NEXT + NATIVE + HELPERS + "\n".join(CALLBACKS) + TEST_SUPPORT + anchors + main
+    # Owner-retirement tests exercise the explicit owned Python producer;
+    # borrowed native routes now refuse before their first admission read.
+    from test_pencil_rna_owned_dispatch import source_with_main as owned_source
+    return owned_source(main, mode="id", legacy_owned=True)
 
 
 class PencilRNAOverrideOwnerTeardownTests(unittest.TestCase):
     def run_cpp(self, main):
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source_with_main(main))
+        from test_pencil_rna_owned_dispatch import compile_run
+        compile_run(source_with_main(main))
 
     def test_native_no_owner_and_optional_arguments_preserve_api_behavior(self):
         self.run_cpp(r"""
@@ -344,10 +340,10 @@ int main() {
   }
   {
     Fixture f;f.add_owner();
-    assert(rna_ID_override_create(&f.linked,&f.foreign,nullptr,true)==&f.created);
-    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_writes==1);
+    assert(!rna_ID_override_create(&f.linked,&f.foreign,nullptr,true));
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_writes==0);
     rna_ID_override_library_reset(&f.overridden,&f.override,&f.foreign,nullptr,&f.reports,false,false);
-    assert(g_reset_single==1&&g_cancel_calls==0&&has_owner(&f.main));
+    assert(g_reset_single==0&&g_cancel_calls==0&&has_owner(&f.main));
   }
 }
 """)
@@ -451,7 +447,8 @@ int main() {
          g_reset_hierarchy==1&&g_remaps==2&&g_deletes==1&&g_resyncs==1&&f.reports.errors==0);
 }
 """).replace("#define WITH_APPLE_CROSSPLATFORM\n", "")
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source)
+        from test_pencil_rna_owned_dispatch import compile_run
+        compile_run(source)
 
     def test_user_remap_preserves_native_type_admission_and_context_free_success(self):
         self.run_cpp(r"""
@@ -477,7 +474,7 @@ int main() {
   {
     Fixture f;f.add_owner();g_expected_remap=&f.hint;
     rna_ID_user_remap(&f.linked,&f.foreign,nullptr,&f.hint);
-    assert(g_remaps==1&&g_cancel_calls==0&&has_owner(&f.main));
+    assert(g_remaps==0&&g_cancel_calls==0&&has_owner(&f.main));
   }
 }
 """)
@@ -531,8 +528,8 @@ int main() {
   }
   {
     Fixture f;f.add_owner();
-    assert(rna_ID_make_local(&f.linked,&f.foreign,nullptr,true,false,true)==&f.created);
-    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_make_locals==1&&g_newptr_clears==1);
+    assert(!rna_ID_make_local(&f.linked,&f.foreign,nullptr,true,false,true));
+    assert(g_cancel_calls==0&&has_owner(&f.main)&&g_make_locals==0&&g_newptr_clears==0);
   }
 }
 """)
@@ -550,10 +547,9 @@ int main() {
     Fixture f;f.add_owner(true);f.linked.newid=&f.root;f.linked.tag|=ID_TAG_NEW;
     mutate(f,mutation);
     assert(!rna_ID_make_local(&f.linked,&f.main,&f.C,true,true,true));
-    const bool early=mutation==NewptrUID||mutation==UnlinkPrimary;
-    assert(g_cancel_calls==(early?1:2)&&g_make_locals==0&&g_newptr_clears==0&&g_metadata_locals==0);
+    assert(g_cancel_calls==1&&g_make_locals==0&&g_newptr_clears==0&&g_metadata_locals==0);
     assert(f.linked.tag&ID_TAG_NEW);
-    assert(bool(f.second.modalhandlers.first)==early);
+    assert(f.second.modalhandlers.first==&f.other_owner);
   }
   {
     Fixture f;f.add_owner();assert(f.linked.newid==nullptr);mutate(f,NewptrChanged);

@@ -1,0 +1,97 @@
+{
+  "status": "passed_final_native_source_and_literal_reconfirmation_approval_resolved_full_native_pending",
+  "reviewer": "independent_final_native_correctness",
+  "review_date": "2026-10-15",
+  "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "baseline_verified_run": "38612413567",
+  "prior_detailed_native_review": "independent-final-native-source-review.json",
+  "prior_review_preserved": true,
+  "actionable_source_findings": [],
+  "reconfirmation": {
+    "all_six_materialized_source_hashes_match_prior_review": true,
+    "materialized_source_sha256": {
+      "source/blender/makesrna/intern/rna_ID.cc": "63b39443cf049d63fee8a99291017a74d6315ca3e811747af2fafca05bda6685",
+      "source/blender/makesrna/RNA_access.hh": "926d02bed42b28958dd1ab0da5add4ed06854e693f34450f7e29e7781bee2f79",
+      "source/blender/makesrna/intern/rna_mesh.cc": "b117dd6ffa3a8ab5dee64a7fa5f2db3c8cfa92a26492bf86d96fec48202c5151",
+      "source/blender/makesrna/intern/rna_mesh_api.cc": "571f3f0276a8bd62de6aa630882c729827d120121b81890512afeb71670e334e",
+      "source/blender/makesrna/intern/rna_access.cc": "24cd41904f36100dc79b0f12cf39c8c661b4659494404793f97bee4cf067954e",
+      "source/blender/python/intern/bpy_rna.cc": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda"
+    },
+    "all_prior_native_contract_findings_still_apply": true,
+    "zero_add_correction": "Exact four count0 add profiles invoke SAME native body via one-use lease before CTX/drain/UID receipt; native Edit-error-before-zero order remains at trusted frontier.",
+    "foreign_target_correction": "Other owner-present targets absent from original active Main refuse before first CTX; no post-query foreign replacement blessing. Initially absent foreign/evaluated native baseline remains scoped separately.",
+    "per_WM_and_lifetime": "Fresh typed/owned validation precedes did=false and any subsequent cancellation. Scoped busy/one-use first native gate, no second generated Main lookup, exact raw bool/ID outputs and no post-destroy target read are unchanged.",
+    "nonApple": "Standard C++17 [[maybe_unused]] strict-helper annotation remains present; no native behavior change."
+  },
+  "literal_preservation": {
+    "baseline_sections": 132,
+    "candidate_sections": 132,
+    "changed_sections": [
+      "source/blender/makesrna/intern/rna_ID.cc",
+      "source/blender/makesrna/RNA_access.hh",
+      "source/blender/makesrna/intern/rna_mesh.cc",
+      "source/blender/makesrna/intern/rna_mesh_api.cc",
+      "source/blender/makesrna/intern/rna_access.cc",
+      "source/blender/python/intern/bpy_rna.cc"
+    ],
+    "unchanged_sections": 126,
+    "added_sections": [],
+    "removed_sections": [],
+    "packaged_interaction_python_sections": 7,
+    "all_packaged_interaction_python_sections_unchanged": true,
+    "accepted_UI_preserved": "Only six listed native/RNA/BPY integration sections differ. Every other overlay section remains byte-exact, including accepted ring/native bars/tools/icons/HUD/GHOST/editor sections."
+  },
+  "approval": {
+    "status": "resolved_by_human_Approved",
+    "evidence": "Leading docs/PROJECT_HANDOFF.md and source-checkpoint.json human_authorization record the direct human Approved reply.",
+    "scope": "VALIDATION_CHANGES_FOR_REVIEW.md: six retained migrations, shared material API integration and new Python/deletion/generated-wrapper/historical-failure coverage",
+    "prior_rejection_records_preserved": "fixture-migration-review-proposal.json",
+    "effect": "The prior automatic-review approval blocker is resolved for the concrete validation changes. Completion of validation remains required."
+  },
+  "verified_current_validation_logs": {
+    "owned_dispatch": {
+      "passed": 14,
+      "seconds": 26.103,
+      "log": ".cache/rna-owned-approved-complete-first.log"
+    },
+    "retained_ID": {
+      "passed": 15,
+      "seconds": 16.163,
+      "log": ".cache/rna-owned-retained-id-approved.log"
+    },
+    "retained_Mesh": {
+      "passed": 17,
+      "seconds": 17.001,
+      "log": ".cache/rna-owned-retained-mesh-approved.log"
+    },
+    "retained_material_collection": {
+      "passed": 25,
+      "seconds": 23.998,
+      "log": ".cache/rna-owned-material-retained-approved.log"
+    },
+    "pinned_preflight": {
+      "status": "pass",
+      "files": 132,
+      "log": ".cache/rna-owned-preflight-approved-final.log"
+    },
+    "git_diff_check": "pass"
+  },
+  "remaining_gates": {
+    "full_suite": {
+      "status": "running_at_review_no_pass_claim",
+      "log": ".cache/rna-owned-full-approved-final.log",
+      "owner": "root records eventual result"
+    },
+    "native_build": "pending; no new build dispatched by reviewer",
+    "IPA_package_and_actual15_compiled_review": "pending after exact native source build",
+    "device_acceptance": false
+  },
+  "boundaries": [
+    "This addendum reconfirms production source/literal preservation and reads passing approved validation logs. The prior detailed bounded native-source review remains authoritative for its inspected contracts.",
+    "Original failed logs and prior review are preserved as history; their old approval/full-validation status is superseded only to the extent explicitly recorded here.",
+    "Full suite completion, exact native compilation, IPA/package verification and actual15 compiled branch/outer review are still separate unfinished gates.",
+    "PointerRNA copies do not hold IDs alive; pre-frontier parsing callbacks, arbitrary initially absent provider deletion, native heap/Cancel/depsgraph internals, global CFG/reentrancy/rollback and UIKit/device behavior remain outside the bounded proof.",
+    "No production or fixture edits were made by this reviewer."
+  ]
+}

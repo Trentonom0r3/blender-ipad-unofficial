@@ -69,15 +69,16 @@ ADD_NAMES = ("rna_Mesh_vertices_add", "rna_Mesh_edges_add",
 API_NAMES = ("rna_Mesh_clear_geometry", "rna_Mesh_update", "rna_Mesh_validate",
              "rna_Mesh_validate_material_indices")
 CALLBACK_NAMES = ADD_NAMES + API_NAMES
-CALLBACKS = [function(MESH, "static void " + name + "(") for name in ADD_NAMES]
-CALLBACKS += [function(API, "static " + result + name + "(") for name, result in zip(
+CALLBACKS = [function(MESH, ("static " if "static void " + name + "(" in MESH else "") + "void " + name + "(") for name in ADD_NAMES]
+CALLBACKS += [function(API, ("static " if "static " + result + name + "(" in API else "") + result + name + "(") for name, result in zip(
     API_NAMES, ("void ", "void ", "bool ", "bool "))]
 ED_NAMES = ("ED_mesh_verts_add", "ED_mesh_edges_add", "ED_mesh_loops_add", "ED_mesh_faces_add")
 ED_CALLBACKS = [function(ED, "void " + name + "(") for name in ED_NAMES]
 PREFIX = ID_PREFIX.replace("#include <vector>", "#include <vector>\n#include <string>").replace("ID_OB='O' | ('B'<<8)", "ID_ME='M' | ('E'<<8), ID_OB='O' | ('B'<<8)")
-# Match the pinned context.cc null branch in ctx_data_pointer_verify,
-# through which CTX_data_main(nullptr) returns nullptr. Non-null context
-# lookups remain a bounded fixture model; Python/context-provider lookup is not run.
+# The fixture supplies nullable implicit-Main plumbing for direct native calls.
+# This is modeled input, not execution of pinned CTX_data_main(nullptr): the
+# native getter dereferences C->data.main. Provider/interpreter behavior is outside
+# this direct-callback proof.
 PREFIX = PREFIX.replace("static Main *CTX_data_main(const bContext *C){return C->main;}",
                         "static Main *CTX_data_main(const bContext *C){return C?C->main:nullptr;}")
 PREFIX = PREFIX.replace("struct ReportList { int errors=0; };",
@@ -271,19 +272,23 @@ static void mutate(Fixture &f,Mutation mutation) {g_fixture=&f;g_mutation=mutati
 
 
 def source_with_main(main):
-    anchors = "static void fixture_emit_consumers(){\n" + "\n".join(
-        f"volatile auto consumer{i}=&{name};(void)consumer{i};" for i, name in enumerate(
-            CALLBACK_NAMES + ("mutate", "call_action", "assert_no_write", "BKE_libblock_find_session_uid", "GS", "BKE_reportf"))) + "\n}\n"
-    main = re.sub(r"int main\(\)\s*\{", "int main(){fixture_emit_consumers();", main, count=1)
-    return "\n".join((PREFIX, WM_OWNER_NEXT, NATIVE, "\n".join(ED_CALLBACKS), HELPERS, MESH_HELPER, "\n".join(CALLBACKS), SUPPORT, anchors, main))
+    # Historical owner-retirement expectations now enter the same explicit
+    # owned producer as Python. Native borrowed refusal is tested separately.
+    from test_pencil_rna_owned_dispatch import source_with_main as owned_source
+    return owned_source(main, mode="mesh", legacy_owned=True)
 
 
 class PencilMeshStorageOwnerTeardownTests(unittest.TestCase):
-    def run_cpp(self, main, apple=True):
-        source = source_with_main(main)
+    def run_cpp(self, main, apple=True, borrowed=False):
+        if borrowed:
+            from test_pencil_rna_owned_dispatch import source_with_main as native_source
+            source = native_source(main, mode="mesh", legacy_owned=False)
+        else:
+            source = source_with_main(main)
         if not apple:
             source = source.replace("#define WITH_APPLE_CROSSPLATFORM\n", "")
-        test_ipad_panels.IPadWorkspacePanelsTests()._run_source(source)
+        from test_pencil_rna_owned_dispatch import compile_run
+        compile_run(source)
 
     def test_all_eight_live_consumers_retire_all_registered_owners_before_native_mutation(self):
         self.run_cpp(r"""
@@ -405,11 +410,11 @@ int main() {
 }
 """)
 
-    def test_generated_null_context_supplies_null_main_for_seven_formerly_context_free_apis(self):
+    def test_modeled_implicit_prefix_and_null_Main_direct_native_callbacks_for_seven_apis(self):
         self.run_cpp(r"""
-// These ordinary callback arguments use the exact makesrna implicit prefix
-// checked below. The getter is the bounded fixture implementation of pinned
-// CTX_data_main's null-context semantics, not a complete RNA_function_call.
+// Argument ordering matches the makesrna implicit prefix checked below.
+// The nullable getter is a fixture boundary: actual native callbacks receive
+// modeled null Main inputs. The pinned getter/generated wrapper is not executed.
 static bool generated_call(Fixture &f,int action,bContext *C) {
   Mesh *_self=&f.mesh;ReportList *reports=&f.reports;g_operation_main=&f.main;
   switch(action) {
@@ -440,11 +445,13 @@ int main() {
       if(invalid==0)G_MAIN=nullptr;
       else C=&f.C,f.C.main=nullptr;
       if(action>=6)assert(!generated_call(f,action,C));else generated_call(f,action,C);
-      assert(g_cancel_calls==0&&f.reports.errors>0);assert_no_write();
+      assert(g_cancel_calls==0);
+      if(invalid==0){assert(f.reports.errors>0);assert_no_write();}
+      else{assert(f.reports.errors==0&&g_writes>0&&g_last_mesh==&f.mesh);}
     }
   }
 }
-""")
+""", borrowed=True)
 
     def test_actual_wm_absence_query_has_no_cancel_and_refuses_bad_context_or_handlers(self):
         self.run_cpp(r"""
@@ -487,7 +494,8 @@ int main() {
       Main *main=&f.main;
       if(context==3)f.add_owner(),main=&f.foreign,C=nullptr;
       call_action(f,action,C,main);
-      assert(g_cancel_calls==0&&f.reports.errors==0&&g_writes+g_cache_dirty>0);
+      if(context==3){assert(g_cancel_calls==0&&f.reports.errors>0);assert_no_write();}
+      else assert(g_cancel_calls==0&&f.reports.errors==0&&g_writes+g_cache_dirty>0);
       assert(bool(has_owner(&f.main))==(context==3));
     }
   }

@@ -76,6 +76,15 @@ static void RNA_parameter_get_lookup(ParameterList *p,const char *name,void **ou
 }
 static void RNA_parameter_set_lookup(ParameterList *p,const char*,const void *value){p->result=*static_cast<Material *const *>(value);}
 static bContext *BPY_context_get();
+// This material-only fixture instantiates the three IDMaterials identities and
+// unrelated sentinels, never any of the fifteen ID/Mesh FunctionRNA globals.
+// Their actual implementation is exercised in test_pencil_rna_owned_dispatch.
+// Keep that external API boundary fail-fast rather than admitting a new route.
+static bool RNA_function_is_id_storage_mutation(const FunctionRNA *) { return false; }
+static bool RNA_function_id_storage_call_owned(
+    bContext *, PointerRNA *, FunctionRNA *, ParameterList *, ReportList *) {
+  std::abort();
+}
 static int g_native_appends=0,g_native_pops=0,g_native_clears=0;
 static int g_index_mesh_remove=0,g_index_curve_remove=0,g_index_gp_remove=0;
 static int g_index_mesh_clear=0,g_index_curve_clear=0;

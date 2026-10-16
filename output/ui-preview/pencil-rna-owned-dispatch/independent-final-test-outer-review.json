@@ -1,0 +1,88 @@
+{
+  "status": "passed_bounded_final_test_and_outer_source_review_full_suite_pending",
+  "reviewer": "collection_outer_finish",
+  "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "authorization": "Direct human Approved response authorizes the concrete validation proposal and additional Python/deletion coverage. Earlier approval-pending documents/rejections are historical; this review does not reinterpret them as current authorization state.",
+  "reviewed_file_sha256": {
+    "build/test_pencil_rna_owned_dispatch.py": "e039d42a0a2bf876a3cdbcc562eaefc58589f53883cfa72646d732c0813395d6",
+    "build/tests/pinned_rna_owner_prequery_baseline.inc.cc": "bbc62d92c5fda5b6b32832b723e61d34e04460f4a7ea88d3cbfb116d18d3192e",
+    "build/test_pencil_rna_override_owner_teardown.py": "9bd8ce9f5e40e116d7ae05428b555203f00a256066120fd7497b19e31dc020b6",
+    "build/test_pencil_mesh_storage_owner_teardown.py": "500c973fc9bd26dcabe1e48c91682246af02c9b29259430ad44a9f5faf17fea3",
+    "build/test_pencil_material_collection_owner_teardown.py": "aa7672f60fa17e3048e8759ec1d975f29a19fbc8e913ebb0c04eed455da190f6"
+  },
+  "actual_python_tail_sha256": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda",
+  "test_results_inspected": {
+    "owned_dispatch": {
+      "passed": 14,
+      "seconds": 26.103,
+      "log": ".cache/rna-owned-approved-complete-first.log"
+    },
+    "retained_ID": {
+      "passed": 15,
+      "seconds": 16.163,
+      "log": ".cache/rna-owned-retained-id-approved.log"
+    },
+    "retained_Mesh": {
+      "passed": 17,
+      "seconds": 17.001,
+      "log": ".cache/rna-owned-retained-mesh-approved.log"
+    },
+    "retained_material": {
+      "passed": 25,
+      "seconds": 23.998,
+      "log": ".cache/rna-owned-material-retained-approved.log"
+    },
+    "full": {
+      "status": "pending during this review; not claimed passed",
+      "session": 94879,
+      "log": ".cache/rna-owned-full-approved-final.log"
+    },
+    "scope_wording": "Final two test-name/comment corrections narrow evidence labels without changing assertions or execution. Existing green logs use earlier names; no behavior change is inferred from a name change.",
+    "earlier_failures": "Preserve rna-id-owned-full-audit-first.log (487 ran,29 errors) and initial approved Python harness failures. They are not represented as passes."
+  },
+  "review_findings": [],
+  "resolved_evidence_scope_findings": [
+    "Retained nullable Main/CTX plumbing now explicitly identifies the getter as a fixture model. Pinned CTX_data_main dereferences C->data.main on fallback and does not prove native null-C getter support. The test is labeled modeled implicit-prefix/null-Main direct-native-callback coverage, not full generated-wrapper execution.",
+    "Acquired-owner generic-wrapper model explicitly poisons only self and override pointer tokens. Related Scene/ViewLayer/new-ID/residual parameters remain valid; the test does not claim independent poisoned-related-pointer first-read proof."
+  ],
+  "checks": [
+    "Actual fifteen-profile map, owned dispatcher, fifteen native bodies, shared helper and WM scan are extracted from complete candidate sources through changed_source/function, not replaced by a test admission allowlist. Fixture profile arrays construct contract inputs and raw expected outputs; same-name unknown FunctionRNA sentinel proves identity selection rather than name selection.",
+    "Actual RNA_function_call is executed around an explicitly modeled generated wrapper. The wrapper copies raw self/parameter values before the modeled Main getter, then calls actual native bodies and writes only owned ParameterList output storage. Borrowed owner-at-entry refuses before wrapper/query; newly acquired owner refuses at the native first gate without Cancel, native write or poisoned self/override dereference.",
+    "Actual Python method tail is extracted after ordinary argument parsing. The fixture supplies owned ParameterList and explicit interpreter/conversion boundaries; it does not execute Python parsing, GIL or a generated wrapper from makesrna.",
+    "All fifteen owned producer routes execute actual dispatcher/native bodies with two registered owners. Copied target survives reset of the original Python wrapper. Context, reports and changed raw parameter refusal prevent output conversion and converge on metadata cleanup.",
+    "Native destroy tests both hierarchy variants through the actual native callback seam. Its model genuinely deletes a heap ID and removes Main membership, while the original Python wrapper is reset during Cancel. Tail checks zero return conversions, null-parent metadata construction and exactly-once ParameterList cleanup; any attempted old-parent reconstruction is rejected by the model.",
+    "Source Python tail itself performs no self_ptr/owner dereference after the new dispatch. It creates funcptr with owner=null and static FunctionRNA metadata. Scalar bool and raw returned ID* conversions are the only exact outputs; actual pyrna_param_to_py uses bool bytes or the actual returned ID*, and native ParameterList cleanup reads static metadata/raw storage rather than ID pointees.",
+    "Raw parameter storage records sizeof(bool),sizeof(int),pointer sizes and poison bytes beyond each slot. Source dispatcher uses the actual bool/int/raw-ID parameter types and original native output identifiers. Full native ABI still needs exact target compile/compiled review.",
+    "Historical helper snippet was independently reconstructed from verified production01e2b1a plus the exact pin and matched byte-for-byte, SHA2560f5b2dd4ce2a46fe4407ec441b608510f3cbd747fbd377e3a4b3445cf3288630. Runtime baseline must emit its specific changed-ID-admitted marker and fail the contract assertion. Current helper refuses the same UID-change/removal scenarios. Baseline body is tracked portable evidence, never shipped production.",
+    "Approved retained foreign-context migrations now refuse active-project targets supplied with another Main, keep the stroke owner, perform zero Cancel and zero edits. Existing no-owner, optional/default/non-Apple positive paths remain separate and passing.",
+    "Approved localization migration now requires refusal after first native Cancel when the target/newid relation changes, retains the second registered owner and forbids localization/metadata/newptr cleanup. This strengthens the before-next-Cancel invariant rather than relaxing mutation checks.",
+    "Approved Mesh migration uses actual borrowed native callbacks for nullable Main cases rather than redirecting through an owned producer. It retains UID-zero/global-no-owner/owner-present contexts; only the callback argument model is claimed, not a null-C native CTX getter.",
+    "Material fixture adds only exact unknown-profile boundary declarations: new storage predicate false and unreachable dispatcher abort. Its actual material branch/counters/behavior assertions remain intact, and the separate ID/Mesh harness executes the new implementation.",
+    "Owner-present evaluated/non-Main count0 adds exercise exact collection shape, native Edit-error-before-zero and no provider/Cancel. Unprovable other owner-present foreign targets refuse before a provider. No-owner evaluated/UID-zero and non-Apple baselines remain tested.",
+    "CI explicitly discovers the new owned dispatcher module. C++17 strict compile checks remain, and missing compiler is an explicit skip. Native operations, allocation, Main/list/context callbacks and interpreter conversion stay instrumented boundaries."
+  ],
+  "literal_ui_preservation": {
+    "overlay_sections": 132,
+    "changed_source_sections": [
+      "source/blender/makesrna/intern/rna_ID.cc",
+      "source/blender/makesrna/RNA_access.hh",
+      "source/blender/makesrna/intern/rna_mesh.cc",
+      "source/blender/makesrna/intern/rna_mesh_api.cc",
+      "source/blender/makesrna/intern/rna_access.cc",
+      "source/blender/python/intern/bpy_rna.cc"
+    ],
+    "packaged_python_UI_sections_byte_exact": 7,
+    "ghost_interface_hud_View3D_sections_byte_exact": 39,
+    "result": "All seven packaged Python UI and39 GHOST/interface/HUD/View3D sections remain byte-exact to verified baseline. No ring/header/icon/geometry/corner/accepted input design change."
+  },
+  "boundaries": [
+    "This is an independent bounded source/test review, not full-suite completion, native build approval, target binary proof or device acceptance.",
+    "Python parsing, real GIL/module lifetime, arbitrary interpreter/provider callbacks, allocator reuse, full BKE/depsgraph operations, actual generated code/struct layout and UIKit timing are modeled or outside scope.",
+    "Copies own ancestor-vector storage and raw argument bytes, not ID reference counts. Destroy proof covers the modeled native deletion seam and normal tail cleanup, not all exception/unwind/allocation failures.",
+    "No-owner-to-no-owner arbitrary callback deletion remains native baseline. Owner-present positive-count evaluated/non-Main shapes remain unsupported/refused; do not describe blanket native parity.",
+    "Poisoned generic model checks self/override values only. Null-context getter behavior is modeled. Do not broaden these into complete native generated-wrapper or all-related-pointer execution proof.",
+    "Attempts are not a global cancellation/reentrancy bound, refusal does not undo provider/Cancel effects, and generic Cancel is not rollback.",
+    "Full appropriate suite/preflight/final native review and one exact target build/full IPA/compiled verification remain mandatory before delivery."
+  ]
+}

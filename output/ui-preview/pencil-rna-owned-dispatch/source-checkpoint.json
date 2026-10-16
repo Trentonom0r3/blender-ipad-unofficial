@@ -1,5 +1,5 @@
 {
-  "status": "source_reviewed_validation_incomplete_awaiting_explicit_test_edit_approval_do_not_build",
+  "status": "source_validated_native_build_pending",
   "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
   "baseline_verified_run": 38612413567,
   "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05",
@@ -13,48 +13,60 @@
     "source/blender/python/intern/bpy_rna.cc": "f3701253205b21933453c373f863cc044f8730df37f9c1e3ede72ad97fca6cda"
   },
   "validation": {
-    "focused_owned": {
-      "passed": 7,
-      "seconds": 9.203,
-      "scope": "independent reviewer current fe816827 execution, captured in tool output only"
+    "full": {
+      "passed": 494,
+      "seconds": 361.495,
+      "log": ".cache/rna-owned-full-approved-final.log"
+    },
+    "owned_python_native": {
+      "passed": 14,
+      "seconds": 26.098,
+      "log": ".cache/rna-owned-approved-complete-final.log"
+    },
+    "retained_id": {
+      "passed": 15,
+      "seconds": 16.163,
+      "log": ".cache/rna-owned-retained-id-approved.log"
+    },
+    "retained_mesh": {
+      "passed": 17,
+      "seconds": 13.892,
+      "log": ".cache/rna-owned-retained-mesh-approved-final.log"
+    },
+    "retained_material": {
+      "passed": 25,
+      "seconds": 23.998,
+      "log": ".cache/rna-owned-material-retained-approved.log"
     },
     "offline_preflight_files": 132,
-    "preflight_log": ".cache/rna-id-owned-preflight-final-current.log",
     "diff_check": "passed",
-    "retained_id_mesh": "migrated but UNRUN",
-    "full": {
-      "ran": 487,
-      "passed": 458,
-      "errors": 29,
-      "seconds": 368.158,
-      "log": ".cache/rna-id-owned-full-audit-first.log",
-      "status": "FAILED; not a validated candidate",
-      "breakdown": "23 material collection fixture compiler errors: missing newly connected public ID-storage APIs in shared Python harness; six retained ID/Mesh migration assertions/scoping unresolved"
-    },
-    "independent_root_integration": "bounded pass only; native source incomplete",
-    "native_build": "NONE",
-    "independent_final_native_source": "bounded pass; full/new tests incomplete, not build approval"
+    "independent_native_source": "passed; see final review",
+    "native_build": null
   },
   "first_failure": {
     "log": ".cache/rna-id-owned-focused-first.log",
     "result": "7 compiler errors from missing fixture thread macros; corrected explicit no-op interpreter boundary; superseded by focused7 pass"
   },
   "remaining": [
-    "Explicit human approval needed for the proposed validation migrations and new harness coverage; automatic approval review rejected them three times. No rejected edits applied. Do not route around it.",
-    "After approval: update six retained cases as proposed; adapt material shared harness for new public APIs without weakening behavior assertions; complete actual Python/destroy/generated/portable historical failure tests.",
-    "Run meaningful affected/full checks, pinned preflight and final independent review before source commit/build. No new native build or package for this candidate."
+    "Commit/push exact validated source and build once.",
+    "Download full IPA and independently review actual fifteen compiled native/outer consumers plus retained HUD launch and Weight cleanup."
   ],
   "regeneration_script": "C:/Users/tjerf/AppData/Local/Temp/regenerate-rna-id-storage-owned.py",
   "root_integration_script": "C:/Users/tjerf/AppData/Local/Temp/connect-rna-id-storage-python.py (already applied; do NOT rerun)",
   "design_contract": "output/ui-preview/pencil-material-collection/rna-context-query-outer-contract.json",
   "root_integration_review": "output/ui-preview/pencil-material-collection/rna-context-query-root-integration-review.json",
   "device_acceptance": false,
-  "usage_checkpoint": "October15 ordinary window fresh; latest32 percent five-hour/95 percent weekly. Primary reset2026-10-15T08:39:17Z/3:39AMChicago; weekly2026-10-20T07:52:15Z;0credits. No running tester/verifier/build. Human approval pending; no dependent test edits until received.",
+  "usage_checkpoint": "Human approval fulfilled; ordinary limits permit work. No reset credit redeemed. Full goal active and unfinished.",
   "resolved": [
     "Owner-present zero adds invoke same native body before CTX/drain/UID receipt, preserving Edit-error-before-zero; positive non-Main Edit admission remains an explicit unsupported owner-present shape.",
     "Unprovable owner-present targets outside active Main now refuse BEFORE first CTX query; no-owner foreign/evaluated baseline remains.",
     "C++17 [[maybe_unused]] covers the strict helper now unused on non-Apple."
   ],
   "approval_proposal": "output/ui-preview/pencil-rna-owned-dispatch/VALIDATION_CHANGES_FOR_REVIEW.md",
-  "approval_rejections": "output/ui-preview/pencil-rna-owned-dispatch/fixture-migration-review-proposal.json"
+  "approval_rejections": "output/ui-preview/pencil-rna-owned-dispatch/fixture-migration-review-proposal.json",
+  "human_authorization": {
+    "reply": "Approved",
+    "scope": "VALIDATION_CHANGES_FOR_REVIEW.md: six retained migrations, shared material API integration and new Python/deletion/generated-wrapper/historical-failure coverage",
+    "supersedes": "Prior automatic approval rejections; original rejection records preserved"
+  }
 }

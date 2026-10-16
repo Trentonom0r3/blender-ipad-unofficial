@@ -1,0 +1,72 @@
+{
+  "status": "source_validated_native_build_pending",
+  "baseline_production": "01e2b1a60797bead82d251fedac6bcd41e332be9",
+  "baseline_verified_run": 38612413567,
+  "canonical_lf_patch_sha256": "fe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "source_changes": [
+    "source/blender/makesrna/RNA_access.hh",
+    "source/blender/makesrna/intern/rna_ID.cc",
+    "source/blender/makesrna/intern/rna_access.cc",
+    "source/blender/makesrna/intern/rna_mesh.cc",
+    "source/blender/makesrna/intern/rna_mesh_api.cc",
+    "source/blender/python/intern/bpy_rna.cc"
+  ],
+  "unchanged_overlay_sections": 126,
+  "all_seven_packaged_python_ui_sections_unchanged": true,
+  "fixture_sha256": {
+    "build/test_pencil_rna_owned_dispatch.py": "e039d42a0a2bf876a3cdbcc562eaefc58589f53883cfa72646d732c0813395d6",
+    "build/test_pencil_rna_override_owner_teardown.py": "9bd8ce9f5e40e116d7ae05428b555203f00a256066120fd7497b19e31dc020b6",
+    "build/test_pencil_mesh_storage_owner_teardown.py": "500c973fc9bd26dcabe1e48c91682246af02c9b29259430ad44a9f5faf17fea3",
+    "build/test_pencil_material_collection_owner_teardown.py": "aa7672f60fa17e3048e8759ec1d975f29a19fbc8e913ebb0c04eed455da190f6",
+    "build/tests/pinned_rna_owner_prequery_baseline.inc.cc": "bbc62d92c5fda5b6b32832b723e61d34e04460f4a7ea88d3cbfb116d18d3192e"
+  },
+  "validation": {
+    "full": {
+      "passed": 494,
+      "seconds": 361.495,
+      "log": ".cache/rna-owned-full-approved-final.log"
+    },
+    "owned_python_native": {
+      "passed": 14,
+      "seconds": 26.098,
+      "log": ".cache/rna-owned-approved-complete-final.log"
+    },
+    "retained_id": {
+      "passed": 15,
+      "seconds": 16.163,
+      "log": ".cache/rna-owned-retained-id-approved.log"
+    },
+    "retained_mesh": {
+      "passed": 17,
+      "seconds": 13.892,
+      "log": ".cache/rna-owned-retained-mesh-approved-final.log"
+    },
+    "retained_material": {
+      "passed": 25,
+      "seconds": 23.998,
+      "log": ".cache/rna-owned-material-retained-approved.log"
+    },
+    "offline_preflight_files": 132,
+    "diff_check": "passed"
+  },
+  "human_authorization": {
+    "reply": "Approved",
+    "scope": "VALIDATION_CHANGES_FOR_REVIEW.md; completed without skipping failed checks"
+  },
+  "previous_failed_full_log_preserved": ".cache/rna-id-owned-full-audit-first.log",
+  "independent_reviews": [
+    "independent-final-native-source-approved-review.json",
+    "independent-final-test-outer-review.json"
+  ],
+  "coverage": [
+    "Actual fifteen native ID/Mesh bodies and owned Python dispatch tail, registered WM scan, native first gates and generic RNA frontier",
+    "Actual heap-ID destruction, null-parent return conversion and unconditional metadata cleanup; wrapper disposal during cancellation",
+    "Per-successful-query identity/raw argument checks, initially absent-to-owned refusal, count-zero native admission before context query and owner-present foreign refusal",
+    "Portable exact historical production helper reproduces UID-change and removed-membership admission failures; candidate refuses",
+    "Approved retained ID/Mesh migrations and fail-fast material-only external API boundary preserve existing native assertions"
+  ],
+  "boundaries": "Python interpreter/GIL/refinement/ParameterList conversion, generated-wrapper adaptation, allocation/depsgraph/native BKE operations are modeled boundaries. Null-context implicit Main getter is not executed: modeled null-Main arguments reach actual borrowed callbacks. Generic acquired-owner stale numeric tokens cover self/override only; related arguments stay valid. C++ heap deletion is executed, not a full allocator proof. No global reentrancy/rollback/UIKit/device proof.",
+  "native_build": null,
+  "device_acceptance": false,
+  "full_goal": "unfinished"
+}

@@ -157775,7 +157775,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/intern/rna_ID.cc
 --- a/source/blender/makesrna/intern/rna_ID.cc
 +++ b/source/blender/makesrna/intern/rna_ID.cc
-@@ -202,6 +202,15 @@
+@@ -202,6 +202,19 @@
 
  #ifdef RNA_RUNTIME
 
@@ -157783,19 +157783,24 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +
 +#  ifdef WITH_APPLE_CROSSPLATFORM
 +#    include <cstdint>
++#    include <cstring>
 +#    include "DNA_layer_types.h"
++#    include "DNA_mesh_types.h"
 +#    include "DNA_scene_types.h"
 +#    include "BKE_context.hh"
++#    include "BKE_main.hh"
++#    include "BKE_mesh_types.hh"
 +#  endif
 +
  #  include "DNA_anim_types.h"
 
  #  include "BLI_listbase.h"
-@@ -779,13 +788,286 @@
+@@ -779,8 +792,309 @@
    WM_main_add_notifier(NC_ID | NA_EDITED, nullptr);
  }
 
 -static ID *rna_ID_override_create(ID *id, Main *bmain, bool remap_local_usages)
+-{
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +struct RnaIDOverrideIdentity {
 +  uintptr_t address = 0;
@@ -157912,7 +157917,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 + * hierarchy without passing through the guarded Outliner operators. Drain only
 + * registered native paint owners from the active Main, then reacquire every ID
 + * input by type/session UID before allowing the operation to continue. */
-+static bool rna_ID_paint_owner_teardown(bContext *C,
++[[maybe_unused]] static bool rna_ID_paint_owner_teardown(bContext *C,
 +                                       Main *bmain,
 +                                       ID **r_id,
 +                                       ID **related_ids,
@@ -157920,7 +157925,9 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +                                       Scene **r_scene,
 +                                       ViewLayer **r_view_layer,
 +                                       ReportList *reports,
-+                                       const char *operation)
++                                       const char *operation,
++                                       bool (*validate_owned)(void *) = nullptr,
++                                       void *owned_validation_data = nullptr)
 +{
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (!bmain || !r_id || !*r_id || related_id_count < 0 || related_id_count > 2 ||
@@ -157989,10 +157996,6 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: paint owner could not be retired", operation);
 +      return false;
 +    }
-+    if (!did_teardown) {
-+      return true;
-+    }
-+
 +    ID *ids[4]{};
 +    for (int i = 0; i < id_count; i++) {
 +      if (!identities[i].address) continue;
@@ -158025,14 +158028,36 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: view layer changed during paint cancellation", operation);
 +      return false;
 +    }
++    if (validate_owned && !validate_owned(owned_validation_data)) {
++      if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: owned input shape changed", operation);
++      return false;
++    }
++    /* A successful WM absence result can still have called context providers.
++     * Reconstruct every input before accepting even a no-Cancel result. */
++    if (!did_teardown) return true;
 +  }
 +  if (reports) BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: too many paint owners", operation);
 +  return false;
 +#else
-+  UNUSED_VARS(C, bmain, r_id, related_ids, related_id_count, r_scene, r_view_layer, reports, operation);
++  UNUSED_VARS(C, bmain, r_id, related_ids, related_id_count, r_scene, r_view_layer, reports,
++              operation, validate_owned, owned_validation_data);
 +  return true;
 +#endif
 +}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Only the explicit owned Python producer may prepare this single native call.
++ * The lease contains values, never ID/RNA storage, and is consumed before the
++ * first native self read. Generic dispatch and recursive producers ignore it. */
++struct RnaIDStorageNativeLease {
++  uintptr_t main_address = 0;
++  uintptr_t id_address = 0;
++  const char *operation = nullptr;
++  bool consumed = false;
++};
++static thread_local RnaIDStorageNativeLease *rna_ID_storage_native_lease = nullptr;
++static thread_local bool rna_ID_storage_owned_busy = false;
++#endif
 +
 +bool RNA_id_paint_owner_teardown(bContext *C,
 +                                Main *bmain,
@@ -158041,45 +158066,48 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
 +                                const char *operation)
 +{
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  /* A callback-free absence query preserves native calls on evaluated/no-main
-+   * IDs which cannot be reconstructed by a Main session UID. Never cancel an
-+   * owner before the strict helper has captured a resolvable input identity. */
-+  /* Native RNA dispatch with a null context supplies a null implicit Main.
-+   * Preserve formerly context-free Mesh calls only on proved global absence;
-+   * never borrow that Main/context to cancel an owner. */
-+  Main *owner_main = bmain;
-+  if (!C && !owner_main) {
-+    owner_main = G_MAIN;
++  if (r_id && *r_id && rna_ID_storage_native_lease &&
++      !rna_ID_storage_native_lease->consumed &&
++      rna_ID_storage_native_lease->main_address == uintptr_t(bmain) &&
++      rna_ID_storage_native_lease->id_address == uintptr_t(*r_id) && operation &&
++      rna_ID_storage_native_lease->operation &&
++      std::strcmp(rna_ID_storage_native_lease->operation, operation) == 0)
++  {
++    rna_ID_storage_native_lease->consumed = true;
++    return true;
 +  }
-+  if (owner_main && owner_main == G_MAIN && r_id && *r_id &&
-+      WM_event_ipad_pencil_paint_owner_teardown_next(C, owner_main, nullptr))
++  if (rna_ID_storage_owned_busy) {
++    if (reports) BKE_report(reports, RPT_ERROR, "ID storage native dispatch was refused: unmatched or consumed owned call");
++    return false;
++  }
++  UNUSED_VARS(C, bmain);
++  /* Native/generated frames borrow their inputs. Never call a provider or
++   * cancellation callback here, including before their native admission read. */
++  if (G_MAIN &&
++      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr))
 +  {
 +    return true;
 +  }
++  if (reports) {
++    BKE_reportf(reports, RPT_ERROR, "ID mutation %s was refused: paint owner is still active", operation);
++  }
++  return false;
++#else
++  UNUSED_VARS(C, bmain, r_id, reports, operation);
++  return true;
 +#endif
-+  return rna_ID_paint_owner_teardown(
-+      C, bmain, r_id, nullptr, 0, nullptr, nullptr, reports, operation);
 +}
 +
 +static ID *rna_ID_override_create(ID *id, Main *bmain, bContext *C, bool remap_local_usages)
- {
++{
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, nullptr, "creation")) {
++    return nullptr;
++  }
++
    if (!ID_IS_OVERRIDABLE_LIBRARY(id)) {
      return nullptr;
    }
-
-   if (remap_local_usages) {
-+    ID *live_id = id;
-+    if (!rna_ID_paint_owner_teardown(
-+            C, bmain, &live_id, nullptr, 0, nullptr, nullptr, nullptr, "creation"))
-+    {
-+      return nullptr;
-+    }
-+    id = live_id;
-+    if (!ID_IS_OVERRIDABLE_LIBRARY(id)) return nullptr;
-     BKE_main_id_tag_all(bmain, ID_TAG_DOIT, true);
-   }
-
-@@ -812,6 +1094,7 @@
+@@ -812,11 +1126,16 @@
 
  static ID *rna_ID_override_hierarchy_create(ID *id,
                                              Main *bmain,
@@ -158087,25 +158115,16 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                              Scene *scene,
                                              ViewLayer *view_layer,
                                              ID *id_instance_hint,
-@@ -820,6 +1103,17 @@
+                                             bool do_fully_editable)
+ {
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, nullptr, "hierarchy creation")) {
++    return nullptr;
++  }
++
    if (!ID_IS_OVERRIDABLE_LIBRARY(id)) {
      return nullptr;
    }
-+
-+  ID *live_id = id;
-+  ID *related_ids[] = {id_instance_hint};
-+  if (!rna_ID_paint_owner_teardown(
-+          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, nullptr, "hierarchy creation"))
-+  {
-+    return nullptr;
-+  }
-+  id = live_id;
-+  id_instance_hint = related_ids[0];
-+  if (!ID_IS_OVERRIDABLE_LIBRARY(id)) return nullptr;
-
-   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
-
-@@ -872,6 +1166,7 @@
+@@ -872,10 +1191,15 @@
  static void rna_ID_override_library_reset(ID *id,
                                            IDOverrideLibrary * /*override_library*/,
                                            Main *bmain,
@@ -158113,26 +158132,15 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                            ReportList *reports,
                                            bool do_hierarchy,
                                            bool set_system_override)
-@@ -881,6 +1176,18 @@
-     return;
-   }
-
-+  ID *live_id = id;
-+  if (!rna_ID_paint_owner_teardown(
-+          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "reset"))
-+  {
-+    return;
-+  }
-+  id = live_id;
-+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
-+    BKE_reportf(reports, RPT_ERROR, "ID '%s' is no longer an override", id->name);
+ {
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, reports, "reset")) {
 +    return;
 +  }
 +
-   if (do_hierarchy) {
-     BKE_lib_override_library_id_hierarchy_reset(bmain, id, set_system_override);
-   }
-@@ -894,6 +1201,7 @@
+   if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
+     BKE_reportf(reports, RPT_ERROR, "ID '%s' isn't an override", id->name);
+     return;
+@@ -894,9 +1218,14 @@
  static void rna_ID_override_library_destroy(ID *id,
                                              IDOverrideLibrary * /*override_library*/,
                                              Main *bmain,
@@ -158140,26 +158148,14 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                              ReportList *reports,
                                              bool do_hierarchy)
  {
-@@ -902,6 +1210,18 @@
-     return;
-   }
-
-+  ID *live_id = id;
-+  if (!rna_ID_paint_owner_teardown(
-+          C, bmain, &live_id, nullptr, 0, nullptr, nullptr, reports, "destroy"))
-+  {
-+    return;
-+  }
-+  id = live_id;
-+  if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
-+    BKE_reportf(reports, RPT_ERROR, "ID '%s' is no longer an override", id->name);
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, reports, "destroy")) {
 +    return;
 +  }
 +
-   if (do_hierarchy) {
-     BKE_lib_override_library_delete(bmain, id);
-   }
-@@ -916,6 +1236,7 @@
+   if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
+     BKE_reportf(reports, RPT_ERROR, "ID '%s' isn't an override", id->name);
+     return;
+@@ -916,6 +1245,7 @@
  static bool rna_ID_override_library_resync(ID *id,
                                             IDOverrideLibrary *override_library,
                                             Main *bmain,
@@ -158167,77 +158163,616 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
                                             ReportList *reports,
                                             Scene *scene,
                                             ViewLayer *view_layer,
-@@ -935,6 +1256,22 @@
-         id->name);
-     return false;
-   }
+@@ -923,6 +1253,10 @@
+                                            bool do_hierarchy_enforce,
+                                            bool do_whole_hierarchy)
+ {
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, reports, "resync")) {
++    return false;
++  }
 +
-+  const uintptr_t override_library_address = uintptr_t(override_library);
-+  ID *live_id = id;
-+  ID *related_ids[] = {reinterpret_cast<ID *>(override_resync_residual_storage)};
-+  if (!rna_ID_paint_owner_teardown(
-+          C, bmain, &live_id, related_ids, 1, &scene, &view_layer, reports, "resync"))
-+  {
-+    return false;
-+  }
-+  id = live_id;
-+  override_resync_residual_storage = reinterpret_cast<Collection *>(related_ids[0]);
-+  if (uintptr_t(id->override_library) != override_library_address) {
-+    BKE_reportf(reports, RPT_ERROR, "Library override resync was refused: override changed during paint cancellation");
-+    return false;
-+  }
-+  override_library = id->override_library;
+   BLI_assert(id->override_library == override_library);
 
-   ID *id_root = do_whole_hierarchy ? override_library->hierarchy_root : id;
-   BlendFileReadReport bf_reports = {};
-@@ -1091,9 +1428,19 @@
+   if (!override_library->hierarchy_root ||
+@@ -1091,8 +1425,12 @@
    id->us = 0; /* don't save */
  }
 
 -static void rna_ID_user_remap(ID *id, Main *bmain, ID *new_id)
+-{
 +static void rna_ID_user_remap(ID *id, Main *bmain, bContext *C, ID *new_id)
- {
++{
++  if (!RNA_id_paint_owner_teardown(C, bmain, &id, nullptr, "user remap")) {
++    return;
++  }
++
    if ((GS(id->name) == GS(new_id->name)) && (id != new_id)) {
-+    ID *related_ids[] = {new_id};
-+    if (!rna_ID_paint_owner_teardown(
-+            C, bmain, &id, related_ids, 1, nullptr, nullptr, nullptr, "user remap"))
-+    {
-+      return;
-+    }
-+    new_id = related_ids[0];
-+    if (GS(id->name) != GS(new_id->name) || id == new_id) {
-+      return;
-+    }
      /* For now, do not allow remapping data in linked data from here... */
      BKE_libblock_remap(
-         bmain, id, new_id, ID_REMAP_SKIP_INDIRECT_USAGE | ID_REMAP_SKIP_NEVER_NULL_USAGE);
-@@ -1102,10 +1449,23 @@
+@@ -1102,9 +1440,17 @@
    }
  }
 
 -static ID *rna_ID_make_local(
 -    ID *self, Main *bmain, bool /*clear_proxy*/, bool clear_liboverride, bool clear_asset_data)
+-{
 +static ID *rna_ID_make_local(ID *self,
 +                             Main *bmain,
 +                             bContext *C,
 +                             bool /*clear_proxy*/,
 +                             bool clear_liboverride,
 +                             bool clear_asset_data)
- {
++{
++  if (!RNA_id_paint_owner_teardown(C, bmain, &self, nullptr, "make local")) {
++    return nullptr;
++  }
++
    if (ID_IS_LINKED(self)) {
-+    ID *related_ids[] = {self->newid};
-+    if (!rna_ID_paint_owner_teardown(
-+            C, bmain, &self, related_ids, 1, nullptr, nullptr, nullptr, "make local"))
-+    {
-+      return nullptr;
-+    }
-+    if (!ID_IS_LINKED(self) || self->newid != related_ids[0]) {
-+      return nullptr;
-+    }
      int flags = 0;
      if (clear_asset_data) {
-       flags |= LIB_ID_MAKELOCAL_ASSET_DATA_CLEAR;
-@@ -1167,6 +1527,9 @@
+@@ -1127,6 +1473,561 @@
+   return ret_id;
+ }
+
++
++/* Exact owned ID/Mesh RNA dispatch. The ordinary generated callbacks borrow
++ * pointers before CTX_data_main; only this producer may retain value receipts
++ * across that lookup and registered paint cancellation. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++extern FunctionRNA rna_ID_override_create_func;
++extern FunctionRNA rna_ID_override_hierarchy_create_func;
++extern FunctionRNA rna_IDOverrideLibrary_reset_func;
++extern FunctionRNA rna_IDOverrideLibrary_destroy_func;
++extern FunctionRNA rna_IDOverrideLibrary_resync_func;
++extern FunctionRNA rna_ID_user_remap_func;
++extern FunctionRNA rna_ID_make_local_func;
++extern FunctionRNA rna_MeshVertices_add_func;
++extern FunctionRNA rna_MeshEdges_add_func;
++extern FunctionRNA rna_MeshLoops_add_func;
++extern FunctionRNA rna_MeshPolygons_add_func;
++extern FunctionRNA rna_Mesh_update_func;
++extern FunctionRNA rna_Mesh_clear_geometry_func;
++extern FunctionRNA rna_Mesh_validate_func;
++extern FunctionRNA rna_Mesh_validate_material_indices_func;
++
++extern void rna_Mesh_vertices_add(Mesh *, Main *, bContext *, ReportList *, int);
++extern void rna_Mesh_edges_add(Mesh *, Main *, bContext *, ReportList *, int);
++extern void rna_Mesh_loops_add(Mesh *, Main *, bContext *, ReportList *, int);
++extern void rna_Mesh_polygons_add(Mesh *, Main *, bContext *, ReportList *, int);
++extern void rna_Mesh_update(Mesh *, Main *, bContext *, ReportList *, bool, bool);
++extern void rna_Mesh_clear_geometry(Mesh *, Main *, bContext *, ReportList *);
++extern bool rna_Mesh_validate(Mesh *, Main *, bContext *, ReportList *, bool, bool);
++extern bool rna_Mesh_validate_material_indices(Mesh *, Main *, bContext *, ReportList *);
++
++enum class RnaIDStorageProfile {
++  None, OverrideCreate, HierarchyCreate, Reset, Destroy, Resync, UserRemap, MakeLocal,
++  VerticesAdd, EdgesAdd, LoopsAdd, PolygonsAdd, MeshUpdate, MeshClear, MeshValidate,
++  MeshValidateMaterials,
++};
++
++static RnaIDStorageProfile rna_ID_storage_profile(const FunctionRNA *func)
++{
++  if (func == &rna_ID_override_create_func) return RnaIDStorageProfile::OverrideCreate;
++  if (func == &rna_ID_override_hierarchy_create_func) return RnaIDStorageProfile::HierarchyCreate;
++  if (func == &rna_IDOverrideLibrary_reset_func) return RnaIDStorageProfile::Reset;
++  if (func == &rna_IDOverrideLibrary_destroy_func) return RnaIDStorageProfile::Destroy;
++  if (func == &rna_IDOverrideLibrary_resync_func) return RnaIDStorageProfile::Resync;
++  if (func == &rna_ID_user_remap_func) return RnaIDStorageProfile::UserRemap;
++  if (func == &rna_ID_make_local_func) return RnaIDStorageProfile::MakeLocal;
++  if (func == &rna_MeshVertices_add_func) return RnaIDStorageProfile::VerticesAdd;
++  if (func == &rna_MeshEdges_add_func) return RnaIDStorageProfile::EdgesAdd;
++  if (func == &rna_MeshLoops_add_func) return RnaIDStorageProfile::LoopsAdd;
++  if (func == &rna_MeshPolygons_add_func) return RnaIDStorageProfile::PolygonsAdd;
++  if (func == &rna_Mesh_update_func) return RnaIDStorageProfile::MeshUpdate;
++  if (func == &rna_Mesh_clear_geometry_func) return RnaIDStorageProfile::MeshClear;
++  if (func == &rna_Mesh_validate_func) return RnaIDStorageProfile::MeshValidate;
++  if (func == &rna_Mesh_validate_material_indices_func) return RnaIDStorageProfile::MeshValidateMaterials;
++  return RnaIDStorageProfile::None;
++}
++
++static const char *rna_ID_storage_operation(const RnaIDStorageProfile profile)
++{
++  switch (profile) {
++    case RnaIDStorageProfile::OverrideCreate: return "creation";
++    case RnaIDStorageProfile::HierarchyCreate: return "hierarchy creation";
++    case RnaIDStorageProfile::Reset: return "reset";
++    case RnaIDStorageProfile::Destroy: return "destroy";
++    case RnaIDStorageProfile::Resync: return "resync";
++    case RnaIDStorageProfile::UserRemap: return "user remap";
++    case RnaIDStorageProfile::MakeLocal: return "make local";
++    case RnaIDStorageProfile::VerticesAdd: return "Mesh.vertices.add";
++    case RnaIDStorageProfile::EdgesAdd: return "Mesh.edges.add";
++    case RnaIDStorageProfile::LoopsAdd: return "Mesh.loops.add";
++    case RnaIDStorageProfile::PolygonsAdd: return "Mesh.polygons.add";
++    case RnaIDStorageProfile::MeshUpdate: return "Mesh.update";
++    case RnaIDStorageProfile::MeshClear: return "Mesh.clear_geometry";
++    case RnaIDStorageProfile::MeshValidate: return "Mesh.validate";
++    case RnaIDStorageProfile::MeshValidateMaterials: return "Mesh.validate_material_indices";
++    case RnaIDStorageProfile::None: break;
++  }
++  return "unsupported";
++}
++
++struct RnaIDStorageArguments {
++  bool first = false, second = false, third = false;
++  int count = 0;
++  uintptr_t related = 0, scene = 0, view_layer = 0;
++  bool operator==(const RnaIDStorageArguments &other) const
++  {
++    return first == other.first && second == other.second && third == other.third &&
++           count == other.count && related == other.related && scene == other.scene &&
++           view_layer == other.view_layer;
++  }
++};
++
++template<typename T>
++static bool rna_ID_storage_parameter(ParameterList *parms, const char *name, T *r_value)
++{
++  void *data = nullptr;
++  RNA_parameter_get_lookup(parms, name, &data);
++  if (!data) return false;
++  *r_value = *static_cast<const T *>(data);
++  return true;
++}
++
++static bool rna_ID_storage_arguments(const RnaIDStorageProfile profile,
++                                      ParameterList *parms,
++                                      RnaIDStorageArguments *r_args)
++{
++  *r_args = {};
++  ID *related = nullptr;
++  Scene *scene = nullptr;
++  ViewLayer *view_layer = nullptr;
++  Collection *collection = nullptr;
++  bool valid = true;
++  switch (profile) {
++    case RnaIDStorageProfile::OverrideCreate:
++      valid = rna_ID_storage_parameter(parms, "remap_local_usages", &r_args->first); break;
++    case RnaIDStorageProfile::HierarchyCreate:
++      valid = rna_ID_storage_parameter(parms, "scene", &scene) &&
++              rna_ID_storage_parameter(parms, "view_layer", &view_layer) &&
++              rna_ID_storage_parameter(parms, "reference", &related) &&
++              rna_ID_storage_parameter(parms, "do_fully_editable", &r_args->first); break;
++    case RnaIDStorageProfile::Reset:
++      valid = rna_ID_storage_parameter(parms, "do_hierarchy", &r_args->first) &&
++              rna_ID_storage_parameter(parms, "set_system_override", &r_args->second); break;
++    case RnaIDStorageProfile::Destroy:
++      valid = rna_ID_storage_parameter(parms, "do_hierarchy", &r_args->first); break;
++    case RnaIDStorageProfile::Resync:
++      valid = rna_ID_storage_parameter(parms, "scene", &scene) &&
++              rna_ID_storage_parameter(parms, "view_layer", &view_layer) &&
++              rna_ID_storage_parameter(parms, "residual_storage", &collection) &&
++              rna_ID_storage_parameter(parms, "do_hierarchy_enforce", &r_args->first) &&
++              rna_ID_storage_parameter(parms, "do_whole_hierarchy", &r_args->second);
++      related = reinterpret_cast<ID *>(collection); break;
++    case RnaIDStorageProfile::UserRemap:
++      valid = rna_ID_storage_parameter(parms, "new_id", &related) && related; break;
++    case RnaIDStorageProfile::MakeLocal:
++      valid = rna_ID_storage_parameter(parms, "clear_proxy", &r_args->first) &&
++              rna_ID_storage_parameter(parms, "clear_liboverride", &r_args->second) &&
++              rna_ID_storage_parameter(parms, "clear_asset_data", &r_args->third); break;
++    case RnaIDStorageProfile::VerticesAdd:
++    case RnaIDStorageProfile::EdgesAdd:
++    case RnaIDStorageProfile::LoopsAdd:
++    case RnaIDStorageProfile::PolygonsAdd:
++      valid = rna_ID_storage_parameter(parms, "count", &r_args->count); break;
++    case RnaIDStorageProfile::MeshUpdate:
++      valid = rna_ID_storage_parameter(parms, "calc_edges", &r_args->first) &&
++              rna_ID_storage_parameter(parms, "calc_edges_loose", &r_args->second); break;
++    case RnaIDStorageProfile::MeshValidate:
++      valid = rna_ID_storage_parameter(parms, "verbose", &r_args->first) &&
++              rna_ID_storage_parameter(parms, "clean_customdata", &r_args->second); break;
++    case RnaIDStorageProfile::MeshClear:
++    case RnaIDStorageProfile::MeshValidateMaterials: break;
++    case RnaIDStorageProfile::None: return false;
++  }
++  r_args->related = uintptr_t(related);
++  r_args->scene = uintptr_t(scene);
++  r_args->view_layer = uintptr_t(view_layer);
++  return valid;
++}
++
++/* Resolve numeric addresses before reading ID fields. UID-zero receipts are
++ * allowed only through non-retiring admission; strict mutation drain still
++ * requires the original positive session UID contract. */
++static ID *rna_ID_storage_id_find(Main *bmain, const uintptr_t address)
++{
++  if (!bmain || !address) return nullptr;
++  ID *result = nullptr;
++  int matches = 0;
++  ID *id;
++  FOREACH_MAIN_ID_BEGIN (bmain, id) {
++    if (uintptr_t(id) == address) { result = id; matches++; }
++  }
++  FOREACH_MAIN_ID_END;
++  return matches == 1 ? result : nullptr;
++}
++
++static bool rna_ID_storage_identity(Main *bmain,
++                                     const uintptr_t address,
++                                     RnaIDOverrideIdentity *r_identity)
++{
++  *r_identity = {};
++  if (!address) return true;
++  ID *id = rna_ID_storage_id_find(bmain, address);
++  if (!id || !GS(id->name)) return false;
++  ID *library = id->lib ? rna_ID_storage_id_find(bmain, uintptr_t(id->lib)) : nullptr;
++  if (id->lib && (!library || GS(library->name) != ID_LI)) return false;
++  *r_identity = {address, id->session_uid, short(GS(id->name)), uintptr_t(id->lib),
++                 library ? library->session_uid : 0};
++  return true;
++}
++
++static bool rna_ID_storage_identity_equal(const RnaIDOverrideIdentity &a,
++                                           const RnaIDOverrideIdentity &b)
++{
++  return a.address == b.address && a.session_uid == b.session_uid && a.idcode == b.idcode &&
++         a.library_address == b.library_address && a.library_uid == b.library_uid;
++}
++
++struct RnaIDStorageIDState {
++  RnaIDOverrideIdentity id, reference, hierarchy_root, newid;
++  uintptr_t override_address = 0;
++  int override_flag = 0, tag = 0, flag = 0;
++  char name[sizeof(((ID *)nullptr)->name)]{};
++  bool operator==(const RnaIDStorageIDState &other) const
++  {
++    return rna_ID_storage_identity_equal(id, other.id) &&
++           rna_ID_storage_identity_equal(reference, other.reference) &&
++           rna_ID_storage_identity_equal(hierarchy_root, other.hierarchy_root) &&
++           rna_ID_storage_identity_equal(newid, other.newid) &&
++           override_address == other.override_address && override_flag == other.override_flag &&
++           tag == other.tag && flag == other.flag &&
++           std::memcmp(name, other.name, sizeof(name)) == 0;
++  }
++};
++
++static bool rna_ID_storage_state(Main *bmain,
++                                  const uintptr_t address,
++                                  RnaIDStorageIDState *r_state)
++{
++  *r_state = {};
++  if (!address) return true;
++  if (!rna_ID_storage_identity(bmain, address, &r_state->id)) return false;
++  ID *id = rna_ID_storage_id_find(bmain, address);
++  if (!id) return false;
++  r_state->tag = id->tag;
++  r_state->flag = id->flag;
++  std::memcpy(r_state->name, id->name, sizeof(r_state->name));
++  r_state->override_address = uintptr_t(id->override_library);
++  if (id->override_library) {
++    r_state->override_flag = id->override_library->flag;
++    if (!rna_ID_storage_identity(bmain, uintptr_t(id->override_library->reference), &r_state->reference) ||
++        !rna_ID_storage_identity(bmain, uintptr_t(id->override_library->hierarchy_root), &r_state->hierarchy_root))
++    {
++      return false;
++    }
++  }
++  return rna_ID_storage_identity(bmain, uintptr_t(id->newid), &r_state->newid);
++}
++
++struct RnaIDStorageReceipt {
++  RnaIDStorageIDState target, related, scene;
++  uintptr_t data_address = 0, type_address = 0, runtime_address = 0;
++  bool edit_mesh = false;
++  int verts = 0, edges = 0, corners = 0, faces = 0, legacy_faces = 0;
++  bool operator==(const RnaIDStorageReceipt &other) const
++  {
++    return target == other.target && related == other.related && scene == other.scene &&
++           data_address == other.data_address && type_address == other.type_address &&
++           runtime_address == other.runtime_address && edit_mesh == other.edit_mesh &&
++           verts == other.verts && edges == other.edges && corners == other.corners &&
++           faces == other.faces && legacy_faces == other.legacy_faces;
++  }
++};
++
++static bool rna_ID_storage_mesh_profile(const RnaIDStorageProfile profile)
++{
++  return profile >= RnaIDStorageProfile::VerticesAdd;
++}
++
++static bool rna_ID_storage_target_shape(const RnaIDStorageProfile profile,
++                                         const PointerRNA &target,
++                                         const ID *id)
++{
++  if (!id || !target.type || target.owner_id != id) return false;
++  const short type = GS(id->name);
++  if (profile == RnaIDStorageProfile::Reset || profile == RnaIDStorageProfile::Destroy ||
++      profile == RnaIDStorageProfile::Resync)
++  {
++    if (target.type != &RNA_IDOverrideLibrary || target.data != id->override_library) return false;
++    if (target.ancestors.is_empty()) return true;
++    return target.ancestors.size() == 1 && target.ancestors[0].data == id &&
++           (target.ancestors[0].type == &RNA_ID ||
++            RNA_type_to_ID_code(target.ancestors[0].type) == type);
++  }
++  if (target.data != id || !target.ancestors.is_empty()) return false;
++  if (profile == RnaIDStorageProfile::VerticesAdd) return type == ID_ME && target.type == &RNA_MeshVertices;
++  if (profile == RnaIDStorageProfile::EdgesAdd) return type == ID_ME && target.type == &RNA_MeshEdges;
++  if (profile == RnaIDStorageProfile::LoopsAdd) return type == ID_ME && target.type == &RNA_MeshLoops;
++  if (profile == RnaIDStorageProfile::PolygonsAdd) return type == ID_ME && target.type == &RNA_MeshPolygons;
++  if (rna_ID_storage_mesh_profile(profile)) return type == ID_ME && target.type == &RNA_Mesh;
++  return target.type == &RNA_ID || RNA_type_to_ID_code(target.type) == type;
++}
++
++static bool rna_ID_storage_receipt(Main *bmain,
++                                    const RnaIDStorageProfile profile,
++                                    const PointerRNA &target,
++                                    const RnaIDStorageArguments &args,
++                                    RnaIDStorageReceipt *r_receipt)
++{
++  *r_receipt = {};
++  ID *id = rna_ID_storage_id_find(bmain, uintptr_t(target.owner_id));
++  if (!rna_ID_storage_target_shape(profile, target, id) ||
++      !rna_ID_storage_state(bmain, uintptr_t(id), &r_receipt->target) ||
++      !rna_ID_storage_state(bmain, args.related, &r_receipt->related) ||
++      !rna_ID_storage_state(bmain, args.scene, &r_receipt->scene)) return false;
++  if (args.scene && r_receipt->scene.id.idcode != ID_SCE) return false;
++  if (profile == RnaIDStorageProfile::Resync && args.related &&
++      r_receipt->related.id.idcode != ID_GR) return false;
++  if ((profile == RnaIDStorageProfile::HierarchyCreate || profile == RnaIDStorageProfile::Resync) &&
++      !args.scene) return false;
++  if (args.view_layer) {
++    ViewLayer *view_layer = nullptr;
++    if (!rna_ID_override_view_layer_reacquire(
++            reinterpret_cast<Scene *>(args.scene), args.view_layer, &view_layer)) return false;
++  }
++  r_receipt->data_address = uintptr_t(target.data);
++  r_receipt->type_address = uintptr_t(target.type);
++  if (rna_ID_storage_mesh_profile(profile)) {
++    Mesh *mesh = reinterpret_cast<Mesh *>(id);
++    if (!mesh->runtime) return false;
++    r_receipt->runtime_address = uintptr_t(&*mesh->runtime);
++    r_receipt->edit_mesh = bool(mesh->runtime->edit_mesh);
++    r_receipt->verts = mesh->verts_num;
++    r_receipt->edges = mesh->edges_num;
++    r_receipt->corners = mesh->corners_num;
++    r_receipt->faces = mesh->faces_num;
++    r_receipt->legacy_faces = mesh->totface_legacy;
++  }
++  return true;
++}
++
++static bool rna_ID_storage_requires_drain(const RnaIDStorageProfile profile,
++                                           ID *id,
++                                           const RnaIDStorageArguments &args,
++                                           const RnaIDStorageReceipt &receipt)
++{
++  switch (profile) {
++    case RnaIDStorageProfile::OverrideCreate: return args.first && ID_IS_OVERRIDABLE_LIBRARY(id);
++    case RnaIDStorageProfile::HierarchyCreate: return ID_IS_OVERRIDABLE_LIBRARY(id);
++    case RnaIDStorageProfile::Reset:
++    case RnaIDStorageProfile::Destroy: return ID_IS_OVERRIDE_LIBRARY_REAL(id);
++    case RnaIDStorageProfile::Resync:
++      return id->override_library && id->override_library->hierarchy_root &&
++             !(id->override_library->flag & LIBOVERRIDE_FLAG_NO_HIERARCHY);
++    case RnaIDStorageProfile::UserRemap:
++      return receipt.target.id.address != args.related &&
++             receipt.target.id.idcode == receipt.related.id.idcode;
++    case RnaIDStorageProfile::MakeLocal: return ID_IS_LINKED(id);
++    case RnaIDStorageProfile::VerticesAdd:
++    case RnaIDStorageProfile::EdgesAdd:
++    case RnaIDStorageProfile::LoopsAdd:
++    case RnaIDStorageProfile::PolygonsAdd: return args.count != 0 && !receipt.edit_mesh;
++    default: return true;
++  }
++}
++
++/* Final native calls contain no generated provider lookup. Return slots have
++ * their exact native RNA ABI (bool or ID*), not integer boolean surrogates. */
++static void rna_ID_storage_native_call(const RnaIDStorageProfile profile,
++                                        Main *bmain,
++                                        bContext *C,
++                                        PointerRNA *target,
++                                        const RnaIDStorageArguments &args,
++                                        ParameterList *parms,
++                                        ReportList *reports)
++{
++  ID *id = target->owner_id;
++  Mesh *mesh = reinterpret_cast<Mesh *>(target->data);
++  ID *result = nullptr;
++  bool success = false;
++  switch (profile) {
++    case RnaIDStorageProfile::OverrideCreate:
++      result = rna_ID_override_create(static_cast<ID *>(target->data), bmain, C, args.first);
++      RNA_parameter_set_lookup(parms, "id", &result); break;
++    case RnaIDStorageProfile::HierarchyCreate:
++      result = rna_ID_override_hierarchy_create(static_cast<ID *>(target->data), bmain, C,
++          reinterpret_cast<Scene *>(args.scene), reinterpret_cast<ViewLayer *>(args.view_layer),
++          reinterpret_cast<ID *>(args.related), args.first);
++      RNA_parameter_set_lookup(parms, "id", &result); break;
++    case RnaIDStorageProfile::Reset:
++      rna_ID_override_library_reset(id, static_cast<IDOverrideLibrary *>(target->data), bmain, C,
++                                   reports, args.first, args.second); break;
++    case RnaIDStorageProfile::Destroy:
++      rna_ID_override_library_destroy(id, static_cast<IDOverrideLibrary *>(target->data), bmain, C,
++                                     reports, args.first); break;
++    case RnaIDStorageProfile::Resync:
++      success = rna_ID_override_library_resync(id, static_cast<IDOverrideLibrary *>(target->data),
++          bmain, C, reports, reinterpret_cast<Scene *>(args.scene),
++          reinterpret_cast<ViewLayer *>(args.view_layer), reinterpret_cast<Collection *>(args.related),
++          args.first, args.second);
++      RNA_parameter_set_lookup(parms, "success", &success); break;
++    case RnaIDStorageProfile::UserRemap:
++      rna_ID_user_remap(static_cast<ID *>(target->data), bmain, C, reinterpret_cast<ID *>(args.related)); break;
++    case RnaIDStorageProfile::MakeLocal:
++      result = rna_ID_make_local(static_cast<ID *>(target->data), bmain, C, args.first, args.second, args.third);
++      RNA_parameter_set_lookup(parms, "id", &result); break;
++    case RnaIDStorageProfile::VerticesAdd: rna_Mesh_vertices_add(mesh, bmain, C, reports, args.count); break;
++    case RnaIDStorageProfile::EdgesAdd: rna_Mesh_edges_add(mesh, bmain, C, reports, args.count); break;
++    case RnaIDStorageProfile::LoopsAdd: rna_Mesh_loops_add(mesh, bmain, C, reports, args.count); break;
++    case RnaIDStorageProfile::PolygonsAdd: rna_Mesh_polygons_add(mesh, bmain, C, reports, args.count); break;
++    case RnaIDStorageProfile::MeshUpdate: rna_Mesh_update(mesh, bmain, C, reports, args.first, args.second); break;
++    case RnaIDStorageProfile::MeshClear: rna_Mesh_clear_geometry(mesh, bmain, C, reports); break;
++    case RnaIDStorageProfile::MeshValidate:
++      success = rna_Mesh_validate(mesh, bmain, C, reports, args.first, args.second);
++      RNA_parameter_set_lookup(parms, "result", &success); break;
++    case RnaIDStorageProfile::MeshValidateMaterials:
++      success = rna_Mesh_validate_material_indices(mesh, bmain, C, reports);
++      RNA_parameter_set_lookup(parms, "result", &success); break;
++    case RnaIDStorageProfile::None: break;
++  }
++}
++#endif
++
++bool RNA_function_is_id_storage_mutation(const FunctionRNA *func)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return rna_ID_storage_profile(func) != RnaIDStorageProfile::None;
++#else
++  UNUSED_VARS(func);
++  return false;
++#endif
++}
++
++bool RNA_function_id_storage_call_absent(const FunctionRNA *func, ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (rna_ID_storage_profile(func) == RnaIDStorageProfile::None) return true;
++  if (!rna_ID_storage_owned_busy && G_MAIN &&
++      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr)) return true;
++  if (reports) BKE_report(reports, RPT_ERROR, "ID storage operation was refused: paint owner is active");
++  return false;
++#else
++  UNUSED_VARS(func, reports);
++  return true;
++#endif
++}
++
++bool RNA_function_id_storage_call_owned(bContext *C,
++                                         PointerRNA *target,
++                                         FunctionRNA *func,
++                                         ParameterList *parms,
++                                         ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const RnaIDStorageProfile profile = rna_ID_storage_profile(func);
++  if (profile == RnaIDStorageProfile::None) return true;
++  const auto refuse = [&]() {
++    if (reports) BKE_report(reports, RPT_ERROR, "ID storage operation was refused: owned inputs or context changed");
++    return false;
++  };
++  if (rna_ID_storage_owned_busy || !target || !parms || parms->func != func || !G_MAIN) return refuse();
++  struct OwnedScope {
++    ~OwnedScope() { rna_ID_storage_native_lease = nullptr; rna_ID_storage_owned_busy = false; }
++  } scope;
++  rna_ID_storage_owned_busy = true;
++  PointerRNA owned_target = *target;
++  RnaIDStorageArguments args;
++  if (!rna_ID_storage_arguments(profile, parms, &args)) return refuse();
++  Main *original_main = G_MAIN;
++  const bool initially_absent = WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, original_main, nullptr);
++  bool active_target = false;
++  RnaIDStorageReceipt receipt;
++  if (!initially_absent) {
++    /* A zero collection add has no Main-dependent native effect. Keep its
++     * exact Edit-error-before-zero admission in the SAME native body without
++     * carrying even an evaluated/non-Main ID across a callback or UID receipt.
++     * Only owned RNA entry values are copied/read here; the native body owns
++     * its ordinary runtime/admission read, with no intervening callback. */
++    const bool zero_add = args.count == 0 &&
++        (profile == RnaIDStorageProfile::VerticesAdd || profile == RnaIDStorageProfile::EdgesAdd ||
++         profile == RnaIDStorageProfile::LoopsAdd || profile == RnaIDStorageProfile::PolygonsAdd);
++    if (zero_add) {
++      StructRNA *expected = profile == RnaIDStorageProfile::VerticesAdd ? &RNA_MeshVertices :
++                            profile == RnaIDStorageProfile::EdgesAdd ? &RNA_MeshEdges :
++                            profile == RnaIDStorageProfile::LoopsAdd ? &RNA_MeshLoops : &RNA_MeshPolygons;
++      if (owned_target.type != expected || !owned_target.data ||
++          owned_target.data != owned_target.owner_id || !owned_target.ancestors.is_empty()) return refuse();
++#  ifdef WITH_PYTHON
++      if (BPY_context_get() != C) return refuse();
++#  endif
++      RnaIDStorageNativeLease lease{uintptr_t(original_main), uintptr_t(owned_target.owner_id),
++                                    rna_ID_storage_operation(profile), false};
++      rna_ID_storage_native_lease = &lease;
++      rna_ID_storage_native_call(profile, original_main, C, &owned_target, args, parms, reports);
++      rna_ID_storage_native_lease = nullptr;
++      return lease.consumed ? true : refuse();
++    }
++    active_target = rna_ID_storage_id_find(original_main, uintptr_t(owned_target.owner_id)) != nullptr;
++    /* There is no callback-free native registry for arbitrary foreign or
++     * evaluated ID inputs. Refuse before the provider, never bless a reused
++     * address by capturing its replacement after CTX_data_main. No-owner
++     * foreign/evaluated native behavior below remains unchanged. */
++    if (!active_target ||
++        !rna_ID_storage_receipt(original_main, profile, owned_target, args, &receipt)) return refuse();
++  }
++  Main *bmain = C ? CTX_data_main(C) : nullptr;
++  if (G_MAIN != original_main) return refuse();
++  if (initially_absent) {
++    /* Newly acquired owners have no pre-query receipt. Never cancel using the
++     * generated frame's now potentially invalid raw input. */
++    if (!WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, original_main, nullptr)) return refuse();
++  }
++  else {
++    RnaIDStorageReceipt fresh;
++    if (bmain != original_main ||
++        !rna_ID_storage_receipt(bmain, profile, owned_target, args, &fresh) || !(receipt == fresh)) return refuse();
++    ID *id = rna_ID_storage_id_find(bmain, uintptr_t(owned_target.owner_id));
++    if (!id) return refuse();
++    if (active_target && rna_ID_storage_requires_drain(profile, id, args, receipt)) {
++      ID *related[] = {reinterpret_cast<ID *>(args.related)};
++      int related_count = args.related ? 1 : 0;
++      if (profile == RnaIDStorageProfile::MakeLocal) {
++        related[0] = reinterpret_cast<ID *>(receipt.target.newid.address);
++        related_count = 1;
++      }
++      Scene *scene = reinterpret_cast<Scene *>(args.scene);
++      ViewLayer *view_layer = reinterpret_cast<ViewLayer *>(args.view_layer);
++      struct ValidationData {
++        Main *main;
++        Main *original;
++        RnaIDStorageProfile profile;
++        const PointerRNA *target;
++        const RnaIDStorageArguments *args;
++        const RnaIDStorageReceipt *receipt;
++        FunctionRNA *func;
++        ParameterList *parms;
++      } validation{bmain, original_main, profile, &owned_target, &args, &receipt, func, parms};
++      const auto validate_owned = [](void *opaque) {
++        const auto &v = *static_cast<const ValidationData *>(opaque);
++        RnaIDStorageReceipt fresh;
++        RnaIDStorageArguments fresh_args;
++        return G_MAIN == v.original && v.parms->func == v.func &&
++               rna_ID_storage_arguments(v.profile, v.parms, &fresh_args) && *v.args == fresh_args &&
++               rna_ID_storage_receipt(v.main, v.profile, *v.target, *v.args, &fresh) &&
++               *v.receipt == fresh;
++      };
++      if (!rna_ID_paint_owner_teardown(C, bmain, &id, related, related_count,
++              args.scene ? &scene : nullptr, args.scene ? &view_layer : nullptr,
++              reports, rna_ID_storage_operation(profile), validate_owned, &validation)) return false;
++      RnaIDStorageReceipt fresh;
++      if (G_MAIN != original_main ||
++          !rna_ID_storage_receipt(bmain, profile, owned_target, args, &fresh) || !(receipt == fresh)) return refuse();
++    }
++  }
++  RnaIDStorageArguments fresh_args;
++  if (!rna_ID_storage_arguments(profile, parms, &fresh_args) || !(args == fresh_args) || parms->func != func) return refuse();
++#  ifdef WITH_PYTHON
++  if (BPY_context_get() != C) return refuse();
++#  endif
++  /* No callback between completed validation and the one first native gate.
++   * This also admits exact native no-op/error calls on proved active inputs
++   * without gratuitously cancelling an unrelated paint owner. */
++  RnaIDStorageNativeLease lease{uintptr_t(bmain), uintptr_t(owned_target.owner_id),
++                                rna_ID_storage_operation(profile), false};
++  rna_ID_storage_native_lease = &lease;
++  rna_ID_storage_native_call(profile, bmain, C, &owned_target, args, parms, reports);
++  rna_ID_storage_native_lease = nullptr;
++  if (!lease.consumed) return refuse();
++  /* A native destroy may have freed target. There is deliberately no target
++   * read, refinement, receipt or old-owner reconstruction after native return. */
++  return true;
++#else
++  UNUSED_VARS(C, target, func, parms, reports);
++  return true;
++#endif
++}
++
+ static AnimData *rna_ID_animation_data_create(ID *id, Main *bmain)
+ {
+   AnimData *adt = BKE_animdata_ensure_id(id);
+@@ -1167,6 +2068,9 @@
    short *totcol = BKE_id_material_len_p(id);
    Material *mat_id = (Material *)assign_ptr->owner_id;
    if (totcol && (key >= 0 && key < *totcol)) {
@@ -158247,7 +158782,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
      BLI_assert(BKE_id_is_in_global_main(id));
      BLI_assert(BKE_id_is_in_global_main(&mat_id->id));
      BKE_id_material_assign(G_MAIN, id, mat_id, key + 1);
-@@ -1177,15 +1540,18 @@
+@@ -1177,15 +2081,18 @@
    }
  }
 
@@ -158269,7 +158804,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
  {
    Material *ma;
    short *totcol = BKE_id_material_len_p(id);
-@@ -1199,6 +1565,9 @@
+@@ -1199,6 +2106,9 @@
      return nullptr;
    }
 
@@ -158279,7 +158814,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    ma = BKE_id_material_pop(bmain, id, index_i);
 
    if (*totcol == totcol_orig) {
-@@ -1213,8 +1582,11 @@
+@@ -1213,8 +2123,11 @@
    return ma;
  }
 
@@ -158293,7 +158828,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    BKE_id_material_clear(bmain, id);
 
    DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
-@@ -2120,7 +2492,7 @@
+@@ -2120,7 +3033,7 @@
    func = RNA_def_function(srna, "reset", "rna_ID_override_library_reset");
    RNA_def_function_ui_description(func,
                                    "Reset this override to match again its linked reference ID");
@@ -158302,7 +158837,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(
        func,
        "do_hierarchy",
-@@ -2136,7 +2508,7 @@
+@@ -2136,7 +3049,7 @@
    func = RNA_def_function(srna, "destroy", "rna_ID_override_library_destroy");
    RNA_def_function_ui_description(
        func, "Delete this override ID and remap its usages to its linked reference ID instead");
@@ -158311,7 +158846,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    RNA_def_boolean(func,
                    "do_hierarchy",
                    true,
-@@ -2147,7 +2519,7 @@
+@@ -2147,7 +3060,7 @@
    func = RNA_def_function(srna, "resync", "rna_ID_override_library_resync");
    RNA_def_function_ui_description(
        func, "Resync the data-block and its sub-hierarchy, or the whole hierarchy if requested");
@@ -158320,7 +158855,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_boolean(
        func, "success", false, "Success", "Whether the resync process was successful or not");
    RNA_def_function_return(func, parm);
-@@ -2491,7 +2863,7 @@
+@@ -2491,7 +3404,7 @@
    RNA_def_function_ui_description(func,
                                    "Create an overridden local copy of this linked data-block (not "
                                    "supported for all data-blocks)");
@@ -158329,7 +158864,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
    RNA_def_function_return(func, parm);
    RNA_def_boolean(func,
-@@ -2506,7 +2878,7 @@
+@@ -2506,7 +3419,7 @@
        func,
        "Create an overridden local copy of this linked data-block, and most of its dependencies "
        "when it is a Collection or and Object");
@@ -158338,7 +158873,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the root ID");
    RNA_def_function_return(func, parm);
    parm = RNA_def_pointer(
-@@ -2539,7 +2911,7 @@
+@@ -2539,7 +3452,7 @@
    func = RNA_def_function(srna, "user_remap", "rna_ID_user_remap");
    RNA_def_function_ui_description(
        func, "Replace all usage in the .blend file of this ID by new given one");
@@ -158347,7 +158882,7 @@ diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/
    parm = RNA_def_pointer(func, "new_id", "ID", "", "New ID to use");
    RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
-@@ -2548,7 +2920,7 @@
+@@ -2548,7 +3461,7 @@
        func,
        "Make this data-block local, return local one "
        "(may be a copy of the original, in case it is also indirectly used)");
@@ -158367,7 +158902,7 @@ diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA
  #include <optional>
  #include <stdarg.h>
  #include <string>
-@@ -30,6 +31,60 @@
+@@ -30,6 +31,71 @@
  struct ReportList;
  struct Scene;
  struct bContext;
@@ -158417,9 +158952,20 @@ diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA
 +                                                   ParameterList *parms,
 +                                                   ReportList *reports);
 +
-+/** Retire registered Pencil paint owners before native ID/storage mutation.
-+ * Reacquires the input ID after each completed WM drain; non-active Mains and
-+ * non-Apple builds preserve their native no-owner path. */
++/* Exact ID/Mesh function identities use explicit owned Python dispatch. The
++ * generic caller refuses a current paint owner before entering generated raw
++ * self/input/Main frames. These APIs do not select functions by name. */
++bool RNA_function_is_id_storage_mutation(const FunctionRNA *func);
++bool RNA_function_id_storage_call_absent(const FunctionRNA *func, ReportList *reports);
++bool RNA_function_id_storage_call_owned(bContext *C,
++                                        PointerRNA *target,
++                                        FunctionRNA *func,
++                                        ParameterList *parms,
++                                        ReportList *reports);
++
++/** Callback-free absence admission for borrowed native ID/storage consumers.
++ * Only the explicit owned producer may retire owners and reconstruct inputs.
++ * This function never invokes native Cancel or a supplied context provider. */
 +bool RNA_id_paint_owner_teardown(bContext *C,
 +                                Main *bmain,
 +                                ID **r_id,
@@ -158440,7 +158986,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
  #  include "rna_mesh_utils.hh"
 
  using blender::StringRef;
-@@ -70,6 +72,83 @@
+@@ -70,6 +72,87 @@
  /* -------------------------------------------------------------------- */
  /** \name Generic Helpers
   * \{ */
@@ -158454,7 +159000,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
 +                                         ReportList *reports,
 +                                         const char *operation)
 +{
-+  ID *id = &(*r_mesh)->id;
++  ID *id = reinterpret_cast<ID *>(*r_mesh);
 +  if (!RNA_id_paint_owner_teardown(C, bmain, &id, reports, operation)) {
 +    return false;
 +  }
@@ -158462,61 +159008,65 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
 +  return true;
 +}
 +
-+static void rna_Mesh_vertices_add(
++void rna_Mesh_vertices_add(
 +    Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)
 +{
++  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.vertices.add")) {
++    return;
++  }
++
 +  /* Preserve the native Edit-mode error even for zero count, without retiring
 +   * a paint owner for an operation that cannot mutate storage. */
 +  if (mesh->runtime->edit_mesh || count == 0) {
 +    ED_mesh_verts_add(mesh, reports, count);
 +    return;
 +  }
-+  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.vertices.add")) {
-+    return;
-+  }
 +  ED_mesh_verts_add(mesh, reports, count);
 +}
 +
-+static void rna_Mesh_edges_add(
++void rna_Mesh_edges_add(
 +    Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)
 +{
++  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.edges.add")) {
++    return;
++  }
++
 +  /* Preserve the native Edit-mode error even for zero count, without retiring
 +   * a paint owner for an operation that cannot mutate storage. */
 +  if (mesh->runtime->edit_mesh || count == 0) {
 +    ED_mesh_edges_add(mesh, reports, count);
 +    return;
 +  }
-+  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.edges.add")) {
-+    return;
-+  }
 +  ED_mesh_edges_add(mesh, reports, count);
 +}
 +
-+static void rna_Mesh_loops_add(
++void rna_Mesh_loops_add(
 +    Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)
 +{
++  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.loops.add")) {
++    return;
++  }
++
 +  /* Preserve the native Edit-mode error even for zero count, without retiring
 +   * a paint owner for an operation that cannot mutate storage. */
 +  if (mesh->runtime->edit_mesh || count == 0) {
 +    ED_mesh_loops_add(mesh, reports, count);
 +    return;
 +  }
-+  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.loops.add")) {
-+    return;
-+  }
 +  ED_mesh_loops_add(mesh, reports, count);
 +}
 +
-+static void rna_Mesh_polygons_add(
++void rna_Mesh_polygons_add(
 +    Mesh *mesh, Main *bmain, bContext *C, ReportList *reports, int count)
 +{
++  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.polygons.add")) {
++    return;
++  }
++
 +  /* Preserve the native Edit-mode error even for zero count, without retiring
 +   * a paint owner for an operation that cannot mutate storage. */
 +  if (mesh->runtime->edit_mesh || count == 0) {
 +    ED_mesh_faces_add(mesh, reports, count);
-+    return;
-+  }
-+  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.polygons.add")) {
 +    return;
 +  }
 +  ED_mesh_faces_add(mesh, reports, count);
@@ -158524,7 +159074,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
 
  static Mesh *rna_mesh(const PointerRNA *ptr)
  {
-@@ -2530,8 +2609,8 @@
+@@ -2530,8 +2613,8 @@
    RNA_def_struct_sdna(srna, "Mesh");
    RNA_def_struct_ui_text(srna, "Mesh Vertices", "Collection of mesh vertices");
 
@@ -158535,7 +159085,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
    parm = RNA_def_int(
        func, "count", 0, 0, INT_MAX, "Count", "Number of vertices to add", 0, INT_MAX);
    RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
-@@ -2556,8 +2635,8 @@
+@@ -2556,8 +2639,8 @@
    RNA_def_struct_sdna(srna, "Mesh");
    RNA_def_struct_ui_text(srna, "Mesh Edges", "Collection of mesh edges");
 
@@ -158546,7 +159096,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
    parm = RNA_def_int(func, "count", 0, 0, INT_MAX, "Count", "Number of edges to add", 0, INT_MAX);
    RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
  #  if 0 /* BMESH_TODO Remove until BMesh merge */
-@@ -2594,8 +2673,8 @@
+@@ -2594,8 +2677,8 @@
    RNA_def_struct_sdna(srna, "Mesh");
    RNA_def_struct_ui_text(srna, "Mesh Loops", "Collection of mesh loops");
 
@@ -158557,7 +159107,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
    parm = RNA_def_int(func, "count", 0, 0, INT_MAX, "Count", "Number of loops to add", 0, INT_MAX);
    RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
  }
-@@ -2620,8 +2699,8 @@
+@@ -2620,8 +2703,8 @@
    RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
    RNA_def_property_ui_text(prop, "Active Polygon", "The active face for this mesh");
 
@@ -158571,10 +159121,12 @@ diff --git a/source/blender/makesrna/intern/rna_mesh.cc b/source/blender/makesrn
 diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/makesrna/intern/rna_mesh_api.cc
 --- a/source/blender/makesrna/intern/rna_mesh_api.cc
 +++ b/source/blender/makesrna/intern/rna_mesh_api.cc
-@@ -198,10 +198,15 @@
+@@ -197,11 +197,16 @@
+   DEG_id_tag_update(&mesh->id, 0);
  }
 
- static void rna_Mesh_update(Mesh *mesh,
+-static void rna_Mesh_update(Mesh *mesh,
++void rna_Mesh_update(Mesh *mesh,
 +                            Main *bmain,
                              bContext *C,
 +                            ReportList *reports,
@@ -158593,7 +159145,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
 
 -static void rna_Mesh_clear_geometry(Mesh *mesh)
 -{
-+static void rna_Mesh_clear_geometry(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports)
++void rna_Mesh_clear_geometry(Mesh *mesh, Main *bmain, bContext *C, ReportList *reports)
 +{
 +  if (!rna_Mesh_paint_owner_teardown(&mesh, bmain, C, reports, "Mesh.clear_geometry")) {
 +    return;
@@ -158607,7 +159159,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
    WM_main_add_notifier(NC_GEOM | ND_DATA, mesh);
 +}
 +
-+static bool rna_Mesh_validate(Mesh *mesh,
++bool rna_Mesh_validate(Mesh *mesh,
 +                              Main *bmain,
 +                              bContext *C,
 +                              ReportList *reports,
@@ -158621,7 +159173,7 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
 +  return BKE_mesh_validate(mesh, verbose, clean_customdata);
 +}
 +
-+static bool rna_Mesh_validate_material_indices(Mesh *mesh,
++bool rna_Mesh_validate_material_indices(Mesh *mesh,
 +                                               Main *bmain,
 +                                               bContext *C,
 +                                               ReportList *reports)
@@ -158898,6 +159450,18 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 
  #ifndef NDEBUG
      /* NOTE: By design, it can be safely assumed that both old and new ID pointers are valid when
+@@ -7246,6 +7453,11 @@
+     bContext *C, ReportList *reports, PointerRNA *ptr, FunctionRNA *func, ParameterList *parms)
+ {
+   if (func->call) {
++    /* Generated wrappers cache raw self/parameter pointers before their implicit
++     * context Main lookup. Borrowed callers cannot retire an owner there. */
++    if (!RNA_function_id_storage_call_absent(func, reports)) {
++      return -1;
++    }
+     func->call(C, reports, ptr, parms);
+
+     return 0;
 diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/intern/bpy_rna.cc
 --- a/source/blender/python/intern/bpy_rna.cc
 +++ b/source/blender/python/intern/bpy_rna.cc
@@ -159004,7 +159568,7 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
      if (keynum_abs >= len) {
        PyErr_Format(PyExc_IndexError,
                     "bpy_prop_collection[index] = value: "
-@@ -6879,9 +6944,32 @@
+@@ -6879,9 +6944,47 @@
      bContext *C = BPY_context_get();
 
      BKE_reports_init(&reports, RPT_STORE);
@@ -159012,6 +159576,7 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
 +    /* Parameter parsing has finished. Own the target before the explicit
 +     * producer drain; generated raw _self/input locals do not exist yet. */
 +    std::optional<PointerRNA> id_materials_target;
++    std::optional<PointerRNA> id_storage_target;
 +    bool prepared = true;
 +    if (RNA_function_is_id_materials_mutation(self_func)) {
 +      id_materials_target.emplace(*self_ptr);
@@ -159026,13 +159591,27 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
 +        funcptr = RNA_pointer_create_discrete(self_ptr->owner_id, &RNA_Function, self_func);
 +      }
 +    }
-+    if (prepared && !id_materials_target) {
++    else if (RNA_function_is_id_storage_mutation(self_func)) {
++      id_storage_target.emplace(*self_ptr);
++      self_ptr = &*id_storage_target;
++      prepared = RNA_function_id_storage_call_owned(
++          C, self_ptr, self_func, &parms, &reports);
++      if (BPY_context_get() != C) {
++        BKE_report(&reports, RPT_ERROR, "ID storage operation context changed");
++        prepared = false;
++      }
++      /* These exact functions return only void, bool or an independent ID*.
++       * Destroy can intentionally delete self. Return conversion and metadata
++       * cleanup must not retain a parent ID or read its invalidated wrapper. */
++      funcptr = RNA_pointer_create_discrete(nullptr, &RNA_Function, self_func);
++    }
++    if (prepared && !id_materials_target && !id_storage_target) {
 +      RNA_function_call(C, &reports, self_ptr, self_func, &parms);
 +    }
 
      err = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
 +    if (!prepared && err != -1) {
-+      PyErr_SetString(PyExc_RuntimeError, "Material collection operation was refused");
++      PyErr_SetString(PyExc_RuntimeError, "Owned RNA operation was refused");
 +      err = -1;
 +    }
 
