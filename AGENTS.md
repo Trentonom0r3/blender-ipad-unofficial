@@ -1,3 +1,59 @@
+## Pointer assignment native-parity audit correction - 2026-10-18 UTC
+
+Current uncommitted patch 44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002 fixes two independently reproduced material
+slot prediction defects. Capture retains the bounded actual allocated material
+and bit prefix needed by native short(actcol), including earlier getter shrink;
+Debug internal getter clamp keeps that physical prefix until final comparison.
+All29 connected tests pass32.377s with exact pinned native resize/sanitize/sync
+bodies and separate Debug/Release prior-getter/count0 cases. Retained material23
+and Object5 pass;132-file pinned preflight/diff passes. Independent source/literal
+review passes:4native/API/BPY sections changed,128/all7UI sections byteexact.
+
+Full suite:523/523 pass384.970s. Status: FULL_PASS_REQUIRES_EXACT_COMMIT_BUILD. Evidence:
+.cache/pointer-assignment-full-corrected.log; never infer a pending result passed.
+No new commit/native build/IPA/device acceptance. Verified production remains
+196b54c/run38850540318. Source checkpoint and final independent review are under
+output/ui-preview/pencil-rna-owned-dispatch. Original failed logs preserved.
+After full pass commit/push coherent exact source, build once and verify full
+downloaded IPA plus actual compiled consumers/HUD launch/Weight cleanup.
+
+User requested independent audit/fixes of prior agents for at least24hours;
+Full goal unfinished; no device wait. Fresh ordinary usage15percent five-hour/
+2percent weekly; resets1792318662/1792905462;0credits. Earlier review failures were
+quota failures, not unsafe-action determinations or missing human approval.
+
+## Owned pointer assignment INCOMPLETE source - 2026-10-16 UTC
+
+New exact3 Object.data/Object.active_material/MaterialSlot.material correction
+is UNCOMMITTED and MUST NOT BE BUILT. Read pointer-assignment-source-checkpoint.json
+under pencil-rna-owned-dispatch and actual current logs. Authoritative source is
+Temp/blender-pencil-rna-mlvacs05; preserve every repository/materialized/test edit.
+Four existing native/RNA/BPY sections change;128 others/all7 UI sections remain
+exact verified production196b54c/run38850540318. No new native build or IPA.
+
+Connected native state/one-use generic-native leases/owned Python apply+latefinish/
+context-free cleanup/provider receipts/borrowed gates are implemented. Native
+sameMesh/Empty/Curve/Armature/material postrules preserve original IDs and native
+effects; complete C/messagebus update stays. Supplied C/Main provider proof occurs
+in producer before null-C original-owner WM drain, avoiding provider callbacks in
+the shared scan's Main traversal. Default WM/Mesh policy is unchanged.
+
+Connected22 tests pass21.868s and132-file first preflight passes. This is NOT
+final validation: first complete494 run341.657s FAILED22errors (472passed),
+21 retained-material model compiler seams and1 removed Object-UID extraction.
+Retained fixture migrations/new Release/nonApple/nested/historical coverage are
+being finished; inspect actual files/logs before rerun. No skipped failures,
+no assertion weakening or newcore claims from explicitly modeled legacy APIs.
+Then affected/full checks and independent native/literal review are required
+before source commit/build/full IPA/actual compiled verification. Prior494-pass
+evidence belongs to VERIFIED196b54c, not this unfinished candidate.
+
+The user explicitly requested continued work and an audit/fix of past agents'
+work for the next24hours. Fresh ordinary window is available; the prior quota
+reviewer failure is over. No new authorization is missing.0credits; no redemption.
+Full goal active and unfinished. Independent reviewers now audit inherited code
+and test assumptions before any source build.
+
 ## Next pointer-assignment ABI checkpoint - 2026-10-16 UTC
 
 Verified production remains196b54c/run38850540318; no corrective source/build.

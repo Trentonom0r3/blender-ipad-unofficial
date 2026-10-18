@@ -1,0 +1,45 @@
+{
+  "timestamp_utc": "2026-10-18T05:28:53.760214+00:00",
+  "status": "FULL_PASS_REQUIRES_EXACT_COMMIT_BUILD",
+  "candidate_patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "production_source": "196b54ca63a8fa558225479711de2426a83f8c53",
+  "authoritative_materialization": "C:/Users/tjerf/AppData/Local/Temp/blender-pencil-rna-mlvacs05",
+  "fixed_findings": [
+    "Debug getter logical clamp must retain physical material/bit prefix during native recalloc.",
+    "Earlier getter can hide allocated slots before receipt creation. Profile1 now captures bounded allocated prefixes required by native short(actcol), separately for materials/bits; original ID/context checks preserved."
+  ],
+  "connected_tests": {
+    "passed": 29,
+    "seconds": 32.377,
+    "log": ".cache/pointer-transaction-focused-fourth.log"
+  },
+  "retained_tests": {
+    "material": 23,
+    "object": 5,
+    "logs": [
+      ".cache/pointer-retained-material-first.log",
+      ".cache/pointer-retained-object-third.log"
+    ]
+  },
+  "preflight": "132 pinned files PASS .cache/pointer-assignment-preflight-final.log",
+  "full_suite": {
+    "status": "PASS",
+    "log": ".cache/pointer-assignment-full-corrected.log",
+    "tests": 523,
+    "seconds": 384.97
+  },
+  "independent_review": {
+    "reviewer": "final_pointer_audit",
+    "status": "bounded source PASS; prior P2 resolved",
+    "scope": "Original state, native parity, lease/Debug/borrowed gates, BPY copies/cleanup/late update. Final physical-prefix capture and regression inspected. Independent comparison132sections:4intended changes128unchanged/all7UI unchanged."
+  },
+  "new_build": false,
+  "new_IPA": false,
+  "device_acceptance": false,
+  "limits": "Models retain allocator/container/Curve/Armature/interpreter/depsgraph boundaries; no global lifetime or rollback proof. Native compilation/package/actual compiled review still required.",
+  "usage": "Fresh ordinary usage15percent five-hour/2percent weekly; resets1792318662/1792905462;0credits; no redemption.",
+  "pending": [
+    "Full suite completed523/523 in384.970s; retained original failed logs.",
+    "After full pass, coherent exact commit/push/build once, full downloaded IPA and actual compiled proof. Preserve existing failed logs, all untracked evidence and unchanged UI."
+  ]
+}

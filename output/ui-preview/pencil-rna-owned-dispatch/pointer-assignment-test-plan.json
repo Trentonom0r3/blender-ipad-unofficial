@@ -1,0 +1,153 @@
+{
+  "title": "Exact-three pointer-assignment connected regression design",
+  "timestamp_utc": "2026-10-16T10:00:25.437849+00:00",
+  "status": "Read-only test design; no production/tracked test edits, no new regression execution or build",
+  "baseline": "237048a direction checkpoint; verified production196b54ca63a8fa558225479711de2426a83f8c53/run38850540318; patchfe816827b12a53fcb9555d95d5f1dd9066fd24b91988c8038b819a0083e10127",
+  "profiles": [
+    "Object.data",
+    "Object.active_material",
+    "MaterialSlot.material"
+  ],
+  "api_dependency": "Await root-approved begin/apply-once/finish/context-free-free declarations and exact native postsetter transition policy. Names in ABI recommendation are proposed, not current callable APIs.",
+  "reusable_harness": [
+    {
+      "file": "build/test_pencil_material_assign_owner_teardown.py",
+      "reuse": "PREFIX/MODEL, actual WM_NEXT, ID/Library/override membership, ID-first Object layout, separate native int Object.totcol/actcol and short data totcol, owned ancestor vectors, actual generic Debug/Release OUTER, full UPDATE, actual pointer-conversion/report/PYTHON_LATE source blocks and native material bodies/adapters. Existing source_with_main provides an executable connected template, not a generic Blender runtime.",
+      "changes_needed_for_new_suite": "Add Object.data type metadata and data types, exact native setter/get/typef and property-specific update wrappers, real pinned CTX_data_pointer_verify/Main/Scene getters with a modeled ctx_data_get callback frontier, full saved C/messagebus sentinels. Do not retain current CTX_data_scene always-null shortcut for provider tests. Keep generated adapter forwarding explicitly modeled until actual generated native compiled checks."
+    },
+    {
+      "file": "build/test_pencil_object_data_teardown.py",
+      "reuse": "Actual setter/lookup function extraction, source membership guard/cross-window characterization, existing no-owner/Edit/same-value/refcount controls and historical callback ordering.",
+      "limit": "Current small Object has an extra Link before ID and stubbed Mesh/Curve/pose effects; do not transplant that layout as native DNA or use its BKE stubs to certify postsetter receipts. Retain its bounded scope; migrate direct owner-cancel assertions only after exact borrowed/owned API is implemented and review authorizes concrete semantic updates."
+    },
+    {
+      "file": "build/test_pencil_rna_owned_dispatch.py",
+      "reuse": "Existing actual owned producer/Python RAII report and cleanup extraction patterns, one-shot receipt/first-gate poison checks, portable historical failing helper provenance and shared WM hooks.",
+      "limit": "Function dispatch lease behavior is not itself proof of a new pointer transaction. Tests must invoke new actual exact3 producer, native generic setter and finish, not copy dispatcher logic into model."
+    },
+    {
+      "file": "output/ui-preview/pencil-rna-owned-dispatch/object-data-outer-characterization/",
+      "reuse": "Existing actual Object.data generic Debug, selected UI and Python report/late-update source extraction plus retained tombstone instrumentation; 28 old executions are separate baseline evidence."
+    },
+    {
+      "file": "output/ui-preview/pencil-rna-owned-dispatch/update-provider-frontier-characterization/",
+      "reuse": "Exact public update wrapper, ctx_data_pointer_verify/Main/Scene bodies, actual material profile/absence helpers and source hashes; event logs demonstrate unspecified argument order.",
+      "limit": "Its update suffix and WM endpoint are models. New correction fixture must execute actual full common update and actual shared WM scan through the real producer, not promote those42 runs to full-update proof."
+    }
+  ],
+  "portable_native_bodies": [
+    {
+      "body": "rna_Object_data_set/get/typef and Object.data direct-update wrapper plus shared impl/dependency bodies",
+      "source": "Current overlay rna_object.cc; pinned baseline same native setter body after guard.",
+      "assertions": "Execute without rewriting native admission/order/refcount branches; model only external BKE/interpreter/allocator boundaries. Getter subdivision-resolution is a counted boundary, never a read-only receipt constructor."
+    },
+    {
+      "body": "BKE_mesh_assign_object",
+      "source": ".cache/pinned-paint-storage/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/mesh.cc:1587",
+      "portable": "Small exact whole body; include in new provenance-bearing portable snippet. Its multires rebuild, materials synchronization and modifier test calls must have explicit downstream scope."
+    },
+    {
+      "body": "multires_force_sculpt_rebuild; BKE_sculptsession_free_pbvh",
+      "source": "C:/Users/tjerf/AppData/Local/Temp/pencil-object-data-contract-pin/manifest.json points to exact multires.cc327 and paint.cc2279.",
+      "portable": "Use exact whole bodies with bounded SculptSession containers and explicit flush/reset allocation boundaries. Same-Mesh case must observe rebuild/PBVH reset before refcount reassign, even though pointer and final users are unchanged. Material-length/modifier reconciliation remain separate boundaries unless exact bodies are included."
+    },
+    {
+      "body": "Eight BKE material assign/get/array/length bodies",
+      "source": "build/tests/pinned_material_assign.inc.cc (existing pin/blob/GPL/per-bodySHA256 provenance).",
+      "portable": "Reuse byte-exact bodies and actual native MAXMAT32766. Existing modeled length synchronization/allocator/depsgraph boundaries stay stated. Preserve actcol0 native growth, link-bit slot choice, null, same-value, unsupported and over-limit effects."
+    },
+    {
+      "body": "Empty assignment",
+      "source": "Exact branch inside rna_Object_data_set, not a separate BKE callback.",
+      "portable": "Direct old decrement/clear then nullable Image acceptance/increment can execute with real counted user operations. Invalid direct native data type baseline is distinct from Python type rejection."
+    },
+    {
+      "body": "Curve type adjustment and Armature pose rebuild",
+      "source": "Actual setter calls BKE_curve_type_test(ob,true) or BKE_pose_rebuild(G_MAIN,ob,newArmature,true). Their kernel bodies are NOT in the currently reviewed portable cache.",
+      "required_before_claim": "Obtain exact pinned bodies/provenance and bound legitimate resulting Object.type/pose/cache/material changes with native reviewer before fixing postsetter receipt expectations. If infeasible to execute complete kernels, execute exact setter branch with explicit counted callee model and separately audited native transition constraints; label that scope, never call it full Curve/Armature kernel proof. Do not demand whole Object byte equality or bless arbitrary postsetter recapture."
+    }
+  ],
+  "test_architecture": {
+    "one_connected_suite": "Create a new bounded fixture for actual prepare/apply/finish/free + actual generic pointer Debug frame/full common update/Python tails; keep retained suites as independent regression coverage. Use actual exact property metadata lookup identity, real producer and shared WM bodies from candidate source. No duplicated receipt decision logic in test model.",
+    "provenance": "Portable selected kernel/baseline source uses exact pin/revision/blob URL where available, GPL marker and per-function hashes. CI must import/compile with ignored primary caches absent; no runtime network dependency.",
+    "target_reads": "Maintain live-ID registry and tombstoned retained backing. Instrument getters, ID refcounts, native assign/rebuild, update/notifier/messagebus, raw setter counts and C/provider calls separately; fail-fast on stale reads for corrected source, expose old source as expected historical failure.",
+    "execution": "C++17 Debug and NDEBUG for generic pointer/postread cases; Apple and nonApple for baseline parity; O0/O2 only for bounded provider/receipt shapes where it adds evidence. Do not multiply every matrix redundantly.",
+    "provider_order": "New owned path must explicitly Main then validation then Scene then validation, not rely on C++ argument order. Actual old public wrapper remains a historical order/frontier control. Exact CTX getters use actual verify(nullptr) null result semantics, not an invented nullable fallback getter.",
+    "actual_python_scope": "Extract real function-scope receipt owner, pointer conversion/report block and existing late-update position from pyrna_py_to_prop. Model interpreter conversion/refcounts/exception APIs and preserve report/DECREF order. Ordinary selected ID/None leaves value_new null: no claim of an ordinary DECREF callback. A synthetic nonnull cleanup adversary is labeled an enclosing cleanup contract test, not demonstrated user reachability.",
+    "native_ui": "Execute actual selected-pointer set and unconditional update tail; an owned Python success must not make borrowed native UI acquire cancellation authority. Retain same C/messagebus context, not update_main substitution.",
+    "no_rollback": "Once apply ran, a finish refusal may leave native assignment/callback effects in place. Assert exactly-one apply and no subsequent stale tags, not restoration or atomic history."
+  },
+  "regression_groups": [
+    {
+      "id": "R1-current-borrowed-debug",
+      "cases": "Object.data owner removal/replacement, old-data removal, incoming-data removal during current callback-bearing guard; Debug and Release, report-bearing Python and reportless selected UI tail.",
+      "current_failure": "Current Debug getter/refcount postreads and UI unconditional late tags hit retained tombstones; prior28 characterization provides actual source anchors.",
+      "required": "Borrowed exact3 gates refuse before first getter/refcount/native self read/provider, perform zero Cancel and zero assign/tag. Corrected owned path is separately exercised."
+    },
+    {
+      "id": "R2-all-owner-whole-assignment",
+      "cases": "Registered owner on distinct Object/window from assigned target; target same Mesh, Edit and null-nonEmpty silent setter branches as well as different Mesh; two windows and one replacement spawned owner.",
+      "current_failure": "Current ObjectUID filter and same/Edit skip leave owner live while full assignment/rebuild/update proceeds.",
+      "required": "Supported owned producer drains all registered activeMain owners via fresh original context; exact setter once, then finish; callback mutation/refusal stops before next unsafe write. Distinct-object case proves policy, not dependency evaluation itself."
+    },
+    {
+      "id": "R3-prequery-receipt",
+      "cases": "Initial owner/no owner; target/value/old ID removal, UID/type/address replacement, duplicate UID, Library/override/reference/root mutation in first Main provider or first completed WM call with did=false. Numeric incoming property address replaced/mismatched before lookup.",
+      "current_failure": "Existing Object.data wrapper has no whole-assignment receipt; current material update receipt does not span finish providers.",
+      "required": "Original typed identities/property bound before first callback, reconstructed after every provider/WM completion even did=false. No getter used for capture, no stale metadata dereference; failure prevents later provider/Cancel/apply/tag as appropriate."
+    },
+    {
+      "id": "R4-native-poststate",
+      "cases": "Different Mesh and sameMesh PBVH; Empty oldImage->None/newImage/sameImage; Curve valid native type transition; Armature rebuild; material actcol0 growth, DATA/OBJECT link choices, null/same material, slot offset.",
+      "required": "Original target UID/name/Library/override survives legitimate native changes; receipt accepts narrowly allowed poststate, retains original incoming identity, exact usercount deltas and native setter count1. Native callee field mutations outside allowed poststate fail before finish tags. Do not compare all pre/post fields for equality."
+    },
+    {
+      "id": "R5-finish-stages",
+      "cases": "Remove/replace target, old/incoming ID, Main, Scene, WM/window, original context membership or static property metadata after apply but before finish; during Main provider; during Scene provider. Providers may retire owner and return normally.",
+      "current_failure": "Current material late gate can pass after provider retires owner/removes target; Object.data is unprofiled. Existing42 executes this frontier with modeled suffix.",
+      "required": "Finish validates postsetter original receipt before provider; Main exactly once then revalidate; Scene only if Main stage still valid, exactly once then revalidate; no hidden second provider. Invalid stage yields zero later tag/messagebus and consumes/refuses receipt without reading replaced owner. Original applied mutation remains, no rollback claim."
+    },
+    {
+      "id": "R6-acquired-owner",
+      "cases": "Initially absent supported owner target: Main or Scene provider acquires owner; same providers retire/reacquire; new owner after prepare before apply and before finish.",
+      "required": "No native write/tag while new owner remains. Root must finalize whether stage performs a fresh all-owner drain+recapture or refuses; fixture asserts the chosen exact policy, never silently treats new owner as noowner. Borrowed initially-absent provider deletion is either protected by its own receipt or explicitly retained native-baseline boundary, not certified by early absence alone."
+    },
+    {
+      "id": "R7-single-use-reentrancy",
+      "cases": "Nested same/different exact3 producer from WM/provider/update callback; direct generated setter/generic update while pending; apply twice; finish twice; wrong receipt/context/profile; free before finish; two distinct sequential transactions.",
+      "required": "Busy/one-use state prevents unauthorized nested mutation or receipt reuse, release cleanup restores next independent call, no leaked global admission. No global termination/concurrent-thread guarantee from bounded recursion tests."
+    },
+    {
+      "id": "R8-Python-owned-lifetime",
+      "cases": "Invalidate original target/value wrapper optionals/ancestor vectors during owned cancellation/provider; BPY_context_get changes or becomes null before apply and at late update; report error; supported normal ID/None success; explicit allocation failure if API exposes it; synthetic cleanup adversary separately labeled.",
+      "required": "Copy target/value storage before callbacks; never reread original param or ptr afterward; same saved C used through finish; BPy_reports_to_error suppresses finish after native error; every early return destroys context-free receipt exactly once without CTX/RNA/WM callbacks or pointee reads. Ordinary ID/None cleanup count remains zero nonnull DECREF."
+    },
+    {
+      "id": "R9-borrowed-route-closure",
+      "cases": "Each exact3 direct generated setter, generic Debug/Release RNA_property_pointer_set, public RNA_property_update, RNA_property_update_main, and new narrow direct update wrapper with active owner; selected UI void-setter then unconditional update.",
+      "required": "Actual entry gates run before self/admission/getter/provider/tag reads; no native Cancel. Generic property with same identifier but different exact callback stays unrelated. MaterialSlot.link shared-update and active_material_index semantics remain unchanged; narrow wrappers do not blanket-gate shared dependency/update helpers."
+    },
+    {
+      "id": "R10-native-parity",
+      "cases": "Noowner/nonApple different/same Mesh; Edit before null/tag mismatch; nonEmpty null silent return + late update; original/evaluated mismatch report and no Python update; valid evaluated/foreign/noMain/zeroUID baselines; Empty null/Image; exact material null/same/Edit/actcol0/link/unsupported/MAXMAT and int-vs-short widths; wrong Python dynamic type before producer; unrelated property.",
+      "required": "Compare to exact native reference bodies/counters. Preserve error vs silent return, refcounts, sameMesh rebuild and complete late update. Unsupported owner-present evaluated/foreign/nullC can refuse under explicit policy, but do not relabel noowner native fallback as owned-origin proof. Getter-nullC controls are separate from full downstream update nullC support."
+    }
+  ],
+  "baseline_failure_strategy": {
+    "preserve": "Keep current28/42 reports/logs and existing direct setter/material tests intact during design. No production patch mutation to manufacture a failure.",
+    "portable": "Before implementation, capture only necessary exact current196 consumer bodies/profile helper/public wrapper/Python source slices with hashes in a provenance-bearing baseline include. Reuse same instrumentation; old baseline must reach expected tombstone/noowner-policy failure or unsafe side-effect count while corrected connected candidate stops earlier. New API absence on old source alone is not behavioral failure proof.",
+    "assertions": "At least Object.data Debug postread case and material provider-retirement stale-suffix case must be behavioral historical failures; sameMesh/crossObject owner-live effect is a third distinct regression. Retained backing/tombstone means observed boundary, not allocator UAF."
+  },
+  "before_implementation": [
+    "Root sends final exact3 public ABI and supported owner-present/noowner NativeBaseline policy; tests reference actual implementation, not this plan as a hidden spec.",
+    "Native reviewer completes Curve/Armature/material/modifier expected poststate and exact direct-update metadata wrappers; generic update/shared helper scope is explicit.",
+    "Agree controlled allocator failure/free API test seam and whether newly acquired owners are refused or drained during finish.",
+    "Confirm native noowner/nullC/foreign input support and separate callback-free baseline from claimed owned receipt support."
+  ],
+  "verification_exit_criteria": "Meaningful connected exact3 suite passes with actual native/generic/owned/Python/public-update code, historical regression behavior demonstrated, retained Object/material/ID/Mesh/WM suites pass with honest boundaries, portable CI sources present, independent native/outer/literal UI review passes; then root runs full suite/preflight and one exact native/package/compiled verification. No design report is counted as passing implementation.",
+  "limits": [
+    "This is test design, no new tests executed.",
+    "Native allocator/BKE containers/depsgraph/provider/interpreter/UI/WM scheduler boundaries remain explicit per fixture.",
+    "No new device acceptance, generic all-RNA lifetime, true UAF, rollback, global CFG/reentrancy or full Curve/Armature kernel guarantee."
+  ]
+}

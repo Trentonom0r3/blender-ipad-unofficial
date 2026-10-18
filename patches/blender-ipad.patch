@@ -156949,17 +156949,28 @@ diff --git a/source/blender/editors/object/object_select.cc b/source/blender/edi
 diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makesrna/intern/rna_object.cc
 --- a/source/blender/makesrna/intern/rna_object.cc
 +++ b/source/blender/makesrna/intern/rna_object.cc
-@@ -286,6 +286,9 @@
+@@ -286,6 +286,12 @@
  #ifdef RNA_RUNTIME
 
  #  include <algorithm>
 +#  include <vector>
 +#  include <tuple>
 +#  include <cstdint>
++#  include <utility>
++
++#  include "MEM_guardedalloc.h"
 
  #  include <fmt/format.h>
 
-@@ -300,6 +303,7 @@
+@@ -293,6 +299,7 @@
+
+ #  include "DNA_ID.h"
+ #  include "DNA_constraint_types.h"
++#  include "DNA_curve_types.h"
+ #  include "DNA_gpencil_legacy_types.h"
+ #  include "DNA_grease_pencil_types.h"
+ #  include "DNA_key_types.h"
+@@ -300,6 +307,7 @@
  #  include "DNA_material_types.h"
  #  include "DNA_node_types.h"
 
@@ -156967,7 +156978,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
  #  include "BLI_math_matrix.h"
  #  include "BLI_math_vector.h"
 
-@@ -318,6 +322,8 @@
+@@ -318,6 +326,8 @@
  #  include "BKE_key.hh"
  #  include "BKE_layer.hh"
  #  include "BKE_library.hh"
@@ -156976,126 +156987,31 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
  #  include "BKE_light_linking.h"
  #  include "BKE_material.hh"
  #  include "BKE_mesh.hh"
-@@ -512,10 +518,118 @@
-   return RNA_id_pointer_create(reinterpret_cast<ID *>(ob->data));
+@@ -498,6 +508,9 @@
+
+ void rna_Object_data_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_pointer_assignment_native_admit(ptr, 3, true, nullptr)) return;
++#endif
+   rna_Object_internal_update_data_dependency(bmain, scene, ptr);
  }
 
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+static Object *rna_Object_main_find_by_uid(Main *bmain, const uint64_t session_uid)
-+{
-+  if (!bmain || !session_uid) return nullptr;
-+  Object *found = nullptr;
-+  LISTBASE_FOREACH (Object *, candidate, &bmain->objects) {
-+    if (candidate->id.session_uid != session_uid) continue;
-+    if (found) return nullptr;
-+    found = candidate;
-+  }
-+  return found;
-+}
-+
-+static bool rna_Object_main_contains_pointer(Main *bmain, const Object *object)
-+{
-+  if (!bmain || !object) return false;
-+  LISTBASE_FOREACH (Object *, candidate, &bmain->objects) {
-+    if (candidate == object) return true;
-+  }
-+  return false;
-+}
-+
-+static ID *rna_Object_data_main_find_by_uid(Main *bmain,
-+                                            const short idcode,
-+                                            const uint64_t session_uid)
-+{
-+  if (!bmain || !session_uid) return nullptr;
-+  ListBase *ids = which_libbase(bmain, idcode);
-+  if (!ids) return nullptr;
-+  ID *found = nullptr;
-+  LISTBASE_FOREACH (ID *, candidate, ids) {
-+    if (candidate->session_uid != session_uid) continue;
-+    if (found) return nullptr;
-+    found = candidate;
-+  }
-+  return found;
-+}
-+
-+static thread_local bool rna_object_data_pencil_teardown_in_progress = false;
-+#endif
-+
+@@ -514,8 +527,13 @@
+
  static void rna_Object_data_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_pointer_assignment_native_admit(ptr, 3, false, reports)) return;
++#endif
    Object *ob = static_cast<Object *>(ptr->data);
    ID *id = static_cast<ID *>(value.data);
 +
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+  Main *owner_main = G_MAIN;
-+  const uint64_t object_uid = ob->id.session_uid;
-+  const bool object_is_in_main = owner_main && rna_Object_main_contains_pointer(owner_main, ob);
-+  if (!(ob->mode & OB_MODE_EDIT) && id != static_cast<ID *>(ob->data) && object_is_in_main) {
-+    if (!object_uid || rna_Object_main_find_by_uid(owner_main, object_uid) != ob) {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint refused ambiguous object identity");
-+      return;
-+    }
-+    if (rna_object_data_pencil_teardown_in_progress) {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented re-entrant object data change");
-+      return;
-+    }
-+    const int object_type = ob->type;
-+    const int object_mode = ob->mode;
-+    ID *old_data = static_cast<ID *>(ob->data);
-+    const short old_data_idcode = old_data ? GS(old_data->name) : 0;
-+    const uint64_t old_data_uid = old_data ? old_data->session_uid : 0;
-+    const short new_data_idcode = id ? GS(id->name) : 0;
-+    const uint64_t new_data_uid = id ? id->session_uid : 0;
-+    if ((old_data && ((old_data->tag & ID_TAG_NO_MAIN) || !old_data_uid)) ||
-+        (id && ((id->tag & ID_TAG_NO_MAIN) || !new_data_uid)))
-+    {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented unsafe object data change");
-+      return;
-+    }
-+    if (old_data &&
-+        rna_Object_data_main_find_by_uid(owner_main, old_data_idcode, old_data_uid) != old_data)
-+    {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented stale object data change");
-+      return;
-+    }
-+
-+    struct ReentrancyGuard {
-+      ReentrancyGuard() { rna_object_data_pencil_teardown_in_progress = true; }
-+      ~ReentrancyGuard() { rna_object_data_pencil_teardown_in_progress = false; }
-+    } reentrancy_guard;
-+    if (!WM_event_ipad_pencil_paint_object_teardown(owner_main, object_uid) ||
-+        G_MAIN != owner_main)
-+    {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint prevented safe object data change");
-+      return;
-+    }
-+
-+    Object *live_object = rna_Object_main_find_by_uid(owner_main, object_uid);
-+    ID *live_old_data = old_data ?
-+                            rna_Object_data_main_find_by_uid(
-+                                owner_main, old_data_idcode, old_data_uid) :
-+                            nullptr;
-+    ID *live_new_data = id ?
-+                            rna_Object_data_main_find_by_uid(
-+                                owner_main, new_data_idcode, new_data_uid) :
-+                            nullptr;
-+    if (G_MAIN != owner_main || live_object != ob || !live_object ||
-+        live_object->id.session_uid != object_uid || live_object->type != object_type ||
-+        live_object->mode != object_mode || live_object->data != old_data ||
-+        (old_data && live_old_data != old_data) || (id && live_new_data != id))
-+    {
-+      BKE_report(reports, RPT_ERROR, "Active Pencil paint refused changed object data context");
-+      return;
-+    }
-+    ob = live_object;
-+    id = live_new_data;
-+  }
-+#endif
 +
 
    if (ob->mode & OB_MODE_EDIT) {
      return;
-@@ -1112,10 +1226,282 @@
+@@ -1112,10 +1130,768 @@
    return RNA_id_pointer_create(reinterpret_cast<ID *>(ma));
  }
 
@@ -157281,7 +157197,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +
 +/* Neither this gate nor direct setters introduce callbacks in borrowed UI
 + * frames. It also blocks reentrant writes during the explicit original drain. */
-+static bool rna_material_assign_owner_absent(ReportList *reports)
++[[maybe_unused]] static bool rna_material_assign_owner_absent(ReportList *reports)
 +{
 +  if (G_MAIN &&
 +      WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr))
@@ -157292,6 +157208,492 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +  return false;
 +}
 +#endif
++
++/* IPAD_POINTER_ASSIGNMENT_STATE_BEGIN */
++/* Owned exact-profile receipts never call RNA getters: those may create storage.
++ * The native setter is the only transition between the two recorded phases. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++struct RnaPointerAssignmentSlots {
++  bool supported = false;
++  short count = 0;
++  uintptr_t array = 0;
++  std::vector<RnaMaterialIDState> materials;
++  bool operator==(const RnaPointerAssignmentSlots &other) const
++  {
++    return std::tie(supported, count, array, materials) ==
++           std::tie(other.supported, other.count, other.array, other.materials);
++  }
++};
++
++struct RnaPointerAssignmentSnapshot {
++  RnaMaterialIDState object, data, old_data, incoming;
++  short object_type = 0, old_curve_type = 0, incoming_curve_type = 0;
++  int mode = 0, actcol = 0, count = 0, old_curve_flag = 0, incoming_curve_flag = 0;
++  int object_missing = 0, old_missing = 0, incoming_missing = 0;
++  bool incoming_indirect = false;
++  uintptr_t object_array = 0, bits_array = 0, pose = 0, sculpt = 0;
++  std::vector<RnaMaterialIDState> object_materials;
++  std::vector<char> bits;
++  RnaPointerAssignmentSlots old_slots, incoming_slots;
++  bool operator==(const RnaPointerAssignmentSnapshot &other) const
++  {
++    return std::tie(object, data, old_data, incoming, object_type, old_curve_type,
++                    incoming_curve_type, mode, actcol, count, old_curve_flag,
++                    incoming_curve_flag, object_missing, old_missing, incoming_missing,
++                    incoming_indirect, object_array, bits_array, pose, sculpt,
++                    object_materials, bits, old_slots, incoming_slots) ==
++           std::tie(other.object, other.data, other.old_data, other.incoming,
++                    other.object_type, other.old_curve_type, other.incoming_curve_type,
++                    other.mode, other.actcol, other.count, other.old_curve_flag,
++                    other.incoming_curve_flag, other.object_missing, other.old_missing,
++                    other.incoming_missing, other.incoming_indirect, other.object_array,
++                    other.bits_array, other.pose, other.sculpt, other.object_materials,
++                    other.bits, other.old_slots, other.incoming_slots);
++  }
++};
++
++struct RnaPointerAssignmentState {
++  Main *main = nullptr;
++  int profile = 0, slot = -1;
++  bool applied = false;
++  uintptr_t object_address = 0, old_address = 0, incoming_address = 0;
++  RnaPointerAssignmentSnapshot before, current;
++};
++
++static short rna_pointer_assignment_data_type(const short object_type)
++{
++  switch (object_type) {
++    case OB_EMPTY: return ID_IM;
++    case OB_MESH: return ID_ME;
++    case OB_CURVES_LEGACY:
++    case OB_FONT:
++    case OB_SURF: return ID_CU_LEGACY;
++    case OB_MBALL: return ID_MB;
++    case OB_LAMP: return ID_LA;
++    case OB_CAMERA: return ID_CA;
++    case OB_LATTICE: return ID_LT;
++    case OB_ARMATURE: return ID_AR;
++    case OB_SPEAKER: return ID_SPK;
++    case OB_LIGHTPROBE: return ID_LP;
++    case OB_GPENCIL_LEGACY: return ID_GD_LEGACY;
++    case OB_GREASE_PENCIL: return ID_GP;
++    case OB_CURVES: return ID_CV;
++    case OB_POINTCLOUD: return ID_PT;
++    case OB_VOLUME: return ID_VO;
++    default: return 0;
++  }
++}
++
++static bool rna_pointer_assignment_slots_capture(Main *bmain,
++                                                 ID *id,
++                                                 RnaPointerAssignmentSlots *result)
++{
++  *result = {};
++  if (!id || !ELEM(GS(id->name), ID_ME, ID_CU_LEGACY, ID_MB, ID_GD_LEGACY,
++                  ID_CV, ID_PT, ID_VO, ID_GP))
++  {
++    return true;
++  }
++  short *count = BKE_id_material_len_p(id);
++  Material ***array = BKE_id_material_array_p(id);
++  if (!count || !array || *count < 0 || *count > MAXMAT || (*count && !*array)) {
++    return false;
++  }
++  result->supported = true;
++  result->count = *count;
++  result->array = uintptr_t(*array);
++  for (int i = 0; i < *count; i++) {
++    RnaMaterialIDState material;
++    if (!rna_material_state_capture(bmain, uintptr_t((*array)[i]), &material) ||
++        (material.id.address && material.id.type != ID_MA))
++    {
++      return false;
++    }
++    result->materials.push_back(material);
++  }
++  return true;
++}
++
++static bool rna_pointer_assignment_capture(Main *bmain,
++                                           const RnaPointerAssignmentState &state,
++                                           RnaPointerAssignmentSnapshot *result)
++{
++  *result = {};
++  if (!bmain || G_MAIN != bmain ||
++      !rna_material_state_capture(bmain, state.object_address, &result->object) ||
++      result->object.id.type != ID_OB ||
++      !rna_material_state_capture(bmain, state.old_address, &result->old_data) ||
++      !rna_material_state_capture(bmain, state.incoming_address, &result->incoming))
++  {
++    return false;
++  }
++  Object *object = reinterpret_cast<Object *>(rna_material_id_find(bmain, state.object_address));
++  ID *old_data = rna_material_id_find(bmain, state.old_address);
++  ID *incoming = rna_material_id_find(bmain, state.incoming_address);
++  if (!object || (object->id.tag & ID_TAG_NO_MAIN) ||
++      (old_data && (old_data->tag & ID_TAG_NO_MAIN)) ||
++      (incoming && (incoming->tag & ID_TAG_NO_MAIN)) ||
++      !rna_material_state_capture(bmain, uintptr_t(object->data), &result->data) ||
++      object->totcol < 0 || object->totcol > MAXMAT ||
++      (object->totcol && (!object->mat || !object->matbits)))
++  {
++    return false;
++  }
++  result->object_type = object->type;
++  result->mode = object->mode;
++  result->actcol = object->actcol;
++  result->count = object->totcol;
++  result->object_array = uintptr_t(object->mat);
++  result->bits_array = uintptr_t(object->matbits);
++  result->pose = uintptr_t(object->pose);
++  result->sculpt = uintptr_t(object->sculpt);
++  result->object_missing = object->id.tag & ID_TAG_MISSING;
++  result->old_missing = old_data ? old_data->tag & ID_TAG_MISSING : 0;
++  result->incoming_missing = incoming ? incoming->tag & ID_TAG_MISSING : 0;
++  result->incoming_indirect = incoming && (incoming->tag & ID_TAG_INDIRECT);
++  int material_prefix = object->totcol;
++  int bits_prefix = object->totcol;
++  if (state.profile == 1) {
++    /* An earlier material getter can reduce totcol without shrinking either
++     * allocation or actcol. Native assignment grows with MEM_recallocN and
++     * retains these hidden cells. Capture only the allocated prefix that this
++     * exact short-index assignment can expose, keeping logical count separate. */
++    const int act = short(object->actcol);
++    if (act <= MAXMAT) {
++      const size_t needed = size_t(std::max(act, 1));
++      const size_t materials_allocated = object->mat ?
++          MEM_allocN_len(object->mat) / sizeof(*object->mat) : 0;
++      const size_t bits_allocated = object->matbits ? MEM_allocN_len(object->matbits) : 0;
++      if (materials_allocated < size_t(object->totcol) ||
++          bits_allocated < size_t(object->totcol))
++      {
++        return false;
++      }
++      material_prefix = std::max(material_prefix, int(std::min(needed, materials_allocated)));
++      bits_prefix = std::max(bits_prefix, int(std::min(needed, bits_allocated)));
++    }
++  }
++  for (int i = 0; i < material_prefix; i++) {
++    RnaMaterialIDState material;
++    if (!rna_material_state_capture(bmain, uintptr_t(object->mat[i]), &material) ||
++        (material.id.address && material.id.type != ID_MA))
++    {
++      return false;
++    }
++    result->object_materials.push_back(material);
++  }
++  for (int i = 0; i < bits_prefix; i++) {
++    result->bits.push_back(object->matbits[i]);
++  }
++  if (!rna_pointer_assignment_slots_capture(bmain, old_data, &result->old_slots) ||
++      !rna_pointer_assignment_slots_capture(bmain, incoming, &result->incoming_slots))
++  {
++    return false;
++  }
++  if (old_data && GS(old_data->name) == ID_CU_LEGACY) {
++    const Curve *curve = reinterpret_cast<Curve *>(old_data);
++    result->old_curve_type = curve->ob_type;
++    result->old_curve_flag = curve->flag;
++  }
++  if (incoming && GS(incoming->name) == ID_CU_LEGACY) {
++    const Curve *curve = reinterpret_cast<Curve *>(incoming);
++    result->incoming_curve_type = curve->ob_type;
++    result->incoming_curve_flag = curve->flag;
++  }
++  return true;
++}
++
++/* Resolve the saved original identities before recording any post-call state.
++ * Never turn an address-reused replacement into the next phase's origin. */
++static bool rna_pointer_assignment_originals_live(Main *bmain,
++                                                 const RnaPointerAssignmentState &state)
++{
++  if (!bmain || bmain != state.main || G_MAIN != bmain) return false;
++  for (const RnaMaterialIDIdentity *identity :
++       {&state.before.object.id, &state.before.old_data.id, &state.before.incoming.id})
++  {
++    RnaMaterialIDIdentity fresh;
++    if (!rna_material_identity_capture(bmain, identity->address, &fresh) ||
++        !(fresh == *identity))
++    {
++      return false;
++    }
++  }
++  return true;
++}
++
++static bool rna_pointer_assignment_same_origin(const RnaMaterialIDState &before,
++                                               const RnaMaterialIDState &after,
++                                               const RnaPointerAssignmentState &state)
++{
++  if (!(before.id == after.id) || !(before.library == after.library) ||
++      !(before.reference == after.reference) || !(before.hierarchy_root == after.hierarchy_root) ||
++      before.override_address != after.override_address || before.override_flag != after.override_flag)
++  {
++    return false;
++  }
++  /* id_us_plus promotes an indirectly linked incoming ID to EXTERN. User counts
++   * also have fake/extra-user bookkeeping, so neither is an immutable identity. */
++  return before.extern_tag == after.extern_tag ||
++         (before.id.address == state.incoming_address && state.before.incoming_indirect &&
++          before.library.address && before.extern_tag == 0 && after.extern_tag == ID_TAG_EXTERN);
++}
++
++static bool rna_pointer_assignment_materials_equal(
++    const std::vector<RnaMaterialIDState> &expected,
++    const std::vector<RnaMaterialIDState> &actual,
++    const RnaPointerAssignmentState &state)
++{
++  if (expected.size() != actual.size()) return false;
++  for (size_t i = 0; i < expected.size(); i++) {
++    if (!rna_pointer_assignment_same_origin(expected[i], actual[i], state)) return false;
++  }
++  return true;
++}
++
++static bool rna_pointer_assignment_slots_equal(const RnaPointerAssignmentSlots &expected,
++                                               const RnaPointerAssignmentSlots &actual,
++                                               const RnaPointerAssignmentState &state)
++{
++  return expected.supported == actual.supported && expected.count == actual.count &&
++         rna_pointer_assignment_materials_equal(expected.materials, actual.materials, state);
++}
++
++static void rna_pointer_assignment_slots_resize(RnaPointerAssignmentSlots &slots, const int count)
++{
++  slots.count = short(count);
++  slots.materials.resize(count);
++}
++
++static void rna_pointer_assignment_object_resize(RnaPointerAssignmentSnapshot &snapshot,
++                                                 const int count)
++{
++  snapshot.count = count;
++  snapshot.object_materials.resize(count);
++  snapshot.bits.resize(count);
++}
++
++static void rna_pointer_assignment_sanitize_active(RnaPointerAssignmentSnapshot &snapshot)
++{
++  if (snapshot.count && snapshot.actcol == 0) snapshot.actcol = 1;
++  snapshot.actcol = std::min(snapshot.actcol, snapshot.count);
++}
++
++static bool rna_pointer_assignment_expected_post(const RnaPointerAssignmentState &state,
++                                                 const RnaPointerAssignmentSnapshot &after)
++{
++  const RnaPointerAssignmentSnapshot &before = state.before;
++  if (!rna_pointer_assignment_same_origin(before.object, after.object, state) ||
++      !rna_pointer_assignment_same_origin(before.old_data, after.old_data, state) ||
++      !rna_pointer_assignment_same_origin(before.incoming, after.incoming, state) ||
++      before.mode != after.mode || before.object_missing != after.object_missing ||
++      before.old_missing != after.old_missing || before.incoming_missing != after.incoming_missing ||
++      before.old_curve_type != after.old_curve_type || before.old_curve_flag != after.old_curve_flag ||
++      before.incoming_curve_type != after.incoming_curve_type ||
++      before.incoming_curve_flag != after.incoming_curve_flag)
++  {
++    return false;
++  }
++  RnaPointerAssignmentSnapshot expected = before;
++#ifndef NDEBUG
++  /* RNA_property_pointer_set reads the material getter before its native set.
++   * That getter may clamp Object.totcol without reallocating its arrays. Keep
++   * their original physical prefix: a later MEM_recallocN may grow the logical
++   * count back into those retained slots rather than initialize them to zero. */
++  if (state.profile != 3 && before.old_slots.count > 0) {
++    expected.count = std::min(before.count, int(before.old_slots.count));
++  }
++#endif
++  bool increments_incoming = false;
++  if (state.profile == 3) {
++    const bool silent = (before.mode & OB_MODE_EDIT) ||
++                        (!state.incoming_address && before.object_type != OB_EMPTY);
++    if (!silent) {
++      increments_incoming = state.incoming_address != 0;
++      expected.data = before.incoming;
++      if (before.incoming.id.type == ID_CU_LEGACY) {
++        expected.object_type = before.incoming_curve_type;
++      }
++      if (before.object_type != OB_EMPTY && before.incoming_slots.supported) {
++        if (!before.object_missing && before.incoming_missing) {
++          rna_pointer_assignment_slots_resize(expected.incoming_slots, before.count);
++        }
++        else {
++          rna_pointer_assignment_object_resize(expected, before.incoming_slots.count);
++          rna_pointer_assignment_sanitize_active(expected);
++        }
++      }
++      if (state.old_address == state.incoming_address) expected.old_slots = expected.incoming_slots;
++    }
++  }
++  else {
++    int act = short(state.profile == 1 ? before.actcol : state.slot + 1);
++    if (act <= MAXMAT && before.old_slots.supported) {
++      increments_incoming = state.incoming_address != 0;
++      act = std::max(act, 1);
++      rna_pointer_assignment_slots_resize(expected.old_slots, std::max<int>(act, before.old_slots.count));
++      rna_pointer_assignment_object_resize(expected, std::max(act, expected.count));
++      if (expected.bits[act - 1] == 1) {
++        expected.object_materials[act - 1] = before.incoming;
++        if (!before.object_missing && before.old_missing) {
++          rna_pointer_assignment_slots_resize(expected.old_slots, expected.count);
++        }
++        else {
++          rna_pointer_assignment_object_resize(expected, expected.old_slots.count);
++          rna_pointer_assignment_sanitize_active(expected);
++        }
++      }
++      else {
++        expected.old_slots.materials[act - 1] = before.incoming;
++        rna_pointer_assignment_object_resize(expected, expected.old_slots.count);
++        rna_pointer_assignment_sanitize_active(expected);
++      }
++    }
++  }
++  const bool promotes = increments_incoming && before.incoming_indirect &&
++                        before.incoming.library.address;
++  if (after.incoming_indirect != (promotes ? false : before.incoming_indirect) ||
++      (!increments_incoming && before.incoming.extern_tag != after.incoming.extern_tag) ||
++      before.sculpt != after.sculpt)
++  {
++    return false;
++  }
++  const bool rebuilds_pose = state.profile == 3 && before.object_type == OB_ARMATURE &&
++                            !(before.mode & OB_MODE_EDIT) && state.incoming_address;
++  if ((!rebuilds_pose && before.pose != after.pose) ||
++      (rebuilds_pose && ((before.pose && before.pose != after.pose) || !after.pose)))
++  {
++    return false;
++  }
++  /* Allocations, pose channels, Curve projection/handles and multires/PBVH are
++   * legitimate same-native-body effects. Check original IDs and exact logical
++   * relation/slots first, then record their fresh physical snapshot once. */
++  expected.object_materials.resize(expected.count);
++  expected.bits.resize(expected.count);
++  return expected.object_type == after.object_type && expected.actcol == after.actcol &&
++         expected.count == after.count && expected.bits == after.bits &&
++         rna_pointer_assignment_same_origin(expected.data, after.data, state) &&
++         rna_pointer_assignment_materials_equal(expected.object_materials, after.object_materials, state) &&
++         rna_pointer_assignment_slots_equal(expected.old_slots, after.old_slots, state) &&
++         rna_pointer_assignment_slots_equal(expected.incoming_slots, after.incoming_slots, state);
++}
++#endif
++
++RnaPointerAssignmentState *RNA_pointer_assignment_state_create(Main *bmain,
++                                                               const PointerRNA *ptr,
++                                                               const PointerRNA *value,
++                                                               const int profile,
++                                                               ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  UNUSED_VARS(reports);
++  /* Unsupported initial no-owner inputs may deliberately follow NativeBaseline;
++   * their caller decides refusal, so capture failure must not set an error. */
++  if (!bmain || bmain != G_MAIN || !ptr || !value || profile < 1 || profile > 3 ||
++      !ptr->owner_id || ptr->type != (profile == 2 ? &RNA_MaterialSlot : &RNA_Object) ||
++      (profile != 2 && ptr->data != ptr->owner_id) ||
++      (value->data && (!value->type || value->owner_id != value->data)) ||
++      (!value->data && value->owner_id) || !value->ancestors.is_empty() ||
++      (profile != 2 && !ptr->ancestors.is_empty()) || ptr->ancestors.size() > 1)
++  {
++    return nullptr;
++  }
++  RnaPointerAssignmentState state;
++  state.main = bmain;
++  state.profile = profile;
++  state.object_address = uintptr_t(ptr->owner_id);
++  state.incoming_address = uintptr_t(value->data);
++  for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
++    if (ancestor.type != &RNA_Object || uintptr_t(ancestor.data) != state.object_address) return nullptr;
++  }
++  RnaMaterialIDState object_identity;
++  if (!rna_material_state_capture(bmain, state.object_address, &object_identity) ||
++      object_identity.id.type != ID_OB)
++  {
++    return nullptr;
++  }
++  Object *object = reinterpret_cast<Object *>(rna_material_id_find(bmain, state.object_address));
++  if (!object) return nullptr;
++  state.old_address = uintptr_t(object->data);
++  if (!rna_pointer_assignment_capture(bmain, state, &state.before)) return nullptr;
++  if (profile == 2) {
++    const uintptr_t slot = uintptr_t(ptr->data);
++    if (slot < state.object_address || slot - state.object_address >= uintptr_t(state.before.count)) {
++      return nullptr;
++    }
++    state.slot = int(slot - state.object_address);
++  }
++  if (profile != 3) {
++    if (!state.before.old_slots.supported || !state.old_address ||
++        state.before.old_data.id.type != rna_material_data_type(state.before.object_type) ||
++        (state.incoming_address && (state.before.incoming.id.type != ID_MA || value->type != &RNA_Material)))
++    {
++      return nullptr;
++    }
++  }
++  else {
++    const short expected_type = rna_pointer_assignment_data_type(state.before.object_type);
++    if (!expected_type || (state.old_address && state.before.old_data.id.type != expected_type) ||
++        (state.incoming_address && state.before.incoming.id.type != expected_type) ||
++        (state.before.object_type != OB_EMPTY && !state.old_address) ||
++        (state.before.incoming.id.type == ID_CU_LEGACY &&
++         !ELEM(state.before.incoming_curve_type, OB_CURVES_LEGACY, OB_SURF, OB_FONT)))
++    {
++      return nullptr;
++    }
++  }
++  state.current = state.before;
++  return new RnaPointerAssignmentState(std::move(state));
++#else
++  UNUSED_VARS(bmain, ptr, value, profile, reports);
++  return nullptr;
++#endif
++}
++
++bool RNA_pointer_assignment_state_validate(Main *bmain, const RnaPointerAssignmentState *state)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!state || !rna_pointer_assignment_originals_live(bmain, *state)) return false;
++  RnaPointerAssignmentSnapshot fresh;
++  return rna_pointer_assignment_capture(bmain, *state, &fresh) && fresh == state->current;
++#else
++  UNUSED_VARS(bmain, state);
++  return false;
++#endif
++}
++
++bool RNA_pointer_assignment_state_mark_applied(Main *bmain,
++                                               RnaPointerAssignmentState *state,
++                                               ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  RnaPointerAssignmentSnapshot fresh;
++  if (state && !state->applied && rna_pointer_assignment_originals_live(bmain, *state) &&
++      rna_pointer_assignment_capture(bmain, *state, &fresh) &&
++      rna_pointer_assignment_expected_post(*state, fresh))
++  {
++    state->current = std::move(fresh);
++    state->applied = true;
++    return true;
++  }
++  if (reports) BKE_report(reports, RPT_ERROR, "Pointer assignment native result changed original inputs");
++  return false;
++#else
++  UNUSED_VARS(bmain, state, reports);
++  return false;
++#endif
++}
++
++void RNA_pointer_assignment_state_free(RnaPointerAssignmentState *state) noexcept
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  delete state;
++#else
++  UNUSED_VARS(state);
++#endif
++}
++
++/* IPAD_POINTER_ASSIGNMENT_STATE_END */
 +
 +bool RNA_object_material_assign_paint_owner_teardown(bContext *C,
 +                                                     PointerRNA *ptr,
@@ -157375,12 +157777,12 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +{
 +  UNUSED_VARS(reports);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  if (!rna_material_assign_owner_absent(reports)) return;
++  if (!RNA_pointer_assignment_native_admit(ptr, 1, false, reports)) return;
 +#endif
    Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
 
    DEG_id_tag_update(static_cast<ID *>(value.data), 0);
-@@ -1125,6 +1511,376 @@
+@@ -1125,6 +1901,376 @@
        G_MAIN, ob, static_cast<Material *>(value.data), ob->actcol, BKE_MAT_ASSIGN_EXISTING);
  }
 
@@ -157757,7 +158159,7 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
  static int rna_Object_active_material_editable(const PointerRNA *ptr, const char ** /*r_info*/)
  {
    Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
-@@ -1343,8 +2099,12 @@
+@@ -1343,8 +2489,12 @@
 
  static void rna_MaterialSlot_material_set(PointerRNA *ptr,
                                            PointerRNA value,
@@ -157767,11 +158169,54 @@ diff --git a/source/blender/makesrna/intern/rna_object.cc b/source/blender/makes
 +{
 +  UNUSED_VARS(reports);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  if (!rna_material_assign_owner_absent(reports)) return;
++  if (!RNA_pointer_assignment_native_admit(ptr, 2, false, reports)) return;
 +#endif
    Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
    int index = rna_MaterialSlot_index(ptr);
 
+@@ -1434,6 +2584,24 @@
+   WM_main_add_notifier(NC_OBJECT | ND_OB_SHADING, ptr->owner_id);
+   WM_main_add_notifier(NC_MATERIAL | ND_SHADING_LINKS, nullptr);
+   DEG_relations_tag_update(bmain);
++}
++
++/* Only the two selected pointer properties use these direct-update gates.
++ * MaterialSlot.link retains the shared native update entry unchanged. */
++static void rna_Object_active_material_update(Main *bmain, Scene *scene, PointerRNA *ptr)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_pointer_assignment_native_admit(ptr, 1, true, nullptr)) return;
++#endif
++  rna_MaterialSlot_update(bmain, scene, ptr);
++}
++
++static void rna_MaterialSlot_material_update(Main *bmain, Scene *scene, PointerRNA *ptr)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!RNA_pointer_assignment_native_admit(ptr, 2, true, nullptr)) return;
++#endif
++  rna_MaterialSlot_update(bmain, scene, ptr);
+ }
+
+ static std::optional<std::string> rna_MaterialSlot_path(const PointerRNA *ptr)
+@@ -2330,7 +3498,7 @@
+                                  nullptr,
+                                  "rna_MaterialSlot_material_poll");
+   RNA_def_property_ui_text(prop, "Material", "Material data-block used by this material slot");
+-  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
++  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_material_update");
+
+   prop = RNA_def_property(srna, "slot_index", PROP_INT, PROP_NONE);
+   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+@@ -3021,7 +4189,7 @@
+   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
+   RNA_def_property_editable_func(prop, "rna_Object_active_material_editable");
+   RNA_def_property_ui_text(prop, "Active Material", "Active material being displayed");
+-  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
++  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_active_material_update");
+
+   prop = RNA_def_property(srna, "active_material_index", PROP_INT, PROP_UNSIGNED);
+   RNA_def_property_int_sdna(prop, nullptr, "actcol");
 diff --git a/source/blender/makesrna/intern/rna_ID.cc b/source/blender/makesrna/intern/rna_ID.cc
 --- a/source/blender/makesrna/intern/rna_ID.cc
 +++ b/source/blender/makesrna/intern/rna_ID.cc
@@ -158902,10 +159347,42 @@ diff --git a/source/blender/makesrna/RNA_access.hh b/source/blender/makesrna/RNA
  #include <optional>
  #include <stdarg.h>
  #include <string>
-@@ -30,6 +31,71 @@
+@@ -30,6 +31,103 @@
  struct ReportList;
  struct Scene;
  struct bContext;
++
++/* These three exact built-in pointer profiles own their complete Python
++ * assignment and late update. Borrowed native callers never retire owners. */
++enum class eRNAPointerAssignmentResult { Unrelated, NativeBaseline, AppliedOwned, Refused };
++struct RNAPointerAssignmentReceipt;
++struct RnaPointerAssignmentState;
++bool RNA_property_is_pointer_assignment(PropertyRNA *prop);
++eRNAPointerAssignmentResult RNA_property_pointer_assignment_begin_owned(
++    bContext *C,
++    const PointerRNA *target,
++    PropertyRNA *prop,
++    const PointerRNA *value,
++    ReportList *reports,
++    RNAPointerAssignmentReceipt **r_receipt);
++bool RNA_property_pointer_assignment_finish_owned(bContext *C,
++                                                  RNAPointerAssignmentReceipt *receipt,
++                                                  ReportList *reports);
++void RNA_property_pointer_assignment_receipt_free(RNAPointerAssignmentReceipt *receipt) noexcept;
++bool RNA_pointer_assignment_native_admit(const PointerRNA *ptr,
++                                         int profile,
++                                         bool is_update,
++                                         ReportList *reports);
++RnaPointerAssignmentState *RNA_pointer_assignment_state_create(Main *bmain,
++                                                              const PointerRNA *target,
++                                                              const PointerRNA *value,
++                                                              int profile,
++                                                              ReportList *reports);
++bool RNA_pointer_assignment_state_validate(Main *bmain, const RnaPointerAssignmentState *state);
++bool RNA_pointer_assignment_state_mark_applied(Main *bmain,
++                                              RnaPointerAssignmentState *state,
++                                              ReportList *reports);
++void RNA_pointer_assignment_state_free(RnaPointerAssignmentState *state) noexcept;
 +
 +/* Exact shipped material pointer properties. The explicit Python producer has
 + * a report/exception boundary; ordinary UI/set/update paths only query absence. */
@@ -159222,7 +159699,24 @@ diff --git a/source/blender/makesrna/intern/rna_mesh_api.cc b/source/blender/mak
 diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makesrna/intern/rna_access.cc
 --- a/source/blender/makesrna/intern/rna_access.cc
 +++ b/source/blender/makesrna/intern/rna_access.cc
-@@ -70,6 +70,202 @@
+@@ -10,6 +10,8 @@
+ #include <cstdint>
+ #include <cstring>
+ #include <limits>
++#include <memory>
++#include <vector>
+ #include <sstream>
+
+ #include <fmt/format.h>
+@@ -19,6 +21,7 @@
+ #include "DNA_ID.h"
+ #include "DNA_anim_types.h"
+ #include "DNA_scene_types.h"
++#include "DNA_screen_types.h"
+ #include "DNA_windowmanager_types.h"
+
+ #include "BLI_dynstr.h"
+@@ -70,6 +73,705 @@
 
  #include "rna_access_internal.hh"
  #include "rna_internal.hh"
@@ -159281,6 +159775,509 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 +#endif
 +  return true;
 +}
++
++/* IPAD_POINTER_ASSIGNMENT_TRANSACTION_BEGIN */
++static void rna_property_update(
++    bContext *C, Main *bmain, Scene *scene, PointerRNA *ptr, PropertyRNA *prop);
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++extern void Object_data_set(PointerRNA *, PointerRNA, ReportList *);
++
++/* Compare numeric input metadata only with fresh, fixed built-in lookups. In
++ * particular, never inspect an old PropertyRNA merely to classify it again. */
++static int rna_pointer_assignment_profile(const PropertyRNA *prop)
++{
++  const uintptr_t address = uintptr_t(prop);
++  struct Profile { StructRNA *type; const char *name; int number; PropPointerSetFunc setter; };
++  const Profile profiles[] = {{&RNA_Object, "active_material", 1, Object_active_material_set},
++                              {&RNA_MaterialSlot, "material", 2, MaterialSlot_material_set},
++                              {&RNA_Object, "data", 3, Object_data_set}};
++  for (const Profile &profile : profiles) {
++    PropertyRNA *fresh = RNA_struct_type_find_property(profile.type, profile.name);
++    if (fresh && uintptr_t(fresh) == address && fresh->magic == RNA_MAGIC &&
++        fresh->type == PROP_POINTER &&
++        reinterpret_cast<PointerPropertyRNA *>(fresh)->set == profile.setter)
++    {
++      return profile.number;
++    }
++  }
++  return 0;
++}
++
++static PropertyRNA *rna_pointer_assignment_property(const int profile, const uintptr_t address)
++{
++  StructRNA *type = profile == 2 ? &RNA_MaterialSlot : &RNA_Object;
++  const char *name = profile == 1 ? "active_material" : profile == 2 ? "material" : "data";
++  if (profile < 1 || profile > 3) return nullptr;
++  PropertyRNA *fresh = RNA_struct_type_find_property(type, name);
++  return fresh && uintptr_t(fresh) == address && rna_pointer_assignment_profile(fresh) == profile ?
++             fresh : nullptr;
++}
++
++static bool rna_pointer_assignment_absent()
++{
++  return G_MAIN && WM_event_ipad_pencil_paint_owner_teardown_next(nullptr, G_MAIN, nullptr);
++}
++
++static bool rna_pointer_assignment_refuse(ReportList *reports)
++{
++  if (reports) {
++    BKE_report(reports, RPT_ERROR, "Pointer assignment was refused: Pencil owner or original inputs changed");
++  }
++  return false;
++}
++
++struct RnaPointerAssignmentID {
++  uintptr_t address = 0, library = 0, override_address = 0, reference = 0, root = 0;
++  uint32_t uid = 0, library_uid = 0, reference_uid = 0, root_uid = 0;
++  short type = 0, reference_type = 0, root_type = 0;
++  int override_flag = 0;
++  bool operator==(const RnaPointerAssignmentID &other) const
++  {
++    return address == other.address && uid == other.uid && type == other.type &&
++           library == other.library && library_uid == other.library_uid &&
++           override_address == other.override_address && override_flag == other.override_flag &&
++           reference == other.reference && reference_uid == other.reference_uid &&
++           reference_type == other.reference_type && root == other.root &&
++           root_uid == other.root_uid && root_type == other.root_type;
++  }
++};
++
++static ID *rna_pointer_assignment_id_find(Main *bmain, const uintptr_t address)
++{
++  if (!bmain || !address) return nullptr;
++  ID *result = nullptr;
++  int matches = 0;
++  ID *id;
++  FOREACH_MAIN_ID_BEGIN (bmain, id) {
++    if (uintptr_t(id) == address) { result = id; matches++; }
++  }
++  FOREACH_MAIN_ID_END;
++  return matches == 1 ? result : nullptr;
++}
++
++static bool rna_pointer_assignment_id_capture(
++    Main *bmain, const uintptr_t address, RnaPointerAssignmentID *r_id)
++{
++  *r_id = {};
++  if (!address) return true;
++  ID *id = rna_pointer_assignment_id_find(bmain, address);
++  if (!id || !id->session_uid) return false;
++  r_id->address = address;
++  r_id->uid = id->session_uid;
++  r_id->type = GS(id->name);
++  if (id->lib) {
++    ID *library = rna_pointer_assignment_id_find(bmain, uintptr_t(id->lib));
++    if (!library || GS(library->name) != ID_LI || !library->session_uid) return false;
++    r_id->library = uintptr_t(library);
++    r_id->library_uid = library->session_uid;
++  }
++  if (id->override_library) {
++    r_id->override_address = uintptr_t(id->override_library);
++    r_id->override_flag = id->override_library->flag;
++    ID *related[] = {id->override_library->reference, id->override_library->hierarchy_root};
++    for (int i = 0; i < 2; i++) {
++      if (!related[i]) continue;
++      ID *live = rna_pointer_assignment_id_find(bmain, uintptr_t(related[i]));
++      if (!live || !live->session_uid) return false;
++      if (i == 0) {
++        r_id->reference = uintptr_t(live); r_id->reference_uid = live->session_uid;
++        r_id->reference_type = GS(live->name);
++      }
++      else {
++        r_id->root = uintptr_t(live); r_id->root_uid = live->session_uid;
++        r_id->root_type = GS(live->name);
++      }
++    }
++  }
++  return true;
++}
++
++struct RnaPointerAssignmentContext {
++  uintptr_t context = 0, python_context = 0, main = 0, wm = 0, window = 0;
++  uintptr_t screen = 0, area = 0, region = 0, region_runtime = 0;
++  uint32_t wm_uid = 0, screen_uid = 0;
++  int winid = 0, width = 0, height = 0, region_type = 0;
++  std::vector<RnaPointerAssignmentID> scenes;
++};
++
++static bool rna_pointer_assignment_context_capture(
++    bContext *C, Main *bmain, RnaPointerAssignmentContext *r_context)
++{
++  if (!C || !bmain || G_MAIN != bmain) return false;
++  wmWindowManager *wm = CTX_wm_manager(C);
++  wmWindow *win = CTX_wm_window(C);
++  if (!wm || !win || BLI_findindex(&bmain->wm, wm) == -1 || !wm->id.session_uid ||
++      BLI_findindex(&wm->windows, win) == -1 || !win->winid || !win->runtime)
++  {
++    return false;
++  }
++  bScreen *screen = CTX_wm_screen(C);
++  ScrArea *area = CTX_wm_area(C);
++  ARegion *region = CTX_wm_region(C);
++  if (!screen || BLI_findindex(&bmain->screens, screen) == -1 || !screen->id.session_uid ||
++      WM_window_get_active_screen(win) != screen ||
++      (area && BLI_findindex(&screen->areabase, area) == -1) ||
++      (region && (!area || (BLI_findindex(&area->regionbase, region) == -1 &&
++                           BLI_findindex(&screen->regionbase, region) == -1))))
++  {
++    return false;
++  }
++  *r_context = {};
++  r_context->context = uintptr_t(C);
++#  ifdef WITH_PYTHON
++  r_context->python_context = uintptr_t(BPY_context_get());
++#  endif
++  r_context->main = uintptr_t(bmain); r_context->wm = uintptr_t(wm);
++  r_context->window = uintptr_t(win); r_context->wm_uid = wm->id.session_uid;
++  r_context->winid = win->winid; r_context->width = win->sizex; r_context->height = win->sizey;
++  r_context->screen = uintptr_t(screen); r_context->screen_uid = screen->id.session_uid;
++  r_context->area = uintptr_t(area); r_context->region = uintptr_t(region);
++  r_context->region_runtime = region ? uintptr_t(region->runtime) : 0;
++  r_context->region_type = region ? region->regiontype : 0;
++  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
++    RnaPointerAssignmentID identity;
++    if (!rna_pointer_assignment_id_capture(bmain, uintptr_t(scene), &identity) ||
++        identity.type != ID_SCE)
++    {
++      return false;
++    }
++    r_context->scenes.push_back(identity);
++  }
++  return true;
++}
++
++static bool rna_pointer_assignment_context_matches(
++    bContext *C, Main *bmain, const RnaPointerAssignmentContext &context)
++{
++  if (uintptr_t(C) != context.context || uintptr_t(G_MAIN) != context.main ||
++      uintptr_t(bmain) != context.main)
++  {
++    return false;
++  }
++#  ifdef WITH_PYTHON
++  if (uintptr_t(BPY_context_get()) != context.python_context) return false;
++#  endif
++  RnaPointerAssignmentContext fresh;
++  if (!rna_pointer_assignment_context_capture(C, bmain, &fresh)) return false;
++  return fresh.context == context.context && fresh.python_context == context.python_context &&
++         fresh.main == context.main && fresh.wm == context.wm && fresh.window == context.window &&
++         fresh.wm_uid == context.wm_uid && fresh.winid == context.winid &&
++         fresh.width == context.width && fresh.height == context.height &&
++         fresh.screen == context.screen && fresh.screen_uid == context.screen_uid &&
++         fresh.area == context.area && fresh.region == context.region &&
++         fresh.region_runtime == context.region_runtime && fresh.region_type == context.region_type &&
++         fresh.scenes == context.scenes;
++}
++
++static bool rna_pointer_assignment_scene_matches(
++    const RnaPointerAssignmentContext &context, const Scene *scene)
++{
++  if (!scene) return true;
++  for (const RnaPointerAssignmentID &identity : context.scenes) {
++    if (identity.address == uintptr_t(scene)) return true;
++  }
++  return false;
++}
++
++enum class RnaPointerAssignmentPhase { Set, Update };
++struct RnaPointerAssignmentLease {
++  uintptr_t owner = 0, data = 0, type = 0, property = 0;
++  int profile = 0;
++  RnaPointerAssignmentPhase phase = RnaPointerAssignmentPhase::Set;
++  bool outer_consumed = false, native_consumed = false, native_ready = false;
++};
++static thread_local bool rna_pointer_assignment_busy = false;
++static thread_local RnaPointerAssignmentLease *rna_pointer_assignment_lease = nullptr;
++
++static bool rna_pointer_assignment_lease_matches(
++    const PointerRNA *ptr, const int profile, const RnaPointerAssignmentPhase phase)
++{
++  const RnaPointerAssignmentLease *lease = rna_pointer_assignment_lease;
++  return ptr && lease && lease->profile == profile && lease->phase == phase &&
++         lease->owner == uintptr_t(ptr->owner_id) && lease->data == uintptr_t(ptr->data) &&
++         lease->type == uintptr_t(ptr->type);
++}
++
++struct RnaPointerAssignmentBusyScope {
++  RnaPointerAssignmentBusyScope() { rna_pointer_assignment_busy = true; }
++  ~RnaPointerAssignmentBusyScope()
++  {
++    rna_pointer_assignment_lease = nullptr;
++    rna_pointer_assignment_busy = false;
++  }
++};
++
++struct RnaPointerAssignmentLeaseScope {
++  explicit RnaPointerAssignmentLeaseScope(RnaPointerAssignmentLease *lease)
++  {
++    rna_pointer_assignment_lease = lease;
++  }
++  ~RnaPointerAssignmentLeaseScope() { rna_pointer_assignment_lease = nullptr; }
++};
++
++static bool rna_pointer_assignment_outer_admit(
++    const PointerRNA *ptr, PropertyRNA *prop, const bool is_update, ReportList *reports)
++{
++  const int profile = rna_pointer_assignment_profile(prop);
++  if (!profile) return true;
++  const auto phase = is_update ? RnaPointerAssignmentPhase::Update : RnaPointerAssignmentPhase::Set;
++  if (rna_pointer_assignment_lease_matches(ptr, profile, phase) &&
++      rna_pointer_assignment_lease->property == uintptr_t(prop) &&
++      !rna_pointer_assignment_lease->outer_consumed)
++  {
++    rna_pointer_assignment_lease->outer_consumed = true;
++    return true;
++  }
++  if (rna_pointer_assignment_busy || rna_pointer_assignment_lease ||
++      !rna_pointer_assignment_absent())
++  {
++    return rna_pointer_assignment_refuse(reports);
++  }
++  return true;
++}
++/* Arm only at the immediate native call site, after Debug getter/refcount
++ * work. A nested native call during a getter cannot steal the owned lease. */
++static bool rna_pointer_assignment_native_ready(
++    const PointerRNA *ptr, PropertyRNA *prop, const bool is_update)
++{
++  const int profile = rna_pointer_assignment_profile(prop);
++  if (!profile) return true;
++  if (!rna_pointer_assignment_absent()) return false;
++  if (!rna_pointer_assignment_lease) return !rna_pointer_assignment_busy;
++  const auto phase = is_update ? RnaPointerAssignmentPhase::Update : RnaPointerAssignmentPhase::Set;
++  if (!rna_pointer_assignment_lease_matches(ptr, profile, phase) ||
++      rna_pointer_assignment_lease->property != uintptr_t(prop) ||
++      !rna_pointer_assignment_lease->outer_consumed ||
++      rna_pointer_assignment_lease->native_consumed ||
++      rna_pointer_assignment_lease->native_ready)
++  {
++    return false;
++  }
++  rna_pointer_assignment_lease->native_ready = true;
++  return true;
++}
++#endif
++
++struct RNAPointerAssignmentReceipt {
++  PointerRNA target, value;
++  RnaPointerAssignmentState *state = nullptr;
++  uintptr_t property = 0, context = 0, main = 0;
++  int profile = 0;
++  bool finished = false;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  RnaPointerAssignmentContext context_values;
++#endif
++};
++
++bool RNA_property_is_pointer_assignment(PropertyRNA *prop)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  return rna_pointer_assignment_profile(prop) != 0;
++#else
++  UNUSED_VARS(prop);
++  return false;
++#endif
++}
++
++bool RNA_pointer_assignment_native_admit(
++    const PointerRNA *ptr, int profile, bool is_update, ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const auto phase = is_update ? RnaPointerAssignmentPhase::Update : RnaPointerAssignmentPhase::Set;
++  if (rna_pointer_assignment_lease_matches(ptr, profile, phase) &&
++      rna_pointer_assignment_lease->outer_consumed &&
++      rna_pointer_assignment_lease->native_ready &&
++      !rna_pointer_assignment_lease->native_consumed && rna_pointer_assignment_absent())
++  {
++    rna_pointer_assignment_lease->native_ready = false;
++    rna_pointer_assignment_lease->native_consumed = true;
++    return true;
++  }
++  if (rna_pointer_assignment_busy || rna_pointer_assignment_lease ||
++      !rna_pointer_assignment_absent())
++  {
++    return rna_pointer_assignment_refuse(reports);
++  }
++#else
++  UNUSED_VARS(ptr, profile, is_update, reports);
++#endif
++  return true;
++}
++
++void RNA_property_pointer_assignment_receipt_free(RNAPointerAssignmentReceipt *receipt) noexcept
++{
++  if (!receipt) return;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  RNA_pointer_assignment_state_free(receipt->state);
++#endif
++  delete receipt;
++}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static bool rna_pointer_assignment_receipt_matches(
++    bContext *C, const RNAPointerAssignmentReceipt &receipt)
++{
++  Main *bmain = G_MAIN;
++  return uintptr_t(C) == receipt.context && uintptr_t(bmain) == receipt.main &&
++         rna_pointer_assignment_property(receipt.profile, receipt.property) &&
++         rna_pointer_assignment_context_matches(C, bmain, receipt.context_values) &&
++         RNA_pointer_assignment_state_validate(bmain, receipt.state);
++}
++#endif
++
++eRNAPointerAssignmentResult RNA_property_pointer_assignment_begin_owned(
++    bContext *C, const PointerRNA *target, PropertyRNA *prop, const PointerRNA *value,
++    ReportList *reports, RNAPointerAssignmentReceipt **r_receipt)
++{
++  if (r_receipt) *r_receipt = nullptr;
++#ifdef WITH_APPLE_CROSSPLATFORM
++  const int profile = rna_pointer_assignment_profile(prop);
++  if (!profile) return eRNAPointerAssignmentResult::Unrelated;
++  auto refuse = [&]() {
++    rna_pointer_assignment_refuse(reports);
++    return eRNAPointerAssignmentResult::Refused;
++  };
++  if (!r_receipt || !target || !value || rna_pointer_assignment_busy ||
++      rna_pointer_assignment_lease) return refuse();
++  const bool initially_absent = rna_pointer_assignment_absent();
++  if (!G_MAIN) return refuse();
++  auto receipt = std::unique_ptr<RNAPointerAssignmentReceipt,
++      decltype(&RNA_property_pointer_assignment_receipt_free)>(
++      new RNAPointerAssignmentReceipt(), RNA_property_pointer_assignment_receipt_free);
++  receipt->target = *target;
++  receipt->value = *value;
++  receipt->profile = profile;
++  receipt->property = uintptr_t(prop);
++  receipt->context = uintptr_t(C);
++  receipt->main = uintptr_t(G_MAIN);
++  receipt->state = RNA_pointer_assignment_state_create(
++      G_MAIN, &receipt->target, &receipt->value, profile, nullptr);
++  if (!receipt->state ||
++      !rna_pointer_assignment_context_capture(C, G_MAIN, &receipt->context_values))
++  {
++    return initially_absent ? eRNAPointerAssignmentResult::NativeBaseline : refuse();
++  }
++#  ifdef WITH_PYTHON
++  if (BPY_context_get() != C) return refuse();
++#  endif
++  RnaPointerAssignmentBusyScope busy_scope;
++  if (!initially_absent) {
++    for (int attempt = 0; ; attempt++) {
++      bool did_teardown = false;
++      if (attempt >= 256 || !rna_pointer_assignment_receipt_matches(C, *receipt)) return refuse();
++      /* Keep supplied-context providers outside the shared scan's own Main
++       * traversal. Its null-C original policy reconstructs only the registered
++       * owner after this producer has validated the caller and original IDs. */
++      Main *caller_main = CTX_data_main(C);
++      if (uintptr_t(caller_main) != receipt->main ||
++          !rna_pointer_assignment_receipt_matches(C, *receipt) ||
++          !WM_event_ipad_pencil_paint_owner_teardown_next(
++              nullptr, G_MAIN, &did_teardown,
++              eIPadPencilPaintOwnerContextPolicy::MaterialAssignmentOriginal) ||
++          !rna_pointer_assignment_receipt_matches(C, *receipt))
++      {
++        return refuse();
++      }
++      if (!did_teardown) break;
++    }
++  }
++  if (!rna_pointer_assignment_receipt_matches(C, *receipt) ||
++      !rna_pointer_assignment_absent()) return refuse();
++  PropertyRNA *fresh = rna_pointer_assignment_property(profile, receipt->property);
++  RnaPointerAssignmentLease lease{uintptr_t(receipt->target.owner_id),
++      uintptr_t(receipt->target.data), uintptr_t(receipt->target.type), receipt->property,
++      profile, RnaPointerAssignmentPhase::Set, false, false};
++  {
++    RnaPointerAssignmentLeaseScope lease_scope(&lease);
++    RNA_property_pointer_set(&receipt->target, fresh, receipt->value, reports);
++  }
++  if (!lease.outer_consumed || !lease.native_consumed ||
++      (reports && BKE_reports_contain(reports, RPT_ERROR))) return refuse();
++  if (!rna_pointer_assignment_context_matches(C, G_MAIN, receipt->context_values) ||
++      !rna_pointer_assignment_property(profile, receipt->property) ||
++      !RNA_pointer_assignment_state_mark_applied(G_MAIN, receipt->state, reports))
++  {
++    return refuse();
++  }
++  *r_receipt = receipt.release();
++  return eRNAPointerAssignmentResult::AppliedOwned;
++#else
++  UNUSED_VARS(C, target, prop, value, reports);
++  return eRNAPointerAssignmentResult::Unrelated;
++#endif
++}
++
++bool RNA_property_pointer_assignment_finish_owned(
++    bContext *C, RNAPointerAssignmentReceipt *receipt, ReportList *reports)
++{
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!receipt || receipt->finished || rna_pointer_assignment_busy ||
++      rna_pointer_assignment_lease) return rna_pointer_assignment_refuse(reports);
++  receipt->finished = true;
++  RnaPointerAssignmentBusyScope busy_scope;
++  if (!rna_pointer_assignment_receipt_matches(C, *receipt)) return rna_pointer_assignment_refuse(reports);
++  Main *bmain = CTX_data_main(C);
++  if (uintptr_t(bmain) != receipt->main ||
++      !rna_pointer_assignment_receipt_matches(C, *receipt) ||
++      !rna_pointer_assignment_absent()) return rna_pointer_assignment_refuse(reports);
++  Scene *scene = CTX_data_scene(C);
++  if (!rna_pointer_assignment_receipt_matches(C, *receipt) ||
++      !rna_pointer_assignment_scene_matches(receipt->context_values, scene) ||
++      !rna_pointer_assignment_absent()) return rna_pointer_assignment_refuse(reports);
++  PropertyRNA *fresh = rna_pointer_assignment_property(receipt->profile, receipt->property);
++  RnaPointerAssignmentLease lease{uintptr_t(receipt->target.owner_id),
++      uintptr_t(receipt->target.data), uintptr_t(receipt->target.type), receipt->property,
++      receipt->profile, RnaPointerAssignmentPhase::Update, false, false};
++  {
++    RnaPointerAssignmentLeaseScope lease_scope(&lease);
++    rna_property_update(C, bmain, scene, &receipt->target, fresh);
++  }
++  return (lease.outer_consumed && lease.native_consumed) || rna_pointer_assignment_refuse(reports);
++#else
++  UNUSED_VARS(C, receipt, reports);
++  return true;
++#endif
++}
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Return true when this exact profile was handled, including refusal. Unsupported
++ * initially-absent shapes retain the explicitly bounded native baseline. */
++static bool rna_pointer_assignment_borrowed_update(
++    bContext *C, PointerRNA *target, PropertyRNA *prop)
++{
++  const int profile = rna_pointer_assignment_profile(prop);
++  if (!profile) return false;
++  if (rna_pointer_assignment_busy || rna_pointer_assignment_lease ||
++      !rna_pointer_assignment_absent()) return true;
++  const uintptr_t property = uintptr_t(prop);
++  PointerRNA owned_target = *target;
++  const PointerRNA value = PointerRNA_NULL;
++  std::unique_ptr<RnaPointerAssignmentState, decltype(&RNA_pointer_assignment_state_free)> state(
++      RNA_pointer_assignment_state_create(G_MAIN, &owned_target, &value, profile, nullptr),
++      RNA_pointer_assignment_state_free);
++  RnaPointerAssignmentContext context;
++  if (!state || !rna_pointer_assignment_context_capture(C, G_MAIN, &context)) return false;
++  auto valid = [&]() {
++    return rna_pointer_assignment_property(profile, property) &&
++           rna_pointer_assignment_context_matches(C, G_MAIN, context) &&
++           RNA_pointer_assignment_state_validate(G_MAIN, state.get());
++  };
++  RnaPointerAssignmentBusyScope busy_scope;
++  Main *bmain = CTX_data_main(C);
++  if (uintptr_t(bmain) != context.main || !valid() || !rna_pointer_assignment_absent()) return true;
++  Scene *scene = CTX_data_scene(C);
++  if (!valid() || !rna_pointer_assignment_scene_matches(context, scene) ||
++      !rna_pointer_assignment_absent()) return true;
++  PropertyRNA *fresh = rna_pointer_assignment_property(profile, property);
++  RnaPointerAssignmentLease lease{uintptr_t(owned_target.owner_id), uintptr_t(owned_target.data),
++      uintptr_t(owned_target.type), property, profile, RnaPointerAssignmentPhase::Update, false, false};
++  RnaPointerAssignmentLeaseScope lease_scope(&lease);
++  rna_property_update(C, bmain, scene, &owned_target, fresh);
++  return true;
++}
++#endif
++/* IPAD_POINTER_ASSIGNMENT_TRANSACTION_END */
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +struct Material;
@@ -159425,8 +160422,13 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 
  static CLG_LogRef LOG = {"rna.access"};
 
-@@ -2431,6 +2627,11 @@
+@@ -2429,8 +3131,16 @@
+ static void rna_property_update(
+     bContext *C, Main *bmain, Scene *scene, PointerRNA *ptr, PropertyRNA *prop)
  {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_pointer_assignment_outer_admit(ptr, prop, true, nullptr)) return;
++#endif
    const bool is_rna = (prop->magic == RNA_MAGIC);
    prop = rna_ensure_property(prop);
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -159437,20 +160439,60 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 
    if (is_rna) {
      if (prop->update) {
-@@ -4487,6 +4688,12 @@
-                   ptr_value.type->identifier);
+@@ -2447,6 +3157,9 @@
+         }
+       }
+       else {
++#ifdef WITH_APPLE_CROSSPLATFORM
++        if (!rna_pointer_assignment_native_ready(ptr, prop, true)) return;
++#endif
+         prop->update(bmain, scene, ptr);
+       }
+     }
+@@ -2526,6 +3239,9 @@
+
+ void RNA_property_update(bContext *C, PointerRNA *ptr, PropertyRNA *prop)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (rna_pointer_assignment_borrowed_update(C, ptr, prop)) return;
++#endif
+   rna_property_update(C, CTX_data_main(C), CTX_data_scene(C), ptr, prop);
+ }
+
+@@ -4469,6 +5185,9 @@
+                               PointerRNA ptr_value,
+                               ReportList *reports)
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!rna_pointer_assignment_outer_admit(ptr, prop, false, reports)) return;
++#endif
+   /* Detect IDProperty and retrieve the actual PropertyRNA pointer before cast. */
+   IDProperty *idprop = rna_idproperty_check(&prop, ptr);
+
+@@ -4488,6 +5207,12 @@
        return;
      }
-+
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    /* Borrowed native UI frames do not own a callback boundary. Refuse before
 +     * Debug getters retain old/new IDs; Python explicitly prepares beforehand. */
 +    if (!rna_material_assignment_owner_absent(prop, reports)) return;
 +#endif
-
++
  #ifndef NDEBUG
      /* NOTE: By design, it can be safely assumed that both old and new ID pointers are valid when
-@@ -7246,6 +7453,11 @@
+      * accessed through RNA. Handling of invalid ID pointers, e.g. freed ones etc., should never
+@@ -4516,6 +5241,9 @@
+     if (!((prop->flag & PROP_NEVER_NULL) && ptr_value.data == nullptr) &&
+         !((prop->flag & PROP_ID_SELF_CHECK) && ptr->owner_id == ptr_value.owner_id))
+     {
++#ifdef WITH_APPLE_CROSSPLATFORM
++      if (!rna_pointer_assignment_native_ready(ptr, prop, false)) return;
++#endif
+       pprop->set(ptr, ptr_value, reports);
+     }
+
+@@ -7246,6 +7974,11 @@
      bContext *C, ReportList *reports, PointerRNA *ptr, FunctionRNA *func, ParameterList *parms)
  {
    if (func->call) {
@@ -159465,37 +160507,55 @@ diff --git a/source/blender/makesrna/intern/rna_access.cc b/source/blender/makes
 diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/intern/bpy_rna.cc
 --- a/source/blender/python/intern/bpy_rna.cc
 +++ b/source/blender/python/intern/bpy_rna.cc
-@@ -1625,6 +1625,10 @@
+@@ -1625,6 +1625,16 @@
  static int pyrna_py_to_prop(
      PointerRNA *ptr, PropertyRNA *prop, void *data, PyObject *value, const char *error_prefix)
  {
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+  std::optional<PointerRNA> material_assign_target;
-+  bContext *material_assign_context = nullptr;
++  struct PointerAssignmentReceiptOwner {
++    RNAPointerAssignmentReceipt *receipt = nullptr;
++    ~PointerAssignmentReceiptOwner()
++    {
++      RNA_property_pointer_assignment_receipt_free(receipt);
++    }
++  } pointer_assignment_owner;
++  bContext *pointer_assignment_context = nullptr;
 +#endif
    /* XXX hard limits should be checked here. */
    const int type = RNA_property_type(prop);
 
-@@ -2079,8 +2083,28 @@
+@@ -2079,8 +2089,40 @@
            if ((param == nullptr) || RNA_struct_is_a(param->ptr->type, ptr_type)) {
              ReportList reports;
              BKE_reports_init(&reports, RPT_STORE);
 -            RNA_property_pointer_set(
 -                ptr, prop, (param == nullptr) ? PointerRNA_NULL : *param->ptr, &reports);
 +#ifdef WITH_APPLE_CROSSPLATFORM
-+            if (RNA_property_is_material_assignment(prop)) {
-+              material_assign_context = BPY_context_get();
-+              material_assign_target.emplace(*ptr);
-+              const PointerRNA material_value =
++            if (RNA_property_is_pointer_assignment(prop)) {
++              /* Own ancestor storage before the explicit producer can call
++               * any provider or native cancellation callback. The receipt
++               * carries these originals through the late update as well. */
++              const PointerRNA assignment_target = *ptr;
++              const PointerRNA assignment_value =
 +                  (param == nullptr) ? PointerRNA_NULL : *param->ptr;
-+              ptr = &*material_assign_target;
-+              const bool prepared = RNA_property_material_assign_paint_owner_teardown(
-+                  material_assign_context, ptr, prop, material_value, &reports);
-+              if (BPY_context_get() != material_assign_context) {
-+                BKE_report(&reports, RPT_ERROR, "Material assignment was refused: Python context changed");
++              pointer_assignment_context = BPY_context_get();
++              const eRNAPointerAssignmentResult result =
++                  RNA_property_pointer_assignment_begin_owned(pointer_assignment_context,
++                                                               &assignment_target,
++                                                               prop,
++                                                               &assignment_value,
++                                                               &reports,
++                                                               &pointer_assignment_owner.receipt);
++              if (BPY_context_get() != pointer_assignment_context) {
++                BKE_report(&reports, RPT_ERROR, "Pointer assignment was refused: Python context changed");
 +              }
-+              else if (prepared) {
-+                RNA_property_pointer_set(ptr, prop, material_value, &reports);
++              else if (result == eRNAPointerAssignmentResult::NativeBaseline ||
++                       result == eRNAPointerAssignmentResult::Unrelated)
++              {
++                RNA_property_pointer_set(ptr, prop, assignment_value, &reports);
++              }
++              else if (result == eRNAPointerAssignmentResult::Refused) {
++                BKE_report(&reports, RPT_ERROR, "Pointer assignment was refused before update");
 +              }
 +            }
 +            else
@@ -159507,28 +160567,37 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
              const int err = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
              if (err == -1) {
                Py_XDECREF(value_new);
-@@ -2205,7 +2229,19 @@
-
-   /* Run RNA property functions. */
-   if (RNA_property_update_check(prop)) {
--    RNA_property_update(BPY_context_get(), ptr, prop);
-+#ifdef WITH_APPLE_CROSSPLATFORM
-+    if (material_assign_target) {
-+      if (BPY_context_get() != material_assign_context) {
-+        PyErr_SetString(PyExc_RuntimeError, "Material assignment context changed before update");
-+        return -1;
-+      }
-+      RNA_property_update(material_assign_context, ptr, prop);
-+    }
-+    else
-+#endif
-+    {
-+      RNA_property_update(BPY_context_get(), ptr, prop);
-+    }
+@@ -2204,6 +2246,29 @@
    }
 
-   return 0;
-@@ -2452,8 +2488,37 @@
+   /* Run RNA property functions. */
++  /* Owned assignments do not read the former wrapper or PropertyRNA at this
++   * point. Finish resolves the original receipt before each provider/update. */
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (pointer_assignment_owner.receipt) {
++    if (BPY_context_get() != pointer_assignment_context) {
++      PyErr_SetString(PyExc_RuntimeError, "Pointer assignment context changed before update");
++      return -1;
++    }
++    ReportList reports;
++    BKE_reports_init(&reports, RPT_STORE);
++    const bool updated = RNA_property_pointer_assignment_finish_owned(
++        pointer_assignment_context, pointer_assignment_owner.receipt, &reports);
++    const int err = BPy_reports_to_error(&reports, PyExc_RuntimeError, true);
++    if (err == -1) {
++      return -1;
++    }
++    if (!updated) {
++      PyErr_SetString(PyExc_RuntimeError, "Pointer assignment refused a changed late update");
++      return -1;
++    }
++  }
++  else
++#endif
+   if (RNA_property_update_check(prop)) {
+     RNA_property_update(BPY_context_get(), ptr, prop);
+   }
+@@ -2452,8 +2517,37 @@
 
    PYRNA_PROP_COLLECTION_ABS_INDEX(-1);
 
@@ -159568,7 +160637,7 @@ diff --git a/source/blender/python/intern/bpy_rna.cc b/source/blender/python/int
      if (keynum_abs >= len) {
        PyErr_Format(PyExc_IndexError,
                     "bpy_prop_collection[index] = value: "
-@@ -6879,9 +6944,47 @@
+@@ -6879,9 +6973,47 @@
      bContext *C = BPY_context_get();
 
      BKE_reports_init(&reports, RPT_STORE);

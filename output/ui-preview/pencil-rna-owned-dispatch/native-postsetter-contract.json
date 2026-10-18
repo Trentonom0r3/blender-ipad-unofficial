@@ -1,0 +1,142 @@
+{
+  "status": "bounded_primary_source_contract_and_first_implementation_pending_connected_validation",
+  "timestamp_utc": "2026-10-16T10:12:08.514781+00:00",
+  "baseline": "196b54ca63a8fa558225479711de2426a83f8c53/run38850540318 remains verified; this new source is not built",
+  "scope": [
+    "Object.data",
+    "Object.active_material",
+    "MaterialSlot.material"
+  ],
+  "native_materialization": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05\\source\\blender\\makesrna\\intern\\rna_object.cc",
+    "sha256_at_report": "c62505cb19c1d5450404b4807b01e2c050971e4a55b2856deea4fd99d26369c9",
+    "only_file_edited_by_this_agent": true,
+    "marker": "IPAD_POINTER_ASSIGNMENT_STATE_BEGIN/END"
+  },
+  "API": {
+    "opaque": "struct RnaPointerAssignmentState",
+    "profiles": {
+      "1": "Object.active_material",
+      "2": "MaterialSlot.material",
+      "3": "Object.data"
+    },
+    "create": "RNA_pointer_assignment_state_create(Main*, const PointerRNA*, const PointerRNA*, int, ReportList*) -> RnaPointerAssignmentState*; report-free nullptr means unsupported, leaving baseline/refusal decision to outer caller",
+    "validate": "RNA_pointer_assignment_state_validate(Main*, const RnaPointerAssignmentState*) -> bool; exact currently recorded pre/post snapshot",
+    "mark_applied": "RNA_pointer_assignment_state_mark_applied(Main*, RnaPointerAssignmentState*, ReportList*) -> bool; once-only, original identities plus predicted native relation/logical slots BEFORE retaining the fresh physical snapshot",
+    "free": "RNA_pointer_assignment_state_free(RnaPointerAssignmentState*) noexcept; vector/numeric-state deletion only, no ID/Main/context/provider access",
+    "native_gate": "RNA_pointer_assignment_native_admit(const PointerRNA*,int,bool is_update,ReportList*), implemented by outer agent; gate occurs before Object/data/slot reads",
+    "ownership": "rna_access owns copied PointerRNA/ancestors, static property identity, native phase leases, busy scope, WM drain/provider sequencing and original context. Native state never owns an ID reference."
+  },
+  "primary_findings": [
+    {
+      "anchors": "pinned curve.cc437-465; native rna_Object_data_set incoming ID_CU_LEGACY branch",
+      "finding": "Curve native assignment sets Object.type exactly incoming Curve.ob_type. Supported Curve posttypes are OB_CURVES_LEGACY/OB_SURF/OB_FONT. For legacy-curve 2D, BKE_curve_dimension_update projects Nurb coordinates and recomputes Bezier handles. Do not require Object.type or geometry byte-equality across native setter.",
+      "receipt_rule": "Save incoming Curve.ob_type/flag before providers; require those remain the same, require same original Object/old/incoming IDs, then expect post Object.data=incoming and Object.type=saved incoming type. Unrecognized Curve.ob_type is unsupported, not silently blessed."
+    },
+    {
+      "anchors": "pinned armature.cc2880-2934; rna_Object_data_set OB_ARMATURE branch",
+      "finding": "BKE_pose_rebuild creates Object.pose if absent, clears/rebuilds bone links, creates channels and frees unmatched channels, rebuilds hash/handles/constraint flags, clears POSE_RECALC and sets POSE_WAS_REBUILT; may tag graph relations.",
+      "receipt_rule": "Object.type/mode/data ID identities remain fixed except expected data replacement. Existing pose allocation remains same; absent pose becomes nonnull. Channel/node content and allocation changes are kernel effects, not immutable identity. Fresh pose pointer is recorded after native call and checked through later providers."
+    },
+    {
+      "anchors": "pinned mesh.cc1587-1608; multires.cc327-338; modifier.cc828-844",
+      "finding": "BKE_mesh_assign_object always calls multires_force_sculpt_rebuild before checking Mesh data branch, decrements old/increments incoming, syncs material lengths and tests modifiers. Same Mesh still flushes sculpt updates and frees PBVH; modifier multires levels can change.",
+      "receipt_rule": "Never skip same-value Mesh assignment or whole transaction. Require same original Object/old/incoming IDs and expected Mesh relation after the SAME native body. PBVH/modifier changes remain actual kernel boundaries; Object.sculpt pointer itself remains stable."
+    },
+    {
+      "anchors": "pinned material.cc981-1045; rna_Object_data_set BKE_object_materials_sync_length calls",
+      "finding": "Normal sync resizes Object slots to incoming DATA slots and sanitizes actcol. Nonmissing Object + missing placeholder DATA reverses direction: DATA slots resize to current Object count with no active-index sanitize in that branch. Shrink may retain allocations; growth zeros new cells. do_id_user=false means sync does not perform independent users decrements for truncated slots.",
+      "receipt_rule": "Predict exact logical vectors/counts/bits and active-index rule from prestate/missing flags, permit legitimate allocation changes, then record post addresses. Keep full int widths for Object.totcol/actcol; DATA count is short."
+    },
+    {
+      "anchors": "pinned material.cc1120-1222; current native setters use BKE_MAT_ASSIGN_EXISTING",
+      "finding": "Material act is narrowed to short, returns if >MAXMAT, then clamps to >=1. DATA storage grows first, Object arrays grow next. Existing matbits byte selects object only when equal1; other bytes use DATA. Object-link syncs lengths using missing-placeholder rule; DATA-link syncs all sharing Objects and sanitizes target active index.",
+      "receipt_rule": "Profile1 derives act from actual short(Object.actcol); profile2 uses validated original numeric slot+1. Predict selected logical slot=incoming, preserve other slots/prefix/zero extension and native link bit. Native early act refusal still allows later property update. No replacement setter or duplicate BKE call."
+    },
+    {
+      "anchors": "pinned material.cc682-723; generic RNA_property_pointer_set Debug getters",
+      "finding": "BKE_object_material_get_p can clamp Object.totcol=min(DATAcount,Objectcount) before native setter when DATAcount>0; Debug generic setter calls getter before and after set. Ordinary capture must never call this getter.",
+      "receipt_rule": "Postrule explicitly accounts for the pre-set getter clamp under #ifndef NDEBUG, then predicts native assignment from that logical Object count. Release uses original count. Capture reads physical arrays directly."
+    },
+    {
+      "anchors": "native rna_Object_data_set first Edit/null/tag-mismatch checks",
+      "finding": "Edit and nonEmpty nullptr are silent setter returns; Python still reaches late geometry/relations/messagebus update unless report conversion errors. Empty accepts null/Image and does decrement/increment roundtrip. Wrong evaluated/original tag combination reports error.",
+      "receipt_rule": "Silent branches expect old data/type/mode/material relation but still use full owned transaction/late-update lease. Empty expects null/Image incoming; report errors remain caller-controlled suppression. No generic same-pointer/null/Edit no-op shortcut."
+    },
+    {
+      "anchors": "pinned lib_id.cc285-295,336-389",
+      "finding": "id_us_plus may promote linked INDIRECT to EXTERN, clear INDIRECT_WEAK_LINK and Library.runtime.parent. EXTRAUSER/FAKEUSER bookkeeping means users are not always simple \u00b11. id_us_min does not free an ID.",
+      "receipt_rule": "Original address+sessionUID+IDtype+Library/override identities remain required. Only actually assigned incoming linked INDIRECT promotion is accepted at mark_applied; silent/early-refused branches cannot claim promotion. Incoming indirect flag transition is checked. Do not impose usercount byte equality or replace native ID user functions."
+    }
+  ],
+  "poststate_algorithm": [
+    "create proves original active-Main Object and nullable incoming/old IDs before providers, copies numeric typed metadata and direct physical material arrays; no RNA getter or native mutation is used. Unsupported shapes return clean nullptr.",
+    "Before pre/post validation or mark, re-find original Object/old/incoming numeric addresses in current Main and compare original sessionUID+IDtype before recording any next-phase snapshot. Main must still equal original active G_MAIN.",
+    "mark runs immediately after the same native generic setter and Debug checks, without intervening provider. Require original typed metadata, allowed incoming tag transition, expected Object.data/type/mode and exact logical material result; only then record fresh allocation addresses, slots and pose/sculpt state. Never capture whatever replacement occupies an old address as a new origin.",
+    "validate compares the recorded phase exactly after every successful WM including did=false and after each explicitly sequenced Main then Scene provider. Outer transaction owns timing, receipts/context/property matching, newly acquired owner rejection and one-use native leases.",
+    "Borrowed update can create a nullable-value state and validate it without mark_applied; it records a read-only current-state receipt. create accepts nullable incoming for all3 including nonEmpty Object.data silent-null shape."
+  ],
+  "direct_update_contract": {
+    "Object.data": {
+      "registration": "rna_object.cc pinned Object.data update0/rna_Object_data_update; current property keeps this exact identity",
+      "wrapper": "rna_Object_data_update",
+      "line": 507,
+      "gate_profile": 3,
+      "body": "unchanged rna_Object_internal_update_data_dependency -> relations tag + geometry tag + native draw notifier"
+    },
+    "Object.active_material": {
+      "wrapper": "rna_Object_active_material_update",
+      "line": 2561,
+      "gate_profile": 1,
+      "body": "same shared rna_MaterialSlot_update native body"
+    },
+    "MaterialSlot.material": {
+      "wrapper": "rna_MaterialSlot_material_update",
+      "line": 2569,
+      "gate_profile": 2,
+      "body": "same shared rna_MaterialSlot_update native body"
+    },
+    "unrelated_preservation": "MaterialSlot.link retains shared rna_MaterialSlot_update directly; Object.active_material_index remains NO_DEG_UPDATE/notifier-only and unchanged. Do not blanket gate shared Object dependency helpers.",
+    "generated_identity": "pinned makesrna.cc4430-4435 embeds prop->update callback directly in generated property initializer. Exact two pointer registrations now name their profile-specific wrappers, not field-name dispatch. Future generated/native build must verify these new identities; existing196b binary is not new-wrapper proof."
+  },
+  "source_checks_done": {
+    "Object_data_native_body": "1278 bytes from original Edit admission through return exactly match pinned baseline after replacing only first admission/old callback block",
+    "six_first_gates": "Checked source ordering in all3 setters and3 selected update callbacks; new gate precedes Object/data/slot/owner-tag body access",
+    "tracked_tests_or_patch_edits_by_this_agent": false,
+    "connected_fixture_status": "Fixture agent notified of block markers/signatures/dependencies; pending compile/run at report time",
+    "native_build_or_device_claim": false
+  },
+  "supported_boundaries": [
+    "Strict activeMain original typed IDs with nonzero unique sessionUID; expected Object/data type pairing; well-formed bounded direct slot arrays; exact Object/MaterialSlot PointerRNA shape and owned ancestor requirements.",
+    "Counts above MAXMAT, malformed arrays/UIDs, nonMain/evaluated/foreign IDs, unusual Object/data type or Curve type shapes are unsupported for this receipt. Outer distinguishes initial-absence NativeBaseline from owner-present refusal. Existing no-owner and nonApple native behavior is not rewritten by native bodies.",
+    "Contextless full Python owned assignment remains separately unsupported; null Main/Scene getter safety alone is not complete downstream update proof.",
+    "Snapshot validates relevant direct identity/relation/physical material state, not all mesh geometry, Curve Nurb storage, modifier payloads, pose-channel contents, sculpt PBVH internals or complete dependency graph. Native BKE/allocator kernels are trust boundaries and connected tests must label their models.",
+    "No allocator/globalCFG/WMtermination/all-RNA callback lifetime/generic Cancel rollback/UIKit/device guarantee. No native build until connected and retained tests plus independent reviews complete."
+  ],
+  "primary_downloads": [
+    {
+      "source": "source/blender/blenkernel/intern/curve.cc",
+      "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-native-postsetter-contract-pin\\curve.cc",
+      "sha256": "f877274e47a150892c92591c1949251538ad3bfc55ecd58cd43f662c72235ea0"
+    },
+    {
+      "source": "source/blender/blenkernel/intern/armature.cc",
+      "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-native-postsetter-contract-pin\\armature.cc",
+      "sha256": "f70cc0c01395e8427ca84a2a80e2dd841b1b95b162a21291a5cc45163778eb2e"
+    },
+    {
+      "source": "source/blender/blenkernel/intern/modifier.cc",
+      "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-native-postsetter-contract-pin\\modifier.cc",
+      "sha256": "d94c368a39e940ae8a0cf74bc7b81c9a188e5f5dd1e2fef6394fc830352b22a0"
+    },
+    {
+      "source": "source/blender/blenkernel/intern/lib_id.cc",
+      "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-native-postsetter-contract-pin\\lib_id.cc",
+      "sha256": "cf61d38d7af1b3e09e6bb7c7032a0b85ae5cccf21c886791a85e7853ff59446e"
+    }
+  ]
+}

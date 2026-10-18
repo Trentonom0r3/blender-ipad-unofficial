@@ -5,6 +5,9 @@ The pinned material assign/get/array/length bodies run without rewriting; only
 allocator, length synchronization and dependency graph effects are modeled.
 Generated setter adapters model makesrna forwarding. This is host evidence,
 not execution of Python, UIKit, a full Blender Main, or device paint behavior.
+The new whole-assignment transaction is an explicitly named boundary model in
+this retained suite. Its actual implementation, provider receipts and disposal
+are executed separately by test_pencil_pointer_assignment_transaction.py.
 """
 from pathlib import Path
 import hashlib
@@ -190,6 +193,15 @@ static void WM_msg_publish_rna(wmMsgBus*,PointerRNA*,PropertyRNA*){native_effect
 static void WM_main_add_notifier(int,void*){native_effect();++g_notifiers;}
 static int g_generic_sets=0;
 static void generic_set(PointerRNA*,PointerRNA,ReportList*){++g_generic_sets;}
+
+#ifndef FIXTURE_REAL_POINTER_ASSIGNMENT
+// LEGACY_TRANSACTION_API_BOUNDARY_MODEL declarations. This deliberately does
+// not model typed whole-assignment receipts, leases or provider revalidation.
+// The separate connected fixture excludes this entire boundary and compiles
+// the actual transaction/state/gates instead.
+static bool RNA_pointer_assignment_native_admit(const PointerRNA*,int,bool,ReportList*);
+#endif
+
 // Native getter and assign names are adapted at the boundary so execution can
 // check stale outer-frame accesses. Their primary source bodies are unchanged.
 """
@@ -331,9 +343,14 @@ static void mutate(Fixture &f,Mutation mutation,int after=1){g_fixture=&f;g_muta
 
 OBJECT_HELPER_START = OBJECT.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, OBJECT.index("struct RnaMaterialIDIdentity"))
 OBJECT_HELPERS = OBJECT[OBJECT_HELPER_START:OBJECT.index("static void rna_Object_active_material_set(")]
+# Retain the actual historical material identity/WM helper. The new full
+# Object.data/material transaction state belongs to the connected suite.
+state_begin = OBJECT_HELPERS.index("/* IPAD_POINTER_ASSIGNMENT_STATE_BEGIN */")
+state_end = OBJECT_HELPERS.index("/* IPAD_POINTER_ASSIGNMENT_STATE_END */") + len("/* IPAD_POINTER_ASSIGNMENT_STATE_END */")
+OBJECT_HELPERS = OBJECT_HELPERS[:state_begin] + OBJECT_HELPERS[state_end:]
 ACCESS_HELPER_START = ACCESS.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, ACCESS.index("static int rna_material_assignment_profile"))
 ACCESS_COLLECTION_START = ACCESS.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, ACCESS.index("extern bool rna_IDMaterials_assign_int"))
-ACCESS_HELPERS = ACCESS[ACCESS_HELPER_START:ACCESS_COLLECTION_START]
+ACCESS_HELPERS = ACCESS[ACCESS_HELPER_START:ACCESS.index("/* IPAD_POINTER_ASSIGNMENT_TRANSACTION_BEGIN */")]
 MATERIAL_UPDATE = "\n".join(function(OBJECT, signature) for signature in (
     "static void rna_Object_internal_update(", "static void rna_MaterialSlot_update("))
 UPDATE = "\n".join(function(ACCESS, signature) for signature in (
@@ -392,12 +409,66 @@ static int python_assign(Fixture &f,bool null_value=false,int mutation=0){
 """
 
 
+
+LEGACY_TRANSACTION_API_BOUNDARY_MODEL = r"""
+#ifndef FIXTURE_REAL_POINTER_ASSIGNMENT
+// Narrow adapters preserve the retained material preflight/outer/BKE checks.
+// They delegate absence to the actual shared WM query and material preflight.
+// They are not evidence for the new transaction implementation or its lease.
+static bool RNA_pointer_assignment_native_admit(const PointerRNA*,int profile,bool,ReportList *reports){
+#ifdef WITH_APPLE_CROSSPLATFORM
+  assert(profile==1||profile==2);return rna_material_assign_owner_absent(reports);
+#else
+  (void)profile;(void)reports;return true;
+#endif
+}
+static bool rna_pointer_assignment_outer_admit(PointerRNA*,PropertyRNA *prop,bool,ReportList *reports){
+#ifdef WITH_APPLE_CROSSPLATFORM
+  return rna_material_assignment_owner_absent(prop,reports);
+#else
+  (void)prop;(void)reports;return true;
+#endif
+}
+static bool rna_pointer_assignment_native_ready(PointerRNA *ptr,PropertyRNA *prop,bool update){
+  return rna_pointer_assignment_outer_admit(ptr,prop,update,nullptr);
+}
+static bool rna_pointer_assignment_borrowed_update(bContext*,PointerRNA *ptr,PropertyRNA *prop){
+  return !rna_pointer_assignment_outer_admit(ptr,prop,true,nullptr);
+}
+enum class eRNAPointerAssignmentResult{Unrelated,NativeBaseline,AppliedOwned,Refused};
+struct RNAPointerAssignmentReceipt{PointerRNA target,value;PropertyRNA *property=nullptr;};
+static bContext *BPY_context_get();
+void RNA_property_pointer_set(PointerRNA*,PropertyRNA*,PointerRNA,ReportList*);
+static void RNA_property_update(bContext*,PointerRNA*,PropertyRNA*);
+static bool RNA_property_is_pointer_assignment(PropertyRNA *prop){return RNA_property_is_material_assignment(prop);}
+static eRNAPointerAssignmentResult RNA_property_pointer_assignment_begin_owned(
+    bContext *C,const PointerRNA *target,PropertyRNA *prop,const PointerRNA *value,
+    ReportList *reports,RNAPointerAssignmentReceipt **result){
+  // Saved copies are the old preflight caller's ownership model, not a model
+  // of the new native receipt. Its actual tests exercise the real producer.
+  auto receipt=std::make_unique<RNAPointerAssignmentReceipt>();
+  receipt->target=*target;receipt->value=*value;receipt->property=prop;
+  if(!RNA_property_material_assign_paint_owner_teardown(C,&receipt->target,prop,receipt->value,reports)||
+     BPY_context_get()!=C){
+    BKE_report(reports,RPT_ERROR,"modeled complete-assignment admission refused");
+    return eRNAPointerAssignmentResult::Refused;
+  }
+  RNA_property_pointer_set(&receipt->target,prop,receipt->value,reports);
+  *result=receipt.release();return eRNAPointerAssignmentResult::AppliedOwned;
+}
+static bool RNA_property_pointer_assignment_finish_owned(bContext *C,RNAPointerAssignmentReceipt *receipt,ReportList*){
+  RNA_property_update(C,&receipt->target,receipt->property);return true;
+}
+static void RNA_property_pointer_assignment_receipt_free(RNAPointerAssignmentReceipt *receipt)noexcept{delete receipt;}
+#endif
+"""
+
 def source_with_main(main):
     return "\n".join((PREFIX, MODEL, WM_NEXT,
         "#define BKE_object_material_get fixture_native_material_get\n"
         "#define BKE_object_material_assign fixture_native_material_assign", MATERIAL_BODIES,
         NATIVE_ADAPTERS, OBJECT_HELPERS, SLOT_INDEX, "\n".join(GETTERS),
-        "\n".join(SETTERS), GENERATED_ADAPTERS, ACCESS_HELPERS, OUTER, MATERIAL_UPDATE,
+        "\n".join(SETTERS), GENERATED_ADAPTERS, ACCESS_HELPERS, LEGACY_TRANSACTION_API_BOUNDARY_MODEL, OUTER, MATERIAL_UPDATE,
         "#define RNA_property_update fixture_native_property_update", UPDATE,
         "#undef RNA_property_update", PYTHON_MODEL, PYTHON_FRAME, SUPPORT, PYTHON_SUPPORT, main))
 
@@ -569,7 +640,8 @@ for(bool slot:{false,true}){Fixture f(slot);f.add_owner();assert(f.preflight(&f.
 int main(){for(bool slot:{false,true})for(bool clear:{false,true}){
   Fixture f(slot);f.add_owner();assert(python_assign(f,clear)==0);
   assert(!g_python_target&&!g_python_param.ptr&&g_cancel_calls==1);
-  assert(g_reports_to_error==1&&g_python_errors==0&&g_decrefs==0&&g_property_update_calls==1);
+  // The new actual Python tail reports both begin and finish.
+  assert(g_reports_to_error==2&&g_python_errors==0&&g_decrefs==0&&g_property_update_calls==1);
   assert(f.mesh.mat[slot?1:0]==(clear?nullptr:&f.new_material)&&g_native_assigns==1);
   assert(f.old_material.id.us==9&&f.new_material.id.us==(clear?10:11));
 }}
