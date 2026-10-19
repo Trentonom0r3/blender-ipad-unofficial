@@ -1,0 +1,146 @@
+--- pre-review-fixture.py
++++ build/test_pencil_pan_paint_producer.py
+@@ -4,7 +4,7 @@
+ actual corrected overlay is required; the historical producer is a separate
+ failure control. Every runtime pinned input is acquired explicitly.
+ UIKit messages/scheduling, initial brush setup, coordinate/tablet transforms,
+-generic stroke_done dispatch and BKE effects remain instrumentation boundaries.
++generic stroke_done dispatch, wm_operator_finished and BKE effects remain instrumentation boundaries.
+ No device, geometry, history, universal rollback or Undo proof is claimed.
+ """
+ from pathlib import Path
+@@ -260,7 +260,7 @@
+  ipad_pencil_paint_cancelled_generation=0;uintptr_t ipad_pencil_paint_queued_region=0;
+  int32_t ipad_pencil_paint_queued_origin_xy[2]{};bool ipad_pencil_paint_queued_down=false;};
+ struct wmWindow {Runtime*runtime=nullptr;GHOST_IWindow*ghostwin=nullptr;List<wmEventHandler>modalhandlers;bScreen*screen=nullptr;};
+-struct wmWindowManager {int op_undo_depth=0;};
++struct wmWindowManager {int op_undo_depth=0;intptr_t undo_id=7,register_id=9;};
+ struct IPadFingerPaintOwner {std::array<uint64_t,19>values{};std::array<char,64>tool{};bool valid=true;};
+ struct StrokeCache {bool alt_smooth=false;};
+ namespace bke::pbvh {enum class Type{Mesh,BMesh};struct Tree{Type value=Type::Mesh;Type type()const{return value;}};}
+@@ -287,7 +287,7 @@
+ struct wmOperatorType {void(*cancel)(bContext*,wmOperator*)=nullptr;void(*modal)()=nullptr;
+  int flag=OPTYPE_UNDO;bool modalkeymap=false;uint64_t ipad_lifetime_id=29;};
+ struct wmOperator {wmOperatorType*type=nullptr;wmOperator*opm=nullptr;void*customdata=nullptr;
+- uint64_t lifetime=31;bool freed=false;};
++ uint64_t lifetime=31;bool freed=false,finished=false;};
+ struct wmEventHandler_Op {wmEventHandler head;bool is_fileselect=false;
+  struct {wmWindow*win=nullptr;ScrArea*area=nullptr;ARegion*region=nullptr;}context;
+  uint64_t ipad_pencil_paint_serial=0,ipad_pencil_paint_generation=0,
+@@ -337,7 +337,7 @@
+ struct PaintStroke {int event_type=LEFTMOUSE;void*mode_data=nullptr;};
+ void*paint_stroke_mode_data(PaintStroke*stroke){return stroke->mode_data;}
+ int line_finalizers=0,done_calls=0,cache_frees=0,undo_restores=0,texture_exits=0,
+- modal_releases=0,cancel_calls=0,reports=0,operator_frees=0,handler_frees=0;
++ modal_releases=0,cancel_calls=0,reports=0,operator_frees=0,handler_frees=0,finished_calls=0;
+ std::vector<int>native_order;
+ namespace vertex {static void vpaint_stroke_done(const bContext*,PaintStroke*);}
+ namespace weight {static void wpaint_stroke_done(const bContext*,PaintStroke*);}
+@@ -384,6 +384,16 @@
+  auto*stroke=*stroke_p;bool first_modal=false;NATIVE_RELEASE return OPERATOR_RUNNING_MODAL;}
+ void wm_operator_reports(bContext*,wmOperator*,int,bool){++reports;native_order.push_back(50);}
+ void WM_window_status_area_tag_redraw(wmWindow*){}
++intptr_t wm_operator_undo_active_id(wmWindowManager*wm){return wm->undo_id;}
++intptr_t wm_operator_register_active_id(wmWindowManager*wm){return wm->register_id;}
++// The native finished body owns registration/history/possible free. Model only
++// the call boundary; this fixture makes no claim about its storage/history effects.
++void wm_operator_finished(bContext*C,wmOperator*op,bool repeat,bool store,
++                          bool has_undo_step,bool has_register){
++ assert(C->manager->op_undo_depth==0&&!op->freed&&!op->finished&&!op->customdata);
++ assert(!repeat&&store&&!has_undo_step&&!has_register);
++ op->finished=true;++finished_calls;native_order.push_back(55);
++}
+ void WM_operator_free(wmOperator*op){assert(!op->freed);op->freed=true;++operator_frees;native_order.push_back(60);}
+ void WM_cursor_grab_disable(wmWindow*,void*){}
+ void BLI_remlink(List<wmEventHandler>*list,void*item){auto*h=static_cast<wmEventHandler*>(item);
+@@ -397,6 +407,8 @@
+  auto*handlers=&win->modalhandlers;bool ipad_pencil_paint_interrupt=false;
+  INTERRUPT_DECISION
+  int retval=OPERATOR_RUNNING_MODAL;
++ const intptr_t undo_id_prev=wm_operator_undo_active_id(wm);
++ const intptr_t register_id_prev=wm_operator_register_active_id(wm);
+  UNDO_BEGIN
+  NATIVE_INTERRUPT
+  if(!ipad_pencil_paint_interrupt){
+@@ -406,7 +418,8 @@
+  else ++cancel_calls;
+  UNDO_END
+  CANCEL_REPORTS
+- if(false){} OPERATOR_RELEASE
++ OPERATOR_FINISHED_BRANCH
++ OPERATOR_RELEASE
+  HANDLER_REMOVE
+  return retval;
+ }
+@@ -425,7 +438,7 @@
+   pointer_capture={};pointer_hud_contact={};ring_capture={};pointer_finger_contact=false;
+   mouse_left_pressed=mouse_middle_pressed=mouse_right_pressed=flythrough=false;
+   line_finalizers=done_calls=cache_frees=undo_restores=texture_exits=modal_releases=cancel_calls=0;
+-  reports=operator_frees=handler_frees=shared_state_updates=0;
++  reports=operator_frees=handler_frees=shared_state_updates=finished_calls=0;
+   ghost::ios::navigation_regions.clear();ghost::ios::finger_paint_regions.clear();
+   ghost::ios::pencil_ring_presentations.clear();
+   registered_types={};registered_types[0].cancel=blender::ed::sculpt_paint::sculpt_brush_stroke_cancel;
+@@ -479,9 +492,12 @@
+    assert(d->ipad_pencil_paint_region==sender.contact.region&&d->ipad_pencil_paint_origin_x==100&&d->ipad_pencil_paint_origin_y==100);
+    assert(d->tablet.Pressure==sender.sample.pressure&&d->tablet.Ytilt==sender.sample.ytilt);}
+  }
+- void check_cleanup(){assert(reports==1&&operator_frees==1&&handler_frees==1&&op.freed&&owner.head.freed);
++ void check_cleanup(){assert(reports==1&&operator_frees==1&&handler_frees==1&&op.freed&&owner.head.freed&&finished_calls==0&&!op.finished);
+   assert(owner.op==nullptr&&win.modalhandlers.items.empty()&&manager.op_undo_depth==0);
+   assert(native_order.size()>=4);auto end=native_order.end();assert(std::vector<int>(end-4,end)==std::vector<int>({50,60,70,80}));}
++ void check_finished(){assert(reports==1&&finished_calls==1&&operator_frees==0&&!op.freed&&op.finished&&handler_frees==1&&owner.head.freed);
++  assert(owner.op==nullptr&&win.modalhandlers.items.empty()&&manager.op_undo_depth==0);
++  assert(native_order.size()>=4);auto end=native_order.end();assert(std::vector<int>(end-4,end)==std::vector<int>({50,55,70,80}));}
+ };
+ 
+ void movement(){Fixture f;f.begin();
+@@ -495,7 +511,7 @@
+   assert(wm_queue[0].ipad_pencil_paint_origin_xy[0]==105&&wm_queue[0].ipad_pencil_paint_origin_xy[1]==800);
+   f.dispatch();assert(!cancel_calls&&!done_calls&&!line_finalizers&&!modal_releases);}
+  f.action(UIGestureRecognizerStateEnded);assert(system_owner.queue.size()==1);f.check_packet(system_owner.queue[0]);
+- f.transfer();f.dispatch();assert(modal_releases==1&&line_finalizers==1&&done_calls==1&&!cancel_calls);f.check_cleanup();}
++ f.transfer();f.dispatch();assert(modal_releases==1&&line_finalizers==1&&done_calls==1&&!cancel_calls);f.check_finished();}
+ 
+ void terminal(int state,int mode,bool expired,bool dyntopo=false){Fixture f(mode);f.begin();
+  if(expired)f.expire();if(dyntopo){f.object.pbvh.value=bke::pbvh::Type::BMesh;f.brush.supports_dyntopo=true;}
+@@ -504,7 +520,8 @@
+  bool cancelled=state!=UIGestureRecognizerStateEnded;f.check_packet(system_owner.queue[0],cancelled);
+  assert(!pencil_paint_enqueued_down&&pencil_paint_retired_serial==41);
+  f.transfer();assert(wm_queue.size()==1&&wm_queue[0].ipad_pencil_paint_phase==WM_PENCIL_PAINT_PHASE_END);
+- assert(bool(wm_queue[0].flag&WM_EVENT_IS_POINTER_CANCEL)==cancelled);f.dispatch();f.check_cleanup();
++ assert(bool(wm_queue[0].flag&WM_EVENT_IS_POINTER_CANCEL)==cancelled);f.dispatch();
++ if(cancelled)f.check_cleanup();else f.check_finished();
+  if(cancelled){assert(cancel_calls==1&&!modal_releases&&!line_finalizers&&done_calls==1);
+   if(mode==OB_MODE_SCULPT){assert(undo_restores==!dyntopo&&cache_frees==1&&texture_exits==1);
+    assert(native_order[dyntopo?0:1]==30&&native_order[dyntopo?1:2]==20&&native_order[dyntopo?2:3]==40);}
+@@ -552,7 +569,7 @@
+  assert(system_owner.queue.empty()&&pencil_paint_enqueued.serial==42&&pencil_paint_enqueued_down);
+  assert(f.runtime.ipad_pencil_paint_queued_serial==42&&f.runtime.ipad_pencil_paint_queued_down&&cancel_calls==1);
+  f.sender.contact=replacement_contact;f.action(UIGestureRecognizerStateEnded);f.transfer();assert(wm_queue.size()==1);
+- f.dispatch();assert(cancel_calls==1&&modal_releases==1&&line_finalizers==1&&done_calls==2&&operator_frees==2&&handler_frees==2);}
++ f.dispatch();assert(cancel_calls==1&&modal_releases==1&&line_finalizers==1&&done_calls==2&&operator_frees==1&&finished_calls==1&&handler_frees==2);}
+ 
+ void capture_cancel(){Fixture f;f.begin();f.action(UIGestureRecognizerStateChanged,{123,104},{23,4});
+  f.transfer();f.dispatch();auto sample=f.sender.sample;f.expire();tablet_data.Pressure=.99f;
+@@ -694,6 +711,7 @@
+         'NATIVE_INTERRUPT': block(op_call, 'if (ipad_pencil_paint_interrupt) {'),
+         'UNDO_END': block(op_call, 'if (ot->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {'),
+         'CANCEL_REPORTS': block(op_call, 'if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {'),
++        'OPERATOR_FINISHED_BRANCH': block(op_call[op_call.index("        /* Important to run 'wm_operator_finished'"):], 'if (retval & OPERATOR_FINISHED) {'),
+         'OPERATOR_RELEASE': block(op_call, 'else if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {'),
+         'HANDLER_REMOVE': block(op_call, 'if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {', 2),
+     }
+@@ -777,10 +795,11 @@
+             'historical_pin': 'd9b6fe34ddce527d93b97c0bf42ad92cebac4e4e',
+             'tested_producer_sha256': hashlib.sha256(CORRECTED_PAN.encode()).hexdigest(),
+             'scope': 'Full transformed handlePan, unchanged NavigationIOS ticket/capture policy, generator/lease, cursor/button constructors; actual WM packet queue admission, cursor/button/trackpad mapping, registered owner/context/lifetime admission, tombstone, interrupt/status cleanup; native four mode cancel bodies and generic native release branch.',
++            'native_finished_scope': 'Exact OPERATOR_FINISHED branch and following cancellation else-if execute; wm_operator_finished plus undo/register active-id queries are instrumented boundaries. Ended asserts native Line/done, one modeled finish and handler removal without direct cancellation free. Cancelled/Failed preserve exact report/free/unlink/handler order and zero modeled finish.',
+             'boundaries': ['UIKit messages, contact/action timing, and initial native brush allocation/modal owner binding are fixture setup.',
+                            'Delayed action tests retain frozen recognizer provenance; actual cancelPointerCapture and TouchAdmission invalidation execute. Full UIKit reset/action timing remains outside scope.',
+                            'GHOST trackpad/key storage, WM scheduling, coordinate/tablet preference transform calls, ED owner capture and BKE/brush effect allocations are instrumentation boundaries.',
+-                           'Native callback bodies and cleanup ordering execute; no universal rollback, geometry/history/Undo or device claim.'],
++                           'Native callback bodies and cancellation cleanup order execute; normal WM finish is an instrumented call boundary. No universal rollback, geometry/history/Undo or device claim.'],
+             'runs': cls.results,
+             'historical_failures_expected': 3,
+         }

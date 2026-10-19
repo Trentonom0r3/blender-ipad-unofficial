@@ -1,0 +1,6 @@
+REPRODUCED: first Changed queues untagged MOUSEPAN before owned motion; actual WM classifies Cancel; tombstone consumes following motion.
+TERMINAL state=4: is_cancelled=false; native release finalizer/done=1; serial retired; repeat terminal dropped.
+TERMINAL state=5: is_cancelled=false; native release finalizer/done=1; serial retired; repeat terminal dropped.
+TERMINAL state=3: is_cancelled=false; native release finalizer/done=1; serial retired; repeat terminal dropped.
+CONTROL: matched terminal survives expired presentation because GHOST already owns the exact queued contact.
+CONTROL: mismatched and unqueued terminals cannot release another contact.

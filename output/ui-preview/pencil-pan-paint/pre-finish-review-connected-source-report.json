@@ -1,0 +1,473 @@
+{
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "source_inputs": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "6dfc24bc2c89cb206a04bd3e8e199aecfe3ee3aa066471716073ba72c169942c",
+    "intern/ghost/intern/GHOST_EventButton.hh": "8749b998a9e7d743c3bfd80631ab472462f2b8f38655f81e0adada4338512af4",
+    "intern/ghost/intern/GHOST_EventCursor.hh": "d461bcab1bf0d2638a206cc54d91633dee4afd3c82f0a8680f0629cb03e6c55f",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+    "source/blender/editors/sculpt_paint/sculpt.cc": "13bff21bc01490d04455ba1ba4e29ed2866bc994398939df7c2f012a8507d9cb",
+    "source/blender/editors/sculpt_paint/paint_vertex.cc": "59f390be949d8d022777e4ef5a6fcf2e9ac90949905a8c8492a7611533a7b89d",
+    "source/blender/editors/sculpt_paint/paint_weight.cc": "da05e918e8017408e64bcf2e0ab305d265776a876bb11523a80c175fcb344834",
+    "source/blender/editors/sculpt_paint/paint_image_ops_paint.cc": "8ddc4b50bd189dc4dbf0e3201bb78672ac5ec866fd39657bc23d320a5f75d69e",
+    "source/blender/editors/sculpt_paint/paint_stroke.cc": "29b78df9c577c64e844d6cd827f57308f55435f6b4304eb06a1c29feb0d8f101"
+  },
+  "cache_directory": "C:\\Users\\tjerf\\AppData\\Local\\Packages\\sandbox.{088cc6b2-bb5d-41c7-a9db-dfde166542cc}\\AC\\Temp\\pencil-pan-connected-proposal\\recorded-declared-preflight-cache",
+  "source_runtime": "Every pinned input above explicitly acquired with preflight.get_source(pin,path,cache,False); patched files reconstructed by test_touch_extrude.changed_source against that cache.",
+  "correction": "Actual current producer compiled unchanged; two predicates plus comments are the scope oracle. Repository untouched by this suite.",
+  "producer_variant": "actual corrected current overlay; no simulated-correction fallback",
+  "historical_producer_sha256": "85bf405c365a0bbe0e0b88bb20e3d3c8ccfbe4b31a2e81801bd35976bfe1dcb6",
+  "historical_source_commit": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "historical_overlay_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "historical_pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "tested_producer_sha256": "6237464b57ee2e69f2f4cd5ea4916ce1edc36c5ba91c1649577084c21bb6025a",
+  "scope": "Full transformed handlePan, unchanged NavigationIOS ticket/capture policy, generator/lease, cursor/button constructors; actual WM packet queue admission, cursor/button/trackpad mapping, registered owner/context/lifetime admission, tombstone, interrupt/status cleanup; native four mode cancel bodies and generic native release branch.",
+  "boundaries": [
+    "UIKit messages, contact/action timing, and initial native brush allocation/modal owner binding are fixture setup.",
+    "Delayed action tests retain frozen recognizer provenance; actual cancelPointerCapture and TouchAdmission invalidation execute. Full UIKit reset/action timing remains outside scope.",
+    "GHOST trackpad/key storage, WM scheduling, coordinate/tablet preference transform calls, ED owner capture and BKE/brush effect allocations are instrumentation boundaries.",
+    "Native callback bodies and cleanup ordering execute; no universal rollback, geometry/history/Undo or device claim."
+  ],
+  "runs": [
+    {
+      "variant": "proposed",
+      "case": "capture",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS capture\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "early",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS early\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "expiry",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS expiry\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "mid_enqueue_expiry",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS mid_enqueue_expiry\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "movement",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS movement\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "navigation",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS navigation\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "owner",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS owner\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "replacement",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS replacement\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "tuple",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS tuple\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "untagged",
+      "arguments": [],
+      "returncode": 0,
+      "stdout": "PASS untagged\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        1,
+        0,
+        1
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "historical",
+      "case": "terminal",
+      "arguments": [
+        4,
+        1,
+        0,
+        0
+      ],
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: d->is_cancelled==cancel, file C:\\Users\\tjerf\\AppData\\Local\\Packages\\sandbox.{088cc6b2-bb5d-41c7-a9db-dfde166542cc}\\AC\\Temp\\pencil-pan-connected-proposal\\final-declared-proof\\pencil_pan_historical_connected.cc, line 1799\n"
+    },
+    {
+      "variant": "historical",
+      "case": "terminal",
+      "arguments": [
+        5,
+        1,
+        0,
+        0
+      ],
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: d->is_cancelled==cancel, file C:\\Users\\tjerf\\AppData\\Local\\Packages\\sandbox.{088cc6b2-bb5d-41c7-a9db-dfde166542cc}\\AC\\Temp\\pencil-pan-connected-proposal\\final-declared-proof\\pencil_pan_historical_connected.cc, line 1799\n"
+    },
+    {
+      "variant": "historical",
+      "case": "movement",
+      "arguments": [],
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: system_owner.queue.size()==1&&system_owner.queue[0]->type==GHOST_kEventCursorMove, file C:\\Users\\tjerf\\AppData\\Local\\Packages\\sandbox.{088cc6b2-bb5d-41c7-a9db-dfde166542cc}\\AC\\Temp\\pencil-pan-connected-proposal\\final-declared-proof\\pencil_pan_historical_connected.cc, line 1813\n"
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        1,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        1,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        2,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        4,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        4,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        8,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        3,
+        8,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        1,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        2,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        2,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        4,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        4,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        8,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        4,
+        8,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        1,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        1,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        2,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        2,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        4,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        4,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        8,
+        0,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    },
+    {
+      "variant": "proposed",
+      "case": "terminal",
+      "arguments": [
+        5,
+        8,
+        1,
+        0
+      ],
+      "returncode": 0,
+      "stdout": "PASS terminal\n",
+      "stderr": ""
+    }
+  ],
+  "historical_failures_expected": 3
+}

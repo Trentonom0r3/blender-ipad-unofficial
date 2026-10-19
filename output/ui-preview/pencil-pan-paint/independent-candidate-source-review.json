@@ -1,0 +1,68 @@
+{
+  "status": "PASS_BOUNDED_TWO_PREDICATE_SOURCE_REVIEW",
+  "created_utc": "2026-10-19T17:54:11.880730+00:00",
+  "candidate_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-pan-candidate-zuunirx8",
+  "source_overlay_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "source_file_sha256": "f0913254dd794b71bbc2eb0e2a83ccbd739f210eb76b0260d7cff2ccae85e095",
+  "candidate_file_sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+  "contract": "C:\\Users\\tjerf\\.codex\\visualizations\\2026\\09\\14\\01a09e01-9bdd-7ac1-81bf-66b1660c4d7b\\pencil_pan_next_contract.md",
+  "contract_sha256": "9e4b793cd2f4cd273b1c84775feff98e036b171a4d974b84046324d38b0a9830",
+  "provenance": "Independently reconstructed full current overlay with build/test_touch_extrude.changed_source from declared exact pin, using explicit UTF-8; no stale GHOST Temp materialization. Manifest matches raw bytes. Exact unified diff matches candidate.diff; reversing exactly two local replacements reproduces the whole reconstructed source byte-for-byte.",
+  "reference_hashes": {
+    "GHOST_NavigationIOS.hh": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+    "wm_event_system.cc": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c",
+    "pinned_paint_stroke.cc": "29b78df9c577c64e844d6cd827f57308f55435f6b4304eb06a1c29feb0d8f101"
+  },
+  "findings": [],
+  "reviewed_obligations": [
+    {
+      "area": "Suffix reachability and preservation",
+      "source_lines": "ios1450-1643; candidate1450-1646",
+      "result": "touchStreamAllowed, hardware-drag rejection, ring capture/ended return, pointer HUD/tool capture/ended return, ordinary finger/flythrough return all precede the precision suffix and are byte-exact. Reaching modified suffix entails frozen gestureUsesPencil true. All code outside the two replacements is byte-exact, including indirect, two/three-finger, direct/indirect pinch, hover, hardware registration and accepted UI/ring code."
+    },
+    {
+      "area": "Frozen provenance semantics",
+      "source_lines": "ios330-449; nav76-88,301-328",
+      "result": "Pan recognizer touchesBegan acquires pencil_paint_origin once for a fresh single Pencil touch at its physical origin, excludes captured ring/HUD and uses pencil_paint_at_start excluding ring/navigation/non-paint regions, before superclass delivery. Getter returns this saved value; movement does not replace it. PencilPaintContact.valid checks nonzero serial/generation/region only. New predicate intentionally does not query current mode, current presentation, liveness or hit map."
+    },
+    {
+      "area": "Changed pan suppression",
+      "candidate_lines": "1616-1630",
+      "result": "Cached relative translation and cache update remain in original order. Valid frozen paint contact prevents only this precision suffix PAN_GESTURE append; cursor motion, coordinates and tablet snapshot remain. Invalid/unsupported Pencil keeps exact original nonzero pan+cursor sequence. Zero translation behavior unchanged. A frozen tagged contact remains suppressed after stale/retired/mismatched identity or expired presentation, so generator rejection of pointer packets cannot leak an untagged trackpad pan from this suffix."
+    },
+    {
+      "area": "Terminal cancellation policy",
+      "candidate_lines": "1633-1644",
+      "result": "Existing Ended/Cancelled/Failed block and single LEFT_BUTTON_UP append remain. Valid paint contact sets cancelled false for Ended and true for Cancelled/Failed; invalid contact retains original false terminal semantics. No extra synthetic release, translation, token, liveness test or recapture is introduced."
+    },
+    {
+      "area": "Generator lease invariant retained",
+      "source_lines": "ios970-999,1086-1123",
+      "result": "Generator body unchanged. Pointer packets compare full serial/generation/region/origin_x/origin_y tuple with an actually enqueued down; once down exists matching terminal does not require live presentation. Before down, expired/retired contact or any tagged up is refused. Down ownership is stored only after GHOST down enqueue; terminal retires serial and clears tuple. Foreign/repeated packets cannot release the current replacement lease. This source review establishes the existing gates, not all UIKit callback sequences."
+    },
+    {
+      "area": "cancelPointerCapture preserved",
+      "source_lines": "ios1413-1447",
+      "result": "Existing cancellation emits one cancelled up only when actual tagged down was enqueued, using saved tuple/location/tablet before invalidating recognizers. Candidate changes none of this. Existing invalidated stream returns early; tagged delayed packets that still reach suffix cannot produce paired navigation."
+    },
+    {
+      "area": "WM cancellation versus ordinary native release",
+      "source_lines": "wm2457-2477,2951-2983,8555-8557; pinnedpaint1616+,1764+",
+      "result": "Unchanged generator passes cancelled into GHOST button; unchanged WM conversion sets WM_EVENT_IS_POINTER_CANCEL on cancelled up. Existing admitted original-owner Dispatch plus flag enters ot->cancel and OPERATOR_CANCELLED|PASS_THROUGH instead of ot->modal. Ordinary Ended remains unflagged and can reach native modal release/paint_stroke_line_end. Mode cancel behavior stays mode-specific; generic paint_stroke_cancel calls stroke_done. No universal rollback, geometry or Undo promise follows."
+    },
+    {
+      "area": "Accepted UI scope",
+      "result": "Exact one-file two-predicate diff changes no ring choices, names, styles, geometry, static UI assets, other source sections, or event-generator/navigation policy. The nine accepted Base actions remain inherited from verified source; this is literal scope preservation rather than fresh device UI acceptance."
+    }
+  ],
+  "required_next_validation": "Separate connected actual-producer pipeline tests are being prepared. Preserve historical failure; cover valid/end/cancel/fail, presentation expiry before/after actual down, every tuple field, retired/repeated/foreign packets and cancelPointerCapture, plus unchanged navigation routes and portable declared pinned inputs before any production build.",
+  "limitations": [
+    "Source review only; no new production overlay edit, build, compiled candidate or device execution.",
+    "No execution of the connected pipeline fixture in this reviewer; results must be reported by its separate test agent.",
+    "UIKit delivery/reset/action ordering and device occurrence remain modeled or unverified.",
+    "Native rollback/history effects are mode-specific and are not inferred from OPERATOR_CANCELLED."
+  ],
+  "production_mutated": false,
+  "candidate_built": false,
+  "device_acceptance": false
+}

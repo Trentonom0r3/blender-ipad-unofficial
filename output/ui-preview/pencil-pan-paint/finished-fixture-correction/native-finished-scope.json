@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "test_count": 40,
+  "elapsed_seconds": 14.437,
+  "actual_process_successes": 35,
+  "expected_historical_process_failures": 3,
+  "static_source_checks": 2,
+  "corrected_fixture_sha256": "fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170",
+  "prior_fixture_sha256": "a681d5443c8f8b80006f83e41ab4f49495899bcf4f64d416739ee578b0a7d2af",
+  "production_overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "source_paths_changed": [
+    "build/test_pencil_pan_paint_producer.py"
+  ],
+  "native_finished_scope": "Exact OPERATOR_FINISHED branch and following cancellation else-if execute; wm_operator_finished plus undo/register active-id queries are instrumented boundaries. Ended asserts native Line/done, one modeled finish and handler removal without direct cancellation free. Cancelled/Failed preserve exact report/free/unlink/handler order and zero modeled finish.",
+  "actual_native_slices": [
+    "WM OPERATOR_FINISHED branch including has_undo_step/has_register argument calculation",
+    "unchanged following cancellation else-if WM_operator_free branch",
+    "unchanged handler removal block",
+    "paint_stroke_modal release/Line invocation branch",
+    "native mode cancel callbacks and Vertex/Weight stroke_done callbacks"
+  ],
+  "instrumented_boundaries": [
+    "wm_operator_finished body, storage/register/history/free effects; fixture records call and finished marker only",
+    "wm_operator_undo_active_id and wm_operator_register_active_id return controlled stable IDs",
+    "generic stroke_done dispatcher; fixture records completion and invokes the exact mode done callback",
+    "WM scheduling/state emulation, coordinate/tablet transforms, ED captured owner provider, BKE brush/geometry effects",
+    "initial brush allocation/native modal binding and UIKit messages/action/reset timing"
+  ],
+  "normal_ended_assertions": [
+    "one native release/Line invocation and stroke_done",
+    "one instrumented wm_operator_finished call with false,true,false,false arguments",
+    "zero direct cancellation WM_operator_free calls",
+    "reports then modeled finish then handler unlink/free order50,55,70,80"
+  ],
+  "cancelled_failed_assertions": [
+    "exact mode cancellation once",
+    "no normal native release/Line invocation",
+    "zero wm_operator_finished calls",
+    "unchanged exact reports/direct WM_operator_free/unlink/handler-free order50,60,70,80"
+  ],
+  "preservation": "Original fixture and all earlier source/cold-cache/harness-failure evidence retained. Root full-suite run12318 loaded the prior fixture; its result is pre-review evidence, separate from this correction."
+}

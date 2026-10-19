@@ -1,0 +1,61 @@
+{
+  "status": "PASS_BOUNDED_FINAL_SOURCE_AND_FIXTURE_REVIEW_RUNTIME_GATES_SEPARATE",
+  "created_utc": "2026-10-19T18:04:25.891651+00:00",
+  "reviewer": "Independent pan_final_review subagent; source review only; no test executions or production edits",
+  "repository": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial",
+  "reviewed_documents": [
+    "AGENTS.md",
+    "docs/PRODUCT_DIRECTION.md",
+    "docs/IPAD_WORKSPACE.md",
+    "docs/PROJECT_HANDOFF.md",
+    "output/ui-preview/pencil-pan-paint/source-checkpoint.json",
+    "output/ui-preview/pencil-pan-paint/producer-correction-contract.md",
+    "output/ui-preview/pencil-pan-paint/independent-candidate-source-review.json"
+  ],
+  "overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "fixture_sha256": "fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170",
+  "blender_pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "verified_baseline_commit": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "reconstructed_ios_sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+  "actual_current_full_pan_sha256": "6237464b57ee2e69f2f4cd5ea4916ce1edc36c5ba91c1649577084c21bb6025a",
+  "actual_baseline_full_pan_sha256": "85bf405c365a0bbe0e0b88bb20e3d3c8ccfbe4b31a2e81801bd35976bfe1dcb6",
+  "independent_scope_check": {
+    "method": "Read exact baseline patch with explicit Git directory/work tree; reconstruct full pinned files using build/test_touch_extrude.changed_source. No Temp GHOST materializations used.",
+    "overlay_sections": 132,
+    "changed_sections": [
+      "intern/ghost/intern/GHOST_WindowIOS.mm"
+    ],
+    "byte_exact_other_sections": 131,
+    "complete_reconstructed_ios_diff": "Only precision suffix valid-contact PAN predicate, tagged terminal cancelled predicate, and one comment. Every other byte is baseline exact. Accepted UI sections and embedded native UI code therefore remain unchanged."
+  },
+  "findings": [],
+  "resolved_finding": {
+    "issue": "Fixture previously put if(false) before native cancellation else-if, incorrectly using direct cancellation cleanup for normal OPERATOR_FINISHED.",
+    "repair": "Exact extracted OPERATOR_FINISHED block now precedes extracted cancellation else-if. wm_operator_finished and undo/register active-id queries are explicit instrumentation boundaries. Ended asserts separate modeled finish marker55 and no direct cancellation free; cancellation asserts actual report/free/unlink/handler markers50/60/70/80 and finished_calls==0.",
+    "final_source_review": "PASS; production unaffected; exact final fixture runtime validation remains a separate test-author gate."
+  },
+  "reviewed_production_obligations": [
+    "Only valid frozen Pencil paint provenance suppresses this precision suffix paired PAN_GESTURE. Translation cache and owned cursor motion remain; invalid/unsupported Pencil and earlier ring, captured HUD/tool and finger routes are unchanged.",
+    "Frozen provenance is captured at physical touch origin before superclass delivery and returned unchanged; suppression does not query current mode, presentation or lease liveness.",
+    "Terminal emits the existing single up, flagged only for valid tagged Cancelled/Failed. Ended and untagged terminal semantics remain unchanged.",
+    "Unchanged generator compares serial, generation, region and both original coordinates against actual enqueued down; live acquisition is required before down, matching owned terminal can survive presentation expiry, and retired/foreign/repeated packets cannot release replacement.",
+    "Unchanged cancelPointerCapture emits the saved enqueued tuple/location/tablet cancelled up before recognizer invalidation. WM conversion sets WM_EVENT_IS_POINTER_CANCEL; actual original-owner admission and native interrupt choose mode cancel instead of ordinary modal Line release.",
+    "Independent navigation remains untagged and retains existing WM interrupt policy. No global navigation swallowing or paint tagging was introduced."
+  ],
+  "reviewed_fixture_obligations": [
+    "CORRECTED_PAN is actual reconstructed PAN. A token oracle requires production correction before compilation; there is no proposal-only auto-correction fallback.",
+    "Tracked historical full producer digest independently equals c88c85d reconstructed full producer. Three preserved negative controls assert specific semantic failures: paired movement count and Cancelled/Failed is_cancelled mismatch.",
+    "Ten source paths are declared; every non-new pinned input is explicitly acquired via preflight.get_source(pin,path,cache,False), including paint_stroke.cc. New Navigation header comes from patch. No implicit existing-cache paint input remains.",
+    "Full transformed handlePan, actual generator, full Navigation header, cursor/button constructors, queue lease and conversion slices, registered owner/lifetime/context admission, tombstone, interrupt/status branches and four mode cancel bodies execute in generated fixture.",
+    "Cases inspect actual produced packet order/identity/tablet/flag, every tuple field, presentation expiry before/after down, expiry between native enqueues, replacement, repeated terminals, cancelPointerCapture invalidation, owner mismatches, untagged/finger/captured/ring and independent navigation.",
+    "Compile failure raises RuntimeError; historical failure controls require expected assertion text. No test skips or expectation removal found. 40 unittest methods comprise38 child-process runs and2 source/scope checks."
+  ],
+  "evidence_limits": [
+    "This reviewer ran no tests and no broad suite. Prior inspected connected report belongs to pre-review fixture; final corrected40-case and complete suite results must be recorded separately.",
+    "UIKit delivery/reset/action timing and initial native brush allocation/modal owner binding are fixture setup. Trackpad/key storage, WM scheduling/shared state, cross-window routing, coordinate/tablet transforms and ED owner capture are models.",
+    "Generic stroke_done dispatch invokes exact Vertex/Weight done callbacks through instrumentation; BKE/brush effects and wm_operator_finished storage/history behavior remain modeled.",
+    "Normal Ended native Line release branch is executed; actual WM FINISHED decision is extracted, while finished helper effects are instrumented. Cancelled/Failed execute the actual mode cancel and cancellation cleanup slices.",
+    "No new native build, compiled artifact, device acceptance, global heap/reentrancy, geometry, universal rollback/history or Undo proof is claimed."
+  ],
+  "required_next_gates": "Final corrected fixture40-case validation and full suite; exact changed commit native iOS build/full IPA/actual compiled producer-consumer review remain separate. No build readiness claim while those are pending."
+}

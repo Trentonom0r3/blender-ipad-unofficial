@@ -1,3 +1,50 @@
+## Pencil Pan correction validated for exact native build - 2026-10-19 UTC
+
+Candidate40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e passes FINAL563/563 host checks504.242s
+(.cache/pan-paint-full-tests-final.log), corrected40/40 in14.437s, retained38/38,
+132-file final preflight/diff and independent literal/native/source/test review.
+Earlier563-pass461.269s predates the fixture FINISHED-branch correction and is
+superseded. Preserve both logs and initial harness failures. Final testfixture
+fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170 requires actual corrected producer,
+keeps three exact historical failures and separately models normal WM finish.
+
+Only GHOST_WindowIOS.mm precision suffix changes;131othersections/all7UI exact.
+Frozen tagged paint motion suppresses its unwanted untagged PAN; Cancelled/Failed
+marks the existing leased up cancelled; Ended remains native normal completion.
+Existing GHOST/WM ownership, tuple/retirement and native mode-specific cleanup stay.
+Full UIKit/WM scheduling/BKE/geometry/history/device behavior remains unproved.
+Reports: output/ui-preview/pencil-pan-paint/{source-verification.json,
+independent-final-source-test-review.json,finished-fixture-correction/}.
+Commit/push coherent source and build that exact revision ONCE, then full downloaded
+IPA and actual compiled producer/consumer checks. No Pan native build/IPA yet.
+Latest fully verified package c88c85d/run39200263060; no unchanged rebuild.
+Full personal goal unfinished. Preserve accepted UI/Pencil/native/Files contracts.
+
+## Pencil Pan source awaits final full suite - 2026-10-19 UTC
+
+UNCOMMITTED candidate patch40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e changes only
+GHOST_WindowIOS.mm precision suffix;131 other sections/all7UI remain exact.
+Tagged paint motion no longer pairs with untagged PAN that interrupts its stroke;
+Cancelled/Failed flags the existing up, while Ended keeps native completion.
+Original enqueued tuple/retirement and earlier ring/HUD/tool/finger/hardware paths stay.
+Independent literal/native/source review passes. Retained38/38 in28.919s,
+corrected connected40/40 in14.437s and132-file final preflight pass.
+Final fixture fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170 separates actual WM
+FINISHED branch/modelled finish from exact cancellation cleanup. Historical3
+failure controls remain; native mode-specific Cancel is not universal rollback.
+
+FINAL FULL SUITE IS RUNNING session26304/.cache/pan-paint-full-tests-final.log.
+Earlier session12318/log pan-paint-full-tests.log predates that fixture repair;
+retain its result separately. Do not count pending tests passed or build yet.
+Inspect actual logs/process state, finish checks, then commit/push coherent source
+and build exact changed revision ONCE. Prepared watcher:
+.cache/watch-pencil-pan-paint-build.py RUN SHA; sibling pointer helper required.
+Reports: output/ui-preview/pencil-pan-paint/source-checkpoint.json and
+independent-final-source-test-review.json. No new native/IPA/device proof.
+Latest fully verified source remains c88c85d/run39200263060 (fbe8784 evidence only).
+Full goal unfinished. Ordinary usage87percent/weekly62percent at18:02UTC;
+reset22:46:13UTC/5:46PMChicago, continuation5:55PM;0credits.
+
 ## Exact pointer assignment IPA verified - 2026-10-19 UTC
 
 Production c88c85de0f7c31081441157ac6b85a90b3963704/run39200263060 passed
