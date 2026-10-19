@@ -1,0 +1,28 @@
+{
+  "status": "NO_ACTIONABLE_SOURCE_GAP_IN_BOUNDED_WORKFLOW_TRACE",
+  "timestamp_utc": "2026-10-19T23:09:27.860815+00:00",
+  "reviewer": "paint_navigation_restart_audit independent source-only agent",
+  "source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "workflow": "Admitted Pencil paint, actual two-finger navigation, delayed old tail, fresh physical Pencil restart",
+  "source_evidence": {
+    "GHOST_WindowIOS.mm": [
+      "1742-1746: handlePan2f cancels original pointer before independent navigation",
+      "1413-1428: saved enqueued tuple/location/tablet produces cancelled up before recognizer invalidation",
+      "974-995 and1086-1122: exact tuple continuation, actual down enqueue and terminal retirement",
+      "425-433 and365-392: physical reset clears admission/contact, new begin captures new serial/presentation"
+    ],
+    "wm_event_system.cc": [
+      "8151-8264: queue/tombstone/retirement gates precede shared event-state8279 and click-state8563",
+      "2937-2975 and3024-3048: original registered mode Cancel and native cleanup",
+      "6124/5207-5230/5260-5266/5451: old tail isolation",
+      "5589-5597: native double-click fallback retries underlying press with fresh dispatch scope"
+    ]
+  },
+  "scope": "Actual current overlay reconstructed with changed_source. No tests/probes/builds or source edits by reviewer. Existing40case fixture models scheduling/shared state and does not execute entire physical reset/restart workflow.",
+  "limitations": [
+    "UIKit reset/action ordering and full WM scheduling remain unproved.",
+    "Native geometry/history effects and device acceptance remain separate.",
+    "No additional production guard contract follows from this trace; Cancel remains mode-specific."
+  ]
+}

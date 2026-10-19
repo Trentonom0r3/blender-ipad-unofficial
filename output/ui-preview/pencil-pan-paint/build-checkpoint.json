@@ -1,0 +1,806 @@
+{
+  "timestamp_utc": "2026-10-19T23:05:52.364318+00:00",
+  "source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "run": "39338882021",
+  "status": "EXACT_BUILD_DISPATCHED_NATIVE_PACKAGE_COMPILED_GATES_PENDING",
+  "state": {
+    "conclusion": "",
+    "headSha": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+    "jobs": [
+      {
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "databaseId": 118355181199,
+        "name": "preflight / check",
+        "startedAt": "2026-10-19T23:01:16Z",
+        "status": "in_progress",
+        "steps": [
+          {
+            "completedAt": "2026-10-19T23:01:17Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-19T23:01:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:19Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-10-19T23:01:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:21Z",
+            "conclusion": "success",
+            "name": "Prepare pinned source and validate the overlay",
+            "number": 3,
+            "startedAt": "2026-10-19T23:01:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:24Z",
+            "conclusion": "success",
+            "name": "Test generated UI RNA registration calls",
+            "number": 4,
+            "startedAt": "2026-10-19T23:01:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:26Z",
+            "conclusion": "success",
+            "name": "Test native sidebar root and mode admission",
+            "number": 5,
+            "startedAt": "2026-10-19T23:01:24Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:26Z",
+            "conclusion": "success",
+            "name": "Characterize native canvas compositing and terminal delivery",
+            "number": 6,
+            "startedAt": "2026-10-19T23:01:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:26Z",
+            "conclusion": "success",
+            "name": "Characterize native painting terminal ownership contract",
+            "number": 7,
+            "startedAt": "2026-10-19T23:01:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:27Z",
+            "conclusion": "success",
+            "name": "Test native Weight Paint cancellation cleanup",
+            "number": 8,
+            "startedAt": "2026-10-19T23:01:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:27Z",
+            "conclusion": "success",
+            "name": "Test paint context loss in Color Picker",
+            "number": 9,
+            "startedAt": "2026-10-19T23:01:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:29Z",
+            "conclusion": "success",
+            "name": "Test connected iPad keyboard text ownership",
+            "number": 10,
+            "startedAt": "2026-10-19T23:01:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:29Z",
+            "conclusion": "success",
+            "name": "Test preflight checker",
+            "number": 11,
+            "startedAt": "2026-10-19T23:01:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:30Z",
+            "conclusion": "success",
+            "name": "Test portable writer path restoration with host compiler",
+            "number": 12,
+            "startedAt": "2026-10-19T23:01:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:30Z",
+            "conclusion": "success",
+            "name": "Test native project-save context lifetime",
+            "number": 13,
+            "startedAt": "2026-10-19T23:01:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:31Z",
+            "conclusion": "success",
+            "name": "Test native tool-ring geometry with host compiler",
+            "number": 14,
+            "startedAt": "2026-10-19T23:01:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:31Z",
+            "conclusion": "success",
+            "name": "Test contextual Pencil geometry, receipts and setting persistence",
+            "number": 15,
+            "startedAt": "2026-10-19T23:01:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:34Z",
+            "conclusion": "success",
+            "name": "Test floating workspace panels with host compiler",
+            "number": 16,
+            "startedAt": "2026-10-19T23:01:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:35Z",
+            "conclusion": "success",
+            "name": "Test panel resize modal lifetime",
+            "number": 17,
+            "startedAt": "2026-10-19T23:01:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:36Z",
+            "conclusion": "success",
+            "name": "Test working seam modal geometry and lifetime",
+            "number": 18,
+            "startedAt": "2026-10-19T23:01:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:37Z",
+            "conclusion": "success",
+            "name": "Test screen DNA layout for both pointer widths",
+            "number": 19,
+            "startedAt": "2026-10-19T23:01:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:38Z",
+            "conclusion": "success",
+            "name": "Test launcher ordering and stale actions",
+            "number": 20,
+            "startedAt": "2026-10-19T23:01:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:38Z",
+            "conclusion": "success",
+            "name": "Test native category picker styles and highlights",
+            "number": 21,
+            "startedAt": "2026-10-19T23:01:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:40Z",
+            "conclusion": "success",
+            "name": "Test Inspector presentation ownership",
+            "number": 22,
+            "startedAt": "2026-10-19T23:01:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:40Z",
+            "conclusion": "success",
+            "name": "Test saved layout history and reference safety",
+            "number": 23,
+            "startedAt": "2026-10-19T23:01:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:41Z",
+            "conclusion": "success",
+            "name": "Test native navigation hit ownership",
+            "number": 24,
+            "startedAt": "2026-10-19T23:01:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:41Z",
+            "conclusion": "success",
+            "name": "Test navigation interruption, native confirmation and cleanup",
+            "number": 25,
+            "startedAt": "2026-10-19T23:01:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:42Z",
+            "conclusion": "success",
+            "name": "Test interrupted direct-tool transforms and selection",
+            "number": 26,
+            "startedAt": "2026-10-19T23:01:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:43Z",
+            "conclusion": "success",
+            "name": "Test transform tool properties, orientation and ownership",
+            "number": 27,
+            "startedAt": "2026-10-19T23:01:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:43Z",
+            "conclusion": "success",
+            "name": "Test fine drag gain and independent keyboard precision",
+            "number": 28,
+            "startedAt": "2026-10-19T23:01:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:44Z",
+            "conclusion": "success",
+            "name": "Test direct Extrude mesh rollback and batched motion ownership",
+            "number": 29,
+            "startedAt": "2026-10-19T23:01:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:47Z",
+            "conclusion": "success",
+            "name": "Test direct Bevel lifecycle, native routing and pointer precision",
+            "number": 30,
+            "startedAt": "2026-10-19T23:01:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:48Z",
+            "conclusion": "success",
+            "name": "Test accepted Extrude recovery",
+            "number": 31,
+            "startedAt": "2026-10-19T23:01:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:48Z",
+            "conclusion": "success",
+            "name": "Test direct point selection and external modifier parity",
+            "number": 32,
+            "startedAt": "2026-10-19T23:01:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:49Z",
+            "conclusion": "success",
+            "name": "Test direct-pinch navigation policy",
+            "number": 33,
+            "startedAt": "2026-10-19T23:01:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:51Z",
+            "conclusion": "success",
+            "name": "Test editing shelf placement, occlusion and native UI cleanup",
+            "number": 34,
+            "startedAt": "2026-10-19T23:01:49Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:53Z",
+            "conclusion": "success",
+            "name": "Test compact shelf queued-input receipts and native admission",
+            "number": 35,
+            "startedAt": "2026-10-19T23:01:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:56Z",
+            "conclusion": "success",
+            "name": "Test touch Mode native geometry and deferred owner receipts",
+            "number": 36,
+            "startedAt": "2026-10-19T23:01:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:57Z",
+            "conclusion": "success",
+            "name": "Test admitted native Box/Lasso feedback and fresh gesture ownership",
+            "number": 37,
+            "startedAt": "2026-10-19T23:01:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:01:59Z",
+            "conclusion": "success",
+            "name": "Test admitted native Transform stroke feedback and bounded drawing",
+            "number": 38,
+            "startedAt": "2026-10-19T23:01:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:00Z",
+            "conclusion": "success",
+            "name": "Test owned Pencil ring browsing and presented input receipts",
+            "number": 39,
+            "startedAt": "2026-10-19T23:01:59Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:03Z",
+            "conclusion": "success",
+            "name": "Test native Pencil page owners, draw gates and selection receipts",
+            "number": 40,
+            "startedAt": "2026-10-19T23:02:00Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:06Z",
+            "conclusion": "success",
+            "name": "Test rotating page geometry and shared native menu anchoring",
+            "number": 41,
+            "startedAt": "2026-10-19T23:02:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:09Z",
+            "conclusion": "success",
+            "name": "Test Pencil barrel reset provenance and queued native cleanup",
+            "number": 42,
+            "startedAt": "2026-10-19T23:02:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:14Z",
+            "conclusion": "success",
+            "name": "Test Pencil ring contact and native popup dispatch",
+            "number": 43,
+            "startedAt": "2026-10-19T23:02:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:17Z",
+            "conclusion": "success",
+            "name": "Test native copyable Pencil action origin values",
+            "number": 44,
+            "startedAt": "2026-10-19T23:02:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:19Z",
+            "conclusion": "success",
+            "name": "Test contact-only Pencil browsing and inert hover-roll packets",
+            "number": 45,
+            "startedAt": "2026-10-19T23:02:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:23Z",
+            "conclusion": "success",
+            "name": "Test native Pencil interaction owner proof and context-free disposal",
+            "number": 46,
+            "startedAt": "2026-10-19T23:02:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:23Z",
+            "conclusion": "success",
+            "name": "Test native tool icon styling for guarded Pencil inventory",
+            "number": 47,
+            "startedAt": "2026-10-19T23:02:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:25Z",
+            "conclusion": "success",
+            "name": "Test full native Pencil labels and refused-fit draw receipts",
+            "number": 48,
+            "startedAt": "2026-10-19T23:02:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:27Z",
+            "conclusion": "success",
+            "name": "Test registered Pencil popup ownership and deferred cleanup",
+            "number": 49,
+            "startedAt": "2026-10-19T23:02:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:29Z",
+            "conclusion": "success",
+            "name": "Test immediate Pencil callback button lifetimes",
+            "number": 50,
+            "startedAt": "2026-10-19T23:02:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:34Z",
+            "conclusion": "success",
+            "name": "Test owned native Snap self-callback admission and outer-frame refusal",
+            "number": 51,
+            "startedAt": "2026-10-19T23:02:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:35Z",
+            "conclusion": "success",
+            "name": "Test explicit Pencil native-controls fallback and cascade close",
+            "number": 52,
+            "startedAt": "2026-10-19T23:02:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:35Z",
+            "conclusion": "success",
+            "name": "Test native Python popup entry and hidden inventory scrolling",
+            "number": 53,
+            "startedAt": "2026-10-19T23:02:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:36Z",
+            "conclusion": "success",
+            "name": "Pencil viewport view actions",
+            "number": 54,
+            "startedAt": "2026-10-19T23:02:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:46Z",
+            "conclusion": "success",
+            "name": "Ring redraw continuity and final native inventory",
+            "number": 55,
+            "startedAt": "2026-10-19T23:02:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:47Z",
+            "conclusion": "success",
+            "name": "Test Base entry and reversible native header/shelf admission",
+            "number": 56,
+            "startedAt": "2026-10-19T23:02:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:47Z",
+            "conclusion": "success",
+            "name": "Test fresh registered Pencil operator lifetime and Python wrapper identity",
+            "number": 57,
+            "startedAt": "2026-10-19T23:02:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:02:57Z",
+            "conclusion": "success",
+            "name": "Test fresh native Pencil RNA roots and typed tool subgroups",
+            "number": 58,
+            "startedAt": "2026-10-19T23:02:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:04Z",
+            "conclusion": "success",
+            "name": "Test connected Pencil constructors and explicit pending property handoff",
+            "number": 59,
+            "startedAt": "2026-10-19T23:02:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:06Z",
+            "conclusion": "success",
+            "name": "Test Pencil enum parent leases and failed-draw retirement",
+            "number": 60,
+            "startedAt": "2026-10-19T23:03:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:12Z",
+            "conclusion": "success",
+            "name": "Test bounded pending Numbers property consumers and disposal",
+            "number": 61,
+            "startedAt": "2026-10-19T23:03:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:14Z",
+            "conclusion": "success",
+            "name": "Test native Numbers arithmetic and finite array paste",
+            "number": 62,
+            "startedAt": "2026-10-19T23:03:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:16Z",
+            "conclusion": "success",
+            "name": "Test pending Numbers native unregister and terminal ownership",
+            "number": 63,
+            "startedAt": "2026-10-19T23:03:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:19Z",
+            "conclusion": "success",
+            "name": "Native lower-left HUD placement and queued exposure",
+            "number": 64,
+            "startedAt": "2026-10-19T23:03:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:19Z",
+            "conclusion": "success",
+            "name": "Exact packaged nine-slot ring contract",
+            "number": 65,
+            "startedAt": "2026-10-19T23:03:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:21Z",
+            "conclusion": "success",
+            "name": "Unified Pencil ring styling and actual overflow cue",
+            "number": 66,
+            "startedAt": "2026-10-19T23:03:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:23Z",
+            "conclusion": "success",
+            "name": "Fresh persistent ring actions and deferred workspace return",
+            "number": 67,
+            "startedAt": "2026-10-19T23:03:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:27Z",
+            "conclusion": "success",
+            "name": "Actual-composited native HUD receipts and canvas exclusion",
+            "number": 68,
+            "startedAt": "2026-10-19T23:03:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:28Z",
+            "conclusion": "success",
+            "name": "Frozen physical HUD contacts and GHOST payloads",
+            "number": 69,
+            "startedAt": "2026-10-19T23:03:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:35Z",
+            "conclusion": "success",
+            "name": "Native HUD field ownership and one-contact Redo continuation",
+            "number": 70,
+            "startedAt": "2026-10-19T23:03:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:41Z",
+            "conclusion": "success",
+            "name": "Native Pencil numeric interruption and one-step restoration",
+            "number": 71,
+            "startedAt": "2026-10-19T23:03:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:44Z",
+            "conclusion": "success",
+            "name": "Native HUD launch context and first-layout initialization",
+            "number": 72,
+            "startedAt": "2026-10-19T23:03:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:45Z",
+            "conclusion": "success",
+            "name": "Native HUD first-frame sizing and initializer contract",
+            "number": 73,
+            "startedAt": "2026-10-19T23:03:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:46Z",
+            "conclusion": "success",
+            "name": "Recognizer-owned Pencil device and pressure snapshots",
+            "number": 74,
+            "startedAt": "2026-10-19T23:03:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:49Z",
+            "conclusion": "success",
+            "name": "Pencil precision pan producer and native cancellation",
+            "number": 75,
+            "startedAt": "2026-10-19T23:03:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:52Z",
+            "conclusion": "success",
+            "name": "Original-owner Pencil paint teardown and cancellation",
+            "number": 76,
+            "startedAt": "2026-10-19T23:03:49Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:53Z",
+            "conclusion": "success",
+            "name": "Pencil paint Brush deletion lifecycle",
+            "number": 77,
+            "startedAt": "2026-10-19T23:03:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:53Z",
+            "conclusion": "success",
+            "name": "Pencil paint Image removal lifecycle",
+            "number": 78,
+            "startedAt": "2026-10-19T23:03:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:03:54Z",
+            "conclusion": "success",
+            "name": "Pencil owner teardown before Outliner override clear",
+            "number": 79,
+            "startedAt": "2026-10-19T23:03:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:04:28Z",
+            "conclusion": "success",
+            "name": "Owned pointer assignment and complete late-update lifetime",
+            "number": 80,
+            "startedAt": "2026-10-19T23:03:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:04:45Z",
+            "conclusion": "success",
+            "name": "Owned ID and Mesh RNA dispatch context lifetime",
+            "number": 81,
+            "startedAt": "2026-10-19T23:04:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:04:56Z",
+            "conclusion": "success",
+            "name": "Direct RNA library override Pencil-owner teardown",
+            "number": 82,
+            "startedAt": "2026-10-19T23:04:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:05:07Z",
+            "conclusion": "success",
+            "name": "Native Mesh storage mutation Pencil-owner admission",
+            "number": 83,
+            "startedAt": "2026-10-19T23:04:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:05:32Z",
+            "conclusion": "success",
+            "name": "Material assignment and enclosing RNA Pencil-owner admission",
+            "number": 84,
+            "startedAt": "2026-10-19T23:05:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-19T23:05:32Z",
+            "conclusion": "success",
+            "name": "Native RNA public Python context API declaration",
+            "number": 85,
+            "startedAt": "2026-10-19T23:05:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Material collection native storage and owned Python producers",
+            "number": 86,
+            "startedAt": "2026-10-19T23:05:32Z",
+            "status": "in_progress"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Pencil paint Scene removal lifecycle",
+            "number": 87,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Pencil paint owner teardown before native mode exit",
+            "number": 88,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Retire Pencil paint before workspace tool changes",
+            "number": 89,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Pencil paint View Layer owner teardown",
+            "number": 90,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Pencil paint active-object setter owner teardown",
+            "number": 91,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Pencil owner teardown before object conversion",
+            "number": 92,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Refuse Object Delete before freeing an active Pencil paint owner",
+            "number": 93,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Fail closed on Pencil owner context-switch refusal",
+            "number": 94,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Native wmEvent allocation and synthetic-contact provenance",
+            "number": 95,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Post Run actions/checkout@v4",
+            "number": 190,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          }
+        ],
+        "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/39338882021/job/118355181199"
+      }
+    ],
+    "status": "in_progress",
+    "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/39338882021"
+  },
+  "watcher": {
+    "session_id": 89726,
+    "script": ".cache/watch-pencil-pan-paint-build.py",
+    "log": ".cache/pan-paint-build-watch-39338882021.log"
+  },
+  "validation": "source-verification.json",
+  "source_note": "1461998 adds archived diff whitespace normalization to validated974fedc; production40533b and executablefixturefd4729fc unchanged.",
+  "device_acceptance": false,
+  "compiled_obligations": [
+    "Actual handlePan frozen provenance branch prevents pairedPAN for all nonzero serial/generation/region values.",
+    "Actual Cancelled/Failed cancelled-byte store reaches existing GHOST/WM cancelled lift; Ended stays normal.",
+    "Actual generator retains enqueued tuple/terminal admission/retirement; preserved HUD launch and Weight cleanup."
+  ]
+}
