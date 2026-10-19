@@ -1,0 +1,40 @@
+{
+  "status": "PASS_EXACT_NATIVE_PACKAGE_AND_BOUNDED_COMPILED_REVIEW",
+  "timestamp_utc": "2026-10-19T17:54:44.109955+00:00",
+  "run": "39200263060",
+  "source": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "source_patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "artifact_id": 12164068261,
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pointer-assignment\\ipa-39200263060\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248662772,
+    "sha256": "28c75150ab258b8698444c90af7a1b3ba3cce691a5c17db76dd7ff38167073c8",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary_uuid": "6129B9FF-ABF9-316C-9E6D-400211686285",
+  "binary_sha256": "cff31c98a6aa8b7e79e77a747e8d9b42b4133c505bf8a1f02120ca9915b526b3",
+  "host_checks": {
+    "full": 523,
+    "clean_full_seconds": 388.986,
+    "connected_pointer": 29,
+    "pinned_preflight_files": 132
+  },
+  "compiled_review_reports": [
+    "binary-39200263060/independent-compiled-native-review.json",
+    "binary-39200263060/independent-compiled-outer-review.json"
+  ],
+  "preserved_obligations": [
+    "full3368CRC/arm64/iPhoneOS5.0.0",
+    "whole exact interactionUI/default Blender bars/toolbar",
+    "exact pinned native tools/all129icons/nineBase/native-onlyMoreTools",
+    "compiled HUD launch and native Weight cleanup"
+  ],
+  "audit_tool_correction": "Windows case-insensitive RNA/rna dump collision repaired with symbol-address filenames; all31 paths casefold-unique and independent actual re-dumps compared. No production change.",
+  "scope": "Bounded source/host/native compiled/package evidence; no global heap/CFG/callback/reentrancy/interpreter/UIKit/device or Debug runtime proof. Refusal does not roll back callback effects.",
+  "device_acceptance": false,
+  "next": "Connected two-predicate Pencil precision Pan correction; proposal reproduced, not shipped in this package."
+}

@@ -1,3 +1,34 @@
+## Exact pointer assignment IPA verified - 2026-10-19 UTC
+
+Production c88c85de0f7c31081441157ac6b85a90b3963704/run39200263060 passed
+hosted preflight, native iOS Release, full downloaded3368-entry CRC/arm64/iPhoneOS5.0.0,
+whole exact interaction UI/default Blender bars/toolbar/pinned tools/all129icons/
+exact9Base/native-onlyMoreTools and two independent bounded ACTUAL compiled reviews.
+Artifact12164068261; IPA248662772bytes; SHA256
+28c75150ab258b8698444c90af7a1b3ba3cce691a5c17db76dd7ff38167073c8.
+BinaryUUID6129B9FF-ABF9-316C-9E6D-400211686285 passes preserved HUD launch/Weight cleanup.
+Reports: output/ui-preview/pencil-pointer-assignment/native-package-verification.json
+and binary-39200263060/independent-compiled-{native,outer}-review.json.
+No exact IPA device acceptance; no unchanged rebuild or live watcher.
+
+Exact3 Object.data/active_material/MaterialSlot.material preserve owned original
+identities through complete assignment and C/messagebus update. Actual property
+metadata/native refusal/update wrappers, receipt/provider/lease/state and Python
+copy/report/cleanup/late-finish branches were reviewed, resolving inlining/aliases.
+Release review does not prove Debug runtime, global heap/CFG/reentrancy or UIKit.
+523/523 clean host checks388.986s and132-file pinned preflight passed. Earlier
+39100721586 failed preflight from24 missing-context fixture errors; native skipped.
+Portable correction leaves production44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002 unchanged.
+Windows verifier dump collision is repaired with symbol-address filenames and
+independent actual re-dumps; no production correction was needed for that audit defect.
+
+Next concrete interaction gap: actual Pencil precision handlePan emits untagged
+PAN before owned cursor motion, self-interrupting a native stroke; Cancelled/Failed
+lacks cancelled flag. Historical connected source reproduction and a bounded
+next contract exist. Prepare scoped producer correction plus actual pipeline/
+navigation/native-cancel regressions; no broad guard family by inference.
+Keep accepted UI/Pencil/native/history/launch contracts. Full goal unfinished.
+
 ## Exact pointer-assignment replacement building - 2026-10-19 UTC
 
 Corrected source c88c85de0f7c31081441157ac6b85a90b3963704 is pushed and building

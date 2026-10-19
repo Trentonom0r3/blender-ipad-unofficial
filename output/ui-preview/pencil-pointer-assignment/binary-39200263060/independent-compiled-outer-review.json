@@ -1,0 +1,400 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_OUTER_REVIEW",
+  "created_utc": "2026-10-19T17:50:51.792933+00:00",
+  "run": "39200263060",
+  "source": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pointer-assignment\\binary-39200263060\\Blender",
+  "binary_uuid": "6129B9FF-ABF9-316C-9E6D-400211686285",
+  "binary_sha256": "cff31c98a6aa8b7e79e77a747e8d9b42b4133c505bf8a1f02120ca9915b526b3",
+  "source_association": "Independently read ipa-39200263060/verification.json: completed/success run headSha is c88c85de0f7c31081441157ac6b85a90b3963704, source and LF-normalized worktree overlay hashes are44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002. Actual reviewed binary UUID/hash are recorded separately. Local sandbox Git context was not used as build-source proof.",
+  "source_reference_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05",
+  "source_reference_sha256": {
+    "source/blender/makesrna/intern/rna_access.cc": "d91074e2b2f62449bdd19a0832b0764f0e76a3513f4278fbcbbb2d5892db5c3b",
+    "source/blender/makesrna/intern/rna_object.cc": "9db7e308d751814723532f533dd990a7728974e3daedb5ad43fbee18b58920c8",
+    "source/blender/makesrna/RNA_access.hh": "eadfbba1ce79692ce267a0fc984a6393eda3e46419bcdf22fb0f555423479139",
+    "source/blender/python/intern/bpy_rna.cc": "2b8a55c5254db2dec13add8622881def7c2442cfc0d2ca412e911d68da285022"
+  },
+  "scope": "Actual arm64 iOS Release bounded control flow of owned pointer assignment begin/finish/disposal, context/scene receipts, generic setter/update borrowed gates, and Python conversion. Native poststate bodies are reviewed separately.",
+  "fresh_actual_revalidation": [
+    {
+      "function": "RNA_property_pointer_assignment_begin_owned",
+      "start": "0x10124a76c",
+      "end": "0x10124aca4",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "owned_transaction--10124a76c--RNA_property_pointer_assignment_begin_owned.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "RNA_property_pointer_assignment_finish_owned",
+      "start": "0x10124b750",
+      "end": "0x10124b9dc",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "owned_transaction--10124b750--RNA_property_pointer_assignment_finish_owned.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "RNA_property_pointer_assignment_receipt_free",
+      "start": "0x10124a6f4",
+      "end": "0x10124a76c",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "owned_transaction--10124a6f4--RNA_property_pointer_assignment_receipt_free.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_context_capture",
+      "start": "0x10124aca4",
+      "end": "0x10124af28",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "state_and_identity--10124aca4--rna_pointer_assignment_context_capture.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_context_matches",
+      "start": "0x10124b570",
+      "end": "0x10124b750",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "state_and_identity--10124b570--rna_pointer_assignment_context_matches.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_receipt_matches",
+      "start": "0x10124af28",
+      "end": "0x10124b03c",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "state_and_identity--10124af28--rna_pointer_assignment_receipt_matches.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_id_capture",
+      "start": "0x1012605b4",
+      "end": "0x101260824",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "state_and_identity--1012605b4--rna_pointer_assignment_id_capture.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "RNA_property_pointer_set",
+      "start": "0x10124b0f0",
+      "end": "0x10124b570",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "generic_pointer_and_update--10124b0f0--RNA_property_pointer_set.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_outer_admit",
+      "start": "0x101256e90",
+      "end": "0x101256fb8",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "admission--101256e90--rna_pointer_assignment_outer_admit.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_pointer_assignment_native_ready",
+      "start": "0x101256fb8",
+      "end": "0x1012570dc",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "admission--101256fb8--rna_pointer_assignment_native_ready.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "pyrna_py_to_prop",
+      "start": "0x101508564",
+      "end": "0x1015099d8",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "python--101508564--pyrna_py_to_prop.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "rna_property_update",
+      "start": "0x10124b9dc",
+      "end": "0x10124bda4",
+      "initial_watcher_dump_matched": false,
+      "repaired_watcher_assembly": "generic_pointer_and_update--10124b9dc--rna_property_update.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "RNA_property_update",
+      "start": "0x10125195c",
+      "end": "0x101251e20",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "generic_pointer_and_update--10125195c--RNA_property_update.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    },
+    {
+      "function": "RNA_property_update_main",
+      "start": "0x101251e20",
+      "end": "0x101251e38",
+      "initial_watcher_dump_matched": true,
+      "repaired_watcher_assembly": "generic_pointer_and_update--101251e20--RNA_property_update_main.asm",
+      "repaired_watcher_dump_matches_fresh_actual": true
+    }
+  ],
+  "artifact_correction": {
+    "finding": "Case-insensitive Windows filename collision between rna_property_update.asm and RNA_property_update.asm overwrote the internal-function dump with the public wrapper. Actual symbols and JSON boundaries are distinct; no production defect follows.",
+    "mismatched_watcher_dumps": [
+      "rna_property_update"
+    ],
+    "resolved_internal": "outer-independent-internal-update.asm",
+    "resolved_public": "outer-independent-public-update.asm",
+    "status": "REPAIRED_AND_INDEPENDENTLY_RECHECKED",
+    "repair": "Watcher now includes group, numeric actual start address and selector in filename. Repaired31 dump paths are unique after casefold; all14 outer review dumps match independent actual instruction digests.",
+    "repaired_internal": "generic_pointer_and_update--10124b9dc--rna_property_update.asm",
+    "repaired_public": "generic_pointer_and_update--10125195c--RNA_property_update.asm"
+  },
+  "resolved_symbols": {
+    "__Z43RNA_property_pointer_assignment_begin_ownedP8bContextPK10PointerRNAP11PropertyRNAS3_P10ReportListPP27RNAPointerAssignmentReceipt": {
+      "start": "0x10124a76c",
+      "end": "0x10124aca4",
+      "instruction_count": 334,
+      "assembly": null,
+      "instruction_sha256": "87f181fb4b53973e25ff13023c00f877a62598ba36772d6f4f171e3112d06056"
+    },
+    "__Z44RNA_property_pointer_assignment_finish_ownedP8bContextP27RNAPointerAssignmentReceiptP10ReportList": {
+      "start": "0x10124b750",
+      "end": "0x10124b9dc",
+      "instruction_count": 163,
+      "assembly": null,
+      "instruction_sha256": "cde2a2d3dfccc6d27838a5d3ddf0f5e31de852398e7424f775a2acd563346225"
+    },
+    "__Z44RNA_property_pointer_assignment_receipt_freeP27RNAPointerAssignmentReceipt": {
+      "start": "0x10124a6f4",
+      "end": "0x10124a76c",
+      "instruction_count": 30,
+      "assembly": null,
+      "instruction_sha256": "a8fea75d9328f124fe94e28e49733fde864417fafff7a595a2c11c30d71f73a4"
+    },
+    "__ZL38rna_pointer_assignment_context_captureP8bContextP4MainP27RnaPointerAssignmentContext": {
+      "start": "0x10124aca4",
+      "end": "0x10124af28",
+      "instruction_count": 161,
+      "assembly": null,
+      "instruction_sha256": "4a5c213fc26d518642dc824f4669be80fa8f7d4d551cd8b00a06a3c2211fd810"
+    },
+    "__ZL38rna_pointer_assignment_context_matchesP8bContextP4MainRK27RnaPointerAssignmentContext": {
+      "start": "0x10124b570",
+      "end": "0x10124b750",
+      "instruction_count": 120,
+      "assembly": null,
+      "instruction_sha256": "93b6f170ac61f906286f8c2556d72f7cdf4a890c60b12b0c26050b77d1cd6fce"
+    },
+    "__ZL38rna_pointer_assignment_receipt_matchesP8bContextRK27RNAPointerAssignmentReceipt": {
+      "start": "0x10124af28",
+      "end": "0x10124b03c",
+      "instruction_count": 69,
+      "assembly": null,
+      "instruction_sha256": "f971f5af93c367b9c12727d44d0cb6e9132cb03c56363dfe3ac46aafda78fdac"
+    },
+    "__ZL33rna_pointer_assignment_id_captureP4MainmP22RnaPointerAssignmentID": {
+      "start": "0x1012605b4",
+      "end": "0x101260824",
+      "instruction_count": 156,
+      "assembly": null,
+      "instruction_sha256": "507af48064f4902060ea52b91019b5822c0b3b248de7f960f3c2acd0fdfb91c4"
+    },
+    "__Z24RNA_property_pointer_setP10PointerRNAP11PropertyRNAS_P10ReportList": {
+      "start": "0x10124b0f0",
+      "end": "0x10124b570",
+      "instruction_count": 288,
+      "assembly": null,
+      "instruction_sha256": "775b92036390d55d2eac1aa433d3d31013411f0e10b40113d8d9b192a521f5a1"
+    },
+    "__ZL34rna_pointer_assignment_outer_admitPK10PointerRNAP11PropertyRNAbP10ReportList": {
+      "start": "0x101256e90",
+      "end": "0x101256fb8",
+      "instruction_count": 74,
+      "assembly": null,
+      "instruction_sha256": "c99d54da2aafababa17e4550ece8c831c71276e7d3c9a3a69b4a09a9d6e63820"
+    },
+    "__ZL35rna_pointer_assignment_native_readyPK10PointerRNAP11PropertyRNAb": {
+      "start": "0x101256fb8",
+      "end": "0x1012570dc",
+      "instruction_count": 73,
+      "assembly": null,
+      "instruction_sha256": "af4b353458350c07c3a14fcbb9edd1d4dff556535a781e231c296cbf316773a2"
+    },
+    "__ZL16pyrna_py_to_propP10PointerRNAP11PropertyRNAPvP7_objectPKc": {
+      "start": "0x101508564",
+      "end": "0x1015099d8",
+      "instruction_count": 1309,
+      "assembly": null,
+      "instruction_sha256": "dda7b22c61356a709bd738e3830850c53e966eebf1618dc47a85e905ef31cc29"
+    },
+    "__ZL19rna_property_updateP8bContextP4MainP5SceneP10PointerRNAP11PropertyRNA": {
+      "start": "0x10124b9dc",
+      "end": "0x10124bda4",
+      "instruction_count": 242,
+      "assembly": "outer-independent-internal-update.asm",
+      "instruction_sha256": "6f2d0926653c827203bc575844fec8c666f407cd2f00950e37805ba5da6b100d"
+    },
+    "__Z19RNA_property_updateP8bContextP10PointerRNAP11PropertyRNA": {
+      "start": "0x10125195c",
+      "end": "0x101251e20",
+      "instruction_count": 305,
+      "assembly": "outer-independent-public-update.asm",
+      "instruction_sha256": "dc948a66d3bbd69ff59e9e05d5f5ed05e3d81041f5dd33838db16f1e31b9b52d"
+    },
+    "__Z24RNA_property_update_mainP4MainP5SceneP10PointerRNAP11PropertyRNA": {
+      "start": "0x101251e20",
+      "end": "0x101251e38",
+      "instruction_count": 6,
+      "assembly": null,
+      "instruction_sha256": "7112d155e81171ab33d57f48f3e6f252781301278ff509a68503bbb0420f2338"
+    },
+    "__ZN10PointerRNAC1ERKS_": {
+      "start": "0x10124a34c",
+      "end": "0x10124a408",
+      "instruction_count": 47,
+      "assembly": "outer-independent-pointer-copy.asm",
+      "instruction_sha256": "4f119ea08d7485fbc45e22929b73b0a40ca0842f466903bb92e9ed76797bc293"
+    },
+    "__ZN10PointerRNAD1Ev": {
+      "start": "0x100013e10",
+      "end": "0x100013e48",
+      "instruction_count": 14,
+      "assembly": "outer-independent-pointer-destructor.asm",
+      "instruction_sha256": "597b0c559ce1f83fd47b833a680eb7c687643b6f838c53e94f3dc7b97a3d96b5"
+    },
+    "__ZZL38rna_pointer_assignment_borrowed_updateP8bContextP10PointerRNAP11PropertyRNAENK3$_0clEv": {
+      "start": "0x101260b90",
+      "end": "0x101260c8c",
+      "instruction_count": 63,
+      "assembly": "outer-independent-borrowed-validator.asm",
+      "instruction_sha256": "279d4a0a5f0af5a7533fc3d5c5d3e71a7b5a49c3730fdccc5caf3d35bdb44828"
+    },
+    "__ZNSt3__1eqB8ne190102I22RnaPointerAssignmentIDNS_9allocatorIS1_EEEEbRKNS_6vectorIT_T0_EES9_": {
+      "start": "0x101260978",
+      "end": "0x101260a88",
+      "instruction_count": 68,
+      "assembly": "outer-independent-scene-equality.asm",
+      "instruction_sha256": "291c0c6e5dc62a79e598941f99ae555b8c9059c4ab058055607cfaaed0c3ea76"
+    }
+  },
+  "findings": [
+    {
+      "area": "Exact owned entry and copied values",
+      "anchors": [
+        "0x10124a7b4-0x10124a7d0",
+        "0x10124a7d8-0x10124a83c",
+        "0x10124a8d8-0x10124a944"
+      ],
+      "result": "Entry clears output receipt, selects exact profile and checks target/value/output, TLS busy/lease, G_MAIN and initial absence. Both PointerRNA scalar triples plus their ancestor vectors are copied into the heap receipt; actual copy_assign_container calls at0x10124a8f0/0x10124a910 precede state_create0x10124a93c. State/context creation failure returns NativeBaseline only when initially absent; otherwise refuses. No Main or Scene provider is called before state/context capture."
+    },
+    {
+      "area": "Context and typed scene identity",
+      "anchors": [
+        "context_capture0x10124aca4-0x10124af28",
+        "context_matches0x10124b570-0x10124b750",
+        "id_capture0x1012605b4-0x101260824",
+        "scene_equality0x101260978-0x101260a88"
+      ],
+      "result": "Context capture checks G_MAIN, live WM/window/screen membership, nonzero manager/screen UIDs and winid/runtime, active screen and area/region membership. It stores caller/BPY context, Main, WM/window/screen, sizes, area/region/runtime/type and every scene as a0x48-byte typed receipt. Scene capture at0x10124aecc requires SC type; ID capture searches Main and requires exactly one address match/nonzero UID before reading ID metadata, separately validates library LI UID and override reference/root UID/type. Equality checks vector length and every named field, not padding/memcmp. Context recapture/equality is actual; no global allocator lifetime proof is claimed."
+    },
+    {
+      "area": "Owner drain and supplied Main provider",
+      "anchors": [
+        "0x10124ab34-0x10124abb0",
+        "0x10124a984-0x10124a9b4"
+      ],
+      "result": "Owner-present branch starts256-attempt loop. receipt_matches0x10124ab44 must pass before CTX_data_main0x10124ab50. Caller Main equality plus receipt_matches0x10124ab68 must pass before null-C WM_next0x10124ab88 with did-output/policy1(MaterialAssignmentOriginal). Every successful WM call revalidates receipt at0x10124ab98 before did flag is loaded at0x10124aba0; didfalse exits only after that validation. Final receipt+absence query at0x10124a98c/0x10124a9b0 precede lease/set. No supplied-context Main provider is hidden inside this producer shared scan; the null-C original-owner policy itself is outside this outer review."
+    },
+    {
+      "area": "Apply once and postsetter validation",
+      "anchors": [
+        "0x10124a9b8-0x10124aaa8",
+        "0x10124ac08-0x10124aca0"
+      ],
+      "result": "Fresh property resolution then Set-phase lease captures original owner/data/type/property/profile, installs TLS lease and calls generic setter0x10124aa14 on receipt-owned target and value copy. Clears TLS lease immediately afterward. Requires outer/native-consumed flags, no reports error, context match and static property resolution before state_mark_applied0x10124aa94. Only success publishes receipt and returns enum2. Refusal clears busy/lease then frees receipt; exception landing paths also clear scopes and dispose. Failed apply/finish is not rollback."
+    },
+    {
+      "area": "Late finish provider ordering and single use",
+      "anchors": [
+        "0x10124b770-0x10124b874",
+        "0x10124b878-0x10124b960",
+        "0x10124b964-0x10124b9d8"
+      ],
+      "result": "Null/finished/busy/lease refuse. Marks receipt.finished at0x10124b7f8 before provider work. Receipt match0x10124b808 precedes Main provider0x10124b814; compares returned Main and revalidates0x10124b830 then absence0x10124b854 before Scene provider0x10124b860. Receipt match0x10124b870, null-or-captured-scene membership loop0x10124b878-8a0 and absence0x10124b8fc must pass before fresh property, Update-phase TLS lease and complete internal update0x10124b95c. Afterward checks both consumption flags and clears TLS/busy on return or exception; a second finish refuses before providers."
+    },
+    {
+      "area": "Generic setter first gate and Release native admission",
+      "anchors": [
+        "0x10124b130-0x10124b148",
+        "0x10124b22c-0x10124b2bc",
+        "0x10124b2c0-0x10124b380"
+      ],
+      "result": "outer_admit0x10124b134 is before IDProperty resolution, type work or setter. Matching original tuple/property/profile/phase with unconsumed outer lease consumes once; unmatched/busy/lease/owner-present refuses. Existing material gate0x10124b280 precedes immediate native_ready0x10124b2b8, native argument copy and indirect setter0x10124b370. Nonnull/self checks still precede native-ready. This actual package is Release: Debug getter/refcount code is compiled out; its source position after material absence and before native-ready is source-only evidence."
+    },
+    {
+      "area": "Native ready and lease comparisons",
+      "anchors": [
+        "outer_admit0x101256e90-0x101256fb8",
+        "native_ready0x101256fb8-0x1012570dc"
+      ],
+      "result": "Lease_matches is inlined at0x101256ed4-0x101256f2c and0x101257020-0x101257074, comparing owner/data/type/property/profile/phase. Outer consumed byte is set at0x101256f3c. Native-ready first checks absence via null-C/no-output/policy0 WM query0x101257000, then matching tuple, consumed outer, unconsumed native, unarmed ready before setting ready at0x1012570d4. Unleased initially-absent baseline requires no busy flag. Actual native consumer side is separate review."
+    },
+    {
+      "area": "Public update wrapper borrowed path",
+      "anchors": [
+        "public0x10125195c-0x101251e20",
+        "valid_lambda0x101260b90-0x101260c8c"
+      ],
+      "result": "borrowed_update is inlined in actual public wrapper, not missing. Exact profile busy/lease/absence gates0x10125199c-0x101251a04 return before any Main/Scene provider when refused. Absent supported target copy owns ancestor storage0x101251a08-0x101251a8c; state/context capture precede busy0x101251ba4 and Main0x101251bac. Actual valid lambda checks property/profile/context/state at0x101260b90. Main equality+valid+absence precede Scene0x101251bec; valid+scene membership+absence precede Update lease and internal update0x101251ca8. Refused supported paths return after owned cleanup. Unsupported initially-absent state/context shapes deliberately fall through after cleanup to baseline Main0x101251d0c and Scene0x101251d18. This bounded baseline is not a universal ownership guarantee."
+    },
+    {
+      "area": "Internal C and messagebus update preserved",
+      "anchors": [
+        "internal0x10124b9dc-0x10124bda4",
+        "0x10124ba04-0x10124bb54",
+        "0x10124bb54-0x10124bd90",
+        "main_wrapper0x101251e20-0x101251e38"
+      ],
+      "result": "Actual internal function first calls outer_admit at0x10124ba14 then material owner-absence gate0x10124bae4. Non-context native callback is armed only by native_ready0x10124bb10 before callback through prop+0x88 at0x10124bb48. Existing context-specific callback split0x10124bb2c-50 remains. Successful callback continues to notifier0x10124bb60, CTX_wm_message_bus0x10124bb6c and WM_msg_publish_rna0x10124bb78 when C nonnull, and DEG_id_tag_update0x10124bd84 when applicable; IDProperty branch retains recalc/notifier/relations updates. RNA_property_update_main passes null C to this same complete function and therefore remains covered by internal first gate. No manual shortened update replaces C/messagebus semantics."
+    },
+    {
+      "area": "Python original ownership and enum branches",
+      "anchors": [
+        "python0x101508564-0x1015099d8",
+        "0x10150956c-0x101509630",
+        "0x101509818-0x10150988c"
+      ],
+      "result": "ReportList init0x101509574 and exact profile check0x10150957c precede target/value PointerRNA copy constructors0x10150958c/0x1015095a8 at stack0x170/0x118. Saved BPY context0x1015095ac is used for begin0x1015095c8. Post-begin BPY equality0x1015095d0-8 is checked before result branching. Enums0/1 alone reach generic fallback0x10150983c on original ptr but copied value; enum3 reports/refuses; enum2 skips fallback. Pointer copy body0x10124a34c copies scalar triple and independent16-byte ancestor loop/reserve, not merely the Python optional wrapper. Report conversion0x101509884 gates tail and decref cleanup; interpreter-wide lifetimes remain outside scope."
+    },
+    {
+      "area": "Python late finish, no stale wrapper update, disposal",
+      "anchors": [
+        "0x101508668-0x101508694",
+        "0x101508898-0x1015088e8",
+        "0x10150951c-0x101509560",
+        "0x1015098e4-0x1015099d4"
+      ],
+      "result": "Non-null receipt branches before generic update_check/property wrapper. BPY context mismatch errors to common cleanup; equality initializes separate reports and calls finish0x1015088b0 using saved context/receipt. Reports error or false finish refuses; successful finish reaches return without rereading former ptr/property for generic update. No-receipt baseline alone calls update_check0x10150879c/public update0x1015087b0. Copied local ancestors are destroyed0x101509864/86c before report conversion/tail; common normal/error exit calls receipt_free0x101509520, and exception tail calls receipt_free0x1015099cc."
+    },
+    {
+      "area": "Context-free receipt disposal and alias resolution",
+      "anchors": [
+        "receipt_free0x10124a6f4-0x10124a76c",
+        "PointerRNA_dtor0x100013e10-0x100013e48"
+      ],
+      "result": "receipt_free null-checks, calls state_free0x10124a70c, deletes scene vector storage then value/target owned ancestor allocations only and deletes receipt. No context provider, original ID dereference or update callback is called by this destructor. Target0x100013e10 is a156-name folded alias including exact PointerRNA destructor; actual body reads only its own ancestor storage, conditional MEM_freeN, and return. Disassembler chosen FillToolTargetInfo label is not a sculpt callback. Lease_matches/absent/scene_matches are inlined; borrowed_update has no standalone body but its exact validator lambda is resolved. Overloads were selected by exact mangled symbols and next greater text address."
+    }
+  ],
+  "debug_source_only": {
+    "file": "source/blender/makesrna/intern/rna_access.cc",
+    "lines": "RNA_property_pointer_set5183+",
+    "claim": "Material borrowed absence gate precedes Debug old/new getter/refcount reads; native_ready is after Debug getter work and immediate before native setter. Debug binary behavior is not established by this Release review."
+  },
+  "limitations": [
+    "No full heap/allocator/ABA proof, global control-flow or arbitrary callback/reentrancy/interpreter proof.",
+    "No independent proof of shared WM original-owner reconstruction, native setter poststate or all WindowManager callbacks; those are separate reviews.",
+    "No UIKit, GPU, Pencil input, device execution or device acceptance.",
+    "Initially-absent unsupported state/context shapes explicitly retain native baseline; receipt refusal after mutation is not rollback."
+  ],
+  "production_findings": [],
+  "device_acceptance": false,
+  "package_provenance": {
+    "verification": "../ipa-39200263060/verification.json",
+    "run_status": "completed",
+    "conclusion": "success",
+    "head_sha": "c88c85de0f7c31081441157ac6b85a90b3963704",
+    "patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002"
+  }
+}

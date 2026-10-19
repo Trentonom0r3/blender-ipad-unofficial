@@ -1,0 +1,1210 @@
+{
+  "status": "passed_bounded_independent_actual_compiled_native_review",
+  "reviewed_utc": "2026-10-19T17:54:15.314053+00:00",
+  "source_commit": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "run": "39200263060",
+  "production_patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "findings": [],
+  "binary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pointer-assignment\\binary-39200263060\\Blender",
+    "uuid": "6129B9FF-ABF9-316C-9E6D-400211686285",
+    "bytes": 160396752,
+    "sha256": "cff31c98a6aa8b7e79e77a747e8d9b42b4133c505bf8a1f02120ca9915b526b3"
+  },
+  "scope": "Exact three compiled generated setters with inlined native bodies, exact three native update wrappers, native admission/ready leases, native capture/create/original-identity/validate/mark-applied and expected-post logical/physical-prefix anchors, actual native material/mesh callees, and exact compiled property metadata. No source mutation, new build, or device execution.",
+  "method": {
+    "independent_extraction": "Fresh LLVM llvm-nm numeric text symbol bounds and llvm-objdump ARM64 instructions through build/audit_hud_macho.py; watcher instructions compared where corresponding original dumps exist. Same-address aliases checked explicitly.",
+    "metadata": "Pinned upstream RNA layout plus compiled classifier loads; actual callback VAs decoded by LLVM --macho --dyld-info from DYLD_CHAINED_PTR_64_OFFSET, never treating raw chained words as ordinary VAs.",
+    "anchor_count": 93,
+    "refusal_walk": "Ordinary intraprocedural direct successors from exact gate-refusal targets. Calls are boundaries, known stack-check failure is nonreturning. No whole-program CFG claim."
+  },
+  "current_authoritative_source_files": [
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05\\source\\blender\\makesrna\\intern\\rna_object.cc",
+      "sha256": "9db7e308d751814723532f533dd990a7728974e3daedb5ad43fbee18b58920c8"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05\\source\\blender\\makesrna\\intern\\rna_access.cc",
+      "sha256": "d91074e2b2f62449bdd19a0832b0764f0e76a3513f4278fbcbbb2d5892db5c3b"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05\\source\\blender\\makesrna\\RNA_access.hh",
+      "sha256": "eadfbba1ce79692ce267a0fc984a6393eda3e46419bcdf22fb0f555423479139"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\blender-pencil-rna-mlvacs05\\source\\blender\\python\\intern\\bpy_rna.cc",
+      "sha256": "2b8a55c5254db2dec13add8622881def7c2442cfc0d2ca412e911d68da285022"
+    }
+  ],
+  "symbol_scopes": [
+    {
+      "name": "Object_data_set",
+      "start": "0x101403820",
+      "end_exclusive": "0x101403a7c",
+      "symbol": "__Z15Object_data_setP10PointerRNAS_P10ReportList",
+      "same_address_text_aliases": [
+        "__Z15Object_data_setP10PointerRNAS_P10ReportList"
+      ],
+      "instruction_count": 151,
+      "instruction_sha256": "a574a8424764e4a550f183ba43ebb0010329f5d720cd1ba6217f0995e6b42157",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "Object_active_material_set",
+      "start": "0x101404284",
+      "end_exclusive": "0x1014043fc",
+      "symbol": "__Z26Object_active_material_setP10PointerRNAS_P10ReportList",
+      "same_address_text_aliases": [
+        "__Z26Object_active_material_setP10PointerRNAS_P10ReportList"
+      ],
+      "instruction_count": 94,
+      "instruction_sha256": "92611f13d27843118c69f2ec1646078e79d8f0eff09bd3b9afdd7f134e661182",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "MaterialSlot_material_set",
+      "start": "0x10140a2c8",
+      "end_exclusive": "0x10140a43c",
+      "symbol": "__Z25MaterialSlot_material_setP10PointerRNAS_P10ReportList",
+      "same_address_text_aliases": [
+        "__Z25MaterialSlot_material_setP10PointerRNAS_P10ReportList"
+      ],
+      "instruction_count": 93,
+      "instruction_sha256": "444e41befab12eabab29ec71a34887f67e39640f1ef766549506ebf6f6914bcd",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_Object_data_update",
+      "start": "0x1013ffa58",
+      "end_exclusive": "0x1013ffab8",
+      "symbol": "__Z22rna_Object_data_updateP4MainP5SceneP10PointerRNA",
+      "same_address_text_aliases": [
+        "__Z22rna_Object_data_updateP4MainP5SceneP10PointerRNA"
+      ],
+      "instruction_count": 24,
+      "instruction_sha256": "b637b916065ba2b0f2a68f4cd22ca79ceb857420f7e88e73620f7731eafa88cc",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_Object_active_material_update",
+      "start": "0x10140f3a8",
+      "end_exclusive": "0x10140f414",
+      "symbol": "__ZL33rna_Object_active_material_updateP4MainP5SceneP10PointerRNA",
+      "same_address_text_aliases": [
+        "__ZL33rna_Object_active_material_updateP4MainP5SceneP10PointerRNA"
+      ],
+      "instruction_count": 27,
+      "instruction_sha256": "fdab0facc3c74c0db4866064bc68ced3268ea4a8cfbc2aa87f59a8c08ae30387",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_MaterialSlot_material_update",
+      "start": "0x10140f9ec",
+      "end_exclusive": "0x10140fa58",
+      "symbol": "__ZL32rna_MaterialSlot_material_updateP4MainP5SceneP10PointerRNA",
+      "same_address_text_aliases": [
+        "__ZL32rna_MaterialSlot_material_updateP4MainP5SceneP10PointerRNA"
+      ],
+      "instruction_count": 27,
+      "instruction_sha256": "59cf725239216da9336b80e27a30f71fcaf1653be71a852a81605706896baa1a",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "RNA_pointer_assignment_native_admit",
+      "start": "0x10124a5a8",
+      "end_exclusive": "0x10124a6f4",
+      "symbol": "__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList",
+      "same_address_text_aliases": [
+        "__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList"
+      ],
+      "instruction_count": 83,
+      "instruction_sha256": "7caf72a79276df79613f7cb52de7e666d3fb450f5d1a6b8aee64a6096bd3fe37",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_pointer_assignment_native_ready",
+      "start": "0x101256fb8",
+      "end_exclusive": "0x1012570dc",
+      "symbol": "__ZL35rna_pointer_assignment_native_readyPK10PointerRNAP11PropertyRNAb",
+      "same_address_text_aliases": [
+        "__ZL35rna_pointer_assignment_native_readyPK10PointerRNAP11PropertyRNAb"
+      ],
+      "instruction_count": 73,
+      "instruction_sha256": "9d3252c75fce50ab05d70dd72f277f1ca1995668cce0639f716edc847a911634",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_pointer_assignment_profile",
+      "start": "0x10124a424",
+      "end_exclusive": "0x10124a5a8",
+      "symbol": "__ZL30rna_pointer_assignment_profilePK11PropertyRNA",
+      "same_address_text_aliases": [
+        "__ZL30rna_pointer_assignment_profilePK11PropertyRNA"
+      ],
+      "instruction_count": 97,
+      "instruction_sha256": "5ecd902c1cf71556cc7d6aa36011d818ac7093e80017be172eb53d55b26f8f11",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "RNA_pointer_assignment_state_create",
+      "start": "0x1013ffd08",
+      "end_exclusive": "0x101400014",
+      "symbol": "__Z35RNA_pointer_assignment_state_createP4MainPK10PointerRNAS3_iP10ReportList",
+      "same_address_text_aliases": [
+        "__Z35RNA_pointer_assignment_state_createP4MainPK10PointerRNAS3_iP10ReportList"
+      ],
+      "instruction_count": 195,
+      "instruction_sha256": "b4ba6c431425f36f822ccb9dd78e630fa21c54ef40a68036ecf54821ddf2f8ea",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_material_id_find",
+      "start": "0x101400558",
+      "end_exclusive": "0x1014005d8",
+      "symbol": "__ZL20rna_material_id_findP4Mainm",
+      "same_address_text_aliases": [
+        "__ZL20rna_material_id_findP4Mainm"
+      ],
+      "instruction_count": 32,
+      "instruction_sha256": "3271b3237609a081ead9dd1ebe00d1506f437b26472abf36551ebfda3571ae77",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_material_state_capture",
+      "start": "0x10140023c",
+      "end_exclusive": "0x101400558",
+      "symbol": "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState",
+      "same_address_text_aliases": [
+        "__ZL26rna_material_state_captureP4MainmP18RnaMaterialIDState"
+      ],
+      "instruction_count": 199,
+      "instruction_sha256": "172f05728dd5ecfa55f58410aa72e15c23eacf123c0885ab6c50f99984f0a16e",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_pointer_assignment_capture",
+      "start": "0x1014005d8",
+      "end_exclusive": "0x101400be0",
+      "symbol": "__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot",
+      "same_address_text_aliases": [
+        "__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot"
+      ],
+      "instruction_count": 386,
+      "instruction_sha256": "2130d6df6cb4ada3908658e440785564492a46b13ac861b30edbcbca461f201a",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_pointer_assignment_slots_capture",
+      "start": "0x10140d730",
+      "end_exclusive": "0x10140da40",
+      "symbol": "__ZL36rna_pointer_assignment_slots_captureP4MainP2IDP25RnaPointerAssignmentSlots",
+      "same_address_text_aliases": [
+        "__ZL36rna_pointer_assignment_slots_captureP4MainP2IDP25RnaPointerAssignmentSlots"
+      ],
+      "instruction_count": 196,
+      "instruction_sha256": "55c43e15aa0392594151e862873d88d807638a12ab89352d3ca67c04521cebbe",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_pointer_assignment_originals_live",
+      "start": "0x101401134",
+      "end_exclusive": "0x101401390",
+      "symbol": "__ZL37rna_pointer_assignment_originals_liveP4MainRK25RnaPointerAssignmentState",
+      "same_address_text_aliases": [
+        "__ZL37rna_pointer_assignment_originals_liveP4MainRK25RnaPointerAssignmentState"
+      ],
+      "instruction_count": 151,
+      "instruction_sha256": "cee9f1b7126e9729d603a2d541b2a85a62d2427315bdaba7aeba305a52a3dac0",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "RNA_pointer_assignment_state_validate",
+      "start": "0x101400f54",
+      "end_exclusive": "0x101401134",
+      "symbol": "__Z37RNA_pointer_assignment_state_validateP4MainPK25RnaPointerAssignmentState",
+      "same_address_text_aliases": [
+        "__Z37RNA_pointer_assignment_state_validateP4MainPK25RnaPointerAssignmentState"
+      ],
+      "instruction_count": 120,
+      "instruction_sha256": "a985bce28d513382ccf6f6025ae6285b062ff68ef8c87fae9936a20d8d49eccb",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "RnaPointerAssignmentSnapshot_equal",
+      "start": "0x101401390",
+      "end_exclusive": "0x10140157c",
+      "symbol": "__ZNK28RnaPointerAssignmentSnapshoteqERKS_",
+      "same_address_text_aliases": [
+        "__ZNK28RnaPointerAssignmentSnapshoteqERKS_"
+      ],
+      "instruction_count": 123,
+      "instruction_sha256": "6c27e911090290c48b33b01151620232083f1c36b51b8eefe1629c68959014d4",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "RNA_pointer_assignment_state_mark_applied",
+      "start": "0x1014015dc",
+      "end_exclusive": "0x101401d6c",
+      "symbol": "__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList",
+      "same_address_text_aliases": [
+        "__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList"
+      ],
+      "instruction_count": 484,
+      "instruction_sha256": "d556ca43225c17df94dec088c74477c0ac894ffa3e25e19f312acdcb66ef6a74",
+      "watcher_same_instructions": true
+    },
+    {
+      "name": "rna_pointer_assignment_same_origin",
+      "start": "0x10140e214",
+      "end_exclusive": "0x10140e344",
+      "symbol": "__ZL34rna_pointer_assignment_same_originRK18RnaMaterialIDStateS1_RK25RnaPointerAssignmentState",
+      "same_address_text_aliases": [
+        "__ZL34rna_pointer_assignment_same_originRK18RnaMaterialIDStateS1_RK25RnaPointerAssignmentState"
+      ],
+      "instruction_count": 76,
+      "instruction_sha256": "74bd5433f6dd6ea5bfa3732da2e234a3af0070c0f80e6ce5e9099e6cde5b114d",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_pointer_assignment_materials_equal",
+      "start": "0x10140e60c",
+      "end_exclusive": "0x10140e6b4",
+      "symbol": "__ZL38rna_pointer_assignment_materials_equalRKNSt3__16vectorI18RnaMaterialIDStateNS_9allocatorIS1_EEEES6_RK25RnaPointerAssignmentState",
+      "same_address_text_aliases": [
+        "__ZL38rna_pointer_assignment_materials_equalRKNSt3__16vectorI18RnaMaterialIDStateNS_9allocatorIS1_EEEES6_RK25RnaPointerAssignmentState"
+      ],
+      "instruction_count": 42,
+      "instruction_sha256": "ce42956c9eca47c2a3335e9711bd44bfa8f8d8e58b7f84ef57ca034cec9fb740",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_pointer_assignment_slots_equal",
+      "start": "0x10140e6b4",
+      "end_exclusive": "0x10140e774",
+      "symbol": "__ZL34rna_pointer_assignment_slots_equalRK25RnaPointerAssignmentSlotsS1_RK25RnaPointerAssignmentState",
+      "same_address_text_aliases": [
+        "__ZL34rna_pointer_assignment_slots_equalRK25RnaPointerAssignmentSlotsS1_RK25RnaPointerAssignmentState"
+      ],
+      "instruction_count": 48,
+      "instruction_sha256": "cd6d46714cac9dd8cea398e513b7a19a720d5584b27c8d2013a19a5922e04b94",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_pointer_assignment_slots_resize",
+      "start": "0x10140e344",
+      "end_exclusive": "0x10140e390",
+      "symbol": "__ZL35rna_pointer_assignment_slots_resizeR25RnaPointerAssignmentSlotsi",
+      "same_address_text_aliases": [
+        "__ZL35rna_pointer_assignment_slots_resizeR25RnaPointerAssignmentSlotsi"
+      ],
+      "instruction_count": 19,
+      "instruction_sha256": "32a2a6d3bcc441d58042c746ef1209b7d138e9b6f7cc6bdbbf296d8bb9190059",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "rna_pointer_assignment_object_resize",
+      "start": "0x10140e390",
+      "end_exclusive": "0x10140e4d0",
+      "symbol": "__ZL36rna_pointer_assignment_object_resizeR28RnaPointerAssignmentSnapshoti",
+      "same_address_text_aliases": [
+        "__ZL36rna_pointer_assignment_object_resizeR28RnaPointerAssignmentSnapshoti"
+      ],
+      "instruction_count": 80,
+      "instruction_sha256": "eaacdc7d55b6f39c3c9d29e606da6979b2c1a1b78a1b031cbd1a092263e7588d",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "BKE_mesh_assign_object",
+      "start": "0x10025d17c",
+      "end_exclusive": "0x10025d1f0",
+      "symbol": "__Z22BKE_mesh_assign_objectP4MainP6ObjectP4Mesh",
+      "same_address_text_aliases": [
+        "__Z22BKE_mesh_assign_objectP4MainP6ObjectP4Mesh"
+      ],
+      "instruction_count": 29,
+      "instruction_sha256": "8c93c4b8a9042a04420f52dfe3bac067479252ae27104588ac4a7d723b212cff",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "BKE_object_material_assign",
+      "start": "0x10025100c",
+      "end_exclusive": "0x100251014",
+      "symbol": "__Z26BKE_object_material_assignP4MainP6ObjectP8Materialsi",
+      "same_address_text_aliases": [
+        "__Z26BKE_object_material_assignP4MainP6ObjectP8Materialsi"
+      ],
+      "instruction_count": 2,
+      "instruction_sha256": "4724a806e8c2a38a8f8eafa4199c1d3b20984534368ca1e37e5715b9564d9bc4",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "object_material_assign",
+      "start": "0x100251644",
+      "end_exclusive": "0x1002519cc",
+      "symbol": "__ZL22object_material_assignP4MainP6ObjectP8Materialsib",
+      "same_address_text_aliases": [
+        "__ZL22object_material_assignP4MainP6ObjectP8Materialsib"
+      ],
+      "instruction_count": 226,
+      "instruction_sha256": "fedddb4f9dc4187028dd2231e1a41b89c1b62520cd2479d5ecf993935013dbfa",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "BKE_object_materials_sync_length",
+      "start": "0x1002512c8",
+      "end_exclusive": "0x100251444",
+      "symbol": "__Z32BKE_object_materials_sync_lengthP4MainP6ObjectP2ID",
+      "same_address_text_aliases": [
+        "__Z32BKE_object_materials_sync_lengthP4MainP6ObjectP2ID"
+      ],
+      "instruction_count": 95,
+      "instruction_sha256": "8ef2ff9e1ac863a05e53422c52d9630dc313e80fb1a0c36489a91b64170cf42a",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "BKE_object_material_resize",
+      "start": "0x10025114c",
+      "end_exclusive": "0x1002512c8",
+      "symbol": "__Z26BKE_object_material_resizeP4MainP6Objectsb",
+      "same_address_text_aliases": [
+        "__Z26BKE_object_material_resizeP4MainP6Objectsb"
+      ],
+      "instruction_count": 95,
+      "instruction_sha256": "9bb2396746d1df720bae5baf927eb82c24781c6a9528e64f9bd3ac259b556e0f",
+      "watcher_same_instructions": null
+    },
+    {
+      "name": "0x10140dd74",
+      "start": "0x10140dd74",
+      "end_exclusive": "0x10140de60",
+      "symbol": "__ZNSt3__113__tuple_equalILm23EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_",
+      "same_address_text_aliases": [
+        "__ZNSt3__113__tuple_equalILm23EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_"
+      ],
+      "instruction_count": 59,
+      "instruction_sha256": "7390b6aaf773cafdc7ffac05fe26cdba297d6edc62d157a72044a1cdcc902f34"
+    },
+    {
+      "name": "0x10140de60",
+      "start": "0x10140de60",
+      "end_exclusive": "0x10140df84",
+      "symbol": "__ZNSt3__113__tuple_equalILm21EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_",
+      "same_address_text_aliases": [
+        "__ZNSt3__113__tuple_equalILm21EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_"
+      ],
+      "instruction_count": 73,
+      "instruction_sha256": "167554640a0c8b9b37bae380453067175fce3f361a045150b3b950aed8e25029"
+    },
+    {
+      "name": "0x10140df84",
+      "start": "0x10140df84",
+      "end_exclusive": "0x10140e080",
+      "symbol": "__ZNSt3__113__tuple_equalILm14EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_",
+      "same_address_text_aliases": [
+        "__ZNSt3__113__tuple_equalILm14EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_"
+      ],
+      "instruction_count": 63,
+      "instruction_sha256": "5b8d77cdde3b714913c45d10b440934d86462ff77f3a649d7e945d2ed46c9a04"
+    },
+    {
+      "name": "0x10140e080",
+      "start": "0x10140e080",
+      "end_exclusive": "0x10140e118",
+      "symbol": "__ZNSt3__113__tuple_equalILm6EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_",
+      "same_address_text_aliases": [
+        "__ZNSt3__113__tuple_equalILm6EEclB8ne190102INS_5tupleIJRK18RnaMaterialIDStateS6_S6_S6_RKsS8_S8_RKiSA_SA_SA_SA_SA_SA_SA_RKbRKmSE_SE_SE_RKNS_6vectorIS4_NS_9allocatorIS4_EEEERKNSF_IcNSG_IcEEEERK25RnaPointerAssignmentSlotsSR_EEESS_EEbRKT_RKT0_"
+      ],
+      "instruction_count": 38,
+      "instruction_sha256": "e8fd4c00b4cc9f9d03726a538a8c042b73dd1e7397dd783c8fdd66ecc941858f"
+    },
+    {
+      "name": "0x10140e118",
+      "start": "0x10140e118",
+      "end_exclusive": "0x10140e214",
+      "symbol": "__ZNK18RnaMaterialIDStateeqERKS_",
+      "same_address_text_aliases": [
+        "__ZNK18RnaMaterialIDStateeqERKS_"
+      ],
+      "instruction_count": 63,
+      "instruction_sha256": "fd008db1d2c32706115b1b60b23f1271cf2a8658230649f06d496ed6ac745c72"
+    }
+  ],
+  "resolved_inlining_and_ABI": {
+    "native_setters": "No standalone rna_Object_data_set, rna_Object_active_material_set, or rna_MaterialSlot_material_set text symbols. Their native bodies are inlined into unique Object_data_set, Object_active_material_set, MaterialSlot_material_set generated entries; no same-address aliases in these scopes.",
+    "generated_wrapper_caveat": "Before admission, generated entries copy incoming PointerRNA metadata/ancestor vectors to local storage. Admission itself compares numeric PointerRNA metadata. First Object target resolution/dereference is after the refusal branch; claim does not mean zero argument metadata reads or allocations.",
+    "native_admit_ABI": "x0=PointerRNA*,w1=exact profile1/2/3,w2=Set0/Update1,x3=reports or0. All six compiled consumers pass the expected values.",
+    "update_scene": "The three wrappers preserve native Main/owner-ID tagging/notifiers. Their inherited bodies do not consume Scene; absence of Scene use is not a changed update ABI.",
+    "TLS_descriptors": [
+      {
+        "va": "0x106d7ebc0",
+        "symbol": "__ZL28rna_pointer_assignment_lease"
+      },
+      {
+        "va": "0x106d7ebd8",
+        "symbol": "__ZL27rna_pointer_assignment_busy"
+      }
+    ],
+    "indirect_call_resolution": "Native admission/ready blr sites target Mach-O thread-local variable descriptors. Capture blr at0x101400a2c/0x101400b90 loads named _MEM_allocN_len slot0x10664f688, not a context provider. Native material growth blr0x10025187c/0x100251898 uses named _MEM_recallocN_id slot0x10664f6a8.",
+    "import_stubs": [
+      "0x0000000104b67c10 386425 __Unwind_Resume",
+      "0x0000000104b6a19c 387186 __ZdlPv",
+      "0x0000000104b6a340 387227 ___stack_chk_fail",
+      "0x0000000104b6b048 387525 _memcmp",
+      "0x0000000104b6b054 387526 _memcpy"
+    ]
+  },
+  "property_metadata": {
+    "layout_source": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\makesrna\\intern\\rna_internal_types.hh",
+    "layout_source_sha256": "b332382013a9e4f35bee8abf35c91eb7ad04fb7342cfac0c12e9a389d5962bbd",
+    "offsets": {
+      "magic": "0x10",
+      "identifier": "0x18",
+      "flags": "0x20",
+      "type": "0x60",
+      "update": "0x88",
+      "noteflag": "0x90",
+      "setter": "0xe0"
+    },
+    "entries": [
+      {
+        "profile": 1,
+        "property": "Object.active_material",
+        "base": "0x1069efb38",
+        "identifier": "active_material",
+        "magic": "0xffffffff",
+        "property_type": 5,
+        "flags": "0x8000c1",
+        "id_refcount": true,
+        "context_update": false,
+        "context_property_update_bit27": false,
+        "noteflag": "0x6170000",
+        "setter_slot": "0x1069efc18",
+        "setter": "0x101404284",
+        "update_slot": "0x1069efbc0",
+        "update": "0x10140f3a8",
+        "dyld_rebase_evidence": [
+          "__DATA __data 0x1069EFB50 0x0040000004C12DF8 rebase 0x104C12DF8",
+          "__DATA __data 0x1069EFBC0 0x002000000140F3A8 rebase 0x10140F3A8",
+          "__DATA __data 0x1069EFC18 0x0020000001404284 rebase 0x101404284"
+        ]
+      },
+      {
+        "profile": 2,
+        "property": "MaterialSlot.material",
+        "base": "0x106a03028",
+        "identifier": "material",
+        "magic": "0xffffffff",
+        "property_type": 5,
+        "flags": "0x8000c1",
+        "id_refcount": true,
+        "context_update": false,
+        "context_property_update_bit27": false,
+        "noteflag": "0x6170000",
+        "setter_slot": "0x106a03108",
+        "setter": "0x10140a2c8",
+        "update_slot": "0x106a030b0",
+        "update": "0x10140f9ec",
+        "dyld_rebase_evidence": [
+          "__DATA __data 0x106A03040 0x0040000004B82D5C rebase 0x104B82D5C",
+          "__DATA __data 0x106A030B0 0x002000000140F9EC rebase 0x10140F9EC",
+          "__DATA __data 0x106A03108 0x002000000140A2C8 rebase 0x10140A2C8"
+        ]
+      },
+      {
+        "profile": 3,
+        "property": "Object.data",
+        "base": "0x1069eeb30",
+        "identifier": "data",
+        "magic": "0xffffffff",
+        "property_type": 5,
+        "flags": "0x28000c1",
+        "id_refcount": true,
+        "context_update": false,
+        "context_property_update_bit27": false,
+        "noteflag": "0x0",
+        "setter_slot": "0x1069eec10",
+        "setter": "0x101403820",
+        "update_slot": "0x1069eebb8",
+        "update": "0x1013ffa58",
+        "dyld_rebase_evidence": [
+          "__DATA __data 0x1069EEB48 0x0040000004B76C2D rebase 0x104B76C2D",
+          "__DATA __data 0x1069EEBB8 0x00A00000013FFA58 rebase 0x1013FFA58",
+          "__DATA __data 0x1069EEC10 0x0010000001403820 rebase 0x101403820"
+        ]
+      }
+    ],
+    "classifier": "0x10124a424..0x10124a5a8 uses fixed Object/MaterialSlot lookups, compares returned numeric address before magic/type/set loads, exact generated setter addresses, and explicit profile constants.",
+    "classifier_constants": [
+      {
+        "profile": 1,
+        "table_va": "0x1063fa7d0",
+        "int_at_plus_0x10": 1
+      },
+      {
+        "profile": 2,
+        "table_va": "0x1063fa7f0",
+        "int_at_plus_0x10": 2
+      },
+      {
+        "profile": 3,
+        "table_va": "0x1063fa810",
+        "int_at_plus_0x10": 3
+      }
+    ]
+  },
+  "native_consumers": [
+    {
+      "profile": 3,
+      "property": "Object.data",
+      "admit_call": "0x1014038e0",
+      "false_branch": "0x1014038e4 ->0x1014039d8",
+      "first_self_resolution": "0x1014038e8",
+      "native_paths": "Edit-mode bit at0x1014038f0 and null non-Empty at0x10140396c..970 exit; ID_TAG_NO_MAIN mismatch reports before mutation. Empty clears/refcounts image; Mesh calls BKE_mesh_assign_object0x1014039d4; other ID writes0x101403930 then sync0x101403948; Curve type0x101403964 and Armature pose0x101403a38 retained.",
+      "same_mesh_effect": "BKE_mesh_assign_object0x10025d1a0 unconditionally calls multires_force_sculpt_rebuild before refcount/data store and material sync; same-pointer assignment is not treated as a no-op."
+    },
+    {
+      "profile": 1,
+      "property": "Object.active_material",
+      "admit_call": "0x101404344",
+      "false_branch": "0x101404348 ->0x10140437c",
+      "first_self_resolution": "0x10140434c",
+      "tag": "0x101404358 tags incoming only after admission",
+      "native_assignment": "0x101404378 BKE_object_material_assign(x0freshGMain,x1Object,x2material,w3signed short actcol,w4=0)"
+    },
+    {
+      "profile": 2,
+      "property": "MaterialSlot.material",
+      "admit_call": "0x10140a388",
+      "false_branch": "0x10140a38c ->0x10140a3bc",
+      "first_self_resolution": "0x10140a390",
+      "native_assignment": "0x10140a3b8 BKE_object_material_assign; numeric encoded slot-owner+1 calculation is explicitly signed-short at0x10140a3b0,w4=0"
+    }
+  ],
+  "update_wrappers": [
+    {
+      "profile": 3,
+      "admit": "0x1013ffa7c",
+      "false_branch": "0x1013ffa80 ->0x1013ffaac",
+      "accepted_effects": [
+        "0x1013ffa88 DEG_relations_tag_update(Main)",
+        "0x1013ffa94 DEG_id_tag_update(owner,2)",
+        "0x1013ffaa8 tail WM_main_add_notifier(0x6170000,owner)"
+      ]
+    },
+    {
+      "profile": 1,
+      "admit": "0x10140f3cc",
+      "false_branch": "0x10140f3d0 ->0x10140f408",
+      "accepted_effects": [
+        "0x10140f3dc DEG_id_tag_update(owner,1)",
+        "0x10140f3e8 WM_main_add_notifier(0x6130000,owner)",
+        "0x10140f3f4 WM_main_add_notifier(0x7200000,null)",
+        "0x10140f404 tail DEG_relations_tag_update(Main)"
+      ]
+    },
+    {
+      "profile": 2,
+      "admit": "0x10140fa10",
+      "false_branch": "0x10140fa14 ->0x10140fa4c",
+      "accepted_effects": [
+        "0x10140fa20 DEG_id_tag_update(owner,1)",
+        "0x10140fa2c WM_main_add_notifier(0x6130000,owner)",
+        "0x10140fa38 WM_main_add_notifier(0x7200000,null)",
+        "0x10140fa48 tail DEG_relations_tag_update(Main)"
+      ]
+    }
+  ],
+  "native_lease": {
+    "matching": "0x10124a5d4..638 compares profile, phase, owner/data/type numeric metadata, outer_consumed byte+28==1,native_ready+2a==1,native_consumed+29==0.",
+    "absence": "0x10124a660 and0x10124a6b8 call WM_next(x0nullC,x1fresh G_MAIN,x2null did,w3default0); null Main refuses. WM helper body is separately reviewed by outer reviewer.",
+    "consume": "On matched successful absence0x10124a66c..670 writes halfword1 atlease+29: native_consumed=true,native_ready=false before true return.",
+    "refusal": "Unmatched occupied lease or busy TLS branches0x10124a690/694 to report-or-false0x10124a6cc..6e4; no target storage read.",
+    "ready": "0x101257000 confirms absence before arming; exact profile/phase/owner/data/type/property/outer-consumed/native-consumed/native-ready comparisons lead to single byte arm0x1012570d4. No lease returns !busy.",
+    "boundary": "Receipt producer and late update integration reviewed separately; no global TLS/reentrancy proof."
+  },
+  "state_paths": {
+    "create": "0x1013ffd24..ffe0c rejects null/foreign Main, profile outside1..3, PointerRNA ownership/type/ancestor shape before target ID storage. Fresh material-state capture and numeric Main find precede first Object.data load0x1013ffea4. MaterialSlot numeric slot bound0x1013ffed4..ffee8; profile-specific data/Material/Curve type checks0x1013fff04..fffbc; current=before then move allocated state0x1013fffd8..ffff4.",
+    "identity_capture": "rna_material_state_capture0x10140029c..2ec traverses fresh Main ID lists, requires unique address match and nonzero session UID before type/field reads; library/reference/hierarchy/override identities are also captured. rna_pointer_assignment_originals_live0x101401134..1390 checks Main equality and fresh original Object/old/incoming address+UID+type; address reused replacements cannot become next origin.",
+    "capture": "0x101400780..794 checks current Main;0x1014007a4..914 capture identities and reject no-Main IDs; logical count bounds0..MAXMAT32766 checked0x10140091c..928. Reads physical Object material and bit arrays directly; no RNA getter call. Old/incoming supported slots capture0x101400b14/28; Curve type/flag fields0x101400b44..b74.",
+    "physical_prefix": "Profile1 only: signed-short actcol load0x101400a00; act>32766 skips extra prefix. needed=max(shortAct,1); material/bit actual lengths from _MEM_allocN_len at0x101400a2c and0x101400b90; material length divided8. Both allocated lengths must cover logical totcol at0x101400ba4..bb4. Independent material/bit captured lengths=max(logicalCount,min(needed,allocatedLength)) at0x101400bb8..bd4. This preserves hidden allocation cells left by an earlier getter while retaining separate logical count.",
+    "validate": "0x101400f78 originals_live,0x101401098 fresh capture,0x1014010a8 snapshot equality versusstate+0x240. Equality tuple helper chain0x101401390/10140dd74/10140de60/10140df84/10140e080 compares identities, logical fields, physical array addresses, material vector contents, full bit vector memcmp and both slot snapshots including arrays.",
+    "mark_applied": "0x101401704..734 requires state,not applied,originals_live,fresh capture; exact expected-post body is inlined at0x101401738..bac. Only after every check succeeds does0x101401bc0..ca8 move fresh snapshot intocurrent; applied byte written1 at0x101401cb0. Failure reports/cleans up and returnsfalse.",
+    "expected_post": "0x101401748/75c/774 same_origin for originalObject/old/incoming; mode/missing/Curve fields compared0x10140177c..7f8. Snapshot copy0x101401804. Profile3 Edit/null non-Empty silent rules0x101401814..828; data/Curve transition0x10140182c..860; missing-data/object material resize and active sanitize0x101401868..894 and0x1014019dc..a04. Old==incoming slots copied0x101401a08..a44. Material profiles use signed-short act/slot+1 at0x101401898..8ac; reject32767, clamp<=0 to1; grow slot/object expected vectors before inspecting original retained bit0x101401900..914. Object-owned bit==1 vs data-owned material transition split0x101401918..998. Incoming indirect-to-extern allowance is narrowed by original incoming library/indirect0x1014019c0..9d8 and same_origin0x10140e30c..338; sculpt stays exact, Armature pose exception bounded0x101401a6c..acc. Expected vectors normalize to logical count0x101401adc/ae8; final objectType/active/count/bits,data origin/material arrays/slots checks0x101401af0..b9c precede recording.",
+    "native_parity": "Actual object_material_assign wrapper0x10025100c passes dosync1. Internal0x100251660..69c applies signed-short32767 refusal and clamp1;0x10025187c/898 MEM_recallocN_id-backed growth retains physical cells; w4=0 reads existing bit0x10025190c..924. Object-owned writes0x100251980 +sync0x100251990; data-owned writes0x100251944 +all-owner sync0x100251954; incoming id_us_plus0x10025199c. BKE_object_materials_sync_length missing-ID direction0x1002513d0..3d4, Object resize0x1002513f0, active sanitize0x1002513f4..420 or reverse ID resize0x100251430..440 matches expected-post branches."
+  },
+  "refusal_continuations": [
+    {
+      "scope": "Object_data_set",
+      "entry": "0x1014039d8",
+      "visited_instruction_count": 18,
+      "calls": [
+        {
+          "pc": "0x1014039e4",
+          "target": "0x100ae425c",
+          "symbol": "_MEM_freeN"
+        },
+        {
+          "pc": "0x101403a40",
+          "target": "0x104b6a340",
+          "symbol": "_zlibVersion+0x104b6a340"
+        }
+      ],
+      "terminal_pcs": [
+        "0x101403a18"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    },
+    {
+      "scope": "Object_active_material_set",
+      "entry": "0x10140437c",
+      "visited_instruction_count": 18,
+      "calls": [
+        {
+          "pc": "0x101404388",
+          "target": "0x100ae425c",
+          "symbol": "_MEM_freeN"
+        },
+        {
+          "pc": "0x1014043c0",
+          "target": "0x104b6a340",
+          "symbol": "_zlibVersion+0x104b6a340"
+        }
+      ],
+      "terminal_pcs": [
+        "0x1014043bc"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "entry": "0x10140a3bc",
+      "visited_instruction_count": 18,
+      "calls": [
+        {
+          "pc": "0x10140a3c8",
+          "target": "0x100ae425c",
+          "symbol": "_MEM_freeN"
+        },
+        {
+          "pc": "0x10140a400",
+          "target": "0x104b6a340",
+          "symbol": "_zlibVersion+0x104b6a340"
+        }
+      ],
+      "terminal_pcs": [
+        "0x10140a3fc"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    },
+    {
+      "scope": "rna_Object_data_update",
+      "entry": "0x1013ffaac",
+      "visited_instruction_count": 3,
+      "calls": [],
+      "terminal_pcs": [
+        "0x1013ffab4"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    },
+    {
+      "scope": "rna_Object_active_material_update",
+      "entry": "0x10140f408",
+      "visited_instruction_count": 3,
+      "calls": [],
+      "terminal_pcs": [
+        "0x10140f410"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    },
+    {
+      "scope": "rna_MaterialSlot_material_update",
+      "entry": "0x10140fa4c",
+      "visited_instruction_count": 3,
+      "calls": [],
+      "terminal_pcs": [
+        "0x10140fa54"
+      ],
+      "target_or_tag_writes": false,
+      "boundary": "Optional MEM_freeN releases generated local PointerRNA ancestor-copy allocation; stack_chk_fail is a non-returning canary boundary. Native callback bodies and exception unwinding are outside this traversal."
+    }
+  ],
+  "checked_instruction_anchors": [
+    {
+      "scope": "Object_data_set",
+      "pc": "0x1014038e0",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x1014038e4",
+      "instruction": "cbz w0, 0x1014039d8 <__Z15Object_data_setP10PointerRNAS_P10ReportList+0x1b8>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x1014038e8",
+      "instruction": "ldr x19, [x19, #0x10]"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x101404344",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x101404348",
+      "instruction": "cbz w0, 0x10140437c <__Z26Object_active_material_setP10PointerRNAS_P10ReportList+0xf8>"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x10140434c",
+      "instruction": "ldr x19, [x19]"
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "pc": "0x10140a388",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "pc": "0x10140a38c",
+      "instruction": "cbz w0, 0x10140a3bc <__Z25MaterialSlot_material_setP10PointerRNAS_P10ReportList+0xf4>"
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "pc": "0x10140a390",
+      "instruction": "ldr x1, [x19]"
+    },
+    {
+      "scope": "rna_Object_data_update",
+      "pc": "0x1013ffa7c",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "rna_Object_data_update",
+      "pc": "0x1013ffa80",
+      "instruction": "cbz w0, 0x1013ffaac <__Z22rna_Object_data_updateP4MainP5SceneP10PointerRNA+0x54>"
+    },
+    {
+      "scope": "rna_Object_data_update",
+      "pc": "0x1013ffa84",
+      "instruction": "mov x0, x20"
+    },
+    {
+      "scope": "rna_Object_active_material_update",
+      "pc": "0x10140f3cc",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "rna_Object_active_material_update",
+      "pc": "0x10140f3d0",
+      "instruction": "cbz w0, 0x10140f408 <__ZL33rna_Object_active_material_updateP4MainP5SceneP10PointerRNA+0x60>"
+    },
+    {
+      "scope": "rna_Object_active_material_update",
+      "pc": "0x10140f3d4",
+      "instruction": "ldr x0, [x20]"
+    },
+    {
+      "scope": "rna_MaterialSlot_material_update",
+      "pc": "0x10140fa10",
+      "instruction": "bl 0x10124a5a8 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList>"
+    },
+    {
+      "scope": "rna_MaterialSlot_material_update",
+      "pc": "0x10140fa14",
+      "instruction": "cbz w0, 0x10140fa4c <__ZL32rna_MaterialSlot_material_updateP4MainP5SceneP10PointerRNA+0x60>"
+    },
+    {
+      "scope": "rna_MaterialSlot_material_update",
+      "pc": "0x10140fa18",
+      "instruction": "ldr x0, [x20]"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x101403924",
+      "instruction": "bl 0x10022665c <__Z9id_us_minP2ID>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x101403930",
+      "instruction": "str x21, [x19, #0x238]"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x101403948",
+      "instruction": "bl 0x1002512c8 <__Z32BKE_object_materials_sync_lengthP4MainP6ObjectP2ID>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x1014039d4",
+      "instruction": "bl 0x10025d17c <__Z22BKE_mesh_assign_objectP4MainP6ObjectP4Mesh>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x101403964",
+      "instruction": "bl 0x1000dcd50 <__Z19BKE_curve_type_testP6Objectb>"
+    },
+    {
+      "scope": "Object_data_set",
+      "pc": "0x101403a38",
+      "instruction": "bl 0x100028dd4 <__Z16BKE_pose_rebuildP4MainP6ObjectP9bArmatureb>"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x101404358",
+      "instruction": "bl 0x1008d9764 <__Z17DEG_id_tag_updateP2IDj>"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x10140436c",
+      "instruction": "ldrsh w3, [x19, #0x2f4]"
+    },
+    {
+      "scope": "Object_active_material_set",
+      "pc": "0x101404378",
+      "instruction": "bl 0x10025100c <__Z26BKE_object_material_assignP4MainP6ObjectP8Materialsi>"
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "pc": "0x10140a3b0",
+      "instruction": "sxth w3, w8"
+    },
+    {
+      "scope": "MaterialSlot_material_set",
+      "pc": "0x10140a3b8",
+      "instruction": "bl 0x10025100c <__Z26BKE_object_material_assignP4MainP6ObjectP8Materialsi>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a5dc",
+      "instruction": "b.ne 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a5e8",
+      "instruction": "b.ne 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a618",
+      "instruction": "b.ne 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a624",
+      "instruction": "b.ne 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a630",
+      "instruction": "b.ne 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a638",
+      "instruction": "tbnz w8, #0x0, 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a660",
+      "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a668",
+      "instruction": "cbz w0, 0x10124a678 <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0xd0>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a670",
+      "instruction": "sturh w0, [x9, #0x29]"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a690",
+      "instruction": "tbnz w8, #0x0, 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a694",
+      "instruction": "cbnz x9, 0x10124a6cc <__Z35RNA_pointer_assignment_native_admitPK10PointerRNAibP10ReportList+0x124>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a6b8",
+      "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_native_admit",
+      "pc": "0x10124a6e4",
+      "instruction": "mov w0, #0x0"
+    },
+    {
+      "scope": "rna_pointer_assignment_native_ready",
+      "pc": "0x101257000",
+      "instruction": "bl 0x100b51420 <__Z46WM_event_ipad_pencil_paint_owner_teardown_nextP8bContextP4MainPb34eIPadPencilPaintOwnerContextPolicy>"
+    },
+    {
+      "scope": "rna_pointer_assignment_native_ready",
+      "pc": "0x101257004",
+      "instruction": "cbz w0, 0x101257094 <__ZL35rna_pointer_assignment_native_readyPK10PointerRNAP11PropertyRNAb+0xdc>"
+    },
+    {
+      "scope": "rna_pointer_assignment_native_ready",
+      "pc": "0x101257074",
+      "instruction": "b.ne 0x101257094 <__ZL35rna_pointer_assignment_native_readyPK10PointerRNAP11PropertyRNAb+0xdc>"
+    },
+    {
+      "scope": "rna_pointer_assignment_native_ready",
+      "pc": "0x1012570d4",
+      "instruction": "strb w9, [x8, #0x2a]"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400794",
+      "instruction": "b.ne 0x101400930 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x358>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x1014008e0",
+      "instruction": "b.ne 0x101400930 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x358>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x1014008e8",
+      "instruction": "ldrb w8, [x25, #0x12e]"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400928",
+      "instruction": "b.ls 0x101400950 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x378>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400a00",
+      "instruction": "ldrsh w8, [x25, #0x2f4]"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400a0c",
+      "instruction": "b.gt 0x101400a3c <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x464>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400a2c",
+      "instruction": "blr x8"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400a30",
+      "instruction": "lsr x27, x0, #3"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400b90",
+      "instruction": "blr x8"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400bac",
+      "instruction": "b.lo 0x101400930 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x358>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400bb4",
+      "instruction": "b.lo 0x101400930 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot+0x358>"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400bc4",
+      "instruction": "csel w9, w26, w9, gt"
+    },
+    {
+      "scope": "rna_pointer_assignment_capture",
+      "pc": "0x101400bd4",
+      "instruction": "csel w10, w26, w8, gt"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_create",
+      "pc": "0x1013ffd4c",
+      "instruction": "b.ne 0x1013ffd80 <__Z35RNA_pointer_assignment_state_createP4MainPK10PointerRNAS3_iP10ReportList+0x78>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_create",
+      "pc": "0x1013ffe9c",
+      "instruction": "bl 0x101400558 <__ZL20rna_material_id_findP4Mainm>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_create",
+      "pc": "0x1013ffea4",
+      "instruction": "ldr x8, [x0, #0x238]"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_create",
+      "pc": "0x1013ffebc",
+      "instruction": "bl 0x1014005d8 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_create",
+      "pc": "0x1013ffee8",
+      "instruction": "b.hs 0x1013fffc0 <__Z35RNA_pointer_assignment_state_createP4MainPK10PointerRNAS3_iP10ReportList+0x2b8>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_validate",
+      "pc": "0x101400f78",
+      "instruction": "bl 0x101401134 <__ZL37rna_pointer_assignment_originals_liveP4MainRK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_validate",
+      "pc": "0x101401098",
+      "instruction": "bl 0x1014005d8 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_validate",
+      "pc": "0x1014010a8",
+      "instruction": "bl 0x101401390 <__ZNK28RnaPointerAssignmentSnapshoteqERKS_>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401710",
+      "instruction": "tbnz w8, #0x0, 0x101401cc0 <__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList+0x6e4>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x10140171c",
+      "instruction": "bl 0x101401134 <__ZL37rna_pointer_assignment_originals_liveP4MainRK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401730",
+      "instruction": "bl 0x1014005d8 <__ZL30rna_pointer_assignment_captureP4MainRK25RnaPointerAssignmentStateP28RnaPointerAssignmentSnapshot>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401748",
+      "instruction": "bl 0x10140e214 <__ZL34rna_pointer_assignment_same_originRK18RnaMaterialIDStateS1_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x10140175c",
+      "instruction": "bl 0x10140e214 <__ZL34rna_pointer_assignment_same_originRK18RnaMaterialIDStateS1_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401774",
+      "instruction": "bl 0x10140e214 <__ZL34rna_pointer_assignment_same_originRK18RnaMaterialIDStateS1_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401804",
+      "instruction": "bl 0x10140e774 <__ZN28RnaPointerAssignmentSnapshotC2ERKS_>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401810",
+      "instruction": "b.ne 0x101401898 <__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList+0x2bc>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401818",
+      "instruction": "tbnz w8, #0x0, 0x101401a4c <__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList+0x470>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x1014018a8",
+      "instruction": "sxth w8, w8"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x1014018b4",
+      "instruction": "b.gt 0x101401a4c <__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList+0x470>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401900",
+      "instruction": "bl 0x10140e390 <__ZL36rna_pointer_assignment_object_resizeR28RnaPointerAssignmentSnapshoti>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401914",
+      "instruction": "b.ne 0x10140195c <__Z41RNA_pointer_assignment_state_mark_appliedP4MainP25RnaPointerAssignmentStateP10ReportList+0x380>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401b38",
+      "instruction": "bl 0x104b6b048 <_zlibVersion+0x104b6b048>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401b68",
+      "instruction": "bl 0x10140e60c <__ZL38rna_pointer_assignment_materials_equalRKNSt3__16vectorI18RnaMaterialIDStateNS_9allocatorIS1_EEEES6_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401b84",
+      "instruction": "bl 0x10140e6b4 <__ZL34rna_pointer_assignment_slots_equalRK25RnaPointerAssignmentSlotsS1_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401b9c",
+      "instruction": "bl 0x10140e6b4 <__ZL34rna_pointer_assignment_slots_equalRK25RnaPointerAssignmentSlotsS1_RK25RnaPointerAssignmentState>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401bc0",
+      "instruction": "bl 0x104b6b054 <_zlibVersion+0x104b6b054>"
+    },
+    {
+      "scope": "RNA_pointer_assignment_state_mark_applied",
+      "pc": "0x101401cb0",
+      "instruction": "strb w20, [x19, #0x10]"
+    },
+    {
+      "scope": "BKE_mesh_assign_object",
+      "pc": "0x10025d1a0",
+      "instruction": "bl 0x100311558 <__Z29multires_force_sculpt_rebuildP6Object>"
+    },
+    {
+      "scope": "object_material_assign",
+      "pc": "0x10025187c",
+      "instruction": "blr x8"
+    },
+    {
+      "scope": "object_material_assign",
+      "pc": "0x100251898",
+      "instruction": "blr x8"
+    },
+    {
+      "scope": "object_material_assign",
+      "pc": "0x100251920",
+      "instruction": "cmp w9, #0x1"
+    },
+    {
+      "scope": "object_material_assign",
+      "pc": "0x100251944",
+      "instruction": "str x21, [x8, x22, lsl #3]"
+    },
+    {
+      "scope": "object_material_assign",
+      "pc": "0x100251980",
+      "instruction": "str x21, [x8, x22, lsl #3]"
+    },
+    {
+      "scope": "BKE_object_materials_sync_length",
+      "pc": "0x1002513f0",
+      "instruction": "bl 0x10025114c <__Z26BKE_object_material_resizeP4MainP6Objectsb>"
+    }
+  ],
+  "limitations": [
+    "Bounded actual Release ARM64 review, not exhaustive whole-binary CFG/dataflow, heap safety, allocator validity, arbitrary callback, provider, reentrancy, interpreter or UIKit proof.",
+    "Native helpers called by a reviewed instruction remain call boundaries unless explicitly inspected above. No proof of every cross-object data dependency or arbitrary corruption.",
+    "Debug-only expected-post getter-clamp adjustment under #ifndef NDEBUG is not compiled into this Release body; it remains source/host-test evidence only. Immediately after snapshot copy0x101401804 the Release body branches by profile, with no Debug count clamp.",
+    "This report does not establish archive CRC/content/signing/installability or iPad device acceptance. Parent package verification and any device evidence must remain separate.",
+    "Current production patch SHA and source commit/run association are pinned task provenance; source file hashes and actual binary UUID/SHA recorded independently here."
+  ]
+}
