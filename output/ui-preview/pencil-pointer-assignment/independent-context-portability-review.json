@@ -1,0 +1,81 @@
+{
+  "status": "PASS_BOUNDED_CONTEXT_PORTABILITY_REVIEW",
+  "timestamp_utc": "2026-10-19T04:35:02.633813+00:00",
+  "reviewer": "portable_context_final",
+  "base_head": "e5a561c6f4289d65a7783f11eb5da1f2b5e6c8dd",
+  "scope": "Final review of the two-file portable context fixture correction and recorded clean-room results. No tests, builds, commits or production edits performed by this reviewer.",
+  "findings": [],
+  "source_checks": {
+    "all_29_test_method_asts_unchanged": true,
+    "existing_native_fixture_prefix_unchanged": true,
+    "three_context_functions_match_local_pinned_source_and_recorded_hashes": true,
+    "context_body_sha256_utf8_lf": {
+      "static bool ctx_data_pointer_verify(": "fcc2e65ff9837ddea19edd007afcd6b4ed5422e44ab003f42c373ec0f93df297",
+      "Main *CTX_data_main(": "9edd620127f61045d102060567b81f0f0636c82eec98ae180fa4001eeaedba38",
+      "Scene *CTX_data_scene(": "8dcb91664e04592709dd8285658ec35f5c90415b23c3a7a00b267c4fe3360f78"
+    },
+    "production_patch_unchanged_from_head": true,
+    "production_patch_sha256_utf8_lf": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+    "clean_room_fixture_and_patch_bytes_match_current_checkout": true
+  },
+  "recorded_execution_evidence": {
+    "full_suite": {
+      "tests": 523,
+      "seconds": 388.986,
+      "terminal_result": "OK",
+      "log": ".cache/pointer-context-clean-full.log"
+    },
+    "original_fixture": {
+      "tests": 29,
+      "seconds": 5.34,
+      "missing_context_errors": 24,
+      "terminal_result": "FAILED (errors=24)",
+      "log": "output/ui-preview/pencil-pointer-assignment/clean-room-original-failure.log"
+    }
+  },
+  "clean_room_inspection": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pointer-ci-portability-gj6e06_m",
+    "context_cc_absent_recursively": true,
+    "declared_requests_count": 154,
+    "all_declared_requests_present_as_file_or_missing_sentinel": true,
+    "missing_sentinel_count": 17,
+    "additional_current_cache_files": [
+      "source/blender/editors/sculpt_paint/paint_stroke.cc",
+      "source/blender/windowmanager/intern/wm_event_query.cc"
+    ],
+    "qualification": "The setup report records the initial declared-preflight cache. The post-suite cache contains two additional source files explicitly requested by existing runtime fixtures. Reviewed calls are test_paint_terminal_contract.py:40 for paint_stroke.cc and test_pencil_gesture_samples.py:78 for wm_event_query.cc; both use preflight.get_source with offline=False. context.cc remains absent. This is a clean-context-cache result, not a fully offline suite claim.",
+    "runtime_additions_declared_by_existing_tests": true
+  },
+  "sha256": {
+    "build/test_pencil_pointer_assignment_transaction.py": {
+      "sha256_bytes": "3a605663356cf4e335c2989b21c963d8d0a95d9a7a53d5872d837dc723f8b4a3",
+      "sha256_utf8_lf": "3a605663356cf4e335c2989b21c963d8d0a95d9a7a53d5872d837dc723f8b4a3"
+    },
+    "build/tests/pinned_pointer_assignment_native.inc.cc": {
+      "sha256_bytes": "a212084dbd010190a9e1b468ba81b6099252a1497d9e36f07cf588a0e5186e96",
+      "sha256_utf8_lf": "a212084dbd010190a9e1b468ba81b6099252a1497d9e36f07cf588a0e5186e96"
+    },
+    "patches/blender-ipad.patch": {
+      "sha256_bytes": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+      "sha256_utf8_lf": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002"
+    },
+    "output/ui-preview/pencil-pointer-assignment/context-portability-clean-room.json": {
+      "sha256_bytes": "c7c8841cca997da085ecbbbf51ef956d3219df8312e89134210666bbb609efb3",
+      "sha256_utf8_lf": "c7c8841cca997da085ecbbbf51ef956d3219df8312e89134210666bbb609efb3"
+    },
+    ".cache/pointer-context-clean-full.log": {
+      "sha256_bytes": "8200acabd55168b54483b60fddd53f99431c1bdba01bd8c5c58cc843d9d87362",
+      "sha256_utf8_lf": "ce9a093e8d8a36a84f5e0431edc2345bcc3ec35783c7277384fa50841b76d1e9"
+    },
+    "output/ui-preview/pencil-pointer-assignment/clean-room-original-failure.log": {
+      "sha256_bytes": "82f1d5267c45ecf1b14e41adb14cb5e6c8e23fdc63a4cc4960498bb5ebdc7df7",
+      "sha256_utf8_lf": "44bd4d9992e2098f9fa823a24d059396c966ec5bc299c8768a6ec06d24bb7098"
+    }
+  },
+  "prior_review_reliance": "Prior final_pointer_audit comparison of generated connected C++ across four Python/historical variants is retained as prior evidence and was not rerun in this bounded completion review.",
+  "limits": [
+    "Recorded Windows host results and current artifacts were inspected; test execution was not repeated.",
+    "This correction still requires an exact changed-revision hosted preflight/native iOS build and subsequent package/compiled review.",
+    "No new IPA or device acceptance, full Blender runtime, allocator/UAF, interpreter, UIKit or global callback-lifetime proof is claimed."
+  ]
+}

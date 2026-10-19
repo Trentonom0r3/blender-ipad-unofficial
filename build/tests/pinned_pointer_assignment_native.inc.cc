@@ -226,3 +226,51 @@ void BKE_objects_materials_sync_length_all(Main *bmain, ID *id)
   }
   BKE_main_unlock(bmain);
 }
+
+/* Source: https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc
+ * SHA256(function UTF-8 LF): fcc2e65ff9837ddea19edd007afcd6b4ed5422e44ab003f42c373ec0f93df297
+ */
+static bool ctx_data_pointer_verify(const bContext *C, const char *member, void **pointer)
+{
+  /* if context is nullptr, pointer must be nullptr too and that is a valid return */
+  if (C == nullptr) {
+    *pointer = nullptr;
+    return true;
+  }
+
+  bContextDataResult result;
+  if (ctx_data_get((bContext *)C, member, &result) == CTX_RESULT_OK) {
+    BLI_assert(result.type == CTX_DATA_TYPE_POINTER);
+    *pointer = result.ptr.data;
+    return true;
+  }
+
+  *pointer = nullptr;
+  return false;
+}
+
+/* Source: https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc
+ * SHA256(function UTF-8 LF): 9edd620127f61045d102060567b81f0f0636c82eec98ae180fa4001eeaedba38
+ */
+Main *CTX_data_main(const bContext *C)
+{
+  Main *bmain;
+  if (ctx_data_pointer_verify(C, "blend_data", (void **)&bmain)) {
+    return bmain;
+  }
+
+  return C->data.main;
+}
+
+/* Source: https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc
+ * SHA256(function UTF-8 LF): 8dcb91664e04592709dd8285658ec35f5c90415b23c3a7a00b267c4fe3360f78
+ */
+Scene *CTX_data_scene(const bContext *C)
+{
+  Scene *scene;
+  if (ctx_data_pointer_verify(C, "scene", (void **)&scene)) {
+    return scene;
+  }
+
+  return C->data.scene;
+}

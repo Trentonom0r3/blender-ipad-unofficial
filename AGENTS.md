@@ -1,3 +1,25 @@
+## Pointer assignment cloud-fixture correction - 2026-10-19 UTC
+
+Run39100721586 at e5a561c failed hosted preflight:24 errors from an undeclared
+cached context.cc dependency; native compilation was skipped and no IPA exists.
+The corrected portable fixture tracks the exact three pinned context functions
+with provenance and hashes. All29 test methods/assertions and generated connected
+C++ remain unchanged; production patch remains 44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002.
+
+Clean-room old-source failure reproduced24 errors. Corrected full suite523/523
+passes388.986s starting from declared preflight cache inputs; two existing tests
+fetch their further pinned inputs explicitly. context.cc stays absent.
+Independent narrow source review passes; earlier full523/native-literal review
+still applies to unchanged production. Preserved failure/report evidence is under
+output/ui-preview/pencil-pointer-assignment. Commit/push this fixture correction
+and dispatch one changed exact revision; never rerun the failed source unchanged.
+Then finish native Release/full downloaded IPA and actual compiled review.
+
+Exact3 Object.data/active_material/MaterialSlot.material owned transactions are
+otherwise unchanged. UI/ring/HUD/native bars/launch/Weight guards are unchanged.
+Latest fully verified package remains196b54c/run38850540318; no new device proof.
+Full personal goal unfinished; continue independently without device waits.
+
 ## Pointer assignment native-parity audit correction - 2026-10-18 UTC
 
 Current uncommitted patch 44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002 fixes two independently reproduced material

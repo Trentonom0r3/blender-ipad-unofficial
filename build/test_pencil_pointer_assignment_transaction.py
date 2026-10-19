@@ -16,7 +16,7 @@ import tempfile
 import unittest
 
 from test_compact_shelf import function
-from test_touch_extrude import changed_source, PIN_ROOT
+from test_touch_extrude import changed_source
 import test_pencil_material_assign_owner_teardown as material
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +24,6 @@ PIN = "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e"
 OBJECT_PATH = "source/blender/makesrna/intern/rna_object.cc"
 ACCESS_PATH = "source/blender/makesrna/intern/rna_access.cc"
 PYTHON_PATH = "source/blender/python/intern/bpy_rna.cc"
-CONTEXT_PATH = "source/blender/blenkernel/intern/context.cc"
 OBJECT = changed_source(OBJECT_PATH)
 ACCESS = changed_source(ACCESS_PATH)
 PYTHON = changed_source(PYTHON_PATH)
@@ -43,6 +42,8 @@ NATIVE_HASHES = {
 }
 NATIVE_MATERIAL_SIGNATURES = ('void BKE_id_material_resize(', 'static void object_material_active_index_sanitize(', 'void BKE_object_material_resize(', 'void BKE_object_materials_sync_length(', 'void BKE_objects_materials_sync_length_all(')
 NATIVE_HASHES.update({'void BKE_id_material_resize(': 'd27014b65e7c0d4f8ece29f4e219beaf8185f700fef50197fe8b852ad3d4889e', 'static void object_material_active_index_sanitize(': 'af12b3afe51f30b0ddda0b8237af16fa6da1b3549357a83c403cf1bde3c25ad4', 'void BKE_object_material_resize(': '2deb1322a22ff69c28bc764e5c6475b58de660226fd9570eafcd29fe01020d02', 'void BKE_object_materials_sync_length(': '9643e63aad5555f840449c69912261f3dcadf623e81f7054844bf84518d15fba', 'void BKE_objects_materials_sync_length_all(': '2a23cfa46f586d0e1ac25b8570903ec34c0fc87f2bcec6a0466d1e1e42cfc6dd'})
+NATIVE_CONTEXT_SIGNATURES = ('static bool ctx_data_pointer_verify(', 'Main *CTX_data_main(', 'Scene *CTX_data_scene(')
+NATIVE_HASHES.update({'static bool ctx_data_pointer_verify(': 'fcc2e65ff9837ddea19edd007afcd6b4ed5422e44ab003f42c373ec0f93df297', 'Main *CTX_data_main(': '9edd620127f61045d102060567b81f0f0636c82eec98ae180fa4001eeaedba38', 'Scene *CTX_data_scene(': '8dcb91664e04592709dd8285658ec35f5c90415b23c3a7a00b267c4fe3360f78'})
 
 
 def replace_once(source, old, new):
@@ -319,7 +320,6 @@ static PointerRNA RNA_id_pointer_create(ID *id){
  return {id,type,id};
 }
 """
-    context = (PIN_ROOT / CONTEXT_PATH).read_text(encoding="utf-8")
     providers = r"""
 enum{CTX_RESULT_OK=1,CTX_DATA_TYPE_POINTER=1};
 struct bContextDataResult{int type=CTX_DATA_TYPE_POINTER;PointerRNA ptr;};
@@ -333,8 +333,8 @@ static int ctx_data_get(bContext *C,const char *member,bContextDataResult*){
 """
     # Exact native getter/verify null-C behavior is retained. Provider lookup,
     # Python dispatch and recursion are modeled only at ctx_data_get.
-    providers += "\n".join(function(context, signature) for signature in (
-        "static bool ctx_data_pointer_verify(", "Main *CTX_data_main(", "Scene *CTX_data_scene("))
+    # Tracked exact bodies keep clean CI independent of incidental local caches.
+    providers += "\n".join(function(NATIVE, signature) for signature in NATIVE_CONTEXT_SIGNATURES)
     state_start = OBJECT.rfind("#ifdef WITH_APPLE_CROSSPLATFORM", 0, OBJECT.index("struct RnaMaterialIDIdentity"))
     state = OBJECT[state_start:OBJECT.index("static void rna_Object_active_material_set(")]
     setters = "\n".join(function(OBJECT, "static void " + name + "(") for name in (

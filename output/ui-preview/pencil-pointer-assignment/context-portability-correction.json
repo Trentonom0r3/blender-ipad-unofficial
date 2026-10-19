@@ -1,0 +1,24 @@
+{
+  "timestamp_utc": "2026-10-19T04:32:56.573912+00:00",
+  "failed_run": "39100721586",
+  "failed_revision": "e5a561c6f4289d65a7783f11eb5da1f2b5e6c8dd",
+  "failure": "Hosted preflight:24 FileNotFoundError errors for undeclared cached context.cc; native job skipped, no IPA.",
+  "correction": "Track the exact three context provider functions in the existing portable fixture with pin URLs and per-body SHA256. Remove incidental local-cache read.",
+  "production_patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
+  "production_changed": false,
+  "test_methods_unchanged": 29,
+  "clean_full_suite": {
+    "tests": 523,
+    "seconds": 388.986,
+    "status": "PASS",
+    "log": ".cache/pointer-context-clean-full.log"
+  },
+  "clean_original_failure": {
+    "errors": 24,
+    "status": "REPRODUCED",
+    "log": "output/ui-preview/pencil-pointer-assignment/clean-room-original-failure.log"
+  },
+  "independent_source_review": "final_pointer_audit: all29 test method ASTs identical; all3 bodies match pinned primary source and SHA; connected C++ byte-identical for all4 Python/historical combinations; patch unchanged. Clean setup reviewed, final outcome separately recorded.",
+  "native_and_package_status": "Replacement exact source commit/build required; no new native or device evidence.",
+  "cache_scope": "Started with declared preflight cache only; existing tests explicitly fetch paint_stroke.cc and wm_event_query.cc at the same pin. context.cc remains absent throughout."
+}
