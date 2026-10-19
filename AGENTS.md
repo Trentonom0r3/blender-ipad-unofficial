@@ -1,3 +1,21 @@
+## Exact pointer-assignment replacement building - 2026-10-19 UTC
+
+Corrected source c88c85de0f7c31081441157ac6b85a90b3963704 is pushed and building
+ONCE in run39200263060; exact head confirmed. Watcher session66391,
+.cache/watch-pointer-assignment-build.py and its run-specific log own waiting,
+full IPA verification, preserved compiled HUD launch/Weight cleanup and initial
+actual three-profile native/outer disassembly. Inspect SAME run/process first.
+No new native success/IPA/device evidence yet. Do not dispatch unchanged source.
+
+Earlier39100721586@e5a561c failed cloud preflight24missing context.cc errors;
+native was skipped. Correction tracks exact provider bodies without changing
+production44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002.
+Clean full523/523 passes388.986s; historical failure reproduced; independent
+source/cache review passes. All29 test methods/generated connected C++ unchanged.
+See output/ui-preview/pencil-pointer-assignment current reports. On native success
+complete full IPA and independent actual compiled review before ready claims.
+Full goal unfinished; preserve all UI/native/input/history/launch contracts.
+
 ## Pointer assignment cloud-fixture correction - 2026-10-19 UTC
 
 Run39100721586 at e5a561c failed hosted preflight:24 errors from an undeclared
