@@ -1,0 +1,473 @@
+{
+  "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "native_inputs": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+    "source/blender/editors/gpencil_legacy/annotate_paint.cc": "76f2f853dafa6f065b8fb5ce08baca44a1f4ab936c65ab70af576a016bf30317",
+    "source/blender/editors/space_view3d/view3d_gizmo_ruler.cc": "1d7461ab551d34274b3f8bc7ac742720f2e975eb9f3dedc71294f8dbc4825c14",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3"
+  },
+  "actual_keymap_trackpad_items": [
+    [
+      "view3d.rotate",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY"
+      },
+      null
+    ],
+    [
+      "view3d.move",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY",
+        "shift": true
+      },
+      null
+    ],
+    [
+      "view3d.zoom",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY",
+        "ctrl": true
+      },
+      null
+    ]
+  ],
+  "compile_returncode": 0,
+  "boundaries": [
+    "UIKit messages and scheduling adapted by retained producer harness",
+    "ordinary native operator setup and event dispatch/keymap match modeled; actual keymap Python evaluated separately",
+    "Knife exact unmapped-event return slice; whole Knife modal not compiled",
+    "WM conversion and actual full wm_event_add_trackpad execute; list allocation/append/free modeled; initial native modal setup and scheduling remain boundaries",
+    "view navigation context/init/state/RNA/soft limits/redraw/camera-sync/autokey external calls modeled",
+    "actual complete zoom invoke/init/apply/scale/distance functions executed in unlocked perspective with cursor zoom disabled; no geometry/Undo/device proof"
+  ],
+  "execution": {
+    "returncode": 0,
+    "stdout": "PASS Ctrl Knife PAN: dist=10 -> 10.197; native zoom finished; Knife PASS_THROUGH; no paint Cancel path\n",
+    "stderr": ""
+  },
+  "source_locations": {
+    "intern/ghost/GHOST_NavigationIOS.hh": {
+      "sha256": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+      "anchors": {
+        "inline bool direct_edit_tool(": 21,
+        "inline PointerCaptureKind pointer_capture_hit(": 216,
+        "struct PointerCapture {": 346
+      }
+    },
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+      "anchors": {
+        "- (void)handlePan:": 671,
+        "case UserInputEvent::EventTypes::PAN_GESTURE:": 1025
+      }
+    },
+    "source/blender/windowmanager/intern/wm_draw.cc": {
+      "sha256": "a75deb39f7c07f6bbe29a6a26088d4fd504ffef71a9b881fe3aa05bc75a60d49",
+      "anchors": {
+        "if (!ghost::ios::direct_edit_tool(": 1585
+      }
+    },
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "sha256": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c",
+      "anchors": {
+        "if (handler->ipad_pencil_paint_serial || ipad_pencil_owner_teardown)": 2937,
+        "static wmEvent *wm_event_add_trackpad(": 7983,
+        "case GHOST_kTrackpadEventScroll:": 8425
+      }
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc": {
+      "sha256": "a018ae67adce2935bcfe21727b3cd94e06a62a44454c85105eed292649003b3d",
+      "anchors": {
+        "static wmOperatorStatus gizmo_tweak_modal(": 552,
+        "evil_event->type = EVT_GIZMO_UPDATE;": 628
+      }
+    },
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc": {
+      "sha256": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+      "anchors": {
+        "static wmOperatorStatus viewmove_invoke(": 106
+      }
+    },
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc": {
+      "sha256": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+      "anchors": {
+        "static wmOperatorStatus viewrotate_invoke(": 368
+      }
+    },
+    "source/blender/editors/mesh/editmesh_knife.cc": {
+      "sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+      "anchors": {
+        "static wmOperatorStatus knifetool_modal(": 4201,
+        "      case MOUSEPAN:": 4455
+      }
+    },
+    "source/blender/editors/gpencil_legacy/annotate_paint.cc": {
+      "sha256": "76f2f853dafa6f065b8fb5ce08baca44a1f4ab936c65ab70af576a016bf30317",
+      "anchors": {
+        "static wmOperatorStatus annotation_draw_modal(": 2423,
+        "/* swallow event to save ourselves trouble */": 2690
+      }
+    },
+    "source/blender/editors/space_view3d/view3d_gizmo_ruler.cc": {
+      "sha256": "1d7461ab551d34274b3f8bc7ac742720f2e975eb9f3dedc71294f8dbc4825c14",
+      "anchors": {
+        "static wmOperatorStatus gizmo_ruler_modal(": 1067
+      }
+    },
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": {
+      "sha256": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+      "anchors": {
+        "static wmOperatorStatus viewzoom_invoke_impl(": 462,
+        "static wmOperatorStatus viewzoom_invoke(": 517
+      }
+    },
+    "scripts/startup/bl_ui/space_view3d_ipad.py": {
+      "sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+      "anchors": {
+        "def ipad_more_tool_inventory(": 164,
+        "class VIEW3D_MT_ipad_tool_inventory": 188
+      }
+    },
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": {
+      "sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+      "anchors": {
+        "def km_knife_tool_modal_map(": 6236,
+        "def km_3d_view_tool_edit_mesh_knife(": 7664,
+        "def km_3d_view_tool_measure(": 7421,
+        "def km_generic_tool_annotate(": 6777
+      }
+    }
+  },
+  "finding": "REPRODUCED_BOUNDED_CTRL_KNIFE_PAIRED_PAN_ZOOM",
+  "production_changed": false,
+  "tests_changed": false,
+  "build_dispatched": false,
+  "scope": "Object/Edit Mesh More Tools Annotate/Measure plus Edit Mesh Knife; direct Box/Lasso origin capture checked. No broad storage-family audit.",
+  "routes": [
+    {
+      "tools": "Annotate/Measure/Knife",
+      "capture": "Not direct_edit_tool; when contact starts outside navigation/HUD/ring/resize, ordinary Pencil precision suffix is reachable without paint provenance. More Tools filters only Base-native ids and preserves native variants."
+    },
+    {
+      "tools": "Annotate (active painting)",
+      "native": "Painting branch swallows non-motion PAN as RUNNING_MODAL; no paint-owner Cancel applies to handler serial0. Ordinary no-modifier navigation before native setup is also stopped by iOS rotate/move wrapper. Whole native modal/setup/scheduling not executed."
+    },
+    {
+      "tools": "Measure (active ruler gizmo tweak)",
+      "native": "Ruler modal returns RUNNING_MODAL; gizmo_tweak_modal changes source event to EVT_GIZMO_UPDATE before PASS_THROUGH, so the handled PAN cannot directly match TRACKPADPAN downstream. Initial click-drag admission/modifier combinations not runtime audited."
+    },
+    {
+      "tools": "Knife",
+      "native": "Native modal has explicit raw MOUSEPAN PASS_THROUGH; ordinary handler has no paint serial so paint admission/Cancel is bypassed. No-modifier and Shift PAN reach iOS rotate/move wrappers and are ignored; supported Ctrl ignore-snap lets actual keymap route the same paired PAN to zoom, with no one-finger filter. Native zoom changes unlocked perspective distance in this bounded source execution."
+    },
+    {
+      "tools": "Box/Lasso direct selection",
+      "native": "Both are already direct_edit_tool and exposed canvas ToolManipulation captures before precision suffix; actual native pointer capture suppresses paired PAN. No new direct-selection failure found in this scope."
+    }
+  ],
+  "next_contract_summary": "After the exact current package gate, scope a Pencil-only native Knife exposed-canvas origin admission that omits only its recognizer paired PAN while retaining native cursor/down/up/modifier/multi-cut handling; preserve non-canvas UI/other-editor Pencil scrolling and all independent finger/hardware navigation. Existing value-only NavigationRect/PointerCapture publisher is the candidate seam; do not add Knife to shared finger whitelist without a Pencil-only admission rule. No paint tagging, global MOUSEPAN swallow, old-operator pointers, replacement cancellation, extra unleased release, or universal rollback.",
+  "actual_knife_modal_keymap": {
+    "all_items": [
+      [
+        "CANCEL",
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "PANNING",
+        {
+          "type": "MIDDLEMOUSE",
+          "value": "ANY",
+          "any": true
+        },
+        null
+      ],
+      [
+        "ADD_CUT_CLOSED",
+        {
+          "type": "LEFTMOUSE",
+          "value": "DOUBLE_CLICK",
+          "any": true
+        },
+        null
+      ],
+      [
+        "ADD_CUT",
+        {
+          "type": "LEFTMOUSE",
+          "value": "ANY",
+          "any": true
+        },
+        null
+      ],
+      [
+        "UNDO",
+        {
+          "type": "Z",
+          "value": "PRESS",
+          "ctrl": true
+        },
+        null
+      ],
+      [
+        "CONFIRM",
+        {
+          "type": "RET",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "CONFIRM",
+        {
+          "type": "NUMPAD_ENTER",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "CONFIRM",
+        {
+          "type": "SPACE",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "NEW_CUT",
+        {
+          "type": "RIGHTMOUSE",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "SNAP_MIDPOINTS_ON",
+        {
+          "type": "LEFT_SHIFT",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "SNAP_MIDPOINTS_OFF",
+        {
+          "type": "LEFT_SHIFT",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ],
+      [
+        "SNAP_MIDPOINTS_ON",
+        {
+          "type": "RIGHT_SHIFT",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "SNAP_MIDPOINTS_OFF",
+        {
+          "type": "RIGHT_SHIFT",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_ON",
+        {
+          "type": "LEFT_CTRL",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_OFF",
+        {
+          "type": "LEFT_CTRL",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_ON",
+        {
+          "type": "RIGHT_CTRL",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_OFF",
+        {
+          "type": "RIGHT_CTRL",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ],
+      [
+        "X_AXIS",
+        {
+          "type": "X",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "Y_AXIS",
+        {
+          "type": "Y",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "Z_AXIS",
+        {
+          "type": "Z",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "ANGLE_SNAP_TOGGLE",
+        {
+          "type": "A",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "CYCLE_ANGLE_SNAP_EDGE",
+        {
+          "type": "R",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "CUT_THROUGH_TOGGLE",
+        {
+          "type": "C",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "SHOW_DISTANCE_ANGLE_TOGGLE",
+        {
+          "type": "S",
+          "value": "PRESS"
+        },
+        null
+      ],
+      [
+        "DEPTH_TEST_TOGGLE",
+        {
+          "type": "V",
+          "value": "PRESS"
+        },
+        null
+      ]
+    ],
+    "no_pan_binding": true,
+    "ctrl_ignore_snap_on": [
+      [
+        "IGNORE_SNAP_ON",
+        {
+          "type": "LEFT_CTRL",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_ON",
+        {
+          "type": "RIGHT_CTRL",
+          "value": "PRESS",
+          "any": true
+        },
+        null
+      ]
+    ],
+    "ctrl_ignore_snap_off": [
+      [
+        "IGNORE_SNAP_OFF",
+        {
+          "type": "LEFT_CTRL",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ],
+      [
+        "IGNORE_SNAP_OFF",
+        {
+          "type": "RIGHT_CTRL",
+          "value": "RELEASE",
+          "any": true
+        },
+        null
+      ]
+    ],
+    "native_registration": "knifetool_modal_keymap assigns Knife Tool Modal Map to MESH_OT_knife_tool (pinned editmesh_knife.cc:4180)"
+  },
+  "reachability_conditions": [
+    "Default native keymap (custom user keymaps excluded), existing live Edit Mesh Knife modal with valid Mesh object and stable original area/region; angle_snapping=false is a legal ordinary Knife state.",
+    "Start Knife with unmodified Pencil down, then press Ctrl during that cut; holding Ctrl before native Knife initiation is not needed or claimed. Native modal Ctrl maps IGNORE_SNAP_ON and sets ignore_vert_snapping/ignore_edge_snapping=true; subsequent raw PAN is a distinct event.",
+    "wm_eventmatch rejects each modal keymap item by event type: every Knife item is a concrete keyboard/mouse button type; modifier any=True does not make the item event type ANY. Raw PAN val=KM_NOTHING is not a double click.",
+    "wm_event_modalkeymap_begin rewrites type to EVT_MODAL_MAP only after an item match; no Knife item matches MOUSEPAN, so subsequent paired PAN remains raw MOUSEPAN and reaches the exact native pass-through branch.",
+    "wm_handler_operator_call applies paint cancellation policy only for handler paint serial or explicit owner teardown; ordinary Knife serial0 follows its own modal. PASS_THROUGH alone returns WM_HANDLER_CONTINUE and carries no FINISHED/CANCELLED bit, leaving Knife registered.",
+    "wm_event_do_handlers dispatches modal handlers first, then (without BREAK) exposed area/region handlers. Native default viewport keymap selects Ctrl-TRACKPADPAN\u2192view3d.zoom. Native zoom wrapper has no one-finger filter.",
+    "The executable starts the modeled native modal with an empty WM queue, which is a legal drained-queue state. It executes actual full wm_event_add_trackpad plus conversion and producer; it does not establish universal cross-callback scheduling/coalescing behavior."
+  ],
+  "wm_source_trace": {
+    "BLI_INLINE bool wm_eventmatch(": {
+      "line": 2642
+    },
+    "static wmKeyMapItem *wm_eventmatch_modal_keymap_items(": {
+      "line": 2745
+    },
+    "static void wm_event_modalkeymap_begin(": {
+      "line": 2778
+    },
+    "if (retval & OPERATOR_PASS_THROUGH) {": {
+      "line": 3157
+    },
+    "action |= wm_handlers_do(C, event, &win->modalhandlers);": {
+      "line": 6254
+    },
+    "action |= wm_handlers_do(C, event, &area->handlers);": {
+      "line": 6358
+    }
+  },
+  "native_source_excerpts": {
+    "event_match": "BLI_INLINE bool wm_eventmatch(const wmEvent *winevent, const wmKeyMapItem *kmi)\n{\n  if (kmi->flag & KMI_INACTIVE) {\n    return false;\n  }\n\n  if (winevent->flag & WM_EVENT_IS_REPEAT) {\n    if (kmi->flag & KMI_REPEAT_IGNORE) {\n      return false;\n    }\n  }\n\n  const int kmitype = WM_userdef_event_map(kmi->type);\n\n  /* The matching rules. */\n  if (kmitype == KM_TEXTINPUT) {\n    if (winevent->val == KM_PRESS) { /* Prevent double clicks. */\n      if (ISKEYBOARD(winevent->type) && winevent->utf8_buf[0]) {\n        return true;\n      }\n    }\n  }\n\n  if (kmitype != KM_ANY) {\n    if (ELEM(kmitype, TABLET_STYLUS, TABLET_ERASER)) {\n      const wmTabletData *wmtab = &winevent->tablet;\n\n      if (winevent->type != LEFTMOUSE) {\n        /* Tablet events can occur on hover + key-press. */\n        return false;\n      }\n      if ((kmitype == TABLET_STYLUS) && (wmtab->active != EVT_TABLET_STYLUS)) {\n        return false;\n      }\n      if ((kmitype == TABLET_ERASER) && (wmtab->active != EVT_TABLET_ERASER)) {\n        return false;\n      }\n    }\n    else {\n      if (winevent->type != kmitype) {\n        return false;\n      }\n    }\n  }\n\n  if (kmi->val != KM_ANY) {\n    if (winevent->val != kmi->val) {\n      return false;\n    }\n  }\n\n  if (kmi->val == KM_PRESS_DRAG) {\n    if (kmi->direction != KM_ANY) {\n      if (kmi->direction != winevent->direction) {\n        return false;\n      }\n    }\n  }\n\n  /* Account for rare case of when these keys are used as the 'type' not as modifiers. */\n  if (kmi->shift != KM_ANY) {\n    const int8_t shift = (winevent->modifier & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING;\n    if ((shift != kmi->shift) && !ELEM(winevent->type, EVT_LEFTSHIFTKEY, EVT_RIGHTSHIFTKEY)) {\n      return false;\n    }\n  }\n  if (kmi->ctrl != KM_ANY) {\n    const int8_t ctrl = (winevent->modifier & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING;\n    if ((ctrl != kmi->ctrl) && !ELEM(winevent->type, EVT_LEFTCTRLKEY, EVT_RIGHTCTRLKEY)) {\n      return false;\n    }\n  }\n  if (kmi->alt != KM_ANY) {\n    const int8_t alt = (winevent->modifier & KM_ALT) ? KM_MOD_HELD : KM_NOTHING;\n    if ((alt != kmi->alt) && !ELEM(winevent->type, EVT_LEFTALTKEY, EVT_RIGHTALTKEY)) {\n      return false;\n    }\n  }\n  if (kmi->oskey != KM_ANY) {\n    const int8_t oskey = (winevent->modifier & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING;\n    if ((oskey != kmi->oskey) && (winevent->type != EVT_OSKEY)) {\n      return false;\n    }\n  }\n  if (kmi->hyper != KM_ANY) {\n    const int8_t hyper = (winevent->modifier & KM_HYPER) ? KM_MOD_HELD : KM_NOTHING;\n    if ((hyper != kmi->hyper) && (winevent->type != EVT_HYPER)) {\n      return false;\n    }\n  }\n\n  /* Only key-map entry with key-modifier is checked,\n   * means all keys without modifier get handled too. */\n  /* That is currently needed to make overlapping events work (when you press A - G fast or so). */\n  if (kmi->keymodifier) {\n    if (winevent->keymodifier != kmi->keymodifier) {\n      return false;\n    }\n  }\n\n  return true;\n}",
+    "modal_mapping": "static void wm_event_modalkeymap_begin(const bContext *C,\n                                       wmOperator *op,\n                                       wmEvent *event,\n                                       wmEvent_ModalMapStore *event_backup)\n{\n  BLI_assert(event->type != EVT_MODAL_MAP);\n\n  /* Support for modal key-map in macros. */\n  if (op->opm) {\n    op = op->opm;\n  }\n\n  event_backup->dbl_click_disabled = false;\n\n  if (op->type->modalkeymap) {\n    wmKeyMap *keymap = WM_keymap_active(CTX_wm_manager(C), op->type->modalkeymap);\n    wmKeyMapItem *kmi = nullptr;\n\n    const wmEvent *event_match = nullptr;\n    wmEvent event_no_dbl_click;\n\n    if ((kmi = wm_eventmatch_modal_keymap_items(keymap, op, event))) {\n      event_match = event;\n    }\n    else if (event->val == KM_DBL_CLICK) {\n      event_no_dbl_click = *event;\n      event_no_dbl_click.val = KM_PRESS;\n      if ((kmi = wm_eventmatch_modal_keymap_items(keymap, op, &event_no_dbl_click))) {\n        event_match = &event_no_dbl_click;\n      }\n    }\n\n    if (event_match != nullptr) {\n      event_backup->prev_type = event->prev_type;\n      event_backup->prev_val = event->prev_val;\n\n      event->prev_type = event_match->type;\n      event->prev_val = event_match->val;\n      event->type = EVT_MODAL_MAP;\n      event->val = kmi->propvalue;\n\n      /* Avoid double-click events even in the case of #EVT_MODAL_MAP,\n       * since it's possible users configure double-click key-map items\n       * which would break when modal functions expect press/release. */\n      if (event->prev_val == KM_DBL_CLICK) {\n        event->prev_val = KM_PRESS;\n        event_backup->dbl_click_disabled = true;\n      }\n    }\n  }\n\n  if (event->type != EVT_MODAL_MAP) {\n    /* This bypass just disables support for double-click in modal handlers. */\n    if (event->val == KM_DBL_CLICK) {\n      event->val = KM_PRESS;\n      event_backup->dbl_click_disabled = true;\n    }\n  }\n}",
+    "modal_items": "static wmKeyMapItem *wm_eventmatch_modal_keymap_items(const wmKeyMap *keymap,\n                                                      wmOperator *op,\n                                                      const wmEvent *event)\n{\n  LISTBASE_FOREACH (wmKeyMapItem *, kmi, &keymap->items) {\n    /* Should already be handled by #wm_user_modal_keymap_set_items. */\n    BLI_assert(kmi->propvalue_str[0] == '\\0');\n    if (wm_eventmatch(event, kmi)) {\n      if ((keymap->poll_modal_item == nullptr) || keymap->poll_modal_item(op, kmi->propvalue)) {\n        return kmi;\n      }\n    }\n  }\n  return nullptr;\n}",
+    "knife_ignore_snap": "      case KNF_MODAL_IGNORE_SNAP_ON:\n        kcd->ignore_vert_snapping = kcd->ignore_edge_snapping = true;\n        do_refresh = true;\n        handled = true;\n        break;\n      case KNF_MODAL_IGNORE_SNAP_OFF:\n        kcd->ignore_vert_snapping = kcd->ignore_edge_snapping = false;\n        do_refresh = true;\n        handled = true;\n        break;\n",
+    "knife_raw_pan": "      case MOUSEPAN:\n      case MOUSEZOOM:\n      case MOUSEROTATE:\n      case WHEELUPMOUSE:\n      case WHEELDOWNMOUSE:\n      case NDOF_MOTION:\n        return OPERATOR_PASS_THROUGH;\n"
+  },
+  "limitations_addendum": "The whole Knife modal and WM scheduling/dispatch were source-traced, not executed. Generated probe executes the exact proven native Knife raw-event branch plus full producer/WM conversion/full trackpad queue function/native zoom math; it does not force a mapped PAN into the raw branch. The event-type/keymap reasoning and valid context conditions above establish why this native raw branch is reachable."
+}

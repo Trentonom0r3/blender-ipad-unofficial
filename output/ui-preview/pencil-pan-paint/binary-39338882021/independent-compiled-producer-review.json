@@ -1,0 +1,160 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_ACTUAL_COMPILED_PRODUCER_REVIEW",
+  "reviewed_utc": "2026-10-19T23:26:06.529785+00:00",
+  "run": "39338882021",
+  "source_commit": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "production_patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "binary": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\Blender",
+    "uuid": "502564F9-A08E-3D79-ADC6-0AA59B69B732",
+    "bytes": 160396752,
+    "sha256": "0990241856220972682f1584d9e78a0667896f3da09c6bd6702386e710c98229"
+  },
+  "findings": [],
+  "unresolved": [],
+  "scope": "Actual current ARM64 handlePan precision provenance suppression and terminal flag, generateUserInputEvents packed button/cursor payload, original enqueue lease/equality/acquisition/retirement, cancelPointerCapture saved tuple/sample cancelled terminal before invalidation, and frozen pan contact getter. WM/native consumer and complete package checks remain separate reports.",
+  "method": "Fresh independent exact Objective-C selector lookup through LLVM llvm-nm numeric text bounds and llvm-objdump instructions; actual binary load-command address mapping reads vector constant and ObjC ivar metadata. Raw independent dumps use distinct filenames. No reliance on modeled crosscompile offsets or bare callee presence.",
+  "scopes": {
+    "handlePan": {
+      "start": "0x1010a9cb8",
+      "end": "0x1010aa944",
+      "instructions": 803,
+      "assembly": "independent-handlePan.asm",
+      "assembly_sha256": "1f974f65d99cadb8d5a20d2415dfa5e494e6d78e769dced5bc4eaafd8493ab0e"
+    },
+    "generateUserInputEvents": {
+      "start": "0x1010a7ac4",
+      "end": "0x1010a88dc",
+      "instructions": 902,
+      "assembly": "independent-generateUserInputEvents.asm",
+      "assembly_sha256": "25cd04ed48e6bd28a2b72db7bc3288a814884cc2c99940d02004935510215c55"
+    },
+    "cancelPointerCapture": {
+      "start": "0x1010a99e8",
+      "end": "0x1010a9cb8",
+      "instructions": 180,
+      "assembly": "independent-cancelPointerCapture.asm",
+      "assembly_sha256": "ec77434026fc5f937e21c7feb48f1848d5bc4bc5bd204be24b789947e4ae0994"
+    },
+    "panContactGetter": {
+      "start": "0x1010a59c4",
+      "end": "0x1010a59dc",
+      "instructions": 6,
+      "assembly": "independent-pan-contact-getter.asm",
+      "assembly_sha256": "3a27e0d8edc5a788637ec66ed116aa7880b111e131b2c66f8afc395937bd8cfc"
+    }
+  },
+  "proof": [
+    {
+      "obligation": "Actual field/provenance mapping",
+      "addresses": [
+        "0x1010aa080",
+        "0x1010aa458-0x1010aa464",
+        "0x1010aa548-0x1010aa550",
+        "0x1010a59c4-0x1010a59d8",
+        "0x10661bedc"
+      ],
+      "reason": "handlePan establishes x22=sp+0x50 event base. Getter receives hidden result buffer sp+0x30 and copies frozen pencil_paint_origin as two128-bit chunks; caller copies those to event+0x88/+0x98. Actual ObjC ivar metadata0x10661bedc identifies pencil_paint_origin at object+176. Generator independently reads input+0x88/+0x98 and copies to local contact sp+0x50/+0x60. Thus precision guard stack slots sp+d8/e0/e8 are contact serial/generation/region from actual current binary."
+    },
+    {
+      "obligation": "Valid paint contact suppresses paired PAN and preserves cursor",
+      "addresses": [
+        "0x1010aa5bc-0x1010aa5d4",
+        "0x1010aa5d8-0x1010aa5ec",
+        "0x1010aa5f0-0x1010aa614",
+        "0x1010aa618-0x1010aa638"
+      ],
+      "reason": "Relative translation and cache update execute before guard. Zero serial or generation branches to translation comparisons; region nonzero after both preceding nonzero branches directly to0x1010aa618, bypassing translation store and enum1 PAN append0x1010aa600..614. If anyfield invalid, existing two-double zero comparison still governs enum1 append. At618 state2 still appends enum0 cursor and increments event count. The guard is on saved contact fields, with no new live-ticket/mode/presentation call."
+    },
+    {
+      "obligation": "Tagged Cancelled/Failed versus Ended flag and single up",
+      "addresses": [
+        "0x1010aa7a8-0x1010aa7d4",
+        "0x1010aa7d8-0x1010aa804",
+        "0x1010aa808-0x1010aa81c",
+        "0x1010aa8dc-0x1010aa8e8"
+      ],
+      "reason": "State3/4/5 converge at7d8. w8 defaults0; each zero serial/generation/region skips directly to804. With valid fields, state is compared3 and cset ne returns1 for4/5,0 for3. 804 stores byte at sp+bd = eventbase sp+50 +0x6d. One enum6 appended at810; count store8dc then same eventpointer sp+50 passed to generator8e8 with no intervening overwrite of flag."
+    },
+    {
+      "obligation": "Actual packed cancel byte reaches up payload",
+      "addresses": [
+        "0x1010a85e4",
+        "0x1010a85f4-0x1010a85f8",
+        "0x1010a8608",
+        "0x1010a8618-0x1010a8648",
+        "0x1010a8654"
+      ],
+      "reason": "Generator inputbase x20 loads halfword from+0x6d containing low cancelled and high directtool byte; stores unchanged at allocated up object x23+0x3c. Payload pointer x12=object+0x28 is saved as event data at object+0x20, so cancellation is payload+0x14. Type3 up is stored at object+8. Full serial/generation pair, region and both origins copy from original local contact to object+0x60/+0x70/+0x78. pushEvent at8654 enqueues that actual packet. Source field names are corroborated by current producer and cancel capture stores, not modeled struct offsets."
+    },
+    {
+      "obligation": "Actual original tuple equality including vectorized controls",
+      "addresses": [
+        "0x1010a7dec-0x1010a7eb4",
+        "0x1010a84e4-0x1010a8598",
+        "0x1051312c8"
+      ],
+      "reason": "Enqueued-down byte gates original lease route. Incoming valid contact and saved serial nonzero required. Actual vector constant at0x1051312c8 bytes0100020004000800 gives16-bit weights1,2,4,8. Vector cmtst/cmeq/pack/reduce requires saved generation/region nonzero and serial/generation equality; mask15 must be complete before scalar region comparison succeeds. Separate32-bit comparisons at7e94..7eb0 compare both original coordinates. Any mismatch reaches event-skip loop7c54. Matching owned route branches7efc without ticket-live call. Repeated corresponding checks after motion sample update preserve original sample lease."
+    },
+    {
+      "obligation": "Acquisition only before down; lease begins after real enqueue",
+      "addresses": [
+        "0x1010a7eb8-0x1010a7ef8",
+        "0x1010a82c0-0x1010a82ec",
+        "0x1010a83a4-0x1010a83e4"
+      ],
+      "reason": "Without enqueued down, tagged serial<=retired skips; ticket-live must pass and tagged enum6 terminal is refused. Down path separately excludes existingdown and requires ticket-live. Real pushEvent83a4 precedes saved full tuple copy83bc/83c0 and down-byte store83c4. Saved last location/tablet follow. Untagged/general navigation follows unchanged event-case routes."
+    },
+    {
+      "obligation": "One terminal retirement after enqueue",
+      "addresses": [
+        "0x1010a8654-0x1010a86b4"
+      ],
+      "reason": "After actual up pushEvent, tagged route updates last location/tablet, clears enqueued-down at8680, stores unsigned max(oldretired,currentserial) at8694..869c and zeros saved32-byte tuple86a0..86b0 before returning to loop. Together with incoming serial/lease gates this preserves original-owner terminal and rejects retired/repeated/foreign packets rather than retargeting replacement."
+    },
+    {
+      "obligation": "Capture cancellation uses original enqueued tuple/sample before invalidation",
+      "addresses": [
+        "0x1010a9a18-0x1010a9a60",
+        "0x1010a9a78-0x1010a9aa0",
+        "0x1010a9aa4-0x1010a9ac0"
+      ],
+      "reason": "Actual enqueued-down ivar gate controls generation. Saved location,tabletsnapshot and fullcontact are loaded from original window ivars. Eventbase sp+8, savedcontact+0x88/+0x98, cancelled byte at sp+0x75 =base+0x6d set1, enum6 andcount1 set, then generator called9aa0. Both touch invalidation calls9ab0/9ac0 follow. Up uses same generator lease gate and retirement path above."
+    }
+  ],
+  "actual_metadata": {
+    "pan_origin_ivar_ref": "0x10661bedc",
+    "pan_origin_offset": 176,
+    "window_enqueued_down_ref": "0x10661bf8c",
+    "window_enqueued_down_offset": 536,
+    "window_retired_serial_ref": "0x10661bf90",
+    "window_retired_serial_offset": 528,
+    "window_last_location_ref": "0x10661bf9c",
+    "window_last_location_offset": 544,
+    "window_last_tablet_ref": "0x10661bfa0",
+    "window_last_tablet_offset": 560,
+    "window_enqueued_tuple_ref": "0x10661bfa4",
+    "window_enqueued_tuple_offset": 496,
+    "vector_weights_ref": "0x1051312c8",
+    "vector_weights_u16": [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  "consumer_join_endpoint": {
+    "producer_cancelled_storage": "GHOST up object+0x3c = data payload(object+0x28)+0x14",
+    "producer_payload_pointer_store": "0x1010a8648",
+    "producer_flag_store": "0x1010a8608",
+    "scope": "Native WM conversion/owner cancellation is reviewed independently; this report supplies exact actual payload endpoint."
+  },
+  "limitations": [
+    "Bounded actual compiled instruction review only. No execution/emulation of UIKit dispatch or device delivery/reset timing.",
+    "Objective-C message dispatch, allocation and pushEvent remain call boundaries; no global heap/CFG/reentrancy proof.",
+    "Repeated state getter values are interpreted as the reported recognizer state during one callback; UIKit behavior remains separate.",
+    "No new geometry, rollback, history, Undo or device guarantee follows from cancellation. Source/runtime fixture, full package and WM/native consumer evidence remain distinct."
+  ],
+  "source_or_tests_changed": false,
+  "device_acceptance": false
+}

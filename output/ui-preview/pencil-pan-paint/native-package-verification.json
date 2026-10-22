@@ -1,0 +1,66 @@
+{
+  "status": "PASS_EXACT_NATIVE_PACKAGE_BOUNDED_COMPILED_REQUIRES_DEVICE_EVIDENCE",
+  "recorded_utc": "2026-10-22T07:42:53.175492+00:00",
+  "run": "39338882021",
+  "source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "production_patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "artifact_id": 12228966660,
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\ipa-39338882021\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248662604,
+    "sha256": "515165dbaaa0e7c1af7ea10ecbd7244226b0645f9430d42d625dcbf4de8587b7",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary": {
+    "uuid": "502564F9-A08E-3D79-ADC6-0AA59B69B732",
+    "sha256": "0990241856220972682f1584d9e78a0667896f3da09c6bd6702386e710c98229",
+    "bytes": 160396752,
+    "matches_exact_downloaded_zip_entry": true
+  },
+  "package_verification": "ipa-39338882021/verification.json",
+  "compiled_reviews": {
+    "independent-compiled-producer-review.json": {
+      "status": "PASS_BOUNDED_INDEPENDENT_ACTUAL_COMPILED_PRODUCER_REVIEW",
+      "sha256": "6955e43a9c1975d51cc227cf9b3da28ad87ad9cd87404400819744cc9e86e4a5"
+    },
+    "independent-compiled-consumer-review.json": {
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED_CONSUMER_REVIEW",
+      "sha256": "dcb4b22af79b91bfc9043f7dd4414ab4aed889ab71b8109a0ac7bb226f7fb14b"
+    },
+    "consumer-evidence-reconciliation.json": {
+      "status": "PASS_BOUNDED_CONSUMER_EVIDENCE_RECONCILIATION",
+      "sha256": "1e6bc2a0219e0348408faf7f5ea4f4c35aea483dfa579fe65c86ed37bdc691f2"
+    }
+  },
+  "preserved_launch_status": "passed",
+  "preserved_weight_cleanup_status": "passed",
+  "source_validation": {
+    "final_full_tests": 563,
+    "seconds": 504.242,
+    "connected": 40,
+    "retained_affected": 38,
+    "pinned_preflight_files": 132,
+    "source_report": "source-verification.json"
+  },
+  "production_scope": "Only GHOST_WindowIOS.mm precision suffix changes;131 other sections and all7 UI sections unchanged. Frozen valid paint contact suppresses its paired PAN; tagged Cancelled/Failed marks existing leased up; Ended remains normal.",
+  "retired_historical_marker_checks_expected_false": [
+    "compact_base_next_drag_and_final_draw_continuity",
+    "current_tool_options_in_base_with_stable_native_slots"
+  ],
+  "next_read_only_audits": "ordinary-tool-audit/manifest.json",
+  "watcher": {
+    "session": 89726,
+    "completed_exit": 0,
+    "log": ".cache/pan-paint-build-watch-39338882021.log"
+  },
+  "limits": [
+    "Actual instruction/call/branch/argument review is bounded, not global heap/CFG/reentrancy or UIKit runtime proof.",
+    "Native mode-specific Cancel is not universal rollback; geometry/history/Undo/device behavior remains separate.",
+    "No new device acceptance; full personal goal remains unfinished."
+  ],
+  "device_acceptance": false
+}

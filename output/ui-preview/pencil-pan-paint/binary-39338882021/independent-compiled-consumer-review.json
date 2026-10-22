@@ -1,0 +1,301 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_CONSUMER_REVIEW",
+  "created_utc": "2026-10-19T23:26:51.829587+00:00",
+  "reviewer": "Independent paint_navigation_restart_audit subagent",
+  "run": "39338882021",
+  "source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\Blender",
+  "binary_bytes": 160396752,
+  "binary_uuid": "502564F9-A08E-3D79-ADC6-0AA59B69B732",
+  "binary_sha256": "0990241856220972682f1584d9e78a0667896f3da09c6bd6702386e710c98229",
+  "method": "Fresh LLVM nm + exact-address bounded objdump via audit_hud_macho helpers; independently inspected actual instructions, branch destinations, callback pointer stores and ABI arguments. Address-bearing filenames avoid duplicate symbol-label collisions. No source/test changes or build dispatch.",
+  "consumer_source_scope": "Consumers unchanged by current precision producer correction. This actual compiled consumer verification is separate from changed producer/generator proof. Only the inlined button payload endpoint is joined here.",
+  "fresh_dump_manifest": "independent-consumer-dump-manifest.json",
+  "symbols": {
+    "__Z23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvy": {
+      "start": "0x100b57cdc",
+      "end": "0x100b59624",
+      "symbol": "__Z23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvy",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b57cdc.asm",
+      "instructions": 1618
+    },
+    "__ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb": {
+      "start": "0x100b50ae4",
+      "end": "0x100b513f0",
+      "symbol": "__ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b50ae4.asm",
+      "instructions": 579
+    },
+    "wm_ipad_pencil_paint_modal_admit": {
+      "start": "0x100b50760",
+      "end": "0x100b50ae4",
+      "symbol": "__ZL32wm_ipad_pencil_paint_modal_admitP8bContextP8wmWindowPK7wmEventPK17wmEventHandler_Opb",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b50760.asm",
+      "instructions": 225
+    },
+    "wm_ipad_pencil_paint_handler_registered": {
+      "start": "0x100b50590",
+      "end": "0x100b50760",
+      "symbol": "__ZL39wm_ipad_pencil_paint_handler_registeredP8wmWindowPK17wmEventHandler_Op",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b50590.asm",
+      "instructions": 116
+    },
+    "__Z20PAINT_OT_image_paintP14wmOperatorType": {
+      "start": "0x101d9f1d4",
+      "end": "0x101d9f240",
+      "symbol": "__Z20PAINT_OT_image_paintP14wmOperatorType",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101d9f1d4.asm",
+      "instructions": 27
+    },
+    "__Z21PAINT_OT_vertex_paintP14wmOperatorType": {
+      "start": "0x101dbb24c",
+      "end": "0x101dbb2f0",
+      "symbol": "__Z21PAINT_OT_vertex_paintP14wmOperatorType",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101dbb24c.asm",
+      "instructions": 41
+    },
+    "__Z21PAINT_OT_weight_paintP14wmOperatorType": {
+      "start": "0x101dcf980",
+      "end": "0x101dcfa24",
+      "symbol": "__Z21PAINT_OT_weight_paintP14wmOperatorType",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101dcf980.asm",
+      "instructions": 41
+    },
+    "SCULPT_OT_brush_strokeEP14": {
+      "start": "0x101de0280",
+      "end": "0x101de0354",
+      "symbol": "__ZN7blender2ed12sculpt_paint22SCULPT_OT_brush_strokeEP14wmOperatorType",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101de0280.asm",
+      "instructions": 53
+    },
+    "L12paint_cancel": {
+      "start": "0x101d9f4e4",
+      "end": "0x101d9f4ec",
+      "symbol": "__ZN7blender2ed12sculpt_paint5image3ops5paintL12paint_cancelEP8bContextP10wmOperator",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101d9f4e4.asm",
+      "instructions": 2
+    },
+    "L13vpaint_cancel": {
+      "start": "0x101dbb420",
+      "end": "0x101dbb428",
+      "symbol": "__ZL13vpaint_cancelP8bContextP10wmOperator",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101dbb420.asm",
+      "instructions": 2
+    },
+    "L13wpaint_cancel": {
+      "start": "0x101dcfb54",
+      "end": "0x101dcfb5c",
+      "symbol": "__ZL13wpaint_cancelP8bContextP10wmOperator",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101dcfb54.asm",
+      "instructions": 2
+    },
+    "L26sculpt_brush_stroke_cancel": {
+      "start": "0x101de06a4",
+      "end": "0x101de07dc",
+      "symbol": "__ZN7blender2ed12sculpt_paintL26sculpt_brush_stroke_cancelEP8bContextP10wmOperator",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101de06a4.asm",
+      "instructions": 78
+    },
+    "19paint_stroke_cancel": {
+      "start": "0x101db7920",
+      "end": "0x101db79c4",
+      "symbol": "__ZN7blender2ed12sculpt_paint19paint_stroke_cancelEP8bContextP10wmOperatorPNS1_11PaintStrokeE",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101db7920.asm",
+      "instructions": 41
+    },
+    "17paint_stroke_free": {
+      "start": "0x101db6084",
+      "end": "0x101db6150",
+      "symbol": "__ZN7blender2ed12sculpt_paint17paint_stroke_freeEP8bContextP10wmOperatorPNS1_11PaintStrokeE",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-101db6084.asm",
+      "instructions": 51
+    },
+    "__Z20wm_event_do_handlersP8bContext": {
+      "start": "0x100b53738",
+      "end": "0x100b54c3c",
+      "symbol": "__Z20wm_event_do_handlersP8bContext",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b53738.asm",
+      "instructions": 1345
+    },
+    "__ZL21wm_handlers_do_internP8bContextP8wmWindowP7wmEventP8ListBase": {
+      "start": "0x100b5ba5c",
+      "end": "0x100b5d318",
+      "symbol": "__ZL21wm_handlers_do_internP8bContextP8wmWindowP7wmEventP8ListBase",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b5ba5c.asm",
+      "instructions": 1583
+    },
+    "__ZZ23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvyENK3$_1clEv": {
+      "start": "0x100b59624",
+      "end": "0x100b59698",
+      "symbol": "__ZZ23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvyENK3$_1clEv",
+      "file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\independent-consumer-100b59624.asm",
+      "instructions": 29
+    }
+  },
+  "evidence": [
+    {
+      "obligation": "actual inlined GHOST button cancelled-byte ABI reaches consumer",
+      "addresses": [
+        "0x1010a85e4",
+        "0x1010a85f8",
+        "0x1010a8608",
+        "0x1010a8628",
+        "0x1010a8648",
+        "0x100b58d10",
+        "0x100b58d20"
+      ],
+      "resolved": "Fresh generator dump independently read: cancelled/directtool halfword loads UserInputEvent+0x6d and stores object+0x3c; payload pointer stored object+0x20 points to object+0x28, so cancelled is payload+0x14. Button-up type3 is stored. Consumer w28=(type==3) gates load byte payload+0x14 ==1; only then event.flag OR0x40. Producer predicate itself is separately reviewed by pan_final_review."
+    },
+    {
+      "obligation": "queue receipt before shared pointer/click state",
+      "addresses": [
+        "0x100b57e38",
+        "0x100b57e58",
+        "0x100b57eb8",
+        "0x100b57f18",
+        "0x100b58c20",
+        "0x100b58c34",
+        "0x100b57f80",
+        "0x100b58d84"
+      ],
+      "resolved": "Cursor and button packet layouts select serial/generation/region/origin-x/origin-y locations explicitly; required zero/malformed/button-kind/runtime failures branch to epilogue100b59420. Terminal calls exact queued-match lambda100b59624 and requires queued_down==1 before retiring serial, clearing lease and setting down=true/phase4. Only admitted path joins100b57f7c and loads win->eventstate at100b57f80, before actual click updater100b58d84."
+    },
+    {
+      "obligation": "exact queued tuple and retirement/cancelled tail refusal",
+      "addresses": [
+        "0x100b59624",
+        "0x100b59638",
+        "0x100b5964c",
+        "0x100b59660",
+        "0x100b59674",
+        "0x100b59688",
+        "0x100b57f18",
+        "0x100b57f34",
+        "0x100b590c8",
+        "0x100b592e0",
+        "0x100b59338"
+      ],
+      "resolved": "Lambda compares runtime+0x10 serial,+0x18 generation,+0x20 region,+0x28 x,+0x2c y; every mismatch returns0. Queue cancelled serial/generation match returns before eventstate; terminal retires and clears. Fresh motion/down acquisition compares retired serial and calls live ticket. Matching originally queued terminal does not call current ticket provider."
+    },
+    {
+      "obligation": "tagged continuation cannot dispatch to replacement/non-owner handler",
+      "addresses": [
+        "0x100b5bbbc",
+        "0x100b5bbe8",
+        "0x100b5bc38",
+        "0x100b5bc94",
+        "0x100b5bd4c",
+        "0x100b5bda4",
+        "0x100b5d15c"
+      ],
+      "resolved": "Owned phase3/4 requires modal handler list; absent exact registered match consumes with action3. Initial scan and dispatch loop compare all five handler/event tuple fields and call registered-owner helper; nonmatching handlers skip. Owned contacts force BREAK|HANDLED at end."
+    },
+    {
+      "obligation": "registered native original operator/type/context validated",
+      "addresses": [
+        "0x100b505f8",
+        "0x100b50638",
+        "0x100b50670",
+        "0x100b50698",
+        "0x100b506b8",
+        "0x100b506c8",
+        "0x100b506f4",
+        "0x100b50700",
+        "0x100b50740",
+        "0x100b5085c",
+        "0x100b50874",
+        "0x100b50900",
+        "0x100b50994",
+        "0x100b509ac",
+        "0x100b50a98"
+      ],
+      "resolved": "Live modal-list membership, operator lifetime, registry mode/type pointer, type lifetime, handler operator type/no-macro, modal+cancel slots, original screen UID and region membership/runtime/visibility are checked. Admission then compares original context window/area/region/screen, current captured typed owner fields0..12 and17/18 plus tool string. Stale/mismatched/missing proof returns Consume1; fully valid Owned returns Dispatch0; independent interrupt returns Cancel2. Inlined owner-matching branches are resolved, not inferred from helper names."
+    },
+    {
+      "obligation": "cancel flag selects original cancel callback rather than normal modal release",
+      "addresses": [
+        "0x100b50e40",
+        "0x100b50e50",
+        "0x100b50e70",
+        "0x100b50ea0",
+        "0x100b50ff8",
+        "0x100b51018",
+        "0x100b51024",
+        "0x100b51030",
+        "0x100b51034",
+        "0x100b511b0",
+        "0x100b511c0"
+      ],
+      "resolved": "Normal owner admission call uses C=x19, win=x27, event=x20, handler=x21, teardown=false. Consume1 returns handled3 before either callback. Dispatch0 extracts bit6 of event.flag at+0x7c; Cancel2 selects same interrupt path. Interrupt marks original serial/generation tombstone, loads original type cancel slot+0x40 and BLR with x0=C,x1=original op=x23, then status0xa=CANCELLED|PASS_THROUGH. Separate unflagged normal path loads type modal slot+0x48 with event x2=x20. Cancel branch skips modal map/release dispatch entirely."
+    },
+    {
+      "obligation": "four mode registration slots resolve to actual native cancellation callbacks",
+      "addresses": [
+        "0x101de02e0",
+        "0x101dbb2ac",
+        "0x101dcf9e0",
+        "0x101d9f224"
+      ],
+      "resolved": "ADRP+ADD plus STP at ot+0x38 places cancel in second slot ot+0x40: Sculpt101de06a4; Vertex101dbb420; Weight101dcfb54; Texture101d9f4e4. These are the same slot loaded by handler BLR100b51030, while registered-owner validation requires exact original registry type/lifetime."
+    },
+    {
+      "obligation": "native mode-specific cancel and completion/free remain",
+      "addresses": [
+        "0x101d9f4e4",
+        "0x101dbb420",
+        "0x101dcfb54",
+        "0x101de06f0",
+        "0x101de074c",
+        "0x101de075c",
+        "0x101de0768",
+        "0x101de0780",
+        "0x101db7978",
+        "0x101db7998",
+        "0x101db79ac",
+        "0x101db79c0",
+        "0x101db60f4",
+        "0x101db6100",
+        "0x101db613c"
+      ],
+      "resolved": "Texture/Vertex/Weight each load op customdata+0x60 into x2 and tail-branch generic paint_stroke_cancel101db7920, with no premature Weight cache free. Sculpt guards cache and dyntopo support before its conditional undo restore, then generic cancel, cache destructor/free/null and texture exit. Generic cancel conditionally calls original stroke redraw/stroke_done slots after stroke_started and tail-calls paint_stroke_free101db6084. Free clears paint state, removes timer/cursor and destroys stroke curve/storage; free callback slot10664f690 resolves nm data symbol mem_guarded::internal::mem_freeN_ex. No universal rollback is asserted."
+    },
+    {
+      "obligation": "normal WM cancellation status cleanup excludes normal finish",
+      "addresses": [
+        "0x100b511d0",
+        "0x100b511ec",
+        "0x100b51248",
+        "0x100b512a4",
+        "0x100b512b0",
+        "0x100b51300",
+        "0x100b51304",
+        "0x100b5134c",
+        "0x100b51360",
+        "0x100b5136c",
+        "0x100b51384"
+      ],
+      "resolved": "Undo depth decrements only with same manager; same-window check gates post-callback cleanup. Status0xa reports via wm_operator_reports; FINISHED bit2 test is false, so cancellation frees original op via WM_operator_free and clears handler op. Normal FINISHED has separate wm_operator_finished call100b51300. Context restore/gizmo update follows; cancellation disables cursor grab, unlinks original handler and calls actual free slot. These are bounded original-context branches, not proof across arbitrary callback mutation."
+    },
+    {
+      "obligation": "already queued cancelled physical tail quarantined",
+      "addresses": [
+        "0x100b537b8",
+        "0x100b537dc",
+        "0x100b537ec",
+        "0x100b53800",
+        "0x100b53cf4",
+        "0x100b53d08"
+      ],
+      "resolved": "wm_event_do_handlers checks down/phase2..4 and cancelled original serial/generation before ordinary dispatch. Matching END clears tombstone; matching tail is unlinked and freed through wm_event_free_last_handled then loop continues, avoiding replacement UI/modal interpretation."
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "No device/UIKit timing/WM scheduler execution, occurrence rate, runtime native owner binding or global CFG/heap/reentrancy claim.",
+    "Mode-specific cancellation and selected normal cleanup branches only. Native geometry/history/Undo effects and arbitrary external callback mutation remain unproved; native Cancel is not universal rollback.",
+    "Generic stroke callbacks are loaded from original PaintStroke fields; their entire mode setup/brush/BKE effects are not traced in this limited review.",
+    "Original live context checks are compiled; lifetime/model assumptions at external capture, registry and allocator calls are not replaced with global runtime proof.",
+    "Changed producer/generator and package/launch proof remain separate reports."
+  ]
+}

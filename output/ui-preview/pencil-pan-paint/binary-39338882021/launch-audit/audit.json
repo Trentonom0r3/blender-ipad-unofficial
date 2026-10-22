@@ -1,0 +1,351 @@
+{
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\binary-39338882021\\Blender",
+  "audit": "bounded ARM64 compiled HUD launch obligations",
+  "device_acceptance": false,
+  "limits": [
+    "Branch conditions overapproximated; false negatives require manual review.",
+    "Registers spilled/reloaded or setter/helper inlining produce inconclusive, never relaxed checks.",
+    "Refresh alias proof requires an acyclic CFG; backward-address shared tails are allowed, directed cycles are refused.",
+    "Native runtime type-to-init connection and live first-frame state remain source/device obligations."
+  ],
+  "uuid": "502564F9-A08E-3D79-ADC6-0AA59B69B732",
+  "sha256": "0990241856220972682f1584d9e78a0667896f3da09c6bd6702386e710c98229",
+  "symbols": {
+    "owner": {
+      "start": 4318268840,
+      "end": 4318269676,
+      "symbol": "__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE"
+    },
+    "refresh": {
+      "start": 4328024844,
+      "end": 4328025672,
+      "symbol": "__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea"
+    },
+    "sizes": {
+      "start": 4318160860,
+      "end": 4318161264,
+      "symbol": "__Z27ED_area_update_region_sizesP15wmWindowManagerP8wmWindowP7ScrArea"
+    },
+    "hud_init": {
+      "start": 4328024148,
+      "end": 4328024212,
+      "symbol": "__ZL15hud_region_initP15wmWindowManagerP7ARegion"
+    },
+    "panels_init": {
+      "start": 4318174732,
+      "end": 4318174868,
+      "symbol": "__Z21ED_region_panels_initP15wmWindowManagerP7ARegion"
+    }
+  },
+  "owner_restoration": {
+    "status": "passed",
+    "issues": [],
+    "limitations": [],
+    "instruction_states": 253,
+    "mutation_calls": [
+      "0x101638f1c"
+    ],
+    "restoration_calls": [
+      "0x101638f6c"
+    ],
+    "post_mutation_return_sites": [
+      "0x101638e68"
+    ],
+    "setter_calls": [
+      [
+        "0x101638f1c",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "A"
+      ],
+      [
+        "0x101638f60",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "SA"
+      ],
+      [
+        "0x101638f6c",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "SR"
+      ],
+      [
+        "0x101638f8c",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "?"
+      ]
+    ]
+  },
+  "refresh_initialization": {
+    "status": "passed",
+    "issues": [],
+    "limitations": [],
+    "instruction_states": 896,
+    "native_size_calls": [
+      "0x101f86cb4"
+    ],
+    "floating_init_calls": [
+      "0x101f86cbc"
+    ],
+    "allocation_calls": [
+      "0x101f86bc8"
+    ],
+    "created_return_sites": [
+      "0x101f86b4c",
+      "0x101f86dd4"
+    ],
+    "verified_native_allocator_calls": {
+      "0x101f86c54": "_MEM_calloc_arrayN_aligned"
+    },
+    "zero_alias_refinements": [
+      [
+        "0x101f86b58",
+        "x0",
+        "NONZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86b58",
+        "x0",
+        "ZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86b6c",
+        "x0",
+        "NONZERO",
+        [
+          "x0",
+          "x22"
+        ]
+      ],
+      [
+        "0x101f86b6c",
+        "x0",
+        "ZERO",
+        [
+          "x0",
+          "x22"
+        ]
+      ],
+      [
+        "0x101f86b88",
+        "x0",
+        "NONZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86b88",
+        "x0",
+        "ZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86b90",
+        "x23",
+        "NONZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86b90",
+        "x23",
+        "ZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86b9c",
+        "x23",
+        "NONZERO",
+        [
+          "x0",
+          "x20",
+          "x22",
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86b9c",
+        "x23",
+        "NONZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86b9c",
+        "x23",
+        "ZERO",
+        [
+          "x22",
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86b9c",
+        "x23",
+        "ZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86ba0",
+        "x22",
+        "NONZERO",
+        [
+          "x0",
+          "x20",
+          "x22",
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86ba0",
+        "x22",
+        "ZERO",
+        [
+          "x22"
+        ]
+      ],
+      [
+        "0x101f86bc0",
+        "x0",
+        "NONZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86bc0",
+        "x0",
+        "ZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86bdc",
+        "x0",
+        "NONZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86bdc",
+        "x0",
+        "ZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86c2c",
+        "x23",
+        "NONZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86c2c",
+        "x23",
+        "ZERO",
+        [
+          "x23"
+        ]
+      ],
+      [
+        "0x101f86ccc",
+        "x0",
+        "NONZERO",
+        [
+          "x0"
+        ]
+      ],
+      [
+        "0x101f86ccc",
+        "x0",
+        "ZERO",
+        [
+          "x0"
+        ]
+      ]
+    ],
+    "flow_proof": {
+      "acyclic": true,
+      "reachable_instructions": 207,
+      "backward_address_edges": [
+        [
+          "0x101f86b58",
+          "0x101f86b38"
+        ],
+        [
+          "0x101f86b74",
+          "0x101f86b38"
+        ],
+        [
+          "0x101f86b88",
+          "0x101f86b38"
+        ],
+        [
+          "0x101f86bc0",
+          "0x101f86b38"
+        ],
+        [
+          "0x101f86c2c",
+          "0x101f86b94"
+        ],
+        [
+          "0x101f86c74",
+          "0x101f86b9c"
+        ],
+        [
+          "0x101f86e18",
+          "0x101f86b38"
+        ],
+        [
+          "0x101f86e44",
+          "0x101f86b38"
+        ]
+      ],
+      "cycle_remaining_instructions": []
+    }
+  },
+  "native_sizing_profile": {
+    "status": "passed",
+    "missing": [],
+    "required_direct_fragments": [],
+    "indirect_call_sites": [
+      "0x10161e934"
+    ]
+  },
+  "native_hud_init_profile": {
+    "status": "passed",
+    "missing": [],
+    "required_direct_fragments": [
+      "ED_region_panels_init",
+      "UI_region_handlers_add"
+    ],
+    "indirect_call_sites": []
+  },
+  "native_view2d_init_profile": {
+    "status": "passed",
+    "missing": [],
+    "required_direct_fragments": [
+      "UI_view2d_region_reinit"
+    ],
+    "indirect_call_sites": []
+  },
+  "status": "passed"
+}

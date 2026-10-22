@@ -1,0 +1,78 @@
+{
+  "status": "READ_ONLY_DESIGN_CANDIDATE_REQUIRES_LIFECYCLE_PROOF",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_locations": {
+    "intern/ghost/GHOST_NavigationIOS.hh": {
+      "sha256": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+      "anchors": {
+        "inline bool direct_edit_tool(": 21,
+        "struct NavigationRect {": 125,
+        "inline PointerCaptureKind pointer_capture_hit(": 216,
+        "struct PointerCapture {": 346,
+        "inline void forget_navigation_window(": 363
+      }
+    },
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+      "anchors": {
+        "@implementation GHOSTUIPanGestureRecognizer": 358,
+        "- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender\n{": 1450,
+        "- (void)cancelPointerCapture\n{": 1413,
+        "- (void)generateUserInputEvents:(const UserInputEvent &)event_info\n{": 966,
+        "GHOST_WindowIOS::~GHOST_WindowIOS()": 3182,
+        "void GHOST_WindowIOS::resignKeyWindow()": 3659
+      }
+    },
+    "source/blender/windowmanager/intern/wm_draw.cc": {
+      "sha256": "a75deb39f7c07f6bbe29a6a26088d4fd504ffef71a9b881fe3aa05bc75a60d49",
+      "anchors": {
+        "static void wm_ipad_finger_paint_record(": 722,
+        "static void wm_ipad_finger_paint_publish(": 745,
+        "static void wm_draw_area_offscreen(": 1093,
+        "static void wm_draw_window_area_layer(": 1337,
+        "static void wm_draw_window_onscreen(": 1438
+      }
+    },
+    "source/blender/windowmanager/wm_draw.hh": {
+      "sha256": "6c3e03bc1db9e48b99e183b3ea71c5a50c33de1e70713684677c9db621f17a5c",
+      "anchors": {
+        "struct wmDrawBuffer": 23
+      }
+    },
+    "source/blender/editors/screen/screen_ipad_panels.cc": {
+      "sha256": "4ecbc9c8efbd58279d54c6e1fb4e5614f6270fa1256aa3db8f0db56ae62d3ac7",
+      "anchors": {
+        "void ED_ipad_editing_canvas_parts(": 2166
+      }
+    },
+    "source/blender/windowmanager/intern/wm_toolsystem.cc": {
+      "sha256": "f5f29b043b01808ec55265977fe5dbf760ea829ef004dc1f7903886084bd6adc",
+      "anchors": {
+        "void WM_toolsystem_ref_set_from_runtime(": 830,
+        "bToolRef *WM_toolsystem_ref_set_by_id_ex(": 1192
+      }
+    },
+    "source/blender/windowmanager/intern/wm_window.cc": {
+      "sha256": "0a334ecf67f105331b5c1bd0717ae10c3ae4738a355926a7ce564127122abf13",
+      "anchors": {
+        "void WM_window_set_active_workspace(": 3477,
+        "void WM_window_set_active_screen(": 3614,
+        "void WM_window_set_active_scene(": 3172
+      }
+    },
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "sha256": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c",
+      "anchors": {
+        "if (handler->ipad_pencil_paint_serial || ipad_pencil_owner_teardown)": 2937,
+        "if (retval & OPERATOR_PASS_THROUGH) {": 3157
+      }
+    }
+  },
+  "native_knife_sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+  "production_changed": false,
+  "tests_changed": false,
+  "builds_dispatched": false,
+  "recommended_scope": "A dedicated Pencil Knife physical-origin hint authorizes only omission of the producer paired PAN. Preserve the existing precision cursor/down/up sequence byte-for-byte semantically. No ToolManipulation routing, paint tag, terminal lease, native operator ownership, new modal Cancel or replacement cancel.",
+  "primary_limit": "Generic navigation currently has no lifetime/generation/tool receipt. A suppression hint cannot be based on late current coordinates/current tool alone. Last-composited higher-UI/geometry/context admission and pending-acquisition invalidation still need a concrete source-executing contract before implementation."
+}

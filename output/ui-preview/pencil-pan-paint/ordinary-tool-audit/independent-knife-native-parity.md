@@ -1,0 +1,53 @@
+Independent native Knife parity challenge (source only)
+
+Exact patch: 40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e. Pin: d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e. No repository/source/test changes, tests or build dispatch.
+
+Freeze only Pencil Knife exposed-canvas physical-origin intent; omit its paired precision PAN while preserving the existing ordinary precision cursor/button/modifier/tap/double-click sequence. Existing exposed-canvas publication and TouchAdmission/GestureContact value lifecycle are reusable. Reuse of the complete ToolManipulation event path is not packet-equivalent and needs separate deliberate semantics/validation. Any interruption terminal requires proof of actual original button-down enqueue and must remain native Knife ADD_CUT-release behavior rather than confirm/full cancel.
+
+retain-native-session
+Physical lift ends one drag-hold, not Knife modal session. Native ADD_CUT release clears is_drag_hold, ignore_edge_snapping and is_drag_undo, updates current mval, and remains RUNNING_MODAL. Keep multiple contacts/cuts before explicit confirm.
+Source: editmesh_knife.cc:4380-4413, editmesh_knife.cc:4556-4557, blender_default.py:6247-6253.
+
+capture-block-is-not-packet-equivalent
+Do not blindly add Knife to ToolManipulation and reuse its complete event block. Existing precision Began queues cursor/down at current recognition location; captured branch queues cursor/down at reconstructed physical origin then an additional current cursor. Existing precision terminal queues only up; captured terminal queues current cursor then up. Native Knife invoke with wait_for_input=false immediately starts a cut at invocation mval; a current MOUSEMOVE while drag holding can add a cut. These sample changes are material and are outside a paired-PAN-only correction.
+Source: GHOST_WindowIOS.mm:1493-1535, GHOST_WindowIOS.mm:1598-1641, editmesh_knife.cc:4384-4409, editmesh_knife.cc:4462-4470, editmesh_knife.cc:4610-4619, blender_default.py:7664-7672.
+
+modifiers-remain-native
+Preserve keyboard delivery, held modifier snapshots and exact native modal mapping. Ctrl press/release changes both snapping flags; Shift changes midpoint snapping; native release itself resets edge snapping even if Ctrl is still held. Do not synthesize modifier transitions, clear held Ctrl, or reinterpret modifiers per cursor update. Preserve numeric/axis/angle/cut-through/depth toggles.
+Source: editmesh_knife.cc:4225-4246, editmesh_knife.cc:4287-4362, editmesh_knife.cc:4402-4408, editmesh_knife.cc:4505-4541, blender_default.py:6254-6269.
+
+confirm-cancel-newcut-remain-native
+Enter/NumpadEnter/Space confirm through finish+exit; empty cuts cancel to avoid an undo push. Escape exits without finish. Right mouse with no cuts cancels; otherwise it ends the current cut and keeps Knife idle/modal. Ctrl-Z retains native per-cut stack semantics. Do not attach confirm or full cancel to Pencil lift/navigation.
+Source: editmesh_knife.cc:4132-4136, editmesh_knife.cc:4252-4285, editmesh_knife.cc:4364-4378, blender_default.py:6245-6253.
+
+pointer-cancel-is-not-knife-cancel
+Knife modal never checks WM_EVENT_IS_POINTER_CANCEL. A flagged left up still maps ADD_CUT release and continues. Existing PointerCapture.finish means one physical button termination, not proof that Knife confirms/cancels. Reuse only a once-only actual-enqueued-press release guarantee; never call a retained Knife operator or synthesize a replacement Cancel.
+Source: GHOST_NavigationIOS.hh:346-359, GHOST_WindowIOS.mm:1413-1444, GHOST_WindowIOS.mm:1524-1535, wm_event_system.cc:8555-8557, editmesh_knife.cc:4201-4557.
+
+physical-origin-and-device-scope
+Freeze Pencil-only canvas intent in touchesBegan before superclass action delivery. Existing general PointerCapture is chosen later at recognizer Began using current publication. Reusing that lookup alone does not preserve physical-start tool/presentation intent across redraw. Existing direct_edit_tool is shared with fingers; adding Knife there unconditionally changes finger editing. Pure tap must retain existing Ended-only cursor/down/up and pan-failure dependency.
+Source: GHOST_WindowIOS.mm:365-392, GHOST_WindowIOS.mm:425-444, GHOST_WindowIOS.mm:854-859, GHOST_WindowIOS.mm:1300-1320, GHOST_WindowIOS.mm:1493-1501, GHOST_NavigationIOS.hh:21-48, GHOST_NavigationIOS.hh:216-245.
+
+publication-and-covered-ui
+Safe reusable seam is the window-owned exposed-canvas parts and first-hit priority. Restrict new publication to actual native Knife active tool in EDIT_MESH and only visible iPad WINDOW canvas parts. Keep resize/HUD/navigation first-hit priority, editing shelf subtraction and floating-menu clearing. Current active-tool publication does not prove capture of keyboard-invoked Knife while another toolbar tool is active; keep that limitation explicit.
+Source: wm_draw.cc:1540-1624, screen_ipad_panels.cc:2166-2180, GHOST_NavigationIOS.hh:216-245.
+
+direct-tool-flag-is-not-neutral
+Existing captured ToolManipulation sets WM_EVENT_IS_DIRECT_TOOL. That suppresses panel dismissal and panel-host rebind on canvas press, and other consumers have tool-specific behavior. It is not merely a no-PAN flag. A paired-PAN-only correction should not gain those effects accidentally; either preserve ordinary Knife cursor/button packets and freeze only PAN eligibility, or explicitly review/test the intended direct-tool UI change.
+Source: GHOST_WindowIOS.mm:1503-1524, wm_event_system.cc:8363-8366, wm_event_system.cc:8551-8554, screen_ipad_panels.cc:2911-2942.
+
+double-click-and-release-timing
+Preserve button timestamps, press/release number and positions, and native double-click conversion. Double-click maps ADD_CUT_CLOSED and can close to init then finish current cut. An added/relocated origin cursor or terminal cursor can change geometric freehand updates and click distance classification. No early physical-down delivery, extra up, or arbitrary coalescing claim.
+Source: editmesh_knife.cc:4414-4436, wm_event_system.cc:7885-7902, wm_event_system.cc:8011-8066, blender_default.py:6247-6248.
+
+independent-navigation
+Omit only admitted Pencil contact recognizer paired PAN. Preserve Knife raw MOUSEPAN/MOUSEZOOM/MOUSEROTATE/wheel/NDOF PASS_THROUGH and independent finger/trackpad/hardware navigation. Keep MiddleMouse PANNING and ordinary native modal context routing; do not globally swallow MOUSEPAN or tag Knife as a paint owner.
+Source: editmesh_knife.cc:4438-4461, wm_event_system.cc:2937-2984, GHOST_WindowIOS.mm:1742-1788, blender_default.py:6246.
+
+Retirement/liveness
+Latch provenance at physical start, keep it through redraw and modifier changes, retire/block the interrupted recognizer until physical reset, and acquire fresh only at next physical start. Suppression must not degrade into paired navigation after stale publication. A value-only receipt is producer intent, not permission to invoke/cancel a native operator. No old operator/brush pointer is retained.
+
+Evidence limits
+Read-only source challenge; no full Knife modal or UIKit/WM scheduler execution was added.
+Native geometry/history effects, device action timing and actual interruption/replacement behavior remain separate evidence.
+Reported line references are full reconstructed current files or exact pinned Knife/keymap files, not stale Temp materializations.

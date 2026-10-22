@@ -1,5 +1,5 @@
 {
-  "status": "PASS_SOURCE_HOST_REVIEW_REQUIRES_EXACT_COMMIT_NATIVE_BUILD",
+  "status": "PASS_EXACT_NATIVE_PACKAGE_BOUNDED_COMPILED_REQUIRES_DEVICE_EVIDENCE",
   "timestamp_utc": "2026-10-19T23:00:07.998232+00:00",
   "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
   "previous_patch_sha256": "44dbcce15cd14907e386033049326aac4248950181d7eb7248f55f1370e1a002",
@@ -11,8 +11,8 @@
   "scope": "Only precision suffix PAN provenance predicate and tagged terminal cancelled flag; actual enqueued leases/WM/native/UI paths unchanged.",
   "review": "independent-candidate-source-review.json",
   "tests": "Final corrected full563/563 passed504.242s; corrected40 and retained38 pass. No native build/device proof yet.",
-  "latest_fully_verified_source": "c88c85de0f7c31081441157ac6b85a90b3963704",
-  "latest_fully_verified_run": "39200263060",
+  "latest_fully_verified_source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "latest_fully_verified_run": "39338882021",
   "fixture_sha256": "fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170",
   "affected_existing": {
     "tests": 38,
@@ -45,5 +45,9 @@
     "seconds": 461.269,
     "log": ".cache/pan-paint-full-tests.log"
   },
-  "fixture_review_correction": "Actual normal WM FINISHED branch now precedes cancellation else-if; wm_operator_finished modeled separately; cancellation cleanup order remains exact. Initial harness failures preserved."
+  "fixture_review_correction": "Actual normal WM FINISHED branch now precedes cancellation else-if; wm_operator_finished modeled separately; cancellation cleanup order remains exact. Initial harness failures preserved.",
+  "source_validation_status": "PASS_SOURCE_HOST_REVIEW_REQUIRES_EXACT_COMMIT_NATIVE_BUILD",
+  "previous_verified_source": "c88c85de0f7c31081441157ac6b85a90b3963704",
+  "previous_verified_run": "39200263060",
+  "native_package_verification": "native-package-verification.json"
 }

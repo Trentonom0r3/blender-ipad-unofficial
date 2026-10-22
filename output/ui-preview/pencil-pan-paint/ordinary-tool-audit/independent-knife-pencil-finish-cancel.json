@@ -1,0 +1,185 @@
+{
+  "status": "BOUNDED_SOURCE_EXPOSURE_GAP_NO_PENCIL_FINISH_CANCEL_PAIR_FOUND",
+  "created_utc": "2026-10-19T23:21:54.886208+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "production_changed": false,
+  "tests_changed": false,
+  "tests_run": false,
+  "build_dispatched": false,
+  "source_hashes": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+      "scope": "full changed_source reconstruction"
+    },
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "sha256": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c",
+      "scope": "full changed_source reconstruction"
+    },
+    "source/blender/editors/mesh/editmesh_knife.cc": {
+      "sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+      "scope": "exact pinned full source"
+    },
+    "scripts/startup/bl_ui/space_view3d_ipad.py": {
+      "sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+      "scope": "full changed_source reconstruction"
+    },
+    "scripts/startup/bl_ui/space_view3d.py": {
+      "sha256": "a106c514c5e594de421a155376f05b6fd804cb0f59f2482c552bf8f4bbd241c4",
+      "scope": "exact pinned full source"
+    },
+    "scripts/startup/bl_ui/space_toolsystem_toolbar.py": {
+      "sha256": "f29a4d4e7b782cd5b08e0fd586e8970f8362b6ee0c09d2eff7d750064e29bd75",
+      "scope": "exact pinned full source"
+    },
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": {
+      "sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+      "scope": "full changed_source reconstruction"
+    },
+    "source/blender/editors/interface/regions/interface_region_menu_pie.cc": {
+      "sha256": "37320b559762a17e8a3d366240d77e4c7fac75dbf68df41959b0bf231f01fa92",
+      "scope": "full changed_source reconstruction"
+    },
+    "source/blender/editors/interface/regions/interface_region_hud.cc": {
+      "sha256": "5e12c11b75654ece88e89c561159d07b44946d32a7d51c8c443e33d832e7a36a",
+      "scope": "full changed_source reconstruction"
+    },
+    "source/blender/editors/interface/interface_handlers.cc": {
+      "sha256": "e82fb38c9468233561e6bf55907131d27e5fed805571cc09e94cd28f76424450",
+      "scope": "full changed_source reconstruction"
+    }
+  },
+  "additional_exact_pinned_read_only_inputs": {
+    "scripts/startup/bl_ui/space_statusbar.py": {
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/startup/bl_ui/space_statusbar.py",
+      "local_file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7\\pinned-space_statusbar.py",
+      "sha256": "ea1c173a075f9b0779dc05329cf99c8c0a5d5fc0888e161f13e42c57052453c8"
+    },
+    "source/blender/editors/space_statusbar/space_statusbar.cc": {
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_statusbar/space_statusbar.cc",
+      "local_file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7\\pinned-space_statusbar.cc",
+      "sha256": "53cb25efff536c72ce3388e1f07b61413c4ef4966cda8dd3384ac03913c33f93"
+    },
+    "source/blender/editors/interface/templates/interface_template_status.cc": {
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/templates/interface_template_status.cc",
+      "local_file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7\\pinned-interface_template_status.cc",
+      "sha256": "960b1bc400356ec682a1780f6d82e7d00c57ea13df30076aae56ba5eb19c9a4a"
+    },
+    "scripts/startup/bl_ui/space_toolsystem_common.py": {
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/startup/bl_ui/space_toolsystem_common.py",
+      "local_file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7\\pinned-space_toolsystem_common.py",
+      "sha256": "23ac0c345e78074307ad28116ee22572109ac7feaaeee1f4b1805ed798b6df8b"
+    }
+  },
+  "findings": [
+    {
+      "id": "no-visible-finish-cancel-pair",
+      "claim": "Within the inspected current standard iPad/native UI routes, no Pencil-visible Finish/Cancel action pair targets an active native Knife. This is a bounded source exposure gap, not a device-observed stuck state.",
+      "refs": [
+        "space_view3d_ipad.py:714-810",
+        "space_view3d_ipad.py:1051-1160",
+        "space_view3d_ipad.py:1498-1575",
+        "space_toolsystem_toolbar.py:1115-1146"
+      ]
+    },
+    {
+      "id": "corner-and-inspector",
+      "claim": "The registered corner HUD panels are Next drag (transform-only poll), Selection (Box/Lasso-only poll), and View. Native Knife Active Tool/Inspector/header draw_settings exposes occlusion, only-selected, xray, measurements, angle snapping and increment; it has widget=None and no terminal buttons. An ordinary new region button alone would not establish reachability because Knife modal receives input first and consumes mapped LMB/unknown events.",
+      "refs": [
+        "space_view3d_ipad.py:720-810",
+        "space_view3d_ipad.py:1567-1570",
+        "space_toolsystem_toolbar.py:1115-1146",
+        "space_toolsystem_common.py:172-187",
+        "space_toolsystem_common.py:798-832",
+        "space_view3d.py:6249-6254",
+        "wm_event_system.cc:6246-6267",
+        "wm_event_system.cc:6285-6295",
+        "editmesh_knife.cc:4380-4413",
+        "editmesh_knife.cc:4556-4557"
+      ]
+    },
+    {
+      "id": "status-hints-are-not-buttons",
+      "claim": "Knife knife_update_header publishes WorkspaceStatus Confirm and Cancel hints. The pinned uiTemplateInputStatus priority branch draws each WorkspaceStatus item with uiItemL_ex, then returns. They are labels, not a Pencil event source. The alternate WM modal keymap status path is also status display.",
+      "refs": [
+        "editmesh_knife.cc:1062-1105",
+        "interface_template_status.cc:260-289",
+        "space_statusbar.py:9-17",
+        "wm_event_system.cc:9294-9342"
+      ]
+    },
+    {
+      "id": "squeeze-does-not-cancel-knife",
+      "claim": "Pencil squeeze is ignored during screen contact/held mouse buttons; after contact it calls cancelPointerCapture then queues optional cursor plus PENCIL_TOOL_PALETTE, not Escape. WM maps this to PENCIL_TOOL_PALETTE KM_PRESS; it reaches modal handlers before ordinary WM keymap. Native Knife has no matching modal item or raw pass-through for this type and returns RUNNING_MODAL. Thus default ordinary active Knife does not gain a ring/Cancel route from squeeze. Existing paint-owner pre-dispatch is paint-specific and cannot be inferred for Knife serial0.",
+      "refs": [
+        "GHOST_WindowIOS.mm:2005-2028",
+        "wm_event_system.cc:8501-8504",
+        "wm_event_system.cc:6209-6212",
+        "wm_event_system.cc:6246-6267",
+        "editmesh_knife.cc:4138-4181",
+        "editmesh_knife.cc:4453-4478",
+        "editmesh_knife.cc:4556-4557",
+        "blender_default.py:835"
+      ]
+    },
+    {
+      "id": "barrel-double-tap-is-native-stop",
+      "claim": "Outside an already open ring, permitted Pencil barrel double-tap between contacts queues PENCIL_CONTEXT_MENU, which emits RIGHTMOUSE down/up. Native default Knife maps right press to NEW_CUT. Before any ADD_CUT no_cuts=true it cancels; once ADD_CUT set no_cuts=false, it only knife_finish_cut+MODE_IDLE and leaves the operator modal. The More Tools Knife launch uses wait_for_input=false, invokes ADD_CUT immediately, and therefore sets no_cuts=false at the first admitted stroke even if no useful geometry was produced. Barrel double-tap is a source-exposed Stop current cut route, not full Cancel or Confirm after cutting. An existing ring instead receives barrel Home.",
+      "refs": [
+        "GHOST_WindowIOS.mm:1142-1155",
+        "GHOST_WindowIOS.mm:1980-2002",
+        "blender_default.py:6253",
+        "blender_default.py:7664-7672",
+        "editmesh_knife.cc:4364-4381",
+        "editmesh_knife.cc:4610-4619"
+      ]
+    },
+    {
+      "id": "keyboard-is-text-only-not-escape",
+      "claim": "The iOS onscreen keyboard is requested by native UI text/numeric editing, not by Knife modal. Its Done sends Enter only while keyboard-active. Its Cancel restores original text and calls that same Enter generator; it sends no Escape. It is not a general Knife cancel control. No inspected visible iPad command keyboard launcher exposes Enter/Space/Escape for a live Knife session. An already-active text-edit keyboard cannot be assumed to dispatch Enter to Knife instead of its owning text edit.",
+      "refs": [
+        "interface_handlers.cc:4400-4442",
+        "GHOST_WindowIOS.mm:2094-2111",
+        "GHOST_WindowIOS.mm:2176-2187",
+        "GHOST_WindowIOS.mm:2775-2792"
+      ]
+    },
+    {
+      "id": "lift-and-navigation-not-terminals",
+      "claim": "Pencil up maps native ADD_CUT release, clears drag holding and continues Knife. Raw pan/zoom/rotate/wheel/NDOF pass through without confirm/cancel. Existing direct-tool POINTER_CANCEL is not interpreted by Knife; neither lift nor two-finger navigation proves whole-session Cancel.",
+      "refs": [
+        "blender_default.py:6248",
+        "editmesh_knife.cc:4380-4413",
+        "editmesh_knife.cc:4438-4461",
+        "editmesh_knife.cc:4556-4557",
+        "GHOST_WindowIOS.mm:1742-1788"
+      ]
+    }
+  ],
+  "smallest_coherent_visible_contract": {
+    "visible_surface": "A compact, persistent Knife-active control pair in the existing viewport corner/exposed HUD area: Finish Knife and Cancel Knife. Show it only for the actual live original native MESH_OT_knife_tool modal, not merely because the toolbar tool is Knife. Keep native multi-cut input between explicit terminal actions. Do not redesign Base ring or make lift/squeeze/two-finger drag a whole-session terminal.",
+    "actions": {
+      "Finish Knife": "Dispatch the native KNF_MODAL_CONFIRM semantic through the original registered Knife modal and ordinary WM status cleanup. Keep native finish+exit, empty-cut CANCELLED/no undo push, otherwise FINISHED/native history.",
+      "Cancel Knife": "Dispatch native KNF_MODAL_CANCEL through the original registered Knife modal and normal WM cleanup. Preserve Escape semantics; do not call finish or emulate right-click NEW_CUT.",
+      "End current cut": "Retain native right-click/barrel NEW_CUT semantics separately. A third button is optional; do not relabel this as full Cancel."
+    },
+    "reachability": "Reserve the actually presented button contact before Knife can treat LMB as ADD_CUT. A normal Python region button that sits behind the native modal does not prove usability. Hit admission must be limited to those visible rendered control bounds; reserve the complete press/motion/release stream so tapping a terminal control cannot add a cut underneath.",
+    "target_lifetime": "Use copied window/area/region and original operator/type lifetime values plus presented generation, resolving a fresh unique live registered Knife owner at action time. Keep operator/handler pointers local only during validated WM dispatch; no retained old operator pointer and no replacement target. Rejected/stale UI contacts remain consumed until physical termination; do not become canvas input or act on a replacement Knife.",
+    "cleanup": "Normal WM native FINISHED/CANCELLED result owns reports/history/operator/handler disposal and removes controls. If Knife ends or context/owner changes while a control contact is pending, retire that presentation and consume its remaining UI tail once. Do not synthesize an unleased mouse release or invoke the Knife operator again.",
+    "preserved_native_meanings": [
+      "Enter/Numpad Enter/Space: Confirm (finish+exit; empty confirm cancels)",
+      "Escape: full native Cancel/exit",
+      "Right mouse/barrel default context action: NEW_CUT; cancel only before no_cuts becomes false, otherwise Stop current cut+idle",
+      "Pencil release: stop drag holding, retain Knife modal and pending multi-cut session",
+      "Ctrl-Z: native per-cut undo; do not replace with global history pop",
+      "Native Ctrl/Shift/numeric/axis/cut-through/angle/depth handling remains independent"
+    ],
+    "required_before_implementation": "Review exact source owner binding, pre-modal UI hit routing and rendered fit at current accepted corner layout. Connected validation must execute actual native confirm/cancel/NEW_CUT/lift branches and normal WM terminal cleanup with stale owner/replacement UI tails. Exact package/compiled/device gates remain separate."
+  },
+  "evidence_limits": [
+    "No device or UIKit/WM runtime execution. UI fit/reachability on an actual iPad remains unproved.",
+    "No claim that every possible accessibility mapping, custom keymap, add-on or external OS feature has been excluded. This is the standard current source path, default native Knife map and visible controls inspected.",
+    "No universal geometry/rollback/history guarantee; controls must preserve exact native action semantics.",
+    "Line references use full reconstructed current overlay sources or exact pinned additional files, never stale Temp source."
+  ]
+}

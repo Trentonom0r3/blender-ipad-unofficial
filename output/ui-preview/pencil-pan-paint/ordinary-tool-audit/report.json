@@ -1,0 +1,53 @@
+{
+  "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\ordinary-native-pan-audit-qggvyhp7",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "native_inputs": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+    "source/blender/editors/gpencil_legacy/annotate_paint.cc": "76f2f853dafa6f065b8fb5ce08baca44a1f4ab936c65ab70af576a016bf30317",
+    "source/blender/editors/space_view3d/view3d_gizmo_ruler.cc": "1d7461ab551d34274b3f8bc7ac742720f2e975eb9f3dedc71294f8dbc4825c14",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3"
+  },
+  "actual_keymap_trackpad_items": [
+    [
+      "view3d.rotate",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY"
+      },
+      null
+    ],
+    [
+      "view3d.move",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY",
+        "shift": true
+      },
+      null
+    ],
+    [
+      "view3d.zoom",
+      {
+        "type": "TRACKPADPAN",
+        "value": "ANY",
+        "ctrl": true
+      },
+      null
+    ]
+  ],
+  "compile_returncode": 0,
+  "boundaries": [
+    "UIKit messages and scheduling adapted by retained producer harness",
+    "ordinary native operator setup and event dispatch/keymap match modeled; actual keymap Python evaluated separately",
+    "Knife exact unmapped-event return slice; whole Knife modal not compiled",
+    "WM conversion and actual full wm_event_add_trackpad execute; list allocation/append/free modeled; initial native modal setup and scheduling remain boundaries",
+    "view navigation context/init/state/RNA/soft limits/redraw/camera-sync/autokey external calls modeled",
+    "actual complete zoom invoke/init/apply/scale/distance functions executed in unlocked perspective with cursor zoom disabled; no geometry/Undo/device proof"
+  ],
+  "execution": {
+    "returncode": 0,
+    "stdout": "PASS Ctrl Knife PAN: dist=10 -> 10.197; native zoom finished; Knife PASS_THROUGH; no paint Cancel path\n",
+    "stderr": ""
+  }
+}

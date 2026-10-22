@@ -1,0 +1,104 @@
+{
+  "status": "READY_PLAN_ONLY_CURRENT_BINARY_NOT_INSPECTED",
+  "created_utc": "2026-10-19T23:17:16.311250+00:00",
+  "target_run": "39338882021",
+  "target_source_prefix": "1461998",
+  "target_overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "baseline_binary": "output/ui-preview/pencil-pointer-assignment/binary-39200263060/Blender",
+  "baseline_uuid": "6129B9FF-ABF9-316C-9E6D-400211686285",
+  "baseline_scopes": {
+    "handlePan": {
+      "start": "0x1010a9cb8",
+      "end": "0x1010aa8fc",
+      "instructions": 785,
+      "assembly": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\compiled-review-preparation\\baseline-handlePan.asm"
+    },
+    "generateUserInputEvents": {
+      "start": "0x1010a7ac4",
+      "end": "0x1010a88dc",
+      "instructions": 902,
+      "assembly": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\compiled-review-preparation\\baseline-generateUserInputEvents.asm"
+    },
+    "cancelPointerCapture": {
+      "start": "0x1010a99e8",
+      "end": "0x1010a9cb8",
+      "instructions": 180,
+      "assembly": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-pan-paint\\compiled-review-preparation\\baseline-cancelPointerCapture.asm"
+    }
+  },
+  "method": "Fresh llvm-nm numeric text bounds plus llvm-objdump actual ARM64 instructions. Exact full Objective-C selectors uniquely bounded; three independent baseline dumps saved here. No current build polling or waiting.",
+  "actual_baseline_anchors": [
+    {
+      "area": "Precision suffix contact copy",
+      "addresses": "0x1010aa420-0x1010aa464,0x1010aa548-0x1010aa550",
+      "observed": "pencilPaintContact message result at sp+0x30 copied as two128-bit chunks to UserInputEvent base x22+0x88/+0x98."
+    },
+    {
+      "area": "Pre-correction PAN append",
+      "addresses": "0x1010aa5b0-0x1010aa600",
+      "observed": "After relative translation/cache messages, compare two doubles tozero then append enum1 and increment event count; no contact-valid guard. This is baseline characterization only."
+    },
+    {
+      "area": "Pre-correction terminal",
+      "addresses": "0x1010aa790-0x1010aa7d4",
+      "observed": "State3/4/5 converge to append enum6; no tagged cancelled-byte assignment here. This is baseline characterization only."
+    },
+    {
+      "area": "Actual consumer offsets",
+      "addresses": "0x1010a7b08-0x1010a7b60,0x1010a85e4-0x1010a8608",
+      "observed": "Generator inputbase x20 reads snapshot-valid0x59/snapshot0x5c, contact0x88/0x98 and checks firstthree contact64-bit fields nonzero. Up packet loads packed16bits from input+0x6d and stores to actual GHOST event+0x3c. This corroborates offset109 cancelled at prior actual SDK binary, not merely modeled crosscompile."
+    },
+    {
+      "area": "Original contact comparison",
+      "addresses": "0x1010a7e08-0x1010a7eb4",
+      "observed": "Actual nonzero original serial/generation/region with vectorized equality and separate origin32-bit compares at0x1010a7e94/0x1010a7ea4; mismatch reaches skip-loop target."
+    },
+    {
+      "area": "Live-acquisition gate",
+      "addresses": "0x1010a7eb8-0x1010a7ef8,0x1010a82c0-0x1010a82ec",
+      "observed": "Retired serial and live-ticket admission before acquisition; tagged up-without-down rejected. Down path additionally calls pencil_paint_ticket_live."
+    },
+    {
+      "area": "Lease begins after enqueue",
+      "addresses": "0x1010a83a4-0x1010a83c4",
+      "observed": "pushEvent precedes original full contact copy to saved enqueued ivar and down-byte store."
+    },
+    {
+      "area": "Up flags and retirement",
+      "addresses": "0x1010a85e4-0x1010a86b0",
+      "observed": "Packed cancelled/directtool flags copied into real button event; complete original tuple/origins stored; pushEvent then last sample/location update, downclear, max retired serial and zeroed saved tuple."
+    },
+    {
+      "area": "Capture cancellation before invalidation",
+      "addresses": "0x1010a9a18-0x1010a9ac0",
+      "observed": "Actual enqueued-down byte gate, saved location/tablet/full contact copy, cancelled one at eventbase sp+8 +0x6d, enum6 and generator call before either invalidateTouchStream call."
+    }
+  ],
+  "required_candidate_proof": [
+    "Verify actual downloaded exact1461998 package/binary identity, UUID and SHA. Independently re-disassemble exact selectors with numeric addresses in filenames; compare watcher outputs while keeping independent raw extraction.",
+    "Resolve actual current handlePan precision UserInputEvent base from getter result and event-list/count stores. Corroborate contact and cancelled offsets through actual current generator and cancelPointerCapture, never accept modeled layout.json alone.",
+    "Prove valid serial AND generation AND region guard dominates the precision enum1 append. Allthree nonzero skips that append despite nonzero translation; any invalid field preserves original nonzero PAN append. Preserve cached translation and Changed enum0 cursor append. Do not confuse finger PAN block or captured HUD blocks with precision suffix.",
+    "Trace exact terminal state3/4/5 block to one enum6 append. Follow actual boolean store: valid contact AND state!=3 yields cancelled1 for4/5; invalid contact or state3 yields0. Follow same UserInputEvent pointer through generator message.",
+    "At actual current generator, trace cancelled byte through potential packed halfword load/store to actual up packet field; identify original tuple and both original coordinates in GHOST cursor/button storage. Do not infer flag from constructor symbol presence.",
+    "Trace original full tuple equality gates including vectorized validity/equality; establish foreign/retired/no-down skip target and successful enqueued-down route without a fresh live-ticket check for matching owned terminal. Confirm live ticket gate still before down acquisition.",
+    "Confirm lease copy/down flag occurs only after real down pushEvent; up pushEvent precedes retired serial max/downclear/tupleclear. Trace capture saved location/tablet/tuple cancelled packet into same generator before touch invalidation.",
+    "If field provenance, inlining, indirect call target or branch relationship cannot be resolved, report inconclusive rather than claiming compilation proved behavior. Keep WM/native semantic slices and package/device evidence explicitly separate."
+  ],
+  "crosscompile_hint": {
+    "path": "C:/Users/tjerf/AppData/Local/Temp/pencil-pan-arm64-layout-vtzfpgg5/layout.json",
+    "status": "HINT_ONLY_NOT_APPLE_SDK_PROOF",
+    "expected_offsets": {
+      "contact": 136,
+      "cancelled": 109,
+      "event_count": 40,
+      "tablet_snapshot": 92
+    },
+    "corroboration": "Prior actual binary instructions independently match relevant offsets; candidate must still be corroborated."
+  },
+  "current_binary_inspected": false,
+  "current_build_polled": false,
+  "production_or_tests_changed": false,
+  "native_candidate_pass_claimed": false,
+  "device_acceptance": false,
+  "limitations": "Baseline instruction anchors are preparation evidence only. Calls/allocator/Objective-C dispatch are bounded boundaries; no global CFG/heap/reentrancy/UIKit runtime, geometry/rollback/history or device proof."
+}
