@@ -1,0 +1,177 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_ACTUAL_COMPILED_UI_GEOMETRY_HIERARCHY_INPUT_REVIEW",
+  "utc": "2026-10-25T05:29:15.501412+00:00",
+  "run": 40163724620,
+  "source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "binary_uuid": "536050F1-2124-326E-8B3C-BE59E2B79089",
+  "binary_sha256": "b42cf53cc3543997a90197e07c723098924e82bd3ac242319831bbeff4418921",
+  "independent_redumps": {
+    "directory": "independent-ui-hierarchy",
+    "manifest": "independent-ui-hierarchy/redump-manifest.json",
+    "count": 95,
+    "instructions": 23607,
+    "exact_symbol_boundaries": true,
+    "casefold_unique_address_and_symbol_hash_filenames": true,
+    "scope_note": "Fresh exact_disassemble/demangle output from this binary. Counts are inventory only; the semantic review below covers named branch/argument paths, not every instruction in this inventory."
+  },
+  "source_correlation": [
+    {
+      "path": "source/blender/editors/interface/interface_handlers.cc",
+      "sha256": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd"
+    },
+    {
+      "path": "source/blender/editors/interface/regions/interface_region_hud.cc",
+      "sha256": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e"
+    },
+    {
+      "path": "source/blender/editors/screen/screen_ipad_panels.cc",
+      "sha256": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_draw.cc",
+      "sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c"
+    }
+  ],
+  "obligations": [
+    {
+      "topic": "First hardware press without prior hover",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "UI_ipad_knife_hud_event_handle 0x101f34954..0x101f34a60",
+        "0x101f349a0..0x101f349c4 requires LEFTMOUSE/PRESS and absent active button; 0x101f349ec..0x101f34a40 hits current region using event.xy, excludes other button types and verifies exact Knife panel type.",
+        "0x101f34a44..0x101f34a54 passes C, current HUD, actual hit button, enum0 BUTTON_ACTIVATE_OVER to native button_activate_init; joins ordinary ui_region_handler at0x101f349c8..0x101f349cc."
+      ]
+    },
+    {
+      "topic": "Exact active Knife UI handler identity",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "UI_ipad_knife_hud_ui_handler 0x101f344e8..0x101f345a4",
+        "Checks base type2/UI, HUD type8, handle_fn==0x101f345a4 ui_handler_region_menu, remove_fn==null, exact supplied area/region, no region_popup.",
+        "0x101f34568 gets current active button;0x101f34570..0x101f34580 requires non-null active state and handler.user_data==but.active; block/panel/type chain tailcalls exact UI_ipad_knife_hud_panel_type.",
+        "button_activate_state 0x101f30d28..0x101f30d44 removes that same function/userdata pair with postpone=true before active disposal. This predicate is narrow; it does not certify arbitrary modal UI."
+      ]
+    },
+    {
+      "topic": "Native UI exit before copied deferred queue callback and non-RNA autokey skip",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "ui_handle_button_event dispatches native button state then button_activate_exit at0x101f468f8/0x101f46db0. button_activate_exit changes EXIT state at0x101f314c8, applies ordinary button0x101f314e4, and ui_but_handle_data_free at0x101f318a0 before returning.",
+        "ui_region_handler calls ui_handle_button_event0x101f34ba4 before ui_apply_but_funcs_after0x101f34c64. Deferred function detaches UIAfterFuncs0x101f425e4..0x101f425ec, copies uiAfterFunc to a stack object0x101f42640..0x101f42648, removes/destructs/frees original0x101f4264c..0x101f42668.",
+        "ui_apply_but_func0x101f37f88..0x101f37fa8 copies funcN and uses but.func_argN_copy_fn to produce separately owned action data, retaining free function. Deferred callback0x101f42c24..0x101f42c34 passes C,argN,arg2;0x101f42c38..0x101f42c44 frees argN after callback.",
+        "ipad_knife_hud_action0x101f8cc98..0x101f8ccc4 copies six32-byte chunks to stack;0x101f8ccc8 loads action byte from copied offset0xb8;0x101f8cccc/0x101f8ccd0 queues with pointer to stack copied owner. It does not call native Knife modal.",
+        "ui_apply_but_autokey0x101f342fc..0x101f34314 checks ButType::But, null rnaprop and null RNA data, then0x101f343d4..0x101f343e4 verifies exact Knife panel and exits before CTX_data_scene at0x101f34318. Ordinary RNA autokey remains elsewhere.",
+        "Native button callback registration uses exact action address0x101f8cc8c; UI_but_funcN_set stores callback,argN,free,copy slots at0x101f17270..0x101f17278. Chained import pointers resolved below."
+      ]
+    },
+    {
+      "topic": "Full translated labels,44 scaled minimum and vertical/horizontal native fit",
+      "status": "PASS_BOUNDED_COMPILED_CALCULATIONS",
+      "evidence": [
+        "ipad_knife_hud_layout0x101f8c554..0x101f8c614 obtains native DPI widget font, translated Finish Knife/Cancel Knife strings, computes measured widths plus ceil(1.75*widget_unit), maxes each with ceil(44*scale)+1. Constant0x42300000 is44.0.",
+        "Candidate lambda0x101f8e3d8..0x101f8e688 verifies current visible WINDOW/canvas and flags, translates pane bounds and subtracts native edge margins. Local halfword0x100 at0x101f8e4b8 represents false,true. Loop0x101f8e520..0x101f8e554 tries vertical then horizontal, uses max widths versus summed widths,2 versus1 heights.",
+        "0x101f8e570..0x101f8e5fc computes representable logical dimensions;0x101f8e604..0x101f8e654 rounds minima upward and finally checks actual converted width/height do not exceed available pane. Only then stores fits=true0x101f8e684. Outer layout tries original WINDOW first and current other region-list candidates; fallback leaves fitsfalse.",
+        "ipad_knife_hud_draw0x101f8cdb4..0x101f8ce00 stores fit,horizontal,canvas,bounds,button widths,ceil(44*scale) minimum and current scale in HudRegionData. Unfit branch emits recovery captions and proceeds to disabled native layout;0x101f8ceb0..0x101f8ced0 sets enabled=fit and vertical native scale.",
+        "UI_ipad_knife_hud_geometry_ready0x101f8c8c4..0x101f8cbdc requires cached fit, exact current scale, current HUD membership, resolves placement by fresh region list and compares current bounds with cached bounds. It checks actual current native button rects in window coordinates, full containment and cached label/height minima, exactly one Confirm and one Cancel, exact callback identity/non-null request, enabled native But type. It contains no font/translation/provider/layout callbacks."
+      ],
+      "limit": "These compiled calculations and current-value guards do not prove actual target runtime layout, full translated glyph rendering, viewport usability or Pencil/device acceptance."
+    },
+    {
+      "topic": "Native HUD initialization and existing Redo storage",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "hud_region_init0x101f8d6c0..0x101f8d700 calls ED_region_panels_init first, sets min/max zoom to1.0, installs native UI_region_handlers_add on runtime handlers and marks temporary regiondata.",
+        "UI_ipad_corner_hud_refresh is independently redumped0x101f8d9a4..; Knife fit lookup has its own path before ordinary corner fallback. Existing HudRegionData is retained; new initialization uses native region/regiondata allocations, existing regionid/region_index_hint storage and redraw/placement. Parent preserved refresh/nativeinitializer automated obligations pass separately.",
+        "hud_region_layout0x101f8d490.. short-circuits active Knife before ordinary corner/last_redo_poll fallback; native panels layout and size conversion remain in actual compiled path."
+      ],
+      "limit": "Bounded native initialization and storage path; no full device launch, Redo history behavior or universal Undo proof."
+    },
+    {
+      "topic": "Completed actual blit/blend receipt publication and full split coverage",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "wm_draw_window_onscreen calls ED_ipad_hud_compositor_begin0x100b48754 before area composition; compositor end0x100b48ed8/0x100b4948c follows callback/panel/region passes.",
+        "wm_draw_window_area_layer viewport path0x100b4ae90..0x100b4ae9c calls GPU_viewport_draw_to_screen then joins0x100b4ae10; offscreen texture blit0x100b4ae0c joins same region receipt. Exact region/window coordinates copied and xmax/ymax made exclusive, then ED_ipad_knife_hierarchy_region_presented0x100b4ae44 receives C,win,actual area,actual region,footprint.",
+        "Blend path0x100b4b1fc..0x100b4b210 passes output footprint to wm_draw_region_blend_receipt and refuses receipt if false. That helper0x100b48444 draws batch before writing exact output rectangle0x100b48448..0x100b48454 and returning true0x100b4846c. Successful branch calls HUD record0x100b4b228 and hierarchy region receipt0x100b4b240 using same output.",
+        "region_presented checks live window,area/region list membership,pending frame/windowID, positive exclusive footprint; stores current runtime draw_buffer identity and inclusive rectangle.",
+        "Hierarchy publish inlined into ED_ipad_hud_compositor_end0x10163d160..0x10163d204 checks pending/windowID, drawing.drawn, callbacks_observed,!opaque callback,drawing settled, fresh settled capture and exact native equality. Required region iteration0x10163d220 onward refuses null buffers.0x10163d280..0x10163d2ac matches area/region/buffer, intersects each composition and subtracts left/right/bottom/top remainders using inclusive boundaries. Remaining rectangle vector must empty before required-region iteration advances0x10163d718..0x10163d73c. Incomplete path sets complete=false; presentation move and pendingclear0x10163d744..0x10163d76c."
+      ],
+      "limit": "Evidence covers actual compiled CPU composition calls and receipt math, not GPU completion/pixel correctness or full compositor scheduler."
+    },
+    {
+      "topic": "Per WINDOW native navigation, Tools/Inspector/rails and current priority",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "ipad_knife_hierarchy_native_capture0x10164c264..0x10164d16c stores current Main,WM session,window address/ID,screen address/session,native pixel dimensions and UI scale; traverses actual current area then each region. Native state includes region identity/flags/visibility/buffer/canvas/gizmo map.",
+        "For each WINDOW with navigation enabled,0x10164cbec..0x10164cc10 reads that current region runtime gizmo_map and WM_gizmomap_group_list,0x10164cc24..0x10164cc48 compares exact VIEW3D_GGT_navigate ID, records group type/tag_remove/hide/init and refuses unsettled setup.0x10164cdcc..0x10164cde8 traverses each live gizmo, reads actual matrix translation/scale;0x10164cf4c..0x10164d01c excludes hidden/invalid/overflow values.0x10164d020..0x10164d074 forms radius=scale*UIscale+4*UIscale and region-origin-relative exclusion box, storing region identity. It does not read a single area navigation-cache box.",
+        "ED_ipad_panels_draw inlined hierarchy draw-capture0x1016403fc..0x101640408 gets current native snapshot;0x101640414..0x10164046c copies five actual model rectangles (left rail,side rail,Tools,Inspector,bottom) into iteration, ignores empty boxes and appends actual button rectangles in following vector loop before moving drawing snapshot.",
+        "UI_ipad_knife_hud_hit inlines higher_point: fresh native capture0x10163e924, fresh higher rect tests0x10163e958, last presented drawn rails/buttons0x10163ea3c, presented native higher0x10163eab4; only then searches presented HUD footprint0x10163eb00. Excludes same HUD region from higher-region tests."
+      ],
+      "limit": "The native navigation bounding formula and actual state/loop wiring are compiled evidence; arbitrary gizmo pixels, GPU picking and runtime screen layout remain unproved."
+    },
+    {
+      "topic": "Opaque window callbacks frozen before mutable callback loop including self-unregistration",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "wm_draw_window_onscreen0x100b4885c loads current win.drawcalls.first,0x100b48860..0x100b48864 derives has_callbacks and0x100b48874 calls hierarchy_window_callbacks BEFORE first opaque callback. Mutable loop0x100b48880..0x100b48890 saves next then calls callback indirectly.",
+        "ED_ipad_knife_hierarchy_window_callbacks0x10163cd5c..0x10163cd88 requires pending matching windowID, sets callbacks_observed=true and stores old opaque|has_callbacks. Self-unregister cannot clear this sticky state.",
+        "ED_ipad_hud_compositor_end0x10163d1ac..0x10163d1bc requires observed and zero opaque before complete. Fresh native capture0x10164c3e8..0x10164c404 also sets settledfalse for current drawcalls presence. A callback added after the snapshot still refuses fresh action; prior callback self-removal leaves framecompletefalse."
+      ]
+    },
+    {
+      "topic": "Pending/stale HUD pixels inert, hardware/windowID and tagged press-tail capture before native Knife LMB",
+      "status": "PASS_BOUNDED",
+      "evidence": [
+        "UI_ipad_knife_hud_owner0x10163e3bc..0x10163e3dc rejects pending frame/windowID mismatch/incomplete presented hierarchy;0x10163e410..0x10163e42c requires fresh settled native equality before original presented owner and ED_ipad_hud_input_admit0x10163e600. Hit routine returns covered pixelstrue after owner attempt0x10163eb24, preserving inert stale footprint.",
+        "Top WM event admission0x100b54a38..0x100b54a50 calls UI_ipad_hud_event_admit for taggedgeneration; false takes0x100b54bf4..0x100b54c2c to event queue removal/free and next event before Knife/modal handlers. Unknown/stale generation cannot fall through as Knife canvas press.",
+        "wm_ipad_knife_hud_dispatch has no standalone symbol: actual inlined body is in wm_event_do_handlers. Tagged path0x100b55234..0x100b55314 checks generation/serial, and actual LEFTMOUSE/PRESS hit generation/owner/hud; refusal0x100b55c0c/0x100b55c20 retires and joins handled0x100b54f14.",
+        "Hardware no-contact path0x100b55a38..0x100b55a68 only acquires actual LEFTMOUSE/PRESS using event.xy; nonpress/miss joins normal fallback. Successful coveredpress publishes latch containing copied owner, actual window.winid and generation0x100b55b48..0x100b55b9c BEFORE validowner/hud tests0x100b55ba0..0x100b55bcc, so stale coveredpress still owns inert tail.",
+        "Prior latch0x100b55c64..0x100b55cd4 compares captured windowID with current winid; freshpress erases old addressreuse latch; other tails clear copied owner/generation and retain inert latch. Fresh samewindowpress removes prior latch and retires old generation; ordinary release/deactivate removes latch0x100b55f5c..0x100b55f78, freshowner equality uses184-byte copied owner comparison0x100b55f90..0x100b55fa8, refusalretire0x100b55fac..0x100b55fbc. Canvas-born motion/release without latch cannot acquire HUD.",
+        "Scope publish0x100b55de8..0x100b55e6c ->UI helper0x100b55e78 ->scopeclear0x100b55e80..0x100b55ea0 ->fresh membership/contextrestoration0x100b55fc0..0x100b56088 ->0x100b54f14 sets handled|break3. Ordinary modal fallthrough at0x100b554a8..0x100b554b4 occurs only refusal paths that did not consume a covered HUD stream. This resolves actual join before generic Knife leftmouse delivery."
+      ]
+    },
+    {
+      "topic": "Preserved HUD owner capture stack/ordered context restore discrepancy",
+      "status": "PASS_MANUAL_BOUNDED_ORIGINAL_AUTOMATED_FAILURE_PRESERVED",
+      "evidence": [
+        "Independently confirmed exact fresh own dump0x10163ad38..0x10163b254 matches root concrete proof scope. CTX_wm_area getter0x10163afb8 stored by str x0,[sp,#8]0x10163afbc; region getter0x10163afc4 saved in callee-savedx26. Mutationarea_set0x10163afd4.",
+        "Only direct SP+8 write is savedarea at0x10163afbc. Local output arrays beginSP+0x10 andSP+0xd0, disjoint from SP+8. SP fixed from0x10163ad54 until epilogue0x10163ae74. New geometryrefusal0x10163afe8 ->0x10163b034, successful Knife receipt0x10163b158 ->0x10163b038; source ordinary capture/Redo refusals share common restore.",
+        "0x10163b03c reloads sameSP+8 intox1; area_set0x10163b040 then savedx26->x1 and region_set0x10163b04c;0x10163b054 joins sole normalreturn epilogue0x10163ae74..0x10163ae90. No postmutation owner getter replaces saved getter values.",
+        "Root independent-root-owner-stack-cfg-proof.json additionally records167postmutationinstructions and actual CFG domination. Original launch-audit/audit.json FAILED remains unchanged; its interpreter drops area tag at stackload. No production source/checker weakened."
+      ],
+      "limit": "Normal return concrete CFG and native ABI/local-frame assumptions; no arbitrary memory alias/OOB, exceptions or globalheap proof."
+    }
+  ],
+  "callback_fixup_resolution": {
+    "format": "LC_DYLD_CHAINED_FIXUPS imports_format1; Mach-O __DATA_CONST pointer bind encoded ordinal",
+    "free_slot": "0x106366ac0",
+    "free_raw": "0x8010000000000558",
+    "free_ordinal": "0x558",
+    "free_symbol": "__Z18but_func_argN_freeI18IPadKnifeHUDActionEvPv",
+    "free_text": "0x101f8e68c",
+    "copy_slot": "0x106366a80",
+    "copy_raw": "0x8010000000000550",
+    "copy_ordinal": "0x550",
+    "copy_symbol": "__Z18but_func_argN_copyI18IPadKnifeHUDActionEPvPKv",
+    "copy_text": "0x101f8e6a8",
+    "copy_semantics": "alloc192bytes then copies current value six32byte chunks. Native allocator implementation itself is outside this review."
+  },
+  "actionable_findings": [],
+  "unresolved_in_scope_semantic_findings": [],
+  "limits": [
+    "Bounded source-correlated ARM64 call/branch/argument and concrete local-stack review only. Names/markers/counts alone were not accepted as proof.",
+    "Not global CFG,heap,allocator,lifetime,reentrancy or WM scheduler correctness.",
+    "Not GPU completion/pixel/selection correctness,target UIKit,physical input timing,runtime geometry or Undo/history/device acceptance.",
+    "Native original Knife/modal semantics,strict owner/private event cleanup and Undo completion are handled by separate native WM reviewer.",
+    "Paired Ctrl-Knife precisionPAN zoom and untagged interruption terminals remain inherited separate limitations.",
+    "Original preserved checker failure retained and manually resolved for concrete compiled stack path; no blanket claim that automated checker passed."
+  ],
+  "production_or_test_edits": false,
+  "builds_dispatched": false,
+  "device_acceptance": false
+}

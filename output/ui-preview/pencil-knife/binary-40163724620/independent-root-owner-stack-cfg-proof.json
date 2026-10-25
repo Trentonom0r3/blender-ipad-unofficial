@@ -1,0 +1,35 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_CFG",
+  "uuid": "536050F1-2124-326E-8B3C-BE59E2B79089",
+  "sha256": "b42cf53cc3543997a90197e07c723098924e82bd3ac242319831bbeff4418921",
+  "scope_start": "0x10163ad38",
+  "post_mutation_entry": "0x10163afd8",
+  "post_mutation_instruction_count": 167,
+  "all_normal_return_sites": [
+    "0x10163ae90"
+  ],
+  "saved_area": [
+    "getter0x10163afb8",
+    "store0x10163afbc",
+    "sp+8",
+    "reload0x10163b03c"
+  ],
+  "saved_region": [
+    "getter0x10163afc4",
+    "assign0x10163afc8",
+    "x26"
+  ],
+  "area_restore": "0x10163b040",
+  "region_restore": "0x10163b04c",
+  "saved_values_established_before_mutation": true,
+  "area_dominates_region_both_dominate_all_post_mutation_returns": true,
+  "x26_epilogue_reload_only_after_ordered_restoration": "0x10163ae88",
+  "raw_automated_result": "FAILED preserved in launch-audit/audit.json; interpreter does not track saved area SPslot. No source/checker weakened.",
+  "manual_stack_inspection": "Fixed SP from prologue to epilogue; sole directsp8 store is savedgetter. WM output arrays beginsp10/spd0 and are disjoint; savedregionx26 is callee-saved.",
+  "limitations": [
+    "Concrete-binary normal-return CFG/call/argument proof, not general memory alias analysis.",
+    "AAPCS/nativecallee valid-local-frame memory ABI assumed; no globalheap/OOB/exception/reentrancy proof.",
+    "Refresh/nativeinitializer obligations separately passed the preserved checker.",
+    "No target UIKit/runtimegeometry/history or device launch acceptance."
+  ]
+}

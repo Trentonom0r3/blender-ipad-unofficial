@@ -1,3 +1,36 @@
+## Exact native Knife controls IPA verified - 2026-10-25 UTC
+
+Production1946aba24b24999dadd4bdd708089b2ba5241150/run40163724620 passed hosted
+preflight/nativeiOSRelease/full downloaded3368CRC/arm64/iPhoneOS5.0.0/wholeexactUI/
+defaultbars/toolbar/pinnednative tools/all129icons/exact9Base/native-onlyMoreTools.
+Artifact12588001535; IPA248680934bytes; SHA256
+b6481d73e3e9eeaaf3cbef11d30f0f4e40dfdfdb66dc799bb90bd0ad76d95903.
+BinaryUUID536050F1-2124-326E-8B3C-BE59E2B79089/SHA256
+b42cf53cc3543997a90197e07c723098924e82bd3ac242319831bbeff4418921.
+Two independent actual compiled native/WM and UI/geometry/hierarchy/input reviews
+PASS;122 freshscope inventories/28980instructions are inventory, not wholebinaryproof.
+Preserved nativefirstsize/init andWeightcleanup pass. Raw automatedowner checker
+FAILED on unsupported savedareaSP+8 reload; original kept. Independent actualgetter/
+SPslot/common orderedrestore and root167instruction concreteCFG domination discharge
+that bounded obligation. No source/checker weakened; no globalheap/CFG/WM/UIKit or
+device proof. Watcher4640 completedexit1 onlybecause rawchecker unsupportedshape;
+all package/dumps completed and exact preserved gate resolved. No liveverifier or
+unchangedrebuild. Reports pencil-knife/native-package-verification.json and actual
+binary-40163724620 independentreviews/preserved-gates-resolved.json. No deviceacceptance.
+
+Native original-live Knife Finish/Cancel controls keep lift/multicut/rightclickStop,
+copied originalowner action queue/normalWM cleanup, completedhigherUI/geometry/
+oldtail guards. Source675/675944.081s/6affected/136filepreflight/diff/source/literal/
+correctionreviews PASS. Original40162427293@3931598 failed fixturemissingcstdint;
+nativeSKIPPED/noIPA; correctedinclude changes no production60001badaoverlay.
+Read next-audit.json before further source. No corrective nextsource exists: paired
+PAN lacks typedPencil/pairprovenance; safeWMfrontier is wm_event_add_ghostevent BEFORE
+pointer mutation/coalescing, samebatchDOWN mayprecedeKnifehandler. Dedicatedphysical
+suppressionhint needs completedtoolintent/pre-recognition invalidation proof; late
+livehandlerfilter/numFingers1/ToolManipulation are insufficient. Full personalgoal
+unfinished. Preserve acceptedring/barrel/contact/bars/Inspector/Files/keyboard/Undo/
+Cancel/lifetime/launch contracts and every untracked evidence; no privatecrashcommit.
+
 ## Native Pencil Knife controls validated for exact build - 2026-10-25 UTC
 
 Candidate60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a passes

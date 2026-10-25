@@ -1,0 +1,457 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_NATIVE_WM_REVIEW",
+  "reviewer": "independent native-WM subagent",
+  "utc": "2026-10-25T05:28:53.973037+00:00",
+  "run": "40163724620",
+  "source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "production_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "binary_uuid": "536050F1-2124-326E-8B3C-BE59E2B79089",
+  "binary_sha256": "b42cf53cc3543997a90197e07c723098924e82bd3ac242319831bbeff4418921",
+  "method": "Fresh exact ARM64 Mach-O disassembly using audit_hud_macho LLVM helpers and exact_disassemble boundary masking; actual branch/argument tracing against complete current patch reconstruction, raw modal table decode, stub and identical-code alias resolution. Watcher symbol presence/call list not treated as proof.",
+  "source_binding": {
+    "head": "1946aba24b24999dadd4bdd708089b2ba5241150",
+    "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+    "checks": [
+      {
+        "path": "source/blender/editors/mesh/editmesh_knife.cc",
+        "sha256_lf": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+        "component_equals_reconstructed_patch": true
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+        "sha256_lf": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c",
+        "component_equals_reconstructed_patch": true
+      },
+      {
+        "path": "source/blender/windowmanager/WM_ipad_knife.hh",
+        "sha256_lf": "c939090b70e30a75e30353dc6d626018c5e5c211ae9013d47f12ae6abfd0e733",
+        "component_equals_reconstructed_patch": true
+      }
+    ]
+  },
+  "independent_redump_count": 27,
+  "independent_instruction_count": 5373,
+  "independent_evidence_directory": "independent-native-wm",
+  "evidence_files": [
+    {
+      "file": "100b42da0--WM_operator_touch_lifetime_id--d78ba5246543.asm",
+      "sha256": "c9f43d1dc4cd7bba58297398d706cbbb594af0d5f7e082135c030cc678486001"
+    },
+    {
+      "file": "100b42eec--WM_operator_touch_lifetime_matches--42362e7b9ec9.asm",
+      "sha256": "e3c8df150bb63444aaeaaae6c3a2ac0d08172514b26bd51d5be7e8a3bf4a1835"
+    },
+    {
+      "file": "100b42fe8--WM_operator_free--6a18de68215f.asm",
+      "sha256": "34e84a047feb9deb51ec92a3246cdee8520cead80bba4503418f97066684d724"
+    },
+    {
+      "file": "100b439f8--operator-lifetime-map-helper--6f8c1a204b2d.asm",
+      "sha256": "a6a9b835ae783d03f8bd00ee4f52ac311b74a4322bd20a8e3d79b8d34be5bcd9"
+    },
+    {
+      "file": "100b43cfc--operator-lifetime-map-helper--89c7919adb23.asm",
+      "sha256": "264dc27d58d6d948cbe1235b2e9c285029afde0ee353246b9c11070024152fee"
+    },
+    {
+      "file": "100b4d430--WM_event_add--38f206bfabd9.asm",
+      "sha256": "8d471e3d52cb2983ef1dbd21e480e00650851abf3a7087074e84c203f953ccad"
+    },
+    {
+      "file": "100b4d694--wm_event_free_all--92ac4fcab46f.asm",
+      "sha256": "6c630dbec225ce2e8bcb371d611514e44ddddf6b102644e4bc3f4b92985d492a"
+    },
+    {
+      "file": "100b4fae4--wm_event_free_handler--f52d7bff9597.asm",
+      "sha256": "f1167be1e2f48c14a477ea9e455f084e0a6b96bd39d25f04a163c114f0fa253d"
+    },
+    {
+      "file": "100b5005c--WM_ipad_knife_owner_capture--c9d47c39a3d0.asm",
+      "sha256": "6da1bb92e99fff34c46dcd1d0b5302a067db717afc09f25734f815c81fa16895"
+    },
+    {
+      "file": "100b502e8--wm_ipad_knife_owner_read--cb8a78a0eb2d.asm",
+      "sha256": "8032c91995a127504bd9442d7ebb10091e73d5769b42468e76a1edcf2c7cf43d"
+    },
+    {
+      "file": "100b50760--WM_ipad_knife_owner_present--3535bba64d94.asm",
+      "sha256": "eebb8944505e7e5632518b5500478aba2ba0ea4db012cf76e0d263e7ad8f17cd"
+    },
+    {
+      "file": "100b5099c--WM_ipad_knife_owner_region--8ef9b5ded556.asm",
+      "sha256": "0d290ffe2caae7f38e32fa0b54a62201c03a9841336dcbd05ebd4451daa55511"
+    },
+    {
+      "file": "100b50b84--WM_ipad_knife_hud_scope_active--47e08c6274f3.asm",
+      "sha256": "335fe1400c5e13a09659b9f94f268dae7804ebcc99df76b8ee9d5b45e668cc9d"
+    },
+    {
+      "file": "100b50c20--WM_ipad_knife_action_queue--dce3b3cd2eb4.asm",
+      "sha256": "fd8065d82645ce5be0f54f7a3de8b988ef81f21fe88939506da16a3c5a22fd4b"
+    },
+    {
+      "file": "100b5194c--wm_handler_operator_call--e3fddf20b38f.asm",
+      "sha256": "0bcabd1433d7b347a62513c128cc448f1e3416ceee6df9ccfd18a534f685ea4d"
+    },
+    {
+      "file": "100b54530--wm_event_do_handlers--580386d1cb75.asm",
+      "sha256": "15cf50702cfe9ce36473006dbdf9564589d0270807aa91d456003bd39c9a6abe"
+    },
+    {
+      "file": "100b56408--wm_event_free_last_handled--70cdd4b3275d.asm",
+      "sha256": "491ee1b74b7f8b00da3c5d54fe469a8804860c2fe252eee6d49a5ef6c56e8039"
+    },
+    {
+      "file": "100b56630--wm_ipad_knife_request_resolve--4d2e0040a589.asm",
+      "sha256": "66e040efe6040a48d527e7c0fa9a5f38a531aa6d92ed046fd9b32395aeb49376"
+    },
+    {
+      "file": "100b58484--WM_event_add_modal_handler_ex--e9001cfca9bf.asm",
+      "sha256": "6ee7fe40317ea049b893fbfa568d8948ae513e8475002f1db5453cd442523f0a"
+    },
+    {
+      "file": "100b5c4c8--wm_operator_finished--3dd731eae5cb.asm",
+      "sha256": "31e3b788a2f10572d5dffb10d82b14a24ea5ee8f37c4927684021b617c277d17"
+    },
+    {
+      "file": "101c33aa0--ED_mesh_knife_modal_type--7a0e5293b586.asm",
+      "sha256": "1876e6c07528275867bf4bb03a3b2b418e5b7921a07399f3087451a3f843d1c7"
+    },
+    {
+      "file": "101c33df4--knifetool_modal--79bcd12817ff.asm",
+      "sha256": "f64520f875a5142a1dde777b4d0e82738934f21ca6e6d6cf15672728a9967565"
+    },
+    {
+      "file": "101c345fc--knifetool_cancel--c8fb92cf452f.asm",
+      "sha256": "34c41e2f5ababf9fead3db9b6e411b9de61e0363dd8713cbd3ce93cb99a0a57e"
+    },
+    {
+      "file": "101c34624--ED_mesh_knife_modal_origin--10279234cfc7.asm",
+      "sha256": "a110a54cc36be297ae31fdd567083bd19760a02d80aa30673bc8f0f712930a55"
+    },
+    {
+      "file": "101c346f0--ED_mesh_knife_modal_action--fcd8cf229bab.asm",
+      "sha256": "e95fa944a8e99667966e1af183f4683f3ca5506a389df2ec0a5adb879ac6ee13"
+    },
+    {
+      "file": "101c37040--knifetool_exit_ex--d62b8cbe2cec.asm",
+      "sha256": "feb73c3cb635423b8e1945741fe2d7b557c4570e397c94f5e244c774dad5261c"
+    },
+    {
+      "file": "101c3941c--knifetool_finish--4be64861d55a.asm",
+      "sha256": "560d44d46b7e003c9cd76da2ebc10f98eca28fe06346cd1e4b02fe92561596ec"
+    }
+  ],
+  "checks": [
+    {
+      "obligation": "Exact native Knife type and original vc guards",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "ED_mesh_knife_modal_type rejects null type, OPTYPE_MACRO bit3 and nonempty type macro first; it compares invoke/modal/cancel slots to exact addresses0x101c33afc/0x101c33df4/0x101c345fc.",
+        "ED_mesh_knife_modal_origin clears all48 output bytes before checking op; rejects opm at0x90, op macro first at0x80, missing customdata at0x60, and inlines the same type guards. Only then it loads original vc scene/view_layer/v3d/region/rv3d/obedit at customdata offsets0x28/0x30/0x50/0x48/0x60/0x40; all six must be nonnull before copied output publication."
+      ],
+      "instruction_addresses": [
+        "0x101c33aa0-0x101c33af8",
+        "0x101c34624-0x101c346ec"
+      ],
+      "independent_evidence": [
+        "101c33aa0--ED_mesh_knife_modal_type--7a0e5293b586.asm",
+        "101c34624--ED_mesh_knife_modal_origin--10279234cfc7.asm"
+      ]
+    },
+    {
+      "obligation": "Private action creates clean semantic native modal event",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "ED_mesh_knife_modal_action returns PASS_THROUGH8 for missing C/event/op/customdata or macro/type mismatch. It constructs the complete176-byte wmEvent from zero stores at sp0..0xa0, then sets only prev_type/prev_val from source event word0x10, EVT_MODAL_MAP0x5022, native val1 Cancel or2 Confirm, xy/mval16 bytes from source offset0x14.",
+        "Confirm bool is tested at0x101c347ac; cinc makes val2 when true and val1 when false. x0=C/x1=original op remain intact; x2 becomes stack event before direct call0x101c347c8 to knifetool_modal. Keyboard UTF8/customdata and other old packet fields are not copied."
+      ],
+      "instruction_addresses": [
+        "0x101c346f0-0x101c34770",
+        "0x101c34780-0x101c347c8"
+      ],
+      "independent_evidence": [
+        "101c346f0--ED_mesh_knife_modal_action--fcd8cf229bab.asm"
+      ]
+    },
+    {
+      "obligation": "Actual mapped native Confirm and Cancel cases and resource exit",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "Compiled modal checks EVT_MODAL_MAP0x5022 at0x101c33fcc..fd4, subtracts1 from val and indexes19-byte table0x1051f29fa. Raw binary decode saved separately resolves Cancel1 through byte54 to0x101c340e4 and Confirm2 through byte0 to0x101c3400c.",
+        "Cancel tags original region redraw at0x101c340e4 and branches to0x101c34104: native exit_ex(op.customdata), customdata=null, status text clear, return CANCELLED2. Confirm saves totkvert from0x354, redraws original region, calls knifetool_finish(op), then exit_ex and nulls customdata/status. It returns FINISHED4 when totkvert is nonzero, otherwise CANCELLED2.",
+        "knifetool_finish iterates captured objects, calls native finish_single_pre, editmesh/select-mode flush and EDBM_update. exit_ex conditionally restores native cursor/draw callback, frees native Knife pools/stacks/hashes/arena/BVH/arrays and releases kcd through the registered memory-free slot. This is native function/call-order evidence, not a proof of all geometry or allocator behavior."
+      ],
+      "instruction_addresses": [
+        "0x101c33fcc-0x101c34048",
+        "0x101c340e4",
+        "0x101c34104-0x101c34120",
+        "0x101c3941c-0x101c394a8",
+        "0x101c37040-0x101c37160"
+      ],
+      "independent_evidence": [
+        "101c33df4--knifetool_modal--79bcd12817ff.asm",
+        "101c3941c--knifetool_finish--4be64861d55a.asm",
+        "101c37040--knifetool_exit_ex--d62b8cbe2cec.asm",
+        "101c345fc--knifetool_cancel--c8fb92cf452f.asm"
+      ]
+    },
+    {
+      "obligation": "Registration-before-bind and fresh original ownership reconstruction",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "wm_ipad_knife_window_manager is inlined: it walks G_MAIN.wm and BLI_findindex(manager.windows,win), rejecting absence or a second containing manager before dereferencing window state. owner_read independently repeats this scan; no absent standalone symbol is counted as missing proof.",
+        "WM_event_add_modal_handler_ex builds handler type3, original op and area/region context; insertion is BLI_insertlinkafter at0x100b585d8 or BLI_addhead at0x100b585e8. Only after insertion does inlined bind call owner_read(win,new_handler,original_area,original_region,true,out) at0x100b58624 (w4=1). Successful output is copied184 bytes into handler+0x178; failure leaves its zero initialized receipt.",
+        "owner_read first validates manager UID/runtime/registered handler membership/type3/not DO_FREE/not fileselect/context window/nonnull op. For reread w4=false it invokes lifetime_matches(op,handler.saved_lifetime) before op type/customdata reads. It looks up the registered MESH_OT_knife_tool type, requires nonzero type lifetime and exact native type guard, then matches op.type and rejects opm.",
+        "Fresh scan validates active screen membership+UID, original numeric area membership/View3D/context area, region membership/window type/runtime/visible/regiondata; original vc region,rv3d,v3d match before active scene/layer/object/mesh identity membership, UIDs and edit-mode checks. It copies the23-value tuple including original handler/op/type lifetimes only after these guards."
+      ],
+      "instruction_addresses": [
+        "0x100b58564-0x100b58664",
+        "0x100b50330-0x100b50478",
+        "0x100b5047c-0x100b50584",
+        "0x100b50588-0x100b5075c"
+      ],
+      "independent_evidence": [
+        "100b58484--WM_event_add_modal_handler_ex--e9001cfca9bf.asm",
+        "100b502e8--wm_ipad_knife_owner_read--cb8a78a0eb2d.asm"
+      ]
+    },
+    {
+      "obligation": "Input capture, presentation presence, and region resolver stay distinct",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "capture validates C.manager and C.window against fresh manager/window membership. It skips DO_FREE entries, rejects unrelated active UI handlers; transparency requires same area, no popup, live HUD region and UI_ipad_knife_hud_ui_handler approval. Every operator handler must have a valid same-area saved receipt; owner_read false and complete184-byte memcmp equality are required. A second owner rejects.",
+        "present uses the same original owner reconstruction/equality and rejects duplicate matching owners, but ignores unrelated/nonmatching entries for presentation. This does not grant strict input authority.",
+        "owner_region first checks receipt validity, fresh manager/C/window and active-screen membership, then resolves area numerically from live list. include_blocked selects present; false selects capture. Complete184-byte equality precedes fresh region-list address resolution. Saved numeric addresses are compared to registered members instead of converted to old native pointers for reads."
+      ],
+      "instruction_addresses": [
+        "0x100b5009c-0x100b502e4",
+        "0x100b507a0-0x100b50998",
+        "0x100b5099c-0x100b50b80"
+      ],
+      "independent_evidence": [
+        "100b5005c--WM_ipad_knife_owner_capture--c9d47c39a3d0.asm",
+        "100b50760--WM_ipad_knife_owner_present--3535bba64d94.asm",
+        "100b5099c--WM_ipad_knife_owner_region--8ef9b5ded556.asm"
+      ]
+    },
+    {
+      "obligation": "Operator lifetime lookup and free invalidation actual data flow",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "lifetime_id hashes op address as a value into map0x107ef3320; a match returns node lifetime0x18. Absent nonnull op increments counter0x107ef3348 unless UINT64_MAX, and emplaces address+new lifetime. lifetime_matches looks up the same map and compares node0x18 to supplied lifetime; no op pointee read occurs in the matcher.",
+        "WM_operator_free stores op to sp+8, passes map address0x107ef3320 and &stack_key to0x100b43cfc before any object cleanup/free. That target has six same-address LLVM aliases including the actual const-wmOperator lifetime-map erase; the nanovdb name in disassembly is a merged-code alias. Body hashes key from[x1], compares node key0x10 and removes the matched node before return. This resolves the alias with exact address, arguments, and body; no global map/heap completeness claim."
+      ],
+      "instruction_addresses": [
+        "0x100b42da0-0x100b42ee8",
+        "0x100b42eec-0x100b42fe4",
+        "0x100b42ff8-0x100b43010",
+        "0x100b43cfc-0x100b43e1c"
+      ],
+      "independent_evidence": [
+        "100b42da0--WM_operator_touch_lifetime_id--d78ba5246543.asm",
+        "100b42eec--WM_operator_touch_lifetime_matches--42362e7b9ec9.asm",
+        "100b42fe8--WM_operator_free--6a18de68215f.asm"
+      ]
+    },
+    {
+      "obligation": "Single-use release scope queues only copied request and owned event",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "Scope TLS descriptor0x106d86b60 is symbol wm_ipad_knife_ui_scope, shared by event loop, scope_active and queue. scope_active is inlined in queue: C, receipt valid slots, generation0xb8 and serial0xc0 must be nonzero, then owner_region(C,current_window,scope.owner,false) must resolve.",
+        "Queue requires release byte0xd0==1, queued0xd1==0, full184-byte scope-owner equality and action enum1/2. On admission it stores queued=1 at0x100b50d14 before allocation/enqueue. A192-byte request is zero constructed; all184 owner bytes and the action byte at0xb8 are copied from values, without borrowing callback/operator storage.",
+        "WM_event_add is inlined here: it allocates a separate176-byte event, writes type0x208/val0, copies scope xy, clears other event fields, writes custom7/free1/request pointer, and appends to current_window.runtime.event_queue with BLI_addtail at0x100b50e14. There is no native terminal dispatch in queue; UI returns before the later private event branch can run."
+      ],
+      "instruction_addresses": [
+        "0x100b50c3c-0x100b50d14",
+        "0x100b50d18-0x100b50d94",
+        "0x100b50d98-0x100b50e18"
+      ],
+      "independent_evidence": [
+        "100b50b84--WM_ipad_knife_hud_scope_active--47e08c6274f3.asm",
+        "100b50c20--WM_ipad_knife_action_queue--dce3b3cd2eb4.asm",
+        "100b4d430--WM_event_add--38f206bfabd9.asm"
+      ]
+    },
+    {
+      "obligation": "Private request resolver validates structure then fresh identity",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "Resolver zeroes all outputs first. It requires event/type0x208/custom7/nonnull customdata/nonzero customdata_free, copies192 request bytes to local stack, and allows action1/2 only. owner_region with include_blocked=false must succeed before area/handler resolution.",
+        "It scans the fresh active screen area list for saved area value and fresh window modal list for saved handler value; only live handler type3/not DO_FREE can be returned. It does not dereference request.saved_operator or cast a saved handler address to a live pointer. Existing owner reconstruction already matched op/type/context/lifetime and full saved receipt."
+      ],
+      "instruction_addresses": [
+        "0x100b56630-0x100b566dc",
+        "0x100b566e4-0x100b56764"
+      ],
+      "independent_evidence": [
+        "100b56630--wm_ipad_knife_request_resolve--4d2e0040a589.asm"
+      ]
+    },
+    {
+      "obligation": "Private packet entry is consumed on success and structural/stale rejection",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "wm_event_do_handlers tests type0x208 at0x100b54e44. Resolve failure branches directly to0x100b54ec4; success passes C,&win.modalhandlers,fresh_handler,event,null,null,false into wm_handler_operator_call at0x100b54e94, then reaches the same branch. There w24=return|3 sets BREAK/HANDLED in both cases.",
+        "This skips ordinary modal dispatcher0x100b554b4. At0x100b54f34 bitmask3 prevents panels handling, and0x100b54fc0 combines flags before0x100b54fc4 tests BREAK and bypasses lower region/area/window input dispatch. Normal consumed event reaches queue unlink0x100b55844 then free_last_handled0x100b55850.",
+        "wm_handler_operator_call defensively resolves again before reading handler.op, compares returned handler to the supplied handler, and returns flags3 on mismatch/rejection. Structurally malformed or stale internally owned request packets therefore do not become ordinary tool input. This is not a memory-safety guarantee for a forged arbitrary customdata address."
+      ],
+      "instruction_addresses": [
+        "0x100b54e40-0x100b54ec8",
+        "0x100b54f34-0x100b54f38",
+        "0x100b54fc0-0x100b54fc4",
+        "0x100b5583c-0x100b55850",
+        "0x100b51994-0x100b519f8",
+        "0x100b51b40-0x100b51b44"
+      ],
+      "independent_evidence": [
+        "100b54530--wm_event_do_handlers--580386d1cb75.asm",
+        "100b5194c--wm_handler_operator_call--e3fddf20b38f.asm"
+      ]
+    },
+    {
+      "obligation": "Original context direct action bypasses modal keymap translation",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "After fresh-handler check, wm_handler_operator_call reads original live handler.op/type and retains ordinary interface-lock/modal checks. For private action w25=1 it uses resolver area+region via setters0x100b51bf8/0x100b51c04; generic handler context fallback is on the other branch.",
+        "Native private branch calls wm_region_mouse_co, loads copied request.action, compares to Confirm enum1 and passes bool in w3 with x0=C/x1=original op/x2=event to ED_mesh_knife_modal_action at0x100b51f6c. It sets modalkeymap_started=false; generic begin and ot.modal indirect call0x100b51f8c..fa0 are bypassed. The private helper maps that bool to native Confirm2/Cancel1; it does not mutate a keyboard/mouse packet into a terminal."
+      ],
+      "instruction_addresses": [
+        "0x100b519d0-0x100b51c20",
+        "0x100b51f40-0x100b51fac"
+      ],
+      "independent_evidence": [
+        "100b5194c--wm_handler_operator_call--e3fddf20b38f.asm"
+      ]
+    },
+    {
+      "obligation": "Native status goes through ordinary completion, Undo selection and handler disposal",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "Ordinary Undo depth increment0x100b51ed4..ee4 precedes action and matching-manager decrement0x100b51fb8..fd0 follows. Context-window equality guard0x100b51fd4..fe0 precedes ordinary status cleanup.",
+        "Status FINISHED bit2 branches to wm_operator_finished(C,op,false,true,has_undo,has_register) at0x100b520f4; CANCELLED bit1 uses WM_operator_free(op)0x100b520a4. Both null handler.op0x100b520f8. Native Confirm can return CANCELLED for no changes, preserving Blender native behavior.",
+        "wm_operator_finished retains normal native Undo/Register decision path including ED_undo_push_op0x100b5c56c and operator register0x100b5c61c or normal free0x100b5c698. This verifies selection of native completion; it is not a universal Undo/history rollback proof.",
+        "After normal context handling/gizmo update, terminal mask6 disables cursor grab, unlinks original handler from supplied modal list0x100b52164 and releases it through mem_freeN_ex at0x100b5217c. wm_event_free_handler is inlined at that site; its standalone5-instruction body uses the same free slot."
+      ],
+      "instruction_addresses": [
+        "0x100b51ed4-0x100b51ee4",
+        "0x100b51fb8-0x100b51fe4",
+        "0x100b52098-0x100b5217c",
+        "0x100b5c4c8-0x100b5c6c4"
+      ],
+      "independent_evidence": [
+        "100b5194c--wm_handler_operator_call--e3fddf20b38f.asm",
+        "100b5c4c8--wm_operator_finished--3dd731eae5cb.asm",
+        "100b42fe8--WM_operator_free--6a18de68215f.asm",
+        "100b4fae4--wm_event_free_handler--f52d7bff9597.asm"
+      ]
+    },
+    {
+      "obligation": "Queued request disposal clears custom payload and queued window cleanup frees it",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "wm_event_custom_free is inlined. free_last_handled checks current event customdata and customdata_free then selects non-drag custom7 through direct MEM_freeN0x100b56490. It clears custom/free word at0x80 and pointer0x88 before storing event_last_handled; later event disposal cannot reuse that request.",
+        "wm_event_free_all similarly pops queued events and frees owned non-drag request customdata before event release. This gives bounded handled-event and pending-window-queue cleanup evidence; it does not enumerate every allocator path or prove arbitrary corrupt payload validity."
+      ],
+      "instruction_addresses": [
+        "0x100b56468-0x100b5649c",
+        "0x100b4d6a8-0x100b4d708"
+      ],
+      "independent_evidence": [
+        "100b56408--wm_event_free_last_handled--70cdd4b3275d.asm",
+        "100b4d694--wm_event_free_all--92ac4fcab46f.asm"
+      ]
+    },
+    {
+      "obligation": "WM HUD dispatch boundary publishes and clears the admitted UI scope",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED",
+      "actual_branch_argument_flow": [
+        "wm_ipad_knife_hud_dispatch is inlined in wm_event_do_handlers. Tagged dispatch requires UI_ipad_knife_hud_generation; tagged press additionally rechecks hit generation/owner/HUD and retires stale proof on mismatch. This WM review treats UI receipt/hit/geometry implementation as the independent UI reviewer boundary.",
+        "After live area+HUD list membership, it saves previous area/region numeric values and Main, sets current original area+HUD, computes region mouse coords and copies owner/generation/serial/xy into the actual TLS scope0x100b55de8..e38. Release authority is exactly LEFTMOUSE1/KM_RELEASE2 and POINTER_CANCEL bit6 clear at0x100b55e3c..e6c.",
+        "It calls UI_ipad_knife_hud_event_handle at0x100b55e78, then immediately zeros all scope fields including queued/release bytes at0x100b55e80..ea0. Context restoration rescans manager/window/Main/screen/area/region membership0x100b55ea4..56084 and clears click/drag flags0x100b56088. No native terminal is called in this scope flow."
+      ],
+      "instruction_addresses": [
+        "0x100b54590-0x100b545a0",
+        "0x100b55234-0x100b5537c",
+        "0x100b55380-0x100b553e0",
+        "0x100b55de8-0x100b55ea0",
+        "0x100b55ea4-0x100b56088"
+      ],
+      "independent_evidence": [
+        "100b54530--wm_event_do_handlers--580386d1cb75.asm"
+      ]
+    }
+  ],
+  "resolved_inlining_and_aliases": [
+    {
+      "body": "wm_ipad_knife_window_manager",
+      "resolution": "Inlined fresh manager list and window membership scan in owner_read/capture/present/region/eventloop."
+    },
+    {
+      "body": "wm_ipad_knife_modal_handler_bind",
+      "resolution": "Inlined after handler insertion in WM_event_add_modal_handler_ex0x100b585ec..58664."
+    },
+    {
+      "body": "wm_ipad_knife_hud_dispatch",
+      "resolution": "Inlined in wm_event_do_handlers; actual TLS publication/UI call/clear/restore scopes reviewed."
+    },
+    {
+      "body": "wm_event_modalkeymap_end",
+      "resolution": "Inlined generic-only0x100b51fe8..52018; private w25=0 bypasses this block."
+    },
+    {
+      "body": "wm_event_custom_free",
+      "resolution": "Inlined in free_last_handled and free_all; custom7 follows non-drag direct MEM_freeN branch."
+    },
+    {
+      "body": "WM_event_add",
+      "resolution": "Inlined queue event allocation/copy/BLI_addtail, compared to fresh standalone scope."
+    },
+    {
+      "body": "wm_event_free_handler",
+      "resolution": "Inlined terminal free at0x100b52168..17c through same mem_freeN_ex slot."
+    },
+    {
+      "body": "memcmp",
+      "resolution": "LLVM misleading zlibVersion text labels are ignored; __stubs/indirect-symbols maps0x104b72368 to _memcmp. Owner equality uses184-byte length0xb8, return must equal0."
+    },
+    {
+      "body": "Lifetime map erase",
+      "resolution": "Merged six-alias target0x100b43cfc includes actual const wmOperator map erase. Arguments use same global map0x107ef3320 and original stack key; body compares hashed key, removes matching node before operator free."
+    }
+  ],
+  "auxiliary_evidence": [
+    "redump-index.json",
+    "source-binding.json",
+    "native-jump-table.json",
+    "alias-and-data-resolution.json",
+    "indirect-symbols.txt"
+  ],
+  "native_jump_table": {
+    "table_va": "0x1051f29fa",
+    "raw_hex": "3600338a92394a4f9b9615462a1053efefef5d",
+    "index0_Cancel_val1": {
+      "byte": 54,
+      "target": "0x101c340e4"
+    },
+    "index1_Confirm_val2": {
+      "byte": 0,
+      "target": "0x101c3400c"
+    }
+  },
+  "unresolved_obligations_within_this_bounded_scope": [],
+  "boundary_to_ui_review": "WM calls UI_ipad_knife_hud_event_handle with admitted scope; UI reviewer owns callback, button, presentation receipt, geometry and hierarchy internals. This report covers scope publish/clear and queued native consumer.",
+  "limits": [
+    "Bounded manual branch/call/argument review, not exhaustive global CFG, all reachable state, scheduling or reentrancy proof.",
+    "No global heap, allocator completeness, hostile arbitrary pointer packet safety, or general callback lifetime guarantee.",
+    "Structural malformed/stale internally owned request packets are guarded; forged nonnull customdata addresses cannot be validated as memory-safe by these guards.",
+    "Native Undo path selection is verified; geometry correctness, history semantics and generic Cancel universal rollback are not proved.",
+    "UI helper internals, compositor pixels, layout, UIKit/Pencil timing and hardware/device acceptance are outside this reviewer scope.",
+    "Preserved HUD launch checker result is separate. This report neither suppresses its raw failure nor substitutes for root independent stack-spill reconciliation.",
+    "Private crash resources and exclusions were not changed; no production, tests, build or workflow edits, dispatches or device operations were performed."
+  ],
+  "production_edits_by_reviewer": false,
+  "tests_edited_by_reviewer": false,
+  "build_dispatched_by_reviewer": false,
+  "device_acceptance": false
+}

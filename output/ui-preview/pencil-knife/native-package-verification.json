@@ -1,0 +1,38 @@
+{
+  "status": "PASS_EXACT_NATIVE_PACKAGE_AND_BOUNDED_COMPILED_REVIEWS",
+  "run": 40163724620,
+  "source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "artifact": 12588001535,
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ipa-40163724620\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248680934,
+    "sha256": "b6481d73e3e9eeaaf3cbef11d30f0f4e40dfdfdb66dc799bb90bd0ad76d95903",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary_uuid": "536050F1-2124-326E-8B3C-BE59E2B79089",
+  "binary_sha256": "b42cf53cc3543997a90197e07c723098924e82bd3ac242319831bbeff4418921",
+  "hosted_preflight": "passed",
+  "native_release": "passed",
+  "exact_whole_package": "passed",
+  "preserved_hud_init": "automated passed",
+  "preserved_owner_restoration": "passed independently traced savedarea SPslot and concrete CFG; raw automated unsupported-stack negative preserved",
+  "raw_automated_owner_result": "FAILED preserved; savedarea stackspill unsupported. No source or checker weakened.",
+  "weight_cleanup": "passed",
+  "native_wm_independent_compiled": "passed bounded actual native/WM branch/call/argument review",
+  "ui_hierarchy_independent_compiled": "passed bounded actual UI/geometry/hierarchy/input review",
+  "watcher_exitcode": 1,
+  "watcher_exit_reason": "Preserved owner interpreter cannot track actual savedarea SPslot; all package checks/dumps completed.",
+  "device_acceptance": false,
+  "scope": "Bounded exact-source/CRC/arm64/UI/compiled evidence, not globalheap/CFG/WM/UIKit/runtimegeometry/history/device acceptance.",
+  "independent_reviews": [
+    "binary-40163724620/independent-compiled-native-wm-review.json",
+    "binary-40163724620/independent-compiled-ui-hierarchy-review.json"
+  ],
+  "preserved_owner_proof": "binary-40163724620/independent-root-owner-stack-cfg-proof.json",
+  "completed_utc": "2026-10-25T05:31:20.619671+00:00",
+  "no_unchanged_rebuild_needed": true
+}
