@@ -1,3 +1,35 @@
+## Original-live Knife PAN candidate — source checkpoint, 2026-10-25 UTC
+
+Latest fully verified package remains source1946aba/run40163724620; no device
+acceptance and no unchanged rebuild. The next source is UNCOMMITTED and MUST NOT
+BE BUILT. Read output/ui-preview/pencil-knife/pan-source-checkpoint.json and actual
+logs/source before continuing. Candidate patchEDD99DB6 (full SHA in report) changes
+15 existing targets; raw Git proves121 prior sections/all7Python/11otherGHOST exact.
+Authoritative materialization: Temp/pencil-canvas-pan-next-01o74gir.
+
+Scope is ORIGINAL ALREADY-LIVE KNIFE ONLY. Same original registered23value owner
+must exist at physical Begin and recognition. Initial tool prediction was retired:
+customized/default-pending keymaps can invoke other native tools. No-handler and
+same-batch initial DOWN routes retain ordinary PAN; that inherited gap is not fixed.
+Only paired PAN is omitted; cursor/down/up/coords/tablet/terminal semantics remain.
+Each full redraw now gets a new token; cached composition retains its exact stamp.
+Current and actually drawn native drags block acquisition. POD/native ownership,
+unknown callback/gizmo pixels, higher UI and all accepted ring/barrel/bars remain.
+
+Three new integrated families PASS149 unit cases in22.541s (underlying canvas147,
+bridge152 O0/O2, Ghost14 positivegroups/2 expected oldfailures).136-file preflight
+and diff PASS. These are bounded source/model checks, not native/device acceptance.
+Retained HUD rerun FAILED68 tests/14failures/5errors; original log is preserved at
+.cache/knife-pan-retained-hud-first.log. New fields/APIs enter old extraction/model
+seams; audit and repair actual failures without weakening original assertions.
+Full current suite NOT RUN. Actual GHOST-wrapper-to-native-bridge connected harness
+now passes168 O0/O2 controls plus root fresh rerun5.711s. Test-only relative-path
+include failure was reproduced/repaired; assertions/source unchanged. Current driver
+hash and fresh report are required, preventing empty-driver/stale-result false PASS.
+No next native build/IPA. Finish connected and retained/full/final independent gates
+before coherent source commit/build once. Full personal goal remains unfinished.
+Ordinary91percent/weekly30percent; reset19:24:44UTC/14:24:44Chicago;0credits.
+
 ## Exact native Knife controls IPA verified - 2026-10-25 UTC
 
 Production1946aba24b24999dadd4bdd708089b2ba5241150/run40163724620 passed hosted

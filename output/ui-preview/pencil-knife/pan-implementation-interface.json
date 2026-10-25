@@ -1,0 +1,104 @@
+{
+  "status": "INTEGRATED_CANDIDATE_UNVALIDATED_REVIEW_CORRECTIONS_IN_PROGRESS_NO_BUILD",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "baseline_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "source_root": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+  "scope": "Only original already-live native Knife contacts may omit duplicated precision PAN. No initial Tool prediction; no-owner and same-batch-before-handler contacts preserve unchanged native packets. No other packet/terminal/ownership/UI change.",
+  "ghost_api": {
+    "intent": "enum class PencilKnifePanIntent:uint8_t {None,Tool,Live};",
+    "contact": "struct PencilKnifePanContact {uint64_t serial=0,content=0,tool_ref=0; int origin_x=0,origin_y=0; std::array<uint64_t,32> scope{}; std::array<uint64_t,23> owner{}; PencilKnifePanIntent intent=None; bool valid()const;};",
+    "probe": "using PencilKnifePanProbe = bool (*)(const void *window, bool capture, const PencilKnifePanContact &original, PencilKnifePanContact &result);",
+    "register": "set_pencil_knife_pan_probe(PencilKnifePanProbe);",
+    "capture": "PencilKnifePanContact pencil_knife_pan_at_start(const void *window,int x,int y,uint64_t serial);",
+    "validate": "bool pencil_knife_pan_recognize(const void *window,const PencilKnifePanContact &original);",
+    "pendingkeys": "Both capture/recognize wrappers in actual .mm must refuse actualGHOSTeventManager getNumEvents(KeyDown/KeyUp)>0 before native callback. Header registry callback nil defaults refusal; no userdata/oldC. Native bridge also checksallnativeWMqueues/keymappedkeyboard +initialzeroModToolvariant."
+  },
+  "native_stamp": "struct wmIPadKnifeCanvasStamp {std::array<uint64_t,32> scope; std::array<uint64_t,23> drawn_owner; uint64_t content; bool valid,unknown_widgets;}; //nativecalloc POD: NO defaultmemberinitializers; everylocalinstance{}; wmIPadKnifeOwner wrapper nontrivial so rawvalues only",
+  "scope_indices": [
+    "MainAddress",
+    "WMAddress",
+    "WMUID",
+    "WindowAddress",
+    "winid",
+    "screenAddress",
+    "screenUID",
+    "areaAddress",
+    "activeSpaceAddress",
+    "regionAddress",
+    "RegionView3DAddress",
+    "workspaceAddress",
+    "workspaceUID",
+    "sceneAddress",
+    "sceneUID",
+    "ViewLayerAddress",
+    "activeObjectAddress",
+    "objectUID",
+    "MeshAddress",
+    "MeshUID",
+    "nativeWidth",
+    "nativeHeight",
+    "UIscaleFloatBits",
+    "nativeRegionTypeAddress",
+    "regionXmin",
+    "regionXmax",
+    "regionYmin",
+    "regionYmax",
+    "localCanvasXmin",
+    "localCanvasXmax",
+    "localCanvasYmin",
+    "localCanvasYmax"
+  ],
+  "native_api": {
+    "scope": "bool WM_ipad_knife_canvas_scope_capture(const bContext*,wmWindow*,ScrArea*,ARegion*,std::array<uint64_t,32>&); //pure freshdirectnative membership/settledEditMesh, no tool/provider/sync",
+    "drawmatch": "bool WM_ipad_knife_draw_callback_known(const bContext*,const ARegion*,const void *handle,void (*draw)(const bContext*,ARegion*,void*),const void *data,int type,wmIPadKnifeOwner&); //freshoriginalregisteredowner ->ED_mesh exactcookie/fcn/data/POST_VIEW/origin compare",
+    "currentcallbacks": "bool ED_region_knife_pan_callbacks_safe(const bContext*,const ARegion*,wmIPadKnifeOwner&); //reads liveRegionDrawCBs only; no callbacks; exact known originalKnife only. Declare ED_screen.hh.",
+    "screenprobe": "bool ED_ipad_knife_pan_probe(bContext*,wmWindow*,bool capture,const ghost::ios::PencilKnifePanContact&,ghost::ios::PencilKnifePanContact&); //existingcompletedhierarchy+actualcontent+point+higherUI+freshwidget/nativeintent, no providers/draw/dispatch",
+    "nativebridge": "static bool wm_ipad_knife_pan_probe(const void*,bool,const ghost::ios::PencilKnifePanContact&,ghost::ios::PencilKnifePanContact&); //freshG_MAIN/windows/ghostwin matches, ownCTX onlyWMsetters/noMainsetter/providers; registerwm_ghost_init,clearBEFOREwm_ghost_exit dispose"
+  },
+  "frame_requirements": [
+    "NativeStamp and wmDrawBuffer must remain trivial/triviallycopyable for actual MEM_callocN; include meaningfulstatic_assert controls. RuntimeBKE uses rawownerarray, no kernel\u2192WM type dependency.",
+    "Separate runtime unknown/knownKnifeOwner fields; existingpaint flags remain exact. Mark execution beforecallback; allowexactnativeKnife callback onlywithsameoriginalowner/cookie/data/type/currentregion. Unknownselfremovalsticky.",
+    "Separate wmDrawBuffer stamp; actualfullnonstereo before/after matching32scope bindscontent; retaincachedstamp; partial/stereo/failure invalid. Contenttokenmonotonicnew on allocation orscope/geometry/unknown/knownowner change; alwaysnewfullredraw. No owner mintedbycachedcomposition.",
+    "Actualcompleted existinghierarchy records eachcompositedCanvas stamp andfullcoverage; postblitoverlays unknownfacts combined; fresh callback/gizmo/opaque/modal checks refuse additions/coveredpoints; copieddrawnowner muststillfreshoriginal.",
+    "Bridge physicalBegin and recognition scope/content/origin/variant equality; explicitToolABA policyequivalence onlynoactionauthority. FreezeomissionafterrecognizedBegan. Do not revalidateChanged: CtrlafterDown staysnativeKnife; ordinarycursor/down/up/flags/coords/cachedtranslation untouched.",
+    "OriginalLive-only output; require same23value original native owner at both physicalBegin and recognition. Any full redraw changes token and refuses; cached-only composition may pass. Native drag draw sticky evidence/currentlist refuses."
+  ],
+  "owners": {
+    "ghost_agent": [
+      "intern/ghost/GHOST_NavigationIOS.hh",
+      "intern/ghost/intern/GHOST_WindowIOS.mm"
+    ],
+    "frame_agent": [
+      "source/blender/windowmanager/WM_ipad_knife.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source/blender/windowmanager/wm_draw.hh",
+      "source/blender/windowmanager/intern/wm_draw.cc",
+      "source/blender/blenkernel/BKE_screen.hh",
+      "source/blender/editors/include/ED_mesh.hh",
+      "source/blender/editors/mesh/editmesh_knife.cc",
+      "source/blender/editors/include/ED_screen.hh",
+      "source/blender/editors/space_api/spacetypes.cc",
+      "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc"
+    ],
+    "bridge_agent": [
+      "source/blender/windowmanager/intern/wm_window.cc",
+      "source/blender/editors/include/ED_ipad_panels.hh",
+      "source/blender/editors/screen/screen_ipad_panels.cc"
+    ]
+  },
+  "forbidden": [
+    "No productionpatch rewrite/build until componentscoherent andvalidated",
+    "No painttagging/direct_tool/cursorrelocation/terminalflag/newlease",
+    "No nativecallbacks/providers/polls/soundmainsetter/WMoperator/queuepump duringprobe",
+    "No broad PANomission: Circle/Transform/custom/hardware unchanged",
+    "No rawoldpointer retention/dereference; addresses value-onlyfreshmembership; no replacementCancel/rollbackclaim"
+  ],
+  "review_resolution": {
+    "utc": "2026-10-25T14:44:41.020109+00:00",
+    "initial_tool_prediction_retired": "Actual customized/default-pending keymaps can start Circle/Transform despite current Knife tool name. Do not predict first DOWN or add broad default-keymap scanners. Require same original registered Knife owner at physicalBegin and recognition. First contact and same-batch no-handler PAN remain inherited unchanged.",
+    "full_redraw": "Scope/exclusion equality is not pixel-content equivalence. New monotonic token on EVERY successful full redraw; cached compositions preserve the original stamp. Intermediate full redraw conservatively refuses contact.",
+    "native_drags": "Fresh active native drag list refuses acquisition; mark existing completed hierarchy opaque immediately before actual drag draw to retain self-removing drawn evidence."
+  },
+  "initial_tool_policy": "Tool enum/field may temporarily remain reserved for regression compatibility; actual native probe must never emit or admit Tool. Prefer valid() requiring original Live owner. No custom/default keymap or handler prediction is authorized.",
+  "source_gate": "Existing f53fb775 overlay is pre-review candidate only; reintegrate after the three bounded corrections. No native build authorized until affected/full/preflight/independent final review pass."
+}
