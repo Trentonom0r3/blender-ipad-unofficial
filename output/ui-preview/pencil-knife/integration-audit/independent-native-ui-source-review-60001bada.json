@@ -1,0 +1,177 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_NATIVE_API_OWNERSHIP_LITERAL_UI_SOURCE_REVIEW",
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "baseline_patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_parity": {
+    "prior_sections": 132,
+    "current_sections": 136,
+    "exact_unchanged_prior_patch_sections": 122,
+    "all7_python": true,
+    "all13_ghost": true,
+    "all122_stable_native_target_hashes_independently_raw_git_checked": true,
+    "all14_changed_test_consumed_sources_match_raw_git": true,
+    "changed_native_targets": [
+      {
+        "path": "source/blender/editors/include/ED_ipad_panels.hh",
+        "raw_git_and_test_source_sha256": "fdacfe769d08ed4366514f1f0d94f94989cc7782bac589c5cfc1d78c7066f490",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/include/ED_mesh.hh",
+        "raw_git_and_test_source_sha256": "211c844d1c82cc71ef842757b96a1daffece0046cd82777fcc77c81349c0eb3e",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/include/UI_interface.hh",
+        "raw_git_and_test_source_sha256": "d5d3019108bf4a804e0bd7bd767afd691b558eb4cb88d94090a722a314f3b9b0",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/interface/interface_handlers.cc",
+        "raw_git_and_test_source_sha256": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/interface/regions/interface_region_hud.cc",
+        "raw_git_and_test_source_sha256": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/mesh/editmesh_knife.cc",
+        "raw_git_and_test_source_sha256": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/screen/area.cc",
+        "raw_git_and_test_source_sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/editors/screen/screen_ipad_panels.cc",
+        "raw_git_and_test_source_sha256": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/CMakeLists.txt",
+        "raw_git_and_test_source_sha256": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/WM_ipad_knife.hh",
+        "raw_git_and_test_source_sha256": "c939090b70e30a75e30353dc6d626018c5e5c211ae9013d47f12ae6abfd0e733",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_draw.cc",
+        "raw_git_and_test_source_sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+        "raw_git_and_test_source_sha256": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/wm_event_system.hh",
+        "raw_git_and_test_source_sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+        "matches_authoritative_materialization": true
+      },
+      {
+        "path": "source/blender/windowmanager/wm_event_types.hh",
+        "raw_git_and_test_source_sha256": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce",
+        "matches_authoritative_materialization": true
+      }
+    ]
+  },
+  "existing_fixture_reader_boundary": {
+    "path": "source/blender/editors/object/object_modes.cc",
+    "section_byte_identical_to_production": true,
+    "baseline_and_candidate_fixture_reader_byte_identical": true,
+    "raw_git_sha256": "d6ce59b062ff77a9c659843e35c8b8c9f3587b68b5a4913d2031517547c43a5f",
+    "fixture_reader_sha256": "8e31d40b4c8d64d84fd1151fbd214c57b47b86c03b5088720d0cae97cf39f734",
+    "difference": "Existing zero-context include insertion: default native git apply places WM_api.hh at EOF, custom fixture reader places it near line49. Function bodies match.",
+    "scope": "Existing baseline source-reader boundary, not a Knife target mismatch. No production/tool change in this increment.",
+    "evidence": "unchanged-object-mode-reader-discrepancy.diff"
+  },
+  "resolved_finding": {
+    "topic": "Opaque window callbacks above native HUD",
+    "disposition": "Corrected in hierarchycf6bdb9 plus actual pre-callback WM hook. Fresh capture refuses current callback presence; completion requires callbacks_observed and sticky opaque_window_callback false. Self-unregistration cannot erase the completed-pass evidence.",
+    "bounded_evidence": [
+      {
+        "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\receipts-opaque-O0-final\\summary.json",
+        "result": "11/11 PASS",
+        "opt": "0"
+      },
+      {
+        "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\receipts-opaque-O2-final\\summary.json",
+        "result": "11/11 PASS",
+        "opt": "2"
+      }
+    ]
+  },
+  "native_api_checks": [
+    "Font/style declarations export through UI_interface.hh -> UI_interface_c.hh; signatures match geometry uses.",
+    "Pinned U.widget_unit is short. UI_UNIT_X/Y integer min/max and explicit float-to-native-pixel/logical conversions match native types.",
+    "uiLayout row/column return references; scale_y_set/ enabled_set/block and uiDefIconTextBut conversion and callback signatures match the pin.",
+    "Panel_Runtime::block and ui_block_to_window_rctf(const ARegion*,const uiBlock*,rctf*,const rctf*) match actual input readiness use.",
+    "UI_but_funcN_set uses matching native callback/free/copy functions; only a copied value request is queued from deferred UI.",
+    "ED declarations match actual pre-callback and successful cached-blit/overlap receipt callsites; publication follows completed window pass.",
+    "Qualified gizmo/WM_gizmo_api.hh and gizmo/WM_gizmo_types.hh exist at pin; current per-WINDOW group/field accesses match native types.",
+    "Private event/custom allocation is value-only/trivially destructible and actual wm_event_custom_free releases it. Native Knife action creates a clean modal-map event and uses original native modal result cleanup."
+  ],
+  "ownership_checks": [
+    "Fresh native registration precedes binding; callback-free original handler/type/lifetime/typed ID/context membership is reconstructed before action admission.",
+    "Presentation-only original presence stays distinct from strict input; only the exact native active Knife-button UI handler is transparent.",
+    "One UI release scope queues one copied request; later native dispatch resolves original live handler before old numeric pointer reads. No replacement dispatch or unleased terminal.",
+    "Hardware acquisition is press-only, preserves canvas-born tails and inert stale/window-reused contacts. Tagged old contacts do not retarget.",
+    "Hierarchy compares native identity/state and successful compositor footprints, records current known higher native regions/navigation plus actual drawn rails/buttons, and refuses new authority for pending/missing/opaque passes.",
+    "Input readiness uses cached layout minima and current native buttons/window coordinates without fonts, translations, provider lookups or callback-bearing layout.",
+    "Pure button-state redraw preserves generation only under unchanged original-owner/measured geometry; inherited context/history/stream and launch guards remain intact."
+  ],
+  "literal_ui_review": {
+    "contract": "Exactly Finish Knife and Cancel Knife native buttons; native dark/blue widget style, full labels, vertical/horizontal native layouts, and disabled recovery when no pane fits. Existing ring order/style/default Blender bars are byte-unchanged.",
+    "independently_inspected_stock_screenshots": [
+      {
+        "case": "landscape",
+        "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\landscape\\native-widgets.png",
+        "labels_fully_visible": true,
+        "native_dark_gray_blue_style": true,
+        "scope": "Independent screenshot inspection of stock5.1.2 native popup only; not target HUD placement."
+      },
+      {
+        "case": "narrow",
+        "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\narrow\\native-widgets.png",
+        "labels_fully_visible": true,
+        "native_dark_gray_blue_style": true,
+        "scope": "Independent screenshot inspection of stock5.1.2 native popup only; not target HUD placement."
+      },
+      {
+        "case": "quad",
+        "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\quad\\native-widgets.png",
+        "labels_fully_visible": true,
+        "native_dark_gray_blue_style": true,
+        "scope": "Independent screenshot inspection of stock5.1.2 native popup only; not target HUD placement."
+      },
+      {
+        "case": "shallow",
+        "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\shallow\\native-widgets.png",
+        "labels_fully_visible": true,
+        "native_dark_gray_blue_style": true,
+        "scope": "Independent screenshot inspection of stock5.1.2 native popup only; not target HUD placement."
+      }
+    ],
+    "geometry_scope": "67 source-executing O0/O2 cases and stock widget measurements. Popover window clamping does not prove target original-pane HUD placement."
+  },
+  "actionable_findings_remaining": [],
+  "limits": [
+    "Full candidate suite and review of any later source changes remain required; source review is not a ready-build assertion.",
+    "No target native compile/package/actual compiled branch evidence or device acceptance exists for this increment.",
+    "Full WM scheduler, target GPU/layout, UIKit/Pencil timing, allocator/global lifetime/reentrancy and actual device editing remain outside this bounded proof.",
+    "Interrupted Knife terminal handling remains inherited; no generic rollback or unleased-release guarantee is introduced.",
+    "Navigation SCALE formula/current native exclusion values were checked; complete GPU selection/pixel geometry is not proved by the snapshot model."
+  ],
+  "production_edits_by_reviewer": false,
+  "native_build": false,
+  "device_acceptance": false
+}

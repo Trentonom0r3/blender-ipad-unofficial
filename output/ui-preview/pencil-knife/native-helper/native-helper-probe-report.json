@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "optimization": "-O0",
+      "compile_returncode": 0,
+      "compile_command": [
+        "C:/Program Files/LLVM/bin/clang++.exe",
+        "-std=c++17",
+        "-O0",
+        "-Werror",
+        "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\native-helper-probe.cc",
+        "-o",
+        "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\native-helper-probe-O0.exe"
+      ],
+      "execution_returncode": 0,
+      "stdout": "PASS 13 native-helper scenarios; full original Knife modal executes with explicit external/BKE/storage boundaries\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "compile_returncode": 0,
+      "compile_command": [
+        "C:/Program Files/LLVM/bin/clang++.exe",
+        "-std=c++17",
+        "-O2",
+        "-Werror",
+        "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\native-helper-probe.cc",
+        "-o",
+        "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\native-helper-probe-O2.exe"
+      ],
+      "execution_returncode": 0,
+      "stdout": "PASS 13 native-helper scenarios; full original Knife modal executes with explicit external/BKE/storage boundaries\n",
+      "stderr": ""
+    }
+  ],
+  "actual_modal_sha256": "5837277adddd3b8e29c51c8a97c4d70eeb14e0bbeef3a28afda1e9e98be6cdf4",
+  "helper_sha256": "b4fdc0cb4092bcbedf3f09127fe000a476c1bc77748d2dbade54847e0c46d8dc",
+  "numinput_fallback_sha256": "6ed0f821edac08d400a70dbfc511ac3c9acdd4f0c9f4af7e0dba351d78e79a35",
+  "numinput_ctrl_gate_sha256": "b138cf33f06dafb7b2c31f9bfee7df818d210aefd61c8c76ca6c941ede963c3f",
+  "numinput_pin_sha256": "856e35cd9ac42c38abbc23923b5e2db7d5a1cdac3443893b5f7a4353033d8ff9",
+  "full_native_modal_unchanged": true,
+  "limits": [
+    "Full original Knife modal and actual exit/finish/cancel wrappers execute; invoke body is a counter stub used only for pointer identity and must never be called by helpers.",
+    "Full geometry finish_ex, allocator exit_ex, viewport matrices, hit/cut and status/redraw external functions are explicit models; retained storage, no allocator or geometry/Undo proof.",
+    "Numeric fallback is exact pinned source; rest of UTF8/evaluator modeled as accepts nonempty text to expose blind-copy Cancel interception. No Python evaluation executes.",
+    "WM handler binding, original-owner admission, normal result/history cleanup, UI, UIKit and native iOS compilation remain separate root integration gates.",
+    "Host struct layouts are instrumentation models, not ABI or SDK proof."
+  ]
+}

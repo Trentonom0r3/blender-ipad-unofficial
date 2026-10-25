@@ -1,0 +1,78 @@
+{
+  "status": "TEMP_NATIVE_HELPER_COMPONENT_PASS_REQUIRES_COHERENT_ROOT_INTEGRATION",
+  "created_utc": "2026-10-22T12:54:16.946448+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "baseline_source": "146199824b8d045b2cbe4509e1f1f8ecd40bf917",
+  "baseline_overlay_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "owned_files": {
+    "source/blender/editors/include/ED_mesh.hh": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\source\\blender\\editors\\include\\ED_mesh.hh",
+      "sha256": "211c844d1c82cc71ef842757b96a1daffece0046cd82777fcc77c81349c0eb3e",
+      "diff": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\ED_mesh.hh.diff",
+      "baseline_sha256": "5765225575ceb5a23783b00091b99b6c8a519968d060bb8035a444bd414a831f",
+      "diff_sha256": "91a3f9d4e1b01740d60694bc5bd0646c58a52c3cdcc88967662654adfdddd5fc",
+      "added_lines": 35,
+      "removed_lines": 0
+    },
+    "source/blender/editors/mesh/editmesh_knife.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\source\\blender\\editors\\mesh\\editmesh_knife.cc",
+      "sha256": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+      "diff": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-helper-mt56dd6j\\editmesh_knife.cc.diff",
+      "baseline_sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+      "diff_sha256": "f3997d422cf78ed1d38e4f1e63edd53669eda276209b3c92bbedcb206e597a99",
+      "added_lines": 50,
+      "removed_lines": 0
+    }
+  },
+  "public_apis": [
+    "MeshKnifeModalOrigin {scene, view_layer, v3d, region, rv3d, object}",
+    "bool ED_mesh_knife_modal_type(const wmOperatorType *)",
+    "bool ED_mesh_knife_modal_origin(const wmOperator *, MeshKnifeModalOrigin &)",
+    "wmOperatorStatus ED_mesh_knife_modal_action(bContext *, wmOperator *, const wmEvent *, bool confirm)"
+  ],
+  "refusal": "Origin clears output/returns false. Action returns PASS_THROUGH without native callback/cleanup; WM independently consumes stale private action.",
+  "event_sanitization": "Zeroed local mapped event; copy only xy/mval and previous type/value. Text/modifiers/flags/opaque payload not inherited.",
+  "probe_report": "native-helper-probe-report.json",
+  "probe_result": "13 scenarios at both O0/O2 under C++17 -Werror; actual full original modal/exit/finish/cancel wrappers execute with explicit external models.",
+  "probe_generator_sha256": "22a378394d6569eb332d03947326d1331419d6cc84546e2cc1640740c239d795",
+  "generated_probe_sha256": "21b9963513ef79968038223ca843c50e921d762c03eb9e78c51121f8fd2cda07",
+  "added_line_hygiene": "passed",
+  "harness_repairs": [
+    {
+      "kind": "generator quoting syntax",
+      "source_changed": false,
+      "result": "No generator file emitted; direct here-string used."
+    },
+    {
+      "kind": "Windows CRT test strcpy -Werror",
+      "source_changed": false,
+      "preserved": "compile-O0.log.first/native-helper-probe-report.json.first",
+      "result": "Only fixture UTF8 initialization changed to bounded assignments."
+    },
+    {
+      "kind": "numeric model scope review",
+      "source_changed": false,
+      "preserved": "native-helper-probe-report.json.before-native-ctrl-gate",
+      "result": "Final exact UTF8 fallback+Ctrl gate, noCtrl unsafe-copy control; prior modeled scope superseded."
+    }
+  ],
+  "not_proved": [
+    "Native iOS/transitive headers",
+    "WM original-owner binding/result/history cleanup",
+    "UI/GPU/geometry/native Undo/UIKit/device",
+    "Global cached native Knife storage lifetime"
+  ],
+  "repository_or_patch_modified": false,
+  "native_build_dispatched": false,
+  "device_acceptance": false,
+  "updated_utc": "2026-10-22T13:02:17.163426+00:00",
+  "macro_contract": "Exact callback identity plus OPTYPE_MACRO/type macro-list refusal; origin/action also refuse macro mother and operator macro-list before private customdata read.",
+  "portable_tests": {
+    "build\\test_pencil_knife_native_action.py": "c9167b8f026534f672a1b3a3d55e8cb39e3ead07f7f289cfd6d5fdd351426314",
+    "build\\tests\\knife_native_action_models.inc.cc": "748578df7f9ee3fa00c5401e18dee79c7efd6081a42a8ee647cd5f40b55b8936",
+    "build\\tests\\knife_native_action_invoke_model.inc.cc": "c43873caad5b9a7992361cd598f46499fa5253d9f9c8f67bfca261b8996d8cf1",
+    "build\\tests\\knife_native_action_cases.inc.cc": "a9745cef912ad5af58e374cd7f89f1096ad7b83df4535105121b702efc24d721"
+  },
+  "portable_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\knife-native-action-portable\\native-action-report.json",
+  "portable_result": "6/6 tests, including actual full modal/helper O0/O2 and two detected prospective regression controls."
+}

@@ -1,0 +1,118 @@
+{
+  "status": "failed",
+  "started_utc": "2026-10-22T07:54:51.093235+00:00",
+  "step": 7,
+  "host_version": "5.1.2",
+  "error": "Traceback (most recent call last):\n  File \"D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\validate_native_knife_workflow.py\", line 170, in tick\n    assert FINISHED != BASELINE and FINISHED['faces'] >= 2, (BASELINE, FINISHED)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ({'vertices': 4, 'edges': 4, 'faces': 1, 'sha256': '2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56'}, {'vertices': 4, 'edges': 4, 'faces': 1, 'sha256': '2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56'})\n",
+  "frames": [
+    {
+      "name": "original-plane",
+      "step": 1,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [],
+      "knife_live": false,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "knife-invoked-from-native-tool",
+      "step": 3,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "pending-cut-after-lift",
+      "step": 5,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "pending-cut-after-native-new-cut",
+      "step": 6,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "native-enter-finished",
+      "step": 7,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [],
+      "knife_live": false,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    }
+  ],
+  "device_acceptance": false
+}

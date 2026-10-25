@@ -1,0 +1,36 @@
+{
+  "status": "FAILED_INITIAL_CANDIDATE_SEVEN_RETAINED_FIXTURE_SEAMS",
+  "tests": 645,
+  "passed": 638,
+  "errors": 7,
+  "seconds": 575.075,
+  "log": ".cache/knife-full-first.log",
+  "patch_sha256": "2c4755e421d887579906feed448a1366699f9f39596e2142f43f2ef174ebf7f7",
+  "failed_cases": [
+    "test_actual_hud_calloc_type_and_missing_data_recovery (test_pencil_hud_cancel.PencilHUDCancelTests.test_actual_hud_calloc_type_and_missing_data_recovery)",
+    "test_actual_native_corner_stack_sizing_covers_all_active_headers (test_pencil_hud_contacts.PencilHUDContactTests.test_actual_native_corner_stack_sizing_covers_all_active_headers)",
+    "test_pencil_hud_initialization (unittest.loader._FailedTest.test_pencil_hud_initialization)",
+    "test_pencil_hud_launch (unittest.loader._FailedTest.test_pencil_hud_launch)",
+    "test_pencil_hud_placement (unittest.loader._FailedTest.test_pencil_hud_placement)",
+    "test_pencil_hud_presentation (unittest.loader._FailedTest.test_pencil_hud_presentation)",
+    "test_actual_router_branch_never_runs_ring_on_stale_owner (test_pencil_paint_contact_lease.PencilPaintContactLeaseTests.test_actual_router_branch_never_runs_ring_on_stale_owner)"
+  ],
+  "subsequent_affected_migrations": [
+    {
+      "tests": 35,
+      "seconds": 42.583,
+      "result": "PASS",
+      "log": ".cache/knife-hud-migrations-affected-final.log"
+    },
+    {
+      "tests": 9,
+      "seconds": 6.177,
+      "result": "PASS",
+      "log": ".cache/knife-paint-contact-migration-affected.log"
+    }
+  ],
+  "all336_original_assertions_preserved": true,
+  "initial_run_predates_expanded_hardware_regression_cases": true,
+  "no_second_full_run_by_this_agent": true,
+  "final_candidate_validation": false
+}

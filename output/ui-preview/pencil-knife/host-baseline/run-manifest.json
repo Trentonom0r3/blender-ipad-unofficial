@@ -1,0 +1,74 @@
+{
+  "status": "PASS_ACTUAL_DISPOSABLE_STOCK_NATIVE_KNIFE_BASELINE",
+  "recorded_utc": "2026-10-22T07:59:35.526776+00:00",
+  "host_binary": "D:\\Program Files\\blender.exe",
+  "host_version": "5.1.2",
+  "host_build_hash": "ec6e62d40fa9",
+  "host_executable_sha256": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+  "probe_source": "build/validate_native_knife_workflow.py",
+  "probe_sha256": "20ac5a7c89a6bd401e12e8b549cdcec4e25614157f862a76b441b0b96942a01a",
+  "result": "native-knife-workflow.json",
+  "result_sha256": "54b73e5f623040313ec374a10a2fe9dd51cb3a2ab8e94e3cab1ff7663b51bf3e",
+  "command": [
+    "D:/Program Files/blender.exe",
+    "--factory-startup",
+    "--disable-autoexec",
+    "--enable-event-simulate",
+    "--window-geometry",
+    "100",
+    "100",
+    "1024",
+    "768",
+    "--python-exit-code",
+    "2",
+    "--python",
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\validate_native_knife_workflow.py"
+  ],
+  "launch": "PowerShell Start-Process -WindowStyle Hidden -PassThru -RedirectStandardOutput host-stdout.log -RedirectStandardError host-stderr.log",
+  "process_pid": 29132,
+  "process_completed": "Native probe wrote passed through step22; stdout says Blender quit; PID no longer running. Native exit code not retained by this launch scope.",
+  "transport": "Actual scoped Window.event_simulate native mouse/key input; native Knife selected through wm.tool_set_by_id; no operating-system input injection or cursor warp.",
+  "evidence": [
+    "Real Window.modal_operators shows MESH_OT_knife_tool active after initial tool press.",
+    "Pencil-analog mouse lift leaves native Knife modal active; raw rightclick NEW_CUT also leaves it active after an explicit pending endpoint.",
+    "Native Enter finishes geometry:4vertices/4edges/1face ->6vertices/7edges/2faces. One native Undo restores exact original topology signature; one Redo restores exact cut signature.",
+    "Empty wait_for_input=True native Knife followed by Enter leaves geometry unchanged; one Undo still reaches original before cut and Redo restores cut, supporting no extra unchanged history step in this baseline.",
+    "A second explicitly recorded pending segment followed by Escape leaves finished horizontal cut unchanged; one Undo again reaches original and Redo restores finished cut.",
+    "Inspected native finished-cut.png and after-escape.png: horizontal cut remains, no cancelled vertical cut."
+  ],
+  "screenshots": {
+    "pending-after-lift.png": {
+      "bytes": 161653,
+      "sha256": "d8b1a8abc0280884d13f63b881939d4b94411b8bc81e8b3a512c0c578900741b"
+    },
+    "pending-after-rightclick.png": {
+      "bytes": 162412,
+      "sha256": "c4d4b0c433e2680baec9ffaaad68ea0583369831b51ef9f3bfda7b71dbf8cb3a"
+    },
+    "finished-cut.png": {
+      "bytes": 157417,
+      "sha256": "c96cad34528cee8b1457a518276db2745981bafd4d5687b08635753fa46c3a17"
+    },
+    "empty-knife.png": {
+      "bytes": 161720,
+      "sha256": "015969202dc2aa8fc4efd10a797c06353cade654c3d335921aaa6f8e8e068157"
+    },
+    "pending-before-escape.png": {
+      "bytes": 162534,
+      "sha256": "49436d5fbb7bf6ccdc2b0ca65300fabf26d0c047bda60149f27036be709f113e"
+    },
+    "after-escape.png": {
+      "bytes": 157417,
+      "sha256": "c96cad34528cee8b1457a518276db2745981bafd4d5687b08635753fa46c3a17"
+    }
+  },
+  "preserved_initial_failure": "attempt-1-preview-only/manifest.json; initial driver only previewed segment before Enter, so strict geometry assertion failed. Corrected driver adds second real endpoint click; no assertion weakening or native-defect claim.",
+  "limits": [
+    "Stock5.1.2 Windows native behavior, not target pinned5.0/iOS/UIKit/Pencil or software keyboard accessory delivery.",
+    "Uses generic native mouse/key packets and real native tool/modal/history; future Finish/Cancel UI button rendering, hit capture and original-handler guarded dispatch are not executed.",
+    "Initial empty-confirm is invoked through actual mesh.knife_tool INVOKE_REGION_WIN wait_for_input=True, not a Pencil menu route.",
+    "No partial-stroke interruption/replacement-owner or Ctrl paired-PAN transport proof. Native Cancel/Undo findings apply only to this disposable plane sequence, not universal rollback."
+  ],
+  "device_acceptance": false,
+  "production_changed": false
+}

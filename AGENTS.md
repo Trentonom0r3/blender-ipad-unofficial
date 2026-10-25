@@ -1,3 +1,93 @@
+## Native Pencil Knife controls validated for exact build - 2026-10-25 UTC
+
+Candidate60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a passes
+FINAL675/675 host checks517.991s, unchanged frozen source/test/CI hashes,136-file
+pinnedpreflight/diff and independent actual native/API/ownership/literalUI review.
+Actual14 changed targets match raw Git;122 prior sections/all7Python/all13GHOST exact.
+Reports output/ui-preview/pencil-knife/{source-verification,frozen-validation}.json
+and integration-audit/independent-native-ui-source-review-60001bada.json.
+No native build/package/compiled/device proof yet. Commit/push this coherent source,
+dispatch exact native build ONCE, watch SAME run with .cache/watch-pencil-knife-build.py
+RUN FULLSHA, verify full IPA/preserved HUDlaunch-Weightcleanup and actual new Knife/
+WM/nativeUI/geometry/hierarchy compiled branches before ready claim. No unchanged build.
+Source uses native original-live Finish/Cancel; multicut/lift/rightclick Stop retained.
+Measured source geometry/presentation hierarchy/old-tail guards are connected; stock
+5.1.2 widget evidence is not target HUD/Pencil/device proof. Prior failed test logs and
+minimal retained model repairs stay preserved; all original assertions remain.
+Latest fully verified production remains146199824b8d045b2cbe4509e1f1f8ecd40bf917 /
+run39338882021; no exactdevice acceptance. Full goal unfinished; preserve accepted
+ring/bars/Inspector/Files/keyboard/Undo/Cancel/lifetime contracts and untracked evidence.
+
+## Knife frozen full validation checkpoint - 2026-10-24 UTC
+
+Current source patch60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a
+is UNCOMMITTED/NO NATIVE BUILD. Exact14 Knife targets,122 prior sections/all7Python/
+all13GHOST unchanged; independent actual-source/native/API/literalUI review PASS.
+FINAL FROZEN VALIDATION session50467, .cache/run-knife-final-frozen.py, log
+.cache/knife-full-frozen.log, exitcode .cache/knife-full-frozen.exitcode and
+output/ui-preview/pencil-knife/frozen-validation.json. Same process/report first;
+no pending-pass claim. All source/test/workflow hashes frozen; wrapper finishes
+fullsuite then pinnedpreflight/diff. Actual completed report supersedes this note.
+Prior integrated675/620.618s FAILED1 retained contacts context-ABI seam; fixed with
+minimal adapter and unchanged sizing assertions, contacts4/4 pass. Original logs
+remain. New final frozen suite is newer. Other retained repairs/active Knife models
+and independent review are documented in source-checkpoint/repair/integration reports.
+On fullpass commit/push coherent exactsource and nativebuild ONCE, then prepared
+.cache/watch-pencil-knife-build.py RUN FULLSHA and fullpackage/actualcompiled review.
+No newIPA/deviceacceptance. Preserve every file/evidence; do not revive old approval.
+At checkpoint ordinary95percent/weekly15percent;0credits; resetOct24 09:06:22UTC /
+04:06:22Chicago. Automation ACTIVE04:13Chicago. Full personal goal unfinished.
+
+## Knife final integrated validation running - 2026-10-24 UTC
+
+Latest verified production remains146199824b8d045b2cbe4509e1f1f8ecd40bf917/run39338882021.
+New Knife source is UNCOMMITTED and NOT BUILT. Actual canonical patch60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a
+now integrates14 target paths from authoritative Temp/pencil-knife-controls-f5ti0n29.
+Raw Git reconstruction and independent native/API/ownership/literalUI review PASS;
+122 prior sections/all7Python/all13GHOST are exact verified production. Read
+output/ui-preview/pencil-knife/source-checkpoint.json and integration-audit reports.
+Completed hierarchy includes actual blit/blend/full split coverage/native nav/rails/
+Tools/Inspector and sticky pre-loop opaque-window callbacks, even self-removal.
+Native widget geometry has67 O0/O2 controls and four measured stock5.1.2 cases;
+actual target HUD placement/UIKit/device remain unproved. Original window-ID tails
+and stale tagged Knife presses stay inert. Native rightclick Stop remains separate.
+
+FINAL FULL SUITE RUNNING session42544/.cache/knife-full-integrated-final.log; exact
+exitcode file .cache/knife-full-integrated-final.exitcode. Do not count pending pass.
+Prior645 suite FAILED7errors; subsequent integrated diagnostic had missing retained
+model APIs/POD geometry and was stopped after known errors, not passed. Repairs
+preserve original assertions: presentation5/5 plus affected cancel/init/placement/
+launch18/18 pass. Models remain explicit; active Knife executes separately.
+136-file final source preflight/diff pass. No commit/native build yet. Finish the
+frozen suite and any actual failures, then coherent exact commit/push/build ONCE.
+Prepared watcher .cache/watch-pencil-knife-build.py RUN FULLSHA; NOT started.
+Source review alone does not prove native compile/package/compiled/device behavior.
+Preserve every source/evidence/selection-collapsed.png. No unchanged rebuild.
+Full personal goal unfinished; import/deepcamera and separate KnifePAN/untagged
+interruption work remain deferred. No old-pointer/replacementCancel/unleasedup
+or universal rollback claim. Older validation approval is fulfilled.0resetcredits.
+
+## Knife controls incomplete source checkpoint - 2026-10-22 UTC
+
+Latest verified production remains146199824b8d045b2cbe4509e1f1f8ecd40bf917/run39338882021.
+No unchanged rebuild. New Knife source is UNCOMMITTED and MUST NOT BE BUILT.
+Read output/ui-preview/pencil-knife/source-checkpoint.json and actual source/logs.
+Authoritative candidate Temp/pencil-knife-controls-f5ti0n29 and integrated repository
+patch contain12 source sections for native Finish/Cancel, original registered owner,
+value queue/private native modal cleanup, native UI premodal capture, copied presented
+HUD receipts and hardware tails. All seven interaction Python/GHOST/ring remain unchanged.
+Focused native helper6/UI entry10/owner dispatch63 checks pass; screen11 checks are
+bounded models. Independent review is INCOMPLETE_NO_BUILD: complete current higher
+Tools/Inspector/rails/navigation exclusion and actual narrow/quad native label/two-button
+fit remain unresolved. Nominal button height is44 scaled units, not measured target UI.
+No full/retained candidate suite or final review/build/IPA/device proof exists.
+Initial offline preflight failed on uncached absence for new WM_ipad_knife.hh; run
+online preflight to establish pinned404 absence. Do not weaken the existing checker.
+Preserve all Temp/source/tests/evidence and selection-collapsed.png. Finish actual
+connected priority/geometry/fixture/full checks before exact source commit/build once.
+Ordinary usage99percent/weekly32percent; reset17:49:32UTC/12:49:32PMChicago;0credits.
+Keep full goal unfinished and continue independently near reset; no device wait.
+
 ## Pencil Pan exact IPA verified - 2026-10-22 UTC
 
 Production146199824b8d045b2cbe4509e1f1f8ecd40bf917/run39338882021 passed hosted

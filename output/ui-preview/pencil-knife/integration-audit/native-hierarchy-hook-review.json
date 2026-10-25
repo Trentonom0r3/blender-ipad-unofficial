@@ -1,0 +1,65 @@
+{
+  "status": "BOUNDED_READ_ONLY_REVIEW_ONE_ACTIONABLE_OPAQUE_WINDOW_FINDING_PENDING_FIX_EVIDENCE",
+  "reviewed_paths": {
+    "component_screen": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\screen\\screen_ipad_panels.cc",
+      "sha256": "41f1aca71344234d6243eb5a103d8862bd090d46bc990c6e78ee1dad346e6cb6"
+    },
+    "root_draw": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29\\source\\blender\\windowmanager\\intern\\wm_draw.cc",
+      "sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9"
+    },
+    "root_event": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29\\source\\blender\\windowmanager\\intern\\wm_event_system.cc",
+      "sha256": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c"
+    },
+    "root_ed_header": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29\\source\\blender\\editors\\include\\ED_ipad_panels.hh",
+      "sha256": "fdacfe769d08ed4366514f1f0d94f94989cc7782bac589c5cfc1d78c7066f490"
+    },
+    "integration_helper": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\integrate-knife-candidate.py",
+      "sha256": "399ba5207b90e715535ed432bdb1c8543924705644d0536357a14aff2565bd36"
+    }
+  },
+  "actual_current_patch_sha256": "2c4755e421d887579906feed448a1366699f9f39596e2142f43f2ef174ebf7f7",
+  "saved_initial_source_parity_report": "integration-audit/report.json proves the original twelve-path snapshot only; later authoritative/component source must be reintegrated and revalidated.",
+  "integration_helper_status": "Safe generator intact: fixed verified baseline, canonical LF, raw git apply with conversion disabled, all132 prior target proof, prior-context inclusion, explicit source refresh/include, no source materialization writes. Root owns subsequent patch integration.",
+  "findings": [
+    {
+      "priority": 1,
+      "topic": "Opaque callback pixels can authorize a HUD despite being drawn above it",
+      "file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\screen\\screen_ipad_panels.cc",
+      "line": 826,
+      "wm_draw_file": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29\\source\\blender\\windowmanager\\intern\\wm_draw.cc",
+      "wm_draw_line": 1496,
+      "evidence": "Window callbacks run after native area/HUD composites, before the hierarchy capture in ED_ipad_panels_draw. Current snapshot lacks actual executed opaque-window callback evidence. WM_draw_cb_exit can unregister callbacks during the mutable callback loop, so only post-loop/current list emptiness is insufficient.",
+      "required_bounded_correction": "Refuse new hierarchy authority for a pass in which opaque window callbacks actually ran, including self-removal; independently refuse fresh authority when callback presence appears after a matching completed frame. Preserve inert coverage of old HUD pixels and known higher-point decline.",
+      "coordination": "Hierarchy agent is implementing the narrow completed-pass plus current-presence correction and source-executing negative cases. No edits by this reviewer.",
+      "device_failure_claim": false
+    }
+  ],
+  "checked_without_additional_actionable_findings": [
+    "Native region publication is after successful non-overlap blit or overlap receipt; absent buffers and zero-alpha blends supply no region completion. Cached buffers still pass through the real composite hooks.",
+    "Hierarchy completion compares value-only native identity/geometry/state after the completed pass and requires every non-HUD native region footprint to have matching buffer/composition coverage.",
+    "Known higher native region/layer/current navigation footprints and actually drawn rails/buttons are checked without provider/font callbacks on input. Native navigation uses per-WINDOW groups, not the overwritten area cache; qualified gizmo headers exist at the pin.",
+    "Navigation group has WM_GIZMOGROUPTYPE_SCALE; its pinned scale_final is scale_basis*UI_SCALE_FAC. Current bounded exclusion radius covers that native navigation shape plus margin.",
+    "Input remains strict while presentation-only owner presence avoids unrelated panel polling. Pending/missing hierarchy refuses new owner authority while old covered pixels may remain inert.",
+    "Hardware contacts acquire only an actual press, preserve canvas-born lift, latch stale/window-reused tails, and queue copied actions after UI rather than calling native terminals inside UI.",
+    "Pure native button-state redraw retains generation only under the same original owner and measured receipt rectangles; no old-stream guards were removed."
+  ],
+  "pinned_qualified_headers_checked": [
+    "source/blender/windowmanager/gizmo/WM_gizmo_api.hh",
+    "source/blender/windowmanager/gizmo/WM_gizmo_types.hh",
+    "source/blender/blenkernel/BKE_main.hh",
+    "source/blender/blenkernel/BKE_global.hh"
+  ],
+  "unproved": [
+    "Opaque correction has not been independently rechecked yet.",
+    "Final integrated fourteen-path source hash, complete affected/full suite, native compile/package/compiled review and device acceptance remain pending.",
+    "No global allocator/context/reentrancy or complete native scheduler/GPU/UIKit proof."
+  ],
+  "production_changed_by_reviewer": false,
+  "native_build": false,
+  "device_acceptance": false
+}

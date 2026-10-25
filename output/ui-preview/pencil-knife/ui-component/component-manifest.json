@@ -1,0 +1,88 @@
+{
+  "status": "INCOMPLETE_NO_BUILD_HIGHER_PRIORITY_AND_NATIVE_FIT_UNRESOLVED",
+  "utc": "2026-10-22T13:11:54.683218+00:00",
+  "folder": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt",
+  "production_patch_unchanged": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "files": {
+    "source/blender/editors/interface/regions/interface_region_hud.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\interface\\regions\\interface_region_hud.cc",
+      "baseline_sha256": "5e12c11b75654ece88e89c561159d07b44946d32a7d51c8c443e33d832e7a36a",
+      "sha256": "3ca2cea98954722ba2636ec0ce6fb9935cc8d813761eef015505988e2555f3df"
+    },
+    "source/blender/editors/screen/screen_ipad_panels.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\screen\\screen_ipad_panels.cc",
+      "baseline_sha256": "4ecbc9c8efbd58279d54c6e1fb4e5614f6270fa1256aa3db8f0db56ae62d3ac7",
+      "sha256": "ad7bd4d66b0a227db57022027ba53e01c672b13a1b65b94f8348ba9c8c733733"
+    },
+    "source/blender/editors/screen/area.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\screen\\area.cc",
+      "baseline_sha256": "9a8ee3d5706a45a3dfb7a8d8947e946bc28eb72bb2344e266ec974ba5f4a22f2",
+      "sha256": "5a74a77c39ec24997c2496a2211a050804ed58f19a85408212a08d8973f0ea4e"
+    },
+    "source/blender/editors/include/UI_interface.hh": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\include\\UI_interface.hh",
+      "baseline_sha256": "4e9056db95ec38a48b5cc3cc22618ecc5a8e31e16bb2064fa053c7d10fee3ca7",
+      "sha256": "45316e086bd506159685f262edf8a1d13857429bf9d7227029e7317dd1b0c97e"
+    }
+  },
+  "public_apis": [
+    "UI_ipad_knife_hud_active(const bContext*)",
+    "UI_ipad_knife_hud_panel_type(const PanelType*)",
+    "UI_ipad_knife_hud_owner(bContext*,wmWindow*,uint64_t,wmIPadKnifeOwner&,ARegion**)",
+    "UI_ipad_knife_hud_hit(bContext*,wmWindow*,const int[2],uint64_t&,wmIPadKnifeOwner&,ARegion**)"
+  ],
+  "wm_api_dependencies": [
+    "WM_ipad_knife_owner_present(C,win,area,owner)",
+    "WM_ipad_knife_owner_capture(C,win,area,owner)",
+    "WM_ipad_knife_owner_region(C,win,owner,bool include_blocked=false)",
+    "WM_ipad_knife_action_queue(C,owner,Confirm/Cancel)"
+  ],
+  "behavior": [
+    "Native no-header exact-callback PanelType with vertically stacked selected-blue Finish Knife and dark Cancel Knife; nominal 44 scaled pixel button height; actual native geometry unverified. Copied trivial owner via native argN copy/free hooks; queue only, no direct native terminal.",
+    "Before other Panel polls, original live Knife presentation filters exact native Knife Panel; old Redo/future/addon storage remains undrawn",
+    "User-hidden DNA bit is never cleared; temporary regiondata override clears only transient hidden, redraws and restores user-hidden visibility when Knife ends",
+    "Native size/init remains before first panel layout, original Knife canvas reacquired; dedicated original quad/split FLOAT offset conversion",
+    "Dedicated value-only Knife receipt avoids providers/tools/Redo context capture; temporarily blocked original refuses before standard capture",
+    "Actual draw records Knife pixel kind even invalid receipt; last actual compositor metadata and generation preserved across unchanged native active-button redraw",
+    "Hardware hit uses original actual saved rectangle and current point-only ED_ipad_hud_exposed_rect copied chrome; modeled current Inspector/launcher and native popup/tooltip checks pass. This alone is insufficient for quad/pending/missing-stale chrome, navigation and whole-rail priority; unresolved.",
+    "Retirement uses G_MAIN and numeric fresh WM/window/screen/region membership for Knife only, without context provider or native terminal"
+  ],
+  "checks": {
+    "scope": "Actual isolated screen HUD capture/layout/draw/compositor/admission/owner-hit/retirement bodies; registered WM owner scan, GPU and allocator remain modeled.",
+    "status": "PASS",
+    "compiler_stdout": "",
+    "compiler_stderr": "",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "checks": [
+      "callback-free strict Knife capture including user-hidden",
+      "area-before-region restoration",
+      "1000 exact owner/texture redraw generations stable",
+      "actual saved owner/hit lookup",
+      "native popup priority and exact tooltip exemption",
+      "blocked owner no provider fallback",
+      "stale history refuses but shields old pixels",
+      "Knife-only callback-free native UI retirement",
+      "changed geometry refuses saved generation",
+      "current higher Inspector/canvas bounds keep priority",
+      "point-only left-strip launcher priority without full-HUD overreach"
+    ]
+  },
+  "remaining": [
+    "CRITICAL: current point higher-layer priority incomplete for quad/pending/missing-stale chrome and native navigation/whole rails; do not build or claim this solved.",
+    "Actual native narrow/quad/portrait/DPI 44-pixel stack measurement, clipping and complete pair-fit policy",
+    "Actual initialization/user-hidden restoration/Redo/quad placement executable checks still pending; no extra probe run this window",
+    "Root WM/native UI integration and generated build interfaces",
+    "Actual connected native button draw/copy/queue and panel filtering fixtures",
+    "Retained HUD fixture boundary models need explicit new Knife APIs/Panel/screen/tool_tip/G_MAIN coverage",
+    "Native iOS compile/package and compiled consumer audits",
+    "Target UIKit/GPU/device/geometry/history evidence; none claimed"
+  ],
+  "limitations": [
+    "Registered WM owner scan modeled in component receipt harness; root fixture independently covers actual WM body",
+    "Allocator/GPU/compositor call placement, native panel solver/button state/interpreter and complete application lifecycle remain explicit boundaries",
+    "No production patch, commit or native build modified by this subagent",
+    "Eleven passing receipt/model checks are bounded actual-body executions with modeled current chrome; they do not establish global higher UI priority or native panel/button geometry."
+  ]
+}

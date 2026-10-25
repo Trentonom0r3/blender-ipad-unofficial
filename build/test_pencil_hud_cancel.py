@@ -416,6 +416,8 @@ int main(){
     def test_actual_hud_calloc_type_and_missing_data_recovery(self):
         hud=fields.source('source/blender/editors/interface/regions/interface_region_hud.cc')
         declaration=block(hud,'struct HudRegionData {')+';'
+        inactive_layout=block(hud,'struct IPadKnifeHUDLayout {')+';'
+        inactive_layout+='\nbool ipad_knife_hud_layout(const bContext*,IPadKnifeHUDLayout&){assert(false && \"No Knife owner in retained calloc fixture\");return false;}\n'
         refresh=function(hud,'void UI_ipad_corner_hud_refresh(')
         redo=function(hud,'ARegion *ED_area_type_hud_redo_region_find(')
         self.assertNotIn('PANEL_ACTIVE',hud)
@@ -424,6 +426,7 @@ int main(){
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
+#include <cstdint>
 #include <type_traits>
 #include <vector>
 #define WITH_APPLE_CROSSPLATFORM
@@ -431,7 +434,8 @@ int main(){
 inline constexpr int RGN_TYPE_HUD=1,RGN_TYPE_WINDOW=2,RGN_FLAG_HIDDEN_BY_USER=1,
  RGN_FLAG_HIDDEN=2,RGN_FLAG_TOO_SMALL=4;
 struct ARegionType{};struct View2D{};
-struct rcti{int xmin=0,xmax=0,ymin=0,ymax=0;};
+// Native DNA rcti is POD: default member initializers would falsify calloc typing.
+struct rcti{int xmin,xmax,ymin,ymax;};
 void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
 struct Runtime{ARegionType*type=nullptr;bool visible=false;
  struct{int xmin=7,ymin=9;}ipad_canvas_rect;float offset_x=0,offset_y=0;};
@@ -445,6 +449,8 @@ wmWindowManager*CTX_wm_manager(bContext*){return &wm;}
 wmWindow*CTX_wm_window(bContext*){return &win;}
 ScrArea*CTX_wm_area(bContext*C){return C->area;}
 ARegion*UI_ipad_corner_canvas(bContext*C){return C->supported?C->canvas:nullptr;}
+// Legacy numeric/Redo profile: no live Knife modal is registered here.
+ARegion*ipad_knife_hud_canvas(bContext*){return nullptr;}
 ARegion*BKE_area_find_region_type(ScrArea*a,int kind){for(auto*r:a->regions)if(r->regiontype==kind)return r;return nullptr;}
 ARegionType art;bool type_ready=true;int allocations=0,inits=0,redraws=0,sizes=0;
 ARegionType*BKE_regiontype_from_id(int,int){return type_ready?&art:nullptr;}
@@ -498,6 +504,6 @@ int main(){
  type_ready=true;area.regions={&canvas};UI_ipad_corner_hud_refresh(&C,&area);
  assert(new_region.regiondata&&new_runtime.type==&art);std::free(new_region.regiondata);
 }
-'''.replace('DECLARATION',declaration).replace('REFRESH',refresh).replace('REDO',redo))
+'''.replace('DECLARATION',declaration+inactive_layout).replace('REFRESH',refresh).replace('REDO',redo))
 
 if __name__=='__main__':unittest.main()

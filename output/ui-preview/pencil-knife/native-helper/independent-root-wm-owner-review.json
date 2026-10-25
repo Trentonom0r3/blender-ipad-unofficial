@@ -1,0 +1,48 @@
+{
+  "status": "BOUNDED_PARTIAL_WM_OWNER_REVIEW_RESOLVED_FINDINGS_PENDING_CONNECTED_UI_WM_VALIDATION",
+  "created_utc": "2026-10-22T13:03:46.148435+00:00",
+  "reviewed_root_materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29",
+  "section_sha256": {
+    "static wmWindowManager *wm_ipad_knife_window_manager(": "19b0001126631d94f851b7f40ee1f4856fbb41ad2ba55714f7cf574e45890b78",
+    "static bool wm_ipad_knife_owner_read(": "fe281188a08f8cb34e035b5f8991d8a630fb7a3b6a22a6fa247684bf5285c1fe",
+    "bool WM_ipad_knife_owner_capture(": "553caac418ac0acb655967ca2d21612b96bd938b3569e6ef776f49920fc5fced",
+    "ARegion *WM_ipad_knife_owner_region(": "a8dcce036f9222f71fd12dafefe41c7b0ef677bc812eaf18045e66c4b0073b3a",
+    "bool WM_ipad_knife_action_queue(": "c343ed73ec4366eef45615478b2cab85f230f96704f2ebe0b7f282c7df4d2b9d",
+    "static bool wm_ipad_knife_request_resolve(": "3a62eb873f29174e8879f8da9ae23ef75c6da2f5a47b9f999e9333543502769f",
+    "static bool wm_ipad_knife_hud_dispatch(": "0997ccbbe2729fd8eb1c0b2159342505c0a75a4e3b1d60f2bc4abba462f1983a",
+    "bool UI_ipad_knife_hud_ui_handler(": "2f9319004cca124e4f06f2692d89eaecf48becabf0a8ba5ff467bd51cf1e5657"
+  },
+  "checked": [
+    "Fresh unique manager/window list membership before window dereference; handler live modal-list membership/type/DO_FREE/fileselect checks precede operator reads.",
+    "Find-only operator lifetime checked before private storage, fresh registry/type lifetime/exact native callback profile precedes native origin.",
+    "Fresh screen/area/visible WINDOW region membership; native immutable vc.region, rv3d and View3D match reconstructed members, not mutable modal handler region.",
+    "Fresh scene UID/list membership; direct layer-name list lookup, OUT_OF_SYNC and active Base membership checks precede object use.",
+    "Fresh active edit Mesh Object/Mesh list membership and UIDs; first lifetime allocation occurs only after membership; original numeric receipt compared on later capture.",
+    "Private action copied into owned POD packet; original live handler is resolved again before direct same-native-modal helper call and normal WM status cleanup.",
+    "Native modal-map translation is bypassed only for private semantic action; ordinary keymap route and unchanged native finish/free branch remain.",
+    "Allowed HUD UI continuation now proves exact handler function, null remove function, context, active button userdata and Knife panel identity.",
+    "Hardware contacts acquire only from real LEFTMOUSE press; unlatched canvas motion/lift passes through."
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Active ViewLayer getter may rewrite window layer names and call ED_render_view_layer_changed on fallback, contradicting callback-free capture.",
+      "resolution": "Actual latest owner_read uses BKE_view_layer_find(scene, win->view_layer_name) and refuses absent name, no fallback setter."
+    },
+    {
+      "finding": "Any same-area HUD UI handler was treated as transparent and bypassed by regional dispatch.",
+      "resolution": "Actual latest capture invokes UI_ipad_knife_hud_ui_handler, exact native region-menu active Knife button identity proof."
+    }
+  ],
+  "pending_connected_obligations": [
+    "Button WAIT_RELEASE state survives actual pure-redraw receipt publication between press and release, or original stream is coherently rebased.",
+    "Actual presented button footprint and higher layers reserve hardware/Pencil stream before Knife LMB dispatch; stale old-owner tails inert.",
+    "Quad/narrow critical row placement and complete native Redo storage preservation.",
+    "Root helper integration, actual source-compiled WM/UI pipeline, native iOS compilation/package/device."
+  ],
+  "boundaries": [
+    "This is source review of listed sections against exact pinned fields/getter definitions, not full executable WM/GPU/heap/Undo proof.",
+    "Native cached multiobject Knife BMesh/storage lifetime remains baseline; no new claim of global cached-storage protection.",
+    "Root materialization can change after these section hashes; repeat final integrated review."
+  ],
+  "production_source_edited_by_reviewer": false
+}

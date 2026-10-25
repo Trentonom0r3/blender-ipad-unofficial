@@ -19,11 +19,15 @@ NATIVE=fixture.read_text(encoding='utf-8')
 HUD=presentation.source('source/blender/editors/interface/regions/interface_region_hud.cc')
 REFRESH=function(HUD,'void UI_ipad_corner_hud_refresh(')
 DATA=function(HUD,'struct HudRegionData {')+';'
+# External inactive Knife geometry boundary; every retained assertion remains native.
+DATA+=function(HUD,'struct IPadKnifeHUDLayout {')+';'
+DATA+='\nbool ipad_knife_hud_layout(const bContext*,IPadKnifeHUDLayout&){assert(false && \"No Knife owner in retained initialization fixture\");return false;}\n'
 WORLD=r'''
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
+#include <cstdint>
 #include <vector>
 #define WITH_APPLE_CROSSPLATFORM
 #define UNUSED_VARS(...) (void)0
@@ -34,7 +38,8 @@ inline constexpr int RGN_TYPE_HUD=1,RGN_TYPE_WINDOW=2,RGN_FLAG_HIDDEN=1,
  RGN_FLAG_TEMP_REGIONDATA=16,AREA_FLAG_REGION_SIZE_UPDATE=1,
  RGN_ALIGN_FLOAT=0,RGN_ALIGN_LEFT=1,RGN_ALIGN_RIGHT=2,
  V2D_COMMONVIEW_PANELS_UI=1,V2D_SCROLL_LEFT=1,V2D_SCROLL_RIGHT=2,SPACE_EMPTY=0;
-struct rcti{int xmin=0,xmax=0,ymin=0,ymax=0;};
+// Native DNA rcti is POD, matching the calloc-owned HudRegionData field.
+struct rcti{int xmin,xmax,ymin,ymax;};
 struct rctf{float xmin=0,xmax=0,ymin=0,ymax=0;};
 void BLI_rcti_init(rcti*r,int a,int b,int c,int d){*r={a,b,c,d};}
 void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
@@ -56,6 +61,8 @@ struct bContext{ScrArea*area;ARegion*canvas;bool supported=true;};
 wmWindowManager wm;wmWindow win;bScreen screen;wmWindowManager*CTX_wm_manager(bContext*){return &wm;}
 wmWindow*CTX_wm_window(bContext*){return &win;}ScrArea*CTX_wm_area(bContext*C){return C->area;}
 ARegion*UI_ipad_corner_canvas(bContext*C){return C->supported?C->canvas:nullptr;}
+// This retained native-initialization fixture has no live Knife modal owner.
+ARegion*ipad_knife_hud_canvas(bContext*){return nullptr;}
 ARegion*BKE_area_find_region_type(ScrArea*a,int kind){for(auto*r:a->regionbase)if(r->regiontype==kind)return r;return nullptr;}
 ARegionType art,canvas_art;ARegionType*BKE_regiontype_from_id(int,int){return &art;}
 Runtime new_runtime;ARegion new_region{RGN_TYPE_HUD,RGN_ALIGN_FLOAT,0,&new_runtime};

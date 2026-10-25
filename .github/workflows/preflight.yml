@@ -170,6 +170,18 @@ jobs:
         run: python3 -m unittest discover -s build -p test_pencil_hud_initialization.py -v
       - name: Recognizer-owned Pencil device and pressure snapshots
         run: python3 -m unittest discover -s build -p test_pencil_gesture_samples.py -v
+      - name: Original native Knife Finish and Cancel semantics
+        run: python3 -m unittest discover -s build -p test_pencil_knife_native_action.py -v
+      - name: Knife original modal owner and queued native dispatch
+        run: python3 -m unittest discover -s build -p test_pencil_knife_owner_dispatch.py -v
+      - name: Knife native regional UI entry and deferred cleanup
+        run: python3 -m unittest discover -s build -p test_pencil_knife_ui_entry.py -v
+      - name: Knife presented contact and hardware tail ownership
+        run: python3 -m unittest discover -s build -p test_pencil_knife_hud_dispatch.py -v
+      - name: Knife completed hierarchy and actual compositor admission
+        run: python3 -m unittest discover -s build -p test_pencil_knife_hud_receipts.py -v
+      - name: Knife measured fit and finished native button geometry
+        run: python3 -m unittest discover -s build -p test_pencil_knife_hud_geometry.py -v
       - name: Pencil precision pan producer and native cancellation
         run: python3 -m unittest discover -s build -p test_pencil_pan_paint_producer.py -v
       - name: Original-owner Pencil paint teardown and cancellation

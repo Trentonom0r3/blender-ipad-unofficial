@@ -1,0 +1,116 @@
+{
+  "status": "PASS_SOURCE_EXECUTING_UI_ENTRY_GATE",
+  "opt_level": "0",
+  "source_guards_completed": [
+    "postpone",
+    "region"
+  ],
+  "source_guards_count": 2,
+  "runtime_cases_count": 8,
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_hashes": {
+    "source/blender/editors/interface/interface_handlers.cc": "e82fb38c9468233561e6bf55907131d27e5fed805571cc09e94cd28f76424450",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "a1b1dfed65bbb09567b304c450a46157ee84eb225dc91cf27c70ff37b63c412c"
+  },
+  "executed_complete_native_functions": [
+    "static bool button_modal_state(",
+    "static uiAfterFunc *ui_afterfunc_new(",
+    "static bool ui_afterfunc_check(",
+    "static void ui_apply_but_func(",
+    "static void ui_apply_but_BUT(",
+    "static void ui_apply_but(",
+    "static void button_activate_state(",
+    "static int ui_do_but_BUT(",
+    "static void button_activate_exit(",
+    "void ui_but_active_free(",
+    "static int ui_handle_button_event(",
+    "static int ui_handle_region_semi_modal_buttons(",
+    "static void ui_apply_but_funcs_after(",
+    "static int ui_region_handler(",
+    "wmEventHandler_UI *WM_event_add_ui_handler(",
+    "void WM_event_remove_ui_handler(",
+    "void wm_event_free_handler("
+  ],
+  "selected_native_dispatch_case": "    case ButType::But:\n    case ButType::Decorator:\n      retval = ui_do_but_BUT(C, but, data, event);\n      break;",
+  "selected_wm_cleanup_body_sha256": "ba057bccbffa2815beb318e17a875ac763901dfca66ec3922e4f365340d2c1a6",
+  "native_function_sha256": {
+    "static bool button_modal_state(": "7fbafaa7e82bec339692f33dc9be838823f0a9329be524d702df86fea05ac4de",
+    "static uiAfterFunc *ui_afterfunc_new(": "a1f7ead25a005d06bb0b5ef16162e8fa78afcf09a23de9d696fe8e67c43838be",
+    "static bool ui_afterfunc_check(": "4fa92986efe3a2dd20932e809c938a47eabca709902c8146c42d6df5915fa9aa",
+    "static void ui_apply_but_func(": "7a9c5bfd0c82fcd39d564fbd29ade3269cbfb04fe085db6c93a80ff222ede541",
+    "static void ui_apply_but_BUT(": "ac1144639af742d0be5d0ed6f0b5113db273c9b91d86c2f107eac160f9ee91b0",
+    "static void ui_apply_but(": "da08118d30cfd1d22c5169bb44ad6cff582a8fefd621458c2aacc9e1e144a34b",
+    "static void button_activate_state(": "d9aad198769d5facbd80368fa21aa44e1e157372aa4a799ac7174cad40302c04",
+    "static int ui_do_but_BUT(": "2663381bb9e42d9c04b089d37b70b6a99f4bcd994cfb4cf095bff44b81d5a2c4",
+    "static void button_activate_exit(": "6e048ea8efd37feb68459cf12264cb671748d1e6175d172c4be2a4980599854b",
+    "void ui_but_active_free(": "b798f737c7fa124ebde2a1ce44d9a473c5d991bd01eb6a7c718915fd8cb80aaf",
+    "static int ui_handle_button_event(": "715e6350de30ab048a87cc392052fed4a5b75394288160f184ac43c65095cefe",
+    "static int ui_handle_region_semi_modal_buttons(": "a4f7a14a3bc21f00235387c06d55df3d1554fb4489ac0d3f9dc5e2c3978b33a6",
+    "static void ui_apply_but_funcs_after(": "b585ee07c94cffc621af4f0cd570e24c70de79c3886d63eafcc6cec9b29cd757",
+    "static int ui_region_handler(": "5c3387f2e1290f62e479527abeefad700d7b580a869e7c4be9542cee8dde3a49",
+    "wmEventHandler_UI *WM_event_add_ui_handler(": "292f98d0f24aea4bda9f712727940d32c306362f2a013db125c8179b3824df07",
+    "void WM_event_remove_ui_handler(": "c90bdbafb1ea30c8174ff31594366ee5ec61d7e5c101746db40874afb8b360bd",
+    "void wm_event_free_handler(": "d1add237e1a8cf71d909850b93ab1491baacd80552ac1d0caf46b63e83e65fa9"
+  },
+  "fixture_sha256": "61f12a1a4ebfe0d2e0251e55bb79bd5e1ac3be451ba9f2992a8345ef1befe9ae",
+  "patch_sha256": "40533b999524fc2ecbe84de08ca0591f76c69abb62db0310b4329f4c8c29bc1e",
+  "cases": [
+    {
+      "case": "free",
+      "returncode": 0,
+      "stdout": "PASS free native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "deferred-stale",
+      "returncode": 0,
+      "stdout": "PASS deferred-stale native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "inside",
+      "returncode": 0,
+      "stdout": "PASS inside native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "reenter",
+      "returncode": 0,
+      "stdout": "PASS reenter native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "outside",
+      "returncode": 0,
+      "stdout": "PASS outside native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "copied",
+      "returncode": 0,
+      "stdout": "PASS copied native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "stale",
+      "returncode": 0,
+      "stdout": "PASS stale native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    },
+    {
+      "case": "deactivate",
+      "returncode": 0,
+      "stdout": "PASS deactivate native regional button state/exit/deferred callback gate; full WM/UI setup modeled\n",
+      "stderr": ""
+    }
+  ],
+  "boundaries": [
+    "Initial native layout/highlighting and hit geometry configured by fixture; full WM/UI setup and UIKit delivery not executed.",
+    "ui_do_button unrelated shortcuts/type dispatch is an enabled-But exact selected-case adapter.",
+    "RNA, ring/Numbers policy, compositor receipt/current-owner admission, hit testing, list/allocation and external GPU/timer/undo/autokey calls are explicitly modeled; unsupported executed features fail assertions.",
+    "uiAfterFunc apply callback only queues a copied value-only Action; no native Knife Finish/Cancel, geometry/history/device proof.",
+    "Postponed WM cleanup executes the exact selected removal body; full WM scheduler remains source-guarded boundary."
+  ],
+  "source_or_production_changed": false,
+  "device_acceptance": false
+}

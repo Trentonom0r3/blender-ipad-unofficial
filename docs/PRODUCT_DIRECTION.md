@@ -1,3 +1,23 @@
+## Native Pencil Knife controls validated for exact build - 2026-10-25 UTC
+
+Candidate60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a passes
+FINAL675/675 host checks517.991s, unchanged frozen source/test/CI hashes,136-file
+pinnedpreflight/diff and independent actual native/API/ownership/literalUI review.
+Actual14 changed targets match raw Git;122 prior sections/all7Python/all13GHOST exact.
+Reports output/ui-preview/pencil-knife/{source-verification,frozen-validation}.json
+and integration-audit/independent-native-ui-source-review-60001bada.json.
+No native build/package/compiled/device proof yet. Commit/push this coherent source,
+dispatch exact native build ONCE, watch SAME run with .cache/watch-pencil-knife-build.py
+RUN FULLSHA, verify full IPA/preserved HUDlaunch-Weightcleanup and actual new Knife/
+WM/nativeUI/geometry/hierarchy compiled branches before ready claim. No unchanged build.
+Source uses native original-live Finish/Cancel; multicut/lift/rightclick Stop retained.
+Measured source geometry/presentation hierarchy/old-tail guards are connected; stock
+5.1.2 widget evidence is not target HUD/Pencil/device proof. Prior failed test logs and
+minimal retained model repairs stay preserved; all original assertions remain.
+Latest fully verified production remains146199824b8d045b2cbe4509e1f1f8ecd40bf917 /
+run39338882021; no exactdevice acceptance. Full goal unfinished; preserve accepted
+ring/bars/Inspector/Files/keyboard/Undo/Cancel/lifetime contracts and untracked evidence.
+
 ## Pencil Pan exact IPA verified - 2026-10-22 UTC
 
 Production146199824b8d045b2cbe4509e1f1f8ecd40bf917/run39338882021 passed hosted

@@ -1,0 +1,403 @@
+{
+  "status": "PASS_SOURCE_EXECUTING_OWNER_GATE",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "opt_level": "2",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-knife-controls-f5ti0n29",
+  "source_hashes": {
+    "source/blender/windowmanager/intern/wm_event_system.cc": "170e8d816b0238fa77a7e8073acb4a55938ca9bea7b148bc54ddb885f0faf817",
+    "source/blender/windowmanager/WM_ipad_knife.hh": "c939090b70e30a75e30353dc6d626018c5e5c211ae9013d47f12ae6abfd0e733",
+    "source/blender/editors/interface/interface_handlers.cc": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd"
+  },
+  "fixture_sha256": "5be7cf28c1088f4b7d570b1106d0f17e592edb94fa227a711ba7eac5b97233ea",
+  "actual_native_bodies": {
+    "static wmWindowManager *wm_ipad_knife_window_manager(": "19b0001126631d94f851b7f40ee1f4856fbb41ad2ba55714f7cf574e45890b78",
+    "static bool wm_ipad_knife_owner_read(": "fe281188a08f8cb34e035b5f8991d8a630fb7a3b6a22a6fa247684bf5285c1fe",
+    "static void wm_ipad_knife_modal_handler_bind(": "e7c41e35020490eac6cd9bcb25783047260e8e4760654a9934c346126ca83d2e",
+    "bool WM_ipad_knife_owner_capture(": "553caac418ac0acb655967ca2d21612b96bd938b3569e6ef776f49920fc5fced",
+    "bool WM_ipad_knife_owner_present(": "c51bb401a8b867518c6259725dc0ec27d093538c0d76af390d2c7c60d8b5cf49",
+    "ARegion *WM_ipad_knife_owner_region(": "465346a96df1c274288f0e7b5b42a2e95f996307c061f71214cddc2e8cc8eb67",
+    "bool WM_ipad_knife_hud_scope_active(": "f20757a9c7717ccbcbdcbc48eb28ebcce13dd271436127bbb8a6dc3981f08cf2",
+    "bool WM_ipad_knife_action_queue(": "c343ed73ec4366eef45615478b2cab85f230f96704f2ebe0b7f282c7df4d2b9d",
+    "static bool wm_ipad_knife_request_resolve(": "3a62eb873f29174e8879f8da9ae23ef75c6da2f5a47b9f999e9333543502769f"
+  },
+  "actual_ui_predicate_sha256": "2f9319004cca124e4f06f2692d89eaecf48becabf0a8ba5ff467bd51cf1e5657",
+  "selected_native_wm_slices": {
+    "original_request_prefix": "eab68354f88a573fe4cec1282daf28bafcb5340352588445538b9365e827a3b7",
+    "original_context_branch": "1adaf47dee38d86f98b98d24165a42c83c1f20f0089f1d122959def51f98aacb",
+    "original_action_branch": "a81b78c861b55368726cab00f527fc5782b014c4bd9d165720c70d5a17711619",
+    "original_undo_bookkeeping": "4b91389cb190dcbde4afbdb163b3eb496e2fb5125376b49b72638930eeb05292",
+    "original_undo_restore": "13fc6a2cdedebc5a096c45f76ba830e5bf2a3a8a2a82710d4cd2d61272ece93a",
+    "original_window_status_cleanup": "5ab276de5ff1e3d848d65d38814341c31c6ff3861dd7514c00cce9367d1f42be"
+  },
+  "cases": [
+    {
+      "case": "area-removed",
+      "returncode": 0,
+      "stdout": "PASS area-removed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "base-replaced",
+      "returncode": 0,
+      "stdout": "PASS base-replaced actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "cancel",
+      "returncode": 0,
+      "stdout": "PASS cancel actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "dedicated-ui",
+      "returncode": 0,
+      "stdout": "PASS dedicated-ui actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "dispatch-mismatched-live-handler",
+      "returncode": 0,
+      "stdout": "PASS dispatch-mismatched-live-handler actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "dispatch-refuses-before-handler-read",
+      "returncode": 0,
+      "stdout": "PASS dispatch-refuses-before-handler-read actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "duplicate-manager",
+      "returncode": 0,
+      "stdout": "PASS duplicate-manager actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "duplicate-owner",
+      "returncode": 0,
+      "stdout": "PASS duplicate-owner actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "finish",
+      "returncode": 0,
+      "stdout": "PASS finish actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "finish-after-ui-disposal",
+      "returncode": 0,
+      "stdout": "PASS finish-after-ui-disposal actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "lifetime-before-old-pointer",
+      "returncode": 0,
+      "stdout": "PASS lifetime-before-old-pointer actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "macro-child",
+      "returncode": 0,
+      "stdout": "PASS macro-child actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "main-replaced",
+      "returncode": 0,
+      "stdout": "PASS main-replaced actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "manager-uid",
+      "returncode": 0,
+      "stdout": "PASS manager-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "membership-before-identity",
+      "returncode": 0,
+      "stdout": "PASS membership-before-identity actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "mesh-removed",
+      "returncode": 0,
+      "stdout": "PASS mesh-removed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "mesh-uid",
+      "returncode": 0,
+      "stdout": "PASS mesh-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "missing-layer",
+      "returncode": 0,
+      "stdout": "PASS missing-layer actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "native-window-change",
+      "returncode": 0,
+      "stdout": "PASS native-window-change actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "no-op-queued-refusal",
+      "returncode": 0,
+      "stdout": "PASS no-op-queued-refusal actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "object-removed",
+      "returncode": 0,
+      "stdout": "PASS object-removed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "object-uid",
+      "returncode": 0,
+      "stdout": "PASS object-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "operator-reused",
+      "returncode": 0,
+      "stdout": "PASS operator-reused actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "other-operator",
+      "returncode": 0,
+      "stdout": "PASS other-operator actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "out-of-sync",
+      "returncode": 0,
+      "stdout": "PASS out-of-sync actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "postponed-ui",
+      "returncode": 0,
+      "stdout": "PASS postponed-ui actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-copy",
+      "returncode": 0,
+      "stdout": "PASS queue-copy actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-invalid-action",
+      "returncode": 0,
+      "stdout": "PASS queue-invalid-action actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-not-release",
+      "returncode": 0,
+      "stdout": "PASS queue-not-release actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-other-owner",
+      "returncode": 0,
+      "stdout": "PASS queue-other-owner actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-outside-scope",
+      "returncode": 0,
+      "stdout": "PASS queue-outside-scope actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-single-use",
+      "returncode": 0,
+      "stdout": "PASS queue-single-use actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-stale-owner",
+      "returncode": 0,
+      "stdout": "PASS queue-stale-owner actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-zero-generation",
+      "returncode": 0,
+      "stdout": "PASS queue-zero-generation actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "queue-zero-serial",
+      "returncode": 0,
+      "stdout": "PASS queue-zero-serial actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "region-hidden",
+      "returncode": 0,
+      "stdout": "PASS region-hidden actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "region-removed",
+      "returncode": 0,
+      "stdout": "PASS region-removed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-handler-replaced",
+      "returncode": 0,
+      "stdout": "PASS resolve-handler-replaced actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-malformed",
+      "returncode": 0,
+      "stdout": "PASS resolve-malformed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-op-replaced",
+      "returncode": 0,
+      "stdout": "PASS resolve-op-replaced actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-same-address-new-lifetime",
+      "returncode": 0,
+      "stdout": "PASS resolve-same-address-new-lifetime actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-stale-uid",
+      "returncode": 0,
+      "stdout": "PASS resolve-stale-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "resolve-wrong-window",
+      "returncode": 0,
+      "stdout": "PASS resolve-wrong-window actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "scene-uid",
+      "returncode": 0,
+      "stdout": "PASS scene-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "screen-removed",
+      "returncode": 0,
+      "stdout": "PASS screen-removed actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "screen-uid",
+      "returncode": 0,
+      "stdout": "PASS screen-uid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "type-reused",
+      "returncode": 0,
+      "stdout": "PASS type-reused actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "ui-popup",
+      "returncode": 0,
+      "stdout": "PASS ui-popup actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "ui-remove-callback",
+      "returncode": 0,
+      "stdout": "PASS ui-remove-callback actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "ui-stale-active",
+      "returncode": 0,
+      "stdout": "PASS ui-stale-active actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "ui-wrong-panel",
+      "returncode": 0,
+      "stdout": "PASS ui-wrong-panel actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "ui-wrong-userdata",
+      "returncode": 0,
+      "stdout": "PASS ui-wrong-userdata actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "unknown-ui",
+      "returncode": 0,
+      "stdout": "PASS unknown-ui actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "unregistered-type",
+      "returncode": 0,
+      "stdout": "PASS unregistered-type actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "valid",
+      "returncode": 0,
+      "stdout": "PASS valid actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "view-origins",
+      "returncode": 0,
+      "stdout": "PASS view-origins actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "window-id",
+      "returncode": 0,
+      "stdout": "PASS window-id actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "wrong-manager-context",
+      "returncode": 0,
+      "stdout": "PASS wrong-manager-context actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    },
+    {
+      "case": "wrong-window-context",
+      "returncode": 0,
+      "stdout": "PASS wrong-window-context actual owner/bind/value-queue/fresh native WM slices; external state explicit\n",
+      "stderr": ""
+    }
+  ],
+  "source_guards_completed": [
+    "bind_order",
+    "callback_free",
+    "dispatch_order",
+    "ui_identity"
+  ],
+  "boundaries": [
+    "Intrusive lists/allocation, initial registration and scope admission, fresh registered-type/lifetime maps, pure named ViewLayer lookup, BKE/native Knife origin, active UI button/panel lookup and event enqueue are explicit external models.",
+    "The genuine native owner/bind/capture/presentation/region/queue/request bodies execute. Their external lookups do not call providers. Invalid old numeric addresses are used in refusal tests without dereference.",
+    "The actual private-action pre-read prefix, context/action/undo/status cleanup slices execute in a private-request-only adapter. Ordinary WM routing, full scheduler and operator geometry/history are not executed.",
+    "ED_mesh_knife_modal_action, wm_operator_finished, operator/handler disposal, reports/gizmo/undo IDs and allocator effects are counted models. FINISHED and CANCELLED use separate native status branches; callback is never inside modeled UI frame.",
+    "Compositor generation/contact origins, hardware acquisition, UI highlighting/state and target UIKit delivery are covered by separate gates or remain unproved. No global lifetime/allocator/reentrancy or A-B-A presentation epoch proof."
+  ],
+  "production_changed": false,
+  "device_acceptance": false
+}

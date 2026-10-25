@@ -1,0 +1,30 @@
+{
+  "status": "PASS_BOUNDED_NATIVE_UI_ENTRY_GATE",
+  "tests_per_build": 10,
+  "builds": [
+    {
+      "optimization": "O0",
+      "report": "report.json",
+      "seconds": 1.234
+    },
+    {
+      "optimization": "O2",
+      "report": "optimized/report.json",
+      "seconds": 1.728
+    }
+  ],
+  "fixture_sha256": "61f12a1a4ebfe0d2e0251e55bb79bd5e1ac3be451ba9f2992a8345ef1befe9ae",
+  "complete_native_functions": 17,
+  "runtime_cases": 8,
+  "source_guards": 2,
+  "initial_compiler_failure": "compile-first-failure.log retained; modeled mutable-list macro declaration and missing modeled constants repaired. Native functions/expectations unchanged.",
+  "production_changed": false,
+  "device_acceptance": false,
+  "limitations": [
+    "Pre-highlighted button admission/layout/hit geometry are modeled. Root compositor/WM ownership tests must separately prove initial contact admission and priority before Knife.",
+    "Full ui_region_handler/ui_handle_button_event/BUT/state activation/exit/apply/deferred bodies and WM UI add/remove execute; unrelated ui_do_button dispatch is exact selected But-case adapter.",
+    "List/allocation/context/receipt-policy/RNA/ring/GPU/timer/undo/autokey dependencies are explicit models; unsupported exercised branches assert.",
+    "Deferred callback copies a trivial value-only Action into a queue after active data and afterfunc record free. It does not call native Knife Finish/Cancel.",
+    "Actual selected native WM postponed cleanup body executes, with surrounding full WM scheduling only source-guarded."
+  ]
+}

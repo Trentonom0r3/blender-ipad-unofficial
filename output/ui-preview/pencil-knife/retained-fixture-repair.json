@@ -1,0 +1,64 @@
+{
+  "status": "AFFECTED_RETAINED_FIXTURES_PASS_FULL_SUITE_PENDING",
+  "utc": "2026-10-24T04:27:16.173784+00:00",
+  "production_patch_changed_by_this_repair": false,
+  "actual_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "files": {
+    "build/test_pencil_hud_presentation.py": {
+      "sha256": "8c419f700eac9ec663707296a260eabeb5f7f5221240f931faebd08612877ad1"
+    },
+    "build/test_pencil_hud_cancel.py": {
+      "sha256": "5afa6fcc02779df6bf91312f5274d693cf1dd7aef1efa740982d991d77d16d9d"
+    },
+    "build/test_pencil_hud_initialization.py": {
+      "sha256": "0e82ff2b145304a906361dd5eb53a61bd319e9e28c0e123ee20ccf87cb64a7ab"
+    }
+  },
+  "original_failure": {
+    "log": ".cache/knife-hud-presentation-affected-first.log",
+    "result": "5 retained tests, 2 passed and 3 compiler errors",
+    "cause": "The intact actual receipt block gained references to the separate Knife manager and measured geometry-ready API, while the legacy no-Knife profile had no external boundary declarations."
+  },
+  "repairs": [
+    {
+      "file": "build/test_pencil_hud_presentation.py",
+      "change": "Explicitly inactive external Knife hierarchy structs/map/functions and geometry-ready=false; no live owner, no hierarchy admission. Actual retained native receipt/draw/admit bodies remain unchanged."
+    },
+    {
+      "file": "build/test_pencil_hud_cancel.py",
+      "change": "Modeled rcti is exact native POD with plain int fields; preserves calloc trivial/trivially-copyable static_assert. Added actual transient layout declaration and assert-false inactive geometry stub, plus explicit cstdint include."
+    },
+    {
+      "file": "build/test_pencil_hud_initialization.py",
+      "change": "Same native POD rectangle and actual transient layout declaration with assert-false inactive geometry stub; shared placement consumers use this corrected boundary."
+    }
+  ],
+  "assertion_policy": "All existing Python/native assertions and test names preserved. Newly added assert-false stubs fail if an inactive legacy profile unexpectedly enters Knife geometry. No production implementation modified.",
+  "results": [
+    {
+      "log": ".cache/knife-hud-presentation-affected-final.log",
+      "tests": 5,
+      "status": "PASS",
+      "seconds": 19.541
+    },
+    {
+      "log": ".cache/knife-hud-calloc-initialization-affected.log",
+      "tests": 3,
+      "status": "PASS",
+      "seconds": 7.302
+    },
+    {
+      "log": ".cache/knife-hud-retained-affected-final.log",
+      "suites": [
+        "cancel",
+        "initialization",
+        "placement",
+        "launch"
+      ],
+      "tests": 18,
+      "status": "PASS",
+      "seconds": 24.765
+    }
+  ],
+  "limits": "These retained suites deliberately register no Knife owner. Actual active Knife hierarchy/callback/input execution is covered by the separate portable 11-case O0/O2 fixture. Complete candidate/full-suite review remains pending; no UIKit/GPU/device proof."
+}

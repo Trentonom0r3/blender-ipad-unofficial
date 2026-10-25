@@ -592,6 +592,15 @@ struct bContext {};
 int ring_dispatches=0, modal_dispatches=0;
 void UI_ipad_ring_event_dispatch(bContext*,wmEvent*) { ++ring_dispatches; }
 int wm_handlers_do(bContext*,wmEvent*,ListBase*) { ++modal_dispatches; return 0; }
+// This retained paint/ring route has no Knife owner, HUD or private requests.
+// Keep the genuine enclosing route; new Knife ownership executes separately.
+enum { IPAD_KNIFE_ACTION=100 };
+struct ScrArea{};struct ARegion{};struct wmEventHandler{};
+struct wmEventHandler_Op{wmEventHandler head;};
+bool wm_ipad_knife_request_resolve(bContext*,wmWindow*,wmEvent*,wmEventHandler_Op**,ScrArea**,ARegion**){assert(false&&"Private Knife request outside retained paint fixture");return false;}
+int wm_handler_operator_call(bContext*,ListBase*,wmEventHandler*,wmEvent*,void*,const char*){assert(false&&"Knife operator dispatch outside retained paint fixture");return 0;}
+bool wm_ipad_knife_hud_dispatch(bContext*,wmWindow*,wmEvent*){return false;}
+
 """+EVENT_ENUMS+"\nint route(bContext*C,wmWindow*win,wmEvent*event,"
 "eIPadPencilPaintPreDispatch ipad_pencil_paint_pre_dispatch,bool ipad_reopen_dismissed){"
 "int action=0;\n"+ROUTE_BLOCK+"\nreturn action;}\n"+r"""

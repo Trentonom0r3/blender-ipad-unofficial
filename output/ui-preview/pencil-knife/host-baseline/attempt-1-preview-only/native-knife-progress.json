@@ -1,0 +1,96 @@
+{
+  "status": "running",
+  "step": 6,
+  "frames": [
+    {
+      "name": "original-plane",
+      "step": 1,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [],
+      "knife_live": false,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "knife-invoked-from-native-tool",
+      "step": 3,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "pending-cut-after-lift",
+      "step": 5,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    },
+    {
+      "name": "pending-cut-after-native-new-cut",
+      "step": 6,
+      "geometry": {
+        "vertices": 4,
+        "edges": 4,
+        "faces": 1,
+        "sha256": "2eb1e9c4889e56491ab99bced634b6317956da37a12e6d8f5a86d41f543e5b56"
+      },
+      "modal_operators": [
+        {
+          "identifier": "Operator",
+          "bl_idname": "MESH_OT_knife_tool",
+          "name": "Knife Topology Tool"
+        }
+      ],
+      "knife_live": true,
+      "canvas": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      }
+    }
+  ]
+}

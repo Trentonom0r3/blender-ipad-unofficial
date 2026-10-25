@@ -1,0 +1,38 @@
+{
+  "status": "PASS_BOUNDED_NATIVE_OWNER_DISPATCH_GATE",
+  "test_file": "build/test_pencil_knife_owner_dispatch.py",
+  "fixture_sha256": "5be7cf28c1088f4b7d570b1106d0f17e592edb94fa227a711ba7eac5b97233ea",
+  "tests_per_optimization": 63,
+  "runtime_cases": 59,
+  "source_guards": 4,
+  "runs": [
+    {
+      "opt_level": "0",
+      "seconds": 1.506,
+      "result": "63/63 PASS",
+      "report": "report.json"
+    },
+    {
+      "opt_level": "2",
+      "seconds": 1.884,
+      "result": "63/63 PASS",
+      "report": "optimized/report.json"
+    }
+  ],
+  "source_hashes": {
+    "source/blender/windowmanager/intern/wm_event_system.cc": "170e8d816b0238fa77a7e8073acb4a55938ca9bea7b148bc54ddb885f0faf817",
+    "source/blender/windowmanager/WM_ipad_knife.hh": "c939090b70e30a75e30353dc6d626018c5e5c211ae9013d47f12ae6abfd0e733",
+    "source/blender/editors/interface/interface_handlers.cc": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd"
+  },
+  "scope": "Actual native owner/window-manager/read/bind/capture/presentation/region/scope/queue/request plus dedicated UI identity predicate, and selected genuine private-action/context/undo/status cleanup.",
+  "new_connected_case": "After native UI button disposal and postponed DO_FREE UI handler carrying poison userdata, fresh original Knife request resolves and finishes exactly once; unrelated UI handler remains for normal postponed cleanup.",
+  "limitations": [
+    "Intrusive lists/allocation, initial registration and scope admission, fresh registered-type/lifetime maps, pure named ViewLayer lookup, BKE/native Knife origin, active UI button/panel lookup and event enqueue are explicit external models.",
+    "The genuine native owner/bind/capture/presentation/region/queue/request bodies execute. Their external lookups do not call providers. Invalid old numeric addresses are used in refusal tests without dereference.",
+    "The actual private-action pre-read prefix, context/action/undo/status cleanup slices execute in a private-request-only adapter. Ordinary WM routing, full scheduler and operator geometry/history are not executed.",
+    "ED_mesh_knife_modal_action, wm_operator_finished, operator/handler disposal, reports/gizmo/undo IDs and allocator effects are counted models. FINISHED and CANCELLED use separate native status branches; callback is never inside modeled UI frame.",
+    "Compositor generation/contact origins, hardware acquisition, UI highlighting/state and target UIKit delivery are covered by separate gates or remain unproved. No global lifetime/allocator/reentrancy or A-B-A presentation epoch proof."
+  ],
+  "source_or_production_changed": false,
+  "device_acceptance": false
+}

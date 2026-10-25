@@ -1,0 +1,123 @@
+{
+  "status": "PASS_RETAINED_FIXTURE_MIGRATIONS_AFFECTED_ONLY",
+  "files": [
+    {
+      "file": "build/test_pencil_hud_cancel.py",
+      "baseline_sha256": "e4dd4f92db2e23de88f17a1130c3299201a3e0022f6dbd7578fcb9bb62157ea3",
+      "candidate_sha256": "ccdf71dfbe5af7c03156fbcb5500dff0ace95398e3d6e1a916e3db8095213452",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 90,
+      "current_assertion_expressions": 90,
+      "test_names_unchanged": [
+        "test_frozen_cancel_producer_after_recognizer_reset",
+        "test_cancelled_uncaptured_pencil_terminal_enters_ghost_once",
+        "test_real_num_slider_cancel_and_native_restoration_dispatch",
+        "test_stale_context_and_unproved_multifield_refuse_without_restore",
+        "test_connected_single_field_propagation_policy",
+        "test_terminal_tombstone_survives_refusal_and_new_hardware_recovers",
+        "test_refused_metadata_terminal_and_motion_cannot_reenter_compositor",
+        "test_actual_hud_calloc_type_and_missing_data_recovery"
+      ]
+    },
+    {
+      "file": "build/test_pencil_hud_contacts.py",
+      "baseline_sha256": "e498d5a8ca68aaa8faa98d70ae5919802abeb1076c88561433eaaadabff0c94f",
+      "candidate_sha256": "91a96140536f5a48cae54d58a01b3724cfa616a90da11c774838bb1f889db540",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 33,
+      "current_assertion_expressions": 33,
+      "test_names_unchanged": [
+        "test_origin_priority_frozen_serial_and_window_retirement",
+        "test_actual_payload_constructors_keep_hardware_zero",
+        "test_connected_recognizer_and_native_dispatch_stamps",
+        "test_actual_native_corner_stack_sizing_covers_all_active_headers"
+      ]
+    },
+    {
+      "file": "build/test_pencil_hud_initialization.py",
+      "baseline_sha256": "d4a18bf07e11902d46085a4fdc4dd2a7c5f3df1963dcdf7a7b0dfdfa08bc5989",
+      "candidate_sha256": "7c4c327b1ab7a1de66faa6252b99da57c88d0250f0429a9205deea65a5701afa",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 14,
+      "current_assertion_expressions": 14,
+      "test_names_unchanged": [
+        "test_zeroed_created_copied_hidden_and_valid_redo_before_first_layout",
+        "test_old_first_draw_lacks_native_initialization"
+      ]
+    },
+    {
+      "file": "build/test_pencil_hud_presentation.py",
+      "baseline_sha256": "93976250d28db27bba38098a523eb4ab9223d6ea190546fde1d9798ccdeed127",
+      "candidate_sha256": "9d0896565fe852b60ba5c720b251e91697886c8fd31637b5d49f7bb2e489ab35",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 79,
+      "current_assertion_expressions": 79,
+      "test_names_unchanged": [
+        "test_draw_owner_tool_copy_declares_bli_string_api",
+        "test_actual_compositor_footprint_success_and_early_returns",
+        "test_connected_cached_draw_history_geometry_and_frozen_generation",
+        "test_stale_retirement_is_named_onfree_and_reacquires_after_callbacks",
+        "test_native_producer_order_and_completed_publication_contract"
+      ]
+    },
+    {
+      "file": "build/test_pencil_hud_launch.py",
+      "baseline_sha256": "5030a1bc53c78f616c18d77c5c24819ff61452e228ed0073a0727e31f20a9dea",
+      "candidate_sha256": "fa94e37ce2b4e96d437952f7ae2bb75bcf3bf1e2a0c7fc13b8502f74287f03dc",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 21,
+      "current_assertion_expressions": 21,
+      "test_names_unchanged": [
+        "test_first_layout_preserves_hud_before_actual_native_animation",
+        "test_success_and_callback_free_refusal_paths_preserve_caller_context",
+        "test_failed_source_is_negative_control_for_first_layout",
+        "test_native_bodies_and_first_layout_call_order"
+      ]
+    },
+    {
+      "file": "build/test_pencil_paint_contact_lease.py",
+      "baseline_sha256": "e521c07a009d843935b16b0118d55fd8d07d28251252259362379b7301168521",
+      "candidate_sha256": "c8f5279ee62e1d8eaa25883cf1e342fd5fe2eca20dcfd134aedf4e73067c9dca",
+      "all_original_assertion_expressions_preserved_in_order": true,
+      "baseline_assertion_expressions": 99,
+      "current_assertion_expressions": 101,
+      "test_names_unchanged": [
+        "test_actual_registered_handler_refuses_region_runtime_teardown",
+        "test_actual_contact_queue_matches_pinned_runtime_and_event_schema",
+        "test_actual_owner_match_accepts_redraws_but_refuses_live_owner_changes",
+        "test_actual_modal_classifier_and_ring_pre_dispatch_cancel_exact_owner",
+        "test_cancelled_native_paint_quarantines_motion_and_lift_from_new_tool",
+        "test_actual_router_branch_never_runs_ring_on_stale_owner",
+        "test_ring_and_reopen_paths_preflight_before_they_bypass_modal_handlers",
+        "test_actual_modal_dispatch_revalidates_and_uses_native_cancel_status_cleanup",
+        "test_owned_cancelled_lift_uses_mode_cancel_instead_of_paint_release"
+      ]
+    }
+  ],
+  "affected_runs": [
+    {
+      "suite": "test_pencil_hud_*.py",
+      "result": "35/35 PASS",
+      "seconds": 42.583,
+      "log": ".cache/knife-hud-migrations-affected-final.log"
+    },
+    {
+      "suite": "test_pencil_paint_contact_lease.py",
+      "result": "9/9 PASS",
+      "seconds": 6.177,
+      "log": ".cache/knife-paint-contact-migration-affected.log"
+    }
+  ],
+  "changes": [
+    "Receipt namespace extraction accepts the new preceding native kind enum while retaining the complete native receipt block.",
+    "Standard-HUD fixtures explicitly model absent Knife registration, native type lookup, empty panel lists and popup model fields. New Knife code remains in compiled receipt bodies; connected Knife gates establish its separate scope.",
+    "Native initialization/calloc fixtures model no Knife canvas; ordinary sizing model carries nullable panel type with no Knife type.",
+    "Launch fixture merges shared Panel/View2D model shapes; pinned native context setters, animation bodies, first-layout checks and exact failed-source negative control remain unchanged.",
+    "Retained paint/ring actual router models no Knife HUD; private Knife dispatch mocks assert if unexpectedly reached."
+  ],
+  "old_failure_logs_preserved": true,
+  "full_suite": "First full run still pending; no second full run before source freeze.",
+  "production_source_changed": false,
+  "native_build": false,
+  "device_acceptance": false
+}

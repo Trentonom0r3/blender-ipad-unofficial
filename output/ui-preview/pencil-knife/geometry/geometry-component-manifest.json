@@ -1,0 +1,222 @@
+{
+  "status": "PASS_BOUNDED_GEOMETRY_SOURCE_AND_STOCK_WIDGET_EVIDENCE_PENDING_ROOT_INTEGRATION",
+  "updated_utc": "2026-10-24T04:09:15.247797+00:00",
+  "files": {
+    "source/blender/editors/interface/regions/interface_region_hud.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\source\\blender\\editors\\interface\\regions\\interface_region_hud.cc",
+      "sha256": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e"
+    },
+    "source/blender/editors/screen/area.cc": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\source\\blender\\editors\\screen\\area.cc",
+      "sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d"
+    }
+  },
+  "apis": [
+    "bool UI_ipad_knife_hud_geometry(const bContext *C, int size[2], bool *r_horizontal);",
+    "bool UI_ipad_knife_hud_geometry_ready(const bContext *C, const ARegion *hud);"
+  ],
+  "focused_checks": [
+    {
+      "opt": "-O0",
+      "compile": 0,
+      "run": 0,
+      "stdout": "PASS 67 source-executing fit/selection/actual-button readiness checks; WM owner,font,matrix,allocator boundaries explicit\n",
+      "stderr": ""
+    },
+    {
+      "opt": "-O2",
+      "compile": 0,
+      "run": 0,
+      "stdout": "PASS 67 source-executing fit/selection/actual-button readiness checks; WM owner,font,matrix,allocator boundaries explicit\n",
+      "stderr": ""
+    }
+  ],
+  "preserved_initial_failure": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\fit-probe-report-first-failed.json",
+  "real_correction": "Native representability of a minimum must round upward then remain <=available; initial policy rounded downward and falsely refused fitting panes. First shallow fixture90px did not satisfy conservative native margins; corrected to100px without reducing source minima.",
+  "host_binary": "D:/Program Files/blender.exe",
+  "host_version": "5.1.2 ec6e62d40fa9",
+  "host_cases": [
+    {
+      "case": "landscape",
+      "host_status": "completed",
+      "original_native_pane": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 653
+      },
+      "native_scale": 1.25,
+      "native_widget_unit": 25.0,
+      "layout": {
+        "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\landscape",
+        "mode": "normal",
+        "units": 10,
+        "horizontal": false
+      },
+      "sampled_callback_extents": {
+        "finish": {
+          "xmin": 23,
+          "xmax": 272,
+          "ymin": 195,
+          "ymax": 249,
+          "sample_count": 304
+        },
+        "cancel": {
+          "xmin": 23,
+          "xmax": 272,
+          "ymin": 140,
+          "ymax": 193,
+          "sample_count": 303
+        }
+      },
+      "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\landscape\\native-widgets.png",
+      "native_result": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\landscape\\native-widget-result.json",
+      "limits": "Native popup uses window clamping, not target original-pane HUD placement. Python operators record hits only; they do not invoke Knife. Sampled extents are cross-band callback observations, not direct native uiBut memory."
+    },
+    {
+      "case": "narrow",
+      "host_status": "completed",
+      "original_native_pane": {
+        "x": 2,
+        "y": 82,
+        "width": 224,
+        "height": 653
+      },
+      "native_scale": 1.25,
+      "native_widget_unit": 25.0,
+      "layout": {
+        "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\narrow",
+        "mode": "narrow",
+        "units": 8,
+        "horizontal": false
+      },
+      "sampled_callback_extents": {
+        "finish": {
+          "xmin": 23,
+          "xmax": 222,
+          "ymin": 195,
+          "ymax": 249,
+          "sample_count": 254
+        },
+        "cancel": {
+          "xmin": 23,
+          "xmax": 222,
+          "ymin": 140,
+          "ymax": 193,
+          "sample_count": 253
+        }
+      },
+      "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\narrow\\native-widgets.png",
+      "native_result": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\narrow\\native-widget-result.json",
+      "limits": "Native popup uses window clamping, not target original-pane HUD placement. Python operators record hits only; they do not invoke Knife. Sampled extents are cross-band callback observations, not direct native uiBut memory."
+    },
+    {
+      "case": "quad",
+      "host_status": "completed",
+      "original_native_pane": {
+        "x": 421,
+        "y": 409,
+        "width": 419,
+        "height": 326
+      },
+      "native_scale": 1.25,
+      "native_widget_unit": 25.0,
+      "layout": {
+        "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\quad",
+        "mode": "quad",
+        "units": 10,
+        "horizontal": false
+      },
+      "sampled_callback_extents": {
+        "finish": {
+          "xmin": 332,
+          "xmax": 581,
+          "ymin": 522,
+          "ymax": 576,
+          "sample_count": 304
+        },
+        "cancel": {
+          "xmin": 332,
+          "xmax": 581,
+          "ymin": 467,
+          "ymax": 520,
+          "sample_count": 303
+        }
+      },
+      "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\quad\\native-widgets.png",
+      "native_result": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\quad\\native-widget-result.json",
+      "limits": "Native popup uses window clamping, not target original-pane HUD placement. Python operators record hits only; they do not invoke Knife. Sampled extents are cross-band callback observations, not direct native uiBut memory."
+    },
+    {
+      "case": "shallow",
+      "host_status": "completed",
+      "original_native_pane": {
+        "x": 2,
+        "y": 82,
+        "width": 838,
+        "height": 128
+      },
+      "native_scale": 1.25,
+      "native_widget_unit": 25.0,
+      "layout": {
+        "out": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\shallow",
+        "mode": "shallow",
+        "units": 14,
+        "horizontal": true
+      },
+      "sampled_callback_extents": {
+        "finish": {
+          "xmin": 23,
+          "xmax": 197,
+          "ymin": 119,
+          "ymax": 172,
+          "sample_count": 228
+        },
+        "cancel": {
+          "xmin": 199,
+          "xmax": 372,
+          "ymin": 119,
+          "ymax": 173,
+          "sample_count": 228
+        }
+      },
+      "screenshot": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\shallow\\native-widgets.png",
+      "native_result": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-native-widget-matrix-ve2tdgws\\shallow\\native-widget-result.json",
+      "limits": "Native popup uses window clamping, not target original-pane HUD placement. Python operators record hits only; they do not invoke Knife. Sampled extents are cross-band callback observations, not direct native uiBut memory."
+    }
+  ],
+  "geometry_behavior": [
+    "Vertical compact default, horizontal for shallow fitting original pane, then another fresh visible WINDOW in same area; native operation origin unchanged.",
+    "Native translated font widths plus pinned default text/icon padding; each44-scale minimum; extra1physical-pixel draw height accommodates observed native border hit rounding.",
+    "Input readiness uses cached minima, fresh numeric placement member/bounds/scale, exactly2 enabled native Knife But actions and transformed actual finished button rects; no font/translation/provider lookup.",
+    "Native dynamic HUD width follows chosen geometry; preserves existing Redo origin fields.",
+    "Physically unfit layout stays Knife-only with disabled controls and Enlarge viewport/Enter-Esc recovery; strict readiness false."
+  ],
+  "boundaries": [
+    "Focused source checks model original registered WM admission, font rasterizer, native block matrix and allocation; root tests cover other connected source seams.",
+    "Actual stock native widget visual/font/hit observations do not execute target5.0 HUD sizing, automatic placement, target WM private queue, UIKit/GHOST or device.",
+    "Extra one-pixel height compensation is source-backed from native54/55 hit bands; corrected height has not been rerun through stock GUI this window. Actual target button readiness enforces cached44 minimum.",
+    "Parent must merge geometry_ready into strict presented admission and perform complete integrated/final review, tests and native build; none claimed here.",
+    "No production patch/shared screen/hierarchy source modified by this component."
+  ],
+  "portable_regression": {
+    "status": "PASS_3_TESTS_67_CONTROLS_AT_O0_O2",
+    "files": {
+      "build/test_pencil_knife_hud_geometry.py": {
+        "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\build\\test_pencil_knife_hud_geometry.py",
+        "sha256": "840c92458a68f3f01d39be4a65aebff6808e1af42314a9eb79cf2722f1681772"
+      },
+      "build/tests/knife_hud_geometry_models.inc.cc": {
+        "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\build\\tests\\knife_hud_geometry_models.inc.cc",
+        "sha256": "892a256c16ed3270190be6ac21876235d3f3050c48bcb4f88a6fb45a53643d1d"
+      },
+      "build/tests/knife_hud_geometry_cases.inc.cc": {
+        "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\build\\tests\\knife_hud_geometry_cases.inc.cc",
+        "sha256": "dbf2905ea01f5a8c09903419e0f3fcc69e3f35523205b3126d81949d43ca58b1"
+      }
+    },
+    "result": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\portable-check\\geometry-test-report.json",
+    "runtime_dependencies": "Tracked fixture siblings plus actual overlay reconstruction from explicitly acquired pinned HUD/area sources; no ignored Temp/cache input. --source-root is an explicit pre-integration override.",
+    "existing_initial_failures_preserved": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-fit-geometry-ooyy5s30\\fit-probe-report-first-failed.json"
+  }
+}

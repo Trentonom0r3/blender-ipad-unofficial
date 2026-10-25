@@ -105,8 +105,13 @@ int main(){
 #include <vector>
 constexpr int PANEL_ACTIVE=(1<<2);
 float UI_UNIT_X=20,UI_SCALE_FAC=1;
-struct Panel{int runtime_flag=PANEL_ACTIVE,ofsy=0,sizey=0;bool closed=true;};
+struct Panel{int runtime_flag=PANEL_ACTIVE,ofsy=0,sizey=0;bool closed=true;void*type=nullptr;};
+// Retained ordinary panel sizing; separate Knife component tests exercise its type.
+bool UI_ipad_knife_hud_panel_type(const void*){return false;}
 struct ARegion{std::vector<const Panel*>panels;};
+struct bContext{};
+// No registered Knife profile in this retained ordinary-header fixture.
+bool UI_ipad_knife_hud_geometry(const bContext*,int[2],bool*){assert(false);return false;}
 bool UI_panel_is_active(const Panel *panel)
 {
   return panel->runtime_flag & PANEL_ACTIVE;
@@ -115,6 +120,10 @@ bool UI_panel_is_closed(const Panel*p){return p->closed;}
 int UI_panel_size_y(const Panel*p){return 20+(p->closed?0:p->sizey);}
 #define LISTBASE_FOREACH(T,v,list) for(T v:*(list))
 HELPER
+// Compatibility adapter supplies only the newly explicit native context input;
+// retained size/count assertions below are unchanged.
+static bool ui_ipad_corner_panels_size(const ARegion *region,int size[2])
+{return ui_ipad_corner_panels_size(nullptr,region,size);}
 int main(){
  Panel redo{PANEL_ACTIVE,-20,0,true},future{PANEL_ACTIVE,-40,0,true},view{PANEL_ACTIVE,-60,0,true};
  Panel inactive{0,-900,800,false};

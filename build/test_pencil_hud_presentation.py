@@ -23,9 +23,11 @@ CHROME = function(SCREEN, 'struct IPadHUDChrome {')+';'
 CHROME += '\nstatic std::unordered_map<uintptr_t, IPadHUDChrome> ipad_hud_chrome;\n'
 CAPTURE = function(SCREEN, 'static void ipad_hud_chrome_capture(').replace('static void', '[[maybe_unused]] static void', 1)
 EXPOSED = function(SCREEN, 'bool ED_ipad_hud_exposed_rect(')
-RECEIPTS = SCREEN[SCREEN.index('namespace {\nstruct IPadHUDOwner {'):
-                  SCREEN.index('\nvoid ED_ipad_editing_canvas_parts',
-                               SCREEN.index('namespace {\nstruct IPadHUDOwner {'))]
+# The new kind enum precedes the same retained receipt block. Preserve its full
+# native implementation; legacy tests explicitly have no live Knife owner.
+_receipt_start = SCREEN.rfind('namespace {', 0, SCREEN.index('struct IPadHUDOwner {'))
+RECEIPTS = SCREEN[_receipt_start:SCREEN.index('\nvoid ED_ipad_editing_canvas_parts', _receipt_start)]
+HAS_KNIFE_PROFILE = 'enum class IPadHUDKind' in RECEIPTS
 
 WORLD = r"""
 #include <algorithm>
@@ -57,11 +59,13 @@ constexpr int RGN_FLAG_HIDDEN=1,RGN_FLAG_HIDDEN_BY_USER=2,RGN_FLAG_TOO_SMALL=4,R
 constexpr int RGN_ALIGN_FLOAT=1,RGN_ALIGN_LEFT=2,RGN_ALIGN_RIGHT=3;
 #define RGN_ALIGN_ENUM_FROM_MASK(v) (v)
 struct RegionRuntime{bool visible=true,ipad_canvas=false;uint64_t ipad_hud_content_lifetime=0;void *draw_buffer=reinterpret_cast<void*>(7);rcti ipad_canvas_rect;};
-struct ARegion{int regiontype=RGN_TYPE_HUD,flag=0,alignment=RGN_ALIGN_FLOAT;bool overlap=true;float alpha=1;RegionRuntime *runtime;rcti winrct;};
+struct Panel{void *type=nullptr;bool active=false;};
+struct ARegion{int regiontype=RGN_TYPE_HUD,flag=0,alignment=RGN_ALIGN_FLOAT;bool overlap=true;float alpha=1;RegionRuntime *runtime;rcti winrct;std::vector<Panel*> panels{};};
 struct AreaRuntime{int ipad_layer=1;};
 struct ScrArea{int spacetype=SPACE_VIEW3D;bool visible=true;AreaRuntime runtime;std::vector<ARegion*> regionbase;};
 struct ID{uint32_t session_uid;};
-struct bScreen{bool do_refresh=false,enabled=true;std::vector<ScrArea*> areabase;ID id{19};};
+struct ToolTip{ARegion*region=nullptr;};
+struct bScreen{bool do_refresh=false,enabled=true;std::vector<ScrArea*> areabase;ID id{19};std::vector<ARegion*> regionbase;ToolTip*tool_tip=nullptr;};
 struct wmWindow{int winid=11,height=800;bScreen *screen;};
 int WM_window_native_pixel_x(const wmWindow*){return 600;}
 int WM_window_native_pixel_y(const wmWindow *w){return w->height;}
@@ -129,6 +133,43 @@ void GPU_texture_unbind(blender::gpu::Texture*){}
 """
 
 
+# External legacy-profile boundary: none of these retained standard-HUD fixtures
+# registers a Knife modal operator. The genuine Knife owner/input path is tested
+# separately in test_pencil_knife_owner_dispatch and HUD dispatch/component gates.
+KNIFE_MODEL = ''
+if HAS_KNIFE_PROFILE:
+    _knife_header = source('source/blender/windowmanager/WM_ipad_knife.hh')
+    _knife_types = _knife_header[:_knife_header.index('/* These APIs')]
+    KNIFE_MODEL = '\n'.join(line for line in _knife_types.splitlines() if not line.startswith(('#pragma', '#include'))) + r"""
+using Main=void;
+Main *G_MAIN=reinterpret_cast<Main*>(1);
+#define STREQ(a,b) (std::strcmp((a),(b))==0)
+bool WM_ipad_knife_owner_present(const bContext*,wmWindow*,ScrArea*,wmIPadKnifeOwner&o){o={};return false;}
+bool WM_ipad_knife_owner_capture(const bContext*,wmWindow*,ScrArea*,wmIPadKnifeOwner&o){o={};return false;}
+ARegion*WM_ipad_knife_owner_region(const bContext*,wmWindow*,const wmIPadKnifeOwner&,bool=false){return nullptr;}
+bool UI_panel_is_active(const Panel*p){return p->active;}
+bool UI_ipad_knife_hud_panel_type(const void*){return false;}
+// This retained suite has no Knife modal. Its independent hierarchy manager
+// is an external, inactive boundary; the connected Knife fixture executes its
+// actual staging/composition/publication/input bodies with live modeled owners.
+bool UI_ipad_knife_hud_geometry_ready(const bContext*,const ARegion*){return false;}
+struct IPadKnifeHierarchyRegion{uint64_t area=0,region=0,buffer=0;rcti rect{};};
+struct IPadKnifeHigherRect{uint64_t region=0;rcti rect{};};
+struct IPadKnifeHierarchyNative{std::vector<IPadKnifeHigherRect>higher;};
+struct IPadKnifeHierarchySnapshot{IPadKnifeHierarchyNative native;std::vector<rcti>drawn_higher;};
+struct IPadKnifeHierarchyFrame{
+ uint64_t window_id=0;bool pending=false,callbacks_observed=false,opaque_window_callback=false;
+ IPadKnifeHierarchySnapshot presented;std::vector<IPadKnifeHierarchyRegion>compositions;
+};
+std::unordered_map<uintptr_t,IPadKnifeHierarchyFrame>ipad_knife_hierarchy_frames;
+void ipad_knife_hierarchy_begin(wmWindow*){}
+void ipad_knife_hierarchy_publish(bContext*,wmWindow*){}
+bool ipad_knife_hierarchy_current(bContext*,wmWindow*){return false;}
+bool ipad_knife_hierarchy_native_capture(bContext*,wmWindow*,IPadKnifeHierarchyNative&out){out={};return false;}
+ARegion*CTX_wm_region_popup(const bContext*){return nullptr;}
+bool BLI_rcti_isect_pt_v(const rcti*r,const int xy[2]){return xy[0]>=r->xmin&&xy[0]<=r->xmax&&xy[1]>=r->ymin&&xy[1]<=r->ymax;}
+"""
+
 def compiled_prefix():
     public = function(HEADER, 'struct IPadHUDPresentedRect {') + ';'
     blend = function(DRAW, 'static bool wm_draw_region_blend_receipt(')
@@ -140,7 +181,7 @@ def compiled_prefix():
     a = layer.index('      if (region->overlap) {', layer.index('/* Blend in overlapping area regions. */'))
     b = layer.index('\n    }\n  }', a)
     producer = 'void native_overlap(bContext *C,wmWindow *win,ScrArea *area,ARegion *region){\n' + layer[a:b] + '\n}'
-    return '#define WITH_APPLE_CROSSPLATFORM\n' + WORLD + public + CHROME + CAPTURE + EXPOSED + RECEIPTS + blend + producer
+    return '#define WITH_APPLE_CROSSPLATFORM\n' + WORLD + KNIFE_MODEL + public + CHROME + CAPTURE + EXPOSED + RECEIPTS + blend + producer
 
 
 class PencilHUDPresentationTests(unittest.TestCase):

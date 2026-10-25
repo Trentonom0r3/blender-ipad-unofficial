@@ -106,6 +106,15 @@ def prefix(old=False):
     world = world.replace(area_stub, setters).replace(region_stub, '')
     world = world.replace('struct ARegion{', 'struct View2D{rctf cur;};\nstruct ARegion{') if 'struct ARegion{' in world else world.replace('struct ARegion {', 'struct View2D{rctf cur;};\nstruct ARegion {')
     world = world.replace('rcti winrct;};', 'rcti winrct;View2D v2d;};')
+    # Presentation's added empty panel list is a legacy model shape change.
+    # Keep this fixture's actual native View2D/animation consumer unchanged.
+    world = world.replace('rcti winrct;std::vector<Panel*> panels{};};',
+                          'rcti winrct;std::vector<Panel*> panels{};View2D v2d;};')
+    panel_world = PANEL_WORLD
+    if 'struct Panel{void *type=nullptr;bool active=false;};' in world:
+        world = world.replace('struct Panel{void *type=nullptr;bool active=false;};',
+                              'struct Panel{void *type=nullptr;bool active=false;void *activedata=nullptr;int ofsx=5,ofsy=6;};')
+        panel_world = panel_world.replace('struct Panel{void *activedata=nullptr;int ofsx=5,ofsy=6;};', '')
     world = world.replace('struct wmWindow{', 'struct wmEvent{int xy[2]={13,17};};\nstruct wmWindow{')
     world = world.replace('bScreen *screen;};', 'bScreen *screen;wmEvent *eventstate=nullptr;std::vector<int> modalhandlers;};')
     for name in ('CTX_wm_manager', 'CTX_wm_window', 'CTX_wm_area', 'CTX_wm_region'):
@@ -120,7 +129,7 @@ def prefix(old=False):
     if old:
         capture = function(current, 'static bool ipad_hud_owner_capture(')
         current = current.replace(capture, OLD_OWNER_CAPTURE.strip(), 1)
-    return current + PANEL_WORLD + PIN_ANIMATION + SETUP
+    return current + panel_world + PIN_ANIMATION + SETUP
 
 
 class PencilHUDLaunchTests(unittest.TestCase):

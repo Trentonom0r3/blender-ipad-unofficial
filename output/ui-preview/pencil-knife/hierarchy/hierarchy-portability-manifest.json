@@ -1,0 +1,79 @@
+{
+  "status": "PORTABLE_FIXTURE_OPAQUE_CALLBACK_PASS_PRODUCTION_INTEGRATION_PENDING",
+  "utc": "2026-10-24T04:20:16.939202+00:00",
+  "source": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\source\\blender\\editors\\screen\\screen_ipad_panels.cc",
+    "sha256": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+    "changed_this_portability_task": "Narrow independently reviewed opaque window draw callback refusal only, plus executed pre-loop evidence API."
+  },
+  "fixture": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\test_pencil_knife_hud_receipts.py",
+    "sha256": "4a198c6af53e2e5bdc347e0443752053f90c8451614936569785e347727ba96d"
+  },
+  "results": {
+    "0": {
+      "status": "PASS",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "source_sha256": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+      "draw_sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+      "opt_level": "0",
+      "boundary_model_sha256": "633dc281b7bd2339f4953f4095fe15991003246d7dfac7af4424b4e12b1a93bc",
+      "pinned_native_getter_sha256": "bc01a02e1b4b204548ca0803c4dca17513f8a02df69b257ed68fe325cbc9e289",
+      "limits": "Actual Knife hierarchy draw, native blit/blend and HUD receipt execution.\n\nWM owner/allocator/font/GPU/list/context primitives are explicit fixtures. The\nactual native button generator, rail policy, draw completion, per-WINDOW nav\ncapture, compositor success branches, publication and hit/retirement execute.\nNo full renderer, native scheduler, UIKit or device proof is claimed.\n",
+      "output": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\receipts-opaque-O0-final"
+    },
+    "2": {
+      "status": "PASS",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "source_sha256": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+      "draw_sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+      "opt_level": "2",
+      "boundary_model_sha256": "633dc281b7bd2339f4953f4095fe15991003246d7dfac7af4424b4e12b1a93bc",
+      "pinned_native_getter_sha256": "bc01a02e1b4b204548ca0803c4dca17513f8a02df69b257ed68fe325cbc9e289",
+      "limits": "Actual Knife hierarchy draw, native blit/blend and HUD receipt execution.\n\nWM owner/allocator/font/GPU/list/context primitives are explicit fixtures. The\nactual native button generator, rail policy, draw completion, per-WINDOW nav\ncapture, compositor success branches, publication and hit/retirement execute.\nNo full renderer, native scheduler, UIKit or device proof is claimed.\n",
+      "output": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-ui-component-4vrxb3lt\\receipts-opaque-O2-final"
+    }
+  },
+  "checks": [
+    "Actual native buttons generator and unchanged rail paging policy, with explicit font-width primitive model",
+    "Complete actual ED_ipad_panels_draw body stages same concrete drawn button vector and whole rails at completion",
+    "Actual native blit/blend success branches produce numeric exclusive composition receipts; missing buffers/no draw/pending/incomplete coverage stays inert",
+    "Actual native quad navigation footprint tail demonstrates area overwrite; new screen capture reads each current WINDOW navigation group",
+    "Exact pinned WM_gizmomap_group_list native body tracked with pin/path/hash provenance, no ignored-cache dependency",
+    "Current native higher region/popup and last completed concrete whole-rail hierarchy decline new acquisition",
+    "Owner/history/geometry staleness preserves old inert footprint; normal 1000-frame same-owner redraw preserves generation",
+    "geometry_ready(C,hud) is after CTX_wm_area_set(C,area); null/other original area and geometry refusal restore area before region",
+    "Knife-specific retirement retains native Redo storage and avoids provider fallback",
+    "Fresh win->drawcalls.first prevents new action admission without invoking opaque callbacks",
+    "Actual onscreen frozen pre-loop marker/hook and native mutable wm_draw_callbacks body execute in the fixture",
+    "A self-unlinking native draw callback cannot clear the executed opaque bit; its completed pass and old pixels remain inert until a new clear completed pass",
+    "Absence of the actual callback-phase hook refuses completion; source assertion places the hook before the actual mutable native callback loop"
+  ],
+  "portability": [
+    "Compiler discovered with clang++/g++, Windows LLVM fallback only if available",
+    "Explicit UTF-8 reads/writes",
+    "Explicit frozen fixture model string with hash; no import-time dependency on evolving retained HUD source extraction",
+    "Pinned native getter retained in fixture with GPL/provenance/hash; no undeclared native .cc cache requirement",
+    "Default repository resolves from installed build/test location; isolated runs require --repo"
+  ],
+  "remaining": [
+    "Root merge into full candidate; affected/full retained checks and independent final source/native UI/ownership review",
+    "Native iOS compilation, downloaded IPA and actual compiled consumer checks",
+    "Actual target UIKit/GPU/native scheduler/device and broad editing acceptance remain unproved"
+  ],
+  "limits": "Actual Knife hierarchy draw, native blit/blend and HUD receipt execution.\n\nWM owner/allocator/font/GPU/list/context primitives are explicit fixtures. The\nactual native button generator, rail policy, draw completion, per-WINDOW nav\ncapture, compositor success branches, publication and hit/retirement execute.\nNo full renderer, native scheduler, UIKit or device proof is claimed.\n",
+  "original_failures_preserved": [
+    "receipts-O0",
+    "receipts-O0-2",
+    "receipt-run-2.log",
+    "receipt-run-3.log",
+    "receipts-opaque-O0",
+    "receipt-opaque-O0.log"
+  ],
+  "production_patch_modified": false,
+  "review_coordination": "Narrow predicate and self-removal producer seam coordinated with /root/knife_pan_native_admission_contract. Actual frame/GPU global reentrancy is outside this bounded execution."
+}

@@ -1,0 +1,82 @@
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1379:3: error: no viable conversion from 'uiAfterFunc *' to 'uiAfterFunc'
+ 1379 |   LISTBASE_FOREACH_MUTABLE (uiAfterFunc *, afterf, &funcs) {
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:76: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                            ^        ~~~~~~~~~~~~~~~~~
+<scratch space>:59:1: note: expanded from here
+   59 | afterf_next
+      | ^
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:107:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'uiAfterFunc *' to 'const uiAfterFunc &' for 1st argument; dereference the argument with *
+  107 | struct uiAfterFunc{uiAfterFunc*next=nullptr,*prev=nullptr;char undostr[64]{};Origin ipad_action_origin;uint64_t ipad_hud_field_uid=0,ipad_popup_lifetime=0;bool ipad_numbers_callback=false,ipad_ring_guarded=false,ipad_view_guarded=false;uint64_t ipad_ring_context[13]{},ipad_ring_tool=0,ipad_ring_lifetime=0,ipad_view_region_data=0;int ipad_ring_reopen=0;std::string ipad_ring_selection_target,drawstr;OpReceipt ipad_operator;ButFunc func=nullptr;void*func_arg1=nullptr,*func_arg2=nullptr;std::function<void(bContext&)>apply_func;FuncN funcN=nullptr;void*func_argN=nullptr;void(*func_argN_free_fn)(void*)=nullptr;void(*rename_func)(bContext*,void*,char*)=nullptr;void*rename_arg1=nullptr,*rename_orig=nullptr;void(*rename_full_func)(std::string)=nullptr;std::string rename_full_new;HandleFunc handle_func=nullptr;void*handle_func_arg=nullptr;int retval=0;wmOperator*popup_op=nullptr;wmOperatorType*optype=nullptr;blender::wm::OpCallContext opcontext{};PointerRNA*opptr=nullptr;PointerRNA rnapoin;void*rnaprop=nullptr;RnaReceipt ipad_rna_receipt;std::optional<ContextStore>context;void(*search_arg_free_fn)(void*)=nullptr;void*search_arg=nullptr;InteractionCallbacks custom_interaction_callbacks;InteractionHandle*custom_interaction_handle=nullptr;};
+      |        ^~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:107:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'uiAfterFunc *' to 'uiAfterFunc &&' for 1st argument
+  107 | struct uiAfterFunc{uiAfterFunc*next=nullptr,*prev=nullptr;char undostr[64]{};Origin ipad_action_origin;uint64_t ipad_hud_field_uid=0,ipad_popup_lifetime=0;bool ipad_numbers_callback=false,ipad_ring_guarded=false,ipad_view_guarded=false;uint64_t ipad_ring_context[13]{},ipad_ring_tool=0,ipad_ring_lifetime=0,ipad_view_region_data=0;int ipad_ring_reopen=0;std::string ipad_ring_selection_target,drawstr;OpReceipt ipad_operator;ButFunc func=nullptr;void*func_arg1=nullptr,*func_arg2=nullptr;std::function<void(bContext&)>apply_func;FuncN funcN=nullptr;void*func_argN=nullptr;void(*func_argN_free_fn)(void*)=nullptr;void(*rename_func)(bContext*,void*,char*)=nullptr;void*rename_arg1=nullptr,*rename_orig=nullptr;void(*rename_full_func)(std::string)=nullptr;std::string rename_full_new;HandleFunc handle_func=nullptr;void*handle_func_arg=nullptr;int retval=0;wmOperator*popup_op=nullptr;wmOperatorType*optype=nullptr;blender::wm::OpCallContext opcontext{};PointerRNA*opptr=nullptr;PointerRNA rnapoin;void*rnaprop=nullptr;RnaReceipt ipad_rna_receipt;std::optional<ContextStore>context;void(*search_arg_free_fn)(void*)=nullptr;void*search_arg=nullptr;InteractionCallbacks custom_interaction_callbacks;InteractionHandle*custom_interaction_handle=nullptr;};
+      |        ^~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1379:3: error: assigning to 'uiAfterFunc *' from incompatible type 'uiAfterFunc'; take the address with &
+ 1379 |   LISTBASE_FOREACH_MUTABLE (uiAfterFunc *, afterf, &funcs) {
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:107: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                                                           ^~~~~~~~
+<scratch space>:60:1: note: expanded from here
+   60 | afterf_next
+      | ^~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1379:3: error: no viable overloaded '='
+ 1379 |   LISTBASE_FOREACH_MUTABLE (uiAfterFunc *, afterf, &funcs) {
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:124: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                                                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:107:8: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from 'uiAfterFunc *' to 'const uiAfterFunc' for 1st argument; dereference the argument with *
+  107 | struct uiAfterFunc{uiAfterFunc*next=nullptr,*prev=nullptr;char undostr[64]{};Origin ipad_action_origin;uint64_t ipad_hud_field_uid=0,ipad_popup_lifetime=0;bool ipad_numbers_callback=false,ipad_ring_guarded=false,ipad_view_guarded=false;uint64_t ipad_ring_context[13]{},ipad_ring_tool=0,ipad_ring_lifetime=0,ipad_view_region_data=0;int ipad_ring_reopen=0;std::string ipad_ring_selection_target,drawstr;OpReceipt ipad_operator;ButFunc func=nullptr;void*func_arg1=nullptr,*func_arg2=nullptr;std::function<void(bContext&)>apply_func;FuncN funcN=nullptr;void*func_argN=nullptr;void(*func_argN_free_fn)(void*)=nullptr;void(*rename_func)(bContext*,void*,char*)=nullptr;void*rename_arg1=nullptr,*rename_orig=nullptr;void(*rename_full_func)(std::string)=nullptr;std::string rename_full_new;HandleFunc handle_func=nullptr;void*handle_func_arg=nullptr;int retval=0;wmOperator*popup_op=nullptr;wmOperatorType*optype=nullptr;blender::wm::OpCallContext opcontext{};PointerRNA*opptr=nullptr;PointerRNA rnapoin;void*rnaprop=nullptr;RnaReceipt ipad_rna_receipt;std::optional<ContextStore>context;void(*search_arg_free_fn)(void*)=nullptr;void*search_arg=nullptr;InteractionCallbacks custom_interaction_callbacks;InteractionHandle*custom_interaction_handle=nullptr;};
+      |        ^~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:107:8: note: candidate function (the implicit move assignment operator) not viable: no known conversion from 'uiAfterFunc *' to 'uiAfterFunc' for 1st argument; dereference the argument with *
+  107 | struct uiAfterFunc{uiAfterFunc*next=nullptr,*prev=nullptr;char undostr[64]{};Origin ipad_action_origin;uint64_t ipad_hud_field_uid=0,ipad_popup_lifetime=0;bool ipad_numbers_callback=false,ipad_ring_guarded=false,ipad_view_guarded=false;uint64_t ipad_ring_context[13]{},ipad_ring_tool=0,ipad_ring_lifetime=0,ipad_view_region_data=0;int ipad_ring_reopen=0;std::string ipad_ring_selection_target,drawstr;OpReceipt ipad_operator;ButFunc func=nullptr;void*func_arg1=nullptr,*func_arg2=nullptr;std::function<void(bContext&)>apply_func;FuncN funcN=nullptr;void*func_argN=nullptr;void(*func_argN_free_fn)(void*)=nullptr;void(*rename_func)(bContext*,void*,char*)=nullptr;void*rename_arg1=nullptr,*rename_orig=nullptr;void(*rename_full_func)(std::string)=nullptr;std::string rename_full_new;HandleFunc handle_func=nullptr;void*handle_func_arg=nullptr;int retval=0;wmOperator*popup_op=nullptr;wmOperatorType*optype=nullptr;blender::wm::OpCallContext opcontext{};PointerRNA*opptr=nullptr;PointerRNA rnapoin;void*rnaprop=nullptr;RnaReceipt ipad_rna_receipt;std::optional<ContextStore>context;void(*search_arg_free_fn)(void*)=nullptr;void*search_arg=nullptr;InteractionCallbacks custom_interaction_callbacks;InteractionHandle*custom_interaction_handle=nullptr;};
+      |        ^~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1453:43: error: use of undeclared identifier 'ND_SPACE_VIEW3D'
+ 1453 |           WM_main_add_notifier(NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+      |                                           ^~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1597:8: error: use of undeclared identifier 'ISMOUSE'
+ 1597 |       (ISMOUSE(event->type) || ISMOUSE_GESTURE(event->type)) &&
+      |        ^~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1597:32: error: use of undeclared identifier 'ISMOUSE_GESTURE'
+ 1597 |       (ISMOUSE(event->type) || ISMOUSE_GESTURE(event->type)) &&
+      |                                ^~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1610:2: error: no viable conversion from 'wmEventHandler *' to 'wmEventHandler'
+ 1610 |  LISTBASE_FOREACH_MUTABLE(wmEventHandler*,handler_base,handlers){
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:76: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                            ^        ~~~~~~~~~~~~~~~~~
+<scratch space>:7:1: note: expanded from here
+    7 | handler_base_next
+      | ^
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:96:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'wmEventHandler *' to 'const wmEventHandler &' for 1st argument; dereference the argument with *
+   96 | struct wmEventHandler{wmEventHandler*next=nullptr,*prev=nullptr;int type=0,flag=0;};struct wmEventHandler_UI{wmEventHandler head;wmUIHandlerFunc handle_fn=nullptr;wmUIHandlerRemoveFunc remove_fn=nullptr;void*user_data=nullptr;struct{ScrArea*area=nullptr;ARegion*region=nullptr,*region_popup=nullptr;}context;};
+      |        ^~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:96:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'wmEventHandler *' to 'wmEventHandler &&' for 1st argument
+   96 | struct wmEventHandler{wmEventHandler*next=nullptr,*prev=nullptr;int type=0,flag=0;};struct wmEventHandler_UI{wmEventHandler head;wmUIHandlerFunc handle_fn=nullptr;wmUIHandlerRemoveFunc remove_fn=nullptr;void*user_data=nullptr;struct{ScrArea*area=nullptr;ARegion*region=nullptr,*region_popup=nullptr;}context;};
+      |        ^~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1610:2: error: assigning to 'wmEventHandler *' from incompatible type 'wmEventHandler'; take the address with &
+ 1610 |  LISTBASE_FOREACH_MUTABLE(wmEventHandler*,handler_base,handlers){
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:107: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                                                           ^~~~~~~~
+<scratch space>:8:1: note: expanded from here
+    8 | handler_base_next
+      | ^~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:1610:2: error: no viable overloaded '='
+ 1610 |  LISTBASE_FOREACH_MUTABLE(wmEventHandler*,handler_base,handlers){
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:75:124: note: expanded from macro 'LISTBASE_FOREACH_MUTABLE'
+   75 | #define LISTBASE_FOREACH_MUTABLE(T,v,l) for(T v=static_cast<T>((l)->first),v##_next=v?v->next:nullptr;v;v=v##_next,v##_next=v?v->next:nullptr)
+      |                                                                                                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:96:8: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from 'wmEventHandler *' to 'const wmEventHandler' for 1st argument; dereference the argument with *
+   96 | struct wmEventHandler{wmEventHandler*next=nullptr,*prev=nullptr;int type=0,flag=0;};struct wmEventHandler_UI{wmEventHandler head;wmUIHandlerFunc handle_fn=nullptr;wmUIHandlerRemoveFunc remove_fn=nullptr;void*user_data=nullptr;struct{ScrArea*area=nullptr;ARegion*region=nullptr,*region_popup=nullptr;}context;};
+      |        ^~~~~~~~~~~~~~
+D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\output\ui-preview\pencil-knife\ui-entry-gate\native-ui-entry.cc:96:8: note: candidate function (the implicit move assignment operator) not viable: no known conversion from 'wmEventHandler *' to 'wmEventHandler' for 1st argument; dereference the argument with *
+   96 | struct wmEventHandler{wmEventHandler*next=nullptr,*prev=nullptr;int type=0,flag=0;};struct wmEventHandler_UI{wmEventHandler head;wmUIHandlerFunc handle_fn=nullptr;wmUIHandlerRemoveFunc remove_fn=nullptr;void*user_data=nullptr;struct{ScrArea*area=nullptr;ARegion*region=nullptr,*region_popup=nullptr;}context;};
+      |        ^~~~~~~~~~~~~~
+9 errors generated.
