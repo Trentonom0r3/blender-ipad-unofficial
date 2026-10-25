@@ -2,6 +2,7 @@
  * Host instrumentation only; actual Knife modal/helper bodies come from declared source.
  * Geometry, allocator disposal, matrices, hits and numeric evaluation are modeled. */
 #include <cassert>
+#include <cstdint>
 #include <cstring>
 #include <array>
 #include <vector>

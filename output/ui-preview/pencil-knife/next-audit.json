@@ -1,0 +1,61 @@
+{
+  "status": "READ_ONLY_NEXT_CONTRACT_SOURCE_GAPS_NO_IMPLEMENTATION",
+  "utc": "2026-10-25T04:40:25.545424+00:00",
+  "source_commit": "39315982258b15bd54cb50123ebb45d69dc5a450",
+  "build": 40162427293,
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_edited": false,
+  "tests_edited": false,
+  "tests_run": false,
+  "current_source_hashes": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c",
+    "source/blender/editors/mesh/editmesh_knife.cc": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+    "source/blender/windowmanager/intern/wm_draw.cc": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb"
+  },
+  "native_modal_body_sha256": "5837277adddd3b8e29c51c8a97c4d70eeb14e0bbeef3a28afda1e9e98be6cdf4",
+  "confirmed_existing_case": {
+    "report": "../pencil-pan-paint/ordinary-tool-audit/report.json",
+    "result": "Prior bounded source execution: unmodified initial Knife cut, then Ctrl, paired untagged PAN passes Knife and invokes default view3d.zoom; dist10->10.197. Normal/Shift controls keep10.",
+    "scope": "Not rerun here. Current GHOST producer and default keymap hashes match those reports; unchanged full native Knife modal body still passes MOUSEPAN. Current Knife HUD dispatcher refuses untagged MOUSEPAN before UI route. This supports continued source reachability, not target/device timing proof."
+  },
+  "current_packet_order": {
+    "precision_began": "CURRENT recognized location CURSOR_MOVE, LEFT_BUTTON_DOWN; cached translation initialized; relative delta therefore zero for normal Began.",
+    "precision_changed": "Optional PAN_GESTURE first, then CURSOR_MOVE; same recognized location/tablet snapshot.",
+    "precision_terminal": "LEFT_BUTTON_UP only, no added cursor; paint-tagged Cancelled/Failed logic stays separate.",
+    "nonneutral_shortcut": "PointerCapture/ToolManipulation instead starts at reconstructed physical origin, adds an additional current cursor, emits terminal cursor before up and sets direct_tool. Do not use it for PAN omission."
+  },
+  "wm_early_hook": {
+    "function_line": 8623,
+    "trackpad_line": 8912,
+    "admission_required_before": "Before wmEvent event,*event_state initialization or at least before any Trackpad shared xy write/coalescing; place dedicated typed-provenance check at the entry-side guard region.",
+    "mutation": "Trackpad branch copies native-converted pd x/y into event_state->xy; wm_event_add_trackpad coalesces same-type prior queued event by freeing/replacing it. A late wm_event_do_handlers filter does not undo those effects.",
+    "identity_absent": "Current GHOST_EventTrackpad PAN constructor supplies no Pencil actor/contact serial/origin/pair token. numFingers1 is also ordinary Finger/indirect scroll; it cannot authorize suppression."
+  },
+  "same_batch_first_down": {
+    "primary_sources": [
+      "Pinned wm.cc WM_main_loop_body: wm_window_events_process precedes wm_event_do_handlers.",
+      "Pinned wm_window.cc wm_window_events_process: GHOST_DispatchEvents queues native WM input before semantic handlers.",
+      "Pinned GHOST_SystemIOS::processEvents returns true; UIKit produces events through view actions."
+    ],
+    "consequence": "CURSOR/DOWN/PAN/CURSOR from one or several UIKit actions can all be converted/queued before the first DOWN invokes native Knife and registers its modal handler. A guard requiring an already-live Knife at GHOST ingestion misses this case. Source ordering is proved; actual UIKit coalescing/timing is not."
+  },
+  "smallest_coherent_direction": {
+    "scope": "Suppression only of the explicitly paired one-finger PAN from a physical Pencil Knife canvas contact; ordinary precision cursor/down/up positions/count/order, translation cache, tablet snapshots, modifiers and terminal semantics stay exact.",
+    "preferred_bound": "Dedicated value-only original contact/Knife canvas intent captured before superclass physical Begin, with completed actual presentation and fresh native validation immediately before recognition admits omission. Current Knife presentation hierarchy can supply completed higher-layer evidence but does not itself capture first-invocation active-tool intent.",
+    "not_ready": "Existing value registry alone cannot prove pre-recognition invalidation for tool/screen/layout/popup changes or A->B->A. Either prove the concrete invalidation/lifecycle coverage or validate a frozen original receipt through a callback-free native bridge; no source for either exists.",
+    "wm_alternative": "Would require explicit Pencil/pair provenance and admission before Trackpad state/coalescing, plus an exact pending-first-DOWN policy. It cannot be implemented as a late live-handler filter or numFingers check. Pending DOWN must not be assumed to invoke Knife through arbitrary native keymap/poll/admission.",
+    "first_invocation_native_parity": "Default Knife toolbar maps plain tool_mouse PRESS to mesh.knife_tool(wait_for_input=False), without any modifier wildcard. Preserve initial modified-down native keymap behavior; never force Knife or clear Ctrl. A later Ctrl press while cutting remains accepted native ignore-snap behavior."
+  },
+  "acceptance_before_new_source": [
+    "Actual changed producer differs only by omission of paired PAN for proved Knife origin; exact old source failure controls retain Ctrl10->10.197 reachability.",
+    "Same-batch initial DOWN/PAN with no live native handler at ingestion; later contacts with original Knife handler; modifier changes after DOWN; modified initial DOWN fallback.",
+    "Finger/indirect/hardware/two-finger/view navigation and Pencil UI/other-editor scrolling unchanged; ring/HUD/Tools/Inspector/rails/nav exclusions remain.",
+    "Fresh and stale original context, tool/popup/layout change before threshold, A->B->A and replacement owner without retaining old pointer.",
+    "No new terminal lease, unleased release, replacement Cancel, forced Finish or universal rollback; current untagged interruption limitation remains separate."
+  ],
+  "build_gate": "No production change until current exact Knife native/package/actual compiled verification closes. This report is source/design evidence only; no new native/device proof."
+}

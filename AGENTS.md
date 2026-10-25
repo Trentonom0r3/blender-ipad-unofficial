@@ -1,3 +1,37 @@
+## Knife hosted fixture correction validated - 2026-10-25 UTC
+
+Run40162427293@39315982258b15bd54cb50123ebb45d69dc5a450 FAILED hosted preflight:
+new native-action fixture lacked<cstdint> for uintptr_t on Linux. Native job was
+SKIPPED; noIPA. Watcher66006 completedexit1. Preserve actual failure log under
+pencil-knife/ipa-40162427293; never dispatch unchanged3931598 again.
+Correction adds ONLY<cstdint> to build/tests/knife_native_action_models.inc.cc;
+all other168 frozen inputs/production overlay60001bada remain exact. Native/test
+bodies and assertions unchanged. Final corrected675/675host944.081s, affected6/6
+17.440s,136-file pinnedpreflight/diff and independent correction review PASS.
+Read pencil-knife/portable-correction-validation.json and independent fixture
+correction review. Exact source/native/literal review remains valid unchanged.
+Commit/push corrected fixture and dispatch replacement exactnativebuild ONCE;
+watch same run/fullIPA/preservedHUD-Weight/actualKnifeWMUIhierarchy review before
+ready. No new native success/package/compiled/device acceptance yet. Full goal
+unfinished. Do not revive older approval or broaden source before current gate.
+
+## Exact native Pencil Knife build dispatched - 2026-10-25 UTC
+
+Validated source39315982258b15bd54cb50123ebb45d69dc5a450 is committed/pushed and
+building ONCE in run40162427293. Exact head confirmed. Watcher session66006/script
+.cache/watch-pencil-knife-build.py/log.cache/knife-build-watch-40162427293.log owns
+SAME build wait/fullIPA/preservedHUDlaunch-Weightcleanup/initial actualKnife scope
+dumps. Inspect same run/process before any replacement. No new native success,
+package/compiled/device proof yet; no ready claim. Source675/675517.991s frozen
+hostchecks/136-file pinnedpreflight/diff/independent source+literal+readiness PASS.
+Patch60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a exact14targets,
+122priorsections/all7Python/all13GHOST unchanged. Read build-checkpoint.json and
+source-verification/frozen-validation/review reports under pencil-knife.
+On success finish full downloadedIPA/arm64/exactUI/bars/tools129icons/nineBase/
+MoreTools and independent ACTUAL nativeKnife/WM/UI/geometry/hierarchy compiled
+branch/argument/alias flow review, not markers. Latest verified source1461998/
+run39338882021 remains the prior package; no unchanged rebuild. Full goal unfinished.
+
 ## Native Pencil Knife controls validated for exact build - 2026-10-25 UTC
 
 Candidate60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a passes

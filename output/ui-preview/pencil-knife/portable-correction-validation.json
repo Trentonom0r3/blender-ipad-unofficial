@@ -1,0 +1,30 @@
+{
+  "status": "PASS_FULL_HOST_AND_PORTABLE_FIXTURE_CORRECTION",
+  "utc": "2026-10-25T04:56:36.339552+00:00",
+  "failed_source": "39315982258b15bd54cb50123ebb45d69dc5a450",
+  "failed_run": 40162427293,
+  "native_job_on_failed_run": "skipped",
+  "failure": "Linux fixture uintptr_t undeclared; explicit cstdint added.",
+  "exact_changed_test": "build/tests/knife_native_action_models.inc.cc",
+  "exact_change": "One #include <cstdint>; all native/test bodies and assertions unchanged.",
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "other168_frozen_inputs_unchanged": true,
+  "corrected_fixture_sha256": "a169f4d9ae4dc7e5053925d18009160908fa959871a53e1127f942470aee882a",
+  "full_suite": {
+    "tests": 675,
+    "seconds": 944.081,
+    "exitcode": 0,
+    "log": "validation/knife-portable-correction-full.log"
+  },
+  "focused_suite": {
+    "tests": 6,
+    "seconds": 17.44,
+    "exitcode": 0
+  },
+  "preflight": {
+    "files": 136,
+    "exitcode": 0
+  },
+  "independent_review": "integration-audit/independent-fixture-cstdint-correction-review.json",
+  "native_package_compiled_device_acceptance": false
+}

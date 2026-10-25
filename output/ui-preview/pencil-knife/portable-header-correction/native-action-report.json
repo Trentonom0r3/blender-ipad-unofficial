@@ -1,0 +1,62 @@
+{
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_dir": null,
+  "source_hashes": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+    "source/blender/editors/include/ED_mesh.hh": "211c844d1c82cc71ef842757b96a1daffece0046cd82777fcc77c81349c0eb3e"
+  },
+  "declared_pin_hashes": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+    "source/blender/editors/include/ED_mesh.hh": "307817b827a2eaec266a043c780d7abb77fbe273868fb802a558f94e34e23d54",
+    "source/blender/editors/util/numinput.cc": "856e35cd9ac42c38abbc23923b5e2db7d5a1cdac3443893b5f7a4353033d8ff9"
+  },
+  "actual_modal_sha256": "5837277adddd3b8e29c51c8a97c4d70eeb14e0bbeef3a28afda1e9e98be6cdf4",
+  "actual_helpers_sha256": "b4fdc0cb4092bcbedf3f09127fe000a476c1bc77748d2dbade54847e0c46d8dc",
+  "numeric_fallback_sha256": "6ed0f821edac08d400a70dbfc511ac3c9acdd4f0c9f4af7e0dba351d78e79a35",
+  "ctrl_gate_sha256": "b138cf33f06dafb7b2c31f9bfee7df818d210aefd61c8c76ca6c941ede963c3f",
+  "results": [
+    {
+      "label": "actual-O0",
+      "optimization": "-O0",
+      "compile_returncode": 0,
+      "execution_returncode": 0,
+      "expected_success": true,
+      "stdout": "PASS 13 native-helper scenarios; full original Knife modal executes with explicit external/BKE/storage boundaries\n",
+      "stderr": ""
+    },
+    {
+      "label": "actual-O2",
+      "optimization": "-O2",
+      "compile_returncode": 0,
+      "execution_returncode": 0,
+      "expected_success": true,
+      "stdout": "PASS 13 native-helper scenarios; full original Knife modal executes with explicit external/BKE/storage boundaries\n",
+      "stderr": ""
+    },
+    {
+      "label": "unsafe-event-copy-control",
+      "optimization": "-O2",
+      "compile_returncode": 0,
+      "execution_returncode": 3221226505,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Assertion failed: ED_mesh_knife_modal_action(&f.C,&f.op,&f.input,false)==OPERATOR_CANCELLED, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\portable-header-correction\\unsafe-event-copy-control.cc, line 624\n"
+    },
+    {
+      "label": "unsafe-type-control",
+      "optimization": "-O2",
+      "compile_returncode": 0,
+      "execution_returncode": 3221226505,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Assertion failed: !ED_mesh_knife_modal_type(&fake), file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\portable-header-correction\\unsafe-type-control.cc, line 596\n"
+    }
+  ],
+  "boundaries": [
+    "Full unchanged native modal and actual exit/finish/cancel wrappers execute.",
+    "Invoke is an identity-only model: no action may reinvoke it.",
+    "Geometry finish_ex, allocator exit_ex, viewport/hit/cut/status functions are instrumentation with retained storage.",
+    "Pinned numeric UTF8 fallback and Ctrl refusal execute; evaluator and remaining input handling are modeled.",
+    "No registered WM ownership, normal handler/history cleanup, UI/GPU/UIKit, ABI or device proof."
+  ]
+}

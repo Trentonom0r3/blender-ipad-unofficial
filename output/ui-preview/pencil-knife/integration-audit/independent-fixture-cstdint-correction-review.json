@@ -1,0 +1,55 @@
+{
+  "status": "PASS_BOUNDED_FIXTURE_HEADER_CORRECTION_REVIEW",
+  "utc": "2026-10-25T04:40:28.806087+00:00",
+  "failed_run": {
+    "run": 40162427293,
+    "head": "39315982258b15bd54cb50123ebb45d69dc5a450",
+    "failure_step": "Original native Knife Finish and Cancel semantics",
+    "preflight": "failure",
+    "native_job": "skipped",
+    "ipa_exists": false,
+    "exact_failure": "Four compiled native-action fixture cases fail because uintptr_t is undeclared on hosted Linux; two structural tests passed. Failure log retained under ipa-40162427293/native-failure.log."
+  },
+  "correction": {
+    "file": "build/tests/knife_native_action_models.inc.cc",
+    "exact_change": "Add #include <cstdint> immediately after <cassert>.",
+    "previous_sha256": "748578df7f9ee3fa00c5401e18dee79c7efd6081a42a8ee647cd5f40b55b8936",
+    "corrected_sha256": "a169f4d9ae4dc7e5053925d18009160908fa959871a53e1127f942470aee882a",
+    "exact_single_include_insertion_verified": true,
+    "all_other_build_tests_workflow_and_production_patch_unchanged": true,
+    "changed_paths_within_build_workflow_patch": [
+      "build/tests/knife_native_action_models.inc.cc"
+    ],
+    "original169_frozen_inputs_differ_only_in_corrected_header": [
+      "build/tests/knife_native_action_models.inc.cc"
+    ],
+    "production_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+    "native_bodies_cases_assertions_unchanged": true
+  },
+  "focused_validation": {
+    "log": ".cache/knife-native-header-corrected.log",
+    "tests": 6,
+    "seconds": 17.44,
+    "status": "PASS",
+    "scope": "Current host full-modal/action regression O0/O2 plus both negative controls; not hosted Linux rerun or native iOS compile."
+  },
+  "static_new_fixture_integer_header_scan": {
+    "native_action": "Common models include <cstdint> before invoke/case fixture fragments using uintptr_t.",
+    "geometry": "Common geometry models explicitly include <cstdint>; case fragment consumes it.",
+    "owner_dispatch": "Generated prefix explicitly includes <cstdint>.",
+    "hud_dispatch": "Imports owner-dispatch generated prefix, which explicitly includes <cstdint>.",
+    "ui_entry": "Generated prefix explicitly includes <cstdint>.",
+    "hud_receipts": "Generated boundary prefix explicitly includes <cstdint>.",
+    "same_missing_integer_header_finding": null,
+    "scope": "Static include dependency scan only; no Linux/compiler/native execution by reviewer."
+  },
+  "reviewer_changes": "Only this JSON evidence report was saved. No source/test/CI/staging/build edits or test reruns.",
+  "native_build_proof": false,
+  "package_proof": false,
+  "device_acceptance": false,
+  "limits": [
+    "Hosted replacement preflight and native iOS build remain pending.",
+    "Previous675-test host run predates this one-line fixture header change; source/other tests remain byte-exact.",
+    "No test assertions or negative controls were weakened and no production behavior changed."
+  ]
+}

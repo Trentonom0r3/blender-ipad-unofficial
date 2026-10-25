@@ -1,0 +1,22 @@
+{
+  "status": "FAILED_HOSTED_FIXTURE_COMPILE_NATIVE_SKIPPED",
+  "run": 40162427293,
+  "source": "39315982258b15bd54cb50123ebb45d69dc5a450",
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40162427293",
+  "watcher_session": 66006,
+  "watcher_script": ".cache/watch-pencil-knife-build.py",
+  "watcher_log": ".cache/knife-build-watch-40162427293.log",
+  "utc": "2026-10-25T04:36:19.618762+00:00",
+  "no_duplicate_build": true,
+  "package_verified": false,
+  "compiled_verified": false,
+  "device_acceptance": false,
+  "watcher_completed": true,
+  "watcher_exitcode": 1,
+  "failure": "Hosted Linux new native-action fixture lacks cstdint for uintptr_t. No native iOS compilation or IPA. Corrected fixture adds only cstdint; production overlay unchanged.",
+  "corrected_fixture": "build/tests/knife_native_action_models.inc.cc",
+  "affected_tests": "6/6 pass17.440s",
+  "full_suite": "Corrected full suite session18436/.cache/knife-portable-correction-full.log pending; .exitcode authoritative",
+  "independent_correction_review": "integration-audit/independent-fixture-cstdint-correction-review.json"
+}
