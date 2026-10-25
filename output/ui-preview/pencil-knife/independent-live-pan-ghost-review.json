@@ -1,0 +1,67 @@
+{
+  "status": "BOUNDED_READONLY_SOURCE_REVIEW_PASS_ORIGINAL_LIVE_ONLY_NO_NATIVE_BUILD_CLAIM",
+  "utc": "2026-10-25T14:48:47.583216+00:00",
+  "reviewer": "independent GHOST component agent reviewing other owned frame/native components",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "source_hashes": {
+    "source/blender/windowmanager/intern/wm_window.cc": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+    "source/blender/editors/include/ED_ipad_panels.hh": "4f21bd297c75d8541f7edc417390ce5d9987587d19c8a3d9f460ca1cae451cbb",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "1accb93cd599da25a13cb3ed9a03843d45f6e1bb59f206e45b6a5a368aee7c84",
+    "source/blender/windowmanager/WM_ipad_knife.hh": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b",
+    "source/blender/windowmanager/wm_draw.hh": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5",
+    "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+    "source/blender/blenkernel/BKE_screen.hh": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+    "source/blender/editors/include/ED_mesh.hh": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+    "source/blender/editors/mesh/editmesh_knife.cc": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+    "source/blender/editors/include/ED_screen.hh": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350",
+    "source/blender/editors/space_api/spacetypes.cc": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f"
+  },
+  "previous_findings_resolved": [
+    {
+      "function": "ipad_knife_pan_default_keymap / ED_ipad_knife_pan_probe",
+      "finding": "Initial Tool prediction could permit pending default-keymap changes to rebuild before DOWN and route Circle, despite old clean effective Knife user map.",
+      "resolution": "Complete Tool/keymap prediction helper removed. Current probe requires same original registered native Live owner at both gates; first/nohandler contact explicitly falls back."
+    },
+    {
+      "function": "ED_ipad_knife_pan_probe / ipad_knife_hierarchy_native_capture / wm_draw_window_onscreen",
+      "finding": "Native drags were drawn after area/UI but not present in fresh admission or completed sticky exclusion facts.",
+      "resolution": "Fresh probe and hierarchy settled refuse manager drags; actual drag draw records opaque callback fact before wm_drags_draw, preserving self-removal exclusion."
+    }
+  ],
+  "checked": [
+    {
+      "function": "wm_ipad_knife_pan_probe / wm_ghost_init / wm_ghost_init_background / wm_ghost_exit",
+      "result": "Fresh G_MAIN manager/window membership and unique opaque ghostwin match; all native queues scan keyboard + modal prev_type; own CTX_create/set manager-window/free; validated workspace/layout/screen children before window setter. No Main setter/provider/poll/operator/queuepump in this path. Registration after successful GHOST creation; clear before dispose and on empty exit/background."
+    },
+    {
+      "function": "WM_ipad_knife_canvas_scope_capture / WM_ipad_knife_draw_callback_known / ED_mesh_knife_draw_callback_known",
+      "result": "Fresh direct native Main/WM/window/workspace/screen/area/region/scene/layer/object/editmesh membership and 32 scalar scope; same original23 registered owner/lifetimes; exact native kcd draw_handle + function + customdata + POST_VIEW + originalregion. No callback execution in query."
+    },
+    {
+      "function": "wm_ipad_knife_canvas_stamp_finish / wm_draw_window_offscreen / ED_ipad_knife_hierarchy_region_presented / ipad_knife_hierarchy_publish",
+      "result": "Fresh token each successful full nonstereo scope-matching draw; partial/stereo/failure invalid; allocation stamp zero-safe. Cached successful compositor copies exact texture stamp, never mints owner. Fullcoverage required; postblit sticky unknown/knownowner facts combine into completed compositions. Fresh content/scope/owner comparisons deny redraw/stale/replacement inheritance."
+    },
+    {
+      "function": "ed_region_draw_cb_draw / ED_region_knife_pan_callbacks_safe / gizmos_draw_list / ipad_knife_hierarchy_native_capture",
+      "result": "Unknown callback execution premarked before actual draw, including self-removal. Only exact own native Knife callback may record knownowner; duplicate/foreign remains unknown. Fresh full callback list read does not invoke callbacks. Current gizmo groups/items captured without poll/setup; visible unknown gizmos refuse; actual drawn nonnavigation unknown sticky. Current opaque window callbacks and pre-loop executed flag deny self-removal pixels."
+    },
+    {
+      "function": "ED_ipad_knife_pan_probe / ED_ipad_hud_forget_window",
+      "result": "Actual completed matching window hierarchy, original point bounds/top-left conversion, exactcanvas scope/content/compositor point, drawn/current higher UI/HUD/floating/popups/UIblocks/gesture/paintcursors/drags/modal refusal. Emits Live only. Same original owner on both gates; cached drawn owners require current fresh original; forget erases hierarchy at existing window teardown."
+    },
+    {
+      "function": "wmIPadKnifeCanvasStamp / wmDrawBuffer / ARegionRuntime / nonApple WM stubs",
+      "result": "Canvas stamp uses raw arrays, no default member initializers; wmDrawBuffer calloc POD guarded by trivial/triviallycopyable static_assert. Kernel runtime stores rawownerarray, no WM type dependency. NonApple owner/scope/draw-match stubs clear outputs/refuse; guarded GHOST bridge types do not enter ordinary platform build."
+    }
+  ],
+  "actionable_findings": [],
+  "limits": [
+    "Read-only actual source audit at these hashes; no native compilation, runtime test, iOS/UIKit/device or package proof performed by this audit.",
+    "Reviewed native query call graph and known current state/admission paths, not arbitrary malformed native heap or global CFG/reentrancy proof.",
+    "Existing registered native Knife owns op customdata lifecycle (source writes only at invoke/exit); no arbitrary plugin memory mutation proof.",
+    "Initial Tool/nohandler same-batch paired PAN remains baseline fallback and is outside this narrow correction.",
+    "Root must complete integrated source-executing actual bridge/frame/GHOST, retained/full/preflight and native/compiled gates before readiness."
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "case": "unexpected_active_hierarchy",
+    "returncode": 3221226505,
+    "stdout": "",
+    "stderr": "Assertion failed: ipad_knife_hierarchy_frames.find(uintptr_t(win)) == ipad_knife_hierarchy_frames.end(), file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\inactive-hierarchy-boundary-negative.cc, line 544\n",
+    "expected_failure": true
+  },
+  {
+    "case": "unexpected_non_hud_region",
+    "returncode": 3221226505,
+    "stdout": "",
+    "stderr": "Assertion failed: C && win && area && region && region->regiontype == RGN_TYPE_HUD, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\inactive-hierarchy-boundary-negative.cc, line 543\n",
+    "expected_failure": true
+  }
+]

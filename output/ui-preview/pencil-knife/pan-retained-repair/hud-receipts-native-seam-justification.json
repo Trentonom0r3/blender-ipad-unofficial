@@ -1,0 +1,53 @@
+{
+  "status": "ASSERTIONS_PRESERVED_NATIVE_SHAPES_REPAIRED",
+  "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "changed_test_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\test_pencil_knife_hud_receipts.py",
+  "test_sha256": "9e3756e4b8f1c47c7a98de065cf27395c2247b8b101584df22c5c0015dc19e29",
+  "baseline_log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\knife-pan-retained-hud-first.log",
+  "reproduced_original_failure": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\hud-receipts-original-O0\\summary.json",
+  "assertion_proof": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\hud-receipts-assertion-AST-proof.json",
+  "inactive_boundary_control": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\hud-receipts-inactive-pan-control.json",
+  "native_primary_seams": {
+    "HIER": {
+      "sha256": "2138ebf25d727cf831b808239a2255d1b57676b8a4e329994de23bf8d69aed58",
+      "description": "Exact current source hierarchy structs/native capture/full-coverage/publication/current checks; no substitutions"
+    },
+    "NOBRANCH": {
+      "sha256": "11badc47f173d92b5cb3e380c667050c2dd7394ad2962d614deae60860c02a12",
+      "description": "Exact actual successful non-overlap region blit/composite receipt branch"
+    },
+    "OVERBRANCH": {
+      "sha256": "6bb66349733316eebbe41203c7e8e71f23667f28e4685022274b4c39e9760d29",
+      "description": "Exact actual overlap blend/composite receipt branch"
+    },
+    "CALLBACK_PRODUCER": {
+      "sha256": "b5cf7a66e5924c80f7f87e49c696b8874017cd79d4c5d37547a044fa9c109cef",
+      "description": "Exact actual pre-callback sticky window-presence producer before actual mutable callback loop"
+    },
+    "NAV_TAIL": {
+      "sha256": "1e27ca3a3600378c99b65fd39c6177c9be5b05223be8c167fa4458692ea673c8",
+      "description": "Exact actual native navigation bounded footprint tail"
+    },
+    "PAN_PROBE": {
+      "sha256": "656d900cad6713732dda43c2b69eca50f68f4ade95751e91569e16e9f6860f0f",
+      "description": "Only excluded new physical PAN entry; outside all retained HUD action paths"
+    },
+    "PAN_INACTIVE": {
+      "sha256": "b6473e9c631214d81951b04b21b7ed4db60b6b0505ebead01c46ce56fae33f73",
+      "description": "Only replacement: deliberate assert-on-entry boundary for excluded physical PAN API"
+    }
+  },
+  "shape_changes": [
+    "wmIPadKnifeCanvasStamp declaration extracted exactly from actual WM_ipad_knife.hh, with existing owner-size constant resolved to23 as in original owner fixture.",
+    "wmDrawBuffer stores a zero-initialized copied CanvasStamp; RegionRuntime stores separate unknown/knownowner scalar facts. Retained HUD fixture neither mints nor admits physical PAN content.",
+    "WMRuntime native drags list shape now has empty first pointer, as read by actual current hierarchy.",
+    "wmGizmo native type/state fields and exact native HIDDEN/DRAW_HOVER/DRAW_MODAL/DRAW_VALUE and state HIGHLIGHT/MODAL/SELECT bits. No callbacks/polls added.",
+    "Exclude only the new ED_ipad_knife_pan_probe from the broad old contiguous HUD extraction. The same signature aborts if entered. All actual HUD hierarchy/publication/exposed geometry/owner/blit/blend/window callback/native nav bodies remain source-executed."
+  ],
+  "boundaries": [
+    "Original WM owner/allocator/font/GPU/list/context fixtures remain explicit. This repair does not claim whole Blender, renderer, scheduler, UIKit or device behavior.",
+    "Physical PAN API is out of scope for retained HUD cases and fails on entry. Its actual connected GHOST/native probe is covered by the separate current PAN bridge suite, not silently modeled here."
+  ],
+  "no_production_change": true,
+  "no_original_assertion_or_expectation_change": true
+}

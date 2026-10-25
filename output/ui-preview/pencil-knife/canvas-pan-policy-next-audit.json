@@ -1,0 +1,202 @@
+{
+  "status": "READ_ONLY_POLICY_AUDIT_DIRECTION_SUPPORTED_NOT_IMPLEMENTATION_READY",
+  "utc": "2026-10-25T09:24:00.647883+00:00",
+  "source_commit": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "evidence_head": "ddb23dfd391a38459988846704b47e0674eff8f7",
+  "verified_build": 40163724620,
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "production_edited": false,
+  "tests_edited": false,
+  "tests_run": false,
+  "scope": "Local actual current source and accepted product documents; native keymap subset independently checked by keymap_parity subagent. No new native build, compiled execution or device proof.",
+  "source_hashes": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+    "intern/ghost/GHOST_NavigationIOS.hh": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+    "source/blender/windowmanager/intern/wm_draw.cc": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "cf6bdb9cb8aa6a34d212d8f52d4b2dee8a3d6481b0954c2d41ce19cc098e6787",
+    "source/blender/editors/mesh/editmesh_knife.cc": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+    "source/blender/editors/transform/transform.cc": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb",
+    "source/blender/windowmanager/intern/wm_gesture_ops.cc": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb"
+  },
+  "recommendation": {
+    "direction": "Prefer a device input policy that omits only the explicitly paired synthetic one-finger PAN from a proved physical Pencil original VIEW3D exposed-canvas precision contact. Apply independently of selected native tool identity, including Knife, Annotate and Measure, while preserving the ordinary precision cursor/down/up stream.",
+    "reason": "The Pencil already produces a native precision mouse stream. Duplicating its motion into TRACKPADPAN can invoke unrelated navigation or native modal size changes. A canvas/device policy does not assert what arbitrary current keymaps or polls will do with the initial DOWN, so it covers same-batch first invocation without predicting that Knife will start.",
+    "scope_bound": "Only the physical Pencil precision suffix after existing ring, HUD/navigation/resize/direct-tool captures and finger branches. Require an original completed exposed VIEW3D canvas receipt and fresh native validation. Initially exclude explicit flythrough/navigation mode rather than silently changing its policy.",
+    "not_ready": "There is no general completed-canvas original-contact suppression receipt or proved pre-recognition invalidation path in current production. Existing paint receipt is paint-specific and current navigation/tool registry is not a proof for all VIEW3D canvas. This report authorizes no shortcut from actor, numFingers, current mode, tool name or absence of a navigation hit.",
+    "packet_invariants": "Do not change initial recognized cursor/down location, packet count/order except paired PAN omission, relative translation cache updates, per-action pressure/tilt snapshot, keyboard modifiers, native click/drag admission, terminal release/flags, or existing paint lease. Do not route through ToolManipulation.",
+    "parity_limit": "This is a deliberate physical-device mapping correction, not proof that every native modal/custom TRACKPADPAN consumer behaves identically. Specific native size mappings and custom bindings must be acknowledged and exercised."
+  },
+  "accepted_workflow_evidence": [
+    {
+      "file": "docs/PRODUCT_DIRECTION.md",
+      "lines": "1219-1222",
+      "finding": "Finger navigation/general UI and Pencil precision/creative input are the guiding distinction; pressure/tilt/hover retained and each new mapping needs a purpose."
+    },
+    {
+      "file": "docs/PRODUCT_DIRECTION.md",
+      "lines": "1131-1133",
+      "finding": "Native Pan/Move must accept Pencil press-drag just as Zoom does; preserve fingers, external input and approved radial/Pencil mappings."
+    },
+    {
+      "file": "docs/IPAD_WORKSPACE.md",
+      "lines": "1081-1085,1221-1225",
+      "finding": "Navigation controls accept finger/Pencil press-drag-release with mouse-equivalent behavior; retain finger scrolling, external pointer/hot-plug, native editors and desktop behavior."
+    },
+    {
+      "file": "docs/IPAD_WORKSPACE.md",
+      "lines": "673-675",
+      "finding": "Personal Pencil-first everyday editing is the priority; preserve native Blender editors, Inspector, Files, safe operation ownership and supported hardware."
+    }
+  ],
+  "actual_pipeline": [
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": "170-194,365-392,446-449",
+      "finding": "ios_touch_device reads physical UITouch.type. GestureContact starts from exactly one actual touch before superclass physical Begin; Pencil actor/serial and samples are recognizer-owned. Generic contact currently does not retain its physical origin outside specialized ring/HUD/paint receipts."
+    },
+    {
+      "file": "intern/ghost/GHOST_NavigationIOS.hh",
+      "lines": "40-123",
+      "finding": "TouchDevice/PencilSample/GestureContact bind actor, value-only touch identity, unique Pencil serial, current sample and down state. This is physical actor evidence, not canvas evidence or tool admission."
+    },
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": "1450-1596",
+      "finding": "Touch admission/hardware reject first, then original ring route, then HUD/navigation/workspace/direct-tool PointerCapture, then finger scroll/flythrough. These paths return before the physical Pencil precision suffix."
+    },
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": "1598-1661",
+      "finding": "Precision path retains tablet and existing paint receipt. Began emits recognized current CURSOR/DOWN and caches translation; Changed appends paired PAN before CURSOR unless paint-tagged; terminal emits existing UP only. Omission can be local to PAN append without changing ordinary native mouse semantics."
+    },
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": "966-1042",
+      "finding": "generateUserInputEvents batches events, cursor/button preserve tablet provenance; PAN becomes GHOST_EventTrackpad Scroll numFingers=1 without Pencil actor/serial/origin/pair token. Physical actor evidence is lost in this PAN constructor."
+    },
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": "840-922,1664-1740",
+      "finding": "Single direct/Pencil recognizer, indirect left-drag, direct/indirect two/three-finger and scroll-only recognizers are separate paths. Excluding only the paired precision PAN can retain them."
+    },
+    {
+      "file": "source/blender/editors/mesh/editmesh_knife.cc",
+      "lines": "4455-4461",
+      "finding": "Native Knife passes MOUSEPAN; the previously recorded Ctrl paired-PAN zoom remains source-reachable. Current source-only review did not rerun timing or numerical reproduction."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": "8912-8972",
+      "finding": "Trackpad conversion writes shared event_state xy and coalesces queued trackpad events before semantic handlers. Late handler suppression cannot undo those mutations. Do not identify Pencil from numFingers=1."
+    }
+  ],
+  "native_keymaps_and_intent": [
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "6777-6825",
+      "finding": "Annotate native maps use ordinary tool PRESS, with Ctrl eraser, or native tweak event. No paired TRACKPADPAN dependency appears in these tool maps."
+    },
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "7421-7429",
+      "finding": "Measure uses tool_maybe_tweak_event for ruler_add; ordinary down/motion routing must remain exact."
+    },
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "7664-7672,6236-6270",
+      "finding": "Knife initial plain PRESS uses wait_for_input=False; later Ctrl/Shift native modal events control ignore-snap/midpoint state, and MIDDLEMOUSE starts native PANNING. Do not force Knife admission or clear initial/later modifiers."
+    },
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "1551-1575",
+      "finding": "Default viewport TRACKPADPAN bindings provide orbit/pan and Ctrl zoom. They must remain for genuine finger/indirect trackpad streams."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": "8205-8245",
+      "finding": "Native USER_TWOBUTTONMOUSE Alt/OSKey LEFTMOUSE-to-MIDDLEMOUSE emulation includes matching release. Deliberate Pencil+modifier mouse navigation can remain because ordinary cursor/down/up and physical modifiers remain; exercise it explicitly."
+    },
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "6032,6108",
+      "finding": "Material parity risk: native Transform maps TRACKPADPAN to PROPORTIONAL_SIZE and Circle Select maps it to SIZE. Broad omission also removes duplicate-motion radius/size changes from a physical Pencil precision stream; do not call every suppressed PAN navigation-only."
+    },
+    {
+      "file": "source/blender/editors/transform/transform.cc",
+      "lines": "1228-1242",
+      "finding": "TFM_MODAL_PROPSIZE consumes native mapped PAN displacement and changes proportional radius. Direct ToolManipulation transforms already bypass the precision suffix, but keyboard-started/native other transform paths need separate controls."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "lines": "510-544",
+      "finding": "GESTURE_MODAL_CIRCLE_SIZE changes Circle Select radius from mapped PAN xy delta, while ordinary MOUSEMOVE updates position/applies selection."
+    },
+    {
+      "file": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": "6342-6358",
+      "finding": "Native Blender Fly modal also maps TRACKPADPAN to CONFIRM. The separate iPad flythrough flag changes routing; do not infer that general exposed VIEW3D means precision editing in navigation mode."
+    }
+  ],
+  "presentation_and_classification_gaps": [
+    {
+      "file": "intern/ghost/GHOST_NavigationIOS.hh",
+      "lines": "216-271",
+      "finding": "navigation_regions gives first-hit Navigation/WorkspaceResize/ToolManipulation and original HUD contact capture, but absence is not positive exposed-canvas evidence. Selection and ToolManipulation are tool-specific policies, not general canvas classification."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_draw.cc",
+      "lines": "1544-1630",
+      "finding": "End-of-draw navigation publication includes resize, HUD/native navigation and only direct_edit_tool canvas regions. Visible popups clear registry. It does not publish general completed per-texture canvas provenance for Knife/Annotate/Measure."
+    },
+    {
+      "file": "intern/ghost/GHOST_NavigationIOS.hh",
+      "lines": "274-325",
+      "finding": "Completed paint presentation registry includes generation/region and frozen original paint origin, but it is admitted by paint-specific native profile and cannot stand in for all VIEW3D canvas."
+    },
+    {
+      "file": "source/blender/editors/screen/screen_ipad_panels.cc",
+      "lines": "2636-2671",
+      "finding": "ED_ipad_finger_paint_capture only admits mesh Sculpt/Vertex/Weight/Texture paint with native brush flag, live tool and non-curve brush; it excludes ordinary Knife/Annotate/Measure."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_draw.cc",
+      "lines": "722-797",
+      "finding": "Paint compositor demonstrates actual layer blockers, last texture generation, live fresh owner lookup, modal/popup/gesture/opaque callback exclusions and navigation/shelf subtraction. Broad canvas policy needs corresponding coherent completed evidence rather than widening paint ownership."
+    },
+    {
+      "file": "source/blender/editors/screen/screen_ipad_panels.cc",
+      "lines": "1768-1783,2615-2630",
+      "finding": "ipad_canvas_rect derives from layout and editing_canvas_parts removes shelf. Geometry alone is not proof that matching current canvas pixels were actually presented or that every higher UI/native widget is absent."
+    },
+    {
+      "file": "source/blender/editors/screen/screen_ipad_panels.cc",
+      "lines": "3362-3387",
+      "finding": "Plain LEFTMOUSE canvas input can dismiss/rehost panels. Suppression-only packet preservation must retain that native behavior; do not use direct_tool to protect a stroke because that changes initial interaction."
+    }
+  ],
+  "invalidation_obligations_before_any_implementation": [
+    "Capture a dedicated value-only original physical Pencil actor/serial, actual window lifetime/native view, exact physical origin, VIEW3D area/WINDOW identity/lifetime, completed canvas texture/presentation generation and exposed part before superclass touchesBegan can recognize or emit actions.",
+    "At the first recognized action and every later omission, prove fresh original native window/screen/workspace/area/region membership, matching original presentation and actual current higher UI/nav classification without callback-driven mutation between validation and admission. Do not dereference saved addresses or accept address reuse.",
+    "A->B->A must not revive a stale contact just because current geometry/tool/screen matches again. Generation/lifetime changes or a callback-free validation barrier must cover pre-recognition changes; tool-intent equality is unnecessary for the broad policy but presentation/context transitions are still relevant.",
+    "Cover screen/workspace/layout/header/quad/split/rotation/scale/buffer resize, tool or mode changes, panel dismiss/rehost/lock, shelf, Inspector/Tools/rails/native navigation, ring/HUD/page replacement, ordinary/native popups, overlapping regions and unknown/opaque window or region draw callbacks, including callback self-removal.",
+    "Maintain Navigation/WorkspaceResize/ToolManipulation and ring/HUD priority from actual original contact. Do not classify an absent/cleared navigation registry, generic inputmode, actor alone or numFingers alone as canvas.",
+    "Explicitly keep flythrough/navigation mode outside initial precision-canvas admission. Mode is a policy exclusion, not evidence of a physical Pencil or exposed canvas.",
+    "Hardware ownership, pending-stream interruption, native view/window teardown and UIKit reset must invalidate the suppression receipt through the old stream; fresh next contacts remain eligible. No new terminal lease, unleased release, replacement Cancel, forced Finish or old-pointer owner invocation.",
+    "Same UIKit batch may queue CURSOR/DOWN/PAN/CURSOR before the first DOWN invokes an operator. Canvas/device proof must suffice without requiring a live Knife or pretending arbitrary native keymaps/polls will accept DOWN.",
+    "Freeze the precise original contract: stale/unknown proof never grants omission; preserve baseline ordinary packets and current existing paint ownership/terminal behavior. Do not silently upgrade this suppression hint into a WM semantic owner token."
+  ],
+  "minimum_acceptance_matrix_for_a_later_candidate": [
+    "Historical exact-source Ctrl-Knife PAN->zoom control retained; candidate omits only paired PAN, with exact recognized cursor/down/up/order/translation/tablet/modifiers unchanged.",
+    "First same-batch DOWN/PAN before native Knife exists; existing original Knife; later Ctrl/Shift and modified initial DOWN fallback; real custom down/motion keymaps and denied native poll.",
+    "Annotate plain/line/polygon/eraser and Ctrl eraser; Measure drag/gizmo interaction; keyboard-started/native Transform proportional size and Circle Select radius controls characterized honestly.",
+    "Native Pencil Pan/Move/Rotate/Zoom controls, Alt/OSKey middle emulation, native keyboard-invoked navigation, explicit flythrough unchanged; hardware/indirect scroll and finger/two/three-finger paths exact.",
+    "Pencil UI, numeric fields, Tools/Inspector/rails/HUD/ring, other editors and popup scrolling retain ordinary paired PAN where appropriate; no global PencilPAN deletion.",
+    "Before-threshold and during-contact presentation/context changes including A->B->A, split/quad/rotation and reused owners, opaque callback changes and original window close cannot grant stale suppression.",
+    "Exact broad policy compatibility statement acknowledges native/custom TRACKPADPAN consumers; no all-keymap or all-native-editing parity claim.",
+    "Run coherent source fixtures/full retained checks/pinned-source preflight/independent source review, then exact native build/package/actual compiled producer and new receipt-consumer evidence before ready; device behavior remains separately unproved."
+  ],
+  "bottom_line": "The broader physical Pencil exposed-canvas precision policy is a more coherent next direction than Knife-only tool-intent prediction. It reduces the proof to actor/original presentation/liveness rather than arbitrary operator invocation. It is not currently implementation-ready, and its native size/custom TRACKPADPAN compatibility limits are material."
+}

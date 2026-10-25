@@ -1,0 +1,108 @@
+{
+  "status": "NO_IMPLEMENTATION_READY",
+  "utc": "2026-10-25T09:21:55Z",
+  "scope": "Read-only connected design audit; no source/test edits or tests run. Suppression-only physical Pencil original VIEW3D precision-canvas contact, independent of Knife invocation.",
+  "basis": {
+    "verified_production": "1946aba24b24999dadd4bdd708089b2ba5241150/run40163724620",
+    "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+    "materialized": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+    "hashes_match_next_audit": [
+      "GHOST_WindowIOS.mm",
+      "wm_draw.cc",
+      "screen_ipad_panels.cc",
+      "wm_event_system.cc"
+    ],
+    "navigation_header_sha256": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+    "git_caveat": "Ordinary git in the supplied active path reports not a work tree and resolves ddb23dfd391a38459988846704b47e0674eff8f7; authority here is the parent's raw-Git patch plus exact materialized source hashes, not that ordinary git result."
+  },
+  "answer": "Existing presentation/contact building blocks support a narrow generic precision-canvas direction without exact-Knife tool intent or assumptions that a queued DOWN invokes Knife. Existing completed registry and native admission APIs do not supply the required generic pre-recognition freshness proof. Do not implement PAN omission yet.",
+  "actual_dataflow": [
+    {
+      "source": "intern/ghost/intern/GHOST_WindowIOS.mm:365",
+      "fact": "GHOSTUIPanGestureRecognizer touchesBegan freezes physical GestureContact device/serial, ring/HUD origin and paint-only contact before super touchesBegan at line392. Touch identity remains recognizer-local; copied contact values cross boundaries."
+    },
+    {
+      "source": "intern/ghost/GHOST_NavigationIOS.hh:89",
+      "fact": "GestureContact is the actor authority: device is Pencil only for its original physical UITouch, with a monotonic Pencil serial. Hover/tablet presence and numFingers are not actor proof."
+    },
+    {
+      "source": "intern/ghost/intern/GHOST_WindowIOS.mm:1450",
+      "fact": "handlePan first preserves hardware-stream exclusion, ring capture, navigation/resize/tool capture and Finger/flythrough paths. Only the remaining Pencil branch at1598 is ordinary precision input; there is no separate generic precision-canvas receipt/input-mode object."
+    },
+    {
+      "source": "intern/ghost/intern/GHOST_WindowIOS.mm:1605",
+      "fact": "Began emits recognized-current CURSOR/DOWN and sets cached translation; Changed computes/updates the same cache then appends optional PAN before current CURSOR; terminal appends only UP. Paint valid-contact omission at1619 is the narrow existing precedent."
+    },
+    {
+      "source": "intern/ghost/intern/GHOST_WindowIOS.mm:965",
+      "fact": "generateUserInputEvents serializes each UserInputEvent under synchronized(self), selects its tablet snapshot and emits list order. PAN_GESTURE creates ordinary GHOST_EventTrackpad at1027 with numFingers1 and no actor/contact/pair provenance."
+    },
+    {
+      "source": "source/blender/windowmanager/intern/wm_event_system.cc:8623",
+      "fact": "Any WM alternative must decide before eventstate setup/Trackpad xy write at8940 and wm_event_add_trackpad coalescing at8490/8972. Native dispatch can ingest initial DOWN and paired PAN before DOWN creates a Knife modal; native handler existence cannot establish first-contact provenance."
+    }
+  ],
+  "existing_reuse": [
+    {
+      "source": "intern/ghost/GHOST_NavigationIOS.hh:274",
+      "usable": "Value rectangles, subtraction, physical actor/serial, ring/HUD priority and completed-presentation pattern.",
+      "boundary": "FingerPaintRect/PencilPaintContact is paint-specific. ED_ipad_finger_paint_capture at screen_ipad_panels.cc2636 rejects EDIT_MESH and all non-brush profiles; wm_draw.cc1218 clears its generation unless the bounded paint profile survives a full stable draw."
+    },
+    {
+      "source": "source/blender/windowmanager/intern/wm_draw.cc:722",
+      "usable": "Actual compositor order, full texture receipt, higher-region subtraction, sticky opaque callback facts, navigation/shelf exclusion.",
+      "boundary": "Publish at745 rejects modal/UI handlers, modifiers, dismissible panels, popups, gestures, unknown widgets and opaque callbacks, then writes only paint regions. It is not a generic precision-canvas proof and does not freshly validate at UIKit recognition."
+    },
+    {
+      "source": "source/blender/editors/screen/screen_ipad_panels.cc:826",
+      "usable": "Native fresh-member hierarchy capture, settled layout, Main/WM/window/screen identity, every required native region composition and higher chrome/navigation footprints; completed/current checks at970/995.",
+      "boundary": "Private Knife hierarchy has no GHOST generic-canvas publication or UIKit validation entrypoint. Its native-equality state does not capture tool identity/epoch, modal list history or arbitrary world/custom-gizmo hit footprints. HUD owner API2443 requires already-presented Knife HUD owner and cannot admit initial generic canvas contact."
+    },
+    {
+      "source": "source/blender/editors/interface/regions/interface_region_menu_pie.cc:576",
+      "usable": "Ring stages candidate, validates actual drawn values, publishes GHOST receipt647, then commits native presented state650-652 on the same main thread; refusal retires publication.",
+      "boundary": "Atomic native/GHOST publication is ring-scoped. It is neither a generic validation callback nor a generic invalidation epoch."
+    }
+  ],
+  "freshness_frontier": {
+    "present_invalidations": [
+      "Paint-map clear on native OP modal registration wm_event_system.cc7306",
+      "Paint-map clear on native UI modal registration7759",
+      "Paint-map clear on GHOST key events8641-8643",
+      "GHOST window destruction forget_navigation_window GHOST_WindowIOS.mm3184; native HUD/hierarchy forget screen_ipad_panels.cc2608"
+    ],
+    "missing": [
+      "No completed generic VIEW3D precision-canvas receipt published to GHOST",
+      "No existing callback-free native query from physical Begin/recognized Begin to re-find and validate the frozen original receipt",
+      "No monotonic tool/layout/modal-context invalidation epoch covering all pre-threshold changes and A-to-B-to-A",
+      "Window/screen IDs and numeric region addresses do not alone prevent live area/region/tool ABA; current equality can return to its original values",
+      "Current known navigation bounds do not certify unknown widget/gizmo absence after the completed draw"
+    ],
+    "unknown_widget_boundary": "Keep the existing sticky actual-draw exclusions: custom region draw callbacks spacetypes.cc260-269, non-navigation drawn gizmos wm_gizmo_map.cc488-495, non-native paint cursors wm_draw.cc165-167 and curve cursor paint_cursor.cc2232-2236. Never infer safe canvas from a missing current callback or a tooltip bounding box. New widgets/input handlers appearing after completion need fresh invalidation or refusal.",
+    "native_context_boundary": "UI_ipad_context_capture at interface_region_menu_pie.cc306 validates fresh native list membership/scene/view-layer/active-object and copies13 values; it requires an already-resolved native C/area/WINDOW, calls view-layer sync and supplies equality, not transition history. It cannot be called directly from UIKit with an old editor pointer."
+  },
+  "minimum_contract_before_source": [
+    "A separate value-only suppression candidate freezes original physical Pencil serial, window identity, original scaled contact point and completed exposed-canvas presentation identity before super physical Begin; ring/HUD/native-navigation priority remains exact.",
+    "Immediately before recognized Begin can arm omission, resolve current native window/area/region from live membership and validate that frozen presentation through a narrow callback-free bridge or a proven complete invalidation scheme. No old pointer dereference, Python/RNA poll, draw or arbitrary native operator admission.",
+    "Any refusal/missing/unknown/stale/unproved state keeps legacy ordinary events. A-to-B-to-A before threshold must not re-admit an old candidate through equal current values; the concrete epoch/retirement path remains to be designed and proved.",
+    "Suppression data must stay separate from PencilPaintContact: tagging paint changes producer/WM shared-pointer ownership, begin admission and cancelled-terminal behavior. Reusing paint ownership would violate the ordinary cursor/down/up contract.",
+    "The only allowed event-list change is omission of its explicitly paired PAN on the admitted original precision stream. Preserve recognized coordinates, cursor/down/up count/order, translation-cache updates, tablet snapshots, modifiers, flags and terminal semantics. No ToolManipulation, forced Knife invocation, pending-DOWN prediction or new terminal lease.",
+    "Before admitting a broad tool-independent canvas policy, prove native navigation/tool-widget paths retain their behavior; generic geometry alone does not establish editing-versus-navigation semantics. Tool transitions relevant to that classification must invalidate the original receipt."
+  ],
+  "connected_tests_required": [
+    "Execute actual pre-super physical Begin -> threshold delay -> recognition -> original precision producer -> GHOST emission; byte/value compare old/new event lists after deleting only admitted paired PAN.",
+    "No live Knife handler and initial DOWN/PAN in one native batch; later Knife contact; modified initial DOWN native fallback; Ctrl/Shift changes after DOWN; no forced operator/poll assumptions.",
+    "Before threshold: same completed presentation; incomplete/cached/failed/partial draw; tool, mode, screen, window, area/region, scale, layout, popup/modal and known/unknown widget changes; each A-to-B-to-A; replacement area/region/window at same numeric address.",
+    "Keep ordinary Finger/UI/other-editor scrolling, indirect/hardware/wheel, two/three-finger/pinch, flythrough, ring/HUD/Tools/Inspector/rails/navigation/resize and native navigation-tool/gizmo streams unchanged.",
+    "Unknown callback draws then self-removes; unknown gizmo draws; widget appears after completion; window callback removes itself; native membership/context bridge refusal and safe teardown.",
+    "Retain the exact old Ctrl-Knife source failure control (dist10->10.197) and normal/Shift controls; prove changed source removes paired-PAN navigation reachability while retaining native Knife cursor/down/up and Finish/Cancel/lift/rightclick behavior."
+  ],
+  "claims": {
+    "production_edited": false,
+    "tests_edited": false,
+    "tests_run": false,
+    "native_build_run": false,
+    "device_proof": false,
+    "implementation_ready": false
+  }
+}

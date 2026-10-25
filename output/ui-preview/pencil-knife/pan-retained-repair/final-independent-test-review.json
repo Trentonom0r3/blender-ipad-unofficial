@@ -1,0 +1,298 @@
+{
+  "status": "PASS_BOUNDED_READONLY_TEST_FIXTURE_REVIEW_FINAL_FROZEN_HOST_PASSED",
+  "utc": "2026-10-25T19:45:30.680889+00:00",
+  "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "reviewed_file_hashes": {
+    "build/test_pencil_hud_presentation.py": "3ac9bb4a5cb2ae7d3292dc1485de686c78f36527f94f5594c06929d08c518341",
+    "build/test_pencil_hud_placement.py": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d",
+    "build/test_pencil_hud_launch.py": "955fa61912c037cbf57475f9ea6ba9ed538f77261d4eecca85a115ed57840341",
+    "build/test_pencil_knife_hud_receipts.py": "9e3756e4b8f1c47c7a98de065cf27395c2247b8b101584df22c5c0015dc19e29",
+    "build/test_pencil_pan_paint_producer.py": "36bf95efb244b7555e51282e42c1fbc020ea6d77e6765a91c2176906ff635e2d",
+    "build/test_pencil_knife_pan_ghost.py": "783519c0ea30f9cd92875de3032e4c475224f37068b35ff30f505432a9607c2d",
+    "build/test_pencil_knife_pan_bridge.py": "6069d8088c2aa839bacf862cacebd093abb3f47b7918cd4db53c874e870e64c6",
+    "build/test_pencil_knife_pan_canvas.py": "a739d6e458a36547aecaf1799067d06dfffe84b60057e384161ca3eb791bb1e4",
+    ".github/workflows/preflight.yml": "0c6e3f84c69469edfafc9711c5a78eef0770585ae8e169cc9d7d8abc8d28c2ae",
+    "patches/blender-ipad.patch": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+    "build/tests/knife_pan_ghost/baseline-GHOST_NavigationIOS.hh": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+    "build/tests/knife_pan_ghost/baseline-GHOST_WindowIOS.mm": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+    "build/tests/knife_pan_ghost/native-parity-models.inc.cc": "3ca2ee3d6315870ba4dac0b36a107e6c0f5f120067b7229e93ca16b2c615b0fe",
+    "build/tests/knife_pan_ghost/retained-connected-models.inc.cc": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+    "build/tests/knife_pan_ghost/run_connected.py": "af862bf5414e15e508d1c453a5e61cb0dc549822f6735fffae8f769933b0bce4",
+    "build/tests/knife_pan_ghost/scenarios.inc.cc": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21",
+    "build/tests/knife_pan_bridge_models.py": "3fcfc3676292f8e1a2ef1f37225b7fb92c1c586d427fd70f4a07d57b6a454cd1",
+    "build/tests/knife_pan_canvas_cases.inc.cc": "5d9221bf0b09a20a7de099755991e1c6bd0487c91374ca6b6ad568c53bc75419",
+    "build/tests/knife_pan_canvas_draw_models.inc.cc": "984db6242d0b51c5dfd2f946f0dcc89048c928ab49d6cf951a0973e136206e51",
+    "build/tests/knife_pan_canvas_models.inc.cc": "8502c82f462bd1514a51e24f6e9c14ae9ffbb66409944dbade0baf6756a75c23",
+    "build/test_finger_brush_admission.py": "2c9877480204923fb10feef8d053aa2d45e3cd0ae3028c529d157c63c366a773"
+  },
+  "matches_running_full_freeze_inputs": true,
+  "frozen_validation_status_at_review": "RUNNING_FULL_FROZEN_SUITE",
+  "frozen_validation_file": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-frozen-validation.json",
+  "retained_assertion_semantics": {
+    "presentation": {
+      "current_path": "build/test_pencil_hud_presentation.py",
+      "original_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\test_pencil_hud_presentation.py.before",
+      "original_sha256": "8c419f700eac9ec663707296a260eabeb5f7f5221240f931faebd08612877ad1",
+      "current_sha256": "3ac9bb4a5cb2ae7d3292dc1485de686c78f36527f94f5594c06929d08c518341",
+      "all_original_class_methods_AST_identical": true,
+      "class_methods": [
+        "PencilHUDPresentationTests.test_draw_owner_tool_copy_declares_bli_string_api",
+        "PencilHUDPresentationTests.run_native",
+        "PencilHUDPresentationTests.test_actual_compositor_footprint_success_and_early_returns",
+        "PencilHUDPresentationTests.test_connected_cached_draw_history_geometry_and_frozen_generation",
+        "PencilHUDPresentationTests.test_stale_retirement_is_named_onfree_and_reacquires_after_callbacks",
+        "PencilHUDPresentationTests.test_native_producer_order_and_completed_publication_contract"
+      ],
+      "method_AST_sha256": "c4907b59b04e53d78feb6007d9933da173bf686b05b9c5359632f9eef719a05c",
+      "all_original_python_assertion_AST_identical": true,
+      "python_assertion_nodes": 18,
+      "assertion_AST_sha256": "49f3386f2626dcffff24cce1eab526f96745b409a01d34022e1ef9a7045b6360",
+      "original_embedded_cpp_assertions": 61,
+      "current_embedded_cpp_assertions": 63,
+      "all_original_cpp_assertions_retained_as_multiset": true,
+      "missing_cpp_assertions": {},
+      "historical_and_scenario_constants_value_identical": true,
+      "constants_compared": []
+    },
+    "placement": {
+      "current_path": "build/test_pencil_hud_placement.py",
+      "original_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\test_pencil_hud_placement.py.before",
+      "original_sha256": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d",
+      "current_sha256": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d",
+      "all_original_class_methods_AST_identical": true,
+      "class_methods": [
+        "PencilHUDPlacementTests.run_native",
+        "PencilHUDPlacementTests.test_native_exposure_left_empty_rail_and_measured_chrome",
+        "PencilHUDPlacementTests.test_actual_composite_and_old_footprint_after_launcher_or_panel_change",
+        "PencilHUDPlacementTests.test_connected_refresh_changes_only_left_offset_and_preserves_native_init",
+        "PencilHUDPlacementTests.test_expansion_rechecked_before_final_native_placement_in_same_frame"
+      ],
+      "method_AST_sha256": "f5d8bfefa4b1e3918848dd9b00b3fdd4d62413cb757bf13f99c19bbda641dbf7",
+      "all_original_python_assertion_AST_identical": true,
+      "python_assertion_nodes": 2,
+      "assertion_AST_sha256": "516969b51adc0967717733cda897a1910667fddb25a22cc4e60453fa18107200",
+      "original_embedded_cpp_assertions": 33,
+      "current_embedded_cpp_assertions": 33,
+      "all_original_cpp_assertions_retained_as_multiset": true,
+      "missing_cpp_assertions": {},
+      "historical_and_scenario_constants_value_identical": true,
+      "constants_compared": []
+    },
+    "launch": {
+      "current_path": "build/test_pencil_hud_launch.py",
+      "original_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\test_pencil_hud_launch.before.py",
+      "original_sha256": "fa94e37ce2b4e96d437952f7ae2bb75bcf3bf1e2a0c7fc13b8502f74287f03dc",
+      "current_sha256": "955fa61912c037cbf57475f9ea6ba9ed538f77261d4eecca85a115ed57840341",
+      "all_original_class_methods_AST_identical": true,
+      "class_methods": [
+        "PencilHUDLaunchTests.run_native",
+        "PencilHUDLaunchTests.test_first_layout_preserves_hud_before_actual_native_animation",
+        "PencilHUDLaunchTests.test_success_and_callback_free_refusal_paths_preserve_caller_context",
+        "PencilHUDLaunchTests.test_failed_source_is_negative_control_for_first_layout",
+        "PencilHUDLaunchTests.test_native_bodies_and_first_layout_call_order"
+      ],
+      "method_AST_sha256": "a856179a5767cd2714ce32b432c3c7a8f21e0ade7aa83dc75a043440b922d6bf",
+      "all_original_python_assertion_AST_identical": true,
+      "python_assertion_nodes": 10,
+      "assertion_AST_sha256": "d65d857f7be0128fba9ce18fa66a90e50d256e38edbe8afbac411336aedac609",
+      "original_embedded_cpp_assertions": 14,
+      "current_embedded_cpp_assertions": 14,
+      "all_original_cpp_assertions_retained_as_multiset": true,
+      "missing_cpp_assertions": {},
+      "historical_and_scenario_constants_value_identical": true,
+      "constants_compared": [
+        "PIN_SETTERS",
+        "PIN_ANIMATION",
+        "PIN_SHA256",
+        "OLD_OWNER_CAPTURE",
+        "PANEL_WORLD",
+        "SETUP"
+      ]
+    },
+    "KnifeHUDreceipts": {
+      "current_path": "build/test_pencil_knife_hud_receipts.py",
+      "original_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\hud-receipts-original.py",
+      "original_sha256": "4a198c6af53e2e5bdc347e0443752053f90c8451614936569785e347727ba96d",
+      "current_sha256": "9e3756e4b8f1c47c7a98de065cf27395c2247b8b101584df22c5c0015dc19e29",
+      "all_original_class_methods_AST_identical": true,
+      "class_methods": [
+        "KnifeHUDReceipts.run_case"
+      ],
+      "method_AST_sha256": "e6c3390a51c2cb9090f6d850e28fe9788330bdeef68bf1845ec1b2c82adde81e",
+      "all_original_python_assertion_AST_identical": true,
+      "python_assertion_nodes": 7,
+      "assertion_AST_sha256": "aa959f482678bc616ffe5f8df3d5cf7a3d728c52bc9bb65154a33ea7ad323ffd",
+      "original_embedded_cpp_assertions": 49,
+      "current_embedded_cpp_assertions": 50,
+      "all_original_cpp_assertions_retained_as_multiset": true,
+      "missing_cpp_assertions": {},
+      "historical_and_scenario_constants_value_identical": true,
+      "constants_compared": [
+        "SETUP",
+        "CASES"
+      ]
+    },
+    "paintproducer": {
+      "current_path": "build/test_pencil_pan_paint_producer.py",
+      "original_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\paint-producer-before.py",
+      "original_sha256": "fd4729fcac92d884635313eb175670cf15db7f14b7b4b6cb76316ff9a9f83170",
+      "current_sha256": "36bf95efb244b7555e51282e42c1fbc020ea6d77e6765a91c2176906ff635e2d",
+      "all_original_class_methods_AST_identical": true,
+      "class_methods": [
+        "PencilPanPaintProducerTests.setUpClass",
+        "PencilPanPaintProducerTests.run_case",
+        "PencilPanPaintProducerTests.test_historical_nonzero_motion_fails_corrected_contract",
+        "PencilPanPaintProducerTests.test_historical_cancelled_fails_corrected_contract",
+        "PencilPanPaintProducerTests.test_historical_failed_fails_corrected_contract",
+        "PencilPanPaintProducerTests.test_scope_is_exactly_two_precision_predicates",
+        "PencilPanPaintProducerTests.test_native_registered_cancel_routes_match_fixture",
+        "PencilPanPaintProducerTests.tearDownClass"
+      ],
+      "method_AST_sha256": "2d9f6ae51ed69e5ead97574b011a5850a886c87b174482c9e1d8932dc4852175",
+      "all_original_python_assertion_AST_identical": true,
+      "python_assertion_nodes": 13,
+      "assertion_AST_sha256": "5526ad90c871805aaf8edd6ae602dd0b98f1369980f180789458cf411928416d",
+      "original_embedded_cpp_assertions": 108,
+      "current_embedded_cpp_assertions": 109,
+      "all_original_cpp_assertions_retained_as_multiset": true,
+      "missing_cpp_assertions": {},
+      "historical_and_scenario_constants_value_identical": true,
+      "constants_compared": [
+        "HISTORICAL_PAN",
+        "HISTORICAL_PRODUCER_SHA256",
+        "SCENARIOS"
+      ]
+    }
+  },
+  "execution_vs_oracle": {
+    "paint": "Constructed SIMULATED_CORRECTED_PAN is used only by exact source comparison. Actual proposed executable receives CORRECTED_PAN=PAN from current full pinned+overlay source. Unchanged original class methods still compile historical exact source hash85bf405c and require all3 old semantic assertion failures.",
+    "ghost": "Actual current PAN is mechanically message-translated for C++, without corrective predicate rewriting. Removing the declared new Begin/frozen/PAN condition is only an equality oracle against retained baseline; that expression is never assigned back as executed current producer. Current header, physical recognizer methods, queue gates and current generator/constructors execute. Baseline native zoom control still produces10->10.197; explicit old-must-fail requires pans==0 and aborts at O0/O2.",
+    "canvas": "Current complete offscreen draw-loop source and actual source helper/gizmo/paintcursor/drag blocks execute with instrumented native-shaped backing. Allsource block presence/order checks fail if seams disappear; no alternate corrected bodies. NonApple source stubs/current callback inspector execute separately.",
+    "bridge": "Actual GHOST Capture/Recognize wrappers and getNumEvents/pushEvent/getEventManager feed actual native bridge, owned CTX lifecycle, original-owner/scope/current widgets/completed hierarchy code. Shape substitutions affect explicit model backing, not extracted native bodytext. Probe/provider/draw poison counters require no unapproved query callbacks."
+  },
+  "retained_scope_migrations": {
+    "presentation": "Only independent PAN public entry excluded from ordinary HUD compilation; accidental new native references would fail compilation. Inactive hierarchy staging boundary asserts no frame and HUD region; old void* texture identity model retained. Negative controls demonstrate unexpected activeframe/nonHUD refusal.",
+    "launch": "Exact current Owner/Content/capture/layout/draw dependency closure; original native area-before-region setters and animation consumers remain exact pinned bytes and execute. Oldlaunch expected81 is unchanged.",
+    "KnifeHUDreceipts": "Native scalar/stamp/gizmo/drags field shape additions; actual hierarchy/fullcoverage/window callbacks/blit/blend/nav path stays executed. Only independent physical PAN entry replaced with fail-on-entry assertion, verified by expected abort O0/O2.",
+    "paintproducer": "Actual new Knife recognizer methods execute in no-actor legacy brush fixture; unexpected native probe aborts. Original native/WM brush/terminal/packet assertions and historical source remain intact."
+  },
+  "freshness_and_portability": {
+    "ghost_wrapper": "Output directory resolved absolute; existing report archived before child; child returncode0 alone insufficient; newreport, driverSHA, exact16run matrix, expectedfailure diagnostics and generator-preserved facts required. Root emptydriver exit0+preexistingPASS negative control refused as expected.",
+    "bridge_wrapper": "Output/materialized source dir resolved absolute; existing report archived; new result and current driverSHA plus connectedchain/count required. Default CI prepares patched bases before materialization and explicitly fetches unchanged pinned context/workspace/EventManager/System bodies.",
+    "canvas_family": "Default output unique temp directory. Python unittest returncode controls acceptance; compilation failures or incomplete/runtime failures cannot produce a passing test outcome. Its report complete count/status additionally checks allcases. Reusing explicit output directory after setUp/import failure may leave an old JSON file, but that file is not used by its unittest acceptance path.",
+    "fresh_cache_limit": "Bridge standalone default invocation assumes patched base files were prepared by preflight; current CI explicitly runs that first. Other required unchanged inputs are fetched explicitly. Current hardcoded bridge pin path matches pinned workflow d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e. No isolated Temp model dependency in portable GHOST fixture.",
+    "layout_provenance": "Current full composed hierarchy and exactnative navigation/stamp/owner functions, not historical lookup labels, establish new bridge/canvas modeled source seams. Actual GPU/UIKit geometry remains external."
+  },
+  "ci": "preflight.yml adds discover test_pencil_knife_pan_*.py after pinned-source preflight; this collects ghost, canvas and bridge families. Existing retained HUD/paint steps stay present. No host assertion disabling/skip fallback found in new families.",
+  "observed_prior_results": {
+    "new_three_families": "149 tests PASS23.887s in .cache/knife-pan-affected-final.log",
+    "paint_retained": "40 tests PASS12.715s in .cache/knife-pan-retained-producer-third.log",
+    "presentation_placement": "5+4 tests PASS per repairreport",
+    "launch": "4 tests PASS2.190s; pinned combined setter/animation SHA549d4b2f7a0922624bb2d0430979214f12837013150a20fc0d3a807041ca83f4",
+    "KnifeHUDreceipts": "11 originalcases at each O0/O2 plus2expectedinactivePAN aborts per source-hashed report",
+    "full_suite": "RUNNING at review; not counted as pass"
+  },
+  "evidence_hashes": {
+    ".cache/knife-pan-affected-final.log": "70dc1c5623d65a32508a034c40346e49992ac04e531ec52ace0d48cd21689b2a",
+    ".cache/knife-pan-retained-producer-third.log": "9d5ca1f81d10e28408b6adc6b21e4af3a273b637f086105fa4abd0ec90eac242",
+    "output/ui-preview/pencil-knife/pan-retained-repair/ghost-freshness-negative-control.json": "6de0fa11f9fd924f920737e75e58937ebd19ca3e850dc29b4a0a8f8c015ed3c1",
+    "output/ui-preview/pencil-knife/pan-retained-repair/hud-placement-presentation-repair-report.json": "90cac6ba5809496c0aa13d340820a0e9447a46e3e4d74c110209ac61de9f5dec",
+    "output/ui-preview/pencil-knife/pan-retained-repair/hud-receipts-repair-summary.json": "acfcc83d223bd182b2bd01d0a99ffda03d93b99dd1350815d2d986f4f3ee6e60",
+    "output/ui-preview/pencil-knife/pan-retained-repair/launch/repair-report.json": "9f06aa30a85dccfa0d4d0f910110b489e7aab8e2caf3d5ed1849dfa4851c83f5"
+  },
+  "actionable_findings": [],
+  "review_actions": [
+    "Read current frozen test/model/CI sources and retained repairdifferences; independently compared ASTs/embedded native assertions against preserved originals.",
+    "Read source-oracle construction/executed-source dataflow and wrapper freshness acceptance paths.",
+    "Read prior passing/failing logs and root negative-control evidence; checked all reviewed current tracked hashes against active fullfreeze snapshot.",
+    "Saved this report only; no test/source/CI/patch edits or new test/native build executions during this review."
+  ],
+  "limits": [
+    "This agent previously authored the isolated GHOST fixture and launch-only repair; this final pass is a fresh read/mechanical preservation check and an independent review of the other migrations/root wrapper+CI, not independent authorship separation for every artifact.",
+    "Execution remains modular: GHOST physical producer/recognizer test uses instrumented native probe; bridge family separately executes actual GHOST wrappers through actual native query/frame code. Source/API review supplies composition; no single UIKit-to-native runtime or actual device timing proof.",
+    "All native object/list/geometry/GPU/system/registry and initial modal bindings identified by fixtures remain instrumentation boundaries. No whole native translation-unit, arbitrary heap/CFG, UIKit, renderer, scene geometry/history/Undo or device claim.",
+    "Full frozen suite/preflight/diff is still pending at review and must complete with frozen inputs unchanged; no native build/IPA/compiled acceptance is supplied here."
+  ],
+  "last_finger_repair_review": {
+    "status": "PASS_BOUNDED_READONLY_FINGER_FIXTURE_REPAIR_REVIEW",
+    "utc": "2026-10-25T19:56:13.395436+00:00",
+    "current_path": "build/test_finger_brush_admission.py",
+    "current_sha256": "2c9877480204923fb10feef8d053aa2d45e3cd0ae3028c529d157c63c366a773",
+    "original_sha256": "65b407af191f8e6701e9af7ee198658a0d4d5c2eed00fda7736606f487a609f4",
+    "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+    "current_hash_matches_new_full_freeze": true,
+    "new_full_frozen_status_at_review": "RUNNING_FULL_FROZEN_SUITE",
+    "changed_method_only": [
+      "test_actual_draw_stamp_and_self_removed_callback_are_retained"
+    ],
+    "other_7_test_methods_and_run_cpp_helper_AST_identical": true,
+    "all_original_29_Python_assertion_ASTs_identical": true,
+    "assertion_AST_sha256": "67440990114f926a7d1adcd654e13348cc04b82b19bace513788edf35e19bbbd",
+    "all_original_55_Cpp_assertion_lines_ordered_exact_retained": true,
+    "added_assertion_lines": 2,
+    "original_self_removing_callback_and_main_literal_exact": true,
+    "original_main_literal_sha256": "50ce62829df26cfa1dd07daf258abde852fcd923912c9236f75d24f2e2db973e",
+    "actual_native_bodies_exact_in_executed_targeted_fixture": {
+      "new_stamp_counter": "b701259d6a94c302f6ffcd242b6b14b796b9fa5ab138a32ce0432338d1753b4b",
+      "new_stamp_finalizer": "9029f682bb4515910f62113c58b88cee5fb5644b881e664bde7a666ffec854a4",
+      "draw_callback_observer": "a6b779be87055c70f02241c209a6fffaf82cf2df4cb3738410d820adb7ca1ba7"
+    },
+    "seam_assessment": "The broad unchanged actual draw tail now calls the new separate Knife stamp finalizer. Added model fields match that separate storage, actual counter/finalizer/callback observer execute unchanged, and the Sculpt/Finger pre-draw scope is explicitly invalid. Native Knife scope/owner provider boundaries assert on accidental entry; the foreign self-removing callback is classified unknown without a registered Knife owner. Original Finger stamps/self-removal and native mutation/assertion expectations remain intact. This is fixture/source seam repair, with no production predicate substitution.",
+    "observed_runs": "Read saved all8PASS8.248s and targetedO2 compile/execute0 evidence; no new tests executed by this review.",
+    "actionable_findings": [],
+    "evidence_hashes": {
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repair-summary.json": "e84c38e5296cb38b0ac5a3f49c23939d5be1dd4c74427011f3aadbd190ff8a82",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-assertion-AST-proof.json": "b3b606a66152dbcbf7f1d910fee57caa5c6f9581443873ecb49bdcf8be51ae12",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-test-only-repair.diff": "b7691263c7fc863a9962863e4efff65c74b0f01755027717ab15ef6a4749ec22",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-all.log": "04c9e83bc22cf1c5f476c70e239770219493ef96c97645cd431823d9eb5e9e62",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\actual-draw-stamp-and-callback.cc": "48eebb199f8470a390b163054d5af7dccad50bde8353740e57f0d9e3b0fac33e",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\execute.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "limits": "Narrow read-only review of this last fixture repair only. New full824 run is pending; original failed full824 is not counted as pass. No native build, device or whole-renderer proof."
+  },
+  "previous_review_sha256_before_finger_append": "2bdb5ecc496a1fdfebc9353ae03addf90ad80fc9d19ff6306a30960d6f0891b2",
+  "final_portability_addendum": {
+    "status": "PASS_NARROW_READONLY_ATTRIBUTES_INDEX_RAW_HASH_REVIEW",
+    "utc": "2026-10-25T20:07:58.085979+00:00",
+    "exact_attribute_rule": "build/tests/knife_pan_ghost/retained-connected-models.inc.cc -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol",
+    "attribute_scope": "One historical byte-hashed model snapshot path only; ordinary patch LF policy stays intact.",
+    "cached_effective_attributes": [
+      "build/tests/knife_pan_ghost/retained-connected-models.inc.cc: text: unset",
+      "build/tests/knife_pan_ghost/retained-connected-models.inc.cc: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+    ],
+    "staged_entries": [
+      "100644 a5c98bbb24d17f43e665ed9233e99f02f9a970d1 0\t.gitattributes",
+      "100644 54415812730ae3d0853dd4480ab0fec6005c2b06 0\tbuild/tests/knife_pan_ghost/retained-connected-models.inc.cc"
+    ],
+    "working_attributes_sha256": "d82edf0f9ef5af74522a62c76d89a01c61492c703cfa4a0cceee7fcc7c1956d9",
+    "indexed_attributes_sha256": "d82edf0f9ef5af74522a62c76d89a01c61492c703cfa4a0cceee7fcc7c1956d9",
+    "index_equals_working_attributes": true,
+    "snapshot_index_and_working_sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+    "snapshot_bytes": 123031,
+    "snapshot_crlf_lines": 2386,
+    "snapshot_index_equals_working": true,
+    "strict_driver_assertion_exact": "assert hashlib.sha256(RETAINED.read_bytes()).hexdigest()=='d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541'",
+    "driver_sha256": "af862bf5414e15e508d1c453a5e61cb0dc549822f6735fffae8f769933b0bce4",
+    "snapshot_and_driver_match_successful_fullfreeze": true,
+    "cached_whitespace_check_exitcode": 0,
+    "assessment": "-text disables Git line-ending conversion for this exact historical snapshot, preserving the original raw CRLF blob on Windows/Linux. cr-at-eol supplements the default blank-at-eol/blank-at-eof/space-before-tab checks; it does not remove the strict raw-byte SHA assertion or rewrite source/test bytes. Actual index blob and working file both retain d849, so normalization cannot silently produce a passing fixture.",
+    "actionable_findings": [],
+    "limits": "Read-only attributes/index/hash assessment only. No checkout simulation, new tests/native build or broad re-review. Full host pass was observed from the saved frozen report; this attribute-only packaging correction changes no frozen test/source bytes."
+  },
+  "final_full_validation_observed": {
+    "status": "PASS_FROZEN_HOST_PREFLIGHT_DIFF",
+    "suite_exitcode": 0,
+    "suite_summary": [
+      "824",
+      "561.456"
+    ],
+    "inputs_unchanged": true,
+    "changed_inputs": [],
+    "preflight_exitcode": 0,
+    "diff_check_exitcode": 0,
+    "patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+    "finished_utc": "2026-10-25T20:02:32.913021+00:00"
+  },
+  "previous_review_sha256_before_portability_append": "4820df9196dce0794eff5249e32e270a4393054c56f78951dad303371eddf2f1"
+}

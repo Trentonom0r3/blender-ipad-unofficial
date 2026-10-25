@@ -1,0 +1,452 @@
+{
+  "status": "PASS_BOUNDED_NEGATIVE_NATIVE_PARITY_CHARACTERIZATION",
+  "utc": "2026-10-25T09:32:23.982558+00:00",
+  "source_commit": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "verified_build": 40163724620,
+  "patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "probe": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next-probe.py",
+  "probe_sha256": "e2d7ddbb5fcd3f3286267a7f7a9d67446662931e354c1f103cc84c6ebfa5962b",
+  "source_hashes": {
+    "source/blender/windowmanager/intern/wm_gesture_ops.cc": {
+      "raw_sha256": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e",
+      "normalized_text_sha256": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e"
+    },
+    "source/blender/editors/transform/transform.cc": {
+      "raw_sha256": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb",
+      "normalized_text_sha256": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb"
+    },
+    "source/blender/editors/transform/transform.hh": {
+      "raw_sha256": "5d91e00d60bcc0ea72ac1fd1c0ce023b70bf9c3ea9dc908bd221d9cb5eab8aeb",
+      "normalized_text_sha256": "5d91e00d60bcc0ea72ac1fd1c0ce023b70bf9c3ea9dc908bd221d9cb5eab8aeb"
+    },
+    "source/blender/windowmanager/wm_event_types.hh": {
+      "raw_sha256": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce",
+      "normalized_text_sha256": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce"
+    },
+    "source/blender/windowmanager/intern/wm_operators.cc": {
+      "raw_sha256": "919c98dcbf53bfc889a222f15141d6276de913a0fb3bf34c79d02ff297860a48",
+      "normalized_text_sha256": "919c98dcbf53bfc889a222f15141d6276de913a0fb3bf34c79d02ff297860a48"
+    },
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": {
+      "raw_sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+      "normalized_text_sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb"
+    },
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "raw_sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+      "normalized_text_sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef"
+    }
+  },
+  "audit_normalized_source_hash_checks": {
+    "source/blender/windowmanager/intern/wm_gesture_ops.cc": true,
+    "source/blender/editors/transform/transform.cc": true,
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": true,
+    "intern/ghost/intern/GHOST_WindowIOS.mm": true
+  },
+  "initial_probe_failure_log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next\\initial-keymap-expectation-failure.log",
+  "executed_source": {
+    "circle_modal": {
+      "source": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "start_line": 510,
+      "line_count": 99,
+      "sha256": "5c78e5c9da2064fdd34532dcf9a99b2cebe3e5d4bc9b1e58eae0ad97b1839f78"
+    },
+    "transform_sizes": {
+      "source": "source/blender/editors/transform/transform.cc",
+      "start_line": 1228,
+      "line_count": 37,
+      "sha256": "416762298e3e678be7990840a37d0c48346f86815d0360319d956ae3fbad8035"
+    },
+    "transform_mousemove": {
+      "source": "source/blender/editors/transform/transform.cc",
+      "start_line": 1072,
+      "line_count": 14,
+      "sha256": "6c0d935bc263de663ec90602cdfef8aaef4e817c6fcb5714dfd825473a2e8a38"
+    },
+    "gesture_enums": {
+      "source": "source/blender/windowmanager/wm_event_types.hh",
+      "start_line": 528,
+      "line_count": 35,
+      "sha256": "384ff44223fd36ffcab6d35c615a0ccb799f4be2aa493c03d7978f3d07875d92"
+    },
+    "transform_enums": {
+      "source": "source/blender/editors/transform/transform.hh",
+      "start_line": 283,
+      "line_count": 54,
+      "sha256": "619ef303e544b91093f346a91ea7bfbaa8d486765787a404a547764460c02e2b"
+    },
+    "size_limits": {
+      "source": "source/blender/editors/transform/transform.hh",
+      "start_line": 31,
+      "line_count": 2,
+      "sha256": "8f0284193d159c5d0c5d02ee1a0a1b3a7cf9559eec3ce931fcf0dc390e0cd32c"
+    },
+    "circle_action_table": {
+      "source": "source/blender/windowmanager/intern/wm_operators.cc",
+      "start_line": 4328,
+      "line_count": 15,
+      "sha256": "6138eb0ef65d76c80d6d9ff52aa909947582d93c5441e5f468eed24e4a32e47a"
+    },
+    "transform_action_table": {
+      "source": "source/blender/editors/transform/transform.cc",
+      "start_line": 808,
+      "line_count": 7,
+      "sha256": "13dfc8fe57ffa2f7deb859c749028f21fc4fdde73a9b8bd0dbcfac15c3621690"
+    },
+    "km_transform_modal_map": {
+      "source": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "start_line": 5984,
+      "line_count": 72,
+      "sha256": "17c47ff3731074644027476bd95f2fdc5af088f41e8a7bf4fd81fb8ff33f8532"
+    },
+    "km_view3d_gesture_circle": {
+      "source": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "start_line": 6084,
+      "line_count": 28,
+      "sha256": "cedf74b6bc3a2dd094b7a123e75e08430e0f17384b3228ad49fc8a9d4bc14704"
+    }
+  },
+  "compiler": {
+    "path": "C:\\Program Files\\LLVM\\bin\\clang++.exe",
+    "version": "clang version 22.1.5 (https://github.com/llvm/llvm-project 5ea218a153f4d2f815b8244eab3e4b4ba5e00e6c)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Program Files\\LLVM\\bin\n"
+  },
+  "generated_source": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next\\actual-native-slices.cc",
+    "sha256": "c08828d751e104f4ccaf36e566372903331282c07b279daa2f2669e91aaea04e"
+  },
+  "actual_keymaps_artifact": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next\\actual-keymaps.json",
+  "relevant_pan_bindings": {
+    "circle": [
+      [
+        "SIZE",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY"
+        },
+        null
+      ]
+    ],
+    "transform_alt_navigation_on": [
+      [
+        "PROPORTIONAL_SIZE",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY"
+        },
+        null
+      ]
+    ],
+    "transform_alt_navigation_off": [
+      [
+        "PROPORTIONAL_SIZE",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "alt": true
+        },
+        null
+      ]
+    ]
+  },
+  "keymap_checks": [
+    {
+      "label": "circle_plain_pan",
+      "actual": [
+        "SIZE"
+      ],
+      "expected": [
+        "SIZE"
+      ],
+      "pass": true
+    },
+    {
+      "label": "circle_shift_pan_not_size",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "label": "transform_default_plain_pan",
+      "actual": [
+        "PROPORTIONAL_SIZE"
+      ],
+      "expected": [
+        "PROPORTIONAL_SIZE"
+      ],
+      "pass": true
+    },
+    {
+      "label": "transform_no_alt_navigation_plain_pan",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "label": "transform_no_alt_navigation_alt_pan",
+      "actual": [
+        "PROPORTIONAL_SIZE"
+      ],
+      "expected": [
+        "PROPORTIONAL_SIZE"
+      ],
+      "pass": true
+    },
+    {
+      "label": "transform_ctrl_pan_not_size",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "label": "transform_page_up_retained",
+      "actual": [
+        "PROPORTIONAL_SIZE_UP",
+        "AUTOIK_CHAIN_LEN_UP"
+      ],
+      "expected": [
+        "PROPORTIONAL_SIZE_UP",
+        "AUTOIK_CHAIN_LEN_UP"
+      ],
+      "pass": true
+    },
+    {
+      "label": "circle_wheel_retained",
+      "actual": [
+        "ADD"
+      ],
+      "expected": [
+        "ADD"
+      ],
+      "pass": true
+    }
+  ],
+  "native_source_runs": [
+    {
+      "optimization": "-O0",
+      "compile_returncode": 0,
+      "run_returncode": 0,
+      "results": [
+        {
+          "consumer": "circle",
+          "dy": 20,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 31.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -20,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 19.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": 1,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 26.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -1,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 24.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -1000,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 1.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": 20,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 2.20000005,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": -20,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 1.79999995,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": 0,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 2.0,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": -1000,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 9.99999997e-07,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        }
+      ],
+      "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next\\O0-run.log"
+    },
+    {
+      "optimization": "-O2",
+      "compile_returncode": 0,
+      "run_returncode": 0,
+      "results": [
+        {
+          "consumer": "circle",
+          "dy": 20,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 31.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -20,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 19.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": 1,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 26.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -1,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 24.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "circle",
+          "dy": -1000,
+          "initial_radius": 25.0,
+          "paired_pan_then_mousemove_radius": 1.0,
+          "same_mousemove_omitting_pan_radius": 25.0,
+          "final_mouse_position": [
+            200.0,
+            200.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": 20,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 2.20000005,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": -20,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 1.79999995,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": 0,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 2.0,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        },
+        {
+          "consumer": "transform",
+          "dy": -1000,
+          "initial_radius": 2.0,
+          "paired_pan_then_mousemove_radius": 9.99999997e-07,
+          "same_mousemove_omitting_pan_radius": 2.0,
+          "final_mouse_position": [
+            210.0,
+            230.0
+          ]
+        }
+      ],
+      "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-parity-next\\O2-run.log"
+    }
+  ],
+  "conclusion": "Broad omission of paired physical-Pencil PAN is observably not native-modal parity: for dy=+20 the exact Circle modal changes radius 25->31 and the exact Transform PROPSIZE case changes radius 2->2.2; omitting PAN while retaining ordinary MOUSEMOVE leaves those radii 25 and 2. Circle radius is persisted by RNA_int_set. Ordinary mouse positioning still executes in both consumers. These are native advanced size semantics, not viewport navigation.",
+  "policy_implication": "Do not describe a canvas-wide Pencil paired-PAN omission as navigation-only or as preserving all native advanced controls. A Knife-scoped correction can leave Circle/Transform TRACKPADPAN mappings intact; this characterization supplies no receipt, recognizer or lifecycle implementation.",
+  "model_boundaries": [
+    "The complete actual WM_gesture_circle_modal function executes, including mouse-motion, SIZE, ADD, persistence and min clamp. RNA property storage, apply-selection, redraw and gesture-end are explicit small instrumentation; no scene selection geometry is executed.",
+    "Actual Transform PROPSIZE/UP/DOWN case bodies and actual MOUSEMOVE branch body execute. Their surrounding dispatcher, numeric-input precedence, modal poll, transformations, snapping, calculatePropRatio geometry and WM ownership are not executed. calculatePropRatio only records invocation.",
+    "Actual native Python keymap functions execute for both use_alt_navigation settings. A small explicit stock-binding matcher checks type/value/modifier admission; custom keymaps and real WM dispatch are not simulated.",
+    "wmEvent xy/prev_xy and native mapped action are supplied explicitly. No claim that a physical device produces this exact dy, or that all contacts reach these consumers. Modifier and proportional-edit preconditions are stated and exercised.",
+    "No production overlay or existing tests changed; no new iOS build, target execution, UIKit/device proof, stock GUI input injection, binary commit, assertion weakening or rollback claim."
+  ],
+  "production_edited": false,
+  "existing_tests_edited": false,
+  "target_or_device_proof": false
+}

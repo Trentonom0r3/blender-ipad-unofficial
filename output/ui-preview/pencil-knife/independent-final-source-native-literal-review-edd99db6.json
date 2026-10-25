@@ -1,0 +1,167 @@
+{
+  "status": "PASS_BOUNDED_FINAL_SOURCE_NATIVE_LITERAL_REVIEW_FULL_SUITE_PENDING",
+  "reviewed_utc": "2026-10-25T19:45:29.871301+00:00",
+  "reviewer": "independent canvas/native agent; final read-only review; report is the only write",
+  "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "baseline_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "authoritative_source_validation": {
+    "raw_Git_reverse_apply_check": {
+      "returncode": 0,
+      "stderr": ""
+    },
+    "136_actual_source_hashes_match_root_raw_Git_reconstruction": true,
+    "actual_changed_targets": [
+      "intern/ghost/GHOST_NavigationIOS.hh",
+      "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "source/blender/blenkernel/BKE_screen.hh",
+      "source/blender/editors/include/ED_ipad_panels.hh",
+      "source/blender/editors/include/ED_mesh.hh",
+      "source/blender/editors/include/ED_screen.hh",
+      "source/blender/editors/mesh/editmesh_knife.cc",
+      "source/blender/editors/screen/screen_ipad_panels.cc",
+      "source/blender/editors/space_api/spacetypes.cc",
+      "source/blender/windowmanager/WM_ipad_knife.hh",
+      "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+      "source/blender/windowmanager/intern/wm_draw.cc",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source/blender/windowmanager/intern/wm_window.cc",
+      "source/blender/windowmanager/wm_draw.hh"
+    ],
+    "changed_target_hashes": {
+      "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+      "intern/ghost/intern/GHOST_WindowIOS.mm": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34",
+      "source/blender/blenkernel/BKE_screen.hh": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+      "source/blender/editors/include/ED_ipad_panels.hh": "4f21bd297c75d8541f7edc417390ce5d9987587d19c8a3d9f460ca1cae451cbb",
+      "source/blender/editors/include/ED_mesh.hh": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+      "source/blender/editors/include/ED_screen.hh": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350",
+      "source/blender/editors/mesh/editmesh_knife.cc": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+      "source/blender/editors/screen/screen_ipad_panels.cc": "1accb93cd599da25a13cb3ed9a03843d45f6e1bb59f206e45b6a5a368aee7c84",
+      "source/blender/editors/space_api/spacetypes.cc": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+      "source/blender/windowmanager/WM_ipad_knife.hh": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684",
+      "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f",
+      "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b",
+      "source/blender/windowmanager/intern/wm_window.cc": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+      "source/blender/windowmanager/wm_draw.hh": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5"
+    },
+    "unchanged_prior_patch_sections": 121,
+    "all7_python_UI_byte_exact": true,
+    "11_other_GHOST_paths_byte_exact": true,
+    "unchanged_UI_hashes": {
+      "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+      "scripts/startup/bl_ui/__init__.py": "55b4b636adef9b3e7970d85458671c1c6432517e4790eaf49ece0ba89ceee3fe",
+      "scripts/startup/bl_ui/space_filebrowser.py": "cec2fecec5a8df8b4f8441ced0b1292b133ccc1d01b4c665b5add39ba92502ec",
+      "scripts/startup/bl_ui/space_properties.py": "fc361190c256f4c28768b6ab0464b8246fa1cb5f3560ab742b1e6f5a0ccb98c2",
+      "scripts/startup/bl_ui/space_topbar.py": "143492fe8c988f4ffed803574a842c7a9ffe8c2282ab7917f3bf6ad7afc27580",
+      "scripts/startup/bl_ui/space_view3d_toolbar.py": "8657ad123a3b84d1cc42b4b6deb96ef06ea5bc092195d1ad5374449be62cbd54",
+      "scripts/startup/bl_ui/space_view3d_ipad.py": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319"
+    },
+    "unchanged_GHOST_hashes": {
+      "intern/ghost/GHOST_Types.h": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff",
+      "intern/ghost/intern/GHOST_ContextIOS.mm": "43e2b4205373c4831576ad30373c477c50a73277aa60fb227e8e267079d494c4",
+      "intern/ghost/intern/GHOST_EventButton.hh": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+      "intern/ghost/intern/GHOST_EventCursor.hh": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+      "intern/ghost/intern/GHOST_SystemIOS.mm": "b6ae830e97b0cb8aee878e67325f3f846f0c62819fa2d6a20996601555fb1d4b",
+      "intern/ghost/GHOST_ProjectImport-api.hh": "5b24ef510dd5c3355c490c821d2989e234762b80baaa47569d33b346c5f577ea",
+      "intern/ghost/intern/GHOST_EventPencilRing.hh": "11c4d85b78114f22b518fc7790aa7147c49526374792c50f88b4a15721056689",
+      "intern/ghost/intern/GHOST_ProjectExportIOS.hh": "375f57b93b6d76f9b3a4487ef87a3cd538ba904424c9354d1a94eb860b0f89ec",
+      "intern/ghost/intern/GHOST_ProjectImportIOS.hh": "3654a7299f8c4c7ae270691f842f2201d2eef8626f2db24f07fde056030c0764",
+      "intern/ghost/intern/GHOST_ProjectRecentIOS.hh": "d8de7d5fc456e487021e2e45f32a0731e4d215f8974a4ce74032e634e205c888",
+      "intern/ghost/intern/GHOST_ProjectSaveIOS.hh": "b20b2be5276c30c73eea3847b993a4154b062af1c73c9318c49a58ca2d9090f3"
+    },
+    "selected15_independently_reconstructed_sources_match": true
+  },
+  "critical_actual_function_hashes": {
+    "source/blender/windowmanager/intern/wm_window.cc::static bool wm_ipad_knife_pan_probe(": "1a4066081af4c5515b90956ea0152f06d15d1463722079a950f8997b58f59968",
+    "source/blender/windowmanager/intern/wm_window.cc::void wm_ghost_init(": "4e43170fbb43f7943a7b24dcbee9e6c06f77f3a35fd656f150862981f6f0b2a2",
+    "source/blender/windowmanager/intern/wm_window.cc::void wm_ghost_init_background(": "e04c02101467631d30dd7839edaba05a6a27d347a3e16c676e20ba6480e771b4",
+    "source/blender/windowmanager/intern/wm_window.cc::void wm_ghost_exit(": "ec2dc5633a49ff42b628714d203ab198b0c97207831f0c4061118f949b9791c5",
+    "source/blender/windowmanager/intern/wm_event_system.cc::static bool wm_ipad_knife_owner_read(": "fe281188a08f8cb34e035b5f8991d8a630fb7a3b6a22a6fa247684bf5285c1fe",
+    "source/blender/windowmanager/intern/wm_event_system.cc::bool WM_ipad_knife_owner_capture(": "553caac418ac0acb655967ca2d21612b96bd938b3569e6ef776f49920fc5fced",
+    "source/blender/windowmanager/intern/wm_event_system.cc::bool WM_ipad_knife_canvas_scope_capture(": "a5cb6963910fbff8ca58a13b7f12d0929b82e7fd1f6008f3106cbb962ffcf1d8",
+    "source/blender/windowmanager/intern/wm_event_system.cc::bool WM_ipad_knife_draw_callback_known(": "1b95f6d726d5b0d7b5c634adc6858945bfe99fdb5412a9e6df2b998b4a8787f4",
+    "source/blender/windowmanager/intern/wm_draw.cc::static void wm_ipad_knife_canvas_stamp_finish(": "9029f682bb4515910f62113c58b88cee5fb5644b881e664bde7a666ffec854a4",
+    "source/blender/windowmanager/intern/wm_draw.cc::static void wm_draw_area_offscreen(": "fae1a3c82dce7147b6a9fede082b90106f83691582ff01e300000f4b68e83ccd",
+    "source/blender/windowmanager/intern/wm_draw.cc::static void wm_draw_window_area_layer(": "c96ea2211702613c4dc33b710d8038fbdae754f0a7a62fad82fdce290226a529",
+    "source/blender/windowmanager/intern/wm_draw.cc::static void wm_draw_window_onscreen(": "af6743dd02bbfb24039e2befeca26b5eb22fc5b7387b7416a7b4516ffc020e12",
+    "source/blender/windowmanager/intern/wm_draw.cc::static void wm_paintcursor_draw(": "ff4f97c0bf427d5e3df243c955f7ce1fd03cb5941cf439a9684942d8c4ceb25f",
+    "source/blender/editors/space_api/spacetypes.cc::static void ed_region_draw_cb_draw(": "a6b779be87055c70f02241c209a6fffaf82cf2df4cb3738410d820adb7ca1ba7",
+    "source/blender/editors/space_api/spacetypes.cc::bool ED_region_knife_pan_callbacks_safe(": "4430046cccbbc3671dd395d55d1a9d248ddfa08d48b466c100333dd9a2761cc7",
+    "source/blender/editors/mesh/editmesh_knife.cc::bool ED_mesh_knife_draw_callback_known(": "0b8d4fcfcbd26bcd42421b53da4cd348af29accc0c330703df40f3c887c22b31",
+    "source/blender/editors/mesh/editmesh_knife.cc::wmOperatorStatus ED_mesh_knife_modal_action(": "945a2b98789c7078f486ce94a3b862748c84591e28f8cc1153a515d5bd623e33",
+    "source/blender/editors/mesh/editmesh_knife.cc::static wmOperatorStatus knifetool_modal(": "5837277adddd3b8e29c51c8a97c4d70eeb14e0bbeef3a28afda1e9e98be6cdf4",
+    "source/blender/editors/screen/screen_ipad_panels.cc::static bool ipad_knife_hierarchy_native_capture(": "72d0baed81b6f5f76245397befe93c867066fb4294a8cd3bedf6791479489da5",
+    "source/blender/editors/screen/screen_ipad_panels.cc::static void ipad_knife_hierarchy_publish(": "55243a3d7b11f4b847d94097142ebcba77aaa1414b547e120ed240c2da4af8af",
+    "source/blender/editors/screen/screen_ipad_panels.cc::void ED_ipad_knife_hierarchy_region_presented(": "53a0d0300616e1bb4beb0efadf92bfb0d24d0e93ae892b801ac757440063cbfe",
+    "source/blender/editors/screen/screen_ipad_panels.cc::bool ED_ipad_knife_pan_probe(": "656d900cad6713732dda43c2b69eca50f68f4ade95751e91569e16e9f6860f0f",
+    "intern/ghost/intern/GHOST_WindowIOS.mm::PencilKnifePanContact pencil_knife_pan_at_start(": "d51d7be482d30d07f9f048c4065ddb14d698558cb78e874cc98aa7f33aae0652",
+    "intern/ghost/intern/GHOST_WindowIOS.mm::bool pencil_knife_pan_recognize(": "f9d57a36d5445f312d153ebc47986f938c437047f482ecbf12647bec124f7a42",
+    "intern/ghost/intern/GHOST_WindowIOS.mm::- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender\n{": "71ba2094ceb105fa2a4d34f6db41ad7b64545a0ee2c3ed1f013b55f43f194d93",
+    "intern/ghost/intern/GHOST_WindowIOS.mm::- (void)generateUserInputEvents:": "cf8f24a332753b9bacee67a5dbcc7e33106d7e93343a0f8f4506ea21c1e45ce4"
+  },
+  "source_native_review": [
+    "Original-live-only: public receipt valid() requires Live, zero tool_ref and original owner identity; ED probe emits Live only and immediately refuses absent native registered Knife. No initial tool/poll/default-keymap prediction or forced invocation; no-owner/same-batch initial packets retain PAN.",
+    "At physical Begin and before ordinary recognized Began, copied physical serial/origin must match; native bridge freshly resolves current G_MAIN/manager/window/ghostwin, workspace/layout/screen membership then owns CTX_create/free with only WM setters. Direct scope32 binds Main/WM/window/screen/workspace/scene/layer/basact/Object/Mesh IDs, settled edit mesh and finite native geometry. Native original23owner resolution checks actual registered handler/operator/type lifetimes before consuming native customdata.",
+    "Query graph inspected through actual owner, direct scope, ED panel visibility, current hierarchy/current drawlist and pinned context/workspace implementations. No tool/provider/RNA poll/depsgraph sync/native modal/Cancel/draw/event pump executes during probe. CTX_data_main_set is absent; new owned calloc context has no Python/store/dynamic poll callback and every query return after allocation frees it. Addresses from receipts are numeric comparisons against fresh members, never cast into old operator/context pointers.",
+    "Exact known Knife callback requires fresh registered original owner, current region, actual kcd draw_handle, knifetool_draw function, kcd customdata and POST_VIEW. Fresh list inspection invokes no callbacks; duplicate/foreign/unknown entries refuse. Runtime execution facts are marked before actual callback/gizmo/paintcursor execution and survive self-removal. Native unknown gizmo flags account for hidden/NoSetup and hover visibility without arbitrary poll/hit callbacks; no world-gizmo ID allowlist.",
+    "wmIPadKnifeCanvasStamp and wmDrawBuffer are trivial/trivially copyable under actual header static assertions. Raw owner arrays avoid kernel-to-WM header dependency. Actual calloc allocation sites remain; all local stamps zero-initialize. Only successful full/nonstereo before-after matching scope can produce valid content. EVERY successful full redraw gets a new monotonic token; partial/stereo/failure invalidate. Cached composition copies exact existing stamp and never manufactures a current tool or owner.",
+    "Successful actual blit/blend footprints copy texture stamp into completed native hierarchy, full region/split union coverage is required, post-blit known/unknown facts merge before publication, and old known pixels require the same fresh native owner. Current UI blocks, visible unknown widgets, opaque window callbacks, active drags, modal/UI handlers, gestures/popups and covered higher UI refuse. Drag evidence merges true immediately BEFORE actual wm_drags_draw and remains sticky after self-removal; paint receipt flags are preserved.",
+    "Ring/HUD/hardware/pointer/Finger/navigation/resize priorities precede ordinary precision admission. Changed reads a frozen decision and performs no probe. Current GHOST and native WM keyboard queues (including modal-mapped keyboard prev_type and other windows) refuse both gates. Reset/invalidation/fresh contact/window destruction clear receipt; shutdown clears registry callback before system disposal. Additional touches cannot replace or rearm the original admitted contact.",
+    "Ordinary producer comparison independently recovers exact baseline after removing only recognized-Begin/frozen-read and PAN predicate additions. Event generator, cursor/button constructors, cached translation, positions/tablet/direct/terminal payloads and indirect/multifinger/pinch/cancellation bodies remain baseline. Original native Knife modal/action code is exact. Only admitted paired PAN deletion is implemented."
+  ],
+  "literal_UI_review": {
+    "result": "PASS",
+    "basis": "All7 shipped interaction Python sections and sources exact verified baseline; native Knife modal/action unchanged and source changes introduce no user-facing UI labels or layout changes. Existing native Finish/Cancel, default bars/tools/ring/Base contracts remain. Source equality is not a fresh device screenshot or packaged UI check."
+  },
+  "portable_test_review": {
+    "result": "PASS_BOUNDED_HOST_INTEGRATION",
+    "frozen_input_count": 182,
+    "frozen_input_hash_mismatches": [],
+    "reviewed_test_artifact_hashes": {
+      "build\\test_pencil_knife_pan_bridge.py": "6069d8088c2aa839bacf862cacebd093abb3f47b7918cd4db53c874e870e64c6",
+      "build\\test_pencil_knife_pan_canvas.py": "a739d6e458a36547aecaf1799067d06dfffe84b60057e384161ca3eb791bb1e4",
+      "build\\test_pencil_knife_pan_ghost.py": "783519c0ea30f9cd92875de3032e4c475224f37068b35ff30f505432a9607c2d",
+      "build\\tests\\knife_pan_canvas_cases.inc.cc": "5d9221bf0b09a20a7de099755991e1c6bd0487c91374ca6b6ad568c53bc75419",
+      "build\\tests\\knife_pan_canvas_draw_models.inc.cc": "984db6242d0b51c5dfd2f946f0dcc89048c928ab49d6cf951a0973e136206e51",
+      "build\\tests\\knife_pan_canvas_models.inc.cc": "8502c82f462bd1514a51e24f6e9c14ae9ffbb66409944dbade0baf6756a75c23",
+      "build\\tests\\knife_pan_ghost\\baseline-GHOST_NavigationIOS.hh": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+      "build\\tests\\knife_pan_ghost\\baseline-GHOST_WindowIOS.mm": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+      "build\\tests\\knife_pan_ghost\\native-parity-models.inc.cc": "3ca2ee3d6315870ba4dac0b36a107e6c0f5f120067b7229e93ca16b2c615b0fe",
+      "build\\tests\\knife_pan_ghost\\retained-connected-models.inc.cc": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+      "build\\tests\\knife_pan_ghost\\run_connected.py": "af862bf5414e15e508d1c453a5e61cb0dc549822f6735fffae8f769933b0bce4",
+      "build\\tests\\knife_pan_ghost\\scenarios.inc.cc": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21",
+      "build\\tests\\knife_pan_bridge_models.py": "3fcfc3676292f8e1a2ef1f37225b7fb92c1c586d427fd70f4a07d57b6a454cd1"
+    },
+    "workflow_sha256": "0c6e3f84c69469edfafc9711c5a78eef0770585ae8e169cc9d7d8abc8d28c2ae",
+    "CI_discovery": "Existing Ubuntu preflight now runs test_pencil_knife_pan_*.py; portable fixtures use local companions/C++17 and current patch+pin reconstruction, no external Temp dependency for default runs. Explicit source-root/source-dir remains supported. Existing compiler requirement applies; no hosted CI/native run claimed.",
+    "actual_connected_chain": "Bridge driver executes actual GHOST wrappers/registry -> native bridge -> ED probe -> original owner/scope/completed hierarchy, actual GHOST queue getNumEvents/pushEvent/getEventManager and pinned CTX/workspace functions, with counted poison provider/Python/sound seams and native-shaped backing models. Native type identity function executes with callback pointer stubs; full native Knife invocation/cuts tested separately.",
+    "failure_controls": "Source-required GHOST runner has no auto-correction fallback; baseline PAN control remains and old pans==0 assertion must fail at both O0/O2. Current fixtures retain Ctrl zoom10->10.197 historical reachability, admitted PAN absence, Circle25->31/Transform2->2.2 calculations, no-owner/custom initial fallback, exact cookie/data/type/lifetime/region negatives, stale/partial/stereo/current/drawn unknown widgets and full-redraw invalidation. New retained HUD fixture repairs preserve original test/assertion ASTs with fail-on-unexpected inactive-boundary controls.",
+    "known_boundaries": "UIKit/super ordering, system initialization, BKE/geometry/GPU allocation, intrusive list backing and registries use explicit native-shaped models. Reports are host/source evidence, not full native translation unit, SDK, live scheduling, rendered GPU pixels, global heap/lifetime/CFG/reentrancy, history/Undo or device proof."
+  },
+  "actionable_findings": [],
+  "resolved_review_findings": [
+    {
+      "finding": "Ghost wrapper relative-output directory and stale PASS reuse",
+      "resolution": "Root fixed wrapper output resolution before cwd switch, retires prior report, requires fresh report and current driver SHA. Reviewed final code directly. Root reported disposable empty-driver stale-PASS negative fails as required; report frozen input identity includes fix."
+    }
+  ],
+  "inherited_reconstruction_limit": {
+    "path": "source/blender/editors/object/object_modes.cc",
+    "description": "Retained exact-hunk source helper moves existing unchanged WM_api.hh include from raw-Git EOF to include block. Candidate and verified baseline helper outputs are identical for this path; root raw-Git report and actual Temp hash agree. This is outside15 changed targets, not a new source edit. Authoritative review uses actual raw-Git materialization for that file.",
+    "actual_raw_Git_sha256": "d6ce59b062ff77a9c659843e35c8b8c9f3587b68b5a4913d2031517547c43a5f",
+    "helper_sha256": "8e31d40b4c8d64d84fd1151fbd214c57b47b86c03b5088720d0cae97cf39f734"
+  },
+  "full_validation": {
+    "status_at_review": "RUNNING_FULL_FROZEN_SUITE",
+    "full_suite_pending_at_review": true,
+    "report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-frozen-validation.json",
+    "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\knife-pan-full-frozen.log",
+    "acceptance": "No ready/native-build recommendation until full frozen validation and required preflight/review gates finish. This bounded review does not count pending tests passed."
+  },
+  "production_or_tests_edited_by_this_review": false,
+  "native_build_run": false,
+  "commit_created": false,
+  "device_acceptance": false
+}

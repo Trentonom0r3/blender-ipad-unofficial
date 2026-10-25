@@ -1,0 +1,98 @@
+{
+  "status": "PASS_RETAINED_HUD_PLACEMENT_PRESENTATION_EXTRACTION_REPAIR",
+  "candidate_requested": "edd99db6",
+  "current_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "initial_diagnostic_log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\knife-pan-retained-hud-first.log",
+  "initial_diagnostic_log_sha256": "1797b2b45378e036ed3d5ff995b666698c3ed63cfec642bf3f93d7f1a2ad0b58",
+  "changed_tracked_paths": [
+    "build/test_pencil_hud_presentation.py"
+  ],
+  "authorized_unmodified_path": "build/test_pencil_hud_placement.py",
+  "failures_audited": [
+    {
+      "test": "PencilHUDPlacementTests.test_actual_composite_and_old_footprint_after_launcher_or_panel_change",
+      "failure": "compile-time missing canvas-stamp/native PAN types in broad retained receipt extraction"
+    },
+    {
+      "test": "PencilHUDPlacementTests.test_native_exposure_left_empty_rail_and_measured_chrome",
+      "failure": "same compiled_prefix extraction failure before any behavioral assertion"
+    },
+    {
+      "test": "PencilHUDPresentationTests.test_actual_compositor_footprint_success_and_early_returns",
+      "failure": "same compiled_prefix extraction failure before any behavioral assertion"
+    },
+    {
+      "test": "PencilHUDPresentationTests.test_connected_cached_draw_history_geometry_and_frozen_generation",
+      "failure": "same compiled_prefix extraction failure before any behavioral assertion"
+    },
+    {
+      "test": "PencilHUDPresentationTests.test_stale_retirement_is_named_onfree_and_reacquires_after_callbacks",
+      "failure": "same compiled_prefix extraction failure before any behavioral assertion"
+    }
+  ],
+  "repair": [
+    "Extracted the unrelated new public ED_ipad_knife_pan_probe function out of the legacy ordinary-HUD RECEIPTS block by its exact source function body. The legacy entry graph never calls it; actual PAN bridge tests cover it separately.",
+    "Modeled only the native absent-Knife-hierarchy-frame early return of ED_ipad_knife_hierarchy_region_presented. Original fixtures deliberately have no hierarchy frame and retain their void* buffer identity expectations. New boundary asserts require a HUD region and no active hierarchy frame; unexpected use aborts instead of silently returning.",
+    "All original test methods, embedded native test assertion strings and Python assertion ASTs remain identical. Placement file was not changed."
+  ],
+  "behavior_results": {
+    "placement": "4/4 PASS in 4.996s; direct unittest tool execution, no production mutation",
+    "presentation": "5/5 PASS in 5.949s; complete diagnostic saved in hud-presentation-after.log",
+    "new_boundary_negative_controls": [
+      {
+        "case": "unexpected_active_hierarchy",
+        "returncode": 3221226505,
+        "stdout": "",
+        "stderr": "Assertion failed: ipad_knife_hierarchy_frames.find(uintptr_t(win)) == ipad_knife_hierarchy_frames.end(), file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\inactive-hierarchy-boundary-negative.cc, line 544\n",
+        "expected_failure": true
+      },
+      {
+        "case": "unexpected_non_hud_region",
+        "returncode": 3221226505,
+        "stdout": "",
+        "stderr": "Assertion failed: C && win && area && region && region->regiontype == RGN_TYPE_HUD, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\inactive-hierarchy-boundary-negative.cc, line 543\n",
+        "expected_failure": true
+      }
+    ]
+  },
+  "assertion_preservation": {
+    "build/test_pencil_hud_placement.py": {
+      "original_test_methods": 4,
+      "original_python_assertions": 2,
+      "all_original_test_method_ASTs_identical": true,
+      "all_original_python_assertion_ASTs_identical": true,
+      "before_sha256": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d",
+      "after_sha256": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d"
+    },
+    "build/test_pencil_hud_presentation.py": {
+      "original_test_methods": 5,
+      "original_python_assertions": 18,
+      "all_original_test_method_ASTs_identical": true,
+      "all_original_python_assertion_ASTs_identical": true,
+      "before_sha256": "8c419f700eac9ec663707296a260eabeb5f7f5221240f931faebd08612877ad1",
+      "after_sha256": "3ac9bb4a5cb2ae7d3292dc1485de686c78f36527f94f5594c06929d08c518341"
+    }
+  },
+  "production_regression_found": false,
+  "production_regression_conclusion_scope": "The five assigned compile failures were retained extraction/model incompatibilities. Repaired fixtures pass all nine unchanged behavioral tests. This does not resolve other failures in the original 68-test batch or establish native/SDK/GPU/device correctness.",
+  "production_patch_or_workflow_edited": false,
+  "native_build_run": false,
+  "commit_created": false,
+  "device_acceptance": false,
+  "evidence_hashes": {
+    "hud-placement-presentation-after-assertions.json": "47bf4d8318ed19738108a639ab82b6d36f9df7e3092d6d7674c4c0e97deaf5e5",
+    "hud-placement-presentation-before-assertions.json": "33ec7a903d7f8fecb9c4d1874458d5c41cc47aae2094eeb4b84bd0bf0580c7e6",
+    "hud-placement-presentation-repair.diff": "3b664cd047d0f399566790d563c35d3766b2af40fb9da2af82232dc7a8198521",
+    "hud-presentation-after.log": "ba0e24d65093765abe1a3d7ebc0397125281e95ef6b811cde7a7ba16be5c42fb",
+    "hud-receipts-original-assertions.json": "3b190f39b4fdcc5979759d7374c4b9ebc6155cdf9ef1746cbed666eaab08011d",
+    "hud-receipts-original-O0.log": "a26eeb4fce090a175eb0379076cf8a55a0f8d73bec7a7f5eae3fe87e53d63401",
+    "hud-receipts-original.py": "4a198c6af53e2e5bdc347e0443752053f90c8451614936569785e347727ba96d",
+    "hud-receipts-repaired-O0.log": "48989d817e956a3eae0a9bee02ae0f745bf78d4f2224663c76ffef6eec97ed7f",
+    "inactive-hierarchy-boundary-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "inactive-hierarchy-boundary-negative.cc": "9409c776a829dea6a1d65857b71ea09fb59695be4c2670562a0163081eea1a06",
+    "inactive-hierarchy-boundary-negative.exe": "eef085fbc94494cc4be49bbea98537cac2edbcc25360d6b2688fc5e13a5467e1",
+    "inactive-hierarchy-boundary-negatives.json": "32aad945611529b7345ddc1c840d9aac08ae24208d86e6013b94a6239e830cd7",
+    "test_pencil_hud_placement.py.before": "5014f7137b6e16153837383fc73d5600adb842e51d19ab29255946b625e7bd6d",
+    "test_pencil_hud_presentation.py.before": "8c419f700eac9ec663707296a260eabeb5f7f5221240f931faebd08612877ad1"
+  }
+}

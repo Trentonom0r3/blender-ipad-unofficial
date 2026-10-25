@@ -101,13 +101,22 @@ SUFFIX_MARKER = '  UserInputEvent event_info(&touch_point, nullptr, nullptr, pen
 PREFIX, SUFFIX = HISTORICAL_PAN.split(SUFFIX_MARKER, 1)
 SUFFIX = SUFFIX_MARKER + SUFFIX
 OLD_MOVEMENT = 'if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {'
-NEW_MOVEMENT = ('if (!event_info.pencil_paint.valid() &&\n'
+NEW_MOVEMENT = ('if (!event_info.pencil_paint.valid() && !omit_knife_paired_pan &&\n'
                 '        !CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {')
 OLD_TERMINAL = '    event_info.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);'
 NEW_TERMINAL = ('    event_info.cancelled = event_info.pencil_paint.valid() &&\n'
                 '                           sender.state != UIGestureRecognizerStateEnded;\n' + OLD_TERMINAL)
 assert SUFFIX.count(OLD_MOVEMENT) == SUFFIX.count(OLD_TERMINAL) == 1
 CORRECTED_SUFFIX = SUFFIX.replace(OLD_MOVEMENT, NEW_MOVEMENT).replace(OLD_TERMINAL, NEW_TERMINAL)
+# The source oracle describes the new declared Knife extension; it is NEVER
+# used as the executed producer. CORRECTED_PAN below remains actual PAN.
+# This retained brush fixture has no original Knife actor/owner. The full new
+# Knife positive and refusal paths execute in test_pencil_knife_pan_{ghost,bridge}.
+PAINT_ONLY_PREFIX = PREFIX
+PREFIX += ('  if (sender.state == UIGestureRecognizerStateBegan) {\n'
+           '    [sender recognizeKnifePan];\n'
+           '  }\n'
+           '  const bool omit_knife_paired_pan = [sender omitKnifePairedPan];\n')
 SIMULATED_CORRECTED_PAN = PREFIX + CORRECTED_SUFFIX
 CORRECTED_PAN = PAN
 def native_tokens(text):
@@ -117,6 +126,8 @@ assert CORRECTED_PAN[:len(PREFIX)] == PREFIX
 assert CORRECTED_SUFFIX.replace(NEW_MOVEMENT, OLD_MOVEMENT).replace(NEW_TERMINAL, OLD_TERMINAL) == SUFFIX
 
 TRANSLATIONS = {
+    '[sender recognizeKnifePan]': 'sender.recognizeKnifePan()',
+    '[sender omitKnifePairedPan]': 'sender.omitKnifePairedPan()',
     '[sender touchStreamAllowed]': 'sender.touchStreamAllowed()',
     '[sender getScaledTouchPoint:window]': 'sender.touch_point',
     '[sender getScaledTranslation:window]': 'sender.translation',
@@ -210,7 +221,19 @@ void generateUserInputEvents(const UserInputEvent &event_info) {
 }
 enum { UIGestureRecognizerStateBegan=1,UIGestureRecognizerStateChanged,UIGestureRecognizerStateEnded,
  UIGestureRecognizerStateCancelled,UIGestureRecognizerStateFailed };
+namespace ghost::ios {
+/* An unexpected native Knife probe in this brush-only boundary is a failure. */
+bool pencil_knife_pan_recognize(const void *,const PencilKnifePanContact&){
+ assert(false && "no original Knife actor in retained brush fixture");return false;
+}
+}
 struct Sender {int state=UIGestureRecognizerStateBegan;bool pencil=true;
+ ghost::ios::GestureContact gesture_contact;
+ ghost::ios::PencilKnifePanContact pencil_knife_pan_origin;
+ const void*ring_window=nullptr;bool omit_knife_paired_pan=false,knife_pan_recognized=false;
+ TOUCH_FORGET_KNIFE
+ TOUCH_RECOGNIZE_KNIFE
+ TOUCH_OMIT_KNIFE
  CGPoint touch_point{110,100},translation{10,0},cached;
  ghost::ios::PencilSample sample{true,.4f,.2f,-.1f};ghost::ios::PencilPaintContact contact;
  ghost::ios::HUDContact hud;ghost::ios::PencilRingContact ring;
@@ -684,7 +707,10 @@ def build_source(pan):
         'PAN': translate_pan(pan),
         'CANCEL_CAPTURE': capture,
         'TOUCH_ALLOWED': function(recognizer, '- (BOOL)touchStreamAllowed').replace('- (BOOL)touchStreamAllowed', 'bool touchStreamAllowed()'),
-        'TOUCH_INVALIDATE': function(recognizer, '- (void)invalidateTouchStream').replace('- (void)invalidateTouchStream', 'void invalidateTouchStream()'),
+        'TOUCH_INVALIDATE': function(recognizer, '- (void)invalidateTouchStream').replace('- (void)invalidateTouchStream', 'void invalidateTouchStream()').replace('[self forgetKnifePanContact]', 'forgetKnifePanContact()'),
+        'TOUCH_FORGET_KNIFE': function(recognizer, '- (void)forgetKnifePanContact').replace('- (void)forgetKnifePanContact', 'void forgetKnifePanContact()'),
+        'TOUCH_RECOGNIZE_KNIFE': function(recognizer, '- (void)recognizeKnifePan').replace('- (void)recognizeKnifePan', 'void recognizeKnifePan()'),
+        'TOUCH_OMIT_KNIFE': block(recognizer, '- (BOOL)omitKnifePairedPan').replace('- (BOOL)omitKnifePairedPan', 'bool omitKnifePairedPan()'),
         'QUEUE_ADMISSION': queue,
         'CURSOR_CONVERT': cursor,
         'BUTTON_CONVERT': button,

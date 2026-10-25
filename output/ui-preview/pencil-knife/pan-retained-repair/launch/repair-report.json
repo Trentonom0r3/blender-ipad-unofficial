@@ -1,0 +1,138 @@
+{
+  "status": "PASS_RETAINED_HUD_LAUNCH_FIXTURE_ONLY_REPAIR",
+  "utc": "2026-10-25T19:36:45.687188+00:00",
+  "authorized_scope": [
+    "build/test_pencil_hud_launch.py"
+  ],
+  "candidate_overlay_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "target_before_sha256": "fa94e37ce2b4e96d437952f7ae2bb75bcf3bf1e2a0c7fc13b8502f74287f03dc",
+  "target_after_sha256": "955fa61912c037cbf57475f9ea6ba9ed538f77261d4eecca85a115ed57840341",
+  "root_cause": "Launch compiled_prefix imported an expanding broad receipt range, accidentally compiling the new independent Canvas stamp hierarchy and ED_ipad_knife_pan_probe against the old launch-only model. This is source-extraction/model drift; it did not demonstrate a native launch regression.",
+  "repair": "Assemble exact current native Owner/Content/identity/equality/capture/layout/draw bodies used by the launch contract, and only their preexisting inactive-Knife model adapters. Omit unused legacy GPU compositor model/constants. Add brace-balanced one-line-safe extraction helper only in this file. Do not modify native bodies or assertions.",
+  "suite": {
+    "command": "python -m unittest discover -s build -p test_pencil_hud_launch.py -v",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 2.19,
+    "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\launch-suite.log",
+    "historical_control": "Exact OLD_OWNER_CAPTURE is unchanged; expected exit81 first-layout native animation failure still executes and passes its original assertion."
+  },
+  "preserved": {
+    "all_class_methods_ast_identical": true,
+    "method_names": [
+      "run_native",
+      "test_first_layout_preserves_hud_before_actual_native_animation",
+      "test_success_and_callback_free_refusal_paths_preserve_caller_context",
+      "test_failed_source_is_negative_control_for_first_layout",
+      "test_native_bodies_and_first_layout_call_order"
+    ],
+    "all_original_assertion_ast_identical": true,
+    "assertion_node_count": 10,
+    "original_assertions_ast_sha256": "d65d857f7be0128fba9ce18fa66a90e50d256e38edbe8afbac411336aedac609",
+    "repaired_assertions_ast_sha256": "d65d857f7be0128fba9ce18fa66a90e50d256e38edbe8afbac411336aedac609",
+    "all_native_pin_and_scenario_constants_identical": true,
+    "constant_sha256": {
+      "PIN_SETTERS": "b9c375ab1f24d44e44cb7e1c8a10ef4ccae28efb3f029a1bc02401028a9df516",
+      "PIN_ANIMATION": "a7e7a7db045e1af00f5e61c5af867ec4ac8a60d1cb172f3774197fba4d6be4d4",
+      "PIN_SHA256": "f752b5caa4767ccbf025da6d8de5c9c1af99a952b7d8afa2de865d7a51983983",
+      "OLD_OWNER_CAPTURE": "c2ed69b4bbc482f53344f586a6b34294320161279b20043378bd04009c12e65c",
+      "PANEL_WORLD": "46c3923c97a50f2298f7b496bc1f5273c408376ed2e9255d62784aaec3538c23",
+      "SETUP": "65e86faafadcdc6a003049d4a4c4518848401be9d1fbf2660be01800d1049821"
+    },
+    "original_file_sha256": "fa94e37ce2b4e96d437952f7ae2bb75bcf3bf1e2a0c7fc13b8502f74287f03dc",
+    "repaired_file_sha256": "955fa61912c037cbf57475f9ea6ba9ed538f77261d4eecca85a115ed57840341",
+    "original_methods_ast_sha256": "bf0b09743a6498afe3d2bf7be6007a733315bebd2d224f56bef1cff875eece4e",
+    "repaired_methods_ast_sha256": "bf0b09743a6498afe3d2bf7be6007a733315bebd2d224f56bef1cff875eece4e"
+  },
+  "actual_native_pin_verification": {
+    "setters_exact_cached_context_cc": true,
+    "animation_exact_cached_interface_panel_cc": true,
+    "combined_sha256": "549d4b2f7a0922624bb2d0430979214f12837013150a20fc0d3a807041ca83f4",
+    "context_sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "panel_sha256": "a1b38d139a9668b65615672fef8f6bc38b962caf6c2221448a68bdefed1ebd1a"
+  },
+  "current_extracted_native_functions": {
+    "static uint64_t ipad_hud_new_identity(": {
+      "sha256": "a7dd9272435f6b309c6f1019ba1e93819941924f3bdda864393617d60552c550",
+      "compiled_exact": true
+    },
+    "static bool ipad_hud_rect_equal(": {
+      "sha256": "7cf5947934e7b0fad4dffe7052e5763e801f823f0c721c78e687ae6af98efdee",
+      "compiled_exact": true
+    },
+    "static bool ipad_hud_owner_equal(": {
+      "sha256": "0e47636018f0db5ae0fb8d73de65b89343e9fd14be2d4210e4f84ab4561a5b33",
+      "compiled_exact": true
+    },
+    "static bool ipad_hud_window_live(": {
+      "sha256": "ba4d9eefaeb4f7f825577e44b043f320d03dbe4b49d6b50ea8f9598c44249914",
+      "compiled_exact": true
+    },
+    "static bool ipad_hud_owner_capture(": {
+      "sha256": "c5e4902401cc0dd27de9e40b90c18b0574adf3c47d497861a263617009bc2229",
+      "compiled_exact": true
+    },
+    "void ED_ipad_hud_layout_begin(": {
+      "sha256": "d9969b77e2dd50c2f4f6c77915f0aa549e855855d42995b239c760f617d7f683",
+      "compiled_exact": true
+    },
+    "void ED_ipad_hud_layout_end(": {
+      "sha256": "e3f85bce9702b14a9b95fdb5be00677633505ded792ac333bb7f4686663b4c93",
+      "compiled_exact": true
+    },
+    "void ED_ipad_hud_draw_end(": {
+      "sha256": "d8e3db53818eb19aa66d8d02bab139db196d512aaee78a6a04455205c85d3eb2",
+      "compiled_exact": true
+    }
+  },
+  "first_layout_effects": "Actual CTX_wm_area_set clears current region. Area-before-region restoration executes through untouched reference adapter into original native bodies; first layout/draw and all31 refused capture paths retain caller context; real panel animation consumes HUD View2D/window eventstate and creates/removes native modeled handlers/timers.",
+  "prior_failures_preserved": [
+    "retained-hud-first.original.log",
+    "launch-suite.first-extraction-failure.log",
+    "launch-suite.unused-compositor-model-failure.log"
+  ],
+  "limits": [
+    "Pinned Python context-dictionary invalidation is compiled out as before; native WM/list/timer/GPU/provider accessors remain explicit fixture adapters.",
+    "No iOS/native target build, launch/device behavior, compiled package or broad context-lifecycle proof claimed.",
+    "No production/overlay or other test edited by this delegated repair. Root owns other simultaneous repairs and final integration/full validation."
+  ],
+  "files": {
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\assertion-ast-equality.json": {
+      "bytes": 1636,
+      "sha256": "83a6ef32348cf6c77e1ebb73e826840a1595db2a780aac4bca3327020eda55f0"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\current-actual-owner-layout-native-prefix.cc": {
+      "bytes": 23348,
+      "sha256": "f3ed7fe9ab1f95cb662584c4356e6fba64551d001456ce0d304114feec894969"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\historical-launch-failure-native-prefix.cc": {
+      "bytes": 21757,
+      "sha256": "8fe66b459a202014cb0f0fdf2cc1abb5f4ee7e5ad6c62158a9029ecf2308caa0"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\launch-suite.first-extraction-failure.log": {
+      "bytes": 28573,
+      "sha256": "42d028f7e456cdfe83597158bbefdf142daec9273f1dc4f31b209b85b01bf0f9"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\launch-suite.log": {
+      "bytes": 789,
+      "sha256": "6bb08fcb70fe1b3f9a97caeb6a6867d6835d1c27b584740bdd2b1cee82468ae8"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\launch-suite.unused-compositor-model-failure.log": {
+      "bytes": 10984,
+      "sha256": "d12b7f8267a6428a26669340dee32ff48266af52872964cdafe55e38ccccc04b"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\launch-test-only.diff": {
+      "bytes": 3817,
+      "sha256": "3046af905fd39e857182418a6cce8d1582863533d2a28e2ab2b427d8170570d7"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\retained-hud-first.original.log": {
+      "bytes": 153687,
+      "sha256": "1797b2b45378e036ed3d5ff995b666698c3ed63cfec642bf3f93d7f1a2ad0b58"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\launch\\test_pencil_hud_launch.before.py": {
+      "bytes": 21129,
+      "sha256": "fa94e37ce2b4e96d437952f7ae2bb75bcf3bf1e2a0c7fc13b8502f74287f03dc"
+    }
+  }
+}

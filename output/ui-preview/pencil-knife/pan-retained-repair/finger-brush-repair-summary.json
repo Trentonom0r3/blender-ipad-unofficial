@@ -1,0 +1,58 @@
+{
+  "status": "PASS_ALL_8_FINGER_CASES_AND_TARGETED_O2_WITH_ORIGINAL_ASSERTIONS",
+  "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "only_changed_tracked_test": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\test_finger_brush_admission.py",
+  "test_sha256": "2c9877480204923fb10feef8d053aa2d45e3cd0ae3028c529d157c63c366a773",
+  "original_full_suite_failure": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\knife-pan-full-frozen.log",
+    "sha256": "5ad90750f21087035b28fd70956d9e2944c5a060b98cf512532b9ed6e4bd9ee3",
+    "total_tests": 824,
+    "sole_error": "test_actual_draw_stamp_and_self_removed_callback_are_retained"
+  },
+  "original_targeted_reproduction": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-original-targeted.log",
+  "all_8_cases": {
+    "status": "PASS",
+    "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-all.log",
+    "compiler": "clang++ -std=c++17 -Wall -Wextra -Werror -pedantic (default optimization)"
+  },
+  "targeted_O2": {
+    "status": "PASS",
+    "compile_returncode": 0,
+    "execute_returncode": 0,
+    "source": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\actual-draw-stamp-and-callback.cc",
+    "source_sha256": "48eebb199f8470a390b163054d5af7dccad50bde8353740e57f0d9e3b0fac33e",
+    "compile_log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\compile.log",
+    "execute_log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\pan-retained-repair\\finger-brush-repaired-targeted-O2\\execute.log"
+  },
+  "assertion_proof": {
+    "status": "PASS",
+    "original_sha256": "25a2480cab0f72c74274da4ebc0c8319a7c9254aa0d39aac131603eeb9278250",
+    "repaired_sha256": "2c9877480204923fb10feef8d053aa2d45e3cd0ae3028c529d157c63c366a773",
+    "python_assert_AST_equal": true,
+    "unittest_assert_call_AST_equal": true,
+    "original_unittest_assert_call_count": 29,
+    "original_cpp_assert_lines_ordered_exact_preserved": true,
+    "original_cpp_assert_line_count": 55,
+    "added_model_fail_on_entry_assert_line_count": 2,
+    "original_self_removing_callback_and_main_literal_exact_equal": true,
+    "original_main_literal_sha256": "50ce62829df26cfa1dd07daf258abde852fcd923912c9236f75d24f2e2db973e",
+    "other_7_test_methods_AST_exact_equal": true,
+    "run_cpp_helper_AST_exact_equal": true
+  },
+  "seam_justification": [
+    "The existing render slice begins at actual ED_ipad_hud_draw_end and now includes the new native Knife stamp finalizer before the unchanged Finger stamp. The repair keeps that slice exact and executes the actual content counter/finalizer bodies.",
+    "Actual wmIPadKnifeOwner and POD CanvasStamp declarations are extracted from current native header; runtime adds only do_draw and separate Knife exclusion fields; draw buffer adds native viewport/offscreen and the dedicated Knife stamp.",
+    "This Sculpt/Finger fixture has no admitted Edit Mesh Knife pre-draw scope: captured scope32 is empty/valid=false, causing actual finalizer to invalidate only its separate Knife stamp. Native Edit Mesh scope and original Knife owner providers deliberately assert on entry, so an accidental new path cannot silently pass.",
+    "Actual ed_region_draw_cb_draw body is unchanged/source-executed. The custom self-removing callback has no original registered native Knife, so the explicit classification boundary returns unknown with an empty owner. Its independent legacy Finger flag is still marked before invocation and retained in the actual Finger stamp after callback removal.",
+    "Every original C++ assertion line and exact callback/main literal remains unchanged, as do all original Python unittest assertions and the other seven test method ASTs."
+  ],
+  "actual_native_body_sha256": {
+    "new_stamp_counter": "b701259d6a94c302f6ffcd242b6b14b796b9fa5ab138a32ce0432338d1753b4b",
+    "new_stamp_finalizer": "9029f682bb4515910f62113c58b88cee5fb5644b881e664bde7a666ffec854a4",
+    "draw_callback_observer": "a6b779be87055c70f02241c209a6fffaf82cf2df4cb3738410d820adb7ca1ba7"
+  },
+  "limits": "GPU, native list backing, UIKit scheduling and brush geometry remain models. Native Knife classifier is an explicit unknown-owner boundary for this foreign callback; full actual Knife owner/classification is separately tested in the connected PAN suites. No native build or device claim.",
+  "no_production_change": true,
+  "no_other_test_change": true,
+  "no_commit_or_build": true
+}

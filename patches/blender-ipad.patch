@@ -3809,7 +3809,7 @@ index 904050f..0903227 100644
 diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_WindowIOS.mm
 --- a/intern/ghost/intern/GHOST_WindowIOS.mm
 +++ b/intern/ghost/intern/GHOST_WindowIOS.mm
-@@ -6,13 +6,18 @@
+@@ -6,13 +6,20 @@
 
  #include "GHOST_ContextIOS.hh"
  #include "GHOST_SystemIOS.hh"
@@ -3819,6 +3819,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  #include "GHOST_C-api.h"
  #include "GHOST_Debug.hh"
  #include "GHOST_EventButton.hh"
++#include "GHOST_EventManager.hh"
++#include "GHOST_System.hh"
 +#include "GHOST_EventPencilRing.hh"
 +#include "GHOST_WindowManager.hh"
  #include "GHOST_EventCursor.hh"
@@ -3828,13 +3830,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  #include "GHOST_EventTouch.hh"
  #include "GHOST_EventTrackpad.hh"
 
-@@ -20,10 +25,14 @@
+@@ -20,17 +27,30 @@
  #import <Metal/Metal.h>
  #import <QuartzCore/QuartzCore.h>
  #import <UIKit/UIKit.h>
 +#import <UIKit/UIGestureRecognizerSubclass.h>
  #import <UIKit/UIPencilInteraction.h>
 
++#include <cmath>
++#include <limits>
 +#include <string>
  #include <unordered_map>
 
@@ -3843,21 +3847,21 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  // #define IOS_INPUT_LOGGING
  #if defined(IOS_INPUT_LOGGING)
  #  define IOS_INPUT_LOG(...) NSLog(__VA_ARGS__)
-@@ -31,6 +40,13 @@
+ #else
  #  define IOS_INPUT_LOG(...)
  #endif
-
++
 +/* Scale applied to middle-drag PAN (Shift+wheel) trackpad deltas. Blender's iOS
 + * view3d.move trackpad path amplifies our delta ~6x (formula mx = 2*xy - prev_xy
 + * plus its zfac conversion; measured: 0.5 still overshot ~3x), so we pre-divide
 + * to make the grabbed point track the cursor ~1:1. Orbit is left unscaled.
 + * Lower = pans less. */
 +#define MMB_PAN_SCALE 0.17f
-+
+
  // #define IOS_WINDOW_LOGGING
  #if defined(IOS_WINDOW_LOGGING)
  #  define IOS_WINDOW_LOG(...) NSLog(__VA_ARGS__)
-@@ -48,10 +64,12 @@
+@@ -48,10 +68,12 @@
      CURSOR_MOVE,
      PAN_GESTURE,
      PAN_GESTURE_TWO_FINGERS,
@@ -3871,7 +3875,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    };
    EventTypes event_list[10];
    int num_events;
-@@ -59,6 +77,15 @@
+@@ -59,6 +81,15 @@
    CGPoint translation;
    CGFloat distance;
    bool pencil_used;
@@ -3887,7 +3891,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    UserInputEvent(CGPoint *loc, CGPoint *tran, CGFloat *dist, bool pencil)
    {
-@@ -67,6 +94,12 @@
+@@ -67,6 +98,12 @@
      translation = tran ? *tran : CGPointMake(0.0f, 0.0f);
      distance = dist ? *dist : 0.0f;
      pencil_used = pencil;
@@ -3900,7 +3904,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
 
    void add_event(EventTypes event_type)
-@@ -86,14 +119,18 @@
+@@ -86,14 +123,18 @@
          return @"PAN";
        case PAN_GESTURE_TWO_FINGERS:
          return @"PAN2F";
@@ -3920,7 +3924,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      }
      BLI_assert_unreachable();
      return @"Event undefined";
-@@ -101,14 +138,98 @@
+@@ -101,36 +142,407 @@
 
  } UserInputEvent;
 
@@ -3981,6 +3985,53 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  return result;
 +}
 +
++namespace ghost::ios {
++
++static bool pencil_knife_pan_keyboard_queue_clear()
++{
++  const auto *system = static_cast<GHOST_System *>(GHOST_ISystem::getSystem());
++  GHOST_EventManager *manager = system ? system->getEventManager() : nullptr;
++  return manager && manager->getNumEvents(GHOST_kEventKeyDown) == 0 &&
++         manager->getNumEvents(GHOST_kEventKeyUp) == 0;
++}
++
++PencilKnifePanContact pencil_knife_pan_at_start(const void *window,
++                                               int x,
++                                               int y,
++                                               uint64_t serial)
++{
++  if (!window || !serial || !pencil_knife_pan_probe ||
++      !pencil_knife_pan_keyboard_queue_clear()) {
++    return {};
++  }
++  PencilKnifePanContact original;
++  original.serial = serial;
++  original.origin_x = x;
++  original.origin_y = y;
++  PencilKnifePanContact result;
++  if (!pencil_knife_pan_probe(window, true, original, result) || !result.valid() ||
++      result.serial != serial || result.origin_x != x || result.origin_y != y) {
++    return {};
++  }
++  return result;
++}
++
++bool pencil_knife_pan_recognize(const void *window, const PencilKnifePanContact &original)
++{
++  if (!window || !original.valid() || !pencil_knife_pan_probe ||
++      !pencil_knife_pan_keyboard_queue_clear()) {
++    return false;
++  }
++  PencilKnifePanContact result;
++  return pencil_knife_pan_probe(window, false, original, result) && result.valid() &&
++         result.serial == original.serial && result.content == original.content &&
++         result.tool_ref == original.tool_ref && result.origin_x == original.origin_x &&
++         result.origin_y == original.origin_y && result.scope == original.scope &&
++         result.owner == original.owner && result.intent == original.intent;
++}
++
++}  // namespace ghost::ios
++
  /* GHOSTUITapGesture interface for capturing taps. */
  @interface GHOSTUITapGestureRecognizer : UITapGestureRecognizer
 +{
@@ -4009,20 +4060,20 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  @end
 
  @implementation GHOSTUITapGestureRecognizer
-+
+
 +- (void)setRingWindow:(GHOST_WindowIOS *)value { ring_window = value; }
 +- (ghost::ios::PencilRingContact)ringContact { return ring_origin; }
 +- (ghost::ios::HUDContact)hudContact { return hud_origin; }
 +- (BOOL)gestureUsesFinger { return gesture_contact.touch && gesture_contact.device == ghost::ios::TouchDevice::Finger; }
 +- (uint64_t)fingerPaintGeneration { return finger_paint_origin; }
 +- (ghost::ios::PencilPaintContact)pencilPaintContact { return pencil_paint_origin; }
-
++
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
-@@ -116,21 +237,216 @@
+   CGPoint touch_point = [self locationInView:window->getView()];
    return window->scalePointToWindow(touch_point);
- }
-
++}
++
 +- (BOOL)touchStreamAllowed
 +{
 +  return touch_admission.allowed();
@@ -4108,8 +4159,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  touch_admission.reset();
 +  gesture_contact.reset();
 +  [super reset];
-+}
-+
+ }
+
  @end
 
  /* GHOSTUITapGesture interface for capturing taps. */
@@ -4123,6 +4174,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  ghost::ios::PencilRingContact ring_origin;
 +  ghost::ios::HUDContact hud_origin;
 +  ghost::ios::PencilPaintContact pencil_paint_origin;
++  ghost::ios::PencilKnifePanContact pencil_knife_pan_origin;
++  bool omit_knife_paired_pan;
++  bool knife_pan_recognized;
  }
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window;
  - (CGPoint)getScaledTranslation:(GHOST_WindowIOS *)window;
@@ -4139,6 +4193,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +- (ghost::ios::HUDContact)hudContact;
 +- (ghost::ios::PencilPaintContact)pencilPaintContact;
 +- (void)invalidateTouchStream;
++- (void)forgetKnifePanContact;
++- (void)recognizeKnifePan;
++- (BOOL)omitKnifePairedPan;
  @end
 
  @implementation GHOSTUIPanGestureRecognizer
@@ -4153,6 +4210,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  const bool fresh_contact = !touch_admission.active;
 +  touch_admission.begin();
 +  if (fresh_contact) {
++    [self forgetKnifePanContact];
 +    if (touches.count == 1) {
 +      for (UITouch *touch in touches) {
 +        gesture_contact.begin(ios_touch_device(touch), reinterpret_cast<uintptr_t>(touch),
@@ -4172,6 +4230,22 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +            !ring_origin.captured && !hud_origin.generation)
 +          pencil_paint_origin = ghost::ios::pencil_paint_at_start(
 +              ring_window, int(origin.x), int(origin.y), gesture_contact.serial);
++        /* Capture before superclass action delivery, using this exact physical
++         * Pencil actor and origin. Foreign/off-view/nonfinite points never arm it. */
++        if (gesture_contact.pencil_down() &&
++            gesture_contact.touch == reinterpret_cast<uintptr_t>(touch) &&
++            touch.type == UITouchTypePencil && touch.view == self.view &&
++            !ring_origin.captured && !hud_origin.generation &&
++            std::isfinite(local.x) && std::isfinite(local.y) &&
++            CGRectContainsPoint(self.view.bounds, local) &&
++            std::isfinite(origin.x) && std::isfinite(origin.y) &&
++            origin.x >= std::numeric_limits<int>::min() &&
++            origin.x <= std::numeric_limits<int>::max() &&
++            origin.y >= std::numeric_limits<int>::min() &&
++            origin.y <= std::numeric_limits<int>::max()) {
++          pencil_knife_pan_origin = ghost::ios::pencil_knife_pan_at_start(
++              ring_window, int(origin.x), int(origin.y), gesture_contact.serial);
++        }
 +      }
 +    }
 +  }
@@ -4210,6 +4284,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)reset
 +{
++  [self forgetKnifePanContact];
 +  ring_origin = ghost::ios::PencilRingContact{};
 +  hud_origin = {};
 +  pencil_paint_origin = {};
@@ -4226,8 +4301,29 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +
 +- (void)invalidateTouchStream
 +{
++  [self forgetKnifePanContact];
 +  touch_admission.interrupt();
 +}
++
++- (void)forgetKnifePanContact
++{
++  pencil_knife_pan_origin = {};
++  omit_knife_paired_pan = false;
++  knife_pan_recognized = false;
++}
++
++- (void)recognizeKnifePan
++{
++  /* Called only by ordinary precision Began, after every higher-priority path.
++   * Changed uses the frozen result so later native Knife modifiers stay native. */
++  if (knife_pan_recognized) return;
++  knife_pan_recognized = true;
++  omit_knife_paired_pan = gesture_contact.pencil_down() &&
++      gesture_contact.serial == pencil_knife_pan_origin.serial &&
++      ghost::ios::pencil_knife_pan_recognize(ring_window, pencil_knife_pan_origin);
++}
++
++- (BOOL)omitKnifePairedPan { return omit_knife_paired_pan; }
 +
 +- (BOOL)gestureUsesPencil { return gesture_contact.pencil(); }
 +- (BOOL)gestureUsesFinger { return gesture_contact.touch && gesture_contact.device == ghost::ios::TouchDevice::Finger; }
@@ -4236,7 +4332,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window
  {
-@@ -179,15 +495,39 @@
+@@ -179,15 +591,39 @@
  @interface GHOSTUIPinchGestureRecognizer : UIPinchGestureRecognizer
  {
    CGFloat cached_distance;
@@ -4276,7 +4372,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  - (CGPoint)getScaledTouchPoint:(GHOST_WindowIOS *)window touch_id:(int)touch_id
  {
    CGPoint touch_point = [self locationOfTouch:touch_id inView:window->getView()];
-@@ -240,8 +580,16 @@
+@@ -240,8 +676,16 @@
    GHOSTUITapGestureRecognizer *tap4f_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan_gesture_recognizer;
    GHOSTUIPanGestureRecognizer *pan2f_gesture_recognizer;
@@ -4293,7 +4389,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    UIPencilInteraction *pencil_interaction;
    UIScreenEdgePanGestureRecognizer *edge_swipe_left;
    UIScreenEdgePanGestureRecognizer *edge_swipe_right;
-@@ -251,14 +599,51 @@
+@@ -251,14 +695,51 @@
    UITouch *current_pencil_touch;
    GHOST_TabletData tablet_data;
    bool last_tap_with_pencil;
@@ -4347,7 +4443,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Toolbar */
    bool toolbar_enabled;
-@@ -276,13 +661,22 @@
+@@ -276,13 +757,23 @@
 
  /* Gesture recognizers. */
  - (void)registerGestureRecognizers;
@@ -4359,6 +4455,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
          (UIGestureRecognizer *)otherGestureRecognizer;
  - (void)handleTap:(GHOSTUITapGestureRecognizer *)sender;
  - (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender;
++- (void)forgetKnifePanContact;
  - (void)handlePan2f:(GHOSTUIPanGestureRecognizer *)sender;
 +- (void)handlePan3f:(GHOSTUIPanGestureRecognizer *)sender;
 +- (void)handleIndirectPan:(GHOSTUIPanGestureRecognizer *)sender;
@@ -4370,7 +4467,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  /* On screen keyboard handling */
  - (UITextField *)getUITextField;
-@@ -292,20 +686,61 @@
+@@ -292,20 +783,66 @@
  - (const char *)getLastKeyboardString;
  @end
 
@@ -4399,6 +4496,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +static bool ios_escape_closes_window = false;
 +
  @implementation GHOSTUIWindow
++- (void)forgetKnifePanContact
++{
++  [pan_gesture_recognizer forgetKnifePanContact];
++}
++
 +- (void)setNativeChromeHovered:(BOOL)hovered
 +{
 +  native_chrome_hovered = hovered;
@@ -4434,7 +4536,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    external_keyboard_connected = [GCKeyboard coalescedKeyboard] != nil;
 
    /* Register for notifications of chnanges to the onscreen keyboard. */
-@@ -335,6 +770,22 @@
+@@ -335,6 +872,22 @@
                                                   name:GCKeyboardDidDisconnectNotification
                                                 object:nil];
    }
@@ -4457,7 +4559,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)registerGestureRecognizers
-@@ -345,6 +796,7 @@
+@@ -345,6 +898,7 @@
        initWithTarget:self
                action:@selector(handleTap:)];
    tap_gesture_recognizer.delegate = self;
@@ -4465,7 +4567,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap_gesture_recognizer.cancelsTouchesInView = false;
    tap_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:tap_gesture_recognizer];
-@@ -354,6 +806,8 @@
+@@ -354,6 +908,8 @@
        initWithTarget:self
                action:@selector(handleTap2F:)];
    tap2f_gesture_recognizer.delegate = self;
@@ -4474,7 +4576,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap2f_gesture_recognizer.cancelsTouchesInView = false;
    tap2f_gesture_recognizer.delaysTouchesBegan = YES;
    tap2f_gesture_recognizer.numberOfTouchesRequired = 2;
-@@ -364,6 +818,8 @@
+@@ -364,6 +920,8 @@
        initWithTarget:self
                action:@selector(handleTap3F:)];
    tap3f_gesture_recognizer.delegate = self;
@@ -4483,7 +4585,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap3f_gesture_recognizer.cancelsTouchesInView = false;
    tap3f_gesture_recognizer.delaysTouchesBegan = YES;
    tap3f_gesture_recognizer.numberOfTouchesRequired = 3;
-@@ -374,6 +830,8 @@
+@@ -374,6 +932,8 @@
        initWithTarget:self
                action:@selector(handleTap4F:)];
    tap4f_gesture_recognizer.delegate = self;
@@ -4492,7 +4594,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    tap4f_gesture_recognizer.cancelsTouchesInView = false;
    tap4f_gesture_recognizer.delaysTouchesBegan = YES;
    tap4f_gesture_recognizer.numberOfTouchesRequired = 4;
-@@ -384,6 +842,7 @@
+@@ -384,6 +944,7 @@
        initWithTarget:self
                action:@selector(handlePan:)];
    pan_gesture_recognizer.delegate = self;
@@ -4500,7 +4602,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    pan_gesture_recognizer.cancelsTouchesInView = false;
    /* Allow scrolling only with a single finger. */
    pan_gesture_recognizer.minimumNumberOfTouches = 1;
-@@ -392,24 +851,82 @@
+@@ -392,24 +953,82 @@
    pan_gesture_recognizer.allowedTouchTypes = @[ @(UITouchTypePencil), @(UITouchTypeDirect) ];
    [window->getView() addGestureRecognizer:pan_gesture_recognizer];
 
@@ -4583,7 +4685,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Edge swipe. */
    edge_swipe_left = [[UIScreenEdgePanGestureRecognizer alloc]
-@@ -432,6 +949,8 @@
+@@ -432,6 +1051,8 @@
                action:@selector(handleHover:)];
    hover_gesture_recognizer.delegate = self;
    [window->getView() addGestureRecognizer:hover_gesture_recognizer];
@@ -4592,7 +4694,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    current_pencil_touch = nil;
 
    /**  Apple Pencil double-tap. */
-@@ -448,8 +967,33 @@
+@@ -448,8 +1069,33 @@
  {
    /* Lock access to ensure all input-events are received sequentially. */
    @synchronized(self) {
@@ -4626,7 +4728,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        IOS_INPUT_LOG(@"%d-%@ %f,%f",
                      i,
                      event_info.getEventTypeDesc(event_type),
-@@ -458,13 +1002,25 @@
+@@ -458,13 +1104,25 @@
 
        switch (event_type) {
          case UserInputEvent::EventTypes::CURSOR_MOVE:
@@ -4653,7 +4755,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          case UserInputEvent::EventTypes::PAN_GESTURE:
            system->pushEvent(
-@@ -490,27 +1046,88 @@
+@@ -490,27 +1148,88 @@
                                        true,
                                        2));
            break;
@@ -4748,7 +4850,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
                                        event_info.location.x,
                                        event_info.location.y,
                                        event_info.distance,
-@@ -518,14 +1135,24 @@
+@@ -518,14 +1237,24 @@
                                        false,
                                        2));
            break;
@@ -4775,7 +4877,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
            break;
          default:
            GHOST_ASSERT(FALSE, "GHOST_SystemIOS::generateUserInputEvents unsupported event type");
-@@ -539,17 +1166,45 @@
+@@ -539,17 +1268,45 @@
      shouldRecognizeSimultaneouslyWithGestureRecognizer:
          (UIGestureRecognizer *)otherGestureRecognizer
  {
@@ -4802,9 +4904,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -      otherGestureRecognizer == zoom_gesture_recognizer)
 -  {
 -    return YES;
--  }
 +
-   return NO;
++  return NO;
 +}
 +
 +- (BOOL)gestureRecognizer:(UIGestureRecognizer *)recognizer shouldReceiveTouch:(UITouch *)touch
@@ -4815,7 +4916,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      (touch.type == UITouchTypeDirect || touch.type == UITouchTypePencil) &&
 +      (mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)) {
 +    return NO;
-+  }
+   }
+-  return NO;
 +  return YES;
 +}
 +
@@ -4828,7 +4930,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* Override touch methods to capture the UITouch object. */
-@@ -580,8 +1235,10 @@
+@@ -580,8 +1337,10 @@
          tablet_data.Active = GHOST_kTabletModeStylus;
 
          /* Map apple pessure Range to Blender range: 0.0 (not touching) to 1.0 (full pressure). */
@@ -4841,7 +4943,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
          CGFloat azimuthAngle = [current_pencil_touch azimuthAngleInView:window->getView()];
          CGFloat altitudeAngle = [current_pencil_touch altitudeAngle];
-@@ -604,23 +1261,54 @@
+@@ -604,23 +1363,54 @@
  - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
  {
    [super touchesEnded:touches withEvent:event];
@@ -4901,7 +5003,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Send events to indicate a 'click' on event end. */
    if (sender.state == UIGestureRecognizerStateEnded) {
-@@ -630,6 +1318,10 @@
+@@ -630,6 +1420,10 @@
    }
 
    [self generateUserInputEvents:event_info];
@@ -4912,7 +5014,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (void)handleTap2F:(GHOSTUITapGestureRecognizer *)sender
-@@ -677,13 +1369,237 @@
+@@ -677,13 +1471,241 @@
        GHOST_GetMilliSeconds((GHOST_SystemHandle)system), GHOST_kEventFourFingerTap, window));
  }
 
@@ -5011,10 +5113,9 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGPoint touch_point = [sender getScaledTouchPoint:window];
    CGPoint translation = [sender getScaledTranslation:window];
 -  bool pencil_pan = current_pencil_touch ? true : false;
--
 +  const bool pencil_pan = [sender gestureUsesPencil];
 +  const GHOST_TabletData gesture_tablet = ios_tablet_snapshot([sender pencilSample]);
-+
+
 +  if (sender.state == UIGestureRecognizerStateBegan) {
 +    ring_capture = [sender ringContact];
 +    if (ring_capture.captured) {
@@ -5144,6 +5245,10 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    [self generateUserInputEvents:scroll_info];
 +    return;
 +  }
++  if (sender.state == UIGestureRecognizerStateBegan) {
++    [sender recognizeKnifePan];
++  }
++  const bool omit_knife_paired_pan = [sender omitKnifePairedPan];
    UserInputEvent event_info(&touch_point, nullptr, nullptr, pencil_pan);
 +  if (pencil_pan) {
 +    event_info.set_tablet_snapshot(gesture_tablet);
@@ -5152,19 +5257,19 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -700,8 +1616,9 @@
+@@ -700,8 +1722,9 @@
      CGPoint relative_translation = [sender getRelativeTranslation:translation];
      /* Update cached translation */
      [sender setCachedTranslation:translation];
 -    /* Send pan event if non zero */
 -    if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
 +    /* A paint contact owns cursor motion; trackpad pan would interrupt its stroke. */
-+    if (!event_info.pencil_paint.valid() &&
++    if (!event_info.pencil_paint.valid() && !omit_knife_paired_pan &&
 +        !CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        event_info.translation = relative_translation;
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE);
      }
-@@ -717,13 +1634,116 @@
+@@ -717,13 +1740,116 @@
        sender.state == UIGestureRecognizerStateCancelled ||
        sender.state == UIGestureRecognizerStateFailed)
    {
@@ -5281,7 +5386,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Translation can be non-zero on begin event */
    if (sender.state == UIGestureRecognizerStateBegan ||
        sender.state == UIGestureRecognizerStateChanged)
-@@ -739,6 +1759,20 @@
+@@ -739,6 +1865,20 @@
      /* Generate pan event if translation is non zero. */
      if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {
        CGPoint touch_point = [sender getScaledTouchPoint:window];
@@ -5302,13 +5407,13 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        bool pencil_pan = current_pencil_touch ? true : false;
        UserInputEvent event_info(&touch_point, &relative_translation, nullptr, pencil_pan);
        event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_TWO_FINGERS);
-@@ -754,67 +1788,158 @@
-   }
- }
-
--- (void)handleEdgeSwipe:(UIScreenEdgePanGestureRecognizer *)gesture
--{
--  if (gesture.state != UIGestureRecognizerStateEnded) {
+@@ -751,70 +1891,161 @@
+   {
+     /* Set translation back to zero. */
+     [sender setCachedTranslation:CGPointMake(0.0f, 0.0f)];
++  }
++}
++
 +- (void)handlePan3f:(GHOSTUIPanGestureRecognizer *)sender
 +{
 +  if (sender.state == UIGestureRecognizerStateBegan) {
@@ -5321,43 +5426,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    {
 +      [sender setCachedTranslation:CGPointZero];
 +    }
-     return;
-   }
--
--  UIView *view = window->getView();
--  CGPoint location = [gesture locationInView:view];
--  CGSize viewSize = view.bounds.size;
--
--  GHOST_TTouchEventSubTypes ghostEventType;
--
--  if (gesture.edges == UIRectEdgeLeft) {
--    ghostEventType = GHOST_kTouchEventEdgeSwipeInLeft;
--  }
--  else if (gesture.edges == UIRectEdgeRight) {
--    ghostEventType = GHOST_kTouchEventEdgeSwipeInRight;
--  }
--  else {
--    /* For now only handle left/right. */
--    return;
--  }
--
--  system->pushEvent(new GHOST_EventTouch(
--      system->getMilliSeconds(), window, ghostEventType, location.x, location.y));
--}
--
--- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
--{
-   if (sender.state == UIGestureRecognizerStateBegan ||
-       sender.state == UIGestureRecognizerStateChanged)
-   {
--    /* Tablet needs to be set to stylus mode because we need
--     * wmTabletData.is_motion_absolute set to true. */
--    tablet_data.Active = GHOST_kTabletModeStylus;
--    CGPoint hover_point = [sender getScaledTouchPoint:window];
--    /* Add cursor move event. */
--    UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
--    event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
--    [self generateUserInputEvents:event_info];
++    return;
++  }
++  if (sender.state == UIGestureRecognizerStateBegan ||
++      sender.state == UIGestureRecognizerStateChanged)
++  {
 +    CGPoint translation = [sender getScaledTranslation:window];
 +    CGPoint relative_translation = [sender getRelativeTranslation:translation];
 +    [sender setCachedTranslation:translation];
@@ -5367,43 +5440,42 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      event_info.add_event(UserInputEvent::EventTypes::PAN_GESTURE_THREE_FINGERS);
 +      [self generateUserInputEvents:event_info];
 +    }
-   }
-   else if (sender.state == UIGestureRecognizerStateEnded ||
-            sender.state == UIGestureRecognizerStateCancelled ||
-            sender.state == UIGestureRecognizerStateFailed)
-   {
--    tablet_data = GHOST_TABLET_DATA_NONE;
++  }
++  else if (sender.state == UIGestureRecognizerStateEnded ||
++           sender.state == UIGestureRecognizerStateCancelled ||
++           sender.state == UIGestureRecognizerStateFailed)
++  {
 +    [sender setCachedTranslation:CGPointZero];
-+  }
-+}
-+
-+- (void)handleEdgeSwipe:(UIScreenEdgePanGestureRecognizer *)gesture
-+{
-+  if (gesture.state != UIGestureRecognizerStateEnded) {
-+    return;
-+  }
-+
-+  UIView *view = window->getView();
-+  CGPoint location = [gesture locationInView:view];
-+  CGSize viewSize = view.bounds.size;
-+
-+  GHOST_TTouchEventSubTypes ghostEventType;
-+
-+  if (gesture.edges == UIRectEdgeLeft) {
-+    ghostEventType = GHOST_kTouchEventEdgeSwipeInLeft;
-+  }
-+  else if (gesture.edges == UIRectEdgeRight) {
-+    ghostEventType = GHOST_kTouchEventEdgeSwipeInRight;
-+  }
-+  else {
-+    /* For now only handle left/right. */
-+    return;
-+  }
-+
-+  system->pushEvent(new GHOST_EventTouch(
-+      system->getMilliSeconds(), window, ghostEventType, location.x, location.y));
-+}
-+
+   }
+ }
+
+ - (void)handleEdgeSwipe:(UIScreenEdgePanGestureRecognizer *)gesture
+ {
+   if (gesture.state != UIGestureRecognizerStateEnded) {
+     return;
+   }
+
+   UIView *view = window->getView();
+   CGPoint location = [gesture locationInView:view];
+   CGSize viewSize = view.bounds.size;
+
+   GHOST_TTouchEventSubTypes ghostEventType;
+
+   if (gesture.edges == UIRectEdgeLeft) {
+     ghostEventType = GHOST_kTouchEventEdgeSwipeInLeft;
+   }
+   else if (gesture.edges == UIRectEdgeRight) {
+     ghostEventType = GHOST_kTouchEventEdgeSwipeInRight;
+   }
+   else {
+     /* For now only handle left/right. */
+     return;
+   }
+
+   system->pushEvent(new GHOST_EventTouch(
+       system->getMilliSeconds(), window, ghostEventType, location.x, location.y));
+ }
+
 +- (void)cancelRingHover
 +{
 +  ring_hover_capture.finish();
@@ -5417,8 +5489,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  ring_hover_capture.finish();
 +}
 +
-+- (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
-+{
+ - (void)handleHover:(GHOSTUIHoverGestureRecognizer *)sender
+ {
 +  IOS_INPUT_LOG(@"HOVER fired, btn_pressed=%d", mouse_left_pressed);
 +  /* A captured finger/Pencil drag owns both cursor and tablet samples.
 +   * Apply this to hover end too; clearing pressure mid-stroke also corrupts input. */
@@ -5426,9 +5498,11 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      [pan_gesture_recognizer pencilContactDown]) {
 +    return;
 +  }
-+  if (sender.state == UIGestureRecognizerStateBegan ||
-+      sender.state == UIGestureRecognizerStateChanged)
-+  {
+   if (sender.state == UIGestureRecognizerStateBegan ||
+       sender.state == UIGestureRecognizerStateChanged)
+   {
+-    /* Tablet needs to be set to stylus mode because we need
+-     * wmTabletData.is_motion_absolute set to true. */
 +    /* While a pencil is actually touching (an active paint/sculpt stroke),
 +     * handlePan drives the cursor. A stray hover CURSOR_MOVE here uses the
 +     * (stale) hover position and jerks the brush — notably back toward the
@@ -5461,15 +5535,18 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      return;
 +    }
 +    /* Pencil / no-mouse path: original behaviour (stylus hover). */
-+    tablet_data.Active = GHOST_kTabletModeStylus;
-+    UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
-+    event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
-+    [self generateUserInputEvents:event_info];
-+  }
-+  else if (sender.state == UIGestureRecognizerStateEnded ||
-+           sender.state == UIGestureRecognizerStateCancelled ||
-+           sender.state == UIGestureRecognizerStateFailed)
-+  {
+     tablet_data.Active = GHOST_kTabletModeStylus;
+-    CGPoint hover_point = [sender getScaledTouchPoint:window];
+-    /* Add cursor move event. */
+     UserInputEvent event_info(&hover_point, nullptr, nullptr, true);
+     event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);
+     [self generateUserInputEvents:event_info];
+   }
+   else if (sender.state == UIGestureRecognizerStateEnded ||
+            sender.state == UIGestureRecognizerStateCancelled ||
+            sender.state == UIGestureRecognizerStateFailed)
+   {
+-    tablet_data = GHOST_TABLET_DATA_NONE;
 +    if (!current_pencil_touch && ![pan_gesture_recognizer pencilContactDown]) {
 +      tablet_data = GHOST_TABLET_DATA_NONE;
 +    }
@@ -5497,7 +5574,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    else if (sender.state == UIGestureRecognizerStateChanged) {
 
-@@ -830,25 +1955,80 @@
+@@ -830,25 +2061,80 @@
        /* Calculate midpoint between the two touch points. */
        CGPoint midPoint = [sender getPinchMidpoint:window];
 
@@ -5581,7 +5658,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  - (void)beginFrame
  {
-@@ -1003,7 +2183,7 @@
+@@ -1003,7 +2289,7 @@
  {
    IOS_INPUT_LOG(@"Keyboard Cancel button press detected %@", text_field.text);
    /* Restore the original text and return */
@@ -5590,18 +5667,19 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    [self generateKeyboardReturnEvent];
  }
 
-@@ -1076,6 +2256,10 @@
+@@ -1076,7 +2362,11 @@
    if (!text_field) {
      [self initUITextField];
    }
-+
+
 +  /* A new input session must not inherit the last software result. */
 +  text_field_string.clear();
 +  text_field_string_valid = false;
-
++
    /* Save this set of keyboard properties */
    current_keyboard_properties = keyboard_properties;
-@@ -1101,10 +2285,8 @@
+
+@@ -1101,10 +2391,8 @@
    text_field.text = keyboard_properties.text_string ?
                          [NSString stringWithUTF8String:keyboard_properties.text_string] :
                          @"";
@@ -5614,7 +5692,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
    /* Set keyboard type and text alignment.
     * NOTE - the keyboard type is only honoured if using an Apple
-@@ -1198,11 +2380,380 @@
+@@ -1198,11 +2486,380 @@
    }
  }
 
@@ -5995,7 +6073,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  /* IOS_FIXME - Not currently used, could be removed. */
-@@ -1230,7 +2781,10 @@
+@@ -1230,7 +2887,10 @@
      if (!onscreen_keyboard_active) {
        text_field.userInteractionEnabled = YES;
        if (![text_field becomeFirstResponder]) {
@@ -6006,19 +6084,20 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
        }
        onscreen_keyboard_active = true;
      }
-@@ -1251,6 +2805,11 @@
+@@ -1251,7 +2911,12 @@
         (like generating events back to Blender)
         */
        onscreen_keyboard_active = false;
-+
+
 +      /* Copy the final bytes while UIKit still owns the text, including valid empty input. */
 +      const char *input = [[text_field text] UTF8String];
 +      text_field_string_valid = input != nullptr;
 +      text_field_string = input ? input : "";
-
++
        /* Shut down the keyboard. */
        [text_field resignFirstResponder];
-@@ -1269,14 +2828,12 @@
+       /*
+@@ -1269,14 +2934,12 @@
         */
        text_field.userInteractionEnabled = NO;
 
@@ -6035,7 +6114,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    return GHOST_kSuccess;
  }
 
-@@ -1285,20 +2842,26 @@
+@@ -1285,20 +2948,26 @@
    /* Lock access around keyboard handling events */
    @synchronized(self) {
 
@@ -6043,17 +6122,15 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 -    if (text_field.text && ![text_field.text isEqualToString:@""]) {
 -      /* Save the input to a c-string */
 -      text_field_string = [[text_field text] UTF8String];
--    }
--  }
--  return text_field_string;
 +    /* Empty text is a valid edit; nullptr means there is no software result. */
 +    if (text_field.text) {
 +      const char *input = [[text_field text] UTF8String];
 +      text_field_string_valid = input != nullptr;
 +      text_field_string = input ? input : "";
-+    }
+     }
 +    return text_field_string_valid ? text_field_string.c_str() : nullptr;
-+  }
+   }
+-  return text_field_string;
  }
 
  @end
@@ -6070,7 +6147,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 
  @end
 
-@@ -1306,22 +2869,163 @@
+@@ -1306,22 +2975,163 @@
  {
    MTKView *_view;
    GHOST_IOSMetalRenderer *_renderer;
@@ -6079,14 +6156,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
  }
 
  - (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
--{
++                                  secondary:(BOOL)secondary
+ {
 -  _view = mtkView;
 -  _view.multipleTouchEnabled = YES;
-+                                  secondary:(BOOL)secondary
-+{
    self = [super init];
 -  self.view = (UIView *)mtkView;
--
 +  if (self) {
 +    _view = mtkView;
 +    _view.multipleTouchEnabled = YES;
@@ -6104,7 +6179,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +      chrome_hover.allowedTouchTypes = @[ @(UITouchTypeIndirectPointer) ];
 +      [_return_bar addGestureRecognizer:chrome_hover];
 +      [chrome_hover release];
-+
+
 +      UIButton *close = [UIButton buttonWithType:UIButtonTypeSystem];
 +      [close setTitle:NSLocalizedString(@"Close View", nil) forState:UIControlStateNormal];
 +      close.titleLabel.font = [UIFont boldSystemFontOfSize:17];
@@ -6140,8 +6215,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +    }
 +  }
    return self;
- }
-
++}
++
 +- (void)viewDidLayoutSubviews
 +{
 +  [super viewDidLayoutSubviews];
@@ -6215,8 +6290,8 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
 +  _view.delegate = nil;
 +  [_renderer release];
 +  [super dealloc];
-+}
-+
+ }
+
  - (void)viewDidLoad
  {
    [super viewDidLoad];
@@ -6240,7 +6315,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    _view.enableSetNeedsDisplay = NO;
    _view.device = MTLCreateSystemDefaultDevice();
    _view.clearColor = MTLClearColorMake(0, 0, 0, 1.0);
-@@ -1365,11 +3069,12 @@
+@@ -1365,11 +3175,12 @@
                                   GHOST_TWindowState state,
                                   GHOST_TDrawingContextType type,
                                   const GHOST_ContextParams &context_params,
@@ -6254,7 +6329,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    system_ios_ = system_ios;
    /* Parent window will be the window that focus is returned to upon close. */
    parent_window_ = parent_window;
-@@ -1377,7 +3082,6 @@
+@@ -1377,7 +3188,6 @@
 
    /* Create MTKView. */
    metal_view_ = [[MTKView alloc] initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -6262,7 +6337,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(metal_view_, "metalview not valid");
 
    /* Create view controller. */
-@@ -1391,7 +3095,6 @@
+@@ -1391,7 +3201,6 @@
    if (full_screen_) {
      /* Init window at native res. */
      ghost_rootWindow = [[GHOSTUIWindow alloc] init];
@@ -6270,7 +6345,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      /* Ensure fullscreen. */
      CGRect rect = [UIScreen mainScreen].bounds;
      rootWindow.frame = rect;
-@@ -1400,7 +3103,6 @@
+@@ -1400,7 +3209,6 @@
      /* Init window at specified size. */
      ghost_rootWindow = [[GHOSTUIWindow alloc]
          initWithFrame:CGRectMake(left, bottom, width, height)];
@@ -6278,7 +6353,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [ghost_rootWindow setClipsToBounds:YES];
    }
 
-@@ -1410,8 +3112,12 @@
+@@ -1410,8 +3218,12 @@
    rootWindow.windowLevel = UIWindowLevelAlert;
 
    GHOST_ASSERT(rootWindow, "UIWindow not valid");
@@ -6293,7 +6368,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_controller_, "UIViewController not valid");
 
    /* Set presentation style depending on whether main window, dialog or temporary window. */
-@@ -1424,10 +3130,14 @@
+@@ -1424,10 +3236,14 @@
      uiview_controller_.modalPresentationStyle = UIModalPresentationPageSheet;
    }
    rootWindow.rootViewController = uiview_controller_;
@@ -6309,11 +6384,12 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    GHOST_ASSERT(uiview_, "uiview not valid");
 
    /* Initialize Metal device. */
-@@ -1471,14 +3181,28 @@
+@@ -1471,14 +3287,29 @@
 
  GHOST_WindowIOS::~GHOST_WindowIOS()
  {
 +  ghost::ios::forget_navigation_window(this);
++  [(GHOSTUIWindow *)rootWindow forgetKnifePanContact];
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
    releaseNativeHandles();
@@ -6339,7 +6415,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    }
    /* We have no choice but to resign, however this seems like it might cause issues. */
    if (system_ios_->current_active_window_ == this) {
-@@ -1499,6 +3223,9 @@
+@@ -1499,6 +3330,9 @@
 
    /* Release window. */
    if (rootWindow) {
@@ -6349,7 +6425,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
      [rootWindow release];
      rootWindow = nil;
    }
-@@ -1618,7 +3345,7 @@
+@@ -1618,7 +3452,7 @@
  {
    GHOST_ASSERT(getValid(), "GHOST_WindowIOS::getWindowBounds(): window invalid");
 
@@ -6358,7 +6434,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    CGFloat scale = [UIScreen mainScreen].scale;
    CGFloat screenWidth = screenRect.size.width * scale;
    CGFloat screenHeight = screenRect.size.height * scale;
-@@ -1908,6 +3635,7 @@
+@@ -1908,6 +3742,7 @@
 
    /* Make window primary visible window. */
    [rootWindow makeKeyAndVisible];
@@ -6366,7 +6442,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    /* Enable the drawInMTKView() calls for this window. */
    metal_view_.paused = NO;
 
-@@ -1918,6 +3646,11 @@
+@@ -1918,6 +3753,11 @@
                   this);
 
    system_ios_->current_active_window_ = this;
@@ -6378,7 +6454,7 @@ diff --git a/intern/ghost/intern/GHOST_WindowIOS.mm b/intern/ghost/intern/GHOST_
    is_active_window_ = true;
    request_to_make_active_ = false;
    return true;
-@@ -1932,6 +3665,7 @@
+@@ -1932,6 +3772,7 @@
    GHOST_ASSERT(!request_to_make_active_,
                 "GHOST_WindowIOS::resignKeyWindow(): activation request outstanding");
 
@@ -12165,42 +12241,42 @@ index 5032912..f8ac6b0 100644
          ipaint = tool_settings.image_paint
  
 diff --git a/source/blender/blenkernel/BKE_screen.hh b/source/blender/blenkernel/BKE_screen.hh
-index b366649..aef80d3 100644
 --- a/source/blender/blenkernel/BKE_screen.hh
 +++ b/source/blender/blenkernel/BKE_screen.hh
-@@ -1,894 +1,912 @@
+@@ -1,894 +1,916 @@
  /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
  #pragma once
- 
+
  /** \file
   * \ingroup bke
   */
- 
+
++#include <array>
  #include <memory>
  #include <string>
- 
+
  #include "BLI_compiler_attrs.h"
  #include "BLI_map.hh"
  #include "BLI_math_vector_types.hh"
  #include "BLI_string_ref.hh"
  #include "BLI_vector.hh"
- 
+
  #include "DNA_vec_types.h"
- 
+
  #include "RNA_types.hh"
- 
+
  #include "BKE_context.hh"
- 
+
  namespace blender::bke::id {
  class IDRemapper;
  }
- 
+
  namespace blender::asset_system {
  class AssetRepresentation;
  }
- 
+
  struct ARegion;
  struct AssetShelfType;
  struct BlendDataReader;
@@ -12235,20 +12311,20 @@ index b366649..aef80d3 100644
  struct wmTimer;
  struct wmWindow;
  struct wmWindowManager;
- 
+
  /* spacetype has everything stored to get an editor working, it gets initialized via
   * #ED_spacetypes_init() in `editors/space_api/spacetypes.cc` */
  /* an editor in Blender is a combined ScrArea + SpaceType + SpaceData. */
- 
+
  #define BKE_ST_MAXNAME 64
- 
+
  struct wmSpaceTypeListenerParams {
    wmWindow *window;
    ScrArea *area;
    const wmNotifier *notifier;
    const Scene *scene;
  };
- 
+
  struct SpaceType {
    /** For menus. */
    char name[BKE_ST_MAXNAME];
@@ -12256,7 +12332,7 @@ index b366649..aef80d3 100644
    int spaceid;
    /** Icon lookup for menus. */
    int iconid;
- 
+
    /**
     * Initial allocation, after this WM will call init() too.
     * Some editors need area and scene data (e.g. frame range) to set their initial scrolling.
@@ -12264,83 +12340,83 @@ index b366649..aef80d3 100644
    SpaceLink *(*create)(const ScrArea *area, const Scene *scene);
    /** Not free spacelink itself. */
    void (*free)(SpaceLink *sl);
- 
+
    /** Init is to cope with file load, screen (size) changes, check handlers. */
    void (*init)(wmWindowManager *wm, ScrArea *area);
    /** Exit is called when the area is hidden or removed. */
    void (*exit)(wmWindowManager *wm, ScrArea *area);
    /** Listeners can react to bContext changes. */
    void (*listener)(const wmSpaceTypeListenerParams *params);
- 
+
    /** Called when the mouse moves out of the area. */
    void (*deactivate)(ScrArea *area);
- 
+
    /** Refresh context, called after file-reads, #ED_area_tag_refresh(). */
    void (*refresh)(const bContext *C, ScrArea *area);
- 
+
    /** After a spacedata copy, an init should result in exact same situation. */
    SpaceLink *(*duplicate)(SpaceLink *sl);
- 
+
    /** Register operator types on startup. */
    void (*operatortypes)();
    /** Add default items to WM keymap. */
    void (*keymap)(wmKeyConfig *keyconf);
    /** On startup, define dropboxes for spacetype+regions. */
    void (*dropboxes)();
- 
+
    /** Initialize gizmo-map-types and gizmo-group-types with the region. */
    void (*gizmos)();
- 
+
    /** Return context data. */
    bContextDataCallback context;
- 
+
    /** Used when we want to replace an ID by another (or NULL). */
    void (*id_remap)(ScrArea *area, SpaceLink *sl, const blender::bke::id::IDRemapper &mappings);
- 
+
    /**
     * foreach_id callback to process all ID pointers of the editor. Used indirectly by lib_query's
     * #BKE_library_foreach_ID_link when #IDWALK_INCLUDE_UI bit-flag is set (through WM's foreach_id
     * usage of #BKE_screen_foreach_id_screen_area).
     */
    void (*foreach_id)(SpaceLink *space_link, LibraryForeachIDData *data);
- 
+
    int (*space_subtype_get)(ScrArea *area);
    void (*space_subtype_set)(ScrArea *area, int value);
    void (*space_subtype_item_extend)(bContext *C, EnumPropertyItem **item, int *totitem);
- 
+
    /** Return a custom name, based on subtype or other reason. */
    blender::StringRefNull (*space_name_get)(const ScrArea *area);
    /** Return a custom icon, based on subtype or other reason. */
    int (*space_icon_get)(const ScrArea *area);
- 
+
    /**
     * Update pointers for all structs directly owned by this space.
     */
    void (*blend_read_data)(BlendDataReader *reader, SpaceLink *space_link);
- 
+
    /**
     * Update pointers to other id data blocks.
     */
    void (*blend_read_after_liblink)(BlendLibReader *reader, ID *parent_id, SpaceLink *space_link);
- 
+
    /**
     * Write all structs that should be saved in a .blend file.
     */
    void (*blend_write)(BlendWriter *writer, SpaceLink *space_link);
- 
+
    /** Region type definitions. */
    ListBase regiontypes;
- 
+
    /* read and write... */
- 
+
    /** Default key-maps to add. */
    int keymapflag;
- 
+
    ~SpaceType();
  };
- 
+
  /* Region types are also defined using spacetypes_init, via a callback. */
- 
+
  struct wmRegionListenerParams {
    wmWindow *window;
    /** Can be NULL when the region is not part of an area. */
@@ -12349,7 +12425,7 @@ index b366649..aef80d3 100644
    const wmNotifier *notifier;
    const Scene *scene;
  };
- 
+
  struct wmRegionMessageSubscribeParams {
    const bContext *context;
    wmMsgBus *message_bus;
@@ -12359,16 +12435,16 @@ index b366649..aef80d3 100644
    ScrArea *area;
    ARegion *region;
  };
- 
+
  struct RegionPollParams {
    const bScreen *screen;
    const ScrArea *area;
    const ARegion *region;
- 
+
    /** Full context, if WM context above is not enough. */
    const bContext *context;
  };
- 
+
  /* #ARegionType::lock */
  enum ARegionDrawLockFlags {
    REGION_DRAW_LOCK_NONE = 0,
@@ -12376,12 +12452,12 @@ index b366649..aef80d3 100644
    REGION_DRAW_LOCK_BAKING = (1 << 1),
    REGION_DRAW_LOCK_ALL = (REGION_DRAW_LOCK_RENDER | REGION_DRAW_LOCK_BAKING)
  };
- 
+
  struct ARegionType {
    ARegionType *next, *prev;
    /** Unique identifier within this space, defines `RGN_TYPE_xxxx`. */
    int regionid;
- 
+
    /** Add handlers, stuff you only do once or on area/region type/size changes. */
    void (*init)(wmWindowManager *wm, ARegion *region);
    /** Exit is called when the region is hidden or removed. */
@@ -12411,28 +12487,28 @@ index b366649..aef80d3 100644
    void (*listener)(const wmRegionListenerParams *params);
    /** Optional callback to generate subscriptions. */
    void (*message_subscribe)(const wmRegionMessageSubscribeParams *params);
- 
+
    void (*free)(ARegion *);
- 
+
    /** Split region, copy data optionally. */
    void *(*duplicate)(void *poin);
- 
+
    /** Register operator types on startup. */
    void (*operatortypes)();
    /** Add items to keymap. */
    void (*keymap)(wmKeyConfig *keyconf);
    /** Allows default cursor per region. */
    void (*cursor)(wmWindow *win, ScrArea *area, ARegion *region);
- 
+
    /** Return context data. */
    bContextDataCallback context;
- 
+
    /**
     * Called on every frame in which the region's poll succeeds, regardless of visibility, before
     * drawing, visibility evaluation and initialization. Allows the region to override visibility.
     */
    void (*on_poll_success)(const bContext *C, ARegion *region);
- 
+
    /**
     * Called whenever the user changes the region's size. Not called when the size is changed
     * through other means, like to adjust for a scaled down window.
@@ -12449,16 +12525,16 @@ index b366649..aef80d3 100644
     * when the `v2d->tot` is changed and `cur` is adopted accordingly).
     */
    void (*on_view2d_changed)(const bContext *C, ARegion *region);
- 
+
    /** Custom drawing callbacks. */
    ListBase drawcalls;
- 
+
    /** Panels type definitions. */
    ListBase paneltypes;
- 
+
    /** Header type definitions. */
    ListBase headertypes;
- 
+
    /** Hardcoded constraints, smaller than these values region is not visible. */
    int minsizex, minsizey;
    /** When new region opens (region prefsizex/y are zero then. */
@@ -12476,12 +12552,12 @@ index b366649..aef80d3 100644
    /** Call cursor function on each move event. */
    short event_cursor;
  };
- 
+
  /* Panel types. */
- 
+
  struct PanelType {
    PanelType *next, *prev;
- 
+
    /** Unique name. */
    char idname[BKE_ST_MAXNAME];
    /** For panel header. */
@@ -12510,9 +12586,9 @@ index b366649..aef80d3 100644
     */
    blender::float2 offset_units_xy;
    int order;
- 
+
    int flag;
- 
+
    /** Verify if the panel should draw or not. */
    bool (*poll)(const bContext *C, PanelType *pt);
    /** Draw header (optional) */
@@ -12526,9 +12602,9 @@ index b366649..aef80d3 100644
     * in popover regions.
     */
    void (*listener)(const wmRegionListenerParams *params);
- 
+
    /* For instanced panels corresponding to a list: */
- 
+
    /** Reorder function, called when drag and drop finishes. */
    void (*reorder)(bContext *C, Panel *pa, int new_index);
    /**
@@ -12545,15 +12621,15 @@ index b366649..aef80d3 100644
     * the visual order you would see if all panels were expanded.
     */
    void (*set_list_data_expand_flag)(const bContext *C, Panel *pa, short expand_flag);
- 
+
    /** Sub panels. */
    PanelType *parent;
    ListBase children;
- 
+
    /** RNA integration. */
    ExtensionRNA rna_ext;
  };
- 
+
  /** #PanelType.flag */
  enum {
    PANEL_TYPE_DEFAULT_CLOSED = (1 << 0),
@@ -12566,19 +12642,19 @@ index b366649..aef80d3 100644
    /** Don't search panels with this type during property search. */
    PANEL_TYPE_NO_SEARCH = (1 << 7),
  };
- 
+
  struct LayoutPanelHeader {
    float start_y;
    float end_y;
    PointerRNA open_owner_ptr;
    std::string open_prop_name;
  };
- 
+
  struct LayoutPanelBody {
    float start_y;
    float end_y;
  };
- 
+
  /**
   * "Layout Panels" are panels which are defined as part of the #uiLayout. As such they have a
   * specific place in the layout and can not be freely dragged around like top level panels.
@@ -12590,18 +12666,18 @@ index b366649..aef80d3 100644
  struct LayoutPanels {
    blender::Vector<LayoutPanelHeader> headers;
    blender::Vector<LayoutPanelBody> bodies;
- 
+
    void clear()
    {
      this->headers.clear();
      this->bodies.clear();
    }
  };
- 
+
  struct Panel_Runtime {
    /** Applied to Panel.ofsx, but saved separately so we can track changes between redraws. */
    int region_ofsx = 0;
- 
+
    /**
     * Pointer for storing which data the panel corresponds to.
     * Useful when there can be multiple instances of the same panel type.
@@ -12610,27 +12686,30 @@ index b366649..aef80d3 100644
     * This avoids freeing the same pointer twice when panels are removed.
     */
    PointerRNA *custom_data_ptr = nullptr;
- 
+
    /**
     * Pointer to the panel's block. Useful when changes to panel #uiBlocks
     * need some context from traversal of the panel "tree".
     */
    uiBlock *block = nullptr;
- 
+
    /** Non-owning pointer. The context is stored in the block. */
    bContextStore *context = nullptr;
- 
+
    /** Information about nested layout panels generated in layout code. */
    LayoutPanels layout_panels;
  };
- 
+
  namespace blender::bke {
- 
+
  struct ARegionRuntime {
 +  /* Opaque floating tablet region; full bounds own pointer input. */
 +  bool ipad_floating = false;
 +  bool ipad_finger_paint_overlay_blocked = false;
 +  bool ipad_finger_paint_navigation_drawn = false;
++  /* Sticky execution facts, separate from the paint admission policy. */
++  bool ipad_knife_canvas_unknown_widgets = false;
++  std::array<uint64_t, 23> ipad_knife_canvas_drawn_owner{};
 +  int ipad_visibility_request = -1;
 +  /** Unobstructed tablet canvas bounds, relative to the native WINDOW region. */
 +  bool ipad_canvas = false;
@@ -12647,10 +12726,10 @@ index b366649..aef80d3 100644
 +  uint64_t ipad_hud_content_lifetime = 0;
    /** Callbacks for this region type. */
    struct ARegionType *type;
- 
+
    /** Runtime for partial redraw, same or smaller than #ARegion::winrct. */
    rcti drawrct = {};
- 
+
    /**
     * The visible part of the region, use with region overlap not to draw
     * on top of the overlapping regions.
@@ -12658,56 +12737,56 @@ index b366649..aef80d3 100644
     * Lazy initialize, zeroed when unset, relative to #ARegion.winrct x/y min.
     */
    rcti visible_rect = {};
- 
+
    /**
     * The offset needed to not overlap with window scroll-bars.
     * Only used by HUD regions for now.
     */
    int offset_x = 0;
    int offset_y = 0;
- 
+
    /** Panel category to use between 'layout' and 'draw'. */
    const char *category = nullptr;
- 
+
    /** Maps #uiBlock::name to uiBlock for faster lookups. */
    Map<std::string, uiBlock *> block_name_map;
    /** #uiBlock. */
    ListBase uiblocks = {};
- 
+
    /** #wmEventHandler. */
    ListBase handlers = {};
- 
+
    /** Use this string to draw info. */
    char *headerstr = nullptr;
- 
+
    /** Gizmo-map of this region. */
    wmGizmoMap *gizmo_map = nullptr;
- 
+
    /** Blend in/out. */
    wmTimer *regiontimer = nullptr;
- 
+
    wmDrawBuffer *draw_buffer = nullptr;
- 
+
    /** Panel categories runtime. */
    ListBase panels_category = {};
- 
+
    /** Region is currently visible on screen. */
    short visible = 0;
- 
+
    /** Private, cached notifier events. */
    short do_draw = 0;
- 
+
    /** Private, cached notifier events. */
    short do_draw_paintcursor;
- 
+
    /** Dummy panel used in popups so they can support layout panels. */
    Panel *popup_block_panel = nullptr;
  };
- 
+
  }  // namespace blender::bke
- 
+
  /* #uiList types. */
- 
+
  /** Draw an item in the `ui_list`. */
  using uiListDrawItemFunc = void (*)(uiList *ui_list,
                                      const bContext *C,
@@ -12719,62 +12798,62 @@ index b366649..aef80d3 100644
                                      const char *active_propname,
                                      int index,
                                      int flt_flag);
- 
+
  /** Draw the filtering part of an uiList. */
  using uiListDrawFilterFunc = void (*)(uiList *ui_list, const bContext *C, uiLayout *layout);
- 
+
  /** Filter items of an uiList. */
  using uiListFilterItemsFunc = void (*)(uiList *ui_list,
                                         const bContext *C,
                                         PointerRNA *,
                                         const char *propname);
- 
+
  /** Listen to notifiers. Only for lists defined in C. */
  using uiListListener = void (*)(uiList *ui_list, wmRegionListenerParams *params);
- 
+
  struct uiListType {
    uiListType *next, *prev;
- 
+
    /** Unique name. */
    char idname[BKE_ST_MAXNAME];
- 
+
    uiListDrawItemFunc draw_item;
    uiListDrawFilterFunc draw_filter;
    uiListFilterItemsFunc filter_items;
- 
+
    /** For lists defined in C only. */
    uiListListener listener;
- 
+
    /** RNA integration. */
    ExtensionRNA rna_ext;
  };
- 
+
  /* Header types. */
- 
+
  struct HeaderType {
    HeaderType *next, *prev;
    /** Unique name. */
    char idname[BKE_ST_MAXNAME];
    int space_type;
    int region_type;
- 
+
    bool (*poll)(const bContext *C, HeaderType *ht);
    /** Draw entirely, view changes should be handled here. */
    void (*draw)(const bContext *C, Header *header);
- 
+
    /** RNA integration. */
    ExtensionRNA rna_ext;
  };
- 
+
  struct Header {
    /** Runtime. */
    HeaderType *type;
    /** Runtime for drawing. */
    uiLayout *layout;
  };
- 
+
  /* Menu types. */
- 
+
  enum class MenuTypeFlag {
    /**
     * Whether the menu depends on data retrieved via #CTX_data_pointer_get. If it is context
@@ -12787,10 +12866,10 @@ index b366649..aef80d3 100644
    SearchOnKeyPress = (1 << 1),
  };
  ENUM_OPERATORS(MenuTypeFlag, MenuTypeFlag::ContextDependent)
- 
+
  struct MenuType {
    MenuType *next, *prev;
- 
+
    /** Unique name. */
    char idname[BKE_ST_MAXNAME];
    /** For button text. */
@@ -12799,28 +12878,28 @@ index b366649..aef80d3 100644
    /** Optional, see: #wmOwnerID. */
    char owner_id[128];
    const char *description;
- 
+
    /** Verify if the menu should draw or not. */
    bool (*poll)(const bContext *C, MenuType *mt);
    /** Draw entirely, view changes should be handled here. */
    void (*draw)(const bContext *C, Menu *menu);
    void (*listener)(const wmRegionListenerParams *params);
- 
+
    MenuTypeFlag flag;
- 
+
    /** RNA integration. */
    ExtensionRNA rna_ext;
  };
- 
+
  struct Menu {
    /** Runtime. */
    MenuType *type;
    /** Runtime for drawing. */
    uiLayout *layout;
  };
- 
+
  /* Asset shelf types. */
- 
+
  /* #AssetShelfType.flag */
  enum AssetShelfTypeFlag {
    /**
@@ -12836,52 +12915,52 @@ index b366649..aef80d3 100644
     * highlighting the asset as active.
     */
    ASSET_SHELF_TYPE_FLAG_ACTIVATE_FOR_CONTEXT_MENU = (1 << 3),
- 
+
    ASSET_SHELF_TYPE_FLAG_MAX
  };
  ENUM_OPERATORS(AssetShelfTypeFlag, ASSET_SHELF_TYPE_FLAG_MAX);
- 
+
  #define ASSET_SHELF_PREVIEW_SIZE_DEFAULT 64
- 
+
  struct AssetShelfType {
    /** Unique name. */
    char idname[BKE_ST_MAXNAME];
- 
+
    int space_type;
- 
+
    /** Operator to call when activating a grid view item. */
    std::string activate_operator;
    /** Operator to call when dragging a grid view item. */
    std::string drag_operator;
- 
+
    AssetShelfTypeFlag flag;
- 
+
    short default_preview_size;
- 
+
    /** Determine if asset shelves of this type should be available in current context or not. */
    bool (*poll)(const bContext *C, const AssetShelfType *shelf_type);
- 
+
    /**
     * Determine if an individual asset should be visible or not. May be a temporary design,
     * visibility should first and foremost be controlled by asset traits.
     */
    bool (*asset_poll)(const AssetShelfType *shelf_type,
                       const blender::asset_system::AssetRepresentation *asset);
- 
+
    /** Asset shelves can define their own context menu via this layout definition callback. */
    void (*draw_context_menu)(const bContext *C,
                              const AssetShelfType *shelf_type,
                              const blender::asset_system::AssetRepresentation *asset,
                              uiLayout *layout);
- 
+
    const AssetWeakReference *(*get_active_asset)(const AssetShelfType *shelf_type);
- 
+
    /** RNA integration. */
    ExtensionRNA rna_ext;
  };
- 
+
  /* Space-types. */
- 
+
  SpaceType *BKE_spacetype_from_id(int spaceid);
  ARegionType *BKE_regiontype_from_id(const SpaceType *st, int regionid);
  blender::Span<std::unique_ptr<SpaceType>> BKE_spacetypes_list();
@@ -12889,15 +12968,15 @@ index b366649..aef80d3 100644
  bool BKE_spacetype_exists(int spaceid);
  /** Only for quitting blender. */
  void BKE_spacetypes_free();
- 
+
  /* Space-data. */
- 
+
  void BKE_spacedata_freelist(ListBase *lb);
  /**
   * \param lb_dst: should be empty (will be cleared).
   */
  void BKE_spacedata_copylist(ListBase *lb_dst, ListBase *lb_src);
- 
+
  /**
   * Facility to set locks for drawing to survive (render) threads accessing drawing data.
   *
@@ -12906,7 +12985,7 @@ index b366649..aef80d3 100644
   * will be set to by the last call.
   */
  void BKE_spacedata_draw_locks(ARegionDrawLockFlags lock_flags);
- 
+
  /**
   * Version of #BKE_area_find_region_type that also works if \a slink
   * is not the active space of \a area.
@@ -12914,20 +12993,20 @@ index b366649..aef80d3 100644
  ARegion *BKE_spacedata_find_region_type(const SpaceLink *slink,
                                          const ScrArea *area,
                                          int region_type) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
- 
+
  void BKE_spacedata_callback_id_remap_set(
      void (*func)(ScrArea *area, SpaceLink *sl, ID *old_id, ID *new_id));
  /**
   * Currently unused!
   */
  void BKE_spacedata_id_unref(ScrArea *area, SpaceLink *sl, ID *id);
- 
+
  /* Area/regions. */
- 
+
  ARegion *BKE_area_region_copy(const SpaceType *st, const ARegion *region);
- 
+
  ARegion *BKE_area_region_new();
- 
+
  /**
   * Doesn't free the region itself.
   */
@@ -12948,7 +13027,7 @@ index b366649..aef80d3 100644
   */
  void BKE_region_callback_free_gizmomap_set(void (*callback)(wmGizmoMap *));
  void BKE_region_callback_refresh_tag_gizmomap_set(void (*callback)(wmGizmoMap *));
- 
+
  /**
   * Get the layout panel state for the given idname. If it does not exist yet, initialize a new
   * panel state with the given default value.
@@ -12956,7 +13035,7 @@ index b366649..aef80d3 100644
  LayoutPanelState *BKE_panel_layout_panel_state_ensure(Panel *panel,
                                                        blender::StringRef idname,
                                                        bool default_closed);
- 
+
  /**
   * Find a region of type \a region_type in provided \a regionbase.
   *
@@ -12974,7 +13053,7 @@ index b366649..aef80d3 100644
  ARegion *BKE_area_find_region_active_win(const ScrArea *area);
  ARegion *BKE_area_find_region_xy(const ScrArea *area, int regiontype, const int xy[2])
      ATTR_NONNULL(3);
- 
+
  /**
   * \note This is only for screen level regions (typically menus/popups).
   */
@@ -12985,7 +13064,7 @@ index b366649..aef80d3 100644
  ARegion *BKE_screen_find_region_xy(const bScreen *screen,
                                     int regiontype,
                                     const int xy[2]) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1, 3);
- 
+
  ARegion *BKE_screen_find_main_region_at_xy(const bScreen *screen, int space_type, const int xy[2])
      ATTR_NONNULL(1, 3);
  /**
@@ -13009,55 +13088,55 @@ index b366649..aef80d3 100644
                                            const int xy[2]) ATTR_NONNULL(1, 3);
  ScrArea *BKE_screen_find_area_xy(const bScreen *screen, int spacetype, const int xy[2])
      ATTR_NONNULL(1, 3);
- 
+
  void BKE_screen_gizmo_tag_refresh(bScreen *screen);
- 
+
  /**
   * Refresh any screen data that should be set on file-load
   * with "Load UI" disabled.
   */
  void BKE_screen_runtime_refresh_for_blendfile(bScreen *screen);
- 
+
  void BKE_screen_view3d_sync(View3D *v3d, Scene *scene);
  void BKE_screen_view3d_scene_sync(bScreen *screen, Scene *scene);
  bool BKE_screen_is_fullscreen_area(const bScreen *screen) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
  bool BKE_screen_is_used(const bScreen *screen) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
- 
+
  /* Zoom factor conversion. */
- 
+
  float BKE_screen_view3d_zoom_to_fac(float camzoom);
  float BKE_screen_view3d_zoom_from_fac(float zoomfac);
- 
+
  void BKE_screen_view3d_shading_init(View3DShading *shading);
- 
+
  /* Screen. */
- 
+
  /**
   * Callback used by lib_query to walk over all ID usages
   * (mimics `foreach_id` callback of #IDTypeInfo structure).
   */
  void BKE_screen_foreach_id_screen_area(LibraryForeachIDData *data, ScrArea *area);
- 
+
  /**
   * Free (or release) any data used by this screen (does not free the screen itself).
   */
  void BKE_screen_free_data(bScreen *screen);
  void BKE_screen_area_map_free(ScrAreaMap *area_map) ATTR_NONNULL();
- 
+
  ScrEdge *BKE_screen_find_edge(const bScreen *screen, ScrVert *v1, ScrVert *v2);
  void BKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2);
  void BKE_screen_remove_double_scrverts(bScreen *screen);
  void BKE_screen_remove_double_scredges(bScreen *screen);
  void BKE_screen_remove_unused_scredges(bScreen *screen);
  void BKE_screen_remove_unused_scrverts(bScreen *screen);
- 
+
  void BKE_screen_header_alignment_reset(bScreen *screen);
- 
+
  /* .blend file I/O */
- 
+
  void BKE_screen_view3d_shading_blend_write(BlendWriter *writer, View3DShading *shading);
  void BKE_screen_view3d_shading_blend_read_data(BlendDataReader *reader, View3DShading *shading);
- 
+
  void BKE_screen_area_map_blend_write(BlendWriter *writer, ScrAreaMap *area_map);
  /**
   * \return false on error.
@@ -13068,7 +13147,7 @@ index b366649..aef80d3 100644
   * For the saved 2.50 files without `regiondata`.
   */
  void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBase *regions);
- 
+
  /**
   * Called after lib linking process is done, to perform some validation on the read data, or some
   * complex specific reading process that requires the data to be fully read and ID pointers to be
@@ -16210,7 +16289,7 @@ index f9b3a93..8dc220e 100644
 diff --git a/source/blender/editors/include/ED_mesh.hh b/source/blender/editors/include/ED_mesh.hh
 --- a/source/blender/editors/include/ED_mesh.hh
 +++ b/source/blender/editors/include/ED_mesh.hh
-@@ -1,651 +1,700 @@
+@@ -1,651 +1,707 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -16620,6 +16699,13 @@ diff --git a/source/blender/editors/include/ED_mesh.hh b/source/blender/editors/
 +bool ED_mesh_knife_modal_type(const wmOperatorType *type);
 +/** Requires a freshly resolved registered operator; clears the output on refusal. */
 +bool ED_mesh_knife_modal_origin(const wmOperator *op, MeshKnifeModalOrigin &r_origin);
++/** Exact registered Knife draw handle, function, data, POST_VIEW and origin. */
++bool ED_mesh_knife_draw_callback_known(const wmOperator *op,
++                                      const ARegion *region,
++                                      const void *handle,
++                                      void (*draw)(const bContext *, ARegion *, void *),
++                                      const void *data,
++                                      int type);
 +/**
 + * Dispatch the same native modal body once, after the caller proves the original live owner.
 + * The caller owns normal WM result/history/handler cleanup. Refusal returns PASS_THROUGH,
@@ -86531,34 +86617,34 @@ index 71f3a16..a69d49b 100644
                                 const Brush &brush,
                                 const Object &object,
 diff --git a/source/blender/editors/space_api/spacetypes.cc b/source/blender/editors/space_api/spacetypes.cc
-index bb62a58..0e38e93 100644
 --- a/source/blender/editors/space_api/spacetypes.cc
 +++ b/source/blender/editors/space_api/spacetypes.cc
-@@ -1,291 +1,296 @@
+@@ -1,291 +1,327 @@
  /* SPDX-FileCopyrightText: 2008 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
- 
+
  /** \file
   * \ingroup spapi
   */
- 
+
  #include <cstdlib>
- 
+
  #include "MEM_guardedalloc.h"
- 
+
  #include "DNA_windowmanager_types.h"
- 
+
  #include "BLI_listbase.h"
- 
+
  #include "BKE_context.hh"
  #include "BKE_screen.hh"
- 
++#include "WM_ipad_knife.hh"
+
  #include "GPU_state.hh"
- 
+
  #include "UI_interface.hh"
  #include "UI_view2d.hh"
- 
+
  #include "ED_anim_api.hh"
  #include "ED_armature.hh"
  #include "ED_asset.hh"
@@ -86592,15 +86678,15 @@ index bb62a58..0e38e93 100644
  #include "ED_userpref.hh"
  #include "ED_util.hh"
  #include "ED_uvedit.hh"
- 
+
  #include "io_ops.hh"
- 
+
  void ED_spacetypes_init()
  {
    using namespace blender::ed;
    /* UI unit is a variable, may be used in some space type initialization. */
    U.widget_unit = 20;
- 
+
    /* Create space types. */
    ED_spacetype_outliner();
    ED_spacetype_view3d();
@@ -86621,7 +86707,7 @@ index bb62a58..0e38e93 100644
    ED_spacetype_statusbar();
    ED_spacetype_topbar();
    spreadsheet::register_spacetype();
- 
+
    /* Register operator types for screen and all spaces. */
    ED_operatortypes_userpref();
    ED_operatortypes_workspace();
@@ -86652,14 +86738,14 @@ index bb62a58..0e38e93 100644
    ED_operatortypes_mask();
    ED_operatortypes_io();
    ED_operatortypes_edutils();
- 
+
    ED_operatortypes_view2d();
    ED_operatortypes_ui();
- 
+
    ED_screen_user_menu_register();
- 
+
    ED_uilisttypes_ui();
- 
+
    /* Gizmo types. */
    ED_gizmotypes_button_2d();
    ED_gizmotypes_dial_3d();
@@ -86671,7 +86757,7 @@ index bb62a58..0e38e93 100644
    ED_gizmotypes_cage_2d();
    ED_gizmotypes_cage_3d();
    ED_gizmotypes_snap_3d();
- 
+
    /* Register types for operators and gizmos. */
    for (const std::unique_ptr<SpaceType> &type : BKE_spacetypes_list()) {
      /* Initialize gizmo types first, operator types need them. */
@@ -86683,7 +86769,7 @@ index bb62a58..0e38e93 100644
      }
    }
  }
- 
+
  void ED_spacemacros_init()
  {
    using namespace blender::ed;
@@ -86707,7 +86793,7 @@ index bb62a58..0e38e93 100644
    ED_operatormacros_paint();
    ED_operatormacros_grease_pencil();
    ED_operatormacros_nla();
- 
+
    /* Register dropboxes (can use macros). */
    ED_dropboxes_ui();
    for (const std::unique_ptr<SpaceType> &type : BKE_spacetypes_list()) {
@@ -86716,7 +86802,7 @@ index bb62a58..0e38e93 100644
      }
    }
  }
- 
+
  void ED_spacetypes_keymap(wmKeyConfig *keyconf)
  {
    using namespace blender::ed;
@@ -86739,12 +86825,12 @@ index bb62a58..0e38e93 100644
    ED_keymap_mask(keyconf);
    ED_keymap_marker(keyconf);
    sculpt_paint::keymap_sculpt(keyconf);
- 
+
    ED_keymap_view2d(keyconf);
    ED_keymap_ui(keyconf);
- 
+
    transform::keymap_transform(keyconf);
- 
+
    for (const std::unique_ptr<SpaceType> &type : BKE_spacetypes_list()) {
      if (type->keymap) {
        type->keymap(keyconf);
@@ -86756,33 +86842,33 @@ index bb62a58..0e38e93 100644
      }
    }
  }
- 
+
  /* ********************** Custom Draw Call API ***************** */
- 
+
  struct RegionDrawCB {
    RegionDrawCB *next, *prev;
- 
+
    void (*draw)(const bContext *, ARegion *, void *);
    void *customdata;
- 
+
    int type;
  };
- 
+
  void *ED_region_draw_cb_activate(ARegionType *art,
                                   void (*draw)(const bContext *, ARegion *, void *),
                                   void *customdata,
                                   int type)
  {
    RegionDrawCB *rdc = MEM_callocN<RegionDrawCB>(__func__);
- 
+
    BLI_addtail(&art->drawcalls, rdc);
    rdc->draw = draw;
    rdc->customdata = customdata;
    rdc->type = type;
- 
+
    return rdc;
  }
- 
+
  bool ED_region_draw_cb_exit(ARegionType *art, void *handle)
  {
    LISTBASE_FOREACH (RegionDrawCB *, rdc, &art->drawcalls) {
@@ -86794,7 +86880,7 @@ index bb62a58..0e38e93 100644
    }
    return false;
  }
- 
+
  static void ed_region_draw_cb_draw(const bContext *C, ARegion *region, ARegionType *art, int type)
  {
    LISTBASE_FOREACH_MUTABLE (RegionDrawCB *, rdc, &art->drawcalls) {
@@ -86803,22 +86889,52 @@ index bb62a58..0e38e93 100644
 +      /* Unknown callbacks may draw interactive controls, then remove themselves.
 +       * Keep the execution fact with the rendered texture, not the live list. */
 +      if (region) region->runtime->ipad_finger_paint_overlay_blocked = true;
++      if (region && region->runtime) {
++        wmIPadKnifeOwner owner;
++        if (!WM_ipad_knife_draw_callback_known(
++                C, region, rdc, rdc->draw, rdc->customdata, rdc->type, owner) ||
++            region->runtime->ipad_knife_canvas_drawn_owner[0])
++        {
++          region->runtime->ipad_knife_canvas_unknown_widgets = true;
++        }
++        else {
++          region->runtime->ipad_knife_canvas_drawn_owner = owner.values;
++        }
++      }
 +#endif
        rdc->draw(C, region, rdc->customdata);
      }
    }
++}
++
++bool ED_region_knife_pan_callbacks_safe(const bContext *C,
++                                        const ARegion *region,
++                                        wmIPadKnifeOwner &r_owner)
++{
++  r_owner = {};
++  if (!C || !region || !region->runtime || !region->runtime->type) return false;
++  wmIPadKnifeOwner known;
++  LISTBASE_FOREACH (RegionDrawCB *, rdc, &region->runtime->type->drawcalls) {
++    wmIPadKnifeOwner owner;
++    if (known.valid() || !WM_ipad_knife_draw_callback_known(
++                            C, region, rdc, rdc->draw, rdc->customdata, rdc->type, owner))
++      return false;
++    known = owner;
++  }
++  r_owner = known;
++  return true;
  }
- 
+
  void ED_region_draw_cb_draw(const bContext *C, ARegion *region, int type)
  {
    ed_region_draw_cb_draw(C, region, region->runtime->type, type);
  }
- 
+
  void ED_region_surface_draw_cb_draw(ARegionType *art, int type)
  {
    ed_region_draw_cb_draw(nullptr, nullptr, art, type);
  }
- 
+
  void ED_region_draw_cb_remove_by_type(ARegionType *art, void *draw_fn, void (*free)(void *))
  {
    LISTBASE_FOREACH_MUTABLE (RegionDrawCB *, rdc, &art->drawcalls) {
@@ -121056,63 +121172,62 @@ index 5239bf7..076cb65 100644
  
  /** \} */
 diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc b/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
-index f6771bb..0af093a 100644
 --- a/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
 +++ b/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
-@@ -1,1487 +1,1496 @@
+@@ -1,1487 +1,1499 @@
  /* SPDX-FileCopyrightText: 2014 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
- 
+
  /** \file
   * \ingroup wm
   */
- 
+
  #include <cstring>
- 
+
  #include "BLI_ghash.h"
  #include "BLI_listbase.h"
  #include "BLI_math_vector.h"
  #include "BLI_math_vector_types.hh"
  #include "BLI_rect.h"
  #include "BLI_vector.hh"
- 
+
  #include "BKE_context.hh"
  #include "BKE_global.hh"
  #include "BKE_main.hh"
  #include "BKE_screen.hh"
- 
+
  #include "ED_screen.hh"
  #include "ED_select_utils.hh"
  #include "ED_view3d.hh"
- 
+
  #include "GPU_framebuffer.hh"
  #include "GPU_matrix.hh"
  #include "GPU_select.hh"
  #include "GPU_state.hh"
  #include "GPU_viewport.hh"
- 
+
  #include "MEM_guardedalloc.h"
- 
+
  #include "WM_api.hh"
  #include "WM_types.hh"
  #include "wm_event_system.hh"
- 
+
  /* For tool-tips. */
  #include "UI_interface.hh"
- 
+
  #include "DEG_depsgraph.hh"
- 
+
  /* Own includes. */
  #include "wm_gizmo_intern.hh"
  #include "wm_gizmo_wmapi.hh"
- 
+
  /**
   * Store all gizmo-maps here. Anyone who wants to register a gizmo for a certain
   * area type can query the gizmo-map to do so.
   */
  static ListBase gizmomaptypes = {nullptr, nullptr};
- 
+
  /**
   * Update when gizmo-map types change.
   */
@@ -121122,10 +121237,10 @@ index f6771bb..0af093a 100644
    WM_GIZMOMAPTYPE_GLOBAL_UPDATE_INIT = (1 << 0),
    /** Remove by #wmGroupType.type_update_flag. */
    WM_GIZMOMAPTYPE_GLOBAL_UPDATE_REMOVE = (1 << 1),
- 
+
    /** Remove by #wmGroup.tag_remove. */
    WM_GIZMOTYPE_GLOBAL_UPDATE_REMOVE = (1 << 2),
- 
+
    /**
     * Re-create all gizmos.
     *
@@ -121134,13 +121249,13 @@ index f6771bb..0af093a 100644
     * (such as reloading Python scripts).
     */
    WM_GIZMOTYPE_GLOBAL_REINIT_ALL = (1 << 3),
- 
+
  };
  ENUM_OPERATORS(eWM_GizmoFlagGroupTypeGlobalFlag, WM_GIZMOTYPE_GLOBAL_REINIT_ALL)
- 
+
  static eWM_GizmoFlagGroupTypeGlobalFlag wm_gzmap_type_update_flag =
      eWM_GizmoFlagGroupTypeGlobalFlag(0);
- 
+
  /**
   * Gizmo-map update tagging.
   */
@@ -121149,14 +121264,14 @@ index f6771bb..0af093a 100644
    GIZMOMAP_IS_PREPARE_DRAW = (1 << 0),
    GIZMOMAP_IS_REFRESH_CALLBACK = (1 << 1),
  };
- 
+
  /* -------------------------------------------------------------------- */
  /** \name wmGizmoMap Selection Array API
   *
   * Just handle `wm_gizmomap_select_array_*`, not flags or callbacks.
   *
   * \{ */
- 
+
  static void wm_gizmomap_select_array_ensure_len_alloc(wmGizmoMap *gzmap, int len)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
@@ -121166,7 +121281,7 @@ index f6771bb..0af093a 100644
    msel->items = static_cast<wmGizmo **>(MEM_reallocN(msel->items, sizeof(*msel->items) * len));
    msel->len_alloc = len;
  }
- 
+
  void wm_gizmomap_select_array_clear(wmGizmoMap *gzmap)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
@@ -121174,7 +121289,7 @@ index f6771bb..0af093a 100644
    msel->len = 0;
    msel->len_alloc = 0;
  }
- 
+
  void wm_gizmomap_select_array_shrink(wmGizmoMap *gzmap, int len_subtract)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
@@ -121190,7 +121305,7 @@ index f6771bb..0af093a 100644
      }
    }
  }
- 
+
  void wm_gizmomap_select_array_push_back(wmGizmoMap *gzmap, wmGizmo *gz)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
@@ -121202,7 +121317,7 @@ index f6771bb..0af093a 100644
    }
    msel->items[msel->len++] = gz;
  }
- 
+
  void wm_gizmomap_select_array_remove(wmGizmoMap *gzmap, wmGizmo *gz)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
@@ -121217,28 +121332,28 @@ index f6771bb..0af093a 100644
      }
    }
  }
- 
+
  /** \} */
- 
+
  /* -------------------------------------------------------------------- */
  /** \name wmGizmoMap
   * \{ */
- 
+
  static wmGizmoMap *wm_gizmomap_new_from_type_ex(wmGizmoMapType *gzmap_type, wmGizmoMap *gzmap)
  {
    gzmap->type = gzmap_type;
    gzmap->is_init = true;
    WM_gizmomap_tag_refresh(gzmap);
- 
+
    /* Create all gizmo-groups for this gizmo-map. We may create an empty one
     * too in anticipation of gizmos from operators etc. */
    LISTBASE_FOREACH (wmGizmoGroupTypeRef *, gzgt_ref, &gzmap_type->grouptype_refs) {
      wm_gizmogroup_new_from_type(gzmap, gzgt_ref->type);
    }
- 
+
    return gzmap;
  }
- 
+
  wmGizmoMap *WM_gizmomap_new_from_type(const wmGizmoMapType_Params *gzmap_params)
  {
    wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(gzmap_params);
@@ -121246,12 +121361,12 @@ index f6771bb..0af093a 100644
    wm_gizmomap_new_from_type_ex(gzmap_type, gzmap);
    return gzmap;
  }
- 
+
  static void wm_gizmomap_free_data(wmGizmoMap *gzmap)
  {
    /* Clear first so further calls don't waste time trying to maintain correct array state. */
    wm_gizmomap_select_array_clear(gzmap);
- 
+
    for (wmGizmoGroup *gzgroup = static_cast<wmGizmoGroup *>(gzmap->groups.first), *gzgroup_next;
         gzgroup;
         gzgroup = gzgroup_next)
@@ -121262,13 +121377,13 @@ index f6771bb..0af093a 100644
    }
    BLI_assert(BLI_listbase_is_empty(&gzmap->groups));
  }
- 
+
  void wm_gizmomap_remove(wmGizmoMap *gzmap)
  {
    wm_gizmomap_free_data(gzmap);
    MEM_freeN(gzmap);
  }
- 
+
  void WM_gizmomap_reinit(wmGizmoMap *gzmap)
  {
    wmGizmoMapType *gzmap_type = gzmap->type;
@@ -121276,7 +121391,7 @@ index f6771bb..0af093a 100644
    memset(gzmap, 0x0, sizeof(*gzmap));
    wm_gizmomap_new_from_type_ex(gzmap_type, gzmap);
  }
- 
+
  wmGizmoGroup *WM_gizmomap_group_find(wmGizmoMap *gzmap, const char *idname)
  {
    wmGizmoGroupType *gzgt = WM_gizmogrouptype_find(idname, false);
@@ -121285,7 +121400,7 @@ index f6771bb..0af093a 100644
    }
    return nullptr;
  }
- 
+
  wmGizmoGroup *WM_gizmomap_group_find_ptr(wmGizmoMap *gzmap, const wmGizmoGroupType *gzgt)
  {
    LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
@@ -121295,22 +121410,22 @@ index f6771bb..0af093a 100644
    }
    return nullptr;
  }
- 
+
  const ListBase *WM_gizmomap_group_list(wmGizmoMap *gzmap)
  {
    return &gzmap->groups;
  }
- 
+
  bool WM_gizmomap_is_any_selected(const wmGizmoMap *gzmap)
  {
    return gzmap->gzmap_context.select.len != 0;
  }
- 
+
  wmGizmo *WM_gizmomap_get_modal(const wmGizmoMap *gzmap)
  {
    return gzmap->gzmap_context.modal;
  }
- 
+
  bool WM_gizmomap_minmax(
      const wmGizmoMap *gzmap, bool /*use_hidden*/, bool use_select, float r_min[3], float r_max[3])
  {
@@ -121321,12 +121436,12 @@ index f6771bb..0af093a 100644
      }
      return i != 0;
    }
- 
+
    bool ok = false;
    BLI_assert_msg(0, "TODO");
    return ok;
  }
- 
+
  /**
   * Creates and returns idname hash table for (visible) gizmos in \a gzmap
   *
@@ -121343,7 +121458,7 @@ index f6771bb..0af093a 100644
                                           const eWM_GizmoFlag flag_exclude)
  {
    GHash *hash = BLI_ghash_ptr_new(__func__);
- 
+
    /* Collect gizmos. */
    LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
      if (WM_gizmo_group_type_poll(C, gzgroup->type)) {
@@ -121355,10 +121470,10 @@ index f6771bb..0af093a 100644
        }
      }
    }
- 
+
    return hash;
  }
- 
+
  eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGroup *gzgroup)
  {
    eWM_GizmoFlagMapDrawStep step;
@@ -121370,7 +121485,7 @@ index f6771bb..0af093a 100644
    }
    return step;
  }
- 
+
  void WM_gizmomap_tag_refresh_drawstep(wmGizmoMap *gzmap, const eWM_GizmoFlagMapDrawStep drawstep)
  {
    BLI_assert(uint(drawstep) < WM_GIZMOMAP_DRAWSTEP_MAX);
@@ -121381,7 +121496,7 @@ index f6771bb..0af093a 100644
      gzmap->tag_highlight_pending = true;
    }
  }
- 
+
  void WM_gizmomap_tag_refresh(wmGizmoMap *gzmap)
  {
    if (gzmap) {
@@ -121392,7 +121507,7 @@ index f6771bb..0af093a 100644
      gzmap->tag_highlight_pending = true;
    }
  }
- 
+
  bool WM_gizmomap_tag_delay_refresh_for_tweak_check(wmGizmoMap *gzmap)
  {
    LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
@@ -121402,7 +121517,7 @@ index f6771bb..0af093a 100644
    }
    return false;
  }
- 
+
  static bool gizmo_prepare_drawing(wmGizmoMap *gzmap,
                                    wmGizmo *gz,
                                    const bContext *C,
@@ -121424,10 +121539,10 @@ index f6771bb..0af093a 100644
      }
      return true;
    }
- 
+
    return false;
  }
- 
+
  /**
   * Update gizmos of \a gzmap to prepare for drawing. Adds all gizmos that
   * should be drawn to list \a draw_gizmos, note that added items need freeing.
@@ -121440,21 +121555,21 @@ index f6771bb..0af093a 100644
    if (!gzmap || BLI_listbase_is_empty(&gzmap->groups)) {
      return;
    }
- 
+
    gzmap->is_init = false;
- 
+
    wmGizmo *gz_modal = gzmap->gzmap_context.modal;
- 
+
    /* Allow refresh functions to ask to be refreshed again, clear before the loop below. */
    const bool do_refresh = gzmap->update_flag[drawstep] & GIZMOMAP_IS_REFRESH_CALLBACK;
    gzmap->update_flag[drawstep] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
- 
+
    LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
      /* Check group visibility - drawstep first to avoid unnecessary call of group poll callback. */
      if (!wm_gizmogroup_is_visible_in_drawstep(gzgroup, drawstep)) {
        continue;
      }
- 
+
      if (gz_modal && (gzgroup == gz_modal->parent_gzgroup)) {
        if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE) {
          continue;
@@ -121469,7 +121584,7 @@ index f6771bb..0af093a 100644
          continue;
        }
      }
- 
+
      /* Needs to be initialized on first draw. */
      /* XXX weak: Gizmo-group may skip refreshing if it's invisible
       * (map gets untagged nevertheless). */
@@ -121479,25 +121594,25 @@ index f6771bb..0af093a 100644
      }
      /* Calls `setup`, `setup_keymap` and `refresh` if they're defined. */
      WM_gizmogroup_ensure_init(C, gzgroup);
- 
+
      /* Check after ensure which can run refresh and update this value. */
      if (gzgroup->hide.any != 0) {
        continue;
      }
- 
+
      /* Prepare drawing. */
      if (gzgroup->type->draw_prepare) {
        gzgroup->type->draw_prepare(C, gzgroup);
      }
- 
+
      LISTBASE_FOREACH (wmGizmo *, gz, &gzgroup->gizmos) {
        gizmo_prepare_drawing(gzmap, gz, C, draw_gizmos, drawstep);
      }
    }
- 
+
    gzmap->update_flag[drawstep] &= ~GIZMOMAP_IS_PREPARE_DRAW;
  }
- 
+
  /**
   * Draw all visible gizmos in \a gzmap.
   * Uses global draw_gizmos listbase.
@@ -121508,28 +121623,28 @@ index f6771bb..0af093a 100644
    if ((gzmap == nullptr) || BLI_listbase_is_empty(&gzmap->groups)) {
      return;
    }
- 
+
    /* TODO(@ideasman42): This will need its own shader probably?
     * Don't think it can be handled from that point though. */
    // const bool use_lighting = (U.gizmo_flag & V3D_GIZMO_SHADED) != 0;
- 
+
    bool is_depth_prev = false;
- 
+
    /* `draw_gizmos` contains all visible gizmos - draw them. */
    for (LinkData *link = static_cast<LinkData *>(draw_gizmos->first), *link_next; link;
         link = link_next)
    {
      wmGizmo *gz = static_cast<wmGizmo *>(link->data);
      link_next = link->next;
- 
+
      bool is_depth = (gz->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_DEPTH_3D) != 0;
- 
+
      /* Weak! since we don't 100% support depth yet (select ignores depth)
       * always show highlighted. */
      if (is_depth && (gz->state & WM_GIZMO_STATE_HIGHLIGHT)) {
        is_depth = false;
      }
- 
+
      if (is_depth == is_depth_prev) {
        /* Pass. */
      }
@@ -121542,34 +121657,37 @@ index f6771bb..0af093a 100644
        }
        is_depth_prev = is_depth;
      }
- 
+
      /* XXX force AntiAlias Gizmos. */
      GPU_line_smooth(true);
      GPU_polygon_smooth(true);
- 
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    /* Only the actually selected draw list grants this evidence. Tooltip
 +     * bounds do not certify hit footprints for unknown world/custom gizmos. */
 +    if (ARegion *region = CTX_wm_region(C)) {
 +      if (STREQ(gz->parent_gzgroup->type->idname, "VIEW3D_GGT_navigate"))
 +        region->runtime->ipad_finger_paint_navigation_drawn = true;
-+      else region->runtime->ipad_finger_paint_overlay_blocked = true;
++      else {
++        region->runtime->ipad_finger_paint_overlay_blocked = true;
++        region->runtime->ipad_knife_canvas_unknown_widgets = true;
++      }
 +    }
 +#endif
      gz->type->draw(C, gz);
- 
+
      GPU_line_smooth(false);
      GPU_polygon_smooth(false);
- 
+
      /* Free/remove gizmo link after drawing. */
      BLI_freelinkN(draw_gizmos, link);
    }
- 
+
    if (is_depth_prev) {
      GPU_depth_test(GPU_DEPTH_NONE);
    }
  }
- 
+
  void WM_gizmomap_draw(wmGizmoMap *gzmap,
                        const bContext *C,
                        const eWM_GizmoFlagMapDrawStep drawstep)
@@ -121577,14 +121695,14 @@ index f6771bb..0af093a 100644
    if (!WM_gizmo_context_check_drawstep(C, drawstep)) {
      return;
    }
- 
+
    ListBase draw_gizmos = {nullptr};
- 
+
    gizmomap_prepare_drawing(gzmap, C, &draw_gizmos, drawstep);
    gizmos_draw_list(gzmap, C, &draw_gizmos);
    BLI_assert(BLI_listbase_is_empty(&draw_gizmos));
  }
- 
+
  static void gizmo_draw_select_3d_loop(const bContext *C,
                                        wmGizmo **visible_gizmos,
                                        const int visible_gizmos_len,
@@ -121596,19 +121714,19 @@ index f6771bb..0af093a 100644
     * when the depth test is disabled and rendering to a depth render target-only framebuffer.
     * Using `GPU_DEPTH_ALWAYS` fixes the issue. */
    const bool use_intel_gpu_workaround = true;
- 
+
    /* Set default depth state. */
    GPU_depth_test(use_intel_gpu_workaround ? GPU_DEPTH_ALWAYS : GPU_DEPTH_NONE);
    GPU_depth_mask(true);
    bool is_depth_prev = false;
    bool is_depth_skip_prev = false;
- 
+
    for (int select_id = 0; select_id < visible_gizmos_len; select_id++) {
      wmGizmo *gz = visible_gizmos[select_id];
      if (gz->type->draw_select == nullptr) {
        continue;
      }
- 
+
      bool is_depth = (gz->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_DEPTH_3D) != 0;
      if (is_depth == is_depth_prev) {
        /* Pass. */
@@ -121630,18 +121748,18 @@ index f6771bb..0af093a 100644
        GPU_depth_mask(!is_depth_skip);
        is_depth_skip_prev = is_depth_skip;
      }
- 
+
      if (gz->select_bias != 0.0) {
        *r_use_select_bias = true;
      }
- 
+
      /* Pass the selection id shifted by 8 bits. Last 8 bits are used for selected gizmo part id. */
- 
+
      gz->type->draw_select(C, gz, select_id << 8);
    }
- 
+
    /* Reset depth state. */
- 
+
    if (is_depth_prev || use_intel_gpu_workaround) {
      GPU_depth_test(GPU_DEPTH_NONE);
    }
@@ -121649,7 +121767,7 @@ index f6771bb..0af093a 100644
      GPU_depth_mask(true);
    }
  }
- 
+
  static int gizmo_find_intersected_3d_intern(wmGizmo **visible_gizmos,
                                              const int visible_gizmos_len,
                                              const bContext *C,
@@ -121665,47 +121783,47 @@ index f6771bb..0af093a 100644
    /* Almost certainly overkill, but allow for many custom gizmos. */
    GPUSelectBuffer buffer;
    short hits;
- 
+
    BLI_rcti_init_pt_radius(&rect, co, hotspot);
- 
+
    ED_view3d_draw_setup_view(
        wm, CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, nullptr, nullptr, &rect);
- 
+
    bool use_select_bias = false;
- 
+
    /* TODO: waiting for the GPU in the middle of the event loop for every
     * mouse move is bad for performance, we need to find a solution to not
     * use the GPU or draw something once, see #61474. */
    GPU_select_begin(&buffer, &rect, GPU_SELECT_NEAREST_FIRST_PASS, 0);
    /* Do the drawing. */
    gizmo_draw_select_3d_loop(C, visible_gizmos, visible_gizmos_len, &use_select_bias);
- 
+
    hits = GPU_select_end();
- 
+
    if (hits > 0) {
      GPU_select_begin(&buffer, &rect, GPU_SELECT_NEAREST_SECOND_PASS, hits);
      gizmo_draw_select_3d_loop(C, visible_gizmos, visible_gizmos_len, &use_select_bias);
      GPU_select_end();
    }
- 
+
    ED_view3d_draw_setup_view(
        wm, CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, nullptr, nullptr, nullptr);
- 
+
    const blender::Span<GPUSelectResult> hit_results = buffer.storage.as_span().take_front(hits);
    if (use_select_bias && (hits > 1)) {
      float co_direction[3];
      float co_screen[3] = {float(co[0]), float(co[1]), 0.0f};
      ED_view3d_win_to_vector(region, blender::float2{float(co[0]), float(co[1])}, co_direction);
- 
+
      RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
      const int viewport[4] = {0, 0, region->winx, region->winy};
      float co_3d_origin[3];
- 
+
      GPU_matrix_unproject_3fv(co_screen, rv3d->viewinv, rv3d->winmat, viewport, co_3d_origin);
- 
+
      int hit_found = -1;
      float dot_best = FLT_MAX;
- 
+
      for (const GPUSelectResult &hit_result : hit_results) {
        BLI_assert(hit_result.id != -1);
        wmGizmo *gz = visible_gizmos[hit_result.id >> 8];
@@ -121725,11 +121843,11 @@ index f6771bb..0af093a 100644
      }
      return hit_found;
    }
- 
+
    const GPUSelectResult *hit_near = GPU_select_buffer_near(hit_results);
    return hit_near ? hit_near->id : -1;
  }
- 
+
  /**
   * Try to find a 3D gizmo at screen-space coordinate \a co. Uses OpenGL picking.
   */
@@ -121742,12 +121860,12 @@ index f6771bb..0af093a 100644
    wmGizmo *result = nullptr;
    int visible_gizmos_len_trim = visible_gizmos_len;
    int hit = -1;
- 
+
    *r_part = 0;
- 
+
    /* Set up view matrices. */
    view3d_operator_needs_gpu(C);
- 
+
    /* Search for 3D gizmo's that use the 2D callback for checking intersections. */
    bool has_3d = false;
    {
@@ -121768,14 +121886,14 @@ index f6771bb..0af093a 100644
        }
      }
    }
- 
+
    /* Search for 3D intersections if they're before 2D that have been found (if any).
     * This way we always use the first hit. */
    if (has_3d) {
- 
+
      /* The depth buffer is needed for gizmos to obscure each other. */
      GPUViewport *viewport = WM_draw_region_get_viewport(CTX_wm_region(C));
- 
+
      /* When switching between modes and the mouse pointer is over a gizmo, the highlight test is
       * performed before the viewport is fully initialized (region->runtime->draw_buffer = nullptr).
       * When this is the case we should not use depth testing. */
@@ -121790,7 +121908,7 @@ index f6771bb..0af093a 100644
                                        GPU_ATTACHMENT_NONE,
                                    });
      GPU_framebuffer_bind(depth_read_fb);
- 
+
      /* NOTE(@ideasman42): Regarding the hit-radius:
       *
       * - These must remain constant for all event types
@@ -121815,10 +121933,10 @@ index f6771bb..0af093a 100644
          break;
        }
      }
- 
+
      GPU_framebuffer_restore();
      GPU_framebuffer_free(depth_read_fb);
- 
+
      if (hit != -1) {
        const int select_id = hit >> 8;
        const int select_part = hit & 0xff;
@@ -121827,10 +121945,10 @@ index f6771bb..0af093a 100644
        result = visible_gizmos[select_id];
      }
    }
- 
+
    return result;
  }
- 
+
  bool wm_gizmomap_highlight_pending(const wmGizmoMap *gzmap)
  {
    return gzmap->tag_highlight_pending;
@@ -121839,7 +121957,7 @@ index f6771bb..0af093a 100644
  {
    return gzmap->tag_highlight_pending = false;
  }
- 
+
  wmGizmo *wm_gizmomap_highlight_find(wmGizmoMap *gzmap,
                                      bContext *C,
                                      const wmEvent *event,
@@ -121849,7 +121967,7 @@ index f6771bb..0af093a 100644
    wmGizmo *gz = nullptr;
    blender::Vector<wmGizmo *, 128> visible_3d_gizmos;
    bool do_step[WM_GIZMOMAP_DRAWSTEP_MAX];
- 
+
    int mval[2];
    if (event->val == KM_PRESS_DRAG) {
      WM_event_drag_start_mval(event, CTX_wm_region(C), mval);
@@ -121857,20 +121975,20 @@ index f6771bb..0af093a 100644
    else {
      copy_v2_v2_int(mval, event->mval);
    }
- 
+
    for (int i = 0; i < ARRAY_SIZE(do_step); i++) {
      do_step[i] = WM_gizmo_context_check_drawstep(C, eWM_GizmoFlagMapDrawStep(i));
    }
- 
+
    LISTBASE_FOREACH (wmGizmoGroup *, gzgroup, &gzmap->groups) {
- 
+
      /* If it were important we could initialize here,
       * but this only happens when events are handled before drawing,
       * just skip to keep code-path for initializing gizmos simple. */
      if ((gzgroup->hide.any != 0) || ((gzgroup->init_flag & WM_GIZMOGROUP_INIT_SETUP) == 0)) {
        continue;
      }
- 
+
      if (WM_gizmo_group_type_poll(C, gzgroup->type)) {
        const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(gzgroup);
        if (do_step[step]) {
@@ -121892,7 +122010,7 @@ index f6771bb..0af093a 100644
        }
      }
    }
- 
+
    if (!visible_3d_gizmos.is_empty()) {
      /* 2D gizmos get priority. */
      if (gz == nullptr) {
@@ -121900,13 +122018,13 @@ index f6771bb..0af093a 100644
            C, mval, visible_3d_gizmos.data(), visible_3d_gizmos.size(), r_part);
      }
    }
- 
+
    gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_3D] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
    gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
- 
+
    return gz;
  }
- 
+
  void WM_gizmomap_add_handlers(ARegion *region, wmGizmoMap *gzmap)
  {
    LISTBASE_FOREACH (wmEventHandler *, handler_base, &region->runtime->handlers) {
@@ -121917,30 +122035,30 @@ index f6771bb..0af093a 100644
        }
      }
    }
- 
+
    wmEventHandler_Gizmo *handler = MEM_callocN<wmEventHandler_Gizmo>(__func__);
    handler->head.type = WM_HANDLER_TYPE_GIZMO;
    BLI_assert(gzmap == region->runtime->gizmo_map);
    handler->gizmo_map = gzmap;
    BLI_addtail(&region->runtime->handlers, handler);
  }
- 
+
  void wm_gizmomaps_handled_modal_update(bContext *C, wmEvent *event, wmEventHandler_Op *handler)
  {
    const bool modal_running = (handler->op != nullptr);
- 
+
    /* Happens on render or when joining areas. */
    if (!handler->context.region || !handler->context.region->runtime->gizmo_map) {
      return;
    }
- 
+
    wmGizmoMap *gzmap = handler->context.region->runtime->gizmo_map;
    wmGizmo *gz = wm_gizmomap_modal_get(gzmap);
    ScrArea *area = CTX_wm_area(C);
    ARegion *region = CTX_wm_region(C);
- 
+
    wm_gizmomap_handler_context_op(C, handler);
- 
+
    /* Regular update for running operator. */
    if (modal_running) {
      wmGizmoOpElem *gzop = gz ? WM_gizmo_operator_get(gz, gz->highlight_part) : nullptr;
@@ -121967,36 +122085,36 @@ index f6771bb..0af093a 100644
        wm_gizmomap_modal_set(gzmap, C, gz, nullptr, false);
      }
    }
- 
+
    /* Restore the area. */
    CTX_wm_area_set(C, area);
    CTX_wm_region_set(C, region);
  }
- 
+
  bool wm_gizmomap_deselect_all(wmGizmoMap *gzmap)
  {
    wmGizmoMapSelectState *msel = &gzmap->gzmap_context.select;
- 
+
    if (msel->items == nullptr || msel->len == 0) {
      return false;
    }
- 
+
    for (int i = 0; i < msel->len; i++) {
      wm_gizmo_select_set_ex(gzmap, msel->items[i], false, false, true);
    }
- 
+
    wm_gizmomap_select_array_clear(gzmap);
- 
+
    /* Always return true, we already checked
     * if there's anything to deselect. */
    return true;
  }
- 
+
  static bool gizmo_selectable_poll(const wmGizmo *gz, void * /*data*/)
  {
    return (gz->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_SELECT);
  }
- 
+
  /**
   * Select all selectable gizmos in \a gzmap.
   * \return if selection has changed.
@@ -122007,32 +122125,32 @@ index f6771bb..0af093a 100644
    /* GHash is used here to avoid having to loop over all gizmos twice (once to
     * get tot_sel for allocating, once for actually selecting). Instead we collect
     * selectable gizmos in hash table and use this to get tot_sel and do selection. */
- 
+
    GHash *hash = WM_gizmomap_gizmo_hash_new(
        C, gzmap, gizmo_selectable_poll, nullptr, WM_GIZMO_HIDDEN | WM_GIZMO_HIDDEN_SELECT);
    GHashIterator gh_iter;
    int i;
    bool changed = false;
- 
+
    wm_gizmomap_select_array_ensure_len_alloc(gzmap, BLI_ghash_len(hash));
- 
+
    GHASH_ITER_INDEX (gh_iter, hash, i) {
      wmGizmo *gz_iter = static_cast<wmGizmo *>(BLI_ghashIterator_getValue(&gh_iter));
      WM_gizmo_select_set(gzmap, gz_iter, true);
    }
    /* Highlight first gizmo. */
    wm_gizmomap_highlight_set(gzmap, C, msel->items[0], msel->items[0]->highlight_part);
- 
+
    BLI_assert(BLI_ghash_len(hash) == msel->len);
- 
+
    BLI_ghash_free(hash, nullptr, nullptr);
    return changed;
  }
- 
+
  bool WM_gizmomap_select_all(bContext *C, wmGizmoMap *gzmap, const int action)
  {
    bool changed = false;
- 
+
    switch (action) {
      case SEL_SELECT:
        changed = wm_gizmomap_select_all_intern(C, gzmap);
@@ -122044,21 +122162,21 @@ index f6771bb..0af093a 100644
        BLI_assert_unreachable();
        break;
    }
- 
+
    if (changed) {
      WM_event_add_mousemove(CTX_wm_window(C));
    }
- 
+
    return changed;
  }
- 
+
  void wm_gizmomap_handler_context_op(bContext *C, wmEventHandler_Op *handler)
  {
    bScreen *screen = CTX_wm_screen(C);
- 
+
    if (screen) {
      ScrArea *area;
- 
+
      for (area = static_cast<ScrArea *>(screen->areabase.first); area; area = area->next) {
        if (area == handler->context.area) {
          break;
@@ -122084,12 +122202,12 @@ index f6771bb..0af093a 100644
      }
    }
  }
- 
+
  void wm_gizmomap_handler_context_gizmo(bContext * /*C*/, wmEventHandler_Gizmo * /*handler*/)
  {
    /* Pass. */
  }
- 
+
  bool WM_gizmomap_cursor_set(const wmGizmoMap *gzmap, wmWindow *win)
  {
    wmGizmo *gz = gzmap->gzmap_context.highlight;
@@ -122097,10 +122215,10 @@ index f6771bb..0af093a 100644
      WM_cursor_set(win, gz->type->cursor_get(gz));
      return true;
    }
- 
+
    return false;
  }
- 
+
  bool wm_gizmomap_highlight_set(wmGizmoMap *gzmap, const bContext *C, wmGizmo *gz, int part)
  {
    if ((gz != gzmap->gzmap_context.highlight) || (gz && part != gz->highlight_part)) {
@@ -122110,16 +122228,16 @@ index f6771bb..0af093a 100644
        gzmap->gzmap_context.highlight->state &= ~WM_GIZMO_STATE_HIGHLIGHT;
        gzmap->gzmap_context.highlight->highlight_part = -1;
      }
- 
+
      gzmap->gzmap_context.highlight = gz;
- 
+
      if (gz) {
        gz->state |= WM_GIZMO_STATE_HIGHLIGHT;
        gz->highlight_part = part;
        if (init_last_cursor) {
          gzmap->gzmap_context.last_cursor = -1;
        }
- 
+
        if (C && gz->type->cursor_get) {
          wmWindow *win = CTX_wm_window(C);
          if (init_last_cursor) {
@@ -122135,55 +122253,55 @@ index f6771bb..0af093a 100644
        }
        gzmap->gzmap_context.last_cursor = -1;
      }
- 
+
      /* Tag the region for redraw. */
      if (C) {
        ARegion *region = CTX_wm_region(C);
        ED_region_tag_redraw_editor_overlays(region);
      }
- 
+
      return true;
    }
- 
+
    return false;
  }
- 
+
  wmGizmo *wm_gizmomap_highlight_get(wmGizmoMap *gzmap)
  {
    return gzmap->gzmap_context.highlight;
  }
- 
+
  void wm_gizmomap_modal_set(
      wmGizmoMap *gzmap, bContext *C, wmGizmo *gz, const wmEvent *event, bool enable)
  {
    bool do_refresh = false;
- 
+
    if (enable) {
      BLI_assert(gzmap->gzmap_context.modal == nullptr);
      wmWindow *win = CTX_wm_window(C);
- 
+
      WM_tooltip_clear(C, win);
- 
+
      /* Use even if we don't have invoke, so we can setup data before an operator runs. */
      if (gz->parent_gzgroup->type->invoke_prepare) {
        gz->parent_gzgroup->type->invoke_prepare(C, gz->parent_gzgroup, gz, event);
      }
- 
+
      if (gz->type->invoke && (gz->type->modal || gz->custom_modal)) {
        const wmOperatorStatus retval = gz->type->invoke(C, gz, event);
        OPERATOR_RETVAL_CHECK(retval);
- 
+
        if ((retval & OPERATOR_RUNNING_MODAL) == 0) {
          return;
        }
      }
- 
+
      if (gzmap->gzmap_context.modal != gz) {
        do_refresh = true;
      }
      gz->state |= WM_GIZMO_STATE_MODAL;
      gzmap->gzmap_context.modal = gz;
- 
+
      if ((gz->flag & WM_GIZMO_MOVE_CURSOR) && (event->tablet.is_motion_absolute == false)) {
        WM_cursor_grab_enable(win, WM_CURSOR_WRAP_XY, nullptr, true);
        copy_v2_v2_int(gzmap->gzmap_context.event_xy, event->xy);
@@ -122192,16 +122310,16 @@ index f6771bb..0af093a 100644
      else {
        gzmap->gzmap_context.event_xy[0] = INT_MAX;
      }
- 
+
      wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
      if (gzop && gzop->type) {
        const wmOperatorStatus retval = WM_gizmo_operator_invoke(C, gz, gzop, event);
        OPERATOR_RETVAL_CHECK(retval);
- 
+
        if ((retval & OPERATOR_RUNNING_MODAL) == 0) {
          wm_gizmomap_modal_set(gzmap, C, gz, event, false);
        }
- 
+
        /* We failed to hook the gizmo to the operator handler or operator was canceled, return. */
        if (!gzmap->gzmap_context.modal) {
          gz->state &= ~WM_GIZMO_STATE_MODAL;
@@ -122211,18 +122329,18 @@ index f6771bb..0af093a 100644
    }
    else {
      BLI_assert(ELEM(gzmap->gzmap_context.modal, nullptr, gz));
- 
+
      /* Deactivate, gizmo but first take care of some stuff. */
      if (gz) {
        gz->state &= ~WM_GIZMO_STATE_MODAL;
        MEM_SAFE_FREE(gz->interaction_data);
      }
- 
+
      if (gzmap->gzmap_context.modal != nullptr) {
        do_refresh = true;
      }
      gzmap->gzmap_context.modal = nullptr;
- 
+
      if (C) {
        wmWindow *win = CTX_wm_window(C);
        if (gzmap->gzmap_context.event_xy[0] != INT_MAX) {
@@ -122239,16 +122357,16 @@ index f6771bb..0af093a 100644
        ED_region_tag_redraw_editor_overlays(CTX_wm_region(C));
        WM_event_add_mousemove(win);
      }
- 
+
      gzmap->gzmap_context.event_xy[0] = INT_MAX;
    }
- 
+
    if (do_refresh) {
      const int update_flag = GIZMOMAP_IS_REFRESH_CALLBACK;
      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
          gz->parent_gzgroup);
      gzmap->update_flag[step] |= update_flag;
- 
+
      /* Ensure the update flag is set for gizmos that were hidden while modal, see #104817. */
      for (int i = 0; i < WM_GIZMOMAP_DRAWSTEP_MAX; i++) {
        const eWM_GizmoFlagMapDrawStep step_iter = (eWM_GizmoFlagMapDrawStep)i;
@@ -122269,23 +122387,23 @@ index f6771bb..0af093a 100644
      }
    }
  }
- 
+
  wmGizmo *wm_gizmomap_modal_get(wmGizmoMap *gzmap)
  {
    return gzmap->gzmap_context.modal;
  }
- 
+
  wmGizmo **wm_gizmomap_selected_get(wmGizmoMap *gzmap, int *r_selected_len)
  {
    *r_selected_len = gzmap->gzmap_context.select.len;
    return gzmap->gzmap_context.select.items;
  }
- 
+
  ListBase *wm_gizmomap_groups_get(wmGizmoMap *gzmap)
  {
    return &gzmap->groups;
  }
- 
+
  void WM_gizmomap_message_subscribe(const bContext *C,
                                     wmGizmoMap *gzmap,
                                     ARegion *region,
@@ -122308,13 +122426,13 @@ index f6771bb..0af093a 100644
      }
    }
  }
- 
+
  /** \} */ /* #wmGizmoMap. */
- 
+
  /* -------------------------------------------------------------------- */
  /** \name Tooltip Handling
   * \{ */
- 
+
  ARegion *WM_gizmomap_tooltip_init(
      bContext *C, ARegion *region, int * /*r_pass*/, double * /*pass_delay*/, bool *r_exit_on_event)
  {
@@ -122333,13 +122451,13 @@ index f6771bb..0af093a 100644
    }
    return nullptr;
  }
- 
+
  /** \} */ /* #wmGizmoMapType. */
- 
+
  /* -------------------------------------------------------------------- */
  /** \name wmGizmoMapType
   * \{ */
- 
+
  wmGizmoMapType *WM_gizmomaptype_find(const wmGizmoMapType_Params *gzmap_params)
  {
    LISTBASE_FOREACH (wmGizmoMapType *, gzmap_type, &gizmomaptypes) {
@@ -122349,26 +122467,26 @@ index f6771bb..0af093a 100644
        return gzmap_type;
      }
    }
- 
+
    return nullptr;
  }
- 
+
  wmGizmoMapType *WM_gizmomaptype_ensure(const wmGizmoMapType_Params *gzmap_params)
  {
    wmGizmoMapType *gzmap_type = WM_gizmomaptype_find(gzmap_params);
- 
+
    if (gzmap_type) {
      return gzmap_type;
    }
- 
+
    gzmap_type = MEM_callocN<wmGizmoMapType>("gizmotype list");
    gzmap_type->spaceid = gzmap_params->spaceid;
    gzmap_type->regionid = gzmap_params->regionid;
    BLI_addhead(&gizmomaptypes, gzmap_type);
- 
+
    return gzmap_type;
  }
- 
+
  void wm_gizmomaptypes_free()
  {
    for (wmGizmoMapType *gzmap_type = static_cast<wmGizmoMapType *>(gizmomaptypes.first),
@@ -122389,7 +122507,7 @@ index f6771bb..0af093a 100644
      MEM_freeN(gzmap_type);
    }
  }
- 
+
  void wm_gizmos_keymap(wmKeyConfig *keyconf)
  {
    LISTBASE_FOREACH (wmGizmoMapType *, gzmap_type, &gizmomaptypes) {
@@ -122397,57 +122515,57 @@ index f6771bb..0af093a 100644
        wm_gizmogrouptype_setup_keymap(gzgt_ref->type, keyconf);
      }
    }
- 
+
    wm_gizmogroup_tweak_modal_keymap(keyconf);
  }
- 
+
  /** \} */ /* #wmGizmoMapType. */
- 
+
  /* -------------------------------------------------------------------- */
  /** \name Updates for Dynamic Type Registration
   * \{ */
- 
+
  void WM_gizmoconfig_update_tag_group_type_init(wmGizmoMapType *gzmap_type, wmGizmoGroupType *gzgt)
  {
    /* Tag for update on next use. */
    gzmap_type->type_update_flag |= (WM_GIZMOMAPTYPE_UPDATE_INIT | WM_GIZMOMAPTYPE_KEYMAP_INIT);
    gzgt->type_update_flag |= (WM_GIZMOMAPTYPE_UPDATE_INIT | WM_GIZMOMAPTYPE_KEYMAP_INIT);
- 
+
    wm_gzmap_type_update_flag |= WM_GIZMOMAPTYPE_GLOBAL_UPDATE_INIT;
  }
- 
+
  void WM_gizmoconfig_update_tag_group_type_remove(wmGizmoMapType *gzmap_type,
                                                   wmGizmoGroupType *gzgt)
  {
    /* Tag for update on next use. */
    gzmap_type->type_update_flag |= WM_GIZMOMAPTYPE_UPDATE_REMOVE;
    gzgt->type_update_flag |= WM_GIZMOMAPTYPE_UPDATE_REMOVE;
- 
+
    wm_gzmap_type_update_flag |= WM_GIZMOMAPTYPE_GLOBAL_UPDATE_REMOVE;
  }
- 
+
  void WM_gizmoconfig_update_tag_group_remove(wmGizmoMap *gzmap)
  {
    gzmap->tag_remove_group = true;
- 
+
    wm_gzmap_type_update_flag |= WM_GIZMOTYPE_GLOBAL_UPDATE_REMOVE;
  }
- 
+
  void WM_gizmoconfig_update_tag_reinit_all()
  {
    wm_gzmap_type_update_flag |= WM_GIZMOTYPE_GLOBAL_REINIT_ALL;
  }
- 
+
  void WM_gizmoconfig_update(Main *bmain)
  {
    if (G.background) {
      return;
    }
- 
+
    if (wm_gzmap_type_update_flag == 0) {
      return;
    }
- 
+
    if (wm_gzmap_type_update_flag & WM_GIZMOMAPTYPE_GLOBAL_UPDATE_REMOVE) {
      LISTBASE_FOREACH (wmGizmoMapType *, gzmap_type, &gizmomaptypes) {
        if (gzmap_type->type_update_flag & WM_GIZMOMAPTYPE_GLOBAL_UPDATE_REMOVE) {
@@ -122466,10 +122584,10 @@ index f6771bb..0af093a 100644
          }
        }
      }
- 
+
      wm_gzmap_type_update_flag &= ~WM_GIZMOMAPTYPE_GLOBAL_UPDATE_REMOVE;
    }
- 
+
    if (wm_gzmap_type_update_flag & WM_GIZMOMAPTYPE_GLOBAL_UPDATE_INIT) {
      LISTBASE_FOREACH (wmGizmoMapType *, gzmap_type, &gizmomaptypes) {
        const uchar type_update_all = WM_GIZMOMAPTYPE_UPDATE_INIT | WM_GIZMOMAPTYPE_KEYMAP_INIT;
@@ -122480,7 +122598,7 @@ index f6771bb..0af093a 100644
              WM_gizmomaptype_group_init_runtime_keymap(bmain, gzgt_ref->type);
              gzgt_ref->type->type_update_flag &= ~WM_GIZMOMAPTYPE_KEYMAP_INIT;
            }
- 
+
            if (gzgt_ref->type->type_update_flag & WM_GIZMOMAPTYPE_UPDATE_INIT) {
              WM_gizmomaptype_group_init_runtime(bmain, gzmap_type, gzgt_ref->type);
              gzgt_ref->type->type_update_flag &= ~WM_GIZMOMAPTYPE_UPDATE_INIT;
@@ -122488,10 +122606,10 @@ index f6771bb..0af093a 100644
          }
        }
      }
- 
+
      wm_gzmap_type_update_flag &= ~WM_GIZMOMAPTYPE_GLOBAL_UPDATE_INIT;
    }
- 
+
    if (wm_gzmap_type_update_flag & WM_GIZMOTYPE_GLOBAL_UPDATE_REMOVE) {
      for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
           screen = static_cast<bScreen *>(screen->id.next))
@@ -122504,7 +122622,7 @@ index f6771bb..0af093a 100644
              wmGizmoMap *gzmap = region->runtime->gizmo_map;
              if (gzmap != nullptr && gzmap->tag_remove_group) {
                gzmap->tag_remove_group = false;
- 
+
                for (wmGizmoGroup *gzgroup = static_cast<wmGizmoGroup *>(gzmap->groups.first),
                                  *gzgroup_next;
                     gzgroup;
@@ -122523,22 +122641,22 @@ index f6771bb..0af093a 100644
      }
      wm_gzmap_type_update_flag &= ~WM_GIZMOTYPE_GLOBAL_UPDATE_REMOVE;
    }
- 
+
    if (wm_gzmap_type_update_flag & WM_GIZMOTYPE_GLOBAL_REINIT_ALL) {
      WM_reinit_gizmomap_all(bmain);
      wm_gzmap_type_update_flag &= ~WM_GIZMOTYPE_GLOBAL_REINIT_ALL;
    }
  }
- 
+
  /** \} */
- 
+
  /* -------------------------------------------------------------------- */
  /** \name Recreate All Gizmos
   *
   * Use when adjusting themes.
   *
   * \{ */
- 
+
  void WM_reinit_gizmomap_all(Main *bmain)
  {
    for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
@@ -122551,7 +122669,7 @@ index f6771bb..0af093a 100644
            wmGizmoMap *gzmap = region->runtime->gizmo_map;
            if ((gzmap != nullptr) && (gzmap->is_init == false)) {
              WM_gizmomap_reinit(gzmap);
- 
+
              /* Without a redraw elements can fail to activate
               * (such as the 2D viewport buttons). */
              ED_region_tag_redraw(region);
@@ -123215,7 +123333,7 @@ index 6cf3eda..a03ca20 100644
 diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/windowmanager/intern/wm_draw.cc
 --- a/source/blender/windowmanager/intern/wm_draw.cc
 +++ b/source/blender/windowmanager/intern/wm_draw.cc
-@@ -1,1733 +1,2162 @@
+@@ -1,1733 +1,2218 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -123383,6 +123501,7 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +      if (!ED_ipad_native_brush_cursor(pc))
 +        region->runtime->ipad_finger_paint_overlay_blocked = true;
++      region->runtime->ipad_knife_canvas_unknown_widgets = true;
 +#endif
        pc->draw(C, xy, win->eventstate->tablet.tilt, pc->customdata);
        GPU_scissor_test(false);
@@ -123904,6 +124023,46 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
   * \{ */
 
 +#ifdef WITH_APPLE_CROSSPLATFORM
++/* This monotonic identity follows the rendered allocation and its exclusion facts.
++ * Every successful full redraw changes it; cached composition reuses the stamp. */
++static uint64_t wm_ipad_knife_canvas_content_next()
++{
++  static uint64_t last = 0;
++  if (last == UINT64_MAX) return 0;
++  return ++last;
++}
++
++static void wm_ipad_knife_canvas_stamp_finish(bContext *C,
++                                              wmWindow *win,
++                                              ScrArea *area,
++                                              ARegion *region,
++                                              const std::array<uint64_t, 32> &before,
++                                              const bool before_valid,
++                                              const bool partial)
++{
++  wmDrawBuffer *buffer = region->runtime->draw_buffer;
++  if (!buffer) return;
++  wmIPadKnifeCanvasStamp next{};
++  if (before_valid && !partial && !buffer->stereo &&
++      (buffer->viewport || buffer->offscreen) &&
++      WM_ipad_knife_canvas_scope_capture(C, win, area, region, next.scope) && before == next.scope)
++  {
++    next.drawn_owner = region->runtime->ipad_knife_canvas_drawn_owner;
++    next.unknown_widgets = region->runtime->ipad_knife_canvas_unknown_widgets;
++    wmIPadKnifeOwner drawn;
++    drawn.values = next.drawn_owner;
++    if (drawn.valid() && WM_ipad_knife_owner_region(C, win, drawn, true) != region) {
++      buffer->ipad_knife_canvas_stamp.valid = false;
++      return;
++    }
++    /* Scope equality cannot prove unchanged view matrices or Mesh contents.
++     * Physical contacts spanning any full redraw must pass a new capture. */
++    next.content = wm_ipad_knife_canvas_content_next();
++    next.valid = next.content != 0;
++  }
++  buffer->ipad_knife_canvas_stamp = next;
++}
++
 +struct wmIPadFingerPaintCandidate {
 +  uintptr_t region;
 +  uint64_t generation;
@@ -124387,6 +124546,12 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
      GPU_debug_group_begin(use_viewport ? "Viewport" : "ARegion");
 +#ifdef WITH_APPLE_CROSSPLATFORM
++    std::array<uint64_t, 32> knife_canvas_before{};
++    const bool knife_canvas_valid = !stereo &&
++        (region->runtime->do_draw & RGN_DRAW) != 0 &&
++        WM_ipad_knife_canvas_scope_capture(C, win, area, region, knife_canvas_before);
++    region->runtime->ipad_knife_canvas_unknown_widgets = false;
++    region->runtime->ipad_knife_canvas_drawn_owner = {};
 +    IPadFingerPaintOwner paint_before;
 +    const rcti paint_window_before = region->winrct;
 +    const rcti paint_canvas_before = region->runtime->ipad_canvas_rect;
@@ -124434,6 +124599,9 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +    ED_ipad_hud_draw_end(C, win, area, region);
++    wm_ipad_knife_canvas_stamp_finish(
++        C, win, area, region, knife_canvas_before, knife_canvas_valid,
++        paint_partial || (region->runtime->do_draw & RGN_DRAW_PARTIAL) != 0);
 +    IPadFingerPaintOwner paint_after;
 +    ED_ipad_finger_paint_capture(C, paint_after);
 +    bool paint_retry_full = false;
@@ -124688,6 +124856,8 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 +    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
 +      region->runtime->ipad_finger_paint_overlay_blocked = false;
 +      region->runtime->ipad_finger_paint_navigation_drawn = false;
++      region->runtime->ipad_knife_canvas_unknown_widgets = false;
++      region->runtime->ipad_knife_canvas_drawn_owner = {};
 +    }
 +  }
 +#endif
@@ -124761,6 +124931,10 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 
    /* Needs pixel coords in screen. */
    if (wm->runtime->drags.first) {
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* Drag drawing can remove its own source. Keep the executed overlay fact. */
++    ED_ipad_knife_hierarchy_window_callbacks(C, win, true);
++#endif
      wm_drags_draw(C, win);
      wmWindowViewport(win);
    }
@@ -125399,12 +125573,13 @@ diff --git a/source/blender/windowmanager/intern/wm_draw.cc b/source/blender/win
 diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/blender/windowmanager/intern/wm_event_system.cc
 --- a/source/blender/windowmanager/intern/wm_event_system.cc
 +++ b/source/blender/windowmanager/intern/wm_event_system.cc
-@@ -10,13 +10,21 @@
+@@ -10,13 +10,22 @@
   * Also some operator reports utility functions.
   */
 
 +#include <algorithm>
  #include <cstdlib>
++#include <cmath>
  #include <cstring>
 +#include <vector>
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -125421,7 +125596,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "DNA_scene_types.h"
  #include "DNA_screen_types.h"
  #include "DNA_userdef_types.h"
-@@ -28,6 +36,7 @@
+@@ -28,6 +37,7 @@
 
  #include "GHOST_C-api.h"
 
@@ -125429,7 +125604,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "BLI_ghash.h"
  #include "BLI_listbase.h"
  #include "BLI_math_vector.h"
-@@ -35,6 +44,11 @@
+@@ -35,6 +45,11 @@
  #include "BLI_string_utf8.h"
  #include "BLI_timer.h"
  #include "BLI_utildefines.h"
@@ -125441,7 +125616,18 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
  #include "BKE_context.hh"
  #include "BKE_customdata.hh"
-@@ -58,8 +72,14 @@
+@@ -44,6 +59,10 @@
+ #include "BKE_lib_remap.hh"
+ #include "BKE_library.hh"
+ #include "BKE_main.hh"
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "BKE_mesh_types.hh"
++#  include "BKE_editmesh.hh"
++#endif
+ #include "BKE_report.hh"
+ #include "BKE_scene.hh"
+ #include "BKE_screen.hh"
+@@ -58,8 +77,14 @@
  #include "ED_fileselect.hh"
  #include "ED_info.hh"
  #include "ED_markers.hh"
@@ -125456,7 +125642,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "ED_undo.hh"
  #include "ED_util.hh"
  #include "ED_view3d.hh"
-@@ -74,6 +94,7 @@
+@@ -74,6 +99,7 @@
 
  #include "WM_api.hh"
  #include "WM_keymap.hh"
@@ -125464,7 +125650,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #include "WM_message.hh"
  #include "WM_toolsystem.hh"
  #include "WM_types.hh"
-@@ -138,6 +159,13 @@
+@@ -138,6 +164,13 @@
  static bool wm_operator_check_locked_interface(bContext *C, wmOperatorType *ot);
  static wmEvent *wm_event_add_mousemove_to_head(wmWindow *win);
  static void wm_operator_free_for_fileselect(wmOperator *file_operator);
@@ -125478,7 +125664,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
  static void wm_event_state_update_and_click_set_ex(wmEvent *event,
                                                     uint64_t event_time_ms,
-@@ -833,6 +861,11 @@
+@@ -833,6 +866,11 @@
    /* Foreign File warning. */
    wm_test_foreign_file_warning(C);
 
@@ -125490,7 +125676,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    GPU_render_end();
  }
 
-@@ -2253,29 +2286,294 @@
+@@ -2253,29 +2291,294 @@
    CTX_wm_region_set(C, region);
  }
 
@@ -125799,7 +125985,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
          if (handler->op->type->cancel) {
            ScrArea *area = CTX_wm_area(C);
-@@ -2342,6 +2640,7 @@
+@@ -2342,6 +2645,7 @@
 
      wm_event_free_handler(handler_base);
    }
@@ -125807,7 +125993,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  }
 
  BLI_INLINE bool wm_eventmatch(const wmEvent *winevent, const wmKeyMapItem *kmi)
-@@ -2593,14 +2892,486 @@
+@@ -2593,14 +2897,605 @@
  /**
   * \warning this function removes a modal handler, when finished.
   */
@@ -126005,6 +126191,112 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +    }
 +  }
 +  return nullptr;
++}
++
++bool WM_ipad_knife_canvas_scope_capture(const bContext *C,
++                                       wmWindow *win,
++                                       ScrArea *area,
++                                       ARegion *region,
++                                       std::array<uint64_t, 32> &r_scope)
++{
++  r_scope = {};
++  wmWindowManager *manager = wm_ipad_knife_window_manager(win);
++  if (!C || !manager || !manager->id.session_uid || !win->runtime || !win->winid ||
++      CTX_wm_manager(C) != manager || CTX_wm_window(C) != win || !win->workspace_hook)
++    return false;
++  WorkSpace *workspace = win->workspace_hook->active;
++  WorkSpaceLayout *layout = win->workspace_hook->act_layout;
++  if (!workspace || BLI_findindex(&G_MAIN->workspaces, workspace) == -1 ||
++      !workspace->id.session_uid || !layout ||
++      BLI_findindex(&workspace->layouts, layout) == -1) return false;
++  bScreen *screen = layout->screen;
++  if (!screen || BLI_findindex(&G_MAIN->screens, screen) == -1 || !screen->id.session_uid ||
++      !area || BLI_findindex(&screen->areabase, area) == -1 ||
++      area->spacetype != SPACE_VIEW3D || !area->spacedata.first || area->winx < 3 ||
++      area->winy < 3 || !region || BLI_findindex(&area->regionbase, region) == -1 ||
++      region->regiontype != RGN_TYPE_WINDOW || !region->runtime ||
++      !region->runtime->visible || !region->regiondata || !region->runtime->type ||
++      !region->runtime->type->draw || region->runtime->type->do_lock ||
++      region->runtime->headerstr || !region->runtime->ipad_canvas) return false;
++  Scene *scene = win->scene;
++  if (!scene || BLI_findindex(&G_MAIN->scenes, scene) == -1 || !scene->id.session_uid)
++    return false;
++  ViewLayer *layer = BKE_view_layer_find(scene, win->view_layer_name);
++  if (!layer || BLI_findindex(&scene->view_layers, layer) == -1 ||
++      (layer->flag & VIEW_LAYER_OUT_OF_SYNC) || !layer->basact ||
++      BLI_findindex(&layer->object_bases, layer->basact) == -1) return false;
++  Object *object = layer->basact->object;
++  if (!object || BLI_findindex(&G_MAIN->objects, object) == -1 || !object->id.session_uid ||
++      object->type != OB_MESH || object->mode != OB_MODE_EDIT || !object->data) return false;
++  Mesh *mesh = static_cast<Mesh *>(object->data);
++  if (BLI_findindex(&G_MAIN->meshes, mesh) == -1 || !mesh->id.session_uid ||
++      !mesh->runtime || !mesh->runtime->edit_mesh || !mesh->runtime->edit_mesh->bm)
++    return false;
++  const int width = WM_window_native_pixel_x(win), height = WM_window_native_pixel_y(win);
++  const rcti &rect = region->winrct, &canvas = region->runtime->ipad_canvas_rect;
++  const float scale = UI_SCALE_FAC;
++  uint32_t scale_bits = 0;
++  static_assert(sizeof(scale_bits) == sizeof(scale));
++  std::memcpy(&scale_bits, &scale, sizeof(scale));
++  if (width <= 0 || height <= 0 || !std::isfinite(scale) || !(scale > 0.0f) ||
++      rect.xmin < 0 || rect.ymin < 0 || rect.xmax >= width || rect.ymax >= height ||
++      rect.xmax < rect.xmin || rect.ymax < rect.ymin ||
++      canvas.xmin < 0 || canvas.ymin < 0 || canvas.xmax < canvas.xmin ||
++      canvas.ymax < canvas.ymin || canvas.xmax > rect.xmax - rect.xmin ||
++      canvas.ymax > rect.ymax - rect.ymin) return false;
++  r_scope = {uint64_t(uintptr_t(G_MAIN)), uint64_t(uintptr_t(manager)), manager->id.session_uid,
++             uint64_t(uintptr_t(win)), uint64_t(win->winid), uint64_t(uintptr_t(screen)),
++             screen->id.session_uid, uint64_t(uintptr_t(area)),
++             uint64_t(uintptr_t(area->spacedata.first)), uint64_t(uintptr_t(region)),
++             uint64_t(uintptr_t(region->regiondata)), uint64_t(uintptr_t(workspace)),
++             workspace->id.session_uid, uint64_t(uintptr_t(scene)), scene->id.session_uid,
++             uint64_t(uintptr_t(layer)), uint64_t(uintptr_t(object)), object->id.session_uid,
++             uint64_t(uintptr_t(mesh)), mesh->id.session_uid, uint64_t(width), uint64_t(height),
++             uint64_t(scale_bits), uint64_t(uintptr_t(region->runtime->type)),
++             uint64_t(rect.xmin), uint64_t(rect.xmax), uint64_t(rect.ymin), uint64_t(rect.ymax),
++             uint64_t(canvas.xmin), uint64_t(canvas.xmax), uint64_t(canvas.ymin), uint64_t(canvas.ymax)};
++  return true;
++}
++
++bool WM_ipad_knife_draw_callback_known(const bContext *C,
++                                      const ARegion *region,
++                                      const void *handle,
++                                      void (*draw)(const bContext *, ARegion *, void *),
++                                      const void *data,
++                                      const int type,
++                                      wmIPadKnifeOwner &r_owner)
++{
++  r_owner = {};
++  if (!C || !region) return false;
++  wmWindow *win = CTX_wm_window(C);
++  wmWindowManager *manager = wm_ipad_knife_window_manager(win);
++  if (!manager || CTX_wm_manager(C) != manager || !win->workspace_hook) return false;
++  WorkSpace *workspace = win->workspace_hook->active;
++  WorkSpaceLayout *layout = win->workspace_hook->act_layout;
++  if (!workspace || BLI_findindex(&G_MAIN->workspaces, workspace) == -1 || !layout ||
++      BLI_findindex(&workspace->layouts, layout) == -1) return false;
++  bScreen *screen = layout->screen;
++  if (!screen || BLI_findindex(&G_MAIN->screens, screen) == -1) return false;
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    if (BLI_findindex(&area->regionbase, region) == -1) continue;
++    std::array<uint64_t, 32> scope{};
++    if (!WM_ipad_knife_canvas_scope_capture(C, win, area, const_cast<ARegion *>(region), scope))
++      return false;
++    wmIPadKnifeOwner fresh;
++    if (!WM_ipad_knife_owner_present(C, win, area, fresh) ||
++        fresh.values[K_REGION] != uint64_t(uintptr_t(region))) return false;
++    LISTBASE_FOREACH (wmEventHandler *, base, &win->modalhandlers) {
++      if (uint64_t(uintptr_t(base)) != fresh.values[K_HANDLER]) continue;
++      if (base->type != WM_HANDLER_TYPE_OP || (base->flag & WM_HANDLER_DO_FREE)) return false;
++      const auto *handler = reinterpret_cast<const wmEventHandler_Op *>(base);
++      if (!ED_mesh_knife_draw_callback_known(handler->op, region, handle, draw, data, type))
++        return false;
++      r_owner = fresh;
++      return true;
++    }
++    return false;
++  }
++  return false;
 +}
 +
 +/* The UI callback queues copied values only. The native action runs after that
@@ -126260,6 +126552,19 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 +{
 +  return nullptr;
 +}
++bool WM_ipad_knife_canvas_scope_capture(const bContext *, wmWindow *, ScrArea *, ARegion *,
++                                       std::array<uint64_t, 32> &scope)
++{
++  scope = {};
++  return false;
++}
++bool WM_ipad_knife_draw_callback_known(const bContext *, const ARegion *, const void *,
++                                      void (*)(const bContext *, ARegion *, void *),
++                                      const void *, int, wmIPadKnifeOwner &owner)
++{
++  owner = {};
++  return false;
++}
 +bool WM_ipad_knife_hud_scope_active(const bContext *) { return false; }
 +bool WM_ipad_knife_action_queue(bContext *, const wmIPadKnifeOwner &, wmIPadKnifeAction)
 +{
@@ -126295,7 +126600,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    /* Derived, modal or blocking operator. */
    if ((handler_base->type == WM_HANDLER_TYPE_OP) &&
-@@ -2609,8 +3380,20 @@
+@@ -2609,8 +3504,20 @@
      wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;
      wmOperator *op = handler->op;
      wmOperatorType *ot = op->type;
@@ -126317,7 +126622,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        /* Interface is locked and operator is not allowed to run,
         * nothing to do in this case. */
      }
-@@ -2621,21 +3404,75 @@
+@@ -2621,21 +3528,75 @@
        ScrArea *area = CTX_wm_area(C);
        ARegion *region = CTX_wm_region(C);
 
@@ -126401,7 +126706,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        if (ot->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {
          wm->op_undo_depth--;
-@@ -2646,7 +3483,9 @@
+@@ -2646,7 +3607,9 @@
         * operator, area, region etc have all been freed. */
        if (CTX_wm_window(C) == win) {
 
@@ -126412,7 +126717,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
          if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
            wm_operator_reports(C, op, retval, false);
-@@ -2711,6 +3550,25 @@
+@@ -2711,6 +3674,25 @@
      wmOperatorType *ot = WM_operatortype_find(kmi_idname, false);
 
      if (ot && wm_operator_check_locked_interface(C, ot)) {
@@ -126438,7 +126743,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        bool use_last_properties = true;
        PointerRNA tool_properties = {};
 
-@@ -2732,6 +3590,12 @@
+@@ -2732,6 +3714,12 @@
        if (use_tool_properties) {
          WM_toolsystem_ref_properties_init_for_keymap(
              keymap_tool, &tool_properties, properties, ot);
@@ -126451,7 +126756,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          properties = &tool_properties;
          use_last_properties = false;
        }
-@@ -2787,8 +3651,1093 @@
+@@ -2787,8 +3775,1093 @@
    return WM_HANDLER_BREAK;
  }
 
@@ -127545,7 +127850,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    LISTBASE_FOREACH (bScreen *, screen, &G_MAIN->screens) {
      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
        if (area->spacetype == SPACE_FILE) {
-@@ -2817,6 +4766,311 @@
+@@ -2817,6 +4890,311 @@
 
    switch (val) {
      case EVT_FILESELECT_FULL_OPEN: {
@@ -127857,7 +128162,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        ScrArea *area = ED_screen_temp_space_open(
            C, IFACE_("Blender File View"), SPACE_FILE, U.filebrowser_display_type, true);
        if (!area) {
-@@ -2836,6 +5090,15 @@
+@@ -2836,6 +5214,15 @@
        sfile->op = handler->op;
 
        ED_fileselect_set_params_from_userdef(sfile);
@@ -127873,7 +128178,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        action = WM_HANDLER_BREAK;
        break;
-@@ -2985,6 +5248,12 @@
+@@ -2985,6 +5372,12 @@
          }
 
          if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {
@@ -127886,7 +128191,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            wm_operator_free_for_fileselect(handler->op);
          }
        }
-@@ -3423,6 +5692,35 @@
+@@ -3423,6 +5816,35 @@
                                                  wmEvent *event,
                                                  ListBase *handlers)
  {
@@ -127922,7 +128227,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    const bool do_debug_handler =
        (G.debug & G_DEBUG_HANDLERS) &&
        /* Comment this out to flood the console! (if you really want to test). */
-@@ -3449,6 +5747,16 @@
+@@ -3449,6 +5871,16 @@
    {
      handler_base_next = handler_base->next;
 
@@ -127939,7 +128244,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      /* During this loop, UI handlers for nested menus can tag multiple handlers free. */
      if (handler_base->flag & WM_HANDLER_DO_FREE) {
        /* Pass. */
-@@ -3469,6 +5777,26 @@
+@@ -3469,6 +5901,26 @@
          wmEventHandler_Keymap *handler = (wmEventHandler_Keymap *)handler_base;
          wmEventHandler_KeymapResult km_result;
          WM_event_get_keymaps_from_handler(wm, win, handler, &km_result);
@@ -127966,7 +128271,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          eHandlerActionFlag action_iter = WM_HANDLER_CONTINUE;
          /* Compute in advance, as event may be freed on WM_HANDLER_BREAK. */
          const bool event_is_timer = ISTIMER(event->type);
-@@ -3609,6 +5937,9 @@
+@@ -3609,6 +6061,9 @@
      wm_cursor_arrow_move(CTX_wm_window(C), event);
    }
 
@@ -127976,7 +128281,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    /* Do some extra sanity checking before returning the action. */
    wm_event_handler_return_value_check(C, event, action);
    return action;
-@@ -3808,6 +6139,24 @@
+@@ -3808,6 +6263,24 @@
    wmWindow *win = CTX_wm_window(C);
    bScreen *screen = CTX_wm_screen(C);
 
@@ -128001,7 +128306,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    if (screen) {
      ED_screen_areas_iter (win, screen, area) {
        if (BLI_rcti_isect_pt_v(&area->totrct, xy)) {
-@@ -3822,6 +6171,12 @@
+@@ -3822,6 +6295,12 @@
  {
    bScreen *screen = CTX_wm_screen(C);
    ScrArea *area = CTX_wm_area(C);
@@ -128014,7 +128319,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (screen && area) {
      LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-@@ -4093,6 +6448,142 @@
+@@ -4093,6 +6572,142 @@
    return wm_event_do_region_handlers(C, event, region_hovered);
  }
 
@@ -128157,7 +128462,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  void wm_event_do_handlers(bContext *C)
  {
    wmWindowManager *wm = CTX_wm_manager(C);
-@@ -4119,6 +6610,13 @@
+@@ -4119,6 +6734,13 @@
 
      wmEvent *event;
      while ((event = static_cast<wmEvent *>(win->runtime->event_queue.first))) {
@@ -128171,7 +128476,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        eHandlerActionFlag action = WM_HANDLER_CONTINUE;
 
        /* Force handling drag if a key is pressed even if the drag threshold has not been met.
-@@ -4177,6 +6675,33 @@
+@@ -4177,6 +6799,33 @@
 
        CTX_wm_window_set(C, win);
 
@@ -128205,7 +128510,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  #ifdef WITH_XR_OPENXR
        if (event->type == EVT_XR_ACTION) {
          wm_event_handle_xrevent(C, wm, win, event);
-@@ -4209,6 +6734,42 @@
+@@ -4209,6 +6858,42 @@
        wm_region_mouse_co(C, event);
 
        /* First we do priority handlers, modal + some limited key-maps. */
@@ -128248,7 +128553,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        action |= wm_handlers_do(C, event, &win->modalhandlers);
 
        /* File-read case. */
-@@ -4226,6 +6787,20 @@
+@@ -4226,6 +6911,20 @@
            }
          }
        }
@@ -128269,7 +128574,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Check dragging, creates new event or frees, adds draw tag. */
        action |= wm_event_drag_and_drop_test(wm, win, event);
-@@ -4247,6 +6822,15 @@
+@@ -4247,6 +6946,15 @@
  #endif
 
          ED_screen_areas_iter (win, screen, area) {
@@ -128285,7 +128590,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
            /* After restoring a screen from SCREENMAXIMIZED we have to wait
             * with the screen handling till the region coordinates are updated. */
            if (screen->skip_handling) {
-@@ -4328,6 +6912,27 @@
+@@ -4328,6 +7036,27 @@
        /* Un-link and free here, Blender-quit then frees all. */
        BLI_remlink(&win->runtime->event_queue, event);
        wm_event_free_last_handled(win, event);
@@ -128313,7 +128618,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      }
 
      /* Only add mouse-move when the event queue was read entirely. */
-@@ -4352,6 +6957,9 @@
+@@ -4352,6 +7081,9 @@
 
    /* End GPU render boundary. Certain event handlers require GPU usage. */
    GPU_render_end();
@@ -128323,7 +128628,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
  }
 
  /** \} */
-@@ -4617,11 +7225,86 @@
+@@ -4617,11 +7349,86 @@
  }
  #endif
 
@@ -128410,7 +128715,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    wmEventHandler_Op *handler = MEM_callocN<wmEventHandler_Op>(__func__);
    handler->head.type = WM_HANDLER_TYPE_OP;
 
-@@ -4642,6 +7325,13 @@
+@@ -4642,6 +7449,13 @@
                                                             -1;
 
    wm_handler_operator_insert(win, handler);
@@ -128424,7 +128729,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    if (op->type->modalkeymap) {
      WM_window_status_area_tag_redraw(win);
-@@ -5059,6 +7749,19 @@
+@@ -5059,6 +7873,19 @@
                                             void *user_data,
                                             const eWM_EventHandlerFlag flag)
  {
@@ -128444,7 +128749,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    wmEventHandler_UI *handler = MEM_callocN<wmEventHandler_UI>(__func__);
    handler->head.type = WM_HANDLER_TYPE_UI;
    handler->handle_fn = handle_fn;
-@@ -5736,7 +8439,9 @@
+@@ -5736,7 +8563,9 @@
     * them for better performance. */
    if (event_last && event_last->type == MOUSEMOVE) {
      event_last->type = INBETWEEN_MOUSEMOVE;
@@ -128455,7 +128760,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    }
 
    wmEvent *event_new = wm_event_add_intern(win, event);
-@@ -5768,6 +8473,9 @@
+@@ -5768,6 +8597,9 @@
      memset(&tevent, 0x0, sizeof(tevent));
    }
 
@@ -128465,7 +128770,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    tevent.type = MOUSEMOVE;
    tevent.val = KM_NOTHING;
    copy_v2_v2_int(tevent.prev_xy, tevent.xy);
-@@ -5784,7 +8492,9 @@
+@@ -5784,7 +8616,9 @@
    /* Ignore in between trackpad events for performance, we only need high accuracy
     * for painting with mouse moves, for navigation using the accumulated value is ok. */
    const wmEvent *event_last = static_cast<wmEvent *>(win->runtime->event_queue.last);
@@ -128476,7 +128781,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      deltax += event_last->xy[0] - event_last->prev_xy[0];
      deltay += event_last->xy[1] - event_last->prev_xy[1];
 
-@@ -5920,6 +8630,149 @@
+@@ -5920,6 +8754,149 @@
      return;
    }
 
@@ -128626,7 +128931,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
    /**
     * Having both, \a event and \a event_state, can be highly confusing to work with,
     * but is necessary for our current event system, so let's clear things up a bit:
-@@ -5936,6 +8789,16 @@
+@@ -5936,6 +8913,16 @@
    /* Initialize and copy state (only mouse x y and modifiers). */
    event = *event_state;
    event.flag = (eWM_EventFlag)0;
@@ -128643,7 +128948,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
    /**
     * Always support accessing the last key press/release. This is set from `win->eventstate`,
-@@ -5990,6 +8853,25 @@
+@@ -5990,6 +8977,25 @@
 
        wm_stereo3d_mouse_offset_apply(win, event.xy);
        wm_tablet_data_from_ghost(&cd->tablet, &event.tablet);
@@ -128669,7 +128974,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        event.type = MOUSEMOVE;
        event.val = KM_NOTHING;
-@@ -6002,7 +8884,8 @@
+@@ -6002,7 +9008,8 @@
 
        /* Also add to other window if event is there, this makes overdraws disappear nicely. */
        /* It remaps mouse-coord to other window in event. */
@@ -128679,7 +128984,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        if (win_other) {
          wmEvent event_other = *win_other->eventstate;
 
-@@ -6032,6 +8915,9 @@
+@@ -6032,6 +9039,9 @@
 
        int delta[2] = {pd->deltaX, -pd->deltaY};
        switch (pd->subtype) {
@@ -128689,7 +128994,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
          case GHOST_kTrackpadEventMagnify:
            event.type = MOUSEZOOM;
            delta[0] = -delta[0];
-@@ -6105,6 +8991,30 @@
+@@ -6105,6 +9115,30 @@
        }
        break;
      }
@@ -128720,7 +129025,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
      case GHOST_kEventTwoFingerTap:
        event.type = TOUCH_TWO_FINGER_TAP;
        event.val = KM_PRESS;
-@@ -6131,6 +9041,27 @@
+@@ -6131,6 +9165,27 @@
         * GHOST should never generate unknown events and this logic can probably be removed. */
        event.val = (type == GHOST_kEventButtonDown) ? KM_PRESS : KM_RELEASE;
        event.type = wm_event_type_from_ghost_button(bd->button, MIDDLEMOUSE);
@@ -128748,7 +129053,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
 
        /* Get tablet data. */
        wm_tablet_data_from_ghost(&bd->tablet, &event.tablet);
-@@ -6143,7 +9074,8 @@
+@@ -6143,7 +9198,8 @@
                                            (GHOST_TEventType)type);
 
        /* Add to other window if event is there (not to both!). */
@@ -128758,7 +129063,7 @@ diff --git a/source/blender/windowmanager/intern/wm_event_system.cc b/source/ble
        if (win_other) {
          wmEvent event_other = *win_other->eventstate;
 
-@@ -6160,6 +9092,8 @@
+@@ -6160,6 +9216,8 @@
          event_other.type = event.type;
          event_other.val = event.val;
          event_other.tablet = event.tablet;
@@ -143067,47 +143372,67 @@ index cae9c07..7816156 100644
 diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/windowmanager/intern/wm_window.cc
 --- a/source/blender/windowmanager/intern/wm_window.cc
 +++ b/source/blender/windowmanager/intern/wm_window.cc
-@@ -28,6 +28,9 @@
+@@ -28,6 +28,13 @@
  #include "MEM_guardedalloc.h"
- 
+
  #include "GHOST_C-api.h"
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include "GHOST_ProjectImport-api.hh"
++#  include "GHOST_NavigationIOS.hh"
++#  include "ED_ipad_panels.hh"
++#  include "wm_event_types.hh"
++#  include "BLI_threads.h"
 +#endif
- 
+
  #include "BLI_fileops.h"
  #include "BLI_listbase.h"
-@@ -39,6 +42,9 @@
+@@ -39,6 +46,9 @@
  #include "BLI_system.h"
  #include "BLI_time.h"
  #include "BLI_utildefines.h"
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +#  include "BLI_vector.hh"
 +#endif
- 
+
  #include "BLT_translation.hh"
- 
-@@ -475,61 +481,118 @@
+
+@@ -475,61 +485,118 @@
  {
    bScreen *screen = WM_window_get_active_screen(win);
- 
+
 -  if (screen->temp && BLI_listbase_is_single(&screen->areabase) && !WM_window_is_maximized(win)) {
-+  wmWindow *win_other;
-+
-+  /* First check if there is another main window remaining. */
-+  for (win_other = static_cast<wmWindow *>(wm->windows.first); win_other;
-+       win_other = win_other->next)
-+  {
-+    if (win_other != win && win_other->parent == nullptr && !WM_window_is_temp_screen(win_other)) {
-+      break;
-+    }
-+  }
-+
-+  if (win->parent == nullptr && win_other == nullptr) {
-+    wm_quit_with_optional_confirmation_prompt(C, win);
-+    return;
-+  }
-+
+-    ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
+-    rctf *stored_bounds = stored_window_bounds(eSpace_Type(area->spacetype));
+-
+-    if (stored_bounds) {
+-      /* Get DPI and scale from parent window, if there is one. */
+-      WM_window_dpi_set_userdef(win->parent ? win->parent : win);
+-      const float f = GHOST_GetNativePixelSize(static_cast<GHOST_WindowHandle>(win->ghostwin));
+-      stored_bounds->xmin = float(win->posx) * f / UI_SCALE_FAC;
+-      stored_bounds->xmax = stored_bounds->xmin + float(win->sizex) * f / UI_SCALE_FAC;
+-      stored_bounds->ymin = float(win->posy) * f / UI_SCALE_FAC;
+-      stored_bounds->ymax = stored_bounds->ymin + float(win->sizey) * f / UI_SCALE_FAC;
+-      /* Tag user preferences as dirty. */
+-      U.runtime.is_dirty = true;
+-    }
+-  }
+-
+   wmWindow *win_other;
+
+   /* First check if there is another main window remaining. */
+   for (win_other = static_cast<wmWindow *>(wm->windows.first); win_other;
+        win_other = win_other->next)
+   {
+     if (win_other != win && win_other->parent == nullptr && !WM_window_is_temp_screen(win_other)) {
+       break;
+     }
+   }
+
+   if (win->parent == nullptr && win_other == nullptr) {
+     wm_quit_with_optional_confirmation_prompt(C, win);
+     return;
+   }
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  /* Preflight every descendant before changing preferences or closing the first child. */
 +  Main *preflight_bmain = CTX_data_main(C);
@@ -143157,49 +143482,28 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +  if (screen && screen->temp && BLI_listbase_is_single(&screen->areabase) &&
 +      !WM_window_is_maximized(win))
 +  {
-     ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
-     rctf *stored_bounds = stored_window_bounds(eSpace_Type(area->spacetype));
--
-     if (stored_bounds) {
--      /* Get DPI and scale from parent window, if there is one. */
-       WM_window_dpi_set_userdef(win->parent ? win->parent : win);
-       const float f = GHOST_GetNativePixelSize(static_cast<GHOST_WindowHandle>(win->ghostwin));
-       stored_bounds->xmin = float(win->posx) * f / UI_SCALE_FAC;
-       stored_bounds->xmax = stored_bounds->xmin + float(win->sizex) * f / UI_SCALE_FAC;
-       stored_bounds->ymin = float(win->posy) * f / UI_SCALE_FAC;
-       stored_bounds->ymax = stored_bounds->ymin + float(win->sizey) * f / UI_SCALE_FAC;
--      /* Tag user preferences as dirty. */
-       U.runtime.is_dirty = true;
-     }
--  }
--
--  wmWindow *win_other;
--
--  /* First check if there is another main window remaining. */
--  for (win_other = static_cast<wmWindow *>(wm->windows.first); win_other;
--       win_other = win_other->next)
--  {
--    if (win_other != win && win_other->parent == nullptr && !WM_window_is_temp_screen(win_other)) {
--      break;
--    }
--  }
--
--  if (win->parent == nullptr && win_other == nullptr) {
--    wm_quit_with_optional_confirmation_prompt(C, win);
--    return;
-   }
- 
++    ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
++    rctf *stored_bounds = stored_window_bounds(eSpace_Type(area->spacetype));
++    if (stored_bounds) {
++      WM_window_dpi_set_userdef(win->parent ? win->parent : win);
++      const float f = GHOST_GetNativePixelSize(static_cast<GHOST_WindowHandle>(win->ghostwin));
++      stored_bounds->xmin = float(win->posx) * f / UI_SCALE_FAC;
++      stored_bounds->xmax = stored_bounds->xmin + float(win->sizex) * f / UI_SCALE_FAC;
++      stored_bounds->ymin = float(win->posy) * f / UI_SCALE_FAC;
++      stored_bounds->ymax = stored_bounds->ymin + float(win->sizey) * f / UI_SCALE_FAC;
++      U.runtime.is_dirty = true;
++    }
++  }
++
    /* Close child windows. */
    LISTBASE_FOREACH_MUTABLE (wmWindow *, iter_win, &wm->windows) {
      if (iter_win->parent == win) {
        wm_window_close(C, wm, iter_win);
--    }
--  }
 +      if (BLI_findindex(&wm->windows, iter_win) != -1) {
 +        return;
 +      }
-+    }
-+  }
+     }
+   }
 +
 +  CTX_wm_window_set(C, win); /* Needed by handlers. */
 +  if (screen && !ED_screen_exit(C, win, screen)) {
@@ -143220,10 +143524,10 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +    return;
 +  }
 +#endif
- 
+
    WorkSpace *workspace = WM_window_get_active_workspace(win);
    WorkSpaceLayout *layout = BKE_workspace_active_layout_get(win->workspace_hook);
- 
+
    BLI_remlink(&wm->windows, win);
 -
 -  CTX_wm_window_set(C, win); /* Needed by handlers. */
@@ -143238,11 +143542,11 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 -  }
    const bool is_single_editor = !WM_window_is_main_top_level(win) &&
                                  (screen && BLI_listbase_is_single(&screen->areabase));
- 
-@@ -1162,6 +1225,10 @@
+
+@@ -1162,6 +1229,10 @@
    return false;
  }
- 
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static bool wm_window_ipad_pencil_paint_owner_teardown(wmWindowManager *wm, wmWindow *win);
 +#endif
@@ -143250,9 +143554,9 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
  wmWindow *WM_window_open(bContext *C,
                           const char *title,
                           const rcti *rect_unscaled,
-@@ -1231,7 +1298,8 @@
+@@ -1231,7 +1302,8 @@
    }
- 
+
    /* Add new window? */
 -  if (win == nullptr) {
 +  const bool created_new_window = (win == nullptr);
@@ -143260,9 +143564,9 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
      win = wm_window_new(bmain, wm, toplevel ? nullptr : win_prev, dialog);
      win->posx = rect.xmin;
      win->posy = rect.ymin;
-@@ -1257,6 +1325,13 @@
+@@ -1257,6 +1329,13 @@
    }
- 
+
    /* Set scene and view layer to match original window. */
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  if (win->ghostwin != nullptr && !STREQ(win->view_layer_name, view_layer->name) &&
@@ -143274,14 +143578,11 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
    STRNCPY_UTF8(win->view_layer_name, view_layer->name);
    if (WM_window_get_active_scene(win) != scene) {
      /* No need to refresh the tool-system as the window has not yet finished being setup. */
-@@ -1296,10 +1371,23 @@
+@@ -1296,10 +1375,23 @@
      /* Ensure it shows the right space-type editor. */
      ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
      CTX_wm_area_set(C, area);
 -    ED_area_newspace(C, area, space_type, false);
--  }
--
--  ED_screen_change(C, screen);
 +    if (!ED_area_newspace(C, area, space_type, false)) {
 +      if (created_new_window) {
 +        wm_window_close(C, wm, win);
@@ -143289,8 +143590,9 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +      CTX_wm_window_set(C, win_prev);
 +      return nullptr;
 +    }
-+  }
-+
+   }
+
+-  ED_screen_change(C, screen);
 +  bScreen *screen_current = CTX_wm_screen(C);
 +  if (screen_current != screen && !ED_screen_change(C, screen)) {
 +    if (created_new_window) {
@@ -143299,11 +143601,11 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +    CTX_wm_window_set(C, win_prev);
 +    return nullptr;
 +  }
- 
+
    if (!new_window) {
      /* Set size in GHOST window and then update size and position from GHOST,
-@@ -1701,6 +1789,11 @@
- 
+@@ -1701,6 +1793,11 @@
+
    switch (type) {
      case GHOST_kEventWindowDeactivate: {
 +#ifdef WITH_APPLE_CROSSPLATFORM
@@ -143312,9 +143614,9 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +      }
 +#endif
        wm_window_update_eventstate_modifiers_clear(wm, win, event_time_ms);
- 
+
        wm_event_add_ghostevent(wm, win, type, data, event_time_ms);
-@@ -1867,6 +1960,12 @@
+@@ -1867,6 +1964,12 @@
          WM_operator_properties_create_ptr(&props_ptr, ot);
          RNA_string_set(&props_ptr, "filepath", path);
          RNA_boolean_set(&props_ptr, "display_file_selector", false);
@@ -143327,7 +143629,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
          WM_operator_name_call_ptr(
              C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
          WM_operator_properties_free(&props_ptr);
-@@ -1875,6 +1974,40 @@
+@@ -1875,6 +1978,40 @@
        }
        break;
      }
@@ -143367,11 +143669,108 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +#endif
      case GHOST_kEventDraggingDropDone: {
        const GHOST_TEventDragnDropData *ddd = static_cast<const GHOST_TEventDragnDropData *>(data);
- 
-@@ -3085,15 +3218,236 @@
+
+@@ -2113,6 +2250,65 @@
+ /** \name Ghost Init/Exit
+  * \{ */
+
++#ifdef WITH_APPLE_CROSSPLATFORM
++/* Fixed GHOST callback: all identities are resolved in current Main before any
++ * child is inspected. The query owns its otherwise-empty context, never the
++ * input consumer's context. In particular CTX_data_main_set is forbidden here:
++ * that setter invokes the sound Main callback. */
++static bool wm_ipad_knife_pan_probe(const void *ghost_window,
++                                   const bool capture,
++                                   const ghost::ios::PencilKnifePanContact &original,
++                                   ghost::ios::PencilKnifePanContact &result)
++{
++  result = {};
++  static bool querying = false;
++  if (!BLI_thread_is_main() || querying || !g_system || G.background || !G_MAIN ||
++      !ghost_window || !original.serial) return false;
++  querying = true;
++  struct QueryGuard {
++    bool &flag;
++    ~QueryGuard() { flag = false; }
++  } guard{querying};
++  wmWindowManager *manager = nullptr;
++  wmWindow *window = nullptr;
++  /* No retained event or queue pointer survives this callback. Keyboard events
++   * still in native modal mapping retain their original keyboard prev_type. */
++  LISTBASE_FOREACH (wmWindowManager *, wm, &G_MAIN->wm) {
++    if (!wm->runtime || !wm->id.session_uid) return false;
++    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
++      if (!win->runtime) return false;
++      LISTBASE_FOREACH (const wmEvent *, event, &win->runtime->event_queue) {
++        if (ISKEYBOARD(event->type) ||
++            (event->type == EVT_MODAL_MAP && ISKEYBOARD(event->prev_type))) return false;
++      }
++      if (win->ghostwin != ghost_window) continue;
++      if (window) return false;
++      manager = wm;
++      window = win;
++    }
++  }
++  if (!manager || !window || !window->winid || !window->eventstate ||
++      !window->workspace_hook) return false;
++  /* CTX_wm_window_set calls the native workspace/screen getters. Prove those
++   * hook children before that setter can read them. No provider is queried. */
++  WorkSpace *workspace = window->workspace_hook->active;
++  WorkSpaceLayout *layout = window->workspace_hook->act_layout;
++  if (!workspace || BLI_findindex(&G_MAIN->workspaces, workspace) == -1 ||
++      !workspace->id.session_uid || !layout ||
++      BLI_findindex(&workspace->layouts, layout) == -1 || !layout->screen ||
++      BLI_findindex(&G_MAIN->screens, layout->screen) == -1 ||
++      !layout->screen->id.session_uid) return false;
++  bContext *C = CTX_create();
++  if (!C) return false;
++  CTX_wm_manager_set(C, manager);
++  CTX_wm_window_set(C, window);
++  const bool accepted = ED_ipad_knife_pan_probe(C, window, capture, original, result);
++  CTX_free(C);
++  if (!accepted) result = {};
++  return accepted;
++}
++#endif
++
+ void wm_ghost_init(bContext *C)
+ {
+   if (g_system) {
+@@ -2137,6 +2333,9 @@
+     /* This will leak memory, it's preferable to crashing. */
+     exit(EXIT_FAILURE);
+   }
++#ifdef WITH_APPLE_CROSSPLATFORM
++  ghost::ios::set_pencil_knife_pan_probe(wm_ipad_knife_pan_probe);
++#endif
+ #if !(defined(WIN32) || defined(__APPLE__))
+   g_system_backend_id = GHOST_SystemBackend();
+ #endif
+@@ -2161,6 +2360,9 @@
+
+ void wm_ghost_init_background()
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  if (!g_system) ghost::ios::set_pencil_knife_pan_probe(nullptr);
++#endif
+   /* TODO: move this to `wm_init_exit.cc`. */
+
+   if (g_system) {
+@@ -2181,6 +2383,10 @@
+
+ void wm_ghost_exit()
+ {
++#ifdef WITH_APPLE_CROSSPLATFORM
++  /* Clear even when no system exists, before any native window is disposed. */
++  ghost::ios::set_pencil_knife_pan_probe(nullptr);
++#endif
+   if (g_system) {
+     GHOST_DisposeSystem(g_system);
+   }
+@@ -3085,15 +3291,236 @@
    return view_layer;
  }
- 
+
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +static wmWindowManager *wm_window_ipad_find_manager(Main *bmain,
 +                                                    const wmWindowManager *expected_wm)
@@ -143525,7 +143924,6 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
    BLI_assert(BKE_view_layer_find(WM_window_get_active_scene(win), view_layer->name) != nullptr);
 +#ifdef WITH_APPLE_CROSSPLATFORM
    Main *bmain = G_MAIN;
--
 +  wmWindowManager *wm = bmain ? static_cast<wmWindowManager *>(bmain->wm.first) : nullptr;
 +  if (!bmain || !wm || !win || !view_layer) {
 +    return;
@@ -143541,7 +143939,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +  {
 +    return;
 +  }
-+
+
 +  struct LayerTarget {
 +    wmWindowIPadPaintContextSnapshot context;
 +    char old_layer_name[64];
@@ -143608,19 +144006,18 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
    LISTBASE_FOREACH (wmWindow *, win_iter, &wm->windows) {
      if ((win_iter == win_parent) || (win_iter->parent == win_parent)) {
        STRNCPY_UTF8(win_iter->view_layer_name, view_layer->name);
-@@ -3101,6 +3455,7 @@
+@@ -3101,6 +3528,7 @@
        ED_render_view_layer_changed(bmain, screen);
      }
    }
 +#endif
  }
- 
+
  void WM_window_ensure_active_view_layer(wmWindow *win)
-@@ -3123,9 +3478,108 @@
+@@ -3123,9 +3551,108 @@
  {
    wmWindowManager *wm = CTX_wm_manager(C);
    wmWindow *win_parent = (win->parent) ? win->parent : win;
--
 +#ifdef WITH_APPLE_CROSSPLATFORM
 +  Main *bmain = CTX_data_main(C);
 +  if (!bmain || G_MAIN != bmain || !wm || !win || !workspace ||
@@ -143639,7 +144036,7 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
 +  if (!target_workspace_live) {
 +    return;
 +  }
-+
+
 +  struct WorkspaceTarget {
 +    wmWindowIPadPaintContextSnapshot context;
 +    bool needs_teardown;
@@ -143727,13 +144124,13 @@ diff --git a/source/blender/windowmanager/intern/wm_window.cc b/source/blender/w
    LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
      if (win_child->parent == win_parent) {
        bScreen *screen = WM_window_get_active_screen(win_child);
-@@ -3136,6 +3590,7 @@
+@@ -3136,6 +3663,7 @@
        ED_workspace_change(workspace, C, wm, win_child);
      }
    }
 +#endif
  }
- 
+
  WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win)
 diff --git a/source/blender/windowmanager/wm.hh b/source/blender/windowmanager/wm.hh
 index 1b1725c..0be6ee0 100644
@@ -143877,22 +144274,25 @@ index 1b1725c..0be6ee0 100644
   */
  bool wm_open_init_use_scripts(wmOperator *op, bool use_prefs) ATTR_WARN_UNUSED_RESULT;
 diff --git a/source/blender/windowmanager/wm_draw.hh b/source/blender/windowmanager/wm_draw.hh
-index e248c3f..d8c0ec2 100644
 --- a/source/blender/windowmanager/wm_draw.hh
 +++ b/source/blender/windowmanager/wm_draw.hh
-@@ -1,35 +1,46 @@
+@@ -1,35 +1,58 @@
  /* SPDX-FileCopyrightText: 2007 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
- 
+
  /** \file
   * \ingroup wm
   */
- 
+
  #pragma once
- 
-+#include <cstdint>
 +
++#include <cstdint>
++#include <type_traits>
++#ifdef WITH_APPLE_CROSSPLATFORM
++#  include "WM_ipad_knife.hh"
++#endif
+
  struct ARegion;
  struct GPUOffScreen;
  namespace blender::gpu {
@@ -143902,13 +144302,14 @@ index e248c3f..d8c0ec2 100644
  struct ScrArea;
  struct bContext;
  struct wmWindow;
- 
+
  struct wmDrawBuffer {
    GPUOffScreen *offscreen;
    GPUViewport *viewport;
    bool stereo;
    int bound_view;
 +#ifdef WITH_APPLE_CROSSPLATFORM
++  wmIPadKnifeCanvasStamp ipad_knife_canvas_stamp;
 +  /* Trivially copyable stamp owned by this exact texture allocation. */
 +  uint64_t ipad_finger_paint_generation;
 +  uint64_t ipad_finger_paint_screen_uid, ipad_finger_paint_window_id;
@@ -143918,15 +144319,22 @@ index e248c3f..d8c0ec2 100644
 +  bool ipad_finger_paint_unknown_widgets, ipad_finger_paint_navigation_present;
 +#endif
  };
- 
+
  /* `wm_draw.cc` */
- 
+
  void wm_draw_update(bContext *C);
  void wm_draw_region_clear(wmWindow *win, ARegion *region);
  void wm_draw_region_blend(ARegion *region, int view, bool blend);
  void wm_draw_region_test(bContext *C, ScrArea *area, ARegion *region);
- 
+
  blender::gpu::Texture *wm_draw_region_texture(ARegion *region, int view);
++
++#ifdef WITH_APPLE_CROSSPLATFORM
++static_assert(std::is_trivial_v<wmIPadKnifeCanvasStamp>);
++static_assert(std::is_trivially_copyable_v<wmIPadKnifeCanvasStamp>);
++static_assert(std::is_trivial_v<wmDrawBuffer>);
++static_assert(std::is_trivially_copyable_v<wmDrawBuffer>);
++#endif
 diff --git a/source/blender/windowmanager/wm_event_types.hh b/source/blender/windowmanager/wm_event_types.hh
 --- a/source/blender/windowmanager/wm_event_types.hh
 +++ b/source/blender/windowmanager/wm_event_types.hh
@@ -144652,14 +145060,14 @@ index 4e280f1..5369126 100644
  void WM_OT_set_working_color_space(wmOperatorType *ot);
 diff --git a/intern/ghost/GHOST_NavigationIOS.hh b/intern/ghost/GHOST_NavigationIOS.hh
 new file mode 100644
-index 0000000..3c69bc6
 --- /dev/null
 +++ b/intern/ghost/GHOST_NavigationIOS.hh
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,402 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
 +#include <algorithm>
++#include <array>
 +#include <cmath>
 +#include <cstdint>
 +#include <cstring>
@@ -144744,6 +145152,37 @@ index 0000000..3c69bc6
 +         a.generation == b.generation && a.region == b.region &&
 +         a.origin_x == b.origin_x && a.origin_y == b.origin_y;
 +}
++/* Suppression-only receipt for one original physical Pencil Knife canvas contact.
++ * Every native identity is copied scalar evidence; no editor pointer or userdata is retained. */
++enum class PencilKnifePanIntent : uint8_t { None, Tool, Live };
++struct PencilKnifePanContact {
++  uint64_t serial = 0, content = 0, tool_ref = 0;
++  int origin_x = 0, origin_y = 0;
++  std::array<uint64_t, 32> scope{};
++  std::array<uint64_t, 23> owner{};
++  PencilKnifePanIntent intent = PencilKnifePanIntent::None;
++  bool valid() const
++  {
++    /* Tool remains reserved in the value ABI. Only an original registered
++     * native Knife owner can admit omission; initial tool intent is fallback. */
++    return serial && content && intent == PencilKnifePanIntent::Live && !tool_ref &&
++           owner[0] && owner[2] && owner[6] && owner[17] && owner[19];
++  }
++};
++using PencilKnifePanProbe = bool (*)(const void *window,
++                                     bool capture,
++                                     const PencilKnifePanContact &original,
++                                     PencilKnifePanContact &result);
++inline PencilKnifePanProbe pencil_knife_pan_probe = nullptr;
++inline void set_pencil_knife_pan_probe(PencilKnifePanProbe probe)
++{
++  pencil_knife_pan_probe = probe;
++}
++/* The UIKit implementation also checks the actual pending GHOST keyboard queue
++ * immediately before either callback. Missing system/manager/probe refuses. */
++PencilKnifePanContact pencil_knife_pan_at_start(const void *window, int x, int y, uint64_t serial);
++bool pencil_knife_pan_recognize(const void *window, const PencilKnifePanContact &original);
++
 +struct GestureContact {
 +  TouchDevice device = TouchDevice::Unknown;
 +  uintptr_t touch = 0;
@@ -149724,7 +150163,7 @@ diff --git a/source/blender/editors/include/ED_ipad_panels.hh b/source/blender/e
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/include/ED_ipad_panels.hh
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,115 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
 +
@@ -149744,8 +150183,14 @@ new file mode 100644
 +struct uiLayout;
 +struct PanelType;
 +struct wmPaintCursor;
++namespace ghost::ios { struct PencilKnifePanContact; }
 +
 +#ifdef WITH_APPLE_CROSSPLATFORM
++/* Physical Pencil PAN omission only; never an operator/action authority. */
++bool ED_ipad_knife_pan_probe(bContext *C, wmWindow *win, bool capture,
++                              const ghost::ios::PencilKnifePanContact &original,
++                              ghost::ios::PencilKnifePanContact &result);
++
 +/* Same root admission and editor contexts used by native sidebar layout. */
 +bool ED_ipad_panel_category_poll(const bContext *C, PanelType *panel_type);
 +void ED_ipad_view3d_panel_contexts(const bContext *C, const char *contexts[4]);
@@ -151889,7 +152334,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,3445 @@
+@@ -0,0 +1,3643 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -151949,6 +152394,9 @@ new file mode 100644
 +#include "WM_types.hh"
 +#include "WM_toolsystem.hh"
 +#include "wm_event_types.hh"
++#include "wm_event_system.hh"
++#include "wm_draw.hh"
++#include "GHOST_NavigationIOS.hh"
 +
 +#include "ipad_workspace_panels.hh"
 +#include "screen_intern.hh"
@@ -152677,6 +153125,7 @@ new file mode 100644
 +struct IPadKnifeHierarchyRegion {
 +  uint64_t area = 0, region = 0, buffer = 0;
 +  rcti rect{};
++  wmIPadKnifeCanvasStamp canvas{};
 +};
 +struct IPadKnifeHigherRect {
 +  uint64_t region = 0;
@@ -152694,6 +153143,7 @@ new file mode 100644
 +struct IPadKnifeHierarchySnapshot {
 +  IPadKnifeHierarchyNative native;
 +  std::vector<rcti> drawn_higher;
++  std::vector<IPadKnifeHierarchyRegion> compositions;
 +  bool drawn = false, complete = false;
 +};
 +struct IPadKnifeHierarchyFrame {
@@ -152732,7 +153182,8 @@ new file mode 100644
 +  r_native.scale = UI_SCALE_FAC;
 +  /* Native window draw callbacks run after the area/HUD compositor. Their
 +   * pixels and input are opaque here; no fresh Knife action can be proved. */
-+  r_native.settled = !screen->do_refresh && !win->drawcalls.first;
++  r_native.settled = !screen->do_refresh && !win->drawcalls.first && wm->runtime &&
++                     !wm->runtime->drags.first;
 +  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
 +    const bool visible = ED_ipad_panels_area_visible(area);
 +    const View3D *v3d = area->spacetype == SPACE_VIEW3D ?
@@ -152749,6 +153200,7 @@ new file mode 100644
 +    if (visible && area->runtime.ipad_layer != 1 && ipad_knife_rect_has_pixels(area->totrct))
 +      r_native.higher.push_back({0, area->totrct});
 +    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++      if (!region->runtime) return false;
 +      const auto &runtime = *region->runtime;
 +      const rcti &rect = region->winrct, &canvas = runtime.ipad_canvas_rect;
 +      r_native.state.push_back({1, uint64_t(uintptr_t(area)), uint64_t(uintptr_t(region)),
@@ -152765,7 +153217,34 @@ new file mode 100644
 +      }
 +      if (region->regiontype != RGN_TYPE_WINDOW)
 +        r_native.higher.push_back({uint64_t(uintptr_t(region)), rect});
-+      if (!navigation || region->regiontype != RGN_TYPE_WINDOW || !runtime.gizmo_map) continue;
++      if (region->regiontype != RGN_TYPE_WINDOW || !runtime.gizmo_map) continue;
++      /* Snapshot every current native gizmo without invoking poll/setup. Even
++       * hidden/uninitialized additions must match a completed presentation. A
++       * visible non-navigation gizmo has no proved bounded footprint. */
++      LISTBASE_FOREACH (wmGizmoGroup *, group, WM_gizmomap_group_list(runtime.gizmo_map)) {
++        r_native.state.push_back({4, uint64_t(uintptr_t(region)), uint64_t(uintptr_t(group)),
++                                  uint64_t(uintptr_t(group->type)), uint64_t(group->tag_remove),
++                                  uint64_t(group->hide.any), uint64_t(group->init_flag)});
++        const bool known_navigation = navigation && group->type &&
++            STREQ(group->type->idname, "VIEW3D_GGT_navigate");
++        if (!group->type) r_native.settled = false;
++        LISTBASE_FOREACH (wmGizmo *, gizmo, &group->gizmos) {
++          r_native.state.push_back({5, uint64_t(uintptr_t(region)), uint64_t(uintptr_t(group)),
++                                    uint64_t(uintptr_t(gizmo)), uint64_t(uintptr_t(gizmo->type)),
++                                    uint64_t(gizmo->flag), uint64_t(gizmo->state)});
++          /* Exact flag-only no-draw gates from wm_gizmo_is_visible. No
++           * custom group poll or gizmo hit/draw callback is consulted. */
++          const bool flag_visible = !(gizmo->flag & WM_GIZMO_HIDDEN) &&
++              !((gizmo->state & WM_GIZMO_STATE_MODAL) &&
++                !(gizmo->flag & (WM_GIZMO_DRAW_MODAL | WM_GIZMO_DRAW_VALUE))) &&
++              !((gizmo->flag & WM_GIZMO_DRAW_HOVER) &&
++                !(gizmo->state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_SELECT)));
++          if (!known_navigation && !group->hide.any &&
++              (group->init_flag & WM_GIZMOGROUP_INIT_SETUP) && flag_visible)
++            r_native.settled = false;
++        }
++      }
++      if (!navigation) continue;
 +      /* The area cache is overwritten by every quad WINDOW. Read each current
 +       * native navigation group instead, without polling or draw callbacks. */
 +      LISTBASE_FOREACH (wmGizmoGroup *, group, WM_gizmomap_group_list(runtime.gizmo_map)) {
@@ -152875,6 +153354,30 @@ new file mode 100644
 +      if (!ipad_knife_hierarchy_region_complete(required, frame.compositions)) {
 +        frame.drawing.complete = false;
 +        break;
++      }
++    }
++  }
++  frame.drawing.compositions = frame.compositions;
++  if (frame.drawing.complete) {
++    bScreen *screen = WM_window_get_active_screen(win);
++    for (auto &composition : frame.drawing.compositions) {
++      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++        if (uint64_t(uintptr_t(area)) != composition.area) continue;
++        LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++          if (uint64_t(uintptr_t(region)) != composition.region) continue;
++          /* These are sticky facts from overlays executed after the blit.
++           * They extend this composition, never retag its cached texture. */
++          composition.canvas.unknown_widgets |= region->runtime->ipad_knife_canvas_unknown_widgets;
++          wmIPadKnifeOwner overlay;
++          overlay.values = region->runtime->ipad_knife_canvas_drawn_owner;
++          if (overlay.valid()) {
++            wmIPadKnifeOwner texture_owner;
++            texture_owner.values = composition.canvas.drawn_owner;
++            if (texture_owner.valid() && texture_owner != overlay)
++              composition.canvas.unknown_widgets = true;
++            else composition.canvas.drawn_owner = overlay.values;
++          }
++        }
 +      }
 +    }
 +  }
@@ -154196,8 +154699,13 @@ new file mode 100644
 +      found->second.window_id != uint64_t(win->winid)) return;
 +  rcti rect = exclusive_rect;
 +  --rect.xmax; --rect.ymax;
-+  found->second.compositions.push_back({uint64_t(uintptr_t(area)), uint64_t(uintptr_t(region)),
-+                                       uint64_t(uintptr_t(region->runtime->draw_buffer)), rect});
++  IPadKnifeHierarchyRegion composition{uint64_t(uintptr_t(area)), uint64_t(uintptr_t(region)),
++                                        uint64_t(uintptr_t(region->runtime->draw_buffer)), rect};
++  /* A successful blit only copies the exact texture's original stamp. Tool
++   * selection and present modal owners cannot manufacture old pixel authority. */
++  if (region->runtime->draw_buffer)
++    composition.canvas = region->runtime->draw_buffer->ipad_knife_canvas_stamp;
++  found->second.compositions.push_back(composition);
 +}
 +void ED_ipad_hud_compositor_end(bContext *C, wmWindow *win,
 +                                std::vector<IPadHUDPresentedRect> &rects)
@@ -154318,6 +154826,141 @@ new file mode 100644
 +  return false;
 +}
 +
++}
++
++/* Suppression receipt admission is intentionally independent of HUD action
++ * ownership and native DOWN dispatch. Both gates freshly prove the same live
++ * original Knife, copied canvas pixels, and original native scope. */
++bool ED_ipad_knife_pan_probe(bContext *C,
++                              wmWindow *win,
++                              const bool capture,
++                              const ghost::ios::PencilKnifePanContact &original,
++                              ghost::ios::PencilKnifePanContact &result)
++{
++  using ghost::ios::PencilKnifePanContact;
++  using ghost::ios::PencilKnifePanIntent;
++  result = {};
++  if (!C || !win || !original.serial || (!capture && !original.valid()) ||
++      !ipad_hud_window_live(C, win) || ipad_knife_hud_higher_popup(C, win) ||
++      win->gesture.first || !ipad_knife_hierarchy_current(C, win)) return false;
++  const auto found = ipad_knife_hierarchy_frames.find(uintptr_t(win));
++  if (found == ipad_knife_hierarchy_frames.end()) return false;
++  const auto &shown = found->second.presented;
++  const int height = WM_window_native_pixel_y(win), width = WM_window_native_pixel_x(win);
++  if (height <= 0 || width <= 0 || original.origin_x < 0 || original.origin_x >= width ||
++      original.origin_y < 0 || original.origin_y >= height) return false;
++  /* GHOST physical origins already use native pixels, top-left. This is the
++   * inverse of wm_draw.cc's actual height-1-r.y conversion for native hits. */
++  const int xy[2] = {original.origin_x, height - 1 - original.origin_y};
++  for (const rcti &higher : shown.drawn_higher)
++    if (BLI_rcti_isect_pt_v(&higher, xy)) return false;
++  for (const auto &higher : shown.native.higher)
++    if (BLI_rcti_isect_pt_v(&higher.rect, xy)) return false;
++  /* Cached HUD pixels always retain their footprint, even when their original
++   * operator retired. They cannot be inherited by the canvas below them. */
++  const auto hud_frame = ipad_hud_frames.find(uintptr_t(win));
++  if (hud_frame != ipad_hud_frames.end()) {
++    if (hud_frame->second.pending || hud_frame->second.window_id != uint64_t(win->winid))
++      return false;
++    for (const auto &hud : hud_frame->second.presented)
++      for (const rcti &rect : hud.rects)
++        if (BLI_rcti_isect_pt_v(&rect, xy)) return false;
++  }
++  bScreen *screen = WM_window_get_active_screen(win);
++  wmWindowManager *manager = CTX_wm_manager(C);
++  if (!screen || !manager || !manager->runtime || manager->runtime->paintcursors.first ||
++      manager->runtime->drags.first) return false;
++  LISTBASE_FOREACH (ARegion *, floating, &screen->regionbase) {
++    if (!floating->runtime) return false;
++    if (floating->runtime->visible && !(floating->flag & RGN_FLAG_HIDDEN) &&
++        BLI_rcti_isect_pt_v(&floating->winrct, xy)) return false;
++  }
++  ScrArea *target_area = nullptr;
++  ARegion *target_region = nullptr;
++  std::array<uint64_t, 32> scope{};
++  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
++    if (area->spacetype != SPACE_VIEW3D || area->runtime.ipad_layer != 1 ||
++        !ED_ipad_panels_area_visible(area)) continue;
++    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
++      if (!region->runtime || region->regiontype != RGN_TYPE_WINDOW ||
++          !region->runtime->visible || !region->runtime->ipad_canvas ||
++          !BLI_rcti_isect_pt_v(&region->winrct, xy)) continue;
++      const rcti &canvas = region->runtime->ipad_canvas_rect;
++      const int local[2] = {xy[0] - region->winrct.xmin, xy[1] - region->winrct.ymin};
++      if (!BLI_rcti_isect_pt_v(&canvas, local)) continue;
++      if (target_region || !WM_ipad_knife_canvas_scope_capture(C, win, area, region, scope))
++        return false;
++      target_area = area;
++      target_region = region;
++    }
++  }
++  if (!target_region) return false;
++  ARegion *region = target_region;
++  ScrArea *area = target_area;
++  CTX_wm_area_set(C, area);
++  CTX_wm_region_set(C, region);
++  /* Ordinary WINDOW UI blocks have no bounded exclusion proof. No callbacks
++   * or hit tests are invoked to decide whether an unknown block is harmless. */
++  if (region->runtime->uiblocks.first) return false;
++  wmIPadKnifeOwner current_callback_owner;
++  if (!ED_region_knife_pan_callbacks_safe(C, region, current_callback_owner)) return false;
++  const wmDrawBuffer *buffer = region->runtime->draw_buffer;
++  if (!buffer || buffer->stereo || !buffer->ipad_knife_canvas_stamp.valid ||
++      buffer->ipad_knife_canvas_stamp.unknown_widgets ||
++      !buffer->ipad_knife_canvas_stamp.content || buffer->ipad_knife_canvas_stamp.scope != scope)
++    return false;
++  const uint64_t content = buffer->ipad_knife_canvas_stamp.content;
++  wmIPadKnifeOwner drawn_owner;
++  bool composited = false;
++  for (const auto &composition : shown.compositions) {
++    if (composition.area != uint64_t(uintptr_t(area)) ||
++        composition.region != uint64_t(uintptr_t(region))) continue;
++    if (composition.buffer != uint64_t(uintptr_t(buffer)) || !composition.canvas.valid ||
++        composition.canvas.unknown_widgets || composition.canvas.scope != scope ||
++        composition.canvas.content != content) return false;
++    wmIPadKnifeOwner owner;
++    owner.values = composition.canvas.drawn_owner;
++    if (drawn_owner.valid() && owner != drawn_owner) return false;
++    if (owner.valid()) drawn_owner = owner;
++    composited |= BLI_rcti_isect_pt_v(&composition.rect, xy);
++  }
++  if (!composited || region->runtime->ipad_knife_canvas_unknown_widgets) return false;
++  wmIPadKnifeOwner live;
++  const bool has_live = WM_ipad_knife_owner_capture(C, win, area, live);
++  /* No initial tool-name prediction: a same-batch DOWN with no registered
++   * original Knife remains on the ordinary native route, including its PAN. */
++  if (!has_live) return false;
++  /* Existing live intent is stronger than a current tool name and must still
++   * own the exact origin region. Every other modal handler remains higher UI. */
++  if (has_live && WM_ipad_knife_owner_region(C, win, live) != region) return false;
++  LISTBASE_FOREACH (wmEventHandler *, handler, &win->modalhandlers) {
++    if (!has_live || handler->type != WM_HANDLER_TYPE_OP ||
++        (handler->flag & WM_HANDLER_DO_FREE) || uint64_t(uintptr_t(handler)) != live.values[20])
++      return false;
++  }
++  if ((drawn_owner.valid() && (!has_live || drawn_owner != live)) ||
++      (current_callback_owner.valid() && (!has_live || current_callback_owner != live))) return false;
++  /* Even a currently absent callback cannot erase old known Knife pixels. */
++  wmIPadKnifeOwner texture_owner;
++  texture_owner.values = buffer->ipad_knife_canvas_stamp.drawn_owner;
++  if (texture_owner.valid() && (!has_live || texture_owner != live)) return false;
++  PencilKnifePanContact next;
++  next.serial = original.serial;
++  next.origin_x = original.origin_x;
++  next.origin_y = original.origin_y;
++  next.scope = scope;
++  next.content = content;
++  next.intent = PencilKnifePanIntent::Live;
++  next.owner = live.values;
++  /* Only the same original registered native owner can retain this narrow
++   * omission receipt. Tool names and customized initial DOWN maps grant none. */
++  if (!capture && (next.serial != original.serial || next.origin_x != original.origin_x ||
++                   next.origin_y != original.origin_y || next.scope != original.scope ||
++                   next.content != original.content || next.intent != original.intent ||
++                   next.tool_ref != original.tool_ref || next.owner != original.owner)) return false;
++  if (!next.valid()) return false;
++  result = next;
++  return true;
 +}
 +
 +bool UI_ipad_knife_hud_generation(bContext *C, wmWindow *win, const uint64_t generation)
@@ -156752,7 +157395,20 @@ diff --git a/source/blender/editors/sculpt_paint/paint_image_proj.cc b/source/bl
 diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editors/include/ED_screen.hh
 --- a/source/blender/editors/include/ED_screen.hh
 +++ b/source/blender/editors/include/ED_screen.hh
-@@ -52,12 +52,12 @@
+@@ -45,6 +45,12 @@
+ struct wmWindow;
+ struct wmWindowManager;
+
++struct wmIPadKnifeOwner;
++/** Inspect the current draw list without running callbacks. */
++bool ED_region_knife_pan_callbacks_safe(const bContext *C,
++                                        const ARegion *region,
++                                        wmIPadKnifeOwner &r_owner);
++
+ /* regions */
+ /** Only exported for WM. */
+ void ED_region_do_listen(wmRegionListenerParams *params);
+@@ -52,12 +58,12 @@
  void ED_region_do_layout(bContext *C, ARegion *region);
  /** Only exported for WM. */
  void ED_region_do_draw(bContext *C, ARegion *region);
@@ -156767,7 +157423,7 @@ diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editor
  void ED_region_pixelspace(const ARegion *region);
  /**
   * Call to move a popup window (keep OpenGL context free!)
-@@ -226,7 +226,7 @@
+@@ -226,7 +232,7 @@
   * Called in screen_refresh, or screens_init, also area size changes.
   */
  void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area);
@@ -156776,7 +157432,7 @@ diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editor
  blender::StringRefNull ED_area_name(const ScrArea *area);
  int ED_area_icon(const ScrArea *area);
  int ED_screen_area_active(const bContext *C);
-@@ -256,9 +256,9 @@
+@@ -256,9 +262,9 @@
  /**
   * \param skip_region_exit: Skip calling area exit callback. Set for opening temp spaces.
   */
@@ -156788,7 +157444,7 @@ diff --git a/source/blender/editors/include/ED_screen.hh b/source/blender/editor
  int ED_area_headersize();
  int ED_area_footersize();
  /**
-@@ -343,7 +343,7 @@
+@@ -343,7 +349,7 @@
   * event type is mouse move.
   */
  void ED_screen_set_active_region(bContext *C, wmWindow *win, const int xy[2]);
@@ -160928,7 +161584,7 @@ diff --git a/source/blender/editors/include/UI_interface.hh b/source/blender/edi
 diff --git a/source/blender/editors/mesh/editmesh_knife.cc b/source/blender/editors/mesh/editmesh_knife.cc
 --- a/source/blender/editors/mesh/editmesh_knife.cc
 +++ b/source/blender/editors/mesh/editmesh_knife.cc
-@@ -4627,6 +4627,56 @@
+@@ -4627,6 +4627,70 @@
    return OPERATOR_RUNNING_MODAL;
  }
 
@@ -160957,6 +161613,20 @@ diff --git a/source/blender/editors/mesh/editmesh_knife.cc b/source/blender/edit
 +  }
 +  r_origin = origin;
 +  return true;
++}
++
++bool ED_mesh_knife_draw_callback_known(const wmOperator *op,
++                                      const ARegion *region,
++                                      const void *handle,
++                                      void (*draw)(const bContext *, ARegion *, void *),
++                                      const void *data,
++                                      const int type)
++{
++  MeshKnifeModalOrigin origin{};
++  if (!ED_mesh_knife_modal_origin(op, origin) || origin.region != region) return false;
++  const auto *kcd = static_cast<const KnifeTool_OpData *>(op->customdata);
++  return handle && handle == kcd->draw_handle && draw == knifetool_draw && data == kcd &&
++         type == REGION_DRAW_POST_VIEW;
 +}
 +
 +wmOperatorStatus ED_mesh_knife_modal_action(bContext *C,
@@ -161000,7 +161670,7 @@ diff --git a/source/blender/windowmanager/WM_ipad_knife.hh b/source/blender/wind
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/windowmanager/WM_ipad_knife.hh
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,68 @@
 +/* SPDX-FileCopyrightText: 2026 Blender Authors
 + * SPDX-License-Identifier: GPL-2.0-or-later */
 +#pragma once
@@ -161047,3 +161717,25 @@ new file mode 100644
 +                                wmWindow *win,
 +                                ScrArea *area,
 +                                wmIPadKnifeOwner &r_owner);
++
++/* Numeric facts belonging to one texture allocation. POD for MEM_callocN. */
++struct wmIPadKnifeCanvasStamp {
++  std::array<uint64_t, 32> scope;
++  std::array<uint64_t, WM_IPAD_KNIFE_OWNER_VALUES> drawn_owner;
++  uint64_t content;
++  bool valid, unknown_widgets;
++};
++
++/* Pure fresh native membership/geometry reads; no providers or layer sync. */
++bool WM_ipad_knife_canvas_scope_capture(const bContext *C,
++                                       wmWindow *win,
++                                       ScrArea *area,
++                                       ARegion *region,
++                                       std::array<uint64_t, 32> &r_scope);
++bool WM_ipad_knife_draw_callback_known(const bContext *C,
++                                      const ARegion *region,
++                                      const void *handle,
++                                      void (*draw)(const bContext *, ARegion *, void *),
++                                      const void *data,
++                                      int type,
++                                      wmIPadKnifeOwner &r_owner);

@@ -1,0 +1,69 @@
+{
+  "status": "PASS_EXACT_SOURCE_HOST_PREFLIGHT_INDEPENDENT_REVIEW_NATIVE_BUILD_PENDING",
+  "utc": "2026-10-25T20:03:50.201287+00:00",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "source_scope": "Already-live original native Knife contacts only; omit duplicated paired PAN, preserve ordinary pointer packets and custom initial routes. Initial no-handler same-batch contact remains unchanged baseline.",
+  "full_host": {
+    "tests": 824,
+    "seconds": 561.456,
+    "frozen_inputs": 182,
+    "all_unchanged": true,
+    "report": "pan-frozen-validation.json",
+    "log": ".cache/knife-pan-full-frozen-final.log"
+  },
+  "pinned_preflight_files": 136,
+  "raw_git_exact_targets": 136,
+  "changed_targets": [
+    "intern/ghost/GHOST_NavigationIOS.hh",
+    "intern/ghost/intern/GHOST_WindowIOS.mm",
+    "source/blender/blenkernel/BKE_screen.hh",
+    "source/blender/editors/include/ED_ipad_panels.hh",
+    "source/blender/editors/include/ED_mesh.hh",
+    "source/blender/editors/include/ED_screen.hh",
+    "source/blender/editors/mesh/editmesh_knife.cc",
+    "source/blender/editors/screen/screen_ipad_panels.cc",
+    "source/blender/editors/space_api/spacetypes.cc",
+    "source/blender/windowmanager/WM_ipad_knife.hh",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+    "source/blender/windowmanager/intern/wm_draw.cc",
+    "source/blender/windowmanager/intern/wm_event_system.cc",
+    "source/blender/windowmanager/intern/wm_window.cc",
+    "source/blender/windowmanager/wm_draw.hh"
+  ],
+  "prior_sections_byte_exact": 121,
+  "all7_ui_python_exact": true,
+  "other11_ghost_exact": true,
+  "new_families": {
+    "tests": 149,
+    "seconds": 23.887,
+    "native_query_chain_controls": 168,
+    "old_ghost_failure_controls": 2,
+    "reported_boundaries": "Source/model composition, not a UIKit/SDK/GPU/device end-to-end run"
+  },
+  "fresh_ci_sequence": {
+    "report": "pan-ci-fresh-checkout-validation.json",
+    "empty_cache_then_real_preflight": true,
+    "new_families_tests": 149,
+    "new_families_seconds": 25.341,
+    "note": "Earlier experiment omitted preparation/plist; raw diagnostics retained. Actual CI order succeeds without ignored local dependencies."
+  },
+  "independent_source_native_literal": "independent-final-source-native-literal-review-edd99db6.json",
+  "independent_test_and_retained_repairs": "pan-retained-repair/final-independent-test-review.json",
+  "retained_repairs": "All original assertions/historical failures preserved across explicit extraction/model seams; first full824 soleFinger error retained then repaired.",
+  "prior_failed_full": "pan-frozen-validation-first-failed.json",
+  "native_build": "NOT_DISPATCHED",
+  "package_verified": false,
+  "actual_compiled_review": false,
+  "device_acceptance": false,
+  "full_personal_goal": "UNFINISHED",
+  "historical_snapshot_checkout": {
+    "path": "build/tests/knife_pan_ghost/retained-connected-models.inc.cc",
+    "raw_sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+    "git_attribute": "exact historical snapshot -text; preserve CRLF; ordinary whitespace checks retained with cr-at-eol",
+    "actual_staged_bytes_equal_frozen_working_bytes": true,
+    "strict_hash_assert_unchanged": true,
+    "independent_review": "pan-retained-repair/final-independent-test-review.json",
+    "runtime_test_inputs_changed_by_attribute": false
+  }
+}

@@ -1,0 +1,1364 @@
+{
+  "status": "PASS_EXACT_RAW_GIT_SOURCE_AND_PRESERVED_CONTEXT",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "baseline_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "candidate_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "sections": 136,
+  "actual_changed_paths": [
+    "intern/ghost/GHOST_NavigationIOS.hh",
+    "intern/ghost/intern/GHOST_WindowIOS.mm",
+    "source/blender/blenkernel/BKE_screen.hh",
+    "source/blender/editors/include/ED_ipad_panels.hh",
+    "source/blender/editors/include/ED_mesh.hh",
+    "source/blender/editors/include/ED_screen.hh",
+    "source/blender/editors/mesh/editmesh_knife.cc",
+    "source/blender/editors/screen/screen_ipad_panels.cc",
+    "source/blender/editors/space_api/spacetypes.cc",
+    "source/blender/windowmanager/WM_ipad_knife.hh",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+    "source/blender/windowmanager/intern/wm_draw.cc",
+    "source/blender/windowmanager/intern/wm_event_system.cc",
+    "source/blender/windowmanager/intern/wm_window.cc",
+    "source/blender/windowmanager/wm_draw.hh"
+  ],
+  "byte_exact_prior_sections": 121,
+  "all7_python_exact": true,
+  "unchanged_ghost_sections": 11,
+  "source_sha256": {
+    "build_files/cmake/platform/platform_apple.cmake": "485c4cd54295b61e57bd40e9f3c85edd08b9b834b4d6bdb05aae848bd925d270",
+    "intern/ghost/GHOST_Types.h": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff",
+    "intern/ghost/intern/GHOST_ContextIOS.mm": "43e2b4205373c4831576ad30373c477c50a73277aa60fb227e8e267079d494c4",
+    "intern/ghost/intern/GHOST_EventButton.hh": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+    "intern/ghost/intern/GHOST_EventCursor.hh": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+    "intern/ghost/intern/GHOST_SystemIOS.mm": "b6ae830e97b0cb8aee878e67325f3f846f0c62819fa2d6a20996601555fb1d4b",
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34",
+    "release/ios/Blender.app/Info.plist": "51eb53185c56a7ec7b8a96b0e9c01ffa189021a8fabc672203923e3ff6ec9d8d",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+    "scripts/startup/bl_ui/__init__.py": "55b4b636adef9b3e7970d85458671c1c6432517e4790eaf49ece0ba89ceee3fe",
+    "scripts/startup/bl_ui/space_filebrowser.py": "cec2fecec5a8df8b4f8441ced0b1292b133ccc1d01b4c665b5add39ba92502ec",
+    "scripts/startup/bl_ui/space_properties.py": "fc361190c256f4c28768b6ab0464b8246fa1cb5f3560ab742b1e6f5a0ccb98c2",
+    "scripts/startup/bl_ui/space_topbar.py": "143492fe8c988f4ffed803574a842c7a9ffe8c2282ab7917f3bf6ad7afc27580",
+    "scripts/startup/bl_ui/space_view3d_toolbar.py": "8657ad123a3b84d1cc42b4b6deb96ef06ea5bc092195d1ad5374449be62cbd54",
+    "source/blender/blenkernel/BKE_screen.hh": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+    "source/blender/blenkernel/BKE_undo_system.hh": "8cbd5750ebd687c509ef29c85eb9dfce02f18562ad1b9c7663d8fd1192dd5485",
+    "source/blender/blenkernel/BKE_wm_runtime.hh": "823b1863151d4adb829375c05682a34a9337c9ed327f57dfd7d41ab35f3f328f",
+    "source/blender/blenkernel/intern/screen.cc": "5614d2280b49d786740739c93e6667a797945ce833347247f9752b46c56642e7",
+    "source/blender/blenkernel/intern/undo_system.cc": "fe1f89950d28f4c0b4a1cdcdeedc4b4830390fafed27153985b388fb83dd754d",
+    "source/blender/editors/include/ED_mesh.hh": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+    "source/blender/editors/include/ED_undo.hh": "e2e90f2abdae9a1d11f74125c07aef3dacd4e15910a223dbb7787a75812ec7bb",
+    "source/blender/editors/include/UI_interface_c.hh": "16fd94a7cc9355adfd73340932348f97dedf6c0afe96350f0fa5aa59700db408",
+    "source/blender/editors/include/UI_interface_layout.hh": "41d7a2c7f081f323231603cbf0fcaa99227c1ace28acbc39f99a976fde7c78a8",
+    "source/blender/editors/interface/interface.cc": "66c7c6025231bd4235fbe1ed263273dffac0f8f62935c2bacbd2ad5485590e51",
+    "source/blender/editors/interface/interface_handlers.cc": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd",
+    "source/blender/editors/interface/interface_intern.hh": "0187590d4233ada5850b5b443450889a130fec23d5ce47b9d439d30d61739a5c",
+    "source/blender/editors/interface/interface_layout.cc": "4080e610b6308a8604aa34cf89a521f65df13b050f918644b59b29fc63be2bf5",
+    "source/blender/editors/interface/interface_panel.cc": "71c12f7d42b6f93f2f1c14e9a941ba69e0aea73ae09f94a0369644bf2ab59f62",
+    "source/blender/editors/interface/interface_query.cc": "3d9423fb2b5a3c041d48568fd931af5b2556d41f6c8bf5c58a14dc6b75e66d21",
+    "source/blender/editors/interface/interface_widgets.cc": "32f23e1fcf1a2f2bd913014511e42780209e5630a04674faa013b95f5cf6ce9b",
+    "source/blender/editors/interface/regions/interface_region_hud.cc": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e",
+    "source/blender/editors/interface/regions/interface_region_menu_pie.cc": "37320b559762a17e8a3d366240d77e4c7fac75dbf68df41959b0bf231f01fa92",
+    "source/blender/editors/interface/regions/interface_region_menu_popup.cc": "a06fab93a76d59f6003fffe9ba3df998d90ae187b0d9dd06151b02564dfbfd47",
+    "source/blender/editors/interface/regions/interface_region_popup.cc": "17c81ee0417a079addc1a063227acf5aea003db5f1be4b681ab5137e3c4709d6",
+    "source/blender/editors/interface/view2d/view2d_ops.cc": "4810c0fddc3dd5327ae4327aeba9256fb66d85976c7a322738172cf62234b40f",
+    "source/blender/editors/mesh/editmesh_bevel.cc": "4bf08d77e99987a7e98812674b7b67621efeeb7fd1c8d09de2340448566effe8",
+    "source/blender/editors/mesh/editmesh_extrude.cc": "d86c6e1e7be191f915f6335b539de1b59ac1fd90b7ebac4737dbb9dbacdbb19e",
+    "source/blender/editors/mesh/editmesh_undo.cc": "c7a94b40332f770821c4ef4574c56c7d6f8a2dff40a0e2c7e049d5f24d986626",
+    "source/blender/editors/screen/CMakeLists.txt": "d31695c3b8db397064625919dfefe64de474eeaf0633e67f9763509ff9d15fda",
+    "source/blender/editors/screen/area.cc": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d",
+    "source/blender/editors/screen/area_query.cc": "13b6de668fab2a367ca6be3235ea4afa71815dcb503517a95750bf6e8cd83af9",
+    "source/blender/editors/screen/screen_draw.cc": "d71797c42fc61762fa7aec0b5079d3445f39527f8b71abf97ae9044f2bcc68ca",
+    "source/blender/editors/screen/screen_intern.hh": "daa8ac24dd1329d3cc5436dc3ff3f752e768195e4849018e00bdaff06a61b5e9",
+    "source/blender/editors/screen/screen_edit.cc": "2fc67eca41f7514c27a6ad616524d06ecb089a8c6723bab60392edf33c2a8e64",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "source/blender/editors/screen/workspace_layout_edit.cc": "08758ce03646155c3f90ab1520e710c0f8cd89ea29919bde6e5e3f4b544beddb",
+    "source/blender/editors/sculpt_paint/paint_cursor.cc": "7ef177776247ab13495e23a20d074d10f90e5d7e69457f29efdbb3bbcd22b6a3",
+    "source/blender/editors/sculpt_paint/paint_image_ops_paint.cc": "ac7f84fb289fd746b94d34b3ba18070b9840e7f0ad9bb0aa5a9f23220641d655",
+    "source/blender/editors/sculpt_paint/paint_vertex.cc": "99c255f156ab150c0ea880bfa3d305657fbdb16eb7d05da46606e71d7eed52df",
+    "source/blender/editors/sculpt_paint/paint_weight.cc": "deb44043a25f2892f580edc07bcbb35415e4bdd6acf324dcb43051f9cd78e44b",
+    "source/blender/editors/sculpt_paint/sculpt.cc": "bf591bda9e81bd33aa2cd175ea7c5840e8de2f4227e6a94eda7147e4a3c97b18",
+    "source/blender/editors/space_api/spacetypes.cc": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+    "source/blender/editors/space_image/space_image.cc": "a133ba6ebe052de38485ef687646596b7cf231b4ffccc86a098cc17ad0dcc3c9",
+    "source/blender/editors/space_view3d/space_view3d.cc": "a2d13fe2accb36798b304bf7b3cf49946416d9d5d65c1d31d537874cb9ce5a62",
+    "source/blender/editors/space_view3d/view3d_buttons.cc": "87631c9b654300f45f228dadbbf06a20e265a8a981c7fa7934b0ffd28415a67f",
+    "source/blender/editors/space_view3d/view3d_gizmo_navigate.cc": "9138fe86169a84c1dec4aca720f8d89330dd910f458c9f3e943702247df6e6e5",
+    "source/blender/editors/space_view3d/view3d_navigate.cc": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+    "source/blender/editors/space_view3d/view3d_select.cc": "a9f418317438b4cf27584d1baf5c4542429e20f530d89fe38c2787726ee9a05c",
+    "source/blender/editors/transform/transform.cc": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb",
+    "source/blender/editors/transform/transform.hh": "5d91e00d60bcc0ea72ac1fd1c0ce023b70bf9c3ea9dc908bd221d9cb5eab8aeb",
+    "source/blender/editors/transform/transform_ops.cc": "10e1e2229bd8d99795dd27f682c50c6765051b7d0c04add78fe1f360e9034d71",
+    "source/blender/editors/undo/ed_undo.cc": "163d6d7fbdb9cb5a3d8eda522d239e9abfd62c4b4daeb796d5a4eb4ae1e0f8f0",
+    "source/blender/makesdna/DNA_screen_types.h": "0d229ba6ab03532459cfdf64c848b9131a2b0769cad782cb524f21396649ea95",
+    "source/blender/makesrna/intern/rna_screen.cc": "9645011cce38dada04c81e9da1102072f77e8ddf8eb280430c3db6c9ce3ea157",
+    "source/blender/makesrna/intern/rna_space.cc": "6a780ff3498ac394e30251b7c704c5da3b467e844588203d5ba4de691d8fad99",
+    "source/blender/makesrna/intern/rna_ui_api.cc": "f2e81922bda7ec26c904305f9f4ff1c7e6bc4c75eeb659188cc126df5bffa192",
+    "source/blender/makesrna/intern/rna_wm.cc": "f869b1a052a9dc20a6a05cb9a45a1d0eb2c15678eb1872bec9efd74fcec0ab34",
+    "source/blender/python/intern/bpy_operator_wrap.cc": "26cacca3a156762523e1eb6950531c25997ff7116de4aceff186686a44b13c44",
+    "source/blender/windowmanager/WM_api.hh": "9bcc33f0b962021991b6cd8f3fed498261058fd00a464c4c9962185e30a81b29",
+    "source/blender/windowmanager/WM_toolsystem.hh": "9036b190956d3c49f0785f04a2eb4b05f2188c3c97bb42b5ccd82c4b436f67bd",
+    "source/blender/windowmanager/WM_types.hh": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67",
+    "source/blender/windowmanager/gizmo/WM_gizmo_types.hh": "1fcfd08f7a41125212a5d6d28fab6fbab605037fccebbeeeafe4ce7ee3673996",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo.cc": "a725e071d3b0ea9edee4a9d7e30c618089353a57e5a6a9853500125c6e1682ba",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc": "a018ae67adce2935bcfe21727b3cd94e06a62a44454c85105eed292649003b3d",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f",
+    "source/blender/windowmanager/intern/wm.cc": "cecfe0d153fede9837c8080014b964a16d8c2e53e4ca557009955b191829d82a",
+    "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b",
+    "source/blender/windowmanager/intern/wm_files.cc": "0bfe3f41cf929696e1bd76f2429711d9bb55bdd638831f6c595d17908719e3f4",
+    "source/blender/windowmanager/intern/wm_gesture_ops.cc": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e",
+    "source/blender/windowmanager/intern/wm_operator_type.cc": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+    "source/blender/windowmanager/intern/wm_operators.cc": "919c98dcbf53bfc889a222f15141d6276de913a0fb3bf34c79d02ff297860a48",
+    "source/blender/windowmanager/intern/wm_toolsystem.cc": "f5f29b043b01808ec55265977fe5dbf760ea829ef004dc1f7903886084bd6adc",
+    "source/blender/windowmanager/intern/wm_window.cc": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+    "source/blender/windowmanager/wm.hh": "126a674634a417da2319fc97da8432cbe66ed0806d9857fe5528ef188c38c7aa",
+    "source/blender/windowmanager/wm_draw.hh": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5",
+    "source/blender/windowmanager/wm_event_types.hh": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce",
+    "source/blender/windowmanager/wm_files.hh": "19ef9ad9758168fb0addcc7f516ecd87e4d32bd28bf76120584356e3bd8faf6d",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "intern/ghost/GHOST_ProjectImport-api.hh": "5b24ef510dd5c3355c490c821d2989e234762b80baaa47569d33b346c5f577ea",
+    "intern/ghost/intern/GHOST_EventPencilRing.hh": "11c4d85b78114f22b518fc7790aa7147c49526374792c50f88b4a15721056689",
+    "intern/ghost/intern/GHOST_ProjectExportIOS.hh": "375f57b93b6d76f9b3a4487ef87a3cd538ba904424c9354d1a94eb860b0f89ec",
+    "intern/ghost/intern/GHOST_ProjectImportIOS.hh": "3654a7299f8c4c7ae270691f842f2201d2eef8626f2db24f07fde056030c0764",
+    "intern/ghost/intern/GHOST_ProjectRecentIOS.hh": "d8de7d5fc456e487021e2e45f32a0731e4d215f8974a4ce74032e634e205c888",
+    "intern/ghost/intern/GHOST_ProjectSaveIOS.hh": "b20b2be5276c30c73eea3847b993a4154b062af1c73c9318c49a58ca2d9090f3",
+    "scripts/startup/bl_ui/space_view3d_ipad.py": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+    "source/blender/blenkernel/BKE_undo_touch.hh": "0d080b594e8feb61e2738b8a746e265383cb3fec9af840a2279397ddf762bf24",
+    "source/blender/editors/include/ED_ipad_panels.hh": "4f21bd297c75d8541f7edc417390ce5d9987587d19c8a3d9f460ca1cae451cbb",
+    "source/blender/editors/interface/interface_ipad_ring_browse.hh": "76865f81917efcd6ddaf6deaea2ece0787f4ac27ba58ccc6f2247d038e125469",
+    "source/blender/editors/interface/interface_ipad_rna.hh": "f0f40784915232cdf3da63793e6e2570575b79814d6c4be68f820bea56d64952",
+    "source/blender/editors/interface/interface_ipad_tool_ring.hh": "d069b782b2c4b6dbac07d6639b3a28eab11895dca7fad955d260e57066e8135d",
+    "source/blender/editors/screen/ipad_workspace_panels.hh": "f0502de4746b710eaceb9d44bff1f7ed52c132f74d3f5385d69c59168ce919e8",
+    "source/blender/editors/screen/screen_ipad_layout_history.cc": "70d73c281c41902d59bd6ae76967dfdae82d237586bf8eefbdac2cf08195a827",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "1accb93cd599da25a13cb3ed9a03843d45f6e1bb59f206e45b6a5a368aee7c84",
+    "source/blender/windowmanager/intern/wm_ipad_portable_write.hh": "cc82815567b06bf712cfcf050313742152ba66d84a0c76618cefec6c1516f029",
+    "source/blender/windowmanager/wm_event_system.hh": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+    "source/blender/editors/object/object_add.cc": "f291c6cd53316478807df16a6f97ed4df21e632990b0974637db61bce184df3e",
+    "source/blender/editors/scene/scene_edit.cc": "7642fcf5efd8fbf40b5df6aea4fa69c016f0d3068ff47ecf7bfe4eaa586ec5ee",
+    "source/blender/editors/sculpt_paint/paint_image.cc": "4e2b20a388825294105f37ffec3db27dbce9f150792035abc6fc30fb3e76f71f",
+    "source/blender/editors/sculpt_paint/sculpt_ops.cc": "84e60d20cc35420815dfe654f31b818c59f0b1f55885465570eb14f48404d7a2",
+    "source/blender/editors/object/object_modes.cc": "d6ce59b062ff77a9c659843e35c8b8c9f3587b68b5a4913d2031517547c43a5f",
+    "source/blender/editors/include/ED_object.hh": "73c7b9c7e1e1ed43f76204d1a63441553f9c4347b31e47d3a6684a4e340a7aea",
+    "source/blender/editors/space_outliner/outliner_select.cc": "799e9309a180806d1e89ea407afbf8b3b25318b4f030edfbd59c4390b4c27021",
+    "source/blender/editors/sculpt_paint/sculpt_undo.cc": "cfe65097694f1649c5d1deee914e80d9d7132f1686c7390f975965e62c6ba1cd",
+    "source/blender/editors/space_outliner/outliner_edit.cc": "e16b79564eea8c92e616f194d3d59d6ee614dc9d942832b884ed50ab694d7bb0",
+    "source/blender/editors/space_outliner/outliner_tools.cc": "f1a812686c3b603a468a46a16e6ba3f060f19a25725e74fe26c9325f25fa6d1f",
+    "source/blender/makesrna/intern/rna_main_api.cc": "c7ba565aefd8b190c648de131f8c3b2372da7371041fb6497bd20202387c991d",
+    "source/blender/editors/sculpt_paint/paint_intern.hh": "855d3bd3ef08d575c838b7d877b19122089fdb4e2f562b19c988b1829c1cfb61",
+    "source/blender/editors/sculpt_paint/paint_image_proj.cc": "684a1307d9e1d7dcb67a9444c6bc85f14281d24e2f946c96e9c916e58c9a5abd",
+    "source/blender/editors/include/ED_screen.hh": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350",
+    "source/blender/makesrna/intern/rna_layer.cc": "63253ee915f9c35116a1b9bde420dcfc0d43175b4c1696e12bc02fd9c75259ce",
+    "source/blender/editors/object/object_select.cc": "da78e6a7bbdca1da16511ff48ecb1eda3bc8c593d645a6650534fb1180875c71",
+    "source/blender/makesrna/intern/rna_object.cc": "9db7e308d751814723532f533dd990a7728974e3daedb5ad43fbee18b58920c8",
+    "source/blender/makesrna/intern/rna_ID.cc": "63b39443cf049d63fee8a99291017a74d6315ca3e811747af2fafca05bda6685",
+    "source/blender/makesrna/RNA_access.hh": "eadfbba1ce79692ce267a0fc984a6393eda3e46419bcdf22fb0f555423479139",
+    "source/blender/makesrna/intern/rna_mesh.cc": "b117dd6ffa3a8ab5dee64a7fa5f2db3c8cfa92a26492bf86d96fec48202c5151",
+    "source/blender/makesrna/intern/rna_mesh_api.cc": "571f3f0276a8bd62de6aa630882c729827d120121b81890512afeb71670e334e",
+    "source/blender/makesrna/intern/rna_access.cc": "d91074e2b2f62449bdd19a0832b0764f0e76a3513f4278fbcbbb2d5892db5c3b",
+    "source/blender/python/intern/bpy_rna.cc": "2b8a55c5254db2dec13add8622881def7c2442cfc0d2ca412e911d68da285022",
+    "source/blender/python/BPY_extern.hh": "94ce61cd7a95ef7809ffaee3e121d3828a735071f0060d05199a7a776fa1a688",
+    "source/blender/editors/include/UI_interface.hh": "d5d3019108bf4a804e0bd7bd767afd691b558eb4cb88d94090a722a314f3b9b0",
+    "source/blender/editors/mesh/editmesh_knife.cc": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+    "source/blender/windowmanager/CMakeLists.txt": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+    "source/blender/windowmanager/WM_ipad_knife.hh": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684"
+  },
+  "contexts": {
+    "intern/ghost/GHOST_NavigationIOS.hh": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prior_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "original_sha256": "6dfc24bc2c89cb206a04bd3e8e199aecfe3ee3aa066471716073ba72c169942c",
+      "prior_context_ranges": [
+        [
+          5,
+          18
+        ],
+        [
+          19,
+          29
+        ],
+        [
+          30,
+          36
+        ],
+        [
+          47,
+          57
+        ],
+        [
+          58,
+          64
+        ],
+        [
+          66,
+          72
+        ],
+        [
+          85,
+          99
+        ],
+        [
+          100,
+          114
+        ],
+        [
+          115,
+          136
+        ],
+        [
+          178,
+          193
+        ],
+        [
+          239,
+          247
+        ],
+        [
+          250,
+          264
+        ],
+        [
+          275,
+          288
+        ],
+        [
+          291,
+          311
+        ],
+        [
+          334,
+          340
+        ],
+        [
+          344,
+          350
+        ],
+        [
+          353,
+          359
+        ],
+        [
+          363,
+          369
+        ],
+        [
+          373,
+          379
+        ],
+        [
+          383,
+          389
+        ],
+        [
+          391,
+          415
+        ],
+        [
+          431,
+          437
+        ],
+        [
+          447,
+          455
+        ],
+        [
+          457,
+          470
+        ],
+        [
+          489,
+          516
+        ],
+        [
+          517,
+          531
+        ],
+        [
+          538,
+          555
+        ],
+        [
+          579,
+          587
+        ],
+        [
+          603,
+          626
+        ],
+        [
+          629,
+          635
+        ],
+        [
+          676,
+          689
+        ],
+        [
+          699,
+          707
+        ],
+        [
+          716,
+          729
+        ],
+        [
+          738,
+          744
+        ],
+        [
+          753,
+          820
+        ],
+        [
+          829,
+          854
+        ],
+        [
+          1002,
+          1009
+        ],
+        [
+          1075,
+          1081
+        ],
+        [
+          1100,
+          1110
+        ],
+        [
+          1197,
+          1208
+        ],
+        [
+          1229,
+          1236
+        ],
+        [
+          1250,
+          1256
+        ],
+        [
+          1268,
+          1282
+        ],
+        [
+          1284,
+          1304
+        ],
+        [
+          1305,
+          1327
+        ],
+        [
+          1364,
+          1375
+        ],
+        [
+          1376,
+          1383
+        ],
+        [
+          1390,
+          1397
+        ],
+        [
+          1399,
+          1406
+        ],
+        [
+          1409,
+          1417
+        ],
+        [
+          1423,
+          1433
+        ],
+        [
+          1470,
+          1484
+        ],
+        [
+          1498,
+          1504
+        ],
+        [
+          1617,
+          1624
+        ],
+        [
+          1907,
+          1913
+        ],
+        [
+          1917,
+          1923
+        ],
+        [
+          1931,
+          1937
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          5,
+          18
+        ],
+        [
+          19,
+          36
+        ],
+        [
+          47,
+          57
+        ],
+        [
+          58,
+          64
+        ],
+        [
+          66,
+          72
+        ],
+        [
+          85,
+          99
+        ],
+        [
+          100,
+          136
+        ],
+        [
+          178,
+          193
+        ],
+        [
+          239,
+          247
+        ],
+        [
+          250,
+          264
+        ],
+        [
+          275,
+          288
+        ],
+        [
+          291,
+          311
+        ],
+        [
+          334,
+          340
+        ],
+        [
+          344,
+          350
+        ],
+        [
+          353,
+          359
+        ],
+        [
+          363,
+          369
+        ],
+        [
+          373,
+          379
+        ],
+        [
+          383,
+          389
+        ],
+        [
+          391,
+          415
+        ],
+        [
+          431,
+          437
+        ],
+        [
+          447,
+          455
+        ],
+        [
+          457,
+          470
+        ],
+        [
+          489,
+          516
+        ],
+        [
+          517,
+          531
+        ],
+        [
+          538,
+          555
+        ],
+        [
+          579,
+          587
+        ],
+        [
+          603,
+          626
+        ],
+        [
+          629,
+          635
+        ],
+        [
+          676,
+          689
+        ],
+        [
+          699,
+          707
+        ],
+        [
+          716,
+          729
+        ],
+        [
+          738,
+          744
+        ],
+        [
+          750,
+          820
+        ],
+        [
+          829,
+          854
+        ],
+        [
+          1002,
+          1009
+        ],
+        [
+          1075,
+          1082
+        ],
+        [
+          1100,
+          1110
+        ],
+        [
+          1197,
+          1208
+        ],
+        [
+          1229,
+          1236
+        ],
+        [
+          1250,
+          1257
+        ],
+        [
+          1268,
+          1282
+        ],
+        [
+          1284,
+          1304
+        ],
+        [
+          1305,
+          1327
+        ],
+        [
+          1364,
+          1375
+        ],
+        [
+          1376,
+          1383
+        ],
+        [
+          1390,
+          1397
+        ],
+        [
+          1399,
+          1406
+        ],
+        [
+          1409,
+          1417
+        ],
+        [
+          1423,
+          1433
+        ],
+        [
+          1470,
+          1484
+        ],
+        [
+          1498,
+          1504
+        ],
+        [
+          1617,
+          1624
+        ],
+        [
+          1907,
+          1913
+        ],
+        [
+          1917,
+          1923
+        ],
+        [
+          1931,
+          1937
+        ]
+      ]
+    },
+    "source/blender/blenkernel/BKE_screen.hh": {
+      "original_sha256": "83580a1c7e0e3acadcdd7f4cb0bb08d9e994b2f0b0f239f213c60418322b54cc",
+      "prior_context_ranges": [
+        [
+          0,
+          894
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          894
+        ]
+      ]
+    },
+    "source/blender/editors/include/ED_ipad_panels.hh": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prior_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "source/blender/editors/include/ED_mesh.hh": {
+      "original_sha256": "307817b827a2eaec266a043c780d7abb77fbe273868fb802a558f94e34e23d54",
+      "prior_context_ranges": [
+        [
+          0,
+          651
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          651
+        ]
+      ]
+    },
+    "source/blender/editors/include/ED_screen.hh": {
+      "original_sha256": "890fd7870e4ae9bfae9905fd93a875770c72e231ba020264917152771f6a4c3a",
+      "prior_context_ranges": [
+        [
+          51,
+          63
+        ],
+        [
+          225,
+          232
+        ],
+        [
+          255,
+          264
+        ],
+        [
+          342,
+          349
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          44,
+          50
+        ],
+        [
+          51,
+          63
+        ],
+        [
+          225,
+          232
+        ],
+        [
+          255,
+          264
+        ],
+        [
+          342,
+          349
+        ]
+      ]
+    },
+    "source/blender/editors/mesh/editmesh_knife.cc": {
+      "original_sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+      "prior_context_ranges": [
+        [
+          4626,
+          4632
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          4626,
+          4632
+        ]
+      ]
+    },
+    "source/blender/editors/screen/screen_ipad_panels.cc": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prior_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "source/blender/editors/space_api/spacetypes.cc": {
+      "original_sha256": "f1725a0c2965628e58af7ac2ab087df7a736d742ab96f291056eb7491df4cfa3",
+      "prior_context_ranges": [
+        [
+          0,
+          291
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          291
+        ]
+      ]
+    },
+    "source/blender/windowmanager/WM_ipad_knife.hh": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prior_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": {
+      "original_sha256": "8972be7c7824a0827d0e447c225f0264808f4f78dffc831c0ae0a5bf3b09a9dc",
+      "prior_context_ranges": [
+        [
+          0,
+          1487
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          1487
+        ]
+      ]
+    },
+    "source/blender/windowmanager/intern/wm_draw.cc": {
+      "original_sha256": "2e4b9d6dacc7abf35373ec465e5b44c55936628570ebfd2893ff4132275956f4",
+      "prior_context_ranges": [
+        [
+          0,
+          1733
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          1733
+        ]
+      ]
+    },
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "original_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "prior_context_ranges": [
+        [
+          9,
+          22
+        ],
+        [
+          27,
+          33
+        ],
+        [
+          34,
+          40
+        ],
+        [
+          57,
+          65
+        ],
+        [
+          73,
+          79
+        ],
+        [
+          137,
+          143
+        ],
+        [
+          832,
+          838
+        ],
+        [
+          2252,
+          2281
+        ],
+        [
+          2341,
+          2347
+        ],
+        [
+          2592,
+          2606
+        ],
+        [
+          2608,
+          2616
+        ],
+        [
+          2620,
+          2641
+        ],
+        [
+          2645,
+          2652
+        ],
+        [
+          2710,
+          2716
+        ],
+        [
+          2731,
+          2737
+        ],
+        [
+          2786,
+          2794
+        ],
+        [
+          2816,
+          2822
+        ],
+        [
+          2835,
+          2841
+        ],
+        [
+          2984,
+          2990
+        ],
+        [
+          3422,
+          3428
+        ],
+        [
+          3448,
+          3454
+        ],
+        [
+          3468,
+          3474
+        ],
+        [
+          3608,
+          3614
+        ],
+        [
+          3807,
+          3813
+        ],
+        [
+          3821,
+          3827
+        ],
+        [
+          4092,
+          4098
+        ],
+        [
+          4118,
+          4124
+        ],
+        [
+          4176,
+          4182
+        ],
+        [
+          4208,
+          4214
+        ],
+        [
+          4225,
+          4231
+        ],
+        [
+          4246,
+          4252
+        ],
+        [
+          4327,
+          4333
+        ],
+        [
+          4351,
+          4357
+        ],
+        [
+          4616,
+          4627
+        ],
+        [
+          4641,
+          4647
+        ],
+        [
+          5058,
+          5064
+        ],
+        [
+          5735,
+          5742
+        ],
+        [
+          5767,
+          5773
+        ],
+        [
+          5783,
+          5790
+        ],
+        [
+          5919,
+          5925
+        ],
+        [
+          5935,
+          5941
+        ],
+        [
+          5989,
+          5995
+        ],
+        [
+          6001,
+          6008
+        ],
+        [
+          6031,
+          6037
+        ],
+        [
+          6104,
+          6110
+        ],
+        [
+          6130,
+          6136
+        ],
+        [
+          6142,
+          6149
+        ],
+        [
+          6159,
+          6165
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          9,
+          22
+        ],
+        [
+          27,
+          33
+        ],
+        [
+          34,
+          40
+        ],
+        [
+          43,
+          49
+        ],
+        [
+          57,
+          65
+        ],
+        [
+          73,
+          79
+        ],
+        [
+          137,
+          143
+        ],
+        [
+          832,
+          838
+        ],
+        [
+          2252,
+          2281
+        ],
+        [
+          2341,
+          2347
+        ],
+        [
+          2592,
+          2606
+        ],
+        [
+          2608,
+          2616
+        ],
+        [
+          2620,
+          2641
+        ],
+        [
+          2645,
+          2652
+        ],
+        [
+          2710,
+          2716
+        ],
+        [
+          2731,
+          2737
+        ],
+        [
+          2786,
+          2794
+        ],
+        [
+          2816,
+          2822
+        ],
+        [
+          2835,
+          2841
+        ],
+        [
+          2984,
+          2990
+        ],
+        [
+          3422,
+          3428
+        ],
+        [
+          3448,
+          3454
+        ],
+        [
+          3468,
+          3474
+        ],
+        [
+          3608,
+          3614
+        ],
+        [
+          3807,
+          3813
+        ],
+        [
+          3821,
+          3827
+        ],
+        [
+          4092,
+          4098
+        ],
+        [
+          4118,
+          4124
+        ],
+        [
+          4176,
+          4182
+        ],
+        [
+          4208,
+          4214
+        ],
+        [
+          4225,
+          4231
+        ],
+        [
+          4246,
+          4252
+        ],
+        [
+          4327,
+          4333
+        ],
+        [
+          4351,
+          4357
+        ],
+        [
+          4616,
+          4627
+        ],
+        [
+          4641,
+          4647
+        ],
+        [
+          5058,
+          5064
+        ],
+        [
+          5735,
+          5742
+        ],
+        [
+          5767,
+          5773
+        ],
+        [
+          5783,
+          5790
+        ],
+        [
+          5919,
+          5925
+        ],
+        [
+          5935,
+          5941
+        ],
+        [
+          5989,
+          5995
+        ],
+        [
+          6001,
+          6008
+        ],
+        [
+          6031,
+          6037
+        ],
+        [
+          6104,
+          6110
+        ],
+        [
+          6130,
+          6136
+        ],
+        [
+          6142,
+          6149
+        ],
+        [
+          6159,
+          6165
+        ]
+      ]
+    },
+    "source/blender/windowmanager/intern/wm_window.cc": {
+      "original_sha256": "e17bfd3f6019243f23bd70efd583e7f839fdc8c428efcf76eb40a2f59e3b99ed",
+      "prior_context_ranges": [
+        [
+          27,
+          33
+        ],
+        [
+          38,
+          44
+        ],
+        [
+          474,
+          535
+        ],
+        [
+          1161,
+          1167
+        ],
+        [
+          1230,
+          1237
+        ],
+        [
+          1256,
+          1262
+        ],
+        [
+          1295,
+          1305
+        ],
+        [
+          1700,
+          1706
+        ],
+        [
+          1866,
+          1872
+        ],
+        [
+          1874,
+          1880
+        ],
+        [
+          3084,
+          3099
+        ],
+        [
+          3100,
+          3106
+        ],
+        [
+          3122,
+          3131
+        ],
+        [
+          3135,
+          3141
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          27,
+          33
+        ],
+        [
+          38,
+          44
+        ],
+        [
+          474,
+          535
+        ],
+        [
+          1161,
+          1167
+        ],
+        [
+          1230,
+          1237
+        ],
+        [
+          1256,
+          1262
+        ],
+        [
+          1295,
+          1305
+        ],
+        [
+          1700,
+          1706
+        ],
+        [
+          1866,
+          1872
+        ],
+        [
+          1874,
+          1880
+        ],
+        [
+          2112,
+          2118
+        ],
+        [
+          2136,
+          2142
+        ],
+        [
+          2160,
+          2166
+        ],
+        [
+          2180,
+          2186
+        ],
+        [
+          3084,
+          3099
+        ],
+        [
+          3100,
+          3106
+        ],
+        [
+          3122,
+          3131
+        ],
+        [
+          3135,
+          3141
+        ]
+      ]
+    },
+    "source/blender/windowmanager/wm_draw.hh": {
+      "original_sha256": "995652caa9ae2f44f718bb2fac86ef8546cd6b906553595af6cdb5be3ac6ab3c",
+      "prior_context_ranges": [
+        [
+          0,
+          35
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          35
+        ]
+      ]
+    }
+  },
+  "applied": true,
+  "validation": "integration only; component/connected/retained/full/native compiled and device gates remain separate"
+}

@@ -1,3 +1,21 @@
+## Original-live Knife PAN source validated — 2026-10-25 UTC
+
+Exact candidateEDD99DB6 (full SHA in pencil-knife/pan-source-verification.json)
+passes FINAL824/824 in561.456s,182 unchanged frozen inputs,136-file preflight/diff,
+fresh-checkout actual CI preparation/new149 tests and independent final native/
+literal/test reviews. First824/567.057s FAILED one retainedFinger fixture; preserved,
+narrowly repaired, original29Python/55C++ assertions unchanged. Earlier HUD/paint
+seam repairs also retain all original assertions/historical failure controls.
+Raw Git proves exact15 changedtargets,121 priorsections/all7UI/11otherGHOST exact.
+
+Scope is ORIGINAL ALREADY-LIVE KNIFE only. No initial Tool prediction, replacement
+owner or pointer-event rewrite. No-handler/same-batch/custom initial routes retain
+ordinary PAN. Each full redraw changes token; cached presentation retains it.
+Native build/package/actual compiled/device gates are pending. Commit this exact
+coherent source and build ONCE, then full IPA/preserved HUD-Weight/new compiled
+review before ready. Latest fully verified package remains1946aba/run40163724620.
+Full personal goal remains unfinished; preserve every accepted UI/input contract.
+
 ## Original-live Knife PAN candidate — source checkpoint, 2026-10-25 UTC
 
 Latest fully verified package remains source1946aba/run40163724620; no device

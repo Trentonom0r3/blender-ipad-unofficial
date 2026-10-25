@@ -1,0 +1,200 @@
+{
+  "status": "ISOLATED_NATIVE_CANVAS_COMPONENT_SOURCE_AND_HOST_TESTS_PASS_NO_NATIVE_BUILD",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "baseline_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "authoritative_materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "repository_patch_changed": false,
+  "native_build_run": false,
+  "native_sdk_or_gpu_build": false,
+  "device_acceptance": false,
+  "files": {
+    "source/blender/windowmanager/WM_ipad_knife.hh": {
+      "baseline_sha256": "c939090b70e30a75e30353dc6d626018c5e5c211ae9013d47f12ae6abfd0e733",
+      "candidate_sha256": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684"
+    },
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "baseline_sha256": "569bfec2c0926f588fc0a9e3f6d4e3dce2511c0ad0e3788f1d9e876fad97080c",
+      "candidate_sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    "source/blender/windowmanager/wm_draw.hh": {
+      "baseline_sha256": "6c3e03bc1db9e48b99e183b3ea71c5a50c33de1e70713684677c9db621f17a5c",
+      "candidate_sha256": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5"
+    },
+    "source/blender/windowmanager/intern/wm_draw.cc": {
+      "baseline_sha256": "6f7ff6227b2c1df8f50e08b7eda0aad30bc3461488e1cd1df701a3197f4a2fc9",
+      "candidate_sha256": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c"
+    },
+    "source/blender/blenkernel/BKE_screen.hh": {
+      "baseline_sha256": "aedb1018a34e2474f0f168970fc589a37fe83b1bb8ad3e46705fbb0873f42c06",
+      "candidate_sha256": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c"
+    },
+    "source/blender/editors/include/ED_mesh.hh": {
+      "baseline_sha256": "211c844d1c82cc71ef842757b96a1daffece0046cd82777fcc77c81349c0eb3e",
+      "candidate_sha256": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a"
+    },
+    "source/blender/editors/mesh/editmesh_knife.cc": {
+      "baseline_sha256": "4fdcc0518f37f53a5dea1f8338a470ade319f21cd38afbc582d9ba797a542e94",
+      "candidate_sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc"
+    },
+    "source/blender/editors/include/ED_screen.hh": {
+      "baseline_sha256": "22025a5fc38f429548ac20753ee8a2438e7fe2a84c4538676a2f660f131c4da4",
+      "candidate_sha256": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350"
+    },
+    "source/blender/editors/space_api/spacetypes.cc": {
+      "baseline_sha256": "6e6f107d200736c448cc24d1949c4953a3ab63d1879596978ba8d24dce5627ee",
+      "candidate_sha256": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0"
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": {
+      "baseline_sha256": "c529313e722ce0c72362469b9d90f57b4919825123d360a999695e5f8d0897cc",
+      "candidate_sha256": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f"
+    }
+  },
+  "portable_test_artifacts": {
+    "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\component-portable\\build\\test_pencil_knife_pan_canvas.py": "a739d6e458a36547aecaf1799067d06dfffe84b60057e384161ca3eb791bb1e4",
+    "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\component-portable\\build\\tests\\knife_pan_canvas_cases.inc.cc": "5d9221bf0b09a20a7de099755991e1c6bd0487c91374ca6b6ad568c53bc75419",
+    "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\component-portable\\build\\tests\\knife_pan_canvas_draw_models.inc.cc": "984db6242d0b51c5dfd2f946f0dcc89048c928ab49d6cf951a0973e136206e51",
+    "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\component-portable\\build\\tests\\knife_pan_canvas_models.inc.cc": "8502c82f462bd1514a51e24f6e9c14ae9ffbb66409944dbade0baf6756a75c23"
+  },
+  "portable_test_report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\canvas_pan_component\\portable-tests\\test-results.json",
+  "portable_test_report_sha256": "ce3867a8d8c813ddad3a8bbe37e20f4aebcf382634c811bfde5c4a32615ec1f4",
+  "portable_results": {
+    "status": "PASS",
+    "runtime_cases": 73,
+    "optimization_levels": [
+      "0",
+      "2"
+    ],
+    "executed_tests": 147,
+    "nonApple_actual_stub_callback_check": true
+  },
+  "retained_tests": [
+    {
+      "test": "test_pencil_knife_owner_dispatch.py",
+      "result": "63/63 PASS",
+      "report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\canvas_pan_component\\retained-owner\\report.json"
+    },
+    {
+      "test": "test_pencil_knife_native_action.py",
+      "result": "6/6 PASS",
+      "report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\canvas_pan_component\\retained-native-action\\report.json"
+    }
+  ],
+  "actual_functions_unchanged": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "static wmWindowManager *wm_ipad_knife_window_manager(",
+      "sha256": "19b0001126631d94f851b7f40ee1f4856fbb41ad2ba55714f7cf574e45890b78"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "static bool wm_ipad_knife_owner_read(",
+      "sha256": "fe281188a08f8cb34e035b5f8991d8a630fb7a3b6a22a6fa247684bf5285c1fe"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "static void wm_ipad_knife_modal_handler_bind(",
+      "sha256": "e7c41e35020490eac6cd9bcb25783047260e8e4760654a9934c346126ca83d2e"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "bool WM_ipad_knife_owner_capture(",
+      "sha256": "553caac418ac0acb655967ca2d21612b96bd938b3569e6ef776f49920fc5fced"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "bool WM_ipad_knife_owner_present(",
+      "sha256": "c51bb401a8b867518c6259725dc0ec27d093538c0d76af390d2c7c60d8b5cf49"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "ARegion *WM_ipad_knife_owner_region(",
+      "sha256": "465346a96df1c274288f0e7b5b42a2e95f996307c061f71214cddc2e8cc8eb67"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "bool WM_ipad_knife_hud_scope_active(",
+      "sha256": "f20757a9c7717ccbcbdcbc48eb28ebcce13dd271436127bbb8a6dc3981f08cf2"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "bool WM_ipad_knife_action_queue(",
+      "sha256": "c343ed73ec4366eef45615478b2cab85f230f96704f2ebe0b7f282c7df4d2b9d"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "function": "static bool wm_ipad_knife_request_resolve(",
+      "sha256": "3a62eb873f29174e8879f8da9ae23ef75c6da2f5a47b9f999e9333543502769f"
+    },
+    {
+      "path": "source/blender/editors/mesh/editmesh_knife.cc",
+      "function": "bool ED_mesh_knife_modal_type(",
+      "sha256": "2988a1f787c808e4dcc35cd14407c3720a87bf2b35af146b9793598314d0c498"
+    },
+    {
+      "path": "source/blender/editors/mesh/editmesh_knife.cc",
+      "function": "bool ED_mesh_knife_modal_origin(",
+      "sha256": "c0c3c2a7e341f8149a5c69427b7c50eef64a3c8bc43aa932fb818625abe04314"
+    },
+    {
+      "path": "source/blender/editors/mesh/editmesh_knife.cc",
+      "function": "wmOperatorStatus ED_mesh_knife_modal_action(",
+      "sha256": "945a2b98789c7078f486ce94a3b862748c84591e28f8cc1153a515d5bd623e33"
+    },
+    {
+      "path": "source/blender/editors/mesh/editmesh_knife.cc",
+      "function": "static wmOperatorStatus knifetool_modal(",
+      "sha256": "5837277adddd3b8e29c51c8a97c4d70eeb14e0bbeef3a28afda1e9e98be6cdf4"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_draw.cc",
+      "source_slice": "IPadFingerPaintOwner paint_before;",
+      "sha256": "4ae374c4e6ba9645427a6f61f7ea4b9cb042468e272d0642ac7020ff92e6e2bf"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_draw.cc",
+      "source_slice": "IPadFingerPaintOwner paint_after;",
+      "sha256": "144aabe79af2e144be5f35a84c0144354c523ef0b4a6b33cfb7231db1f037305"
+    }
+  ],
+  "native_api": {
+    "stamp": "POD wmIPadKnifeCanvasStamp{array32 scope;array23 drawn_owner;uint64 content;bool valid,unknown_widgets;}",
+    "buffer_member": "wmDrawBuffer.ipad_knife_canvas_stamp",
+    "runtime_fields": [
+      "ipad_knife_canvas_unknown_widgets",
+      "ipad_knife_canvas_drawn_owner (array23)"
+    ],
+    "callbacks": "exact original registered owner -> actual kcd draw_handle/fn/data/POST_VIEW/current origin; fresh current list callback-free; preexecution sticky facts",
+    "content_policy": "Every successful full redraw receives a new content token; cached composition retains its exact prior stamp. Scope32 equality does not prove viewmatrix/Mesh pixel equivalence.",
+    "drag_policy": "Immediately before actual wm_drags_draw when drags.first, merge true through existing sticky ED_ipad_knife_hierarchy_window_callbacks; prior opaque evidence remains sticky after self-removal."
+  },
+  "execution_boundaries": [
+    "Full actual wm_draw_area_offscreen, ed_region_draw_cb_draw, gizmos_draw_list, wm_paintcursor_draw, actual active-drag composition branch plus ED hierarchy sticky helper, original WM owner resolution/bind/capture/present/region, new direct native scope/callback helpers, ED native origin/exact callback helper and actual stamp finish execute in a C++17 fixture.",
+    "Native rendering/allocation, linked lists, context getters/setters, operator/type registries and built-in native type identity are instrumented. Geometry mutation and member lifetime controls execute actual guards; no full Blender translation unit or GPU return/error proof.",
+    "Tests do not prove UIKit scheduling, GPU rendered pixels, custom callback global behavior, native iOS SDK compilation, whole WM event flow, fresh bridge/hierarchy admission or device behavior. Those integration gates are root-owned.",
+    "Cached rendering evidence retains its exact allocation-owned stamp. EVERY successful full redraw mints a new content token because scope32 equality cannot prove viewmatrix/Mesh pixel equivalence. No tool is minted from cached pixels; final integrated native bridge policy is original-live Knife only."
+  ],
+  "review_notes": [
+    {
+      "finding": "Root independent redraw equivalence and drag-overlay audit",
+      "resolution": "Removed unproved full-redraw equivalence preservation. Every successful full redraw mints a fresh token, including unchanged scope/owner/facts. Cached reuse preserves exact stamp. Added actual pre-wm_drags_draw sticky evidence, actual helper OR/self-removal/source-beforeexecution tests. Source/testing remains isolated; original-live-only policy is bridge-owned."
+    },
+    {
+      "finding": "Root proposed missing nonApple WM symbol",
+      "resolution": "Withdrawn: actual scope/callback stubs already exist in existing nonApple WM else branch. Added actual nonApple compile/link/callback inspection/execution control; no extra editor guards retained."
+    },
+    {
+      "finding": "Initial bounded fixture failures",
+      "resolution": "Initial list macro pointer declaration and missing preserved rectangle helper were test adapter errors corrected without changing production assertion requirements. NonApple assert macro comma failure corrected in fixture only; initial compiler log preserved.",
+      "preserved_log": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\canvas_pan_component\\portable-tests\\initial-nonApple-macro-failure.log"
+    }
+  ],
+  "approval_review": {
+    "rejected_action": "Write portable unittest and fixtures into active repository and run there",
+    "reason": "Exceeds explicitly authorized isolated Temp tests/reports scope and instruction not to modify or build repository.",
+    "response": "No repository mutation performed. Portable test artifact saved and tested entirely inside authorized Temp/component-portable/build; root owns separate coherent integration. No rejected action retried."
+  },
+  "diff_report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\pencil-knife\\canvas-pan-component-diff.txt",
+  "diff_report_sha256": "e532e1f26da45086e0b8f521affe3d920c6cf5900c1a355dba17abc943b64a27",
+  "comparison_patch_sha256": "f53fb77548cc5ad17e00e6db863ae08fe91ddfaef433c2a1872e8be090acb788",
+  "diff_report_basis": "Root-integrated patch at comparison_patch_sha256 to final isolated source; frozen original baseline hashes preserved separately."
+}

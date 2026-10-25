@@ -1,5 +1,5 @@
 {
-  "status": "UNCOMMITTED_SOURCE_NOT_FULLY_VALIDATED_NO_BUILD",
+  "status": "PASS_EXACT_SOURCE_HOST_PREFLIGHT_INDEPENDENT_REVIEW_NATIVE_BUILD_PENDING",
   "utc": "2026-10-25T14:53:00.629339+00:00",
   "verified_production_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
   "verified_run": 40163724620,
@@ -37,9 +37,15 @@
       "errors": 5,
       "seconds": 41.002,
       "log": ".cache/knife-pan-retained-hud-first.log",
-      "audit": "Compiler seams include new canvas field/typed wmDrawBuffer/Ghost namespace and new probe pulled into older broad extraction. Actual failures must be audited and repaired with all original assertions retained; not counted passed."
+      "audit": "Compiler seams include new canvas field/typed wmDrawBuffer/Ghost namespace and new probe pulled into older broad extraction. Actual failures must be audited and repaired with all original assertions retained; not counted passed.",
+      "latest_status": "RESOLVED_WITH_ORIGINAL_ASSERTIONS_FINAL_FULL_PASSES"
     },
-    "full_suite": "NOT_RUN_FOR_CURRENT_CANDIDATE",
+    "full_suite": {
+      "status": "PASS",
+      "tests": 824,
+      "seconds": 561.456,
+      "report": "pan-frozen-validation.json"
+    },
     "native_build": "NOT_DISPATCHED",
     "device_acceptance": false,
     "complete_ghost_to_native_chain": {
@@ -59,9 +65,7 @@
     }
   },
   "pending": [
-    "Audit/repair retained HUD extraction/model seams preserving all original assertions, then affected/full frozen checks/preflight/diff.",
-    "Independent final exact source/native/literal/test review after correction integration.",
-    "Only then coherent exact source/tests/CI commit/push, native build once/full downloaded IPA plus actual compiled obligations."
+    "Commit/push exact coherent source/tests/CI, build once; full downloaded IPA and preserved/new actual compiled checks before ready claim."
   ],
   "ordinary_limits": {
     "used_percent": 94,
@@ -70,5 +74,6 @@
     "reset_utc": "2026-10-25T19:24:44Z",
     "credits": 0
   },
-  "preserve": "All untracked evidence and selection-collapsed.png; no private raw crash/binaries/IPA commit."
+  "preserve": "All untracked evidence and selection-collapsed.png; no private raw crash/binaries/IPA commit.",
+  "latest_source_verification": "pan-source-verification.json"
 }

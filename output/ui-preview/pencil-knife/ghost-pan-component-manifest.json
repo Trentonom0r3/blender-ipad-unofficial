@@ -1,0 +1,146 @@
+{
+  "status": "ORIGINAL_LIVE_KNIFE_ONLY_GHOST_COMPONENT_BOUNDED_PROOF_PASS_NOT_NATIVE_BUILT",
+  "utc": "2026-10-25T14:48:47.536084+00:00",
+  "baseline_source": "1946aba24b24999dadd4bdd708089b2ba5241150",
+  "baseline_verified_run": 40163724620,
+  "baseline_patch_sha256": "60001bada2c6fbbc286ae17281510f55bdb5ecdc5e656491890af1badf2b479a",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "owned_authoritative_paths": {
+    "intern/ghost/GHOST_NavigationIOS.hh": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\GHOST_NavigationIOS.hh",
+      "sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+      "baseline_sha256": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d"
+    },
+    "intern/ghost/intern/GHOST_WindowIOS.mm": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\intern\\GHOST_WindowIOS.mm",
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34",
+      "baseline_sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef"
+    }
+  },
+  "api": {
+    "intent": "enum class PencilKnifePanIntent:uint8_t {None,Tool,Live};",
+    "contact": "uint64_t serial=0,content=0,tool_ref=0; int origin_x=0,origin_y=0; std::array<uint64_t,32> scope{}; std::array<uint64_t,23> owner{}; intent=None; bool valid()const; Tool remains reserved ABI only; native producer emits Live only.",
+    "probe": "bool (*)(const void *window,bool capture,const PencilKnifePanContact &original,PencilKnifePanContact &result)",
+    "registration": "set_pencil_knife_pan_probe(PencilKnifePanProbe); inline callback defaults nullptr; no userdata",
+    "capture": "PencilKnifePanContact pencil_knife_pan_at_start(const void*,int x,int y,uint64_t serial); actual .mm checks actual GHOST getEventManager/getNumEvents(KeyDown/KeyUp), refusing missing system/manager/probe before callback",
+    "recognize": "bool pencil_knife_pan_recognize(const void*,const PencilKnifePanContact&); same queue gate; callback output must exactly equal original across all receipt fields",
+    "valid": "serial && content && intent==Live && tool_ref==0 && owner[0] && owner[2] && owner[6] && owner[17] && owner[19]; reserved Tool enum admits none.",
+    "recognizer": "forgetKnifePanContact, recognizeKnifePan, omitKnifePairedPan; no native callback from Changed"
+  },
+  "change_contract": [
+    "Live-only final resolution replaces superseded Tool prediction. Mandatory original-owner fields and reserved tool_ref zero enforced by GHOST valid().",
+    "Separate physical Pencil receipt after ring/HUD priority before super. Original actor+serial and finite in-view original coordinates required. Foreign additional touch cannot arm/clear existing admitted contact.",
+    "Freeze omission/refusal once ordinary precision recognized Began after hardware/ring/pointer/Finger/navigation early returns; Changed only reads frozen bool. Ctrl-after-Begin remains native.",
+    "Clear newreceipt/frozen/resolved on fresh physical contact, reset, invalidate and exact existing window teardown forget point. Additional touchesBegan on active contact leaves original decision.",
+    "Only ordinary pairedPAN condition gains !omit_knife_paired_pan. Every ordinary packet/value/order/coords/tablet/direct/terminal field/cached translation remains baseline exact. No new paint metadata/directtool/action or lease."
+  ],
+  "validation": {
+    "report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\report.json",
+    "optimizations": [
+      "-O0",
+      "-O2"
+    ],
+    "successful_runs": 14,
+    "expected_historical_assertion_failures": 2,
+    "old_failure": "Actual old producer/native WM/Knife pass-through/full native zoom functions reproduce distance10->10.197; separate old-must-fail requires pans==0 and fails at both optimization levels.",
+    "fixed_control": "Admitted native-Live Ctrl Knife original physical contact has only ordinary CURSOR, noPAN; native zoom unreachable in fixture.",
+    "preservation": "Complete packet snapshots compare old/new admitted streams with only PAN deletion; fallback streams exact. Actual Circle25->31/Transform2->2.2 consume retained producer dy20 PAN. Retained paint terminal/Finger/hardware/ring/HUD/tool/resize/navigation/multifinger/pinch fixture assertions unchanged.",
+    "registration": "nil default, callback clear before capture and aftercapture, missing GHOSTSystem/manager before both gates refuse; no Changed callback. Absent GHOST system tested directly; default callback asserted null in each process.",
+    "queue": "Actual pinned GHOST_EventManager::getNumEvents(type) and pushEvent bodies execute connected to physical/recognition wrappers.",
+    "source_oracle": "Actual current producer required. Exact baseline recovered by removing only recognized-Begin/frozen read and !omit predicate. Existing generator/cursor/button constructors and indirect/multifinger/zoom/cancel source bodies exact baseline. No auto source fix. Final positive fixtures use Live original-owner receipts; plain/modified Tool and Tool->Live after physical capture explicitly retain PAN. Mandatory Live owner fields independently refuse zero.",
+    "command": "python output/ui-preview/pencil-knife/ghost-pan-component-tests/run_connected.py --source-root C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+    "portable": "Runner now supports --repo --source-root --cache-dir --output-dir. Without --source-root it reconstructs current authoritative overlay with existing exact-hunk helper; baseline source/models/scenarios are local companion artifacts (no external Temp model dependency). Can migrate into build/test_pencil_knife_pan_ghost.py plus build/tests companions after coherent patch integration.",
+    "compiler": "clang version 22.1.5 (https://github.com/llvm/llvm-project 5ea218a153f4d2f815b8244eab3e4b4ba5e00e6c)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Program Files\\LLVM\\bin\n"
+  },
+  "fixture_repairs": [
+    "Initial mixed enum/int initializer-list compile failure preserved; explicit std::array<int,4> fixes fixture only.",
+    "First gate motion used unchanged translation and expected nonzeroPAN; supplied intended nonzero Changed input. Original failure preserved.",
+    "Retained old native_navigation fixture exposed its vector/list adapter leaving event_queue.last stale after modeled vector consumption; synchronize that adapter at queue_native entry when vector empty. Actual wm_event_add_trackpad and all assertions unchanged. Failure preserved."
+  ],
+  "limits": [
+    "UIKit objects/messages/super scheduling are explicit C++ adapters; actual physical recognizer method bodies execute. No UIKit/device timing proof.",
+    "Native scope/content/intent probe is instrumented; actual fresh native bridge/frame queries require separate integrated acceptance.",
+    "Queue getNumEvents(type) and pushEvent are actual pinned functions; System lookup/queue clearing/WM scheduling remain adapters.",
+    "Preserved producer/generator and native paint/zoom slices execute with retained WM/BKE/context adapters. Initial brush setup/coordinate/tablet transform/native registration are instrumentation.",
+    "No native iOS build/compiled target/device/geometry/history/Undo/universal rollback claim. No production patch/test/build edits.",
+    "Native bridge/frame callback is NOT exercised by this component fixture; root integration must connect actual native registration/queue/membership/content/owner gates and retained/full/source review.",
+    "No production overlay edited, build/CI dispatch/native IPA/device proof, commit or package claim."
+  ],
+  "files": {
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\actual-ghost-connected-O0.exe": {
+      "bytes": 520192,
+      "sha256": "cb34e9777a1fd05f1925d5a2ec83b95a6ad2255c9eb0bfed86a5054fb3db94f2"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\actual-ghost-connected-O2.exe": {
+      "bytes": 434176,
+      "sha256": "770034860bc7dee378a8b1cacbc2918b25ea27c361af6e24dddc2bd3a7b20d28"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\actual-ghost-connected.cc": {
+      "bytes": 162932,
+      "sha256": "d77f4acde3206ef70b7f9d202274632fc72a0626ae0c010b20809a6d94ee3835"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\baseline-GHOST_NavigationIOS.hh": {
+      "bytes": 15255,
+      "sha256": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\baseline-GHOST_WindowIOS.mm": {
+      "bytes": 146420,
+      "sha256": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\ghost-component.diff": {
+      "bytes": 9989,
+      "sha256": "c89aa0e5979b8bb3fbb0e183de3efe09325861946e7edb034a24c05e059c9309"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\initial-gates-runtime-failure.json": {
+      "bytes": 596,
+      "sha256": "9237dd6cf2a5f2a7af516b03616196830a7446aee2bee565def7e865f20afe6f"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\initial-O0-compile-failure.log": {
+      "bytes": 7544,
+      "sha256": "e28db23da40f72233c588494fd4b045b5d04009420d17847613302cc5b2d5e9e"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\native-parity-models.inc.cc": {
+      "bytes": 1870,
+      "sha256": "3ca2ee3d6315870ba4dac0b36a107e6c0f5f120067b7229e93ca16b2c615b0fe"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\O0-compile.log": {
+      "bytes": 8644,
+      "sha256": "a491ffdebd3e4caf4af7f085b86f7143c6761b24675313de085103cda46f04f8"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\O2-compile.log": {
+      "bytes": 8644,
+      "sha256": "a491ffdebd3e4caf4af7f085b86f7143c6761b24675313de085103cda46f04f8"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\prior-tool-intent-component-manifest.json": {
+      "bytes": 11887,
+      "sha256": "f650b46aed420e3eceae2e5a7ece8af72726d3c9a564c9f9d685ee58f8a0084c"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\report.json": {
+      "bytes": 9147,
+      "sha256": "ea721ad428eb3274c6bc411f66e0cca56172fdc8c03e141d4a7b6e60220edd3e"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\retained-adapter-stale-queue-failure.json": {
+      "bytes": 1167,
+      "sha256": "b278038db8814fe7cfdca7f133e3d0ec9dc9fad90b6f6660052313c5b75c2184"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\retained-connected-models.inc.cc": {
+      "bytes": 123031,
+      "sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\run_connected.py": {
+      "bytes": 16408,
+      "sha256": "ff17b4093cd2af3d82a79ef2abe18002601259a28635a6d7b39d1230691ec0cf"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\runs.json": {
+      "bytes": 4215,
+      "sha256": "28ccc3fa3b6f25d75befdddcba08d562370f3118f364797bfca1bbbabea2d08f"
+    },
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ghost-pan-component-tests\\scenarios.inc.cc": {
+      "bytes": 15098,
+      "sha256": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21"
+    }
+  },
+  "scope": "Only original registered Live Knife at physical capture and recognized ordinary precision Begin. Initial Tool/same-batch nohandler contacts retain ordinary PAN; that inherited case is not fixed.",
+  "repository_patch_current_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "repository_patch_note": "Root owns integrated candidate patch changes; component has not edited production patch. Baseline source/patch60001bada retained above; latest root candidate may differ and is pending integrated acceptance."
+}

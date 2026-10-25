@@ -28,6 +28,27 @@ EXPOSED = function(SCREEN, 'bool ED_ipad_hud_exposed_rect(')
 _receipt_start = SCREEN.rfind('namespace {', 0, SCREEN.index('struct IPadHUDOwner {'))
 RECEIPTS = SCREEN[_receipt_start:SCREEN.index('\nvoid ED_ipad_editing_canvas_parts', _receipt_start)]
 HAS_KNIFE_PROFILE = 'enum class IPadHUDKind' in RECEIPTS
+if 'bool ED_ipad_knife_pan_probe(' in RECEIPTS:
+    # This retained slice exercises ordinary HUD receipts. The independent PAN
+    # probe is a separate public entry, covered by the connected PAN fixture.
+    # Extract it out exactly rather than importing its unrelated native world.
+    RECEIPTS = RECEIPTS.replace(function(SCREEN, 'bool ED_ipad_knife_pan_probe('), '', 1)
+if 'void ED_ipad_knife_hierarchy_region_presented(' in RECEIPTS:
+    # No Knife hierarchy frame is registered in these legacy-profile scenarios.
+    # Native staging returns at that missing-frame boundary before reading a
+    # typed canvas draw buffer. Keep void* texture identities used by the old
+    # assertions and fail if the supposedly inactive boundary becomes active.
+    _inactive_staging = r"""
+void ED_ipad_knife_hierarchy_region_presented(bContext *C,wmWindow *win,ScrArea *area,
+                                              ARegion *region,const rcti&)
+{
+  assert(C && win && area && region && region->regiontype == RGN_TYPE_HUD);
+  assert(ipad_knife_hierarchy_frames.find(uintptr_t(win)) == ipad_knife_hierarchy_frames.end());
+}
+"""
+    RECEIPTS = RECEIPTS.replace(
+        function(SCREEN, 'void ED_ipad_knife_hierarchy_region_presented('),
+        _inactive_staging, 1)
 
 WORLD = r"""
 #include <algorithm>

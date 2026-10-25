@@ -92,8 +92,31 @@ void animation_after_capture(Fixture &f){
 """
 
 
+def launch_function(source, signature):
+    """Extract a complete current body, including one-line fixture adapters."""
+    start = source.index(signature)
+    while True:
+        body = source.index('{', start)
+        if ';' not in source[start:body]:
+            break
+        start = source.index(signature, start + len(signature))
+    depth = 1
+    end = body + 1
+    while depth:
+        if source[end] == '{':
+            depth += 1
+        elif source[end] == '}':
+            depth -= 1
+        end += 1
+    return source[start:end]
+
+
 def prefix(old=False):
     world = hud.WORLD
+    # Retain the owner/context model, excluding the unused GPU compositor model.
+    world = world[:world.index('namespace blender {using float4=')]
+    world = world.replace('constexpr int RGN_ALIGN_FLOAT=1,RGN_ALIGN_LEFT=2,RGN_ALIGN_RIGHT=3;',
+                          'constexpr int RGN_ALIGN_FLOAT=1;')
     # Native bodies see an exact wm.area/wm.region representation; references adapt
     # only the existing receipt fixture's separate scalar slots, without changing setters.
     area_stub = re.search(r'void CTX_wm_area_set[^\n]*\n', world).group(0)
@@ -125,7 +148,40 @@ def prefix(old=False):
     world = world.replace('wmOperator *WM_operator_last_redo(', 'wmOperator *fixture_last_redo(', 1)
     world += ('wmOperator *last_redo_override=nullptr;\n'
               'wmOperator *WM_operator_last_redo(const bContext *C){return last_redo_override?last_redo_override:fixture_last_redo(C);}\n')
-    current = hud.compiled_prefix().replace(hud.WORLD, world, 1)
+    # First-layout launch tests compile only their actual native owner/layout
+    # dependency closure. Whole receipt ranges also contain the independent
+    # Pencil PAN/frame compositor, whose model is outside this launch fixture.
+    knife_model = ''
+    if hud.HAS_KNIFE_PROFILE:
+        knife_model = ('constexpr int WM_IPAD_KNIFE_OWNER_VALUES = 23;\n' +
+                       launch_function(hud.KNIFE_MODEL, 'struct wmIPadKnifeOwner {') + ';\n' +
+                       'using Main=void;Main *G_MAIN=reinterpret_cast<Main*>(1);\n')
+        for signature in (
+                'bool WM_ipad_knife_owner_present(',
+                'bool WM_ipad_knife_owner_capture(',
+                'ARegion*WM_ipad_knife_owner_region(',
+                'bool UI_panel_is_active(',
+                'bool UI_ipad_knife_hud_panel_type(',
+                'bool UI_ipad_knife_hud_geometry_ready('):
+            knife_model += launch_function(hud.KNIFE_MODEL, signature) + '\n'
+    receipts = ''
+    if hud.HAS_KNIFE_PROFILE:
+        receipts += launch_function(hud.SCREEN, 'enum class IPadHUDKind {') + ';\n'
+    for signature in ('struct IPadHUDOwner {', 'struct IPadHUDContent {'):
+        receipts += launch_function(hud.SCREEN, signature) + ';\n'
+    receipts += ('static std::unordered_map<uint64_t, IPadHUDContent> ipad_hud_contents;\n'
+                 'static uint64_t ipad_hud_next_identity = 1;\n')
+    for signature in (
+            'static uint64_t ipad_hud_new_identity(',
+            'static bool ipad_hud_rect_equal(',
+            'static bool ipad_hud_owner_equal(',
+            'static bool ipad_hud_window_live(',
+            'static bool ipad_hud_owner_capture(',
+            'void ED_ipad_hud_layout_begin(',
+            'void ED_ipad_hud_layout_end(',
+            'void ED_ipad_hud_draw_end('):
+        receipts += launch_function(hud.SCREEN, signature) + '\n'
+    current = '#define WITH_APPLE_CROSSPLATFORM\n' + world + knife_model + receipts
     if old:
         capture = function(current, 'static bool ipad_hud_owner_capture(')
         current = current.replace(capture, OLD_OWNER_CAPTURE.strip(), 1)

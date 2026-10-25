@@ -221,12 +221,15 @@ int main(){int ghostkey=0;wmEvent state,active_state;wmWindow w{&ghostkey,19,{},
   start=DRAW.index('    ED_ipad_hud_draw_end(C, win, area, region);')
   stamp=DRAW[start:DRAW.index('\n#endif',start)]
   cb=function(changed_source('source/blender/editors/space_api/spacetypes.cc'),'static void ed_region_draw_cb_draw(')
-  self.run_cpp(GHOST+r"""
+  knife_header=changed_source('source/blender/windowmanager/WM_ipad_knife.hh')
+  knife_values='\n'.join(function(knife_header,name)+';' for name in ('struct wmIPadKnifeOwner {','struct wmIPadKnifeCanvasStamp {')).replace('WM_IPAD_KNIFE_OWNER_VALUES','23')
+  knife_stamp=function(DRAW,'static uint64_t wm_ipad_knife_canvas_content_next(')+function(DRAW,'static void wm_ipad_knife_canvas_stamp_finish(')
+  self.run_cpp(GHOST+knife_values+r"""
 struct rcti{int xmin,ymin,xmax,ymax;};
 struct IPadFingerPaintOwner{std::array<uint64_t,19>values{};std::array<char,64>tool{};bool valid=false;};
 struct ID{uint64_t session_uid=77;};struct bScreen{ID id;};
-struct wmDrawBuffer{bool stereo=false;uint64_t ipad_finger_paint_generation=0,ipad_finger_paint_screen_uid=0,ipad_finger_paint_window_id=0,ipad_finger_paint_owner_values[19]{};char ipad_finger_paint_owner_tool[64]{};int ipad_finger_paint_region[4]{},ipad_finger_paint_rect[4]{},ipad_finger_paint_navigation[4]{};bool ipad_finger_paint_unknown_widgets=false,ipad_finger_paint_navigation_present=false;};
-struct Runtime{wmDrawBuffer*draw_buffer;bool ipad_canvas=true; rcti ipad_canvas_rect{0,0,500,500};bool ipad_finger_paint_overlay_blocked=false,ipad_finger_paint_navigation_drawn=false;};
+struct wmDrawBuffer{void*viewport=nullptr,*offscreen=nullptr;wmIPadKnifeCanvasStamp ipad_knife_canvas_stamp{};bool stereo=false;uint64_t ipad_finger_paint_generation=0,ipad_finger_paint_screen_uid=0,ipad_finger_paint_window_id=0,ipad_finger_paint_owner_values[19]{};char ipad_finger_paint_owner_tool[64]{};int ipad_finger_paint_region[4]{},ipad_finger_paint_rect[4]{},ipad_finger_paint_navigation[4]{};bool ipad_finger_paint_unknown_widgets=false,ipad_finger_paint_navigation_present=false;};
+struct Runtime{wmDrawBuffer*draw_buffer;int do_draw=0;bool ipad_knife_canvas_unknown_widgets=false;std::array<uint64_t,23>ipad_knife_canvas_drawn_owner{};bool ipad_canvas=true; rcti ipad_canvas_rect{0,0,500,500};bool ipad_finger_paint_overlay_blocked=false,ipad_finger_paint_navigation_drawn=false;};
 struct ARegion{Runtime*runtime;rcti winrct{0,0,500,500};};struct ScrArea{struct {rcti ipad_navigation_rect{400,400,500,500};}runtime;};
 struct wmWindow{int width=501,height=501,winid=19;bScreen*screen=nullptr;};bScreen*WM_window_get_active_screen(wmWindow*w){return w->screen;}struct bContext{IPadFingerPaintOwner after;};float UI_SCALE_FAC=1;
 void ED_ipad_hud_draw_end(bContext*,wmWindow*,ScrArea*,ARegion*){}
@@ -234,7 +237,19 @@ void ED_ipad_finger_paint_capture(bContext*C,IPadFingerPaintOwner&out){out=C->af
 void BLI_strncpy(char*d,const char*s,size_t n){std::strncpy(d,s,n);d[n-1]=0;}int WM_window_native_pixel_x(wmWindow*w){return w->width;}int WM_window_native_pixel_y(wmWindow*w){return w->height;}
 void wm_ipad_finger_rect_copy(int d[4],const rcti&r){d[0]=r.xmin;d[1]=r.ymin;d[2]=r.xmax;d[3]=r.ymax;}
 void BLI_rcti_translate(rcti*r,int x,int y){r->xmin+=x;r->xmax+=x;r->ymin+=y;r->ymax+=y;}
+// This is a Sculpt/Finger fixture: no Edit Mesh Knife draw scope or owner
+// exists. The actual stamp finalizer below must short-circuit on invalid
+// pre-draw scope; accidental entry into its Edit Mesh providers fails loudly.
+inline constexpr int RGN_DRAW_PARTIAL=1;
+bool WM_ipad_knife_canvas_scope_capture(const bContext*,wmWindow*,ScrArea*,ARegion*,std::array<uint64_t,32>&){assert(false&&"Edit Mesh Knife scope is outside this Sculpt/Finger fixture");return false;}
+ARegion*WM_ipad_knife_owner_region(const bContext*,wmWindow*,const wmIPadKnifeOwner&,bool){assert(false&&"Native Knife owner is outside this Sculpt/Finger fixture");return nullptr;}
+// The one custom callback removes itself and has no registered native Knife
+// owner. Classifying it unknown must preserve the independent legacy flag.
+bool WM_ipad_knife_draw_callback_known(const bContext*,const ARegion*,const void*,void(*)(const bContext*,ARegion*,void*),const void*,int,wmIPadKnifeOwner&out){out={};return false;}
+"""+knife_stamp+r"""
 bool render(bContext*C,wmWindow*win,ScrArea*area,ARegion*region,IPadFingerPaintOwner paint_before,bool paint_partial=false,bool paint_canvas_valid=true){
+ const std::array<uint64_t,32> knife_canvas_before{};
+ const bool knife_canvas_valid=false;
  const rcti paint_window_before{0,0,500,500},paint_canvas_before{0,0,500,500};
  const int paint_width_before=501,paint_height_before=501;const float paint_scale_before=1;
 """+stamp+r"""

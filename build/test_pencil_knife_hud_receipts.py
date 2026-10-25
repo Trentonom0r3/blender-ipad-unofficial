@@ -39,14 +39,20 @@ HEADER=''.join(l[1:] for l in section.splitlines(True) if l.startswith('+') and 
 w=w.replace('struct Panel{void *type=nullptr;bool active=false;};','').replace('std::vector<Panel*> panels{};','').replace('std::vector<ARegion*> regionbase;ToolTip*tool_tip=nullptr;','').replace('const std::vector<Button>&buttons(const Model&,bScreen*){return hud_buttons;}','')
 w=w.replace('constexpr','inline constexpr')
 w=w.replace('struct rcti {','namespace policy=blender::ed::ipad::panels;using policy::Rect;using policy::Edge;\nstruct rcti {',1)
-w=w.replace('struct RegionRuntime{',r'''
-struct GPUViewport{bool texture=true;};struct GPUOffscreen{bool texture=true;};struct wmDrawBuffer{GPUViewport*viewport=nullptr;GPUOffscreen*offscreen=nullptr;};
-struct wmGizmo{int flag=0;float matrix_basis[4][4]{};float scale_basis=8;};struct wmGizmoGroupType{const char*idname="VIEW3D_GGT_navigate";};
+CANVAS_STAMP=function(WMH,'struct wmIPadKnifeCanvasStamp {')+';'
+CANVAS_STAMP=CANVAS_STAMP.replace('WM_IPAD_KNIFE_OWNER_VALUES','23')
+w=w.replace('struct RegionRuntime{',CANVAS_STAMP+r'''
+struct GPUViewport{bool texture=true;};struct GPUOffscreen{bool texture=true;};struct wmDrawBuffer{GPUViewport*viewport=nullptr;GPUOffscreen*offscreen=nullptr;wmIPadKnifeCanvasStamp ipad_knife_canvas_stamp{};};
+struct wmGizmo{void*type=nullptr;int state=0,flag=0;float matrix_basis[4][4]{};float scale_basis=8;};struct wmGizmoGroupType{const char*idname="VIEW3D_GGT_navigate";};
 struct wmGizmoGroup{wmGizmoGroupType*type=nullptr;std::vector<wmGizmo*>gizmos;struct{unsigned any=0;}hide;bool tag_remove=false;int init_flag=1;};
 using ListBase=std::vector<wmGizmoGroup*>;struct wmGizmoMap{ListBase groups;};
 struct PanelType{bool knife=false;};struct Panel{PanelType*type=nullptr;bool active=true;};
 bool UI_panel_is_active(const Panel*p){return p->active;}bool UI_ipad_knife_hud_panel_type(const PanelType*p){return p&&p->knife;}
 struct RegionRuntime{''')
+# Native fields read by the shared hierarchy are inactive value evidence here;
+# HUD controls still execute the actual completed hierarchy and compositor.
+w=w.replace('struct RegionRuntime{','struct RegionRuntime{bool ipad_knife_canvas_unknown_widgets=false;std::array<uint64_t,23>ipad_knife_canvas_drawn_owner{};')
+w=w.replace('std::vector<wmOperator*> operators{};','std::vector<wmOperator*> operators{};struct{void*first=nullptr;}drags{};')
 w=w.replace('void *draw_buffer=reinterpret_cast<void*>(7);','wmDrawBuffer*draw_buffer=nullptr;wmGizmoMap*gizmo_map=nullptr;')
 w=w.replace('bool visible=true,ipad_canvas=false;', 'bool visible=true,ipad_canvas=false,ipad_floating=false;')
 w=w.replace('struct wmWindow{', 'struct wmWindow;struct WindowDrawCB{WindowDrawCB*next=nullptr,*prev=nullptr;void(*draw)(wmWindow*,void*)=nullptr;void*customdata=nullptr;};struct EventState{int xy[2]{};};struct wmWindow{').replace('bScreen *screen;};','bScreen *screen;EventState*eventstate=nullptr;struct{void*first=nullptr;void*last=nullptr;}drawcalls{};};')
@@ -67,6 +73,8 @@ template<class T,class...V>bool ELEM(const T&v,const V&...items){return ((v==ite
 #define STREQ(a,b) (std::strcmp((a),(b))==0)
 inline constexpr int RGN_TYPE_HEADER=3,RGN_TYPE_TOOL_HEADER=4,RGN_TYPE_FOOTER=5;
 inline constexpr int AREA_FLAG_REGION_SIZE_UPDATE=1,WM_GIZMO_HIDDEN=8,WM_GIZMOGROUP_INIT_SETUP=1;
+inline constexpr int WM_GIZMO_DRAW_HOVER=1,WM_GIZMO_DRAW_MODAL=2,WM_GIZMO_DRAW_VALUE=4;
+inline constexpr int WM_GIZMO_STATE_HIGHLIGHT=1,WM_GIZMO_STATE_MODAL=2,WM_GIZMO_STATE_SELECT=4;
 inline constexpr int V3D_GIZMO_HIDE=1,V3D_GIZMO_HIDE_NAVIGATE=2,USER_SHOW_GIZMO_NAVIGATE=1,USER_MINI_AXIS_TYPE_GIZMO=1,USER_APP_LOCK_EDGE_RESIZE=1;
 struct User{int uiflag=1,mini_axis_type=0,app_flag=1;}U;
 struct uiFontStyle{int uifont_id=1;};struct uiStyle{uiFontStyle widget;};uiStyle style;
@@ -108,6 +116,19 @@ assert hashlib.sha256(MAP_BODY.encode()).hexdigest()==MAP_BODY_SHA256
 CHROME=function(S,'struct IPadHUDChrome {')+';\nstatic std::unordered_map<uintptr_t, IPadHUDChrome> ipad_hud_chrome;\n'+function(S,'static void ipad_hud_chrome_capture(')
 HIER=S[S.index('struct IPadKnifeHierarchyRegion {'):S.index('\nstatic void tag_layout(',S.index('struct IPadKnifeHierarchyRegion {'))]
 RECEIPTS=S[S.index('namespace {\nenum class IPadHUDKind'):S.index('\nvoid ED_ipad_editing_canvas_parts',S.index('namespace {\nenum class IPadHUDKind'))]
+# The broad historical HUD slice also contains the newer physical PAN probe.
+# It is not on these HUD/geometry call paths: exclude only that exact function,
+# retaining every actual hierarchy/publication/blit/blend/owner body below.
+# A fail-on-entry boundary makes accidental future PAN entry visible.
+PAN_PROBE=function(S,'bool ED_ipad_knife_pan_probe(')
+if PAN_PROBE not in RECEIPTS:raise RuntimeError('physical PAN probe extraction seam missing')
+PAN_INACTIVE='namespace ghost::ios { struct PencilKnifePanContact; }\n'+PAN_PROBE[:PAN_PROBE.index('{')]+r'''{
+  (void)C; (void)win; (void)capture; (void)original; (void)result;
+  assert(false && "physical Knife PAN admission is outside the retained HUD fixture");
+  return false;
+}
+'''
+RECEIPTS=RECEIPTS.replace(PAN_PROBE,PAN_INACTIVE,1)
 LAYER=function(D,'static void wm_draw_window_area_layer(')
 def block(text,signature):
  start=text.index(signature);begin=text.index('{',start);depth=0
