@@ -1,0 +1,32 @@
+{
+  "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+  "run": 40252354359,
+  "source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "uuid": "FA474B4B-9C76-3BF5-A323-F7EDFC6742C0",
+  "sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+  "owner_restore": "PASS actual getter->SP+8->area setter, then saved x26->region setter; exact argument flow and normal-return CFG domination established.",
+  "owner_proof": "independent-preserved-owner-stack-cfg-proof.json",
+  "native_size_init": "PASS fresh audit: newly allocated HUD path cannot return before native sizes0x101f90cec; floating init0x101f90cf4 follows native sizes. Native size profile0x101621e84 includes regiontype.init indirectcall0x101621fdc. hud_region_init0x101f90784 calls panelsinit0x101625528 at0x101f90794 then handlersadd0x101f907a8; panelsinit calls nativeView2Dreinit0x10162554c. Bounded compiled call/order/profile evidence; live runtime type-to-init connection and first-frame state remain separate.",
+  "fresh_native_audit": "independent-preserved-fresh-audit/audit.json",
+  "weight_cleanup": {
+    "status": "PASS",
+    "scope_start": "0x101dd8a54",
+    "scope_end_exclusive": "0x101dd8a5c",
+    "instruction_count": 2,
+    "argument_flow": "C in x0 and op in x1 unchanged; load x2=op->customdata at+0x60; tailcall generic paint_stroke_cancel0x101dc0820. No custom cleanup/nulling path.",
+    "evidence": "independent-preserved-fresh-audit/weight_cancel.asm"
+  },
+  "raw_automated_owner_status": "FAILED retained unchanged because interpreter does not recognize saved-area SP+8 reload. Fresh run reproduces unsupported shape; independent bounded actual proof resolves only this obligation.",
+  "raw_audit_sha256_unchanged": "7a05c10cd99c6d6097fcf600230c14ff65a5b0ea2da9cf0a78b962b8b3823755",
+  "source_or_checker_changes": false,
+  "production_edits": false,
+  "build_dispatch": false,
+  "scope_limits": [
+    "Concrete local normal-return CFG with branch conditions overapproximated; native callees return to next instruction and preserve AAPCS callee-saved x19/x26 and valid caller-local-frame memory.",
+    "No arbitrary heap alias/OOB, exception/nonlocal exit, reentrant callback or global WM/UIKit proof.",
+    "First-frame live native region type/runtime geometry/device acceptance remains separate.",
+    "No other compiled families reviewed; no SDK/device/general heap/CFG completion or overall ready claim."
+  ],
+  "device_acceptance": false,
+  "completed_utc": "2026-10-26T01:34:50.119065+00:00"
+}

@@ -1,3 +1,29 @@
+## Native Knife PAN package verified; changed compiled review pending — 2026-10-26 UTC
+
+Exact production30da0be80a073ef6a6fc5ce634a2039bbb946afd/run40252354359 PASSED
+hosted preflight/native iOS Release and full downloaded3368CRC/arm64/iPhoneOS5.0.0/
+whole exact UI/default bars/toolbar/pinned tools129icons/nineBase/native-onlyMoreTools.
+Artifact12622001674; IPA248689572bytes; SHA256
+5d9a5bc55d49d07d4a3832861065823db0f346de85ef0638ebc243cbde163dbd.
+BinaryUUID FA474B4B-9C76-3BF5-A323-F7EDFC6742C0; SHA256
+cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0.
+Fresh independent preserved HUD/Weight review PASS. Raw automated owner failure
+is retained: unsupported saved-area SP+8 reload. Actual getter/store/reload and
+167-instruction postmutation normal-return domination prove area-before-region;
+native firstsize/init and Weight cleanup pass. No checker/source weakening.
+Watcher89461 finishedexit1 solely raw owner limitation; all package/actualscope
+dumps collected. No live verifier or unchanged rebuild. CHANGED actual producer/
+registry/nativebridge/draw/composition/higherUI compiled reviews remain PENDING;
+NOT READY and no exact device acceptance. Read pan-native-package-checkpoint.json
+and binary-40252354359/independent-preserved-gates-review.json. Next fresh window
+split actual compiled GHOST producer versus nativebridge/render reviews, resolving
+aliases/inlining/indirect arguments; markers alone are not proof. No production
+expansion before this gate closes. Full personal goal unfinished. Current patch
+2be762de only adds native Screen Ghost dependency vs validated runtime; previous
+40229369141 failed missingheader/noIPA. All accepted UI/input contracts remain.
+Ordinary99percent fivehour/62weekly; resetOct26 05:41:57UTC/00:41:57Chicago;
+resume00:49Chicago. Zero reset credits; never redeem without new human request.
+
 ## Corrected exact native Knife PAN build in progress — 2026-10-26 UTC
 
 Exact correction30da0be80a073ef6a6fc5ce634a2039bbb946afd is building ONCE in
