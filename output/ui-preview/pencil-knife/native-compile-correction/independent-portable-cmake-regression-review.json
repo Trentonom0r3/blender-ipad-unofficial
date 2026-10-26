@@ -1,0 +1,46 @@
+{
+  "status": "PASS_INDEPENDENT_NARROW_CMAKE_DEPENDENCY_CORRECTION_REVIEW",
+  "utc": "2026-10-26T01:00:28.633624+00:00",
+  "failed_native_run": 40229369141,
+  "failed_source_commit": "d2f003eae260e9a2752d92dfdba7d2782fa7b470",
+  "failed_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "corrected_patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "changed_patch_sections": [
+    "a/source/blender/editors/screen/CMakeLists.txt b/source/blender/editors/screen/CMakeLists.txt"
+  ],
+  "identical_other_sections": 135,
+  "actual_cmake_scope": "Only before blender_add_lib(bf_editor_screen...), conditionally append PRIVATE bf_intern_ghost when WITH_APPLE_CROSSPLATFORM. Native Ghost PUBLIC . exports its header directory to the direct screen consumer; native WM STATIC private Ghost edge remains LINK_ONLY and grants no editor include directory. No globalinclude workaround or PUBLIC WM leak.",
+  "regression_evidence": {
+    "report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-pan-screen-cmake-8__xck1h\\portable-patch-run\\report.json",
+    "report_sha256": "81f5c0e53594026345a048b42859e6ceabeb2b3f5b5b9eac2ceb08f5a840b715",
+    "real_cmake_old_Apple_header_missing": true,
+    "real_cmake_fixed_Apple_full_header_CXX17_compile_link_runtime_pass": true,
+    "real_cmake_old_and_fixed_nonApple_identical_includes_and_noGhost_visibility": true,
+    "native_macro_bodies_unchanged_and_executed": true,
+    "actual_full_GHOST_WM_ED_header_bodies_unchanged": true,
+    "WM_actual_target_STATIC_and_link_only_Ghost_verified": true
+  },
+  "portable_package": {
+    "run_visibility.py": {
+      "bytes": 15154,
+      "sha256": "8e6344e74b01e9bc161ec45838ac0ce123e5339a96803422d428ee4875fbcff2"
+    },
+    "inputs/failed-screen-CMakeLists.txt": {
+      "bytes": 1312,
+      "sha256": "d31695c3b8db397064625919dfefe64de474eeaf0633e67f9763509ff9d15fda"
+    },
+    "inputs/provenance.json": {
+      "bytes": 716,
+      "sha256": "9c06765e08e263a48fb64032db73271107bbbbd593ff5e3015eb9ba0da28fa42"
+    }
+  },
+  "portable_behavior": "Exactly3files needed; baseline/provenance relative to runner; normalizedUTF8 text hashes permit Git LF/CRLF checkout. Current source from patch+pin or explicitsourceRoot. Native macros/GhostCMake explicitly fetched via preflight at workflow pin and exact SHAchecked. No old Git ref, 5.8MB failedpatch, externalTemp or output/audit-pinned dependency. UniqueTemp output; stale priorreport archived.",
+  "actionable_findings": [],
+  "limits": [
+    "Native library source lists alone are replaced with one dummy or probe source; real STATIC ownership, current publicheaders, native CMake include/link helper bodies and target scoping execute. Other unavailable Blender librarytargets are empty imported interfaces granting no probe includes.",
+    "Host C++17 syntax/compile/link/runtime of complete actual value-only GHOST header and public WM/ED header closure only. No complete screen_ipad_panels.cc translationunit, Apple SDK/ObjectiveC++/Xcode/nativeIPA build, renderer/UIKit/device proof.",
+    "Native Apple conditionals are evaluated explicitly on the host; this is include dependency regression proof, not cross compiler/ABI/package verification.",
+    "No repository/source/test/patch/builddispatch/commit edits performed by this isolated fixture.",
+    "Independent review covers dependency correction scope/helper/include ownership. Exact corrected iOS native build/IPA/compiled checks remain required."
+  ]
+}

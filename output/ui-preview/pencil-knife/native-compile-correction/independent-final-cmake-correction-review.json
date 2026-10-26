@@ -1,0 +1,52 @@
+{
+  "status": "PASS_NARROW_CMAKE_CORRECTION_SOURCE_REVIEW_REGRESSION_PENDING",
+  "utc": "2026-10-26T00:55:24.265390+00:00",
+  "reviewer": "independent canvas/native agent; read-only except this report",
+  "failed_source": "d2f003eae260e9a2752d92dfdba7d2782fa7b470",
+  "failed_run": 40229369141,
+  "failed_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "corrected_patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "only_changed_patch_target": "source/blender/editors/screen/CMakeLists.txt",
+  "unchanged_other_patch_sections": 135,
+  "unchanged_other_actual_source_hashes": 135,
+  "corrected_CMake_sha256": "25628efeafd01a5209126a341f184d6a879a93aa8c09d5ee6e7373647641c814",
+  "old_CMake_sha256": "d31695c3b8db397064625919dfefe64de474eeaf0633e67f9763509ff9d15fda",
+  "raw_Git_reverse_apply_check": {
+    "returncode": 0,
+    "stderr": ""
+  },
+  "review_findings": [],
+  "review_conclusions": [
+    "The complete changed CMake source equals the failed source plus only two explanatory comments and the conditional private GHOST target dependency. The new block is before blender_add_lib consumes LIB.",
+    "The condition is WITH_APPLE_CROSSPLATFORM, matching the existing Apple-only consuming implementation. When false, the LIB list and all compilation sources/includes/guards are exactly the failed source; non-Apple parity is therefore preserved by this narrow correction.",
+    "The dependency is PRIVATE bf_intern_ghost, an existing target whose pinned CMake exports its root include directory. It supplies the screen module direct use without broadening WM public exports, changing receipt declarations or suppressing code.",
+    "All 135 other patch sections and actual source hashes match the failed candidate, including every runtime CPP/header and seven Python UI targets. Existing native calloc POD/static assertions, value-only scope/owner ABI, exact callbacks, admission/keyboard/lifecycle and literal UI behavior are unchanged."
+  ],
+  "native_ABI_guard_hashes": {
+    "source/blender/windowmanager/WM_ipad_knife.hh": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684",
+    "source/blender/windowmanager/wm_draw.hh": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5",
+    "source/blender/blenkernel/BKE_screen.hh": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8"
+  },
+  "observed_root_validation_logs": {
+    ".cache\\knife-pan-cmake-correction-preflight.log": "e0d4ff63569532350c78742f63974c8789e2febced54ca17a5a59835fca0ce33",
+    ".cache\\knife-pan-cmake-correction-affected.log": "6cb43b2b5074e9cb38695a0dc70074a29e56dbae1f580229c895aabc5f618cb5",
+    ".cache\\knife-pan-cmake-correction-hud.log": "0b3d852233c4339c417156e5ed5b43d1aac4d4a67e51bc739d982f202c7de35a"
+  },
+  "observed_root_validation": {
+    "preflight": "136 pinned targets PASS; source application/syntax only",
+    "affected": "149/149 PASS in24.023s",
+    "retained_HUD": "68/68 PASS in60.658s",
+    "diff_check": "Root reports PASS; raw Git reverse check independently passes here"
+  },
+  "pending_gates": {
+    "actual_GHOST_CMake_regression": "PENDING at delegation; not counted passed by this review",
+    "corrected_native_Release": "NOT RUN/NOT DISPATCHED by reviewer",
+    "IPA": "NONE from failed run; no corrected IPA claim",
+    "device_acceptance": false
+  },
+  "limits": "This narrow read-only review confirms the source correction and unchanged native ABI/guards. It does not execute CMake or claim actual include/link propagation, native compiler success, package correctness or device behavior. Root owns the separate actual CMake regression and subsequent single exact native build after its gate passes.",
+  "reviewer_production_or_test_edits": false,
+  "reviewer_build_run": false,
+  "commit_created": false
+}

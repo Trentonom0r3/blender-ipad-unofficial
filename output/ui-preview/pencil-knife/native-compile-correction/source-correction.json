@@ -1,0 +1,19 @@
+{
+  "status": "CORRECTED_CMAKE_DEPENDENCY_ONLY_VALIDATION_PENDING",
+  "utc": "2026-10-26T00:46:31.257195+00:00",
+  "failed_source": "d2f003eae260e9a2752d92dfdba7d2782fa7b470",
+  "failed_run": 40229369141,
+  "failure": "native screen_ipad_panels.cc62 missing GHOST_NavigationIOS.hh; preflight succeeded; no IPA",
+  "old_patch_sha256": "edd99db6397912c1b962d93c51682b4e3467f5b42db77cac9a1fa7395f0163b3",
+  "new_patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "only_changed_target": "source/blender/editors/screen/CMakeLists.txt",
+  "byte_exact_other_patch_sections": 135,
+  "all_runtime_cpp_and_ui_targets_byte_exact": true,
+  "raw_git_all136_targets_match": true,
+  "old_target_sha256": "d31695c3b8db397064625919dfefe64de474eeaf0633e67f9763509ff9d15fda",
+  "new_target_sha256": "25628efeafd01a5209126a341f184d6a879a93aa8c09d5ee6e7373647641c814",
+  "correction": "Conditional PRIVATE bf_intern_ghost direct dependency supplies its PUBLIC root include to bf_editor_screen; WM private dependency remains private.",
+  "native_build": "NOT_DISPATCHED",
+  "package": false,
+  "device_acceptance": false
+}

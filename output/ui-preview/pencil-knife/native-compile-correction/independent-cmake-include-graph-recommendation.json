@@ -1,0 +1,82 @@
+{
+  "status": "BOUNDED_READONLY_CMAKE_RECOMMENDATION_OBSERVED_HEADER_FAILURE",
+  "reviewed_utc": "2026-10-26T00:48:03.794230+00:00",
+  "failed_run": 40229369141,
+  "failed_source": "d2f003eae260e9a2752d92dfdba7d2782fa7b470",
+  "failed_run_url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40229369141",
+  "native_result": "Release failed during screen module compilation; preflight passed; no IPA from this run",
+  "pinned_blender": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "actual_failure": {
+    "diagnostic": "build\tBuild (Release, install target)\t2026-10-25T20:29:28.3588790Z /Users/runner/work/blender-ipad-unofficial/blender-ipad-unofficial/blender/source/blender/editors/screen/screen_ipad_panels.cc:62:10: fatal error: 'GHOST_NavigationIOS.hh' file not found",
+    "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ipa-40229369141\\native-failure.log",
+    "log_sha256": "1e0f108b7053cea1ab27f87ca0a0a3ca1990974f5675200d52794a58c8031f63",
+    "source": "source/blender/editors/screen/screen_ipad_panels.cc",
+    "line": 62,
+    "header": "GHOST_NavigationIOS.hh"
+  },
+  "module_include_graph": [
+    {
+      "node": "bf_intern_ghost",
+      "definition": "intern/ghost/CMakeLists.txt",
+      "fact": "The pinned target supplies PUBLIC . in its include list, exporting the intern/ghost root. It defines the bf_intern_ghost library through blender_add_lib.",
+      "evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-compile-correction\\audit-pinned\\intern\\ghost\\CMakeLists.txt",
+      "sha256": "eb933c960c3c3d431b582de45fc97837f3d226e8ac49abc7fb98ecf0467dce54",
+      "primary_url": "https://github.com/blender/blender/blob/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/intern/ghost/CMakeLists.txt"
+    },
+    {
+      "node": "bf_windowmanager / bf::windowmanager",
+      "definition": "source/blender/windowmanager/CMakeLists.txt",
+      "fact": "WM has PUBLIC . for WM headers and a PRIVATE/default-private bf_intern_ghost dependency. Its own wm_draw/wm_event_system/wm_window includes therefore see the GHOST public root. That private dependency does not export GHOST compile include usage through WM to Screen.",
+      "evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\windowmanager\\CMakeLists.txt",
+      "sha256": "b335894055d6fbc329ea26826a46a7b6d79b0402b765c66e21ad52f46adb4193"
+    },
+    {
+      "node": "bf_editor_screen",
+      "definition": "source/blender/editors/screen/CMakeLists.txt",
+      "fact": "Screen consumes PRIVATE bf::windowmanager and its own local/RNA/node include paths; its failed source CMake has no direct GHOST target or include root. The new Apple-only screen implementation directly includes the GHOST receipt header.",
+      "failed_evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-compile-correction\\original-screen-cmake.txt",
+      "failed_sha256": "d31695c3b8db397064625919dfefe64de474eeaf0633e67f9763509ff9d15fda",
+      "pinned_evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\editors\\screen\\CMakeLists.txt",
+      "pinned_sha256": "eec348f4581abd7fdf68b97e670ac70fba87be80fec475ae0c309f3cc4169c6c"
+    },
+    {
+      "node": "pinned Blender CMake helpers",
+      "fact": "Actual blender_target_include_dirs_impl defaults includes to PRIVATE and honors PUBLIC for the following root entry. Actual blender_link_libraries defaults libraries to PRIVATE and forwards explicit visibility to target_link_libraries. blender_add_lib__impl applies those functions to each target.",
+      "evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-compile-correction\\audit-pinned\\build_files\\cmake\\macros.cmake",
+      "sha256": "2e3ac4fec4bcf8e2f6b16cc777d23dce2412ab37b41d9e756d5bfd175f133911",
+      "primary_url": "https://github.com/blender/blender/blob/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/build_files/cmake/macros.cmake"
+    },
+    {
+      "node": "existing editor interface precedent",
+      "fact": "The unrelated pinned editor interface target explicitly lists the intern/ghost root in its own include paths, consistent with editor modules requiring their own GHOST header visibility rather than inheriting a WM-private dependency.",
+      "evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\editors\\interface\\CMakeLists.txt",
+      "sha256": "b054bb3ee88884bfe44830f43b882ae8cd0693d272a492a77af6294854a050f9"
+    }
+  ],
+  "recommendation": {
+    "path": "source/blender/editors/screen/CMakeLists.txt",
+    "placement": "After set(LIB ...) and before blender_add_lib(bf_editor_screen ...), conditional on WITH_APPLE_CROSSPLATFORM",
+    "exact_CMake": "if(WITH_APPLE_CROSSPLATFORM)\n  list(APPEND LIB PRIVATE bf_intern_ghost)\nendif()",
+    "reason": "A direct private GHOST target dependency imports its existing declared public root for the module that directly consumes the receipt type, matching the actual module graph. The conditional matches the Apple-only implementation include and avoids broadening non-Apple usage.",
+    "scope": "One existing CMake target file only; no runtime/API/guard/Pencil/event/owner/UI change and no public WM include export change.",
+    "observed_root_proposal_matches": true,
+    "proposed_root_evidence": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\native-compile-correction\\corrected-screen-cmake.txt",
+    "proposed_root_sha256": "25628efeafd01a5209126a341f184d6a879a93aa8c09d5ee6e7373647641c814",
+    "secondary_option": "A conditional private INC entry for ../../../../intern/ghost would also address this header lookup, but the direct target dependency better declares the actual module dependency and uses its existing public usage requirements."
+  },
+  "prior_verification_gap": "The previous extracted-function host fixtures and patch application checks did not compile screen_ipad_panels.cc with its real module include graph. The prior final source review missed this target-level dependency; actual native compiler failure is authoritative.",
+  "recommended_root_validation": [
+    "Execute the actual pinned CMake include/link visibility helpers in an isolated regression: old Apple screen target lacks GHOST root, corrected Apple screen gains it, non-Apple target remains unchanged. Use the real GHOST header rather than a fake header or fabricated -I.",
+    "Check unchanged runtime/production source hashes and all assertions while integrating only the CMake correction, then run exact source preflight/required affected checks.",
+    "A later corrected exact iOS Release must establish native compilation; resolving the observed lookup alone does not prove the remainder of the build or an IPA."
+  ],
+  "audit_limits": [
+    "This agent performed source/diagnostic inspection only; no CMake configure, compiler, build or test execution for this recommendation.",
+    "Pinned Ghost/macros files were fetched through the connected GitHub source tool at the exact pin and saved as audit evidence only. Windows has no iOS SDK/GPU/device validation here.",
+    "Root owns any production correction and regression harness/build. No guard weakening, declaration relocation or architecture rewrite is recommended."
+  ],
+  "production_or_tests_edited": false,
+  "build_run": false,
+  "commit_created": false,
+  "device_acceptance": false
+}

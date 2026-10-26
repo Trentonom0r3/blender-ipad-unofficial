@@ -1,0 +1,42 @@
+{
+  "status": "PASS_NATIVE_DEPENDENCY_CORRECTION_READY_FOR_EXACT_REPLACEMENT_BUILD",
+  "utc": "2026-10-26T01:03:04.695048+00:00",
+  "source_correction": "source-correction.json",
+  "patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "only_native_target_changed": "source/blender/editors/screen/CMakeLists.txt",
+  "other135_sections_and_all_runtime_cpp_ui": "BYTE_EXACT_FAILED_SOURCE",
+  "prior_full_runtime_suite": {
+    "tests": 824,
+    "seconds": 561.456,
+    "unchanged_prior_runtime_test_inputs": true,
+    "scope": "Prior exact C++/UI behavior; CMake and CI selection subsequently change, so not a claim of a fresh full825 run."
+  },
+  "actual_cmake_regression": {
+    "unittest": 1,
+    "actual_configurations": 4,
+    "seconds": 14.17,
+    "log": ".cache/knife-pan-screen-cmake-regression.log",
+    "oldApple": "EXPECTED_GHOST_HEADER_NOT_FOUND",
+    "fixedApple": "ACTUAL_FULL_PUBLIC_HEADERS_COMPILE_LINK_RUN",
+    "old_and_fixed_nonApple": "UNCHANGED_INCLUDE_SETS_NO_GHOST_LEAK"
+  },
+  "affected_live_knife": {
+    "tests": 149,
+    "seconds": 24.023,
+    "log": ".cache/knife-pan-cmake-correction-affected.log"
+  },
+  "retained_hud": {
+    "tests": 68,
+    "seconds": 60.658,
+    "log": ".cache/knife-pan-cmake-correction-hud.log"
+  },
+  "pinned_preflight": 136,
+  "independent_review": "independent-final-cmake-correction-review.json",
+  "independent_actual_regression_review": "independent-portable-cmake-regression-review.json",
+  "failed_run": 40229369141,
+  "failed_source": "d2f003eae260e9a2752d92dfdba7d2782fa7b470",
+  "failed_run_ipa_exists": false,
+  "failed_native_log_sha256": "1e0f108b7053cea1ab27f87ca0a0a3ca1990974f5675200d52794a58c8031f63",
+  "native_replacement": "NOT_DISPATCHED",
+  "device_acceptance": false
+}

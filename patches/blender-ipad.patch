@@ -67608,14 +67608,13 @@ index 2fd3591..dcc34d7 100644
  
  /** \} */
 diff --git a/source/blender/editors/screen/CMakeLists.txt b/source/blender/editors/screen/CMakeLists.txt
-index 5fdf6a9..6140240 100644
 --- a/source/blender/editors/screen/CMakeLists.txt
 +++ b/source/blender/editors/screen/CMakeLists.txt
-@@ -1,66 +1,69 @@
+@@ -1,66 +1,75 @@
  # SPDX-FileCopyrightText: 2023 Blender Authors
  #
  # SPDX-License-Identifier: GPL-2.0-or-later
- 
+
  set(INC
    ../asset
    ../include
@@ -67625,11 +67624,11 @@ index 5fdf6a9..6140240 100644
    # RNA_prototypes.hh
    ${CMAKE_BINARY_DIR}/source/blender/makesrna
  )
- 
+
  set(INC_SYS
    ../../../../extern/fmtlib/include
  )
- 
+
  set(SRC
    area.cc
    area_query.cc
@@ -67645,13 +67644,13 @@ index 5fdf6a9..6140240 100644
    workspace_edit.cc
    workspace_layout_edit.cc
    workspace_listen.cc
- 
+
    screen_intern.hh
 +  screen_ipad_panels.cc
 +  screen_ipad_layout_history.cc
 +  ipad_workspace_panels.hh
  )
- 
+
  set(LIB
    PRIVATE bf::animrig
    PRIVATE bf::asset_system
@@ -67672,13 +67671,19 @@ index 5fdf6a9..6140240 100644
    PRIVATE bf::sequencer
    PRIVATE bf::windowmanager
  )
- 
+
++# The iPad canvas bridge uses GHOST's public value-only input receipts.
++# WM's private GHOST dependency does not export its include path to editors.
++if(WITH_APPLE_CROSSPLATFORM)
++  list(APPEND LIB PRIVATE bf_intern_ghost)
++endif()
++
  if(WITH_HEADLESS)
    add_definitions(-DWITH_HEADLESS)
  endif()
- 
+
  blender_add_lib(bf_editor_screen "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
- 
+
  # RNA_prototypes.hh
  add_dependencies(bf_editor_screen bf_rna)
 diff --git a/source/blender/editors/screen/area.cc b/source/blender/editors/screen/area.cc

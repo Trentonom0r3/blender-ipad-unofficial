@@ -1,3 +1,21 @@
+## Native Screen/GHOST build dependency corrected — 2026-10-26 UTC
+
+Run40229369141@d2f003e FAILED native Release: screen_ipad_panels.cc62 could not
+find GHOST_NavigationIOS.hh. Hosted preflight passed; no IPA. Watcher85545 ended1.
+Never rebuild that exact source unchanged. Root correction is ONLY Screen CMake's
+conditional PRIVATE bf_intern_ghost dependency; WM's private Ghost edge does not
+export its public includes. Patch2be762de (full hash in native-compile-correction/
+source-correction.json); other135 sections/all runtime C++/UI are byte-exact.
+Actual pinned CMake/static-library/link helpers reproduce old missingheader and
+pass fixedApple full publicheaders plus both unchanged nonApple cases. Portable
+regression1/4configurations14.170s, affected149/24.023s, retainedHUD68/60.658s,
+136-file preflight/diff and independent narrow correction/compile audits PASS.
+Prior824/561.456s runtime suite remains applicable to unchanged runtime code; a
+fresh full825 run is not claimed. The exact replacement cloud preflight must pass.
+Commit/push corrected dependency/tests and build once, then full downloaded IPA/
+preserved HUD-Weight/new actual compiled reviews. No ready/device claim yet.
+Full personal goal unfinished; latest verified package remains1946aba/40163724620.
+
 ## Exact original-live Knife PAN build dispatched — 2026-10-25 UTC
 
 Validated source d2f003eae260e9a2752d92dfdba7d2782fa7b470 is building ONCE in
