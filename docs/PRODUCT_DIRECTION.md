@@ -1,3 +1,17 @@
+## Corrected exact native Knife PAN build in progress — 2026-10-26 UTC
+
+Exact correction30da0be80a073ef6a6fc5ce634a2039bbb946afd is building ONCE in
+run40252354359; head confirmed. Watcher89461/.cache/watch-pencil-live-knife-pan-build.py
+log.cache/live-knife-pan-build-watch-40252354359.log owns SAME build/fullIPA/
+preservedHUD-Weight/newactualcompiledscopes. No package/compiled/device success yet.
+Previous40229369141@d2f003 failed native missingGhostheader; noIPA, watcher85545 ended1.
+Correction ONLY Screen conditional PRIVATE bf_intern_ghost;135othersections/runtime/
+UI exact. ActualCMake4cases/publicheaders/oldfailure/nonApple PASS,149+68affected/
+136preflight/diff/independentcorrection reviews PASS. Native SDK validation pending.
+Inspect SAME process/reports before replacement, never rebuild unchanged. Keep all
+source guards and complete downloadedIPA/actualcompiled review before ready.
+Full personal goal unfinished; latest verified package1946aba/run40163724620.
+
 ## Native Screen/GHOST build dependency corrected — 2026-10-26 UTC
 
 Run40229369141@d2f003e FAILED native Release: screen_ipad_panels.cc62 could not
