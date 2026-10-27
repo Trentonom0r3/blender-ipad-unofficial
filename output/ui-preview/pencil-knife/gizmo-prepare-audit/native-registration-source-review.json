@@ -1,0 +1,31 @@
+{
+  "status": "PASS_BOUNDED_PRIMARY_SOURCE_REGISTRATION_VECTOR_RESOLVED",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "primary_sources": {
+    "source/blender/makesrna/intern/rna_wm_gizmo.cc": {
+      "sha256": "a8da354936eff15ed8397e1add6665817b5e6b28eab319cbfcd7294871be8887",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm_gizmo.cc"
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_group_type.cc": {
+      "sha256": "05447ab046bc751b1b9797a3328f8be08c1fd9d89a08913bc16086a740a1ad24",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/gizmo/intern/wm_gizmo_group_type.cc"
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_type.cc": {
+      "sha256": "d8b17c9bdd0033e96c7a1ad06ff0261682de1f3d1fbad5ca330852f8d2ab1559",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/gizmo/intern/wm_gizmo_type.cc"
+    },
+    "source/blender/editors/space_view3d/view3d_gizmo_navigate.cc": {
+      "sha256": "6049ca9ce752e996a37c92cb19b33413c7d464ca4a391672212dc08c05e95700",
+      "url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_view3d/view3d_gizmo_navigate.cc"
+    }
+  },
+  "native_group_allocation": "wm_gizmogrouptype_append__begin uses MEM_callocN; native group constructor sets srna and native callbacks but not rna_ext.srna/call. Native VIEW3D_GGT_navigate has no extension call.",
+  "same_id_group_registration": "rna_GizmoGroup_register: existing type may be removed only if ext.srna is nonnull AND unregister succeeds. Builtin ext.srna is null, so return nullptr before replacement.",
+  "same_id_gizmo_registration": "rna_Gizmo_register uses same ext.srna AND unregister gate; native button_2d cannot be replaced by supported RNA class registration.",
+  "idname_mutation": "rna_GizmoGroup_bl_idname_set and rna_Gizmo_bl_idname_set copy only when existing type idname is empty; nonempty existing identifier stays unchanged.",
+  "limits": [
+    "This resolves the ordinary RNA duplicate-registration spoof vector only; not arbitrary native memory injection or all possible Python reachability.",
+    "Separate supported empty-script-group preparation pixel counterexample remains a real source gap; resolving builtin registration does not erase it.",
+    "No new target runtime/device test from this source inspection."
+  ]
+}

@@ -1,0 +1,769 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T05:57:45.279550+00:00",
+  "status": "BOUNDED_SOURCE_TRACE_COMPLETE_PREMODAL_NAVIGATION_REACHABLE",
+  "repository": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial",
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "canonical_overlay_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "current_materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+  "current_gate": "Two gizmo preparation source guards are validating; this audit makes no production or test edits and does not start a build.",
+  "scope": "Ordinary physical Pencil precision one-finger Changed paired PAN versus native node-link drag and node movement. Unoccluded node WINDOW; no active hardware drag, Pencil paint ticket, Knife paired-PAN suppression, ring/HUD/pointer capture or other modal owner.",
+  "decisions": [
+    {
+      "case": "Already-live native node link",
+      "status": "NO_ACTIONABLE_NAVIGATION_FALLTHROUGH",
+      "finding": "node_link_modal consumes unmatched MOUSEPAN with RUNNING_MODAL. Its edge-pan helper ignores non-MOUSEMOVE. Normal View2D does not receive this paired PAN."
+    },
+    {
+      "case": "Already-live native node transform or translate_attach macro",
+      "status": "NO_ACTIONABLE_NAVIGATION_FALLTHROUGH",
+      "finding": "Unhandled PAN returns RUNNING_MODAL|PASS_THROUGH; WM maps this exact combination to BREAK|MODAL. The macro preserves nonterminal flags. Ordinary region navigation is skipped."
+    },
+    {
+      "case": "Before first CLICK_DRAG has acquired an owner",
+      "status": "SOURCE_REACHABLE_NAVIGATION_CHANGE",
+      "finding": "Physical Changed queues nonzero PAN before CURSOR. MOUSEPAN cannot synthesize CLICK_DRAG, so the preceding DOWN has no link/translate modal yet. The node WINDOW View2D keymap can immediately pan v2d.cur before the following cursor performs drag-threshold recognition. This is a concrete native source route; actual iPad frequency and effect are not measured."
+    },
+    {
+      "case": "Native advanced PAN controls",
+      "status": "PRESERVE",
+      "finding": "Circle uses TRACKPADPAN as SIZE and Transform uses it as PROPORTIONAL_SIZE under native polling. A blanket Pencil/tool-name PAN suppression would remove supported behavior."
+    }
+  ],
+  "event_trace": [
+    "Began resets cached translation, queues CURSOR_MOVE then LEFT_BUTTON_DOWN at the recognized current touch point. It does not predict or acquire node link/translate ownership.",
+    "Initial DOWN cannot match node.link or node.translate_attach because their evaluated ordinary left bindings require CLICK_DRAG. Box Select tool may select on PRESS; node selection remains nonmodal.",
+    "Changed with nonzero relative translation queues PAN_GESTURE followed by CURSOR_MOVE. Generator preserves event_list insertion order.",
+    "PAN_GESTURE becomes one-finger GHOST Trackpad Scroll with current coordinates and translation. WM maps it to MOUSEPAN, copies current coordinates into shared eventstate, and sets prev_xy from the delta.",
+    "ISMOUSE_MOTION only includes MOUSEMOVE/INBETWEEN_MOUSEMOVE; MOUSEPAN therefore cannot enter motion-only CLICK_DRAG synthesis.",
+    "With no higher-priority owner or occlusion, node WINDOW ED_KEYMAP_VIEW2D installs View2D. RNA TRACKPADPAN identifies MOUSEPAN; its default binding invokes view2d.pan. Native poll permits an unlocked node view. Apple guard only excludes File/Asset Shelf single-finger navigation.",
+    "view_pan_invoke computes prev_xy-xy, applies view-pan, frees temporary state and finishes. view_pan_apply_ex modifies v2d.cur immediately and requests redraw/mousemove.",
+    "Following CURSOR can cross drag threshold and synthesize CLICK_DRAG. node_link_invoke converts original drag-start pixels through the then-current v2d before node_link_init socket lookup. This ordering establishes a changed coordinate basis; this audit does not claim a guaranteed mislink or quantify the visible result.",
+    "Once link or transform modal exists, subsequent paired PAN has the bounded consumption/native-control behavior described above. Native release/confirm/cancel remain unchanged."
+  ],
+  "evidence": [
+    {
+      "source": "current",
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "lines": [
+        1071,
+        1081,
+        1105,
+        1127,
+        1137,
+        1714,
+        1747
+      ],
+      "fact": "Generator iterates stored event list; current ordinary Pencil producer emits CURSOR+DOWN on Begin and optional PAN before Changed CURSOR, terminal UP."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": [
+        9036,
+        9064,
+        9096,
+        8614,
+        8633
+      ],
+      "fact": "Trackpad Scroll maps to MOUSEPAN, mutates eventstate xy, and queue helper establishes prev_xy from explicit deltas; only adjacent same-type trackpad events coalesce."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/windowmanager/wm_event_types.hh",
+      "lines": [
+        432,
+        439
+      ],
+      "fact": "ISMOUSE_MOTION is only MOUSEMOVE and INBETWEEN_MOUSEMOVE."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": [
+        6074,
+        6085,
+        6108,
+        6116,
+        6148,
+        6155,
+        6225
+      ],
+      "fact": "CLICK_DRAG synthesis is motion-only and handled before the gesture branch. Each list computes a fresh local action."
+    },
+    {
+      "source": "pinned",
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": [
+        938,
+        953,
+        2162,
+        2209,
+        2213,
+        2285,
+        2302,
+        6608,
+        6623,
+        7169,
+        7185
+      ],
+      "fact": "Evaluated LEFT and RIGHT selection preferences both retain left CLICK_DRAG link and move bindings; node-link modal has no TRACKPADPAN mapping."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/space_node/node_select.cc",
+      "lines": [
+        689,
+        714,
+        815,
+        822
+      ],
+      "fact": "Selection is nonmodal and permits pass-through on PRESS; tweak box select refuses node/socket hit."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": [
+        5428,
+        5431,
+        6077,
+        6148,
+        6155,
+        6214,
+        6222,
+        6986,
+        7004,
+        7015,
+        7020
+      ],
+      "fact": "Selection HANDLED can locally clear drag, but later unhandled area/window list rearms on the same PRESS because HANDLED has no BREAK. Final aggregate clears CLICK only. Do not infer a global drag cancellation from one list."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/space_node/space_node.cc",
+      "lines": [
+        612,
+        637,
+        930,
+        942,
+        1806,
+        1812
+      ],
+      "fact": "Node WINDOW creates normal View2D and includes ED_KEYMAP_VIEW2D."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/editors/screen/area.cc",
+      "lines": [
+        2086,
+        2091
+      ],
+      "fact": "ED_KEYMAP_VIEW2D installs the ordinary View2D keymap."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/makesrna/intern/rna_wm.cc",
+      "lines": [
+        58,
+        242
+      ],
+      "fact": "TRACKPADPAN RNA identifier is MOUSEPAN."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "lines": [
+        117,
+        135,
+        165,
+        197,
+        232,
+        267
+      ],
+      "fact": "Native pan permits an unlocked view, applies MOUSEPAN immediately, changes cur and requests redraw. Existing Apple exclusion is File/Asset Shelf only."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/space_node/node_draw.cc",
+      "lines": [
+        1440,
+        1472,
+        1706,
+        1740,
+        3058,
+        3072
+      ],
+      "fact": "Socket hit rectangles are invisible Label tooltip buttons; node title is Label. Neither establishes a link modal at DOWN."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/editors/interface/interface_query.cc",
+      "lines": [
+        68,
+        85
+      ],
+      "fact": "Ordinary undraggable Label is not interactive except for tooltip lookup."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/editors/interface/interface_handlers.cc",
+      "lines": [
+        10340,
+        10372,
+        9264,
+        9274,
+        12878,
+        12920
+      ],
+      "fact": "Tooltip activation force-disables noninteractive labels; disabled UI returns CONTINUE. No active button route returns CONTINUE on PAN."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/editors/interface/interface_panel.cc",
+      "lines": [
+        2606,
+        2620
+      ],
+      "fact": "Non-PRESS MOUSEPAN does not become a panel click."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "lines": [
+        1395,
+        1416,
+        1419,
+        1483,
+        1578,
+        1611,
+        1622,
+        1628
+      ],
+      "fact": "Link invoke installs native modal only after socket lookup succeeds; modal returns RUNNING_MODAL for unmatched MOUSEPAN."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/interface/view2d/view2d_edge_pan.cc",
+      "lines": [
+        272,
+        280
+      ],
+      "fact": "Link edge-pan helper ignores all events except MOUSEMOVE."
+    },
+    {
+      "source": "current",
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": [
+        877,
+        881,
+        3762,
+        3775,
+        6897,
+        6932
+      ],
+      "fact": "MOUSEPAN is not always-pass; RUNNING_MODAL and RUNNING_MODAL|PASS block ordinary region handlers."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/transform/transform_ops.cc",
+      "lines": [
+        449,
+        495
+      ],
+      "fact": "Transform calls event/apply/end and retains RUNNING_MODAL in active state."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/editors/transform/transform.cc",
+      "lines": [
+        2219,
+        2257,
+        629,
+        635,
+        1225,
+        1239
+      ],
+      "fact": "Active end status is RUNNING_MODAL. Proportional-size poll/handler supports native PAN."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+      "lines": [
+        309,
+        328,
+        405,
+        415,
+        473
+      ],
+      "fact": "Native macro delegates modal to active child and preserves nonterminal flags."
+    },
+    {
+      "source": "pinned",
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "lines": [
+        6031,
+        6107
+      ],
+      "fact": "Native advanced PAN mappings: transform PROPORTIONAL_SIZE and circle SIZE."
+    },
+    {
+      "source": "pinned",
+      "path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "lines": [
+        351,
+        384
+      ],
+      "fact": "Circle modal SIZE derives radius from event vertical delta."
+    }
+  ],
+  "actual_source_execution": {
+    "kind": "Python default-keymap generator only",
+    "result": "PASS",
+    "details": "Executed exact cached keymap source without Blender for LEFT and RIGHT preference branches; asserted left node link/move require CLICK_DRAG, link modal contains no TRACKPADPAN, View2D maps TRACKPADPAN to pan. Params() itself defaults RIGHT; this audit does not mislabel it as the shipped preference.",
+    "evaluated_maps": [
+      {
+        "select_mouse_preference": "LEFT",
+        "left_drag_bindings": [
+          [
+            "node.link",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "detach",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "node.link",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG",
+              "ctrl": true
+            },
+            {
+              "properties": [
+                [
+                  "detach",
+                  true
+                ]
+              ]
+            }
+          ],
+          [
+            "node.translate_attach",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "TRANSFORM_OT_translate",
+                  [
+                    [
+                      "view2d_edge_pan",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ],
+          [
+            "transform.translate",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "release_confirm",
+                  true
+                ],
+                [
+                  "view2d_edge_pan",
+                  true
+                ]
+              ]
+            }
+          ]
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ],
+        "view_pan_binding": [
+          [
+            "view2d.pan",
+            {
+              "type": "TRACKPADPAN",
+              "value": "ANY"
+            },
+            null
+          ]
+        ]
+      },
+      {
+        "select_mouse_preference": "RIGHT",
+        "left_drag_bindings": [
+          [
+            "node.link",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "detach",
+                  false
+                ]
+              ]
+            }
+          ],
+          [
+            "node.link",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG",
+              "ctrl": true
+            },
+            {
+              "properties": [
+                [
+                  "detach",
+                  true
+                ]
+              ]
+            }
+          ],
+          [
+            "node.translate_attach",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "TRANSFORM_OT_translate",
+                  [
+                    [
+                      "view2d_edge_pan",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            }
+          ],
+          [
+            "transform.translate",
+            {
+              "type": "LEFTMOUSE",
+              "value": "CLICK_DRAG"
+            },
+            {
+              "properties": [
+                [
+                  "release_confirm",
+                  true
+                ],
+                [
+                  "view2d_edge_pan",
+                  true
+                ]
+              ]
+            }
+          ]
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ],
+        "view_pan_binding": [
+          [
+            "view2d.pan",
+            {
+              "type": "TRACKPADPAN",
+              "value": "ANY"
+            },
+            null
+          ]
+        ]
+      }
+    ]
+  },
+  "primary_sources": [
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "bytes": 439100,
+      "sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_relationships.cc",
+      "bytes": 91708,
+      "sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/space_node.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/space_node.cc",
+      "bytes": 61118,
+      "sha256": "33c210374b7ace6f779dd0d50a41276303634a251880a0448186c09fec197162"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_select.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_select.cc",
+      "bytes": 41373,
+      "sha256": "4d4ad210cfa20c6d3c034c2d77da6ad168736208bef8b3289fe49a871a6d0391"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_draw.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_draw.cc",
+      "bytes": 168799,
+      "sha256": "c9c71b32f27847ab91736d865d1cc3d759b31d16c870c3de2e0edbd232d33f23"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "bytes": 72860,
+      "sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_edge_pan.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/view2d/view2d_edge_pan.cc",
+      "bytes": 12133,
+      "sha256": "c9537a4d7a9d7b0289059384eb04618e7d22e894e58a3e1a6fb7e62ca1ba708a"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_query.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/interface_query.cc",
+      "bytes": 23554,
+      "sha256": "fd5e5fc1bf1f4fab5ae6bedb00da270bf6572e8b6a2c022c4701fefe03041e04"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_handlers.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/interface_handlers.cc",
+      "bytes": 399316,
+      "sha256": "ef6d9085893385c252fc008e50af10a0191449f2e0d25a09d80c98f72c48a65f"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_panel.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/interface_panel.cc",
+      "bytes": 97114,
+      "sha256": "a1b38d139a9668b65615672fef8f6bc38b962caf6c2221448a68bdefed1ebd1a"
+    },
+    {
+      "path": "source/blender/editors/transform/transform_ops.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/transform/transform_ops.cc",
+      "bytes": 52238,
+      "sha256": "57c909c28b5c78dba813db38ea8512eea2ccc0057ddf339bd559f2ff428f241f"
+    },
+    {
+      "path": "source/blender/editors/transform/transform.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/transform/transform.cc",
+      "bytes": 74246,
+      "sha256": "2f3ee60a00d0875ebd9ef90606d2300c3ba3a3705f76fd4605ac61dd6d61bf02"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_system.cc",
+      "bytes": 231881,
+      "sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_operator_type.cc",
+      "bytes": 18432,
+      "sha256": "cc227a37bcfe40c958f6cdc352966726d67b8c5343199a9c2de7b4e2c52f6707"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "bytes": 38222,
+      "sha256": "73576f004d32a7b76ca4bbd1615b7868ea2be14d8b5a6e67f58f12ed43c8bfcf"
+    },
+    {
+      "path": "source/blender/windowmanager/wm_event_types.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/wm_event_types.hh",
+      "bytes": 18763,
+      "sha256": "af50f513498701f4e34dcbc675da4418174ba0fef6a4a2c7c2d6c7e874717477"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_wm.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm.cc",
+      "bytes": 133468,
+      "sha256": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_api.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/WM_api.hh",
+      "bytes": 96531,
+      "sha256": "ab3039564d8cee642990423a8f360b5ea08e1b3c61e507d16a74537855877ca2"
+    }
+  ],
+  "current_sources": [
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/intern/GHOST_WindowIOS.mm",
+      "bytes": 150646,
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "bytes": 360934,
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    {
+      "path": "source/blender/editors/screen/area.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/screen/area.cc",
+      "bytes": 154812,
+      "sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_query.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/interface_query.cc",
+      "bytes": 23993,
+      "sha256": "3d9423fb2b5a3c041d48568fd931af5b2556d41f6c8bf5c58a14dc6b75e66d21"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_handlers.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/interface_handlers.cc",
+      "bytes": 468106,
+      "sha256": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd"
+    },
+    {
+      "path": "source/blender/editors/interface/interface_panel.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/interface_panel.cc",
+      "bytes": 97295,
+      "sha256": "71c12f7d42b6f93f2f1c14e9a941ba69e0aea73ae09f94a0369644bf2ab59f62"
+    }
+  ],
+  "remaining_proof": [
+    "No native C++ execution, stock GUI probe, target compilation, package change, simulator or iPad/Pencil observation was performed for this node audit.",
+    "The bounded route assumes an ordinary unoccluded unlocked Node WINDOW with no other modal/UI/gizmo owner; it does not generalize all customized tools, keymaps, callbacks or overlapping native panels.",
+    "The native source shows graph navigation before possible node drag acquisition. Guaranteed missed socket, exact pixels, failure frequency, comfortable interaction and device event timing remain unproved.",
+    "Current gizmo correction gate must close before any next production increment. No detached helper, tool-name suppression, code proposal or build is authorized by this report.",
+    "Any later correction needs positive controls for native Circle SIZE, Transform proportional size, intentional View2D/finger/external trackpad navigation, pointer coordinates/tablet/down/up and native history/lifetime ownership.",
+    "Already-live Knife/Paint contact guards, NativeLayer, GHOST/WM provenance and ownership, ring/header/default bars and all accepted UI contracts remain preserved."
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "native_build_started": false,
+  "device_acceptance": false,
+  "scheduling_followup": "Parent requested a separate read-only order-swap parity assessment after this primary report. It is not included as a production proposal."
+}

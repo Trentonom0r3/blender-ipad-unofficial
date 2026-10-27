@@ -3,3 +3,7 @@ patches/blender-ipad.patch text eol=lf
 
 # Historical regression snapshot has an asserted raw SHA-256; preserve its original CRLF bytes.
 build/tests/knife_pan_ghost/retained-connected-models.inc.cc -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Portable pinned historical source has an asserted raw SHA-256.
+build/tests/gizmo_prepare_historical_30da0be.cc text eol=lf
+build/tests/gizmo_prepare_historical_30da0be.json text eol=lf

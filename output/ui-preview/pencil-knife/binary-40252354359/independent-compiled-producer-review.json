@@ -1,0 +1,177 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_REVIEW",
+  "run": "40252354359",
+  "source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "binary_uuid": "FA474B4B-9C76-3BF5-A323-F7EDFC6742C0",
+  "binary_sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+  "reviewed_at_utc": "2026-10-26T05:57:21.412571+00:00",
+  "review_scope": "Actual arm64 GHOST physical pre-super Pencil receipt producer, registry and pending keyboard guards, recognize/omit state, ordinary handlePan paired-PAN omission and retained event generation. Native ownership/probe semantics and render/compositor implementation are separately reviewed.",
+  "method": "Independent read of fresh llvm-nm/nlist, llvm-objdump address-bounded assembly, Mach-O section/indirect-symbol metadata and actual dyld chained bindings; source consulted to name enum/ABI fields, never used as a substitute for actual instruction argument/branch evidence. No production/test edits or build.",
+  "issues": [],
+  "obligations": [
+    {
+      "name": "Exact binary and concrete layout/import identity",
+      "status": "PASS",
+      "evidence": [
+        "Fresh SHA256 and Mach-O LC_UUID match the exact requested image. See independent-producer-fresh-audit/binary-metadata.json.",
+        "nlist _OBJC_IVAR_$_GHOSTUIPanGestureRecognizer.* entries at 0x106623f48..0x106623f6c and actual int32 ivar words resolve ring_window=104, ring_origin=112, hud_origin=152, pencil_paint_origin=176, touch_admission=96, gesture_contact=24, pencil_knife_pan_origin=208, omit_knife_paired_pan=688, knife_pan_recognized=689, cached_translation=8.",
+        "Mach-O indirect symbol table resolves stub 0x104b75480 to _memcpy, 0x104b75474 to _memcmp, 0x104b755e8 to _objc_msgSendSuper2, and 0x104b71f7c to _CGRectContainsPoint. These are not arbitrary zlibVersion labels printed by generic disassembly."
+      ],
+      "conclusion": "Concrete storage/argument and helper identities are resolved independently of misleading nearest-symbol labels."
+    },
+    {
+      "name": "Physical first touch capture precedes superclass action delivery",
+      "status": "PASS",
+      "evidence": [
+        "0x1010a8d7c..0x1010a8d94 reads actual touch_admission.active, branches directly to superclass on existing active stream, or stores halfword 1 (active=true/interrupted=false) for fresh stream; 0x1010a8d98 clears prior Knife receipt through forgetKnifePanContact.",
+        "0x1010a8da0..0x1010a8dac requires touches.count == 1 before GestureContact.begin. Actual touch-device table at 0x10513b8f0 is [1,3,2,3] (UIKit Direct/Indirect/Pencil/IndirectPointer -> Finger/Indirect/Pencil/Indirect); type >=4 becomes Unknown.",
+        "0x1010a903c..0x1010a906c requires nonnull ring_window, recognizer view equal GHOST_WindowIOS view at +0xa8, and exactly one touch before origin processing.",
+        "0x1010a91e8..0x1010a9238 requires GestureContact.down byte +0x18 == 1, touch pointer +0x8 nonzero and equal the enumerated touch x25, stored device == 2, touch.type == 2, and touch.view == recognizer.view.",
+        "0x1010a923c..0x1010a9278 rejects captured ring, nonzero HUD generation, and nonfinite local x/y. 0x1010a9280..0x1010a9290 passes view bounds d0..d3 and exact original local x/y d4/d5 to actual CGRectContainsPoint. 0x1010a9294..0x1010a92e8 requires finite scaled x/y, CGRect result, and each coordinate between -2147483648 and 2147483647.",
+        "0x1010a92ec..0x1010a9304 passes exact window in x0, integer origin x/y in w1/w2 (from 0x1010a916c/170), GestureContact.serial in x3, and sret destination sp+0x50 in x8 to pencil_knife_pan_at_start.",
+        "0x1010a9308..0x1010a931c copies 473 meaningful bytes (through intent at +0x1d8, excluding tail padding) to self+208. Superclass call is later at 0x1010a9344, with self/current-class pair at sp+0x40, original touches and event restored in x2/x3. Actual selector reference 0x106623a60 rebases to cstring touchesBegan:withEvent:, superref 0x106623df8 rebases to this class 0x106624308, and imported stub is objc_msgSendSuper2."
+      ],
+      "conclusion": "Only this original physical Pencil actor can acquire the receipt, and the receipt is frozen before superclass action delivery."
+    },
+    {
+      "name": "Original contact identity, fresh serial and foreign contact handling",
+      "status": "PASS",
+      "evidence": [
+        "GestureContact.begin 0x1010a7350..0x1010a7364 refuses already-owned touch, zero identity and Unknown device. 0x1010a7368/36c stores device and identity; Pencil-only 0x1010a7370..0x1010a73b8 issues next serial, refuses exhaustion by serial zero; 0x1010a73c0/3c4 sets down=true.",
+        "Fresh touchesBegan existing-active branch 0x1010a8d88 -> 0x1010a9324 does not replace stored actor or origin.",
+        "Moved sample update 0x1010a95ac..0x1010a960c requires matching nonzero touch identity and Pencil device plus valid finite sample before updating stored pressure/tilts; foreign touches cannot relabel or update that actor.",
+        "Ended/cancelled update loops preserve the same identity guards at 0x1010a995c..0x1010a9978 and 0x1010a9db4..0x1010a9dd0. Actual super deliveries occur at 0x1010a9a74 and 0x1010a9ecc before matching-identity down=false at 0x1010a9afc..0x1010a9b14 and 0x1010a9f54..0x1010a9f6c."
+      ],
+      "conclusion": "Foreign samples/terminals do not replace, mutate, or end the original actor. Final matched sample is available during superclass terminal delivery. Additional active touches do not independently reacquire a Knife receipt; no claim is made about UIKit internal scheduling."
+    },
+    {
+      "name": "Shared registry registration, background disable and disposal clear",
+      "status": "PASS",
+      "evidence": [
+        "Fresh dyld-info resolves actual GOT slot 0x106368758 (encoded chained-fixup word 0x80100000000008EB) as weak bind __ZN5ghost3ios22pencil_knife_pan_probeE; independent nlist places its definition at 0x106658438, initialized with eight zero bytes. It is a chained bind, not a literal pointer to the encoded number.",
+        "wm_ghost_init 0x100b95fbc requires created system; 0x100b95fc0..0x100b95fd0 loads shared bound registry address and stores exact function pointer 0x100b96914. Registration precedes GHOST_AddEventConsumer at 0x100b95ff0. Existing-system entry returns at 0x100b95f88.",
+        "Fresh-background initialization 0x100b96c20..0x100b96c28 zeros same bound registry before GHOST_CreateSystemBackground 0x100b96c38. Existing system returns without replacing it.",
+        "wm_ghost_exit 0x100b96c74..0x100b96c7c zeros same bound registry before optional GHOST_DisposeSystem at 0x100b96c8c and global system clear at 0x100b96c90.",
+        "Both wrappers load this exact bound registry address at 0x1010a6804/6808 and 0x1010a6a90/6a94, require callback nonnull, then reload callback immediately before blr at 0x1010a6914/6928 and 0x1010a6b3c/6b50."
+      ],
+      "conclusion": "The inlined setter and both indirect callers resolve the same actual registry; normal init installs the native bridge, missing/background/shutdown registry refuses."
+    },
+    {
+      "name": "Keyboard queue helper is actually inlined at both acquisition phases",
+      "status": "PASS",
+      "evidence": [
+        "Capture 0x1010a6820 calls GHOST_ISystem::getSystem, refuses null system and system+0x20 manager; 0x1010a6830..0x1010a684c queries manager getNumEvents with w1=15 then w1=16 and branches to empty result on either nonzero count.",
+        "Recognition 0x1010a6aa4..0x1010a6ad0 likewise resolves system/manager and queries w1=15/16 before callback. Failure returns false at 0x1010a6ad4.",
+        "Fresh getNumEvents assembly at 0x101096c0c..0x101096ce0 walks manager pending-event deque; saved requested type w19 is compared to each virtual getType() result at 0x101096ca8..0x101096cb0 and equal matches increment count. Source enum plus actual ordinary KeyDown/Up generation stores 15/16 (e.g. 0x1010ab5ec/0x1010ab6f0) identify queried event types."
+      ],
+      "conclusion": "Missing helper symbol is explained by actual inlining. Pending GHOST KeyDown or KeyUp refuses both physical capture and recognition, rather than relying on stale WM state."
+    },
+    {
+      "name": "Start wrapper requires a live receipt and preserves exact physical origin",
+      "status": "PASS",
+      "evidence": [
+        "0x1010a67f4 saves caller sret x8; 0x1010a67f8 and 0x1010a6800 require window x0 and serial x3. 0x1010a68c0/68c4/68c8 builds original.serial/origin_x/origin_y in otherwise-zero 480-byte local.",
+        "0x1010a6918..0x1010a6928 passes callback(window=x23, capture=true w1=1, original=sp+0x1e0 x2, result=sp x3). False callback -> zero result.",
+        "0x1010a6934..0x1010a6980 validates result.serial, content, intent byte +0x1d8 == 2, tool_ref +0x10 == 0, and owner words at +0x120/+0x130/+0x150/+0x1a8/+0x1b8 all nonzero. 0x1010a6984..0x1010a69a4 requires original serial and both original coordinates.",
+        "Success 0x1010a69a8..0x1010a69b4 memcpy-copies 480-byte result to caller sret destination. Every refusal joins 0x1010a69bc..0x1010a6a00 zeroing complete meaningful result."
+      ],
+      "conclusion": "Tool/None or no-owner callback results cannot arm omission; default/no-handler acquisition stays fallback. This wrapper does not predict a future Knife handler."
+    },
+    {
+      "name": "Recognition wrapper requires unchanged full owner and scope receipt",
+      "status": "PASS",
+      "evidence": [
+        "0x1010a6a40..0x1010a6a8c requires nonnull window and valid original serial/content/Live intent/zero tool_ref/all five owner-presence words; absent original returns false.",
+        "0x1010a6b40..0x1010a6b50 calls same registry callback with exact window x0=x20, capture=false w1=0, original x2=x19, fresh zeroed result x3=sp.",
+        "0x1010a6b54..0x1010a6ba4 rejects callback failure or invalid returned result. 0x1010a6ba8..0x1010a6be8 compares returned/original serial, content, zero original tool_ref and both integer origins.",
+        "0x1010a6bec..0x1010a6c00 invokes actual memcmp(result+0x20, original+0x20, 256) for all 32 scope words; nonzero refuses. 0x1010a6c04..0x1010a6c14 invokes actual memcmp(result+0x120, original+0x120, 184) for all 23 owner words; nonzero refuses. 0x1010a6c18..0x1010a6c20 requires original intent==2, already required for result."
+      ],
+      "conclusion": "Recognition authorizes omission only for the same complete original owner/scope value receipt, never a replacement owner or a newly available handler. Native bridge generation/owner provenance is a separate review obligation."
+    },
+    {
+      "name": "Recognize once and frozen omission are concrete ivar operations",
+      "status": "PASS",
+      "evidence": [
+        "0x1010aa15c..0x1010aa170 reads/writes actual recognized byte self+689; repeated recognize call returns at 0x1010aa204.",
+        "0x1010aa174..0x1010aa1b4 requires matching stored Pencil actor down/touch/device and exact GestureContact.serial == origin.serial. 0x1010aa1c4..0x1010aa1dc passes ring_window and self+208 original to recognition wrapper.",
+        "0x1010aa1e0..0x1010aa200 stores wrapper boolean (or false from any guard) into actual omit byte self+688; 0x1010aa208..0x1010aa214 simply reads that same byte."
+      ],
+      "conclusion": "Decision is frozen once at ordinary Pencil Began; Changed retains it and later native modifiers remain in the ordinary native event path."
+    },
+    {
+      "name": "Reset/interruption clear receipt and frozen decision",
+      "status": "PASS",
+      "evidence": [
+        "forgetKnifePanContact 0x1010aa0ec..0x1010aa13c zeros full meaningful receipt through byte +0x1d8 at actual self+208; 0x1010aa140..0x1010aa154 separately zeros omit and recognized.",
+        "reset calls forget at 0x1010a9fd4, zeros ring/HUD/paint, touch-admission active+interrupted, GestureContact identity/serial/down/samples at 0x1010a9fd8..0x1010aa04c, calls actual superclass reset at 0x1010aa068, then clears cached translation at 0x1010aa080.",
+        "invalidateTouchStream always calls forget at 0x1010aa0c0, then if active byte==1 sets interrupted at 0x1010aa0d0..0x1010aa0dc. touchStreamAllowed at 0x1010aa094..0x1010aa0ac returns inverted interrupted byte.",
+        "cancelPointerCapture 0x1010ad0e8..0x1010ad104 sends invalidateTouchStream to both tap and pan recognizer actual fields (pan_gesture_recognizer ivar symbol at 0x106623f78). handlePan first tests touchStreamAllowed and returns at 0x1010ad334/338 if refused."
+      ],
+      "conclusion": "Interrupted old tails cannot reuse a Knife omission decision. Idle invalidation clears Knife state without permanently refusing a later fresh stream."
+    },
+    {
+      "name": "Higher-priority and ordinary/finger routing precede recognition",
+      "status": "PASS",
+      "evidence": [
+        "handlePan 0x1010ad330..0x1010ad3ac handles admission and existing mouse-button drag rejection first. 0x1010ad3e4 saves gestureUsesPencil result x28.",
+        "Ring capture handling 0x1010ad468..0x1010ad6b0 returns captured/ended ring streams. Tablet snapshot and native pointer/HUD capture paths 0x1010ad6b4..0x1010ada68 either consume their stream or reach ordinary route only with pointer kind zero and ended=false.",
+        "0x1010ada6c tests Pencil result; non-Pencil jumps to finger/flythrough branch 0x1010adb08, which never calls recognizeKnifePan. Only Pencil ordinary route tests state==1 at 0x1010ada7c and calls recognizeKnifePan at 0x1010ada88, then reads omit at 0x1010ada90."
+      ],
+      "conclusion": "Existing hardware/ring/HUD/navigation/tool captures and finger/flythrough paths keep their earlier routing; Knife probe does not acquire them."
+    },
+    {
+      "name": "Only paired PAN event-list insertion depends on Knife omission",
+      "status": "PASS",
+      "evidence": [
+        "Event record at sp+0x50: count +0x28, location +0x30, translation +0x40, Pencil/valid flags +0x58/+0x59, tablet +0x5c, cancelled +0x6d, native direct flags +0x6e/+0x6f, generation fields +0x70..+0x80 and paint contact +0x88. 0x1010ada94 saves omit only in x21; no Knife identity or omit field is added to UserInputEvent.",
+        "0x1010adab0/ab4 clears translation/distance; 0x1010adaac preserves exact scaled point. 0x1010adab8..0x1010adac8 sets Pencil/valid bytes to 1 and copies unchanged gesture tablet. Paint receipt is independently copied at 0x1010adad0..0x1010adbc8.",
+        "Began 0x1010adbfc..0x1010adc20 sets cached translation and event list literal [0,5] from actual bytes at 0x104fc5ac8; count=2. Thus CURSOR_MOVE then LEFT_BUTTON_DOWN are emitted regardless of omit.",
+        "0x1010adc28..0x1010adc4c always computes relative translation and updates cache. Paint-valid check 0x1010adc50..0x1010adc74 and omit test 0x1010adc78 skip only PAN insertion block 0x1010adc7c..0x1010adca0. Nonzero deltas store translation then enum1 PAN and count. Zero delta also skips that block.",
+        "Changed state==2 at 0x1010adca4..0x1010adcc4 always appends enum0 CURSOR_MOVE after the PAN decision. Terminal state3/4/5 at 0x1010ade34..0x1010adea8 always appends enum6 LEFT_BUTTON_UP; cancelled byte depends only on valid paint receipt and terminal != Ended, not Knife omission.",
+        "All ordinary branches join generateUserInputEvents at 0x1010adf6c..0x1010adf74 with the same record. No call to native action/WM mutation is introduced on the omit branch."
+      ],
+      "conclusion": "The decision suppresses only paired one-finger trackpad PAN synthesis. Cursor/down/up, absolute coordinates, tablet/flag propagation, cache progression and ordinary terminal behavior remain on compiled paths."
+    },
+    {
+      "name": "Generator retains ordinary cursor/button/trackpad argument flow",
+      "status": "PASS",
+      "evidence": [
+        "0x1010ab138..0x1010ab184 chooses record tablet snapshot when Pencil+snapshot_valid, otherwise current tablet for Pencil or actual none constant for non-Pencil, then copies paint receipt separately. Event list/count are read at 0x1010ab1a4 and 0x1010ab2a8. There is no read of recognizer Knife ivars or omission here.",
+        "Untagged ordinary pointer records pass existing paint-owner gate (0x1010ab430..0x1010ab540) when no prior paint contact owns pointer; retained tagged-paint guards remain. This bounded review does not disable their existing arbitration.",
+        "PAN enum1 0x1010ab39c..0x1010ab42c loads absolute x/y and relative dx/dy from record +0x30/+0x40, converts to integers, creates GHOST event type5 with trackpad type1, inverted=false byte at +0x3c, fingers=1 at shared 0x1010ab280/284, and queues via GHOST_System::pushEvent at 0x1010ab294.",
+        "LEFT_BUTTON_DOWN enum5 0x1010ab904..0x1010ab9e8 creates GHOST type2 and left mask1; copies snapshot from generator sp+0x70, direct_tool/direct_finger and generation fields from record +0x6e/+0x6f/+0x70/+0x78/+0x80 and copied paint provenance. Cancelled is false at 0x1010ab9a0.",
+        "CURSOR_MOVE enum0 0x1010aba30..0x1010abb1c stores actual record position, converts x/y, creates GHOST type1, and copies identical tablet/direct/generation/paint payload. LEFT_BUTTON_UP enum6 0x1010abbe0..0x1010abc98 creates type3 left mask1, copies same snapshot/provenance and actual cancelled byte +0x6d. Both queue through GHOST_System::pushEvent."
+      ],
+      "conclusion": "Existing shared-pointer paint arbitration and normal cursor/button payloads are retained; the Knife receipt is suppression-only and never rewrites ordinary event identity or flags."
+    }
+  ],
+  "deliberate_fallbacks": [
+    "No handler at physical Begin, pending/default/same-batch first DOWN, custom first-DOWN mappings, invalid or replacement original owner, missing probe/system/manager, pending key event, invalid/foreign/off-view/nonfinite origin: no acquired valid Live receipt and ordinary PAN fallback. The inherited no-handler/same-batch gap is deliberately NOT fixed or claimed fixed.",
+    "Once ordinary Began has frozen a valid omission receipt, Changed uses it; this is intentional so later native Knife modifiers remain native. No re-probe on every Changed is claimed."
+  ],
+  "limits": [
+    "Bounded static actual compiled evidence in the exact image under its normal dyld bindings. Not execution on an iPad, UIKit recognizer scheduling validation, latency/performance/thermal/battery proof or exact device acceptance.",
+    "Does not claim a global CFG/heap/interposition proof, all possible callbacks, or whole-binary semantic equivalence. EventManager virtual type calls are inspected structurally, not a whole-program proof of every possible GHOST_IEvent subclass.",
+    "Native bridge owner/lifetime/generation/content receipt provenance and render/compositor/higher-UI proofs are separately assigned. This producer PASS alone is not a readiness decision or completion of the full personal goal.",
+    "Existing raw knife-call-sites.json and raw automated retained-gate reports are preserved unchanged. No source/test weakening, build dispatch, or production changes occurred."
+  ],
+  "evidence_directory": "independent-producer-fresh-audit",
+  "evidence_files": [
+    "binary-metadata.json",
+    "contact-begin.asm",
+    "key-event-count.asm",
+    "ordinary-event-generation.asm",
+    "pan-routing-and-events.asm",
+    "physical-touch-begin.asm",
+    "pointer-capture-cancel.asm",
+    "producer-ordinary-precision.asm",
+    "recognizer-accessors.asm",
+    "recognizer-move-end-cancel.asm",
+    "recognizer-reset-omit.asm",
+    "registry-background-exit.asm",
+    "registry-init.asm",
+    "selected-dyld-bindings.txt",
+    "selected-symbols.txt",
+    "start-recognize-wrappers.asm"
+  ]
+}

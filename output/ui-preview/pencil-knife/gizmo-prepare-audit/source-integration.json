@@ -1,0 +1,60 @@
+{
+  "status": "PASS_RAW_GIT_TWO_TARGET_INTEGRATION_VALIDATION_PENDING",
+  "utc": "2026-10-26T06:06:11.094402+00:00",
+  "baseline_source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "baseline_patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "candidate_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "raw_git_exact_targets": 136,
+  "changed_targets": [
+    "source/blender/editors/screen/screen_ipad_panels.cc",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc"
+  ],
+  "prior_sections_exact": 134,
+  "all7_ui_python_exact": true,
+  "all13_ghost_exact": true,
+  "contexts": {
+    "source/blender/editors/screen/screen_ipad_panels.cc": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prior_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": {
+      "original_sha256": "8972be7c7824a0827d0e447c225f0264808f4f78dffc831c0ae0a5bf3b09a9dc",
+      "prior_context_ranges": [
+        [
+          0,
+          1487
+        ]
+      ],
+      "candidate_context_ranges": [
+        [
+          0,
+          1487
+        ]
+      ]
+    }
+  },
+  "changed_before_after_sha256": {
+    "source/blender/editors/screen/screen_ipad_panels.cc": {
+      "before": "1accb93cd599da25a13cb3ed9a03843d45f6e1bb59f206e45b6a5a368aee7c84",
+      "after": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404"
+    },
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": {
+      "before": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f",
+      "after": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7"
+    }
+  },
+  "source_scope": "Opaque script group callback metadata reserves preparation pixels before callbacks; fresh hierarchy refuses even empty groups. Native builtin groups untouched. Tests/native build/package/device pending."
+}

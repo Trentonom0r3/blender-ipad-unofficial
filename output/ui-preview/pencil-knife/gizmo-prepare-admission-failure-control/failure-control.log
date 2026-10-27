@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\tests\gizmo_prepare_admission_models.py", line 98, in <module>
+    exec(compile(ast.Module(body=bridge_ast.body[:main_index], type_ignores=[]), str(bridge_driver), 'exec'), namespace)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\tests\knife_pan_bridge_models.py", line 44, in <module>
+    wm=read('source/blender/windowmanager/intern/wm_event_system.cc');draw=read('source/blender/windowmanager/intern/wm_draw.cc');space=read('source/blender/editors/space_api/spacetypes.cc');knife=read('source/blender/editors/mesh/editmesh_knife.cc')
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\tests\knife_pan_bridge_models.py", line 15, in read
+    def read(p):return (ROOT/p).read_text(encoding='utf-8')
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\pathlib\_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\pathlib\_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\pathlib\_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-failure-control\\missing-source\\source\\blender\\windowmanager\\intern\\wm_event_system.cc'
+Exception ignored in atexit callback <function failed_report at 0x000001A34E5CA840>:
+Traceback (most recent call last):
+  File "D:\dev\Projects\Repos\blendpad\blender-ipad-unofficial\build\tests\gizmo_prepare_admission_models.py", line 38, in failed_report
+    run_nonce=OPT.run_nonce, script_sha256=sha(Path(__file__).read_bytes()),
+NameError: name '__file__' is not defined

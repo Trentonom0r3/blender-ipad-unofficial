@@ -1,0 +1,71 @@
+{
+  "status": "completed",
+  "started_utc": "2026-10-26T06:00:40.485636+00:00",
+  "completed_utc": "2026-10-26T06:00:46.042708+00:00",
+  "host_version": "5.1.2",
+  "host_build_hash": "ec6e62d40fa9",
+  "host_binary": "D:\\Program Files\\blender.exe",
+  "background": false,
+  "callback_counts": {
+    "poll": 4,
+    "setup": 1,
+    "draw_prepare": 2
+  },
+  "samples": [
+    {
+      "callback": "setup",
+      "gizmo_count": 0
+    },
+    {
+      "callback": "draw_prepare",
+      "gizmo_count": 0,
+      "region": [
+        2,
+        84,
+        1048,
+        683
+      ],
+      "viewport": [
+        0,
+        0,
+        1048,
+        683
+      ]
+    },
+    {
+      "callback": "draw_prepare",
+      "gizmo_count": 0,
+      "region": [
+        2,
+        84,
+        1048,
+        683
+      ],
+      "viewport": [
+        0,
+        0,
+        1048,
+        683
+      ]
+    }
+  ],
+  "errors": [],
+  "gizmo_created_by_probe": 0,
+  "space_type": "VIEW_3D",
+  "group_options": [
+    "PERSISTENT"
+  ],
+  "gpu_operation": "UNIFORM_COLOR triangle batch, magenta rectangle, NDC [-0.6,-0.4] to [0.6,0.4], directly in draw_prepare; no gizmo draw callback",
+  "canvas": {
+    "x": 2,
+    "y": 84,
+    "width": 1048,
+    "height": 683
+  },
+  "screenshots": [
+    "baseline.png",
+    "empty-group-draw-prepare.png",
+    "after-unregister.png"
+  ],
+  "scope": "Stock Windows Blender host only; no target iOS/device acceptance; no production/source/test edits"
+}

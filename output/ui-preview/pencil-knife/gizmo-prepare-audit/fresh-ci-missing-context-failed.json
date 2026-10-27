@@ -1,0 +1,23 @@
+{
+  "status": "FAILED_FRESH_CI_SEQUENCE",
+  "started_utc": "2026-10-26T06:22:45.893540+00:00",
+  "fresh_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\gizmo-prepare-fresh-ci-corrected-ayo7wpjm",
+  "copied_files": 212,
+  "patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "empty_cache": true,
+  "steps": [
+    {
+      "name": "pinned-preflight",
+      "exitcode": 0,
+      "log": ".cache\\gizmo-prepare-fresh-ci-corrected-pinned-preflight.log"
+    },
+    {
+      "name": "preparation-regression",
+      "exitcode": 1,
+      "log": ".cache\\gizmo-prepare-fresh-ci-corrected-preparation-regression.log"
+    }
+  ],
+  "no_ignored_implementation_dependency": true,
+  "device_acceptance": false,
+  "prior_setup_error": "Initial copy omitted build-ipa.yml which defines the pin; preserved failed report/log, not a production/CI failure."
+}

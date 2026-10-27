@@ -1,0 +1,37 @@
+{
+  "status": "PASS_FOUR_INPUT_COLD_CI_EXACT_DRIVER_APPLIED",
+  "utc": "2026-10-27T05:50:40.542799+00:00",
+  "fresh_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\gizmo-prepare-four-input-cold-ci-0cm_g_8t",
+  "copied_files": 212,
+  "cache_initially_empty": true,
+  "worktree_driver_unmodified": false,
+  "provisional_driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012",
+  "production_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "steps": [
+    {
+      "name": "preflight",
+      "exitcode": 0,
+      "log": ".cache\\gizmo-prepare-four-input-cold-preflight.log"
+    },
+    {
+      "name": "preparation",
+      "exitcode": 0,
+      "log": ".cache\\gizmo-prepare-four-input-cold-preparation.log"
+    }
+  ],
+  "device_acceptance": false,
+  "prerequisites_missing_after_preflight": {
+    "source/blender/blenkernel/intern/context.cc": true,
+    "source/blender/blenkernel/intern/workspace.cc": true,
+    "intern/ghost/intern/GHOST_EventManager.cc": true,
+    "intern/ghost/intern/GHOST_System.hh": true
+  },
+  "fetched_primary_sha256": {
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "source/blender/blenkernel/intern/workspace.cc": "468a7de619d2436671ef874b1f4b02112ced612730ad0aa7e1e8a28c35d65ea8",
+    "intern/ghost/intern/GHOST_EventManager.cc": "7e30dde27bc20cb20fb7e7b59c861d3ae0b8e65dc64c898f3d4b18fc76e93736",
+    "intern/ghost/intern/GHOST_System.hh": "705bb28328518627b59e3358f8cd1e7942c99401fc520c92843b1f4a67e95007"
+  },
+  "finished_utc": "2026-10-27T05:51:37.554963+00:00",
+  "worktree_driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012"
+}

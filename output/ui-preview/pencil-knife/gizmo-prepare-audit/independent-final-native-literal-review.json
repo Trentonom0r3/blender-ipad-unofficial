@@ -1,0 +1,135 @@
+{
+  "status": "PASS_FINAL_NATIVE_SOURCE_AND_LITERAL_CONTRACT_REVIEW",
+  "created_utc": "2026-10-26T06:18:55.613822+00:00",
+  "reviewer": "Independent final native and literal-contract reviewer, /root/gizmo_prepare_final_review",
+  "candidate_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "baseline_revision": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "baseline_patch_sha256": "2be762dedb0f15238beb6f5a5cc77d09edcc62210cf3beced3cb9cb3bbc6c912",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "ready_for_device_or_delivery": false,
+  "conclusion": "The exact two-source correction closes the supported empty/hidden/scripted GizmoGroup preparation-pixel admission hole at source level without changing native callback order, rendering selection, accepted UI, or ordinary precision event packets. No source blocker found. This review alone does not validate the complete corrected candidate or authorize a ready/device claim.",
+  "raw_git_scope": {
+    "targets": 136,
+    "changed_targets": [
+      "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+      "source/blender/editors/screen/screen_ipad_panels.cc"
+    ],
+    "unchanged_sections": 134,
+    "all7_ui_python_exact": true,
+    "all13_ghost_exact": true
+  },
+  "source_sha256": {
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404",
+    "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c"
+  },
+  "inspected_input_sha256": {
+    "AGENTS.md": "030f9e762cdda69a96fd7d744fb4fb28bffcf07d7e2b2e547ba44cf1246c4c6f",
+    "docs/PRODUCT_DIRECTION.md": "e1de71bf7810425f46826cdc0dfab4cf4b5d2090100042b4f6bc39c4dad684bc",
+    "docs/IPAD_WORKSPACE.md": "b149626408e694fd49e134c81125ff98e04ae0e3d482201ca5db1525cda6a157",
+    "docs/PROJECT_HANDOFF.md": "d1126afe05a5083f05ed31a0313f5090497ce96f18a373cddf018d058d93b9fa",
+    "build/test_pencil_gizmo_prepare_admission.py": "ec4924d4a45ee25fd909e06c388170adc2154a22e312912d3c950ef8d7cb067e",
+    "build/tests/gizmo_prepare_admission_models.py": "cbb00c733823c3b4c7d9944be49d5cbd8a2c00051ec6c2c3b28be09dddc81706",
+    "build/tests/gizmo_prepare_historical_30da0be.cc": "f36d8b15a8d473f62e4a2bed30514d938bd91da15810409f6c5dde6aae180910",
+    "build/tests/gizmo_prepare_historical_30da0be.json": "ecea905b7b82e0ecc2709b3565175581ddd7a479f2e1050da7f8df79d8e4bea1",
+    "build/test_pencil_knife_hud_receipts.py": "47d2959602eb12f4d2c7fc50ed8d04e328728e8de7eebf74925bb4ea8c6e08e9",
+    "build/tests/knife_pan_bridge_models.py": "954477069ff0e200cf70feca669db12a66b23d1945f6ace2111124124a37c992",
+    ".github/workflows/preflight.yml": "7ed9482153e5e83838dc7b907f8e172ac9cda31734c7b31f478af1e7ec332286",
+    "output/ui-preview/pencil-knife/gizmo-prepare-audit/evidence.json": "e1dd95358601e84c8618938425eb90aea22fe7e126407270f7ecc26bb7653fc2",
+    "output/ui-preview/pencil-knife/gizmo-prepare-audit/source-integration.json": "49957d693b293d9d1c333484b8558a7d991dccd4d1c2ed90788b9dfe76d6b544",
+    "output/ui-preview/pencil-knife/gizmo-prepare-audit/independent-correction-contract-review.json": "2de0518dc5edde58c6d6b9505896d4ec1dca9d2079cdad9224963f9b2799cab3",
+    "output/ui-preview/pencil-knife/gizmo-prepare-audit/retained-model-metadata-proof.json": "d4b135068201f646a19a9a5dcae3e719e723777ca421f035d6399d26ffa63ba6",
+    "output/ui-preview/pencil-knife/gizmo-prepare-admission-final/test-results.json": "ecec4277e039b1de4d1633af4d392083914bc6cb282566c6b59c88d993c72c6e",
+    ".cache/gizmo-prepare-retained-pan.log": "848a1967819c220ee4cf8d3e94d1ba0d804ba5df927bee946778c89def21847d",
+    ".cache/gizmo-prepare-retained-hud.log": "555c1e02f52cb4317198de55214a381b04e3498b435c2be6df9afa9d570ac44c",
+    ".cache/gizmo-prepare-preflight.log": "e0d4ff63569532350c78742f63974c8789e2febced54ca17a5a59835fca0ce33"
+  },
+  "native_source_checks": [
+    {
+      "status": "PASS",
+      "site": "wm_gizmo_map.cc:392-414",
+      "finding": "New Apple-only metadata check runs immediately after the flag-only drawstep gate and before modal exclusion, group poll, initialization/setup/keymap/refresh, hide gate, draw_prepare, or per-gizmo selection. Both Finger overlay and Knife unknown-widget flags become true before opaque callback entry. It does not depend on nonempty gizmos, successful poll, draw_prepare presence, or eventual selected draw."
+    },
+    {
+      "status": "PASS",
+      "site": "pinned wm_gizmo_group.cc:240-270,299-312,1240-1253",
+      "finding": "Drawstep visibility only examines drawstep/type flags. The existing actual poll and initialization functions can reach script callbacks before the gizmo list. No callback order, update flag, callback argument, modal rule, draw list, or return value is changed."
+    },
+    {
+      "status": "PASS",
+      "site": "pinned RNA_types.hh:1023 and rna_wm_gizmo.cc:789-916; WM_gizmo_types.hh:459",
+      "finding": "rna_ext.call is an existing function-pointer field on the actual pinned wmGizmoGroupType. Supported RNA/Python registration assigns it together with whichever poll/setup/keymap/refresh/draw_prepare trampoline is installed. Reading it requires no new API, callback or include. C++17 permits the added pointer tests/region declaration, and existing complete runtime fields were already used in this translation unit."
+    },
+    {
+      "status": "PASS",
+      "site": "screen_ipad_panels.cc:831-916",
+      "finding": "Current visible WINDOW hierarchy traversal unconditionally makes settled false for any nonnull scripted group type, including empty, hidden, uninitialized, newly added, removal-tagged and navigation-named modeled groups. The condition is independent of known_navigation. No poll, setup, draw, hit, or RNA lookup is invoked. Invisible regions do not contribute visible pixels; visibility and region geometry are already snapshot state."
+    },
+    {
+      "status": "PASS",
+      "site": "screen_ipad_panels.cc:1005-1064,2570-2592 and wm_draw.cc:699-729,1206-1290,1493-1511",
+      "finding": "Existing full-draw stamp captures unknown-widget evidence before the onscreen runtime reset. The cached texture retains that stamp. Composition carries the stamp and adds post-blit unknown facts; fresh admission requires complete/current settled hierarchy and rejects buffer/composition/runtime unknown evidence. Script removal cannot clear old pixels; a completed clean full redraw can clear the old stamp with a new content identity. Partial redraw cannot mint valid clean exposure."
+    },
+    {
+      "status": "PASS",
+      "site": "pinned wm_gizmo_group_type.cc:65-116 and rna_wm_gizmo.cc:848-863",
+      "finding": "Native builtin type allocation is zeroed; ordinary builtin rna_ext.call remains null. Native navigation registration is not replaced through supported RNA duplicate registration: its extension srna is null and the duplicate path refuses replacement. Arbitrary injected native callbacks or pointer corruption are outside this fixed-pin claim."
+    },
+    {
+      "status": "PASS_WITH_EXISTING_DRAW_INVARIANT",
+      "site": "wm_gizmo_map.cc:407-412; pinned blenkernel/intern/screen.cc:350-390,1324",
+      "finding": "The new mark checks the current region but relies on its runtime allocation, as the existing selected-gizmo marker and surrounding draw pipeline do. Pinned new/copy/blend-read paths allocate ARegionRuntime and the actual region draw loop dereferences it before reaching gizmo drawing. The proposed contract wording mentioned guarding runtime separately; no supported live draw route with region and absent runtime was found. No new pointer is retained across callbacks."
+    },
+    {
+      "status": "PASS",
+      "site": "two-source diff",
+      "finding": "The new operations only read existing type metadata and write existing boolean exclusion facts. No allocation, owner transfer, deferred pointer, teardown route, native operator call, callback invocation or callback-suppressing branch was introduced."
+    }
+  ],
+  "literal_user_contract": {
+    "status": "PASS_UNCHANGED",
+    "nine_base": "Layout / Mode, More Tools, Undo, Redo, Select, Move, Rotate, Scale, Cursor remain exact; same native Tools geometry/style/icons/empty center and native-only compatible remaining inventory.",
+    "ui_evidence": "All seven Python UI patch sections are byte-exact against production30da0be; the only changed native screen line is hierarchy admission. No ring/HUD/panel/bar/header/toolbar/icon/Inspector/Files/keyboard/Undo/Cancel UI definition or draw geometry changed.",
+    "input_evidence": "All thirteen GHOST patch sections and the remaining134 sections are exact. No pointer coordinates, pressure/tilt/tablet data, cursor/down/up/terminal packet, normal PAN producer, original-owner selection or ordinary precision stream is changed. The intended effect is conservative suppression-admission refusal when script pixels cannot be bounded.",
+    "stationary_hover_barrel_contact": "Existing accepted contact browsing, Pencil-barrel Home/reset, stationary hover and persistent ring choices remain unchanged."
+  },
+  "focused_regression_review": {
+    "status": "PASS_FINAL_REPORT_AND_ACTUAL_TEST_REVIEW",
+    "report": "output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-final\\test-results.json",
+    "report_sha256": "ecec4277e039b1de4d1633af4d392083914bc6cb282566c6b59c88d993c72c6e",
+    "current_cases": 52,
+    "historical_expected_failures": 6,
+    "optimizations": [
+      "O0",
+      "O2"
+    ],
+    "source_hashes_match_authoritative_materialization": true,
+    "actual_bodies": "Complete preparation, flag visibility/poll/init helpers, native hierarchy/capture/probe/stamp chain and full area draw loop execute in the fixture.",
+    "controls": "Poll false output, setup/refresh hide/unlink, final-gizmo removal, modal exclusions, drawstep skip, native ext.call-null parity, hidden/uninitialized/new/removal-tagged/navigation-name current groups, cached removal/runtime reset/full redraw/partial refusal.",
+    "historical_provenance": "Both historical complete functions were independently reconstructed from raw Git30da0be patch using the unchanged pinned reader and compared exactly with frozen historical source. Final driver pins old patch/fixture SHA literals, requires precise assertion stderr and prior stdout state witness for each expected failure. All six final failures are those intended assertions, not arbitrary nonzero exits.",
+    "freshness": "Wrapper requires nonce, start time, current wrapper/driver/bridge hashes, exact58 results/current26 cases and all passed; driver archives prior report and emits explicit incomplete/failure status on exception/compile failure.",
+    "boundaries": "Native-shaped objects/lists/registration/allocation, per-gizmo selection and GPU pixel storage are explicit model boundaries. Self-removal unlinks a still-live fixture object; it does not prove native allocator safety. Modeled17-pixel emissions are not GPU measurements. Real171444-pixel counterexample remains separately evidenced on stock Windows Blender5.1.2, not target iOS."
+  },
+  "retained_evidence_reviewed": {
+    "pan": "149/149 in30.055s, actual log ends OK",
+    "hud": "68/68 in65.001s, actual log ends OK",
+    "retained_model_scope": "Only default-null rna_ext.call metadata was added in two retained model declarations; diff and retained metadata proof preserve all previous assertions. Historical CRLF fixture unchanged.",
+    "source_preflight": "Actual log reports patch applies to136 pinned source files and plist/script syntax valid. This is source preflight only."
+  },
+  "inherited_fixture_reader_discrepancy": {
+    "path": "source/blender/editors/object/object_modes.cc",
+    "finding": "Full136 comparison with changed_source reader found only already-preserved WM_api.hh include placement difference: fixture reader puts it near WM_toolsystem.hh, actual Git materialization has it at EOF. The exact patch section is unchanged in this candidate; both changed review targets match the authoritative Git materialization.",
+    "prior_evidence": "output/ui-preview/pencil-knife/integration-audit/unchanged-object-mode-reader-discrepancy.diff",
+    "claim_limit": "Do not claim changed_source reproduces all136 authoritative files byte-for-byte. Raw Git section invariance and actual changed-target bytes are independently confirmed."
+  },
+  "full_suite_observed_at_review": {},
+  "remaining_required_gates": [
+    "Complete exact frozen full current host suite and final unchanged-input/preflight/diff checks.",
+    "Commit coherent corrected source/tests and obtain exact-source native iOS Release/package verification before a delivery claim.",
+    "Inspect corrected actual compiled preparation/hierarchy/stamp/admission paths and retain preserved HUD/Weight gates.",
+    "Actual iPad/Pencil behavior remains unaccepted; no device claim."
+  ],
+  "actionable_source_findings": [],
+  "actions_performed": "Read-only native/pin/diff/test/report inspection and raw Git reconstruction; this JSON review artifact is the only file written by this reviewer. No production/test/build edits, build dispatch, GPU execution or device action."
+}

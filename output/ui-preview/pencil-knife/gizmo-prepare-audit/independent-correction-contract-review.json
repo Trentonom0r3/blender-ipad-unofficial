@@ -1,0 +1,107 @@
+{
+  "status": "PASS_PROPOSED_NARROW_CORRECTION_CONTRACT",
+  "created_utc": "2026-10-26T06:07:36.733800+00:00",
+  "reviewer": "independent native-bridge reviewer",
+  "scope": "Independent pre-implementation contract/placement/source review of the two-site correction for supported scripted GizmoGroup callbacks producing pixels before or without selected gizmo drawing.",
+  "finding_acknowledged": {
+    "source": "evidence.json",
+    "host": "Stock Windows Blender5.1.2, not target iOS",
+    "observation": "Registered persistent Python VIEW3D group with zero gizmos emitted171444 exact magenta pixels from draw_prepare; unregister removed all. Pinned5.0 source has the same callback-before-gizmo-list route.",
+    "implication": "Existing per-selected-gizmo marks are insufficient to classify every supported script group pixel source. Existing exact run40252354359 must not be presented as ready merely from the prior bridge pass."
+  },
+  "inputs": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\evidence.json",
+      "sha256": "e1dd95358601e84c8618938425eb90aea22fe7e126407270f7ecc26bb7653fc2"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\windowmanager\\gizmo\\intern\\wm_gizmo_map.cc",
+      "sha256": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\screen\\screen_ipad_panels.cc",
+      "sha256": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\windowmanager\\intern\\wm_draw.cc",
+      "sha256": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\windowmanager\\gizmo\\intern\\wm_gizmo_group.cc",
+      "sha256": "bab8bf1d2d73e952a7d091eeeb33aef28fde2c98287afbea12c88a4743963ba9"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\windowmanager\\gizmo\\intern\\wm_gizmo_group_type.cc",
+      "sha256": "05447ab046bc751b1b9797a3328f8be08c1fd9d89a08913bc16086a740a1ad24"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\makesrna\\intern\\rna_wm_gizmo.cc",
+      "sha256": "a8da354936eff15ed8397e1add6665817b5e6b28eab319cbfcd7294871be8887"
+    }
+  ],
+  "approved_contract": [
+    {
+      "site": "wm_gizmo_map.cc:gizmomap_prepare_drawing",
+      "placement": "Immediately after flag-only wm_gizmogroup_is_visible_in_drawstep passes, before modal-exclusion branching and before the first group poll/setup/setup_keymap/refresh/draw_prepare callback.",
+      "condition": "gzgroup->type->rna_ext.call is nonnull. Guard region and runtime when accessing the current drawing region; mark both ipad_finger_paint_overlay_blocked and ipad_knife_canvas_unknown_widgets true.",
+      "why": "The script can draw from poll even when poll returnsfalse, from setup/refresh before hiding, or draw_prepare while gizmo list staysempty. Marking before these routes keeps exposure sticky even if a callback removes or hides its own group. Marking only when draw_prepare is nonnull or after poll/ensure_init would leave supported gaps.",
+      "parity": "Do not skip callbacks or change return values/draw lists/order/refresh flags. Fixed native builtin groups with ext.call==null retain the old path. Apple-only marking only changes unsafe receipt admission."
+    },
+    {
+      "site": "screen_ipad_panels.cc:ipad_knife_hierarchy_native_capture",
+      "placement": "At each current group entry before inspecting/iterating the gizmo list and before name-based known_navigation can grant any exemption.",
+      "condition": "For a nonnull group->type whose rna_ext.call is nonnull, set r_native.settled=false unconditionally. Keep the existing null-type refusal.",
+      "why": "The query must remain callback-free and cannot determine whether a scripted group is currently harmless by polling it. The refusal must include empty, hidden, uninitialized, removal-tagged and newly added group instances. No state-vector field is required because fresh unsettled already makes current hierarchy inadmissible.",
+      "parity": "Existing group/gizmo snapshots and builtin navigation footprint logic remain intact. Conservative refusal of a registered hidden/empty script group is intended; it does not hide or disable that group."
+    }
+  ],
+  "source_checks": [
+    {
+      "path": "wm_gizmo_group.cc:299",
+      "evidence": "wm_gizmogroup_is_visible_in_drawstep only switches drawstep and checks WM_GIZMOGROUPTYPE_3D flag. It invokes no poll/callback, so the proposed first mark still precedes arbitrary script preparation."
+    },
+    {
+      "path": "wm_gizmo_map.cc:392-431",
+      "evidence": "Drawstep visibility precedes modal exclusion and WM_gizmo_group_type_poll; WM_gizmogroup_ensure_init runs before hide.any check; draw_prepare runs before the group gizmo-list loop. Empty gizmo lists do not suppress these callback routes."
+    },
+    {
+      "path": "wm_gizmo_group.cc:240-270,1240",
+      "evidence": "ensure_init invokes setup, setup_keymap and refresh. Group poll invokes type.poll; callbacks have no bounded pixel-footprint guarantee."
+    },
+    {
+      "path": "rna_wm_gizmo.cc:789-916",
+      "evidence": "Supported RNA GizmoGroup registration always assigns dummy_wgt.rna_ext.call=call alongside .srna/.data/.free and installs whichever optional trampolines are defined. The poll/setup/refresh/draw_prepare trampolines dispatch through that same ext.call. Testing ext.call captures the supported opaque script route without invoking it."
+    },
+    {
+      "path": "wm_gizmo_group_type.cc",
+      "evidence": "Builtin group type allocation and Python append_ptr paths remain distinct; ordinary native builtin callbacks are part of the fixed pin. The reviewed correction does not claim to classify arbitrary injected native callbacks."
+    },
+    {
+      "path": "wm_draw.cc:1206-1224,1261-1287,wm_ipad_knife_canvas_stamp_finish",
+      "evidence": "Frame markers reset at the existing draw boundary. Knife stamp_finish copies runtime unknown_widgets into the buffer stamp after region drawing; Finger paint buffer copies overlay_blocked. Cached textures preserve their exclusion facts. Current absence/removal of a group must not clear these stamped marks before a completed clean redraw."
+    },
+    {
+      "path": "screen_ipad_panels.cc:ipad_knife_hierarchy_native_capture and ED_ipad_knife_pan_probe",
+      "evidence": "Current native capture already returns a settled field checked by fresh hierarchy admission, while EDprobe additionally refuses buffer/composition/runtime unknown markers. The proposed settled=false and sticky draw markers cover current-state and previously drawn pixels independently."
+    }
+  ],
+  "callback_identification_judgment": {
+    "rna_ext_call_sufficient_for_supported_path": true,
+    "stronger_function_whitelist_required": false,
+    "reason": "Within the pinned builtin code plus supported Python/RNA GizmoGroup registration, ext.call is canonical positive evidence that group preparation can dispatch opaque script code. It is broader and safer than detecting only draw_prepare, class name, nonempty gizmos or current poll result. Requiring a fixed native function-address whitelist would broaden the intended correction without additional supported-route evidence.",
+    "native_navigation_name": "Root separately verified builtin calloc extension.srna is null and RNA duplicate registration rejects replacement. Additionally, unconditional ext.call refusal must apply even if a script group name resembles native navigation; do not make the new condition subordinate to known_navigation."
+  },
+  "focused_validation_requirements_before_build": [
+    "Exercise the actual extracted gizmomap_prepare_drawing body with scripted empty group draw_prepare, poll-false direct output, setup/refresh leading to hide, self-removal and no selected gizmos. Both exclusion markers must already be true when the callback begins and remain true afterward.",
+    "Confirm wrong-drawstep groups run no preparation callbacks in that pass; native ext.call-null groups retain exact callback order, draw selection and marker behavior.",
+    "Exercise actual hierarchy_native_capture with scripted empty/hidden/uninitialized/new/removal-tagged group: settledfalse without any poll/setup/draw/hit invocation. ext.call-null native cases retain prior outcomes.",
+    "Confirm removal after a drawn script frame still refuses cached stamped pixels; only completed clean redraw with fresh matching hierarchy can reacquire the original live Knife receipt.",
+    "Keep existing callback/owner/token/keyboard/unknown-widget assertions and raw failure evidence unchanged. Build only after actual edited source, focused/full required tests, exact patch scope and independent edited-source review pass."
+  ],
+  "actionable_concerns": [],
+  "limits": [
+    "This reviews the proposed two-site contract against actual current/pinned source and the preserved real host counterexample. It is not validation of edits that have not yet been inspected, a native corrected binary, iOS behavior, or final readiness.",
+    "Native builtins are treated as the audited fixed pin. Arbitrary C++ plugin injection, direct in-process callback-pointer corruption, global memory corruption and arbitrary allocator/registration substitution are outside this bounded correction claim.",
+    "No production/test/source edits, builds or device actions performed by this reviewer. Only this independent review artifact is added."
+  ]
+}

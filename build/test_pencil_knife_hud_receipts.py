@@ -43,7 +43,7 @@ CANVAS_STAMP=function(WMH,'struct wmIPadKnifeCanvasStamp {')+';'
 CANVAS_STAMP=CANVAS_STAMP.replace('WM_IPAD_KNIFE_OWNER_VALUES','23')
 w=w.replace('struct RegionRuntime{',CANVAS_STAMP+r'''
 struct GPUViewport{bool texture=true;};struct GPUOffscreen{bool texture=true;};struct wmDrawBuffer{GPUViewport*viewport=nullptr;GPUOffscreen*offscreen=nullptr;wmIPadKnifeCanvasStamp ipad_knife_canvas_stamp{};};
-struct wmGizmo{void*type=nullptr;int state=0,flag=0;float matrix_basis[4][4]{};float scale_basis=8;};struct wmGizmoGroupType{const char*idname="VIEW3D_GGT_navigate";};
+struct wmGizmo{void*type=nullptr;int state=0,flag=0;float matrix_basis[4][4]{};float scale_basis=8;};struct wmGizmoGroupType{const char*idname="VIEW3D_GGT_navigate";struct{void*call=nullptr;}rna_ext;};
 struct wmGizmoGroup{wmGizmoGroupType*type=nullptr;std::vector<wmGizmo*>gizmos;struct{unsigned any=0;}hide;bool tag_remove=false;int init_flag=1;};
 using ListBase=std::vector<wmGizmoGroup*>;struct wmGizmoMap{ListBase groups;};
 struct PanelType{bool knife=false;};struct Panel{PanelType*type=nullptr;bool active=true;};

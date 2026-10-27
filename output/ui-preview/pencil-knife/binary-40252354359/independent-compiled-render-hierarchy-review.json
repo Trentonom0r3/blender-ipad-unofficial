@@ -1,0 +1,301 @@
+{
+  "schema": 1,
+  "review": "independent_actual_arm64_draw_publication_hierarchy",
+  "created_utc": "2026-10-26T06:00:39.246150+00:00",
+  "status": "INCOMPLETE_NO_READY_SUPPORTED_PYTHON_GIZMOGROUP_PREPARATION_PIXELS_UNRECORDED",
+  "run": "40252354359",
+  "source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "binary_uuid": "FA474B4B-9C76-3BF5-A323-F7EDFC6742C0",
+  "binary_sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+  "fresh_evidence_directory": "independent-render-fresh-audit",
+  "fresh_unique_ranges": 59,
+  "obligations": [
+    {
+      "id": "binary_identity",
+      "status": "PASS",
+      "evidence": [
+        "Fresh SHA256 cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+        "macho-identity.txt ARM64 EXECUTE / LC_UUID FA474B4B-9C76-3BF5-A323-F7EDFC6742C0"
+      ],
+      "conclusion": "Fresh evidence is bound to exact run40252354359 binary; symbols are discovery aids, branch/argument facts below are inspected."
+    },
+    {
+      "id": "full_redraw_precondition_actual_caller",
+      "status": "PASS",
+      "evidence": [
+        "wm_draw_area_offscreen 0x100b4c144..0x100b4c208: visible and nonzero do_draw; !stereo and RGN_DRAW bit before x0=C,x1=win,x2=area,x3=region,x4=SP+0x30 scope capture",
+        "0x100b4c214..0x100b4c24c resets runtime unknown and copied owner before region draw",
+        "0x100b4c3d4 / 0x100b4c45c / 0x100b4c51c actual ED_region_do_draw; 0x100b4c570 actual HUD draw_end before stamp finish inlining"
+      ],
+      "conclusion": "Stamp production is connected to actual offscreen region drawing, not a marker or isolated helper. ED_region_do_draw early locked/minimized/status branches are excluded by before/after scope predicate."
+    },
+    {
+      "id": "stamp_finish_inlining_fail_and_scope",
+      "status": "PASS",
+      "evidence": [
+        "0x100b4c574..0x100b4c5f4 saved-before or current partial bit and before-valid w25 gate zero-initialized replacement",
+        "0x100b4c5f8..0x100b4c60c rejects stereo and missing viewport/offscreen",
+        "0x100b4c610..0x100b4c63c recaptures exact same C/win/area/region and compares 0x100 bytes (all32 values)",
+        "0x100b4c6fc..0x100b4c718 drawn owner region proof strict=true; mismatch clears buffer+0x1d8 validity",
+        "0x100b4c770..0x100b4c77c copies replacement 0x1c8 bytes to buffer+0x18"
+      ],
+      "conclusion": "before-valid/partial/stereo/allocation/scope failure cannot retain a valid prior stamp. Missing buffer yields no consumable stamp. Drawn owner mismatch explicitly clears validity."
+    },
+    {
+      "id": "new_monotonic_token_every_full_draw",
+      "status": "PASS",
+      "evidence": [
+        "0x100b4c740..0x100b4c758 load static last at0x107ef37a0; UINT64_MAX compare; add1/store every successful eligible full finish",
+        "0x100b4c75c..0x100b4c76c saturation produces content0/validfalse",
+        "0x100b4c760 content assigned SP+0x488; validity SP+0x490; 0x100b4c77c full stamp copy"
+      ],
+      "conclusion": "Scope equality does not reuse a token after full redraw. Successful eligible full redraw always advances; exhaustion permanently fails closed. No token generation in inspected onscreen/composition receipts."
+    },
+    {
+      "id": "actual_gpu_transfer_not_name_only",
+      "status": "PASS_WITH_NATIVE_RUNTIME_BOUNDARY",
+      "evidence": [
+        "inlined blit 0x100b4af18..0x100b4af34: buffer nonnull; viewport x0 / normalized view x1 / region.winrct x2; actual call0x100a67868 then receipt0x100b4aedc",
+        "GPU_viewport_draw_to_screen0x100a67868 sets w3=w4=1 then tail0x100a6745c",
+        "GPU_viewport_draw_to_screen_ex0x100a6747c..480 nullcolor early return; nonnull branch computes geometry then0x100a67538 calls color managed helper",
+        "color managed helper0x100a67810..0x100a6782c binds color and overlay texture0/1 then actual GPU_batch_draw",
+        "blend receipt0x100b48488 GPU_batch_draw precedes footprint stores0x100b48490..498 and true0x100b484b0"
+      ],
+      "conclusion": "Actual native transfer/batch calls and argument plumbing are resolved. CPU receipt is not hardware completion proof. Native memory-safe allocation and GPU backend submission success remain explicit boundaries."
+    },
+    {
+      "id": "gpu_nullcolor_suspicion_lifecycle_disposition",
+      "status": "RESOLVED_NOT_A_NEW_ORDINARY_COUNTEREXAMPLE",
+      "evidence": [
+        "GPU_viewport_create0x100a66d98..0x100a66da4 calloc result initialized size{-1,-1}, active_view0",
+        "GPU_viewport_bind0x100a66e14..0x100a66e54 positive rect dimensions compare, resize free then create before active view",
+        "textures_create0x100a66f5c..0x100a66f84 assigns render0/overlay0;0x100a67070..7c tests required textures; failure0x100a67080..c0 frees viewport through native allocator",
+        "textures_free0x100a66ea8..0x100a66ef4 clears color/overlay/depth; inspected call routes are bind resize immediately followed create and viewport teardown",
+        "exact pinned gpu_viewport.cc SHA f418dff97388efd623fb01d0145e596b8161c44aada6c149172e5da3daf9f132"
+      ],
+      "conclusion": "The void transfer has a nullcolor no-op, so call presence alone was insufficient. A first memory-safe valid Knife full draw forces texture creation; required texture failure frees viewport itself and belongs to inherited native allocation/lifetime failure, not a proved stable valid viewport/no-draw route. No guard of a freed viewport or global memory safety claim is proposed."
+    },
+    {
+      "id": "cached_exact_stamp_retained_in_receipt",
+      "status": "PASS",
+      "evidence": [
+        "ED_ipad_knife_hierarchy_region_presented0x10163e704..774 livewindow/livearea/liveregion and nonemptyactualfootprint checks",
+        "0x10163e858..86c writes area/region/buffer values and actual inclusive rect (provided halfopen max minus1)",
+        "0x10163e8d4..0x10163e8e4 conditionally memcpy0x1c8 from current buffer+0x18 into composition.canvas",
+        "0x10163e8ec..8f4 push_back copied composition"
+      ],
+      "conclusion": "Cached composition preserves exact texture content/scope/owner/unknown stamp; no retagging or token mint. Persistent hierarchy contains copied integer identities and rectangles, not dereference authority."
+    },
+    {
+      "id": "begin_publish_current_inlining",
+      "status": "PASS",
+      "evidence": [
+        "compositor_begin0x10163d844..854 windowID; pending=true, observed=false, opaque=false; drawing reset0x10163d890; compositions.clear0x10163d8d0..d4",
+        "publish in compositor_end0x10163eb40..bd8 pending, windowID, drawn, callbacks observed, opaque false, drawing.native.settled, fresh capture/current.settled/native_equal",
+        "0x10163f448..46c drawn snapshot move\u2192presented or presented.complete=false; pending=false",
+        "current0x101640864..8cc pendingfalse/windowID/presented.complete then fresh capture.settled and native_equal"
+      ],
+      "conclusion": "Helper missing-symbol entries resolve to actual inlining at caller. Only completed matching CPU window pass grants acquisition, and pending/stale/incomplete snapshots fail closed."
+    },
+    {
+      "id": "all_required_split_region_coverage",
+      "status": "PASS",
+      "evidence": [
+        "native capture includes visible required nonHUD areas/regions at0x10164ee70 onward with integer area/region/buffer and actual rect",
+        "inlined coverage0x10163ebe8..0x10163f150; required buffer nonzero; composition area/region/buffer compare0x10163ec7c..ca8; BLI_rcti_isect0x10163ecf4; inclusive left/right/top/bottom remainder subtraction",
+        "0x10163f8e0..0x10163f8f8 missing/nonempty remainder routes invalid complete before publication"
+      ],
+      "conclusion": "Coverage is required for every visible split region, with same allocation identity and union subtraction; a footprint intersection alone cannot complete the window."
+    },
+    {
+      "id": "fullrails_tools_inspector_header_floating_precedence",
+      "status": "PASS",
+      "evidence": [
+        "onscreen0x100b48848..0x100b488b4 calls actual layers0,1,2 then edges; panels_draw0x100b48934 above area layers and before menu blends",
+        "ED_ipad_panels_draw0x101642b84 native snapshot;0x101642b94..0x101642cc0 copies five layout rectangles, skips only empty, converts max-1;0x101642cc0..db4 copies actual drawnbutton rects; move snapshot0x101642dc4",
+        "native capture0x10164ed34..ed80 excludes visible noncanvas area fulltotrect; nonWINDOW region rectangles included (headers/tools/sidebar) and every split geometry serialized",
+        "probe0x10163ffd4..0x101640020 tests drawn_higher then native.higher;0x101640024..090 cachedHUD footprints;0x1016401e0..208 visible floatingregions reject origin"
+      ],
+      "conclusion": "Full rails and panels, Tools/Inspector, buttons, native region headers/sidebar, split regions and cached HUD pixels have actual presentation precedence. Hidden/empty gates are exact numeric branches."
+    },
+    {
+      "id": "window_callbacks_and_drag_sticky_before_actual_draw",
+      "status": "PASS",
+      "evidence": [
+        "onscreen0x100b488e0..8f8 samples win+0x140 drawcalls and records before mutable callback loop BLR0x100b48910",
+        "window_callbacks0x10163e5e8..614 pending/windowID gates, observed=true, opaque |= argument",
+        "onscreen0x100b4896c..984 checks current manager.runtime.drags and records true before actual wm_drags_draw0x100b48990",
+        "nativecapture0x10164eaf8..eb0c and0x10164fd0c..fd00 settledfalse for current win drawcalls/manager drags; probe0x1016400bc..0c8 rejects current paintcursors/drags"
+      ],
+      "conclusion": "Self-removing actual window callbacks and drag drawings cannot erase already executed opaque overlay evidence. Immediate current lists also block acquisition."
+    },
+    {
+      "id": "unknown_region_callback_and_exact_known_original_knife",
+      "status": "PASS",
+      "evidence": [
+        "ED_region_draw_cb_draw0x101b4dca8..cc0 passes C/region/handle/draw/data/type to knownhelper before BLR; unknown0x101b4dc4c sets sticky runtime+3 before actual0x101b4dc5c; duplicate drawn owner also marks unknown",
+        "WM known0x100b51588..5d8 exact native scope and current owner; modal list membership/type/nonfree0x100b515ec..618; original arguments to ED_mesh_knife_draw_callback_known0x100b51618..630",
+        "mesh predicate0x101c37708..740 compares invoke/modal/cancel exact compiled function addresses;0x101c3777c..7a0 exact origin region, original knifetool_draw function0x101c377a8, stored handle, identical data and POST_VIEW0",
+        "current callbacks_safe0x101b4da7c..db04 walks immediate callback list without calling draw; duplicate or unknown refuses; ED probe calls it0x101640260"
+      ],
+      "conclusion": "Only exact original live native Knife draw callback is known. Unknown or duplicate callbacks mark executed pixels before self-removal; immediate callback scans independently fail closed."
+    },
+    {
+      "id": "actual_gizmo_and_paintcursor_draw_sticky",
+      "status": "PASS_FOR_ACTUAL_SELECTED_GIZMO_AND_PAINTCURSOR_DRAWS_ONLY",
+      "evidence": [
+        "WM_gizmomap_draw selected-list actual draw:0x100b3fbbc strcmp parentgroup id; nonnative path0x100b3faf4..afc sets unknown before arbitrary gizmo.type.draw BLR0x100b3fb10",
+        "native nav path0x100b3fbcc marks navigation fact; nativecapture0x10164f3a8..7a4 snapshots all groups/gizmos, unknown visible setup gizmos make settledfalse; no group poll/hit/draw callback invoked during capture",
+        "paintcursor inlined area_layer0x100b4b0c8..0f4 writes unknown before pc.draw BLR; callback self-removal keeps marker",
+        "publish0x10163f32c..33c ORs runtime unknown into copied composition; owner merge0x10163f340..448 does not retag texture"
+      ],
+      "conclusion": "Actual selected-list nonnavigation gizmo draws and actual paintcursor draws keep sticky executed facts before self-removal. Supported builtin navigation replacement is refused by exact pinned RNA registration. This positive narrow proof does not cover PythonGroup preparation-generated pixels; the separate finding blocks aggregate PASS."
+    },
+    {
+      "id": "native_navigation_geometry_numeric",
+      "status": "PASS_FOR_BUILTIN_NATIVE_GROUP_SUPPORTED_RNA_REPLACEMENT_REFUSED",
+      "evidence": [
+        "nativecapture0x10164f7b8..0x10164f980 visits each region navigation group; group hidden/tag/setup gates; serializes every visible gizmo position/scale/flags",
+        "0x10164fb04..0x10164fbdc finite/nonnegative/intoverflow margin checks",
+        "0x10164fbe0..0x10164fc34 radius=int(scale_basis*UI_SCALE_FAC+4*UI_SCALE_FAC), center=region.winrct.min+int(matrix_basis[3]), higher rect inserted"
+      ],
+      "conclusion": "Per-region (including quad/split) builtin native navigation footprint resolves numerically; exact pinned supported RNA registration refuses builtin group/type replacement. Arbitrary native memory mutation and lifetime failure remain outside bounded scope."
+    },
+    {
+      "id": "ED_probe_completed_exact_stamp_owner_consumption",
+      "status": "PASS",
+      "evidence": [
+        "0x10163ff54 current completed hierarchy;0x1016401c8 fresh32scope;0x101640228 refuses WINDOW uiblocks;0x101640260 current callbacks safe",
+        "0x101640268..2ac buffer nonnull/nonstereo/valid/notunknown/nonzerocontent and all32scope exact",
+        "0x101640314..36c matches area+region+buffer, composition valid/notunknown/scope32/content exact;0x1016402ec and0x101640460 requires actualorigin inside composition",
+        "0x101640494 owner capture;0x1016404b0 ownerregion check;0x1016404d0..4fc current modal list only same original handler;0x101640528..5ec composition/currentcallback/textureowner full23values equality",
+        "recognition0x1016406ec..740 compares captured32scope, content, LiveKnife kind/no pending initialtool then exact23owner before copied valid return"
+      ],
+      "conclusion": "ED probe consumes completed same allocation/content/scope and fresh original owner only. No-handler initial tool prediction does not appear. Native fresh-context bridge safety remains separately reviewed."
+    },
+    {
+      "id": "hierarchy_probe_callback_free_dependency",
+      "status": "PASS_WITH_BRIDGE_GETTER_PRECONDITION",
+      "evidence": [
+        "hierarchy_current direct calls only capture/equal, state vector cleanup; nativecapture contains no BLR/BR; calls only CTX getters, window sizes, BLI_findindex, gizmomap_group_list, std alloc/copy/strcmp",
+        "nativeequal0x10164fd3c..fe30 compares seven identity values/dimensions/scale/fullstate vectors through memcmp",
+        "selected-imports.txt resolves 0x104b745c8=operator delete,0x104b745ec=operator new,0x104b75474=memcmp,0x104b75480=memcpy,0x104b75ffc=strcmp"
+      ],
+      "conclusion": "Native hierarchy capture writes only its output/local vectors and invokes no registered gizmo/provider/draw/poll callbacks. CTX getters require separately established fresh bridge context with callback fields clear. No native pointer authority is retained across callbacks on this probe path."
+    }
+  ],
+  "pending": [],
+  "boundaries": [
+    {
+      "id": "preparation_callbacks",
+      "status": "GAP_CONFIRMED_FOR_SUPPORTED_PYTHON_GROUP_PATH",
+      "evidence": "WM_gizmomap_draw0x100b3fa08/0x100b3fa28 invokes group poll,0x100b3f9cc ensure init, and0x100b3fa64 draw_prepare before selected-list unknown marker; empty final gizmo list exits without marker. Actual paintcursor poll0x100b4b14c also precedes actual draw marker.",
+      "limitation": "Former preparation-only limitation is now a supported PythonGroup draw_prepare pixel gap; see finding and real stockGUI evidence. Unproved emission from unrelated native callbacks or pc.poll is not promoted to a new defect."
+    },
+    {
+      "id": "native_memory_gpu_runtime",
+      "status": "EXPLICIT_NATIVE_BOUNDARY",
+      "limitation": "No global heap/lifetime proof, allocator-failure recovery, shader/backend/hardware completion, UIKit composition or device acceptance. Viewport required texture failure frees viewport in pinned upstream; treating that as ordinary recoverable nullviewport would be unsound."
+    },
+    {
+      "id": "prior_raw_owner_failure",
+      "status": "PRESERVED",
+      "limitation": "Raw saved-area SP+8 automated owner failure untouched; separate independent preserved pass remains separate. No checker weakened or rerun."
+    }
+  ],
+  "activity": {
+    "production_edits": false,
+    "test_edits": false,
+    "builds": false,
+    "tests_run": false,
+    "evidence_only_writes": true,
+    "user_messages": false
+  },
+  "ready_claim": false,
+  "device_acceptance": false,
+  "global_cfg_claim": false,
+  "read_source_hashes": {
+    "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+    "source/blender/editors/screen/screen_ipad_panels.cc": "1accb93cd599da25a13cb3ed9a03843d45f6e1bb59f206e45b6a5a368aee7c84",
+    "source/blender/editors/space_api/spacetypes.cc": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f"
+  },
+  "updated_utc": "2026-10-26T06:04:29.754416+00:00",
+  "resolved_followups": [
+    {
+      "id": "native_navigation_exact_identity_eligibility",
+      "status": "RESOLVED_SUPPORTED_RNA_BUILTIN_REPLACEMENT_REFUSED",
+      "evidence": [
+        "Exact pin rna_wm_gizmo.cc lines850..862: existing group requires ext.srna and successful unregister; otherwise refuses",
+        "Exact pin rna_wm_gizmo.cc lines459..474: equivalent GizmoType builtin replacement refusal",
+        "Root independently reviewed native builtin append calloc/noRNAext, native VIEW3D_GGT_navigate callback assignment, existing nonempty bl_idname immutability"
+      ],
+      "source": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\makesrna\\intern\\rna_wm_gizmo.cc",
+      "sha256": "a8da354936eff15ed8397e1add6665817b5e6b28eab319cbfcd7294871be8887",
+      "conclusion": "Same-name replacement was a hypothesis, not a supported counterexample. Native navigation positive proof is retained for actual builtins under supported registration/lifetime contracts. Arbitrary memory mutation is outside this audit."
+    }
+  ],
+  "findings": [
+    {
+      "id": "P1-unrecorded-python-gizmogroup-preparation-pixels",
+      "priority": "P1",
+      "status": "SUPPORTED_HOST_COUNTEREXAMPLE_AND_EXACT_TARGET_COMPILED_GAP",
+      "title": "An empty Python GizmoGroup can draw unknown canvas pixels before the selected-gizmo marker",
+      "trigger": "A supported persistent VIEW_3D Python GizmoGroup with draw_prepare emits a GPU batch while creating zero gizmos. The callback can run during a real canvas draw; no selected wmGizmo is required.",
+      "compiled_chain": [
+        "view3d_main_region_draw0x102243c1c calls DRW_draw_view0x10103ec38",
+        "DRW 3D render loop0x10103f210 binds overlay framebuffer,0x10103f28c calls DRW_draw_gizmo_3d;0x10103f2f8 calls DRW_draw_gizmo_2d; wrappers pass current region.gizmo_map/C and drawstep1/0 to WM_gizmomap_draw0x100b3f95c",
+        "WM_gizmomap_draw0x100b3fa08/0x100b3fa28 group poll;0x100b3f9cc ensure init;0x100b3fa64 calls group.type.draw_prepare via BLR before looking at group.gizmos0x100b3fa68",
+        "An empty gizmo list at0x100b3fa6c skips to0x100b3fa70\u2192nextgroup, and empty final draw list0x100b3fadc exits. The unknown marker0x100b3fafc is only in actual selected-gizmo draw route.",
+        "Actual RNA group draw_prepare trampoline0x1014dd6ec..0x1014dd748 passes C/group/function/params through type.rna_ext.call, not a pure native geometry getter",
+        "Native current capture0x10164f55c..0x10164f5b4 records group but visits no gizmos for empty list; unknown-settledfalse branch0x10164f7a0 is inside that absent gizmo loop. Stable empty group state can match completed snapshot.",
+        "Stamp_finish0x100b4c694 copies only runtime unknown marker; composition copy0x10163e8e4 and publish OR0x10163f330..33c cannot recover a marker never written. Current EDprobe does not reject a callable Python group itself."
+      ],
+      "source_chain": [
+        "Exact pin rna_wm_gizmo.cc lines746..762 exposes registered group draw_prepare to RNA callback",
+        "Exact pin rna_wm_gizmo.cc lines895..905 installs optional Python preparation callbacks; persistent group map add lines912..916",
+        "Current materialized wm_gizmo_map.cc lines399..432 poll/ensure_init/draw_prepare precede empty-capable gizmo list; lines488..504 mark only selected gizmo.draw",
+        "Current screen_ipad_panels.cc lines881..911 snapshots unknown group then marks unsettled only for a visible actual gizmo"
+      ],
+      "host_observation": {
+        "host": "Windows Blender5.1.2 ec6e62d40fa9",
+        "scope": "Real foreground native host GPU behavior; separate from target arm64 source/compiled review",
+        "callback_counts": {
+          "poll": 4,
+          "setup": 1,
+          "draw_prepare": 2
+        },
+        "gizmos": 0,
+        "errors": [],
+        "magenta_pixels": 171444,
+        "magenta_bounds_inclusive": [
+          212,
+          238,
+          839,
+          510
+        ],
+        "baseline_and_after_unregister_magenta_pixels": 0,
+        "reviewer_visually_inspected": "empty-group-draw-prepare.png",
+        "evidence": "../gizmo-prepare-audit/evidence.json",
+        "report": "../gizmo-prepare-audit/host-result.json"
+      },
+      "impact": "The native receipt and immediate current hierarchy can miss supported preparation-generated unknown pixels. Therefore the strict unknown-widget/higherUI admission obligation is not closed for this exact binary; the intended original-live Knife PAN gate cannot be called ready.",
+      "minimum_correction": "Keep native navigation behavior. Mark sticky unknown evidence before each callable Python GizmoGroup preparation callback in the actual draw route, including a callback that returns false, emits no gizmos or removes/hides its group; independently refuse current callable Python preparation groups during callback-free acquisition. Revalidate successor source/tests/native build/compiled publication before ready.",
+      "no_unrequested_expansion": "No production or test changes made by this reviewer. No broad native callback-family rewrite recommended.",
+      "limits": [
+        "Target iOS/device runtime reproduction is not claimed. Host5.1.2 is capability evidence; exact pin5.0.0 primary source and target arm64 control flow establish the corresponding missing guard.",
+        "This is the supported PythonGroup preparation path demonstrated by the probe, not hypothetical arbitrary native code drawing from every callback.",
+        "Other16 positive bounded obligations are retained; this finding prevents aggregate PASS."
+      ]
+    }
+  ],
+  "host_evidence_hashes": {
+    "evidence.json": "e1dd95358601e84c8618938425eb90aea22fe7e126407270f7ecc26bb7653fc2",
+    "host-result.json": "1f521aa0aa6016232481570ac489cd3c20aef11e8e06091a3791d6b623d78220",
+    "probe.py": "f967b57db82fa5dfad82fdcba65204b7742507596fc0578c797b6a7f54aba5d8",
+    "baseline.png": "496ff0029067de996da34981e5aa4190c2a6ae0517dcd478861f366243951177",
+    "empty-group-draw-prepare.png": "9b6732b7d51d68adeff23b2b10806e8186b11144e2734512a2a285fba4308c69",
+    "after-unregister.png": "496ff0029067de996da34981e5aa4190c2a6ae0517dcd478861f366243951177"
+  },
+  "summary": "Actual ARM64 token/stamp/composition/owner/higherUI/actualdraw marker control flow reviewed. Aggregate gate remains incomplete because supported PythonGroup preparation pixels are not recorded before empty selected-gizmo lists. Native navigation replacement and GPU nullcolor hypotheses were resolved without inventing source defects."
+}

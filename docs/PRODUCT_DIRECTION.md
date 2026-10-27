@@ -1,3 +1,60 @@
+## Opaque preparation pixels corrected; coherent source validated — 2026-10-27 UTC
+
+Exact candidate patcha9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1
+is validated source/host only, NOT yet native-built. Two native targets change;
+134priorsections/all7UI/all13GHOST remain exact30da0be. Opaque script group callback
+metadata now reserves Knife/Finger pixels BEFORE poll/setup/refresh/draw_prepare;
+fresh hierarchy refuses even empty/hidden groups. Native builtin callback order,
+ring/header/icons/input/Undo and all existing ownership guards remain unchanged.
+
+Runtime full826/826997.130s/191unchangedinputs/136preflight/diff PASS. Final runner
+ONLY adds explicit fetching of4fixedpin inputs; exact final5232 driver passes cold
+actualpreflight→58controls and current1/1 34.152s.190otherfrozeninputs/nativebodies/
+assertions exact; normalized generatedC++ matches full. Do not claim final5232 had
+its own191-bytefrozenfull. Independent final source/native/literal/testhash and
+prerequisite review accepts combined verification; no third identical full needed.
+Initial cold cache failures and earlier826/720.882s run are preserved honestly.
+Read pencil-knife/gizmo-prepare-audit/source-verification.json and final reviews.
+
+Commit/push coherent source/tests/CI/bounded evidence and dispatch exact build ONCE;
+then full downloadedIPA plus actual new preparation-before-callback/empty-group
+refusal/cached-composition and preserved producer/bridge/HUDlaunch/Weight checks.
+Prepared.cache/watch-pencil-gizmo-prepare-build.py RUN FULLSHA is not started.
+Old30da0be/run40252354359 native/package passed but is NOT READY due independently
+caught supported empty-script-group draw_prepare pixels. Actual stock5.1.2 probe
+showed171444magenta pixels with0gizmos; unregister restores exactbaseline. No target
+or device acceptance for correction. Keep full goal unfinished, no unchanged build.
+Next read-only Node audit found premodal pairedPAN can navigate before CLICK_DRAG;
+active modals already block navigation. Generic CURSOR-before-PAN is rejected by
+native Circle selection parity. No corrective Node source exists; do not infer a
+blanket suppression/order change. See pencil-node-input-audit/source-contract.json
+and scheduling-order-assessment.json. Import/deepcamera remains deferred.
+
+## Independent audit found preparation-pixel gap; correction unvalidated — 2026-10-26 UTC
+
+Run40252354359@30da0be PASSED native Release/full downloaded IPA. Independent
+actual GHOST producer/nativebridge and preserved HUD/Weight reviews pass. Render
+review found a supported gap: Python GizmoGroup.draw_prepare can draw with zero
+gizmos before the selected-gizmo unknown-pixel marker. Disposable stock5.1.2 GPU
+probe visibly produced171444 magenta pixels,0gizmos; unregister restored identical
+baseline. Exact target compiled callback ordering agrees; no target/device flags
+observed. NOT READY: do not deliver/rebuild unchanged30da0be as corrected.
+
+Root two-source correction is UNCOMMITTED, patcha9999f40 (full SHA in
+pencil-knife/gizmo-prepare-audit/source-checkpoint.json). Script group rna_ext.call
+marks opaque Knife/Finger evidence before poll/setup/refresh/draw_prepare; fresh
+hierarchy refuses even empty/hidden script groups without invoking callbacks.
+Native builtin groups/callback ordering remain unchanged. Raw Git136targets,
+134priorsections/all7UI/all13GHOST exact. Existing149/30.055s and68/65.001s pass;
+136offlinepreflight passes. Two retained models add only default-null callback
+metadata: all original4Python/126C++ assertion lines and otherbytes identical;
+strict historicalCRLF fixture unchanged. New actual-source regression/finalreview
+are in progress; full current suite NOT RUN; NO NEW BUILD. Preserve all sources,
+reports and screenshots; do not count pending validation as passed. Full personal
+goal unfinished. Native nav duplicate-registration spoof was separately rejected
+by actual pinned RNA builtin-registration guards; it does not explain away the
+real empty-script-group preparation callback gap.
+
 ## Native Knife PAN package verified; changed compiled review pending — 2026-10-26 UTC
 
 Exact production30da0be80a073ef6a6fc5ce634a2039bbb946afd/run40252354359 PASSED

@@ -1,0 +1,162 @@
+{
+  "status": "PASS_COMPLETE_PINNED_PREREQUISITE_AUDIT",
+  "created_utc": "2026-10-27T06:08:16.618660+00:00",
+  "reviewer": "Independent narrow prerequisite reviewer /root/gizmo_prerequisite_review",
+  "candidate_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "final_driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012",
+  "conclusion": "The complete four-file prerequisite setup resolves the inherited bridge cache dependency at the current fixed pin. Only source acquisition setup changed; no production code, extracted function, model, assertion, control case, or failure/freshness rule changed. No concrete uncertainty requires a third full826 rerun after this setup-only delta.",
+  "byte_delta_proof": {
+    "original_driver_sha256": "cbb00c733823c3b4c7d9944be49d5cbd8a2c00051ec6c2c3b28be09dddc81706",
+    "incomplete_two_file_driver_sha256": "2b8a9b2d3455d68bab23e5a41afe6676a2e8f314a91eb175395a216ac2fef604",
+    "final_driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012",
+    "proof": "Removing exactly eight added setup lines and their following separator blank reproduces the original driver SHA256 exactly. Relative to the completed two-file full run, the only edit adds two literal GHOST paths to that existing get_source loop.",
+    "current_differences_from_completed_full_manifest": [
+      "build/tests/gizmo_prepare_admission_models.py"
+    ],
+    "remaining_190_frozen_inputs_exact": true
+  },
+  "complete_dependency_inventory": {
+    "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "inherited_cache_reads": [
+      {
+        "bridge_line": 172,
+        "files": [
+          "source/blender/blenkernel/intern/context.cc",
+          "source/blender/blenkernel/intern/workspace.cc"
+        ]
+      },
+      {
+        "bridge_line": 190,
+        "file": "intern/ghost/intern/GHOST_EventManager.cc"
+      },
+      {
+        "bridge_line": 191,
+        "file": "intern/ghost/intern/GHOST_System.hh"
+      }
+    ],
+    "all_four_prepared_before_bridge_exec_for_both_default_and_source_dir_routes": true,
+    "setup_outside_source_dir_conditional": true,
+    "cache_fetch_implementation": "Existing preflight.get_source uses cache/commit/path, fetches raw.githubusercontent.com/blender/blender/{commit}/{path}, and atomically replaces a completed download. Its destination is exactly the hardcoded fixed-pin directory consumed by the reused bridge prefix.",
+    "files": [
+      {
+        "path": "source/blender/blenkernel/intern/context.cc",
+        "cache_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\blenkernel\\intern\\context.cc",
+        "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+        "unmodified_upstream_file": true
+      },
+      {
+        "path": "source/blender/blenkernel/intern/workspace.cc",
+        "cache_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\blenkernel\\intern\\workspace.cc",
+        "sha256": "468a7de619d2436671ef874b1f4b02112ced612730ad0aa7e1e8a28c35d65ea8",
+        "unmodified_upstream_file": true
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_EventManager.cc",
+        "cache_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\intern\\ghost\\intern\\GHOST_EventManager.cc",
+        "sha256": "7e30dde27bc20cb20fb7e7b59c861d3ae0b8e65dc64c898f3d4b18fc76e93736",
+        "unmodified_upstream_file": true
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_System.hh",
+        "cache_path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\intern\\ghost\\intern\\GHOST_System.hh",
+        "sha256": "705bb28328518627b59e3358f8cd1e7942c99401fc520c92843b1f4a67e95007",
+        "unmodified_upstream_file": true
+      }
+    ],
+    "other_reads": "All12 literal ROOT/read inputs and the NavigationIOS.hh generated include are declared in the retained bridge wrapper PATHS. The only other REPO file read is the tracked owner-dispatch prelude. wm_gizmo_group.cc already has its own explicit get_source call. No further prefix file loaders or execution of the old bridge main are present.",
+    "default_route_scope": "CI first runs the declared pinned preflight, which prepares patch-parent inputs. This audit verifies the four additional unpatched inherited dependencies after that preflight; it does not claim default materialization from a wholly empty cache without preflight.",
+    "no_old_implementation_borrowed": true
+  },
+  "retained_guards": {
+    "wrapper_sha256": "ec4924d4a45ee25fd909e06c388170adc2154a22e312912d3c950ef8d7cb067e",
+    "bridge_sha256": "954477069ff0e200cf70feca669db12a66b23d1945f6ace2111124124a37c992",
+    "proof": "Exact original-driver byte reconstruction and unchanged wrapper/bridge hashes preserve every assertion, C++/Python model,26current cases,3historical expected failures per optimization, required historical assertion plus state witness, and startup script/test hash caching. Existing previous-report archival, fresh run nonce/start time, script/test/bridge hash checks, successful driver status/count checks, and explicit FAIL_OR_INCOMPLETE exception/timeout/compile reports remain unchanged. Missing source errors propagate; the inserted code only fetches declared unpatched upstream prerequisites."
+  },
+  "cold_ci_observation": {
+    "validation_path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\fresh-ci-four-input-validation.json",
+    "validation_sha256": "5b277ebcb4b55f6491b4151349b7d1b02520b5772187b840574939e09d5258af",
+    "status": "PASS_FOUR_INPUT_COLD_CI_EXACT_DRIVER_APPLIED",
+    "fresh_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\gizmo-prepare-four-input-cold-ci-0cm_g_8t",
+    "all_four_missing_after_actual_preflight": true,
+    "steps": [
+      {
+        "name": "preflight",
+        "exitcode": 0,
+        "log": ".cache\\gizmo-prepare-four-input-cold-preflight.log"
+      },
+      {
+        "name": "preparation",
+        "exitcode": 0,
+        "log": ".cache\\gizmo-prepare-four-input-cold-preparation.log"
+      }
+    ],
+    "report_path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\fresh-ci-four-input-results\\test-results.json",
+    "report_sha256": "5aad95d79f58b5ceefdaae71a11e0b5f4174b53df59dbc8df453e154068d99b5",
+    "driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012",
+    "run_nonce": "e60ada72ac7644f7932f3b7d8b7e3715",
+    "started_ns": 1793080261473167900,
+    "current_positive_controls": 52,
+    "historical_expected_failures": 6,
+    "count": 58,
+    "all_result_records_pass": true,
+    "exact_driver_wrapper_bridge_hashes_match": true,
+    "source_sha256": {
+      "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7",
+      "source/blender/editors/screen/screen_ipad_panels.cc": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404",
+      "source/blender/windowmanager/intern/wm_draw.cc": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c"
+    }
+  },
+  "completed_full_predecessor": {
+    "manifest_path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\frozen-validation-two-prerequisite-runner.json",
+    "manifest_sha256": "c50feec383dc275c07fc08e2c22a0589eb960669712abce07a776b21785f2df7",
+    "driver_sha256": "2b8a9b2d3455d68bab23e5a41afe6676a2e8f314a91eb175395a216ac2fef604",
+    "status": "PASS_FROZEN_HOST_PREFLIGHT_DIFF",
+    "suite_summary": [
+      "826",
+      "997.130"
+    ],
+    "frozen_input_count": 191,
+    "inputs_unchanged": true,
+    "preflight_exitcode": 0,
+    "diff_check_exitcode": 0,
+    "focused_report_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\gizmo-prepare-admission-2albm0kd\\test-results.json",
+    "focused_report_sha256": "dc79e9e4d115d1d20e337848e56666a2f3036dbbee3afef70ef6cf67831369dc",
+    "generated_cpp_comparison": {
+      "current": {
+        "equal_after_only_declared_include_path_normalization": true,
+        "normalized_sha256": "6fd416158be3cd712b2a05714938e5d7e8c0d302df539fef4514c5ee0633be67"
+      },
+      "historical": {
+        "equal_after_only_declared_include_path_normalization": true,
+        "normalized_sha256": "babe454a5d4807e5fd9a07ed5b55ec57f86649c1ec5310d5b8d71d648eeba413"
+      }
+    },
+    "all_actual_function_pinned_group_and_source_hash_records_equal_to_final_cold": true,
+    "full_harness_diff": "Exactly one include line changes from the full-run declared materialized ROOT to the cold-run declared materialized ROOT. No other current or historical generated C++ byte differs after that path substitution."
+  },
+  "verification_recommendation": {
+    "scope": "Completed unchanged-production full826 and136-file preflight/diff for the two-path predecessor, plus exact final5232 cold58, current-root58, and fresh preflight/diff, are adequate combined checks for this source-acquisition-only final delta.",
+    "third_full_suite_required": false,
+    "reason": "Only two previously implicit upstream fetches were added after the completed full run; their contents match the warm cache used by that full run, and actual generated current/historical harnesses are identical apart from the declared include location. Repeating every unrelated test would add no coverage of changed runtime behavior.",
+    "honest_claim": "Do not call the5232 driver a191-byte-frozen full826 pass. Name the two-path full predecessor and the separately verified final runner. Root owns recording the actual current-root focused and fresh preflight/diff outcomes; this review does not count pending checks as passed."
+  },
+  "preserved_failures": [
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\fresh-ci-incomplete-copy-failed.json",
+      "sha256": "e94c5e4c6ddae744c39af5a328c90374963e6f6aeac38644f76e0161f176657e"
+    },
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\fresh-ci-missing-context-failed.json",
+      "sha256": "7484edac0a687a92534e574a3b497ce354812beb833cb657d23bf08cfc58719c"
+    },
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\fresh-ci-final-preparation-results\\test-results.json",
+      "sha256": "27baa0a1a8f35b0d03f96a4972a91350264fd4bcc5986eca435cae6fb78f277b"
+    }
+  ],
+  "actionable_findings": [],
+  "native_build_or_gpu_execution_by_reviewer": false,
+  "native_sdk_package_compiled_device_gates": "Pending for the corrected source. Stock GPU counterexample and bounded host fixtures are distinct evidence; no iOS/native/device readiness claim.",
+  "device_acceptance": false,
+  "actions_performed": "Read-only repository/report/AST/hash comparison and this independent report write only; no source, model, assertion, test, workflow, or frozen input edited; no test or build launched."
+}

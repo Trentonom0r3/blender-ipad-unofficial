@@ -1,0 +1,46 @@
+{
+  "status": "PASS_COHERENT_SOURCE_HOST_PREFLIGHT_INDEPENDENT_REVIEWS_NATIVE_PENDING",
+  "utc": "2026-10-27T06:10:41.175329+00:00",
+  "baseline_source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "changed_native_targets": [
+    "source/blender/editors/screen/screen_ipad_panels.cc",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc"
+  ],
+  "unchanged_sections": 134,
+  "all7_ui_all13_ghost_exact": true,
+  "full_runtime_suite": {
+    "tests": 826,
+    "seconds": 997.13,
+    "frozen_inputs": 191,
+    "all_inputs_unchanged_at_run": true,
+    "report": "frozen-validation-two-prerequisite-runner.json",
+    "driver_at_full": "2b8a9b2d3455d68bab23e5a41afe6676a2e8f314a91eb175395a216ac2fef604",
+    "source_native_and_all_assertions_unchanged_after_run": true
+  },
+  "final_runner_validation": {
+    "driver_sha256": "5232c555778e722cc9603385428d2be31428a7f87020df753d397812979c9012",
+    "change": "Only explicit fetching of four fixed pinned prerequisites; all assertions/models/generated native bodies unchanged. Last two paths added after full; no final-driver frozen-full claim.",
+    "changed_from_full": [
+      "build/tests/gizmo_prepare_admission_models.py"
+    ],
+    "other_frozen_inputs_exact": 190,
+    "current_focused": "1/1 34.152s;58 controls52current+6 precise historical failures",
+    "cold_sequence": "Fresh empty cache; actual136 preflight passed; all4 direct inputs missing; exact driver fetched them and passed58 controls",
+    "cold_report": "fresh-ci-four-input-validation.json",
+    "normalized_current_cpp_sha256": "6fd416158be3cd712b2a05714938e5d7e8c0d302df539fef4514c5ee0633be67",
+    "independent_scope_recommendation": "independent-standalone-prerequisite-review.json; complete full predecessor plus final cold/current focused checks sufficient, no third identical full required"
+  },
+  "retained": "149/149 30.055s and68/68 65.001s;4Python/126C++ assertions and otherbytes retained",
+  "preflight": "136 offline PASS; final diff PASS",
+  "reviews": [
+    "independent-final-native-literal-review.json",
+    "independent-final-testhash-addendum.json",
+    "independent-standalone-prerequisite-review.json"
+  ],
+  "host_actual_gpu_evidence": "evidence.json; stock5.1.2 empty script GizmoGroup draws171444magenta pixels,0gizmos,unregister restores exactbaseline. Not targetdevice evidence.",
+  "native_build": "NOT_DISPATCHED",
+  "package": "NO_CORRECTED_PACKAGE_YET",
+  "device_acceptance": false,
+  "goal": "UNFINISHED"
+}

@@ -150,7 +150,7 @@ struct Global{bool background=false;int debug=0;}G;
 struct View3D:Link{int gizmo_flag=0;};
 struct wmGizmoType{void(*draw)()=nullptr;};
 struct wmGizmo:Link{wmGizmoType*type=nullptr;int flag=0,state=0;float matrix_basis[4][4]{},scale_basis=1;};
-struct wmGizmoGroupType{char idname[64]="UNKNOWN";bool(*poll)()=nullptr;};
+struct wmGizmoGroupType{char idname[64]="UNKNOWN";bool(*poll)()=nullptr;struct{void*call=nullptr;}rna_ext;};
 struct wmGizmoGroup:Link{wmGizmoGroupType*type=nullptr;int tag_remove=0,init_flag=1;struct{int any=0;}hide;ListBase gizmos;};
 struct wmGizmoMap{ListBase groups;};
 struct bToolRef_Runtime{char keymap[64]="3D View Tool: Edit Mesh, Knife",keymap_fallback[64]{};};struct bToolRef:Link{int space_type=SPACE_VIEW3D,mode=CTX_MODE_EDIT_MESH;bToolRef_Runtime*runtime=nullptr;char idname[64]="builtin.knife";};

@@ -1,0 +1,97 @@
+{
+  "status": "PASS_FINAL_FROZEN_TEST_HASH_AND_FAILURE_INFRASTRUCTURE_ADDENDUM",
+  "created_utc": "2026-10-26T06:22:52.550763+00:00",
+  "supersedes": "Any earlier prose shorthand naming driverbf0557. The original source-review artifact already captured final drivercbb00c73 in its hash table; this addendum explicitly reviews that exact final driver and subsequent metadata EOL normalization.",
+  "base_review": "output\\ui-preview\\pencil-knife\\gizmo-prepare-audit\\independent-final-native-literal-review.json",
+  "base_review_sha256": "f1de651eee5bb04c1ecf4eb601fc798883d0fd2e8dab407522de1ff868da5a57",
+  "candidate_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "native_source_and_literal_verdict": "Original source/API/lifetime/native/UI PASS remains valid; exact source hashes unchanged.",
+  "final_input_sha256": {
+    "patches/blender-ipad.patch": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+    ".gitattributes": "810f62edaac98c9ca9fec2383a0d4d68db00d6dd56af9c25b4a875edd974bfc2",
+    ".github/workflows/preflight.yml": "7ed9482153e5e83838dc7b907f8e172ac9cda31734c7b31f478af1e7ec332286",
+    "build/test_pencil_gizmo_prepare_admission.py": "ec4924d4a45ee25fd909e06c388170adc2154a22e312912d3c950ef8d7cb067e",
+    "build/tests/gizmo_prepare_admission_models.py": "cbb00c733823c3b4c7d9944be49d5cbd8a2c00051ec6c2c3b28be09dddc81706",
+    "build/tests/gizmo_prepare_historical_30da0be.cc": "f36d8b15a8d473f62e4a2bed30514d938bd91da15810409f6c5dde6aae180910",
+    "build/tests/gizmo_prepare_historical_30da0be.json": "f8d184c2b11f63a6d500d86161f2ee69f2af2df77ae8bce6aaeba6e78850edaf"
+  },
+  "driver_delta_proof": {
+    "earlier_driver_sha256": "bf0557e12672994ec274753a3bcc7a91153c298e6108148e985f016e8f79d34e",
+    "final_driver_sha256": "cbb00c733823c3b4c7d9944be49d5cbd8a2c00051ec6c2c3b28be09dddc81706",
+    "proof": "Removing the two startup SHA cache declarations and restoring their former inline expressions reproduces the earlier driver SHA exactly. No extracted body, C++ assertion, case, callback, model or expected witness changed.",
+    "reason": "Caching script/test SHA before shutdown lets atexit emit its explicit failure report when Python teardown no longer exposes __file__. Final success and failure reports use those startup hashes."
+  },
+  "focused_final_report": {
+    "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-final\\test-results.json",
+    "sha256": "ecec4277e039b1de4d1633af4d392083914bc6cb282566c6b59c88d993c72c6e",
+    "status": "PASS",
+    "current_cases": 52,
+    "historical_expected_failures": 6,
+    "count": 58,
+    "nonce": "e5050420b1304b4e8bd202f0e76f4da9",
+    "driver_wrapper_bridge_hashes_match": true,
+    "source_hashes_match_authoritative_materialization": true,
+    "precise_assertion_and_state_witness_checks": true
+  },
+  "negative_infrastructure_reports_reviewed": [
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-failure-control-fixed\\test-results.json",
+      "sha256": "2ecc4152752e56d76da254d01c4270d03c8c57c7bbdbc94d3a99462ad5be9a54",
+      "status": "FAIL_OR_INCOMPLETE",
+      "failure": {
+        "kind": "FileNotFoundError",
+        "message": "[Errno 2] No such file or directory: 'D:\\\\dev\\\\Projects\\\\Repos\\\\blendpad\\\\blender-ipad-unofficial\\\\output\\\\ui-preview\\\\pencil-knife\\\\gizmo-prepare-admission-failure-control-fixed\\\\missing-source\\\\source\\\\blender\\\\windowmanager\\\\intern\\\\wm_event_system.cc'"
+      },
+      "run_nonce": "explicit-missing-source-failure-report",
+      "started_ns": 1792995496708746000,
+      "count": 0
+    },
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-compile-failure-control\\test-results.json",
+      "sha256": "03c391359712ebb3f3b40c8c1bd6a232ad4389cd82d6537d4b0dd8a9b322a272",
+      "status": "FAIL_OR_INCOMPLETE",
+      "failure": {
+        "kind": "COMPILATION",
+        "source": "current",
+        "opt": "0",
+        "returncode": 2,
+        "log": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-compile-failure-control\\compile-current-O0.log"
+      },
+      "run_nonce": "controlled-compile-failure",
+      "started_ns": 1792995551377271300,
+      "count": 0
+    },
+    {
+      "path": "output\\ui-preview\\pencil-knife\\gizmo-prepare-admission-timeout-failure-control\\test-results.json",
+      "sha256": "c7f75a9d1104f4c0ef1413f8621faae47f7ee30231cea821343b7eb995beb91c",
+      "status": "FAIL_OR_INCOMPLETE",
+      "failure": {
+        "kind": "TimeoutExpired",
+        "message": "Command '['C:/Program Files/LLVM/bin/clang++.exe', '-std=c++17', '-DWIN32=1', '-O0', 'D:\\\\dev\\\\Projects\\\\Repos\\\\blendpad\\\\blender-ipad-unofficial\\\\output\\\\ui-preview\\\\pencil-knife\\\\gizmo-prepare-admission-timeout-failure-control\\\\actual-gizmo-prepare-current.cc', '-o', 'D:\\\\dev\\\\Projects\\\\Repos\\\\blendpad\\\\blender-ipad-unofficial\\\\output\\\\ui-preview\\\\pencil-knife\\\\gizmo-prepare-admission-timeout-failure-control\\\\actual-gizmo-prepare-current-O0.exe']' timed out after 120 seconds"
+      },
+      "run_nonce": "controlled-timeout-failure",
+      "started_ns": 1792995551542686900,
+      "count": 0
+    }
+  ],
+  "negative_infrastructure_judgment": "Each controlled missing-source, compiler-failure and TimeoutExpired path leaves a fresh explicit FAIL_OR_INCOMPLETE report with final hashes and distinct run nonce, never a passing actual-source evidence claim. Initial missing-source failed shutdown report/log is preserved separately. These are bounded injected infrastructure failures, not native compiler/device tests.",
+  "metadata_eol_normalization": {
+    "status": "PASS_BYTES_AND_PARSED_DATA_PROOF",
+    "path": "build/tests/gizmo_prepare_historical_30da0be.json",
+    "prior_crlf_sha256": "ecea905b7b82e0ecc2709b3565175581ddd7a479f2e1050da7f8df79d8e4bea1",
+    "final_lf_sha256": "f8d184c2b11f63a6d500d86161f2ee69f2af2df77ae8bce6aaeba6e78850edaf",
+    "proof": "Current JSON has zero CRLF pairs; replacing its LF bytes with CRLF reproduces the exact prior raw SHA. Parsed JSON equals the provenance included in the final focused report.",
+    "historical_cpp_bytes_unchanged": "f36d8b15a8d473f62e4a2bed30514d938bd91da15810409f6c5dde6aae180910",
+    "scope": "The .json line-ending normalization changes metadata bytes only. Both .cc and .json have narrowly scoped text eol=lf attributes. The older raw-CRLF retained connected fixture keeps its -text exception."
+  },
+  "frozen_full_suite_observation": {
+    "status": "RUNNING_FULL_FROZEN_SUITE",
+    "started_utc": "2026-10-26T06:20:12.469509+00:00",
+    "frozen_input_count": 191,
+    "all_final_reviewed_files_match_manifest": true,
+    "log": ".cache/gizmo-prepare-full-frozen.log",
+    "conclusion": "Full191-input suite is running at review. No pending PASS counted. Source review and focused58 do not replace completion of frozen full/preflight/diff/native/package/compiled/device gates."
+  },
+  "actionable_findings": [],
+  "actions_performed": "Read-only checks and this addendum write only; no runtime/test/build input was edited and no test/build was launched by this reviewer."
+}

@@ -1,0 +1,102 @@
+{
+  "finding": "SUPPORTED_HOST_COUNTEREXAMPLE: empty Python VIEW3D PERSISTENT GizmoGroup can emit visible viewport pixels directly from draw_prepare without creating or drawing any gizmo",
+  "host_report": "host-result.json",
+  "host_version": "5.1.2",
+  "host_build_hash": "ec6e62d40fa9",
+  "callback_counts": {
+    "poll": 4,
+    "setup": 1,
+    "draw_prepare": 2
+  },
+  "gizmo_count_in_all_callback_samples": 0,
+  "actual_pixels": {
+    "baseline.png": {
+      "dimensions": [
+        1280,
+        800
+      ],
+      "rgb_255_0_255_pixels": 0,
+      "sha256": "496ff0029067de996da34981e5aa4190c2a6ae0517dcd478861f366243951177",
+      "magenta_bounds_inclusive": null
+    },
+    "empty-group-draw-prepare.png": {
+      "dimensions": [
+        1280,
+        800
+      ],
+      "rgb_255_0_255_pixels": 171444,
+      "sha256": "9b6732b7d51d68adeff23b2b10806e8186b11144e2734512a2a285fba4308c69",
+      "magenta_bounds_inclusive": [
+        212,
+        238,
+        839,
+        510
+      ]
+    },
+    "after-unregister.png": {
+      "dimensions": [
+        1280,
+        800
+      ],
+      "rgb_255_0_255_pixels": 0,
+      "sha256": "496ff0029067de996da34981e5aa4190c2a6ae0517dcd478861f366243951177",
+      "magenta_bounds_inclusive": null
+    }
+  },
+  "source_evidence": {
+    "current_materialized_wm_gizmo_map": {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\windowmanager\\gizmo\\intern\\wm_gizmo_map.cc",
+      "sha256": "242d552187aa508c41d9283f77f6033f7c4a0c2e99db2b02a2ebb8a6eba40a3f",
+      "group_poll_ensure_init_before_draw_prepare_lines": [
+        402,
+        419
+      ],
+      "draw_prepare_before_gizmo_list_lines": [
+        427,
+        431
+      ],
+      "per_selected_gizmo_only_apple_marks_and_draw_lines": [
+        488,
+        500
+      ],
+      "WM_gizmomap_draw_calls_prepare_then_list_lines": [
+        524,
+        525
+      ]
+    },
+    "pinned_rna_wm_gizmo": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\makesrna\\intern\\rna_wm_gizmo.cc",
+      "sha256": "a8da354936eff15ed8397e1add6665817b5e6b28eab319cbfcd7294871be8887",
+      "python_draw_prepare_trampoline_lines": [
+        746,
+        762
+      ],
+      "python_callback_registration_lines": [
+        895,
+        905
+      ],
+      "persistent_map_add_and_notifier_lines": [
+        912,
+        916
+      ],
+      "optional_draw_prepare_definition_lines": [
+        1477,
+        1481
+      ]
+    }
+  },
+  "interpretation": "The current source marks unknown widget evidence only when iterating a selected wmGizmo draw. Group preparation runs earlier with no gizmo-list nonempty requirement. This real registered host callback produced pixels with zero gizmos, so a per-gizmo mark alone does not cover all supported group preparation pixels.",
+  "limits": [
+    "Stock Windows Blender 5.1.2 behavior; target pinned Blender5.0.0 source reviewed separately",
+    "No iOS/device/target runtime mark state measured",
+    "No production/source/tests modified and no build dispatched",
+    "First failed probe with tuple Matrix error preserved under attempt-1-matrix-argument-error"
+  ],
+  "probe_sha256": "f967b57db82fa5dfad82fdcba65204b7742507596fc0578c797b6a7f54aba5d8",
+  "probe_archive_formatting": {
+    "executed_original_sha256": "f967b57db82fa5dfad82fdcba65204b7742507596fc0578c797b6a7f54aba5d8",
+    "archived_probe_sha256": "ee5b00d991dd83e2b4e4a8d3806fd7aebf988bb22c7a8f1f241efc4416187182",
+    "change": "Only redundant blank EOF line removed for normal Git whitespace check. All statements and behavior unchanged; original executed bytes retained locally in .cache/gizmo-prepare-original-executed-host-probe.py.",
+    "runtime_or_test_inputs_changed": false
+  }
+}

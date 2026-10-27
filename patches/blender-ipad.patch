@@ -121179,7 +121179,7 @@ index 5239bf7..076cb65 100644
 diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc b/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
 --- a/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
 +++ b/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc
-@@ -1,1487 +1,1499 @@
+@@ -1,1487 +1,1511 @@
  /* SPDX-FileCopyrightText: 2014 Blender Authors
   *
   * SPDX-License-Identifier: GPL-2.0-or-later */
@@ -121575,6 +121575,18 @@ diff --git a/source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc b/source/
        continue;
      }
 
++#ifdef WITH_APPLE_CROSSPLATFORM
++    /* Script group callbacks may draw before a visible gizmo exists, including
++     * from poll/setup/refresh/draw_prepare. Reserve their opaque pixels before
++     * invoking them; a false poll or self-unlink cannot erase drawn evidence. */
++    if (gzgroup->type && gzgroup->type->rna_ext.call) {
++      if (ARegion *region = CTX_wm_region(C)) {
++        region->runtime->ipad_finger_paint_overlay_blocked = true;
++        region->runtime->ipad_knife_canvas_unknown_widgets = true;
++      }
++    }
++#endif
++
      if (gz_modal && (gzgroup == gz_modal->parent_gzgroup)) {
        if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE) {
          continue;
@@ -152339,7 +152351,7 @@ diff --git a/source/blender/editors/screen/screen_ipad_panels.cc b/source/blende
 new file mode 100644
 --- /dev/null
 +++ b/source/blender/editors/screen/screen_ipad_panels.cc
-@@ -0,0 +1,3643 @@
+@@ -0,0 +1,3645 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
 +/** iPad presentation of existing workspace editors. Presentation preserves saved ScrVerts; explicit seam edits update them. */
@@ -153232,7 +153244,9 @@ new file mode 100644
 +                                  uint64_t(group->hide.any), uint64_t(group->init_flag)});
 +        const bool known_navigation = navigation && group->type &&
 +            STREQ(group->type->idname, "VIEW3D_GGT_navigate");
-+        if (!group->type) r_native.settled = false;
++        /* An empty script group can still draw from its preparation callbacks.
++         * Never poll it to discover whether the original canvas is exposed. */
++        if (!group->type || group->type->rna_ext.call) r_native.settled = false;
 +        LISTBASE_FOREACH (wmGizmo *, gizmo, &group->gizmos) {
 +          r_native.state.push_back({5, uint64_t(uintptr_t(region)), uint64_t(uintptr_t(group)),
 +                                    uint64_t(uintptr_t(gizmo)), uint64_t(uintptr_t(gizmo->type)),

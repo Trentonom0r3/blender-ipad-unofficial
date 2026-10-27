@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T06:01:16.050143+00:00",
+  "status": "ORDER_SWAP_NOT_ACCEPTED_AS_GENERAL_PARITY",
+  "primary_report": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/source-contract.json",
+  "primary_report_sha256": "82f4d86d04eb11241d51eed7f2440ab006e5acf902c08ea1b26084b32cd22c7d",
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "overlay_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "question": "Would queuing ordinary physical Pencil Changed CURSOR before its paired PAN, preserving producer event counts and payloads, allow native node CLICK_DRAG acquisition while preserving advanced native PAN controls?",
+  "answer": "Conditionally helps the threshold-crossing node sample, but does not fully close pre-acquisition navigation and has a concrete Circle Select selection-order counterexample. No implementation or production change is proposed.",
+  "expected_changed_route": [
+    "UserInputEvent.add_event appends, and generator iterates insertion order. GHOST EventManager push_front/pop_back dispatch preserves enqueue order; WM queue appends. Thus a local order change can deliver the cursor first without a replacement owner or new semantic packet.",
+    "If that cursor crosses the native drag threshold, existing keymap polling succeeds and installs node.link or native transform before the trailing PAN, the newly live modal can consume that same PAN. This is a conditional causal effect supported by source.",
+    "If the cursor stays at or below the threshold, fails native polling/socket lookup, starts another owner or triggers UI, there is no guaranteed node modal. Trailing PAN can still reach View2D. WM_event_drag_test uses a strict greater-than threshold; low-delta Changed samples are not categorically eliminated by UIKit pan recognition because Begin resets the cached translation and synthesizes DOWN at the recognized current point."
+  ],
+  "local_invariants_supported_by_source": [
+    "For an isolated nonzero ordinary Changed packet, both list orders contain the same one GHOST cursor and one one-finger Trackpad Scroll, same current coordinates, same explicit translation and same cursor tablet snapshot. Begin/down and terminal/up need not change.",
+    "PAN delta is reconstructed from its own payload: WM takes {deltaX,-deltaY}, then wm_event_add_trackpad sets prev_xy=xy-delta. Modal remapping changes type/value/prev_type/prev_val but leaves xy/prev_xy intact. The same PAN delivered to the same owner without changed coalescing retains the same delta.",
+    "The bounded node link and transform consumption rules in source-contract.json continue to apply after successful modal acquisition. No blanket suppression is necessary to explain this conditional route."
+  ],
+  "concrete_parity_counterexample": {
+    "operator": "Native Circle Select",
+    "source_path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+    "current_lines": {
+      "cursor_applies_selection": [
+        516,
+        525
+      ],
+      "size_changes_radius": [
+        533,
+        543
+      ],
+      "size_only_redraws_and_stores": [
+        583,
+        588
+      ]
+    },
+    "pinned_lines": [
+      351,
+      429
+    ],
+    "mapping": "blender_default.py:6107 maps TRACKPADPAN to SIZE in View3D Gesture Circle; shared Circle modal is also the native circle operator backend.",
+    "existing_order": "PAN_i updates radius, then CURSOR_i moves center and applies selection with the new radius.",
+    "swapped_order": "CURSOR_i moves center and applies selection with the old radius, then PAN_i updates radius but does not call gesture_circle_apply.",
+    "source_state_example": {
+      "description": "Already-active additive circle, previous center far from a new target, old radius10, converted PAN dy=-4 yields fac=-1.2 and floor=-2 so new radius8; target at distance9 from current center. Existing order excludes target at that point; swapped order includes it before shrinking. Final release need not send another cursor to correct selection. This is a source-derived state counterexample, not executed device evidence.",
+      "native_execution": false
+    },
+    "consequence": "Same final radius and same PAN delta are insufficient to preserve selected elements. Increasing radius can also delay intended selection until another cursor sample; shrinking can overselect irreversibly within the active stroke."
+  },
+  "other_observable_differences": [
+    {
+      "kind": "Cursor prev_xy",
+      "evidence": "current wm_event_system.cc:8557-8577",
+      "effect": "Cursor prev_xy is copied from queue tail. Existing PAN-before-CURSOR commonly gives current sample position as cursor prev_xy; CURSOR-before-PAN commonly exposes the previous sample instead. Native delta-based cursor handlers can observe this."
+    },
+    {
+      "kind": "Cursor coalescence",
+      "evidence": "current wm_event_system.cc:8564-8568",
+      "effect": "When the queue tail is MOUSEMOVE, adding another cursor demotes it to INBETWEEN_MOUSEMOVE. Reordering changes which adjacent samples are separated by PAN, especially with zero-translation cursor-only samples or other queued cursor producers. Equal GHOST counts do not prove equal effective WM MOUSEMOVE delivery."
+    },
+    {
+      "kind": "Inherited PAN tablet state",
+      "evidence": "current wm_event_system.cc:8913-8915,8979,9003-9006,9036-9096",
+      "effect": "GHOST PAN has no tablet snapshot. WM copies eventstate; cursor ingest writes current is_motion_absolute and tilt into eventstate. A following PAN can therefore inherit newer tablet fields than the same PAN sent before cursor. Producer payload equality is not full WM event equality."
+    },
+    {
+      "kind": "Gesture chain bookkeeping",
+      "evidence": "current wm_event_system.cc:6761-6779; pinned wm_event_query.cc:365-389",
+      "effect": "Cursor motion can break consecutive gesture state depending on distance from recorded gesture origin. PAN/cursor ordering changes when that bookkeeping runs."
+    },
+    {
+      "kind": "Regional motion history",
+      "evidence": "current wm_event_system.cc:6348-6355,7738-7756",
+      "effect": "Cursor prev_xy influences previous-region paintcursor redraw and region mask polling. Crossing editor/region edges must be tested; broad region neutrality is not established."
+    },
+    {
+      "kind": "Transform proportional editing",
+      "evidence": "current transform.cc:1228-1241; transform_ops.cc:459-507",
+      "effect": "PAN still adjusts prop_size from explicit dy and recalculates ratios, and transformApply runs after each modal event. Pure deterministic final results may match after both events; intermediate transform, snapping, constraints and update callbacks occur in a different order. No general transform parity claim follows."
+    },
+    {
+      "kind": "Custom callbacks and event timestamps",
+      "evidence": "current GHOST_WindowIOS.mm:1105-1137 and native modal dispatch",
+      "effect": "Native callbacks observe order; each GHOST event obtains its enqueue timestamp in its switch branch. A source reorder is an observable scheduling change even with equal data counts."
+    }
+  ],
+  "meaningful_positive_controls_required_before_any_later_change": [
+    "Node threshold-crossing first Changed versus several below-threshold samples; source socket/title hit, no-handler polling failure, node selection and drag acquisition; actual v2d.cur before every sample.",
+    "Native Circle already active and waiting for input; positive/negative SIZE, targets in old/new radius annulus, additive/subtractive selection, final pair followed immediately by release. Compare selected IDs, not just final radius.",
+    "Proportional transform with falloff and influence radius, final coordinates, constraint/snapping selection, intermediate callbacks and undo; ordinary unhandled transform PAN remains blocking as before.",
+    "Both isolated and multiple queued batches; repeated nonzero samples, zero translation, subpixel deltas, cursor coalescence, terminal without final cursor, direct native history/lifetime cleanup.",
+    "Region/editor crossings, native fields and gizmos, supported modified routes and customized keymaps; failure to acquire a node handler cannot be mistaken for safe suppression intent.",
+    "Paint and already-live Knife guards, ring/HUD capture, finger navigation, external pointer/trackpad and supported native PAN controls. Keep the original fresh Knife initial-PASS_ONLY gap separate."
+  ],
+  "evidence_limits": [
+    "This is source-only plus the primary report exact Python keymap evaluation. No native C++ execution, host GUI probe, iOS build/package, simulator or device observation was performed.",
+    "The current two-source gizmo correction gate remains independent and must close before any production increment. No blanket event suppression, owner helper, source/test edit, native build or code proposal is created by this assessment."
+  ],
+  "additional_pinned_sources": [
+    {
+      "path": "intern/ghost/intern/GHOST_EventManager.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/intern/ghost/intern/GHOST_EventManager.cc",
+      "sha256": "7e30dde27bc20cb20fb7e7b59c861d3ae0b8e65dc64c898f3d4b18fc76e93736"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_query.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_query.cc",
+      "sha256": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a"
+    }
+  ],
+  "current_sources": [
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/intern/GHOST_WindowIOS.mm",
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_gesture_ops.cc",
+      "sha256": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e"
+    },
+    {
+      "path": "source/blender/editors/transform/transform.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/transform/transform.cc",
+      "sha256": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb"
+    },
+    {
+      "path": "source/blender/editors/transform/transform_ops.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/transform/transform_ops.cc",
+      "sha256": "10e1e2229bd8d99795dd27f682c50c6765051b7d0c04add78fe1f360e9034d71"
+    }
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "native_build_started": false,
+  "device_acceptance": false
+}

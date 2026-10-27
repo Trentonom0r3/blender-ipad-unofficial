@@ -1,0 +1,201 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_NATIVE_BRIDGE_REVIEW",
+  "reviewer": "independent live_pan_compiled_bridge agent",
+  "created_utc": "2026-10-26T06:00:40.824721+00:00",
+  "run": "40252354359",
+  "source": "30da0be80a073ef6a6fc5ce634a2039bbb946afd",
+  "binary": {
+    "path": "Blender",
+    "architecture": "Mach-O arm64",
+    "uuid": "FA474B4B-9C76-3BF5-A323-F7EDFC6742C0",
+    "sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0"
+  },
+  "method": {
+    "scope": "Fresh native WM query bridge, current Main/WM/window and keyboard queue refusal, owned context, registered original Knife owner23/operator/type/context matching, native scope32 and EDprobe matching, known native Knife draw callback identity. Renderer/token/higher UI and physical GHOST producer are separately reviewed.",
+    "authoritative_source_read": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+    "workspace_instructions_read": [
+      "AGENTS.md",
+      "docs/PRODUCT_DIRECTION.md",
+      "docs/IPAD_WORKSPACE.md",
+      "docs/PROJECT_HANDOFF.md"
+    ],
+    "fresh_tool": [
+      "LLVM (http://llvm.org/):",
+      "  LLVM version 22.1.5",
+      "  Optimized build."
+    ],
+    "fresh_dump_directory": "independent-native-bridge-fresh-audit",
+    "fresh_manifest": "independent-native-bridge-fresh-audit/fresh-manifest.json",
+    "primary_fresh_versus_raw": "independent-native-bridge-fresh-audit/fresh-versus-raw-instructions.json",
+    "all_22_primary_ranges_instruction_exact": true,
+    "fresh_dump_range_count": 65,
+    "fresh_dump_instruction_count": 5888,
+    "count_limit": "Range and instruction totals describe evidence inventory, not whole-binary proof.",
+    "raw_inventory_sha256_unchanged": "0a533618c546ca01873828df1f5f0171ddf56b8b828abcd1986646faf3f141d1",
+    "mutations": "Only new independent audit artifacts. No production, test, raw report/checker edits or build dispatch. Escalated active Git status --short --untracked-files=no was empty."
+  },
+  "obligations": [
+    {
+      "name": "Inlined native callback installation and clearing",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x100b95fc0-0x100b95fd0",
+        "0x100b96c20-0x100b96c28",
+        "0x100b96c74-0x100b96c7c"
+      ],
+      "conclusion": "Actual native init stores exact fresh bridge address 0x100b96914; background initialization and normal exit clear the same registry. The missing standalone setter is inlining, not an absent gate.",
+      "evidence": [
+        "Init loads GOT cell 0x106368758, materializes adrp/add 0x100b96914, stores through loaded address.",
+        "Decoded LC_DYLD_CHAINED_FIXUPS format6: GOT raw0x80100000000008eb, bind ordinal2283 resolves __ZN5ghost3ios22pencil_knife_pan_probeE. Independent producer reviewer additionally resolves its nlist storage to0x106658438.",
+        "Pointer resolution preserved in independent-native-bridge-fresh-audit/resolved-pointers.json; GHOST wrappers and transport remain separate producer-review scope."
+      ]
+    },
+    {
+      "name": "Current Main/manager/window and native queued keyboard refusal",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x100b96914-0x100b96bfc"
+      ],
+      "conclusion": "The bridge resolves unique current window membership by ghostwin under current G_MAIN, scans all current native WM event queues, and refuses keyboard or keyboard-origin modal-map events before context creation.",
+      "evidence": [
+        "0x100b96940-0x100b96984 zero the473-byte receipt. 0x100b96988-0x100b969d0 refuse non-main thread, querying, absent g_system, null ghost_window, G.background, null G_MAIN, or zero original serial.",
+        "Global identities are actual addresses: G base0x106d88028; g_system0x107ef3e10; querying0x107ef3e28. Manager iteration starts Main+0x678; manager runtime+0x5c0 and sessionUID+0x144 must exist before visiting windows+0x1a0.",
+        "0x100b96a0c-0x100b96a54 validate each window runtime+0x168 then iterate queue. type+0x10 uses exact keyboard ranges0x20..0xff and0x12c..0x143. EVT_MODAL_MAP0x5022 additionally tests prev_type+0x90 against the same ranges. Every matching keyboard refuses to0x100b96b70.",
+        "0x100b96a58-0x100b96a88 compare live window ghostwin+0x10 to physical input address, reject a second match, and continue full Main scan. No input ghost-window pointer is dereferenced.",
+        "0x100b96a98-0x100b96b18 require selected winid/eventstate/workspace_hook, active workspace membership in Main+0x6e8 and UID, layout membership in workspace+0x1a0, screen membership in Main+0x598 and UID BEFORE CTX_wm_window_set can read hook children.",
+        "After querying=true at0x100b969d8, normal refusal and success join at0x100b96b74 clearing the flag; exception cleanup pads0x100b96be4/6bec/6bf4 clear before __Unwind_Resume. No queued event pointer survives a callback."
+      ]
+    },
+    {
+      "name": "Own empty context and actual provider/callback bypass",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x100b96b1c-0x100b96b64",
+        "0x1000b1128-0x1000b114c",
+        "0x1000b11c8-0x1000b1210",
+        "0x1000b4954-0x1000b4b90",
+        "0x1000b4200-0x1000b43e0"
+      ],
+      "conclusion": "The bridge creates and frees its own empty context in normal return paths, sets only validated native identities, and reaches native getters without Python/context providers or a user destructor callback.",
+      "evidence": [
+        "0x100b96b1c calls CTX_create; x23 retains ONLY the new C. null allocation refuses. manager_set receives x23/x22 at0x100b96b30, window_set x23/x24 at0x100b96b3c. EDprobe receives x0=C,x1=window,x2=capture,x3=original,x4=result at0x100b96b54. Its bool is preserved in x20 while CTX_free(C) runs at0x100b96b60, before any normal successful/refused return. False result is zeroed at0x100b96b94-0x100b96bdc.",
+        "CTX_create materializes count1,size0x98,align8 then tailbranches through0x106657760. Chained rebase resolves that default MEM_calloc_arrayN_aligned pointer to0x100ae5fd4; align8 tails to0x100ae5d94 which calls actual imported calloc stub0x104b74958. Newly allocated152-byte C therefore has Python state+0x88 and destructor callback+0x60 zero.",
+        "manager_set0x1000b4954 is stores only. window_set uses two actual native getter calls:0x10072a094 loads hook.active and0x10072a12c loads hook.act_layout then screen. Both child identities were proved before entering.",
+        "window/area/region setter BPY clearing branches depend on C+0x88 at0x1000b49d0/0x1000b4ad0/0x1000b4b44, all skipped for this own empty C. EDprobe uses area_set then region_set at0x101640218/0x101640224; neither writes C+0x60 or C+0x88.",
+        "CTX_wm_manager0x1000b4200 is direct C+8 load. CTX_wm_window0x1000b4218 tails into actual ctx_wm_python_context_get0x1000b4230, whose C+0x88==0 branch0x1000b4260-0x1000b4270 bypasses BPY_context_member_get and returns native x3 on main thread.",
+        "CTX_free at0x1000b11c8 tests C+0x60. It remains zero, so the generic BLR callback0x1000b11e4 is unreachable on this bridge path; normal free reaches initial native MEM free pointer0x106657710\u21920x100ae55a8. No CTX_data_main_set, sound Main callback, context provider, operator poll, operator action/Cancel, or draw callback is invoked.",
+        "Related hierarchy_current/native_capture dependency reviewed separately by renderer reviewer: actual native capture writes output/local collections, never C callback/provider fields, and calls only native accessors/collection/libc operations. This report does not substitute for renderer receipt proof."
+      ]
+    },
+    {
+      "name": "Original registered23 owner and native lifetimes",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x100b58fa0-0x100b59184",
+        "0x100b503e0-0x100b50ae4",
+        "0x100b50ae4-0x100b50d20",
+        "0x100b50d20-0x100b50f08",
+        "0x100b42de4-0x100b4314c"
+      ],
+      "conclusion": "The queried owner is the saved registration of the same native live Knife, with fresh handler/operator/type/context/scene/object/mesh membership. Capture cannot invent an initial tool prediction or inherit a replacement operator.",
+      "evidence": [
+        "Registration bind is inlined into WM_event_add_modal_handler_ex. Handler is inserted via0x100b590f4 or0x100b59104 before0x100b59140 calls owner_read(win,handler,area,region,true,stackOwner). The true flag is w4=1 at0x100b5913c; copied184 bytes are installed at handler+0x178..0x22f only after success0x100b59144-0x100b59180.",
+        "wm_ipad_knife_owner_read0x100b5066c repeats current Main and unique manager/windows membership. 0x100b50730-0x100b50778 establish win runtime, modal list membership BEFORE dereferencing handler fields, exact OP type3, not DO_FREE bit7, not fileselect, and absent-or-same context.window.",
+        "On capture/present owner_read flag is w4=0 at0x100b50600 /0x100b50cac. 0x100b507a0-0x100b507b8 loads handler.op and original saved lifetime+0x200 then calls WM_operator_touch_lifetime_matches BEFORE dereferencing op->type at0x100b507e8. Actual matches0x100b42f30 uses pointer-key hash lookup and compares stored lifetime without dereferencing the input operator.",
+        "Registry key is actual cstring0x104bd40b7=MESH_OT_knife_tool.0x100b507c8 calls type registry; current type lifetime+0xe8 must be nonzero, actual native modal type proof0x101c36a7c must pass, op->type must be that registry object, and op->opm must be null.",
+        "Native modal type proof compares actual invoke0x101c36ad8, modal0x101c36dd0, cancel0x101c375d8 function addresses and rejects macro flag/list. ED_mesh_knife_modal_origin0x101c37600 has the same inlined address proof and reads only real Knife customdata origin after it.",
+        "0x100b50800-0x100b508b0 establish current screen membership+UID; area is found by saved address in screen areabase and must be VIEW3D/same handler context.area; region found by saved address in that area must be WINDOW/live visible/runtime/regiondata.0x100b508c8 calls native origin and0x100b508d8-0x100b50908 match exact region/RV3D/V3D.",
+        "0x100b5090c-0x100b50a4c validate current scene against Knife origin, Main scene membership+UID, named current ViewLayer==origin/member/not out-of-sync, active base membership, same active object==origin/Main object member+UID/edit mesh object, and Main mesh member+UID. Final stores0x100b50a98-0x100b50adc produce all23 scalar fields including operator/type lifetimes and handler/V3D/RV3D.",
+        "WM_owner_capture requires same CTX manager/window and area, rejects unrecognized higher UI, saved invalid/different area/bad current owner or duplicate owner. Actual memcmp(saved,current,0xb8) at0x100b50618 and duplicate found bit0x100b50624-28 jointly enforce exact23 values. WM_owner_present uses corresponding184-byte compare0x100b50cc4 for cached known draw lookup.",
+        "WM_owner_region receives include_blocked=false from EDprobe0x1016404b8. It calls fresh capture0x100b50ec4, compares exact184 bytes at0x100b50ed8, then resolves actual region by membership. No saved region pointer is blindly returned.",
+        "Operator lifetime registration allocates monotonic identity in0x100b42edc-0x100b42f14, reuses existing identity, refuses null/exhaustion. WM_operator_free0x100b4302c calls actual hash erase0x100b43d40 FIRST at0x100b4304c, before any bevel/macro/Python destructor and before freeing op. Aliased erase helper is resolved by actual x0=identity map0x107ef3320 and pointer-key argument at sp+8; alternate symbol aliases are not different routes.",
+        "Native WM_operatortype_append and _ptr paths inline monotonic type lifetime assignment to type+0xe8 at0x100b7ca0c-0x100b7ca2c and0x100b7cc0c-0x100b7cc2c; original saved/current equality additionally catches registry replacements. Type-generation global is0x106658328.",
+        "No queried pointer is held across an invoked user/provider/tool/Cancel callback. Query produces copied scalar values only and performs fresh membership/lifetime checks each invocation."
+      ]
+    },
+    {
+      "name": "Fresh native32 scope with guarded children/geometry",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x100b50f08-0x100b513f4"
+      ],
+      "conclusion": "Scope is freshly captured from current native structures after ordered membership checks and contains exactly32 scalar identities/UIDs/dimensions/scale/type/rect coordinates.",
+      "evidence": [
+        "0x100b50f08-0x100b50ff8 repeat current Main, unique manager/window, UID/runtime/winid and CTX manager/window equality.0x100b51020-0x100b510b0 guard workspace/layout/screen/area membership before children.",
+        "0x100b510b4-0x100b51144 require VIEW3D/spacedata/area dimensions\u22653, member WINDOW region/runtime/visible/regiondata, region type+draw pointer present, no draw lock/header string, and native canvas flag. Draw pointer is tested only, never called.",
+        "0x100b51148-0x100b5125c require Main member scene UID, named member ViewLayer not out of sync, member active base, Main object UID with exact mode1=Edit and mesh type, Main mesh UID and live edit_mesh/BMesh.",
+        "0x100b51260-0x100b5134c obtain native dimensions, refuse nonpositive dimensions/nonfinite or nonpositive UI scale, out-of-window/inverted region rectangle, negative/inverted/overflowing canvas rectangle.",
+        "0x100b51350-0x100b513e8 store exactly256 bytes: [Main,WM,WM_UID,window,winid,screen,screen_UID,area,V3D,region,RV3D,workspace,workspace_UID,scene,scene_UID,ViewLayer,object,object_UID,mesh,mesh_UID,width,height,UI_scale_bits,region_type,region_xmin,xmax,ymin,ymax,canvas_xmin,xmax,ymin,ymax]. Returntrue only0x100b513ec after those stores."
+      ]
+    },
+    {
+      "name": "EDprobe exact fresh scope and same original live owner",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x10163fd9c-0x101640748",
+        "0x101640748-0x1016407a4"
+      ],
+      "conclusion": "EDprobe independently reacquires native canvas scope and original live owner, compares native texture/composition and saved recognition receipt exactly, and refuses a missing/replaced owner. Reserved Tool intent cannot admit PAN omission.",
+      "evidence": [
+        "0x10163fe1c-0x10163fe78 refuse null C/window/serial. Recognition requires content, intent2=Live, tool_ref0 and valid original owner identity fields. Capture bypasses only the original.valid requirement, then must prove actual live owner below.",
+        "0x1016401b0-0x1016401d4 call WM_canvas_scope_capture with C,live window, candidate area, candidate region,sp+0x320. Existing candidate region triggers refusal0x1016401ac, so ambiguous canvas targets cannot acquire scope. Then area_set precedes region_set0x101640218/224; uiblocks and callback safety are guarded0x101640228-264.",
+        "Texture buffer native scope at buffer+0x18 is memcmp256 against fresh sp+0x320 at0x1016402a8. Composition scope+0x28 similarly compares256 at0x101640350, with exact buffer/content and valid/no-unknown bits. These are actual byte-count arguments to imported memcmp0x104b75474, not name-marker inference.",
+        "WM_owner_capture(C,window,area,sp+0xe0) call0x1016404a4 must succeed; cbz0x1016404a8 refuses absent original live Knife. No tool-name lookup or initialTool branch substitutes for it.",
+        "Fresh WM_owner_region(C,window,live,false) at0x1016404bc must equal selected region.0x1016404c8-0x1016404f8 rescan every window modal handler: exact OP type3, not DO_FREE, exact pointer==live.values[20], refusing every other handler.",
+        "Drawn composition owner, current known callback owner, and texture drawn owner compare to live using explicit184-byte memcmp at0x101640534,0x101640570,0x1016405e8 whenever their valid owner bits are present.",
+        "next receipt uses original serial/origin copied verbatim, fresh256-byte scope, exact native content, tool_ref zero, live184-byte owner, intentbyte2. The compiler eliminates serial/origin self-comparisons because both sides are directly copied from the same original.",
+        "Recognition(capture=false) at0x1016406ec-0x101640744 compares fresh scope256, content, intent2, tool_ref0, owner184 against original, then shared valid check. Any mismatch returns false and zero output. Contact.valid0x101640748 checks serial/content/Live intent/no tool_ref plus owner[0],[2],[6],[17],[19]. Only successful valid receipt is memcpy473 to result at0x1016406e0.",
+        "Renderer/presentation token freshness/higher UI completeness are distinct reviewer obligations; this native report verifies actual compare/call/argument/refusal edges to those inputs."
+      ]
+    },
+    {
+      "name": "Actual known native Knife draw callback identity",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "ranges": [
+        "0x101b4d9e8-0x101b4dc0c",
+        "0x100b513f4-0x100b516a0",
+        "0x101c376cc-0x101c377a8"
+      ],
+      "conclusion": "An arbitrary region callback cannot be treated as known Knife pixels by name. Actual callback node, function, data, phase and currently registered native operator must all match; callbacks are compared without invoking them.",
+      "evidence": [
+        "ED_region_callbacks_safe zeroes owner and requires C/region/runtime/type. It iterates drawcall nodes;0x101b4dae0-0x101b4dae4 rejects a second callback after a valid known owner.0x101b4dae8-0x101b4db00 pass actual node address as handle, node.draw+0x10, node.customdata+0x18, node.type+0x20 and stack owner to WM known helper. Missing/unknown callback immediately refuses0x101b4db04-0x101b4db68.",
+        "WM known helper resolves same current Main/manager/window/workspace/layout/screen/area/region, calls native scope capture0x100b5159c, freshly owner_present0x100b515d4, and requires fresh.owner.region==input region0x100b515e0-0x100b515e8.",
+        "It then reacquires fresh.owner.handler from actual window modal list0x100b515ec-0x100b51614, validates OP/notDO_FREE, and forwards handler.op/region/handle/draw/data/type in x0..x5 exactly at0x100b51618-0x100b51630.",
+        "ED_mesh known helper has actual inlined native origin/type/macro proof0x101c376cc-0x101c37740; requires nonzero handle, nonnull real Knife origin members, exact origin.region at0x101c3777c.0x101c37784-0x101c377a0 compares draw to fixed native knifetool_draw0x101c377a8, handle to kcd->draw_handle+8, data to same kcd, type to0=REGION_DRAW_POST_VIEW.",
+        "These helpers contain no BLR/BR to an input draw function. Native callback comparisons cannot execute arbitrary draw callbacks or Cancel an operator. Passed owner is copied184-byte fresh original native registration."
+      ]
+    }
+  ],
+  "resolved_non_symbol_evidence": {
+    "pointer_bindings": "independent-native-bridge-fresh-audit/resolved-pointers.json",
+    "mach_o_imports": "independent-native-bridge-fresh-audit/indirect-symbols.txt",
+    "import_addresses": {
+      "0x104b75474": "memcmp",
+      "0x104b75480": "memcpy",
+      "0x104b74958": "calloc",
+      "0x104b7494c": "bzero",
+      "0x104b745c8": "operator delete(void*)",
+      "0x104b745ec": "operator new(size_t)",
+      "0x104b75ffc": "strcmp",
+      "0x104b7203c": "_Unwind_Resume",
+      "0x104b7476c": "__stack_chk_fail"
+    },
+    "inlining_and_aliases": [
+      "No standalone registry setter: actual global stores independently resolved.",
+      "No standalone modal_handler_bind: exact w4=true call and184-byte handler stores in WM_event_add_modal_handler_ex.",
+      "ED_mesh modal origin and draw helper inline exact invoke/modal/cancel identity comparisons.",
+      "memcmp/memcpy imports independently resolved from Mach-O indirect table despite generic zlibVersion disassembly comments.",
+      "CTX_create/free function-pointer globals independently decoded to initial native calloc/free implementations.",
+      "Hash erase helper has several same-address aliases; actual identity-map x0 and operator-key x1 establish this call semantics."
+    ]
+  },
+  "findings": [],
+  "limits": [
+    "This is a bounded static actual arm64 control/argument/membership review of the specified binary and normal native registration/query routes. It is not global heap safety, arbitrary memory corruption, whole-binary CFG, arbitrary registry/allocator/log hook substitution, WM/UIKit concurrency, or device acceptance proof.",
+    "Fresh own-context provider/callback bypass relies on reviewed zero allocation and absence of C callback/provider writes on the native query dependency path. General CTX APIs retain callback/Python capability for other contexts; that capability was not erased or weakened.",
+    "Renderer/token/compositor/higher UI admission facts and GHOST physical provenance/registry invocation are separately reviewed. Their successful reports are required for the combined compiled gate.",
+    "No native rebuild, production/test/checker edits, callback invocation, device action, or readiness declaration was performed. No-handler/same-batch initial DOWN remains ordinary PAN, as intended original-live-only scope.",
+    "Raw knife-call-sites inventory and existing asm/checkers/reports are preserved. This pass neither reclassifies their unresolved entries by marker alone nor changes the earlier raw owner-checker failure."
+  ],
+  "readiness": "This report closes only the bounded native bridge obligation. Overall package readiness remains with the root combined review; no exact-device acceptance is claimed."
+}
