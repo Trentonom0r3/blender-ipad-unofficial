@@ -1,0 +1,806 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-27T10:57:39.943123+00:00",
+  "binary_sha256": "ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404",
+  "tool": "C:/Program Files/LLVM/bin/llvm-objdump.exe",
+  "method": "fresh independent llvm-nm exact text symbol boundaries and llvm-objdump ranges; aliases kept",
+  "ranges": [
+    {
+      "selector": "WM_gizmomap_draw",
+      "start": "0x100b3f8e4",
+      "end": "0x100b3f8f4",
+      "aliases": [
+        "__Z37WM_gizmomap_drawstep_from_gizmo_groupPK12wmGizmoGroup"
+      ],
+      "file": "100b3f8e4--WM_gizmomap_draw.asm",
+      "sha256": "46eedc4661c3bff0b249a0eaf9bb7387c2ef17d3421601da5a01056cb0e820bb",
+      "instruction_count": 4,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306761956",
+        "--stop-address=4306761972",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmomap_draw",
+      "start": "0x100b3f95c",
+      "end": "0x100b3fc30",
+      "aliases": [
+        "__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep"
+      ],
+      "file": "100b3f95c--WM_gizmomap_draw.asm",
+      "sha256": "99c8dfe17319c9bf9eec74d8fde1f9a0de80af300a3547d05803b2441e04b641",
+      "instruction_count": 181,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306762076",
+        "--stop-address=4306762800",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmogroup_ensure_init",
+      "start": "0x100b3ce14",
+      "end": "0x100b3ce78",
+      "aliases": [
+        "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup"
+      ],
+      "file": "100b3ce14--WM_gizmogroup_ensure_init.asm",
+      "sha256": "d664801e9162292704d2ac73527b05d0e760be832d602092369774f04cea2bcd",
+      "instruction_count": 25,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306750996",
+        "--stop-address=4306751096",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmogroup_ensure_init",
+      "start": "0x104a5eb18",
+      "end": "0x104a5ebb0",
+      "aliases": [
+        "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup.cold.1"
+      ],
+      "file": "104a5eb18--WM_gizmogroup_ensure_init.asm",
+      "sha256": "b3dd5fe47cc0114277ddf022bb6558689c0770ac67fb39fec487c5de74ccf649",
+      "instruction_count": 38,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4372949784",
+        "--stop-address=4372949936",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmo_group_refresh",
+      "start": "0x100b3ceb8",
+      "end": "0x100b3cfb4",
+      "aliases": [
+        "__Z22WM_gizmo_group_refreshPK8bContextP12wmGizmoGroup"
+      ],
+      "file": "100b3ceb8--WM_gizmo_group_refresh.asm",
+      "sha256": "aca846c406db517463def844bb9994bac53f41f90335041094c40670b7dd4f1e",
+      "instruction_count": 63,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306751160",
+        "--stop-address=4306751412",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmo_group_type_poll",
+      "start": "0x100b3e344",
+      "end": "0x100b3e3b0",
+      "aliases": [
+        "__Z24WM_gizmo_group_type_pollPK8bContextPK16wmGizmoGroupType"
+      ],
+      "file": "100b3e344--WM_gizmo_group_type_poll.asm",
+      "sha256": "79b2e9c1669262ce8b7034c09814ec84f710a57cbff1be413f571467ba376b92",
+      "instruction_count": 27,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306756420",
+        "--stop-address=4306756528",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_gizmogroup_is_visible_in_drawstep",
+      "start": "0x100b3d098",
+      "end": "0x100b3d0f4",
+      "aliases": [
+        "__Z36wm_gizmogroup_is_visible_in_drawstepPK12wmGizmoGroup24eWM_GizmoFlagMapDrawStep"
+      ],
+      "file": "100b3d098--wm_gizmogroup_is_visible_in_drawstep.asm",
+      "sha256": "dc69c3764f2951915657af7c49330e566816b216d9f33ae5105034eb0355272d",
+      "instruction_count": 23,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306751640",
+        "--stop-address=4306751732",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "rna_GizmoGroup_register",
+      "start": "0x1014dc27c",
+      "end": "0x1014dc674",
+      "aliases": [
+        "__ZL23rna_GizmoGroup_registerP4MainP10ReportListPvPKcPFiP10PointerRNAS3_PbEPFiP8bContextS7_P11FunctionRNAP13ParameterListEPFvS3_E"
+      ],
+      "file": "1014dc27c--rna_GizmoGroup_register.asm",
+      "sha256": "92bb329752d510c2831c3f9b5c60762780633ef70832d258a18bacd7677b854a",
+      "instruction_count": 254,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316840572",
+        "--stop-address=4316841588",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "rna_gizmogroup_poll_cb",
+      "start": "0x1014dd2b0",
+      "end": "0x1014dd3cc",
+      "aliases": [
+        "__ZL22rna_gizmogroup_poll_cbPK8bContextP16wmGizmoGroupType"
+      ],
+      "file": "1014dd2b0--rna_gizmogroup_poll_cb.asm",
+      "sha256": "4028b8e8d60aafdeb3745091c6fffc79b229c0f1463f707f765938472d10a768",
+      "instruction_count": 71,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316844720",
+        "--stop-address=4316845004",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "rna_gizmogroup_setup_cb",
+      "start": "0x1014dd4ec",
+      "end": "0x1014dd5f0",
+      "aliases": [
+        "__ZL23rna_gizmogroup_setup_cbPK8bContextP12wmGizmoGroup"
+      ],
+      "file": "1014dd4ec--rna_gizmogroup_setup_cb.asm",
+      "sha256": "8eeb05d362d22219ef204f878bf20484a33344de0c04ce7b938ed43bfe7ed6fc",
+      "instruction_count": 65,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316845292",
+        "--stop-address=4316845552",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "rna_gizmogroup_refresh_cb",
+      "start": "0x1014dd5f0",
+      "end": "0x1014dd6f4",
+      "aliases": [
+        "__ZL25rna_gizmogroup_refresh_cbPK8bContextP12wmGizmoGroup"
+      ],
+      "file": "1014dd5f0--rna_gizmogroup_refresh_cb.asm",
+      "sha256": "bb844d8db2c3d94a60b07df8fa0538a2b353f8104cb3e26b41454c8f71f601f5",
+      "instruction_count": 65,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316845552",
+        "--stop-address=4316845812",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "rna_gizmogroup_draw_prepare_cb",
+      "start": "0x1014dd6f4",
+      "end": "0x1014dd7f8",
+      "aliases": [
+        "__ZL30rna_gizmogroup_draw_prepare_cbPK8bContextP12wmGizmoGroup"
+      ],
+      "file": "1014dd6f4--rna_gizmogroup_draw_prepare_cb.asm",
+      "sha256": "93963aa2f29e78b47ef8e273a53d6e7ace90a862fc1b2da521d84562438950ee",
+      "instruction_count": 65,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316845812",
+        "--stop-address=4316846072",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "BPY_RNA_gizmogroup_wrapper",
+      "start": "0x1014fc994",
+      "end": "0x1014fc9f4",
+      "aliases": [
+        "__Z26BPY_RNA_gizmogroup_wrapperP16wmGizmoGroupTypePv"
+      ],
+      "file": "1014fc994--BPY_RNA_gizmogroup_wrapper.asm",
+      "sha256": "93078ae96d00764426a2a85090608bcfbf8f6f3deea2ed85fdac69a48764c642",
+      "instruction_count": 24,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316973460",
+        "--stop-address=4316973556",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmogrouptype_append_ptr",
+      "start": "0x100b3e980",
+      "end": "0x100b3ea08",
+      "aliases": [
+        "__Z28WM_gizmogrouptype_append_ptrPFvP16wmGizmoGroupTypePvES1_"
+      ],
+      "file": "100b3e980--WM_gizmogrouptype_append_ptr.asm",
+      "sha256": "6e3ccf1a325e3f2bb3679c9fa20fceec35e35bf7d53d706b211d5226ef39e1e1",
+      "instruction_count": 34,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306758016",
+        "--stop-address=4306758152",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "bpy_class_call",
+      "start": "0x10151af2c",
+      "end": "0x10151b778",
+      "aliases": [
+        "__ZL14bpy_class_callP8bContextP10PointerRNAP11FunctionRNAP13ParameterList"
+      ],
+      "file": "10151af2c--bpy_class_call.asm",
+      "sha256": "df6c76ea7721ccdfc5ffb8ad1713b66c96089dbd18ddc9d5a95229c76c7d4632",
+      "instruction_count": 531,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4317097772",
+        "--stop-address=4317099896",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ipad_knife_hierarchy_native_capture",
+      "start": "0x10164e984",
+      "end": "0x10164fd74",
+      "aliases": [
+        "__ZN12_GLOBAL__N_135ipad_knife_hierarchy_native_captureEP8bContextP8wmWindowRNS_24IPadKnifeHierarchyNativeE"
+      ],
+      "file": "10164e984--ipad_knife_hierarchy_native_capture.asm",
+      "sha256": "5ae6f4f6a2354242cae0f792deb3c1d4164d4222f657d7ac0b71d633b36a01df",
+      "instruction_count": 1276,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318357892",
+        "--stop-address=4318362996",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ipad_knife_hierarchy_current",
+      "start": "0x1016407d4",
+      "end": "0x101640980",
+      "aliases": [
+        "__ZN12_GLOBAL__N_128ipad_knife_hierarchy_currentEP8bContextP8wmWindow"
+      ],
+      "file": "1016407d4--ipad_knife_hierarchy_current.asm",
+      "sha256": "8e75bc26fc16e48caf6f494f9aae5656eb11c6890be6402b1f0b20aa445f44d3",
+      "instruction_count": 107,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318300116",
+        "--stop-address=4318300544",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_knife_pan_probe",
+      "start": "0x10163fdcc",
+      "end": "0x101640778",
+      "aliases": [
+        "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_"
+      ],
+      "file": "10163fdcc--ED_ipad_knife_pan_probe.asm",
+      "sha256": "ab1f722319b8267d2cb62230e705d9f1fc694a408f4f9b3d9ce2c7350bb6e197",
+      "instruction_count": 619,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318297548",
+        "--stop-address=4318300024",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_draw_area_offscreen",
+      "start": "0x100b4bf4c",
+      "end": "0x100b4cac0",
+      "aliases": [
+        "__ZL22wm_draw_area_offscreenP8bContextP8wmWindowP7ScrAreab"
+      ],
+      "file": "100b4bf4c--wm_draw_area_offscreen.asm",
+      "sha256": "89cb37334086be3ae09a9c012defa690cccce70145e278f7fce5584cf48489db",
+      "instruction_count": 733,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306812748",
+        "--stop-address=4306815680",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_draw_window_area_layer",
+      "start": "0x100b4ae10",
+      "end": "0x100b4b38c",
+      "aliases": [
+        "__ZL25wm_draw_window_area_layerP8bContextP8wmWindowiiR22wmIPadFingerPaintFrame"
+      ],
+      "file": "100b4ae10--wm_draw_window_area_layer.asm",
+      "sha256": "d4b753e62f5d60536fe86e92be63cfcd68316ee42dba61ae8a8b12c2c5344710",
+      "instruction_count": 351,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306808336",
+        "--stop-address=4306809740",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_draw_window_onscreen",
+      "start": "0x100b48760",
+      "end": "0x100b49db8",
+      "aliases": [
+        "__ZL23wm_draw_window_onscreenP8bContextP8wmWindowi"
+      ],
+      "file": "100b48760--wm_draw_window_onscreen.asm",
+      "sha256": "3b38382fcac2a155e19eb9778bc882aceadaecb25a709ab52364b0e1c94f2870",
+      "instruction_count": 1430,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306798432",
+        "--stop-address=4306804152",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_knife_hierarchy_region_presented",
+      "start": "0x10163e70c",
+      "end": "0x10163e940",
+      "aliases": [
+        "__Z40ED_ipad_knife_hierarchy_region_presentedP8bContextP8wmWindowP7ScrAreaP7ARegionRK4rcti"
+      ],
+      "file": "10163e70c--ED_ipad_knife_hierarchy_region_presented.asm",
+      "sha256": "f17f746c944835e63487b75e9b9ac6b9123e7ffd0f46bd0afd1f2db0c93436fd",
+      "instruction_count": 141,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318291724",
+        "--stop-address=4318292288",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_hud_compositor_begin",
+      "start": "0x10163d048",
+      "end": "0x10163dd88",
+      "aliases": [
+        "__Z28ED_ipad_hud_compositor_beginP8bContextP8wmWindow"
+      ],
+      "file": "10163d048--ED_ipad_hud_compositor_begin.asm",
+      "sha256": "49022007bff8b8b5ed39fa94c940d26599104e7ed8e69c8b10387f9ed4dd6864",
+      "instruction_count": 848,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318285896",
+        "--stop-address=4318289288",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_hud_compositor_end",
+      "start": "0x10163ea70",
+      "end": "0x10163fa0c",
+      "aliases": [
+        "__Z26ED_ipad_hud_compositor_endP8bContextP8wmWindowRNSt3__16vectorI20IPadHUDPresentedRectNS3_9allocatorIS5_EEEE"
+      ],
+      "file": "10163ea70--ED_ipad_hud_compositor_end.asm",
+      "sha256": "684d25503753956b0e380e0de5084f3a59a7eb4d6161046a5e3479efa90b9de0",
+      "instruction_count": 999,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318292592",
+        "--stop-address=4318296588",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_panels_draw",
+      "start": "0x1016422f0",
+      "end": "0x101642f90",
+      "aliases": [
+        "__Z19ED_ipad_panels_drawP8bContextP8wmWindow"
+      ],
+      "file": "1016422f0--ED_ipad_panels_draw.asm",
+      "sha256": "22312537f77b159e9f21d728640b5a97fadfefd0550ee2d3aa524bca3c385c39",
+      "instruction_count": 808,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318307056",
+        "--stop-address=4318310288",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_ipad_finger_paint_record",
+      "start": "0x100b4b4c0",
+      "end": "0x100b4b89c",
+      "aliases": [
+        "__ZL27wm_ipad_finger_paint_recordP8bContextP8wmWindowP7ScrAreaP7ARegionR22wmIPadFingerPaintFrameRK4rctib"
+      ],
+      "file": "100b4b4c0--wm_ipad_finger_paint_record.asm",
+      "sha256": "fb66b5956370f6371541050920cd1d262eceda991312987a1301ed8b78ce24ae",
+      "instruction_count": 247,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306810048",
+        "--stop-address=4306811036",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_ipad_finger_paint_capture",
+      "start": "0x101641b6c",
+      "end": "0x101641cf0",
+      "aliases": [
+        "__Z28ED_ipad_finger_paint_captureP8bContextR20IPadFingerPaintOwner"
+      ],
+      "file": "101641b6c--ED_ipad_finger_paint_capture.asm",
+      "sha256": "59808313ee9d01886751c688d162a0d4c552d8ad51b83918099bf676f3480f69",
+      "instruction_count": 97,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318305132",
+        "--stop-address=4318305520",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "pyrna_register_class",
+      "start": "0x101511254",
+      "end": "0x101511540",
+      "aliases": [
+        "__ZL20pyrna_register_classP7_objectS0_"
+      ],
+      "file": "101511254--pyrna_register_class.asm",
+      "sha256": "a13924725fb0391113e737bcf40b95f530c7d4f44501f03dea045a244e93f757",
+      "instruction_count": 187,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4317057620",
+        "--stop-address=4317058368",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "pyrna_register_class",
+      "start": "0x104a64d18",
+      "end": "0x104a64de4",
+      "aliases": [
+        "__ZL20pyrna_register_classP7_objectS0_.cold.1"
+      ],
+      "file": "104a64d18--pyrna_register_class.asm",
+      "sha256": "070144f318199fc013125b3207b2325dae4280fc9aec390fbb6e2fd727b71410",
+      "instruction_count": 51,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4372974872",
+        "--stop-address=4372975076",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "wm_draw_update",
+      "start": "0x100b49ec8",
+      "end": "0x100b4a850",
+      "aliases": [
+        "__Z14wm_draw_updateP8bContext"
+      ],
+      "file": "100b49ec8--wm_draw_update.asm",
+      "sha256": "39defc64292e60e37eaef2c25a13e3a4f6e348fefea5b5726cdaf5516d43892d",
+      "instruction_count": 610,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306804424",
+        "--stop-address=4306806864",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ED_region_do_draw",
+      "start": "0x10161fe94",
+      "end": "0x101620b4c",
+      "aliases": [
+        "__Z17ED_region_do_drawP8bContextP7ARegion"
+      ],
+      "file": "10161fe94--ED_region_do_draw.asm",
+      "sha256": "71509a7322ca77de6af34abeb4e1780bba3df565c4a977ea424a49797a170951",
+      "instruction_count": 814,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318166676",
+        "--stop-address=4318169932",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "WM_gizmomap_group_list",
+      "start": "0x100b3f848",
+      "end": "0x100b3f850",
+      "aliases": [
+        "__Z22WM_gizmomap_group_listP10wmGizmoMap"
+      ],
+      "file": "100b3f848--WM_gizmomap_group_list.asm",
+      "sha256": "ca52d4a7a063d4be04331dcd40d158e00057421c5e4cb7cb8821e4b438805b89",
+      "instruction_count": 2,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4306761800",
+        "--stop-address=4306761808",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "RNA_struct_register",
+      "start": "0x1012520f0",
+      "end": "0x1012520f8",
+      "aliases": [
+        "__Z19RNA_struct_registerP9StructRNA"
+      ],
+      "file": "1012520f0--RNA_struct_register.asm",
+      "sha256": "a8f91d041972504581755bb6d7d07f28b0ce6700413e7d57a2ff474ba19a0b35",
+      "instruction_count": 2,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4314177776",
+        "--stop-address=4314177784",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ipad_knife_hierarchy_native_equal",
+      "start": "0x10164fd74",
+      "end": "0x10164fe6c",
+      "aliases": [
+        "__ZN12_GLOBAL__N_133ipad_knife_hierarchy_native_equalERKNS_24IPadKnifeHierarchyNativeES2_"
+      ],
+      "file": "10164fd74--ipad_knife_hierarchy_native_equal.asm",
+      "sha256": "ac11233933e52ee54f6bbae867a56d14072e0a9e245fa4a0030a4c1da9662743",
+      "instruction_count": 62,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4318362996",
+        "--stop-address=4318363244",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "gizmogroup_setup_keymap_cb",
+      "start": "0x1014dd3cc",
+      "end": "0x1014dd4ec",
+      "aliases": [
+        "__ZL30rna_gizmogroup_setup_keymap_cbPK16wmGizmoGroupTypeP11wmKeyConfig"
+      ],
+      "file": "1014dd3cc--gizmogroup_setup_keymap_cb.asm",
+      "sha256": "4fa0ffaeaefa4bd78b453bcd8a1fa07b2eaa7b0265c1b2f079483d83716c429d",
+      "instruction_count": 72,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4316845004",
+        "--stop-address=4316845292",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "CTX_wm_region",
+      "start": "0x1000b3b88",
+      "end": "0x1000b3ba0",
+      "aliases": [
+        "__Z13CTX_wm_regionPK8bContext"
+      ],
+      "file": "1000b3b88--CTX_wm_region.asm",
+      "sha256": "c34ac8f55e59350dac769e85808dbd1ef0cccb5c8a15bb9b6e9152b56b2e1865",
+      "instruction_count": 6,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4295703432",
+        "--stop-address=4295703456",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    },
+    {
+      "selector": "ctx_wm_python_context_get",
+      "start": "0x1000b4230",
+      "end": "0x1000b43e0",
+      "aliases": [
+        "__ZL25ctx_wm_python_context_getPK8bContextPKcPK9StructRNAPv"
+      ],
+      "file": "1000b4230--ctx_wm_python_context_get.asm",
+      "sha256": "6f49ba642867e509a99815dfa87391ce2851e9a5d074547ee12f00e8a1f55850",
+      "instruction_count": 108,
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=4295705136",
+        "--stop-address=4295705568",
+        "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+      ]
+    }
+  ],
+  "missing": [
+    "bpy_class_register",
+    "wm_ipad_finger_paint_publish"
+  ],
+  "identity_sha256": "e051fb5c8bddbb335dc6cdb26cef3df0256d26709c629d76f51e5ee243662e72",
+  "indirect_symbols_sha256": "6a1c305e0b49671b2d0c9e1e066c653eadd48fb66abc88e10e7d0a03f3bd1fed",
+  "missing_resolved": {
+    "bpy_class_register": "actual name pyrna_register_class",
+    "wm_ipad_finger_paint_publish": "inlined actual caller wm_draw_window_onscreen; branch review required"
+  },
+  "historical_comparison": {
+    "binary": "output\\ui-preview\\pencil-knife\\binary-40252354359\\Blender",
+    "sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+    "file": "old-unfixed-gizmomap-context.asm",
+    "command": [
+      "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+      "-d",
+      "--no-show-raw-insn",
+      "--start-address=0x100b3f95c",
+      "--stop-address=0x100b3fc00",
+      "output\\ui-preview\\pencil-knife\\binary-40252354359\\Blender"
+    ],
+    "note": "Old function start 0x100b3f95c and ret 0x100b3fbfc are present in fresh old dump; exclusive stop 0x100b3fc00."
+  },
+  "registration_chained_fixups": {
+    "command": [
+      "C:/Program Files/LLVM/bin/llvm-objdump.exe",
+      "--macho",
+      "--chained-fixups",
+      "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+    ],
+    "whole_output_sha256": "c814b6b9749ffdf57dc46226ce1ce7ac0e340fc31aaad23279a17d23633f29f1",
+    "whole_output_linecount": 26667,
+    "retained_file": "RNA_GizmoGroup-chained-fixups.txt",
+    "retained_addresses": [
+      "0x106bda030",
+      "0x106bda040",
+      "0x106bda048",
+      "0x106bda050"
+    ]
+  },
+  "registration_dyld_info": {
+    "command": [
+      "C:/Program Files/LLVM/bin/llvm-objdump.exe",
+      "--macho",
+      "--dyld-info",
+      "output\\ui-preview\\pencil-knife\\binary-40459756217\\Blender"
+    ],
+    "retained_file": "RNA_GizmoGroup-dyld-info.txt",
+    "whole_output_linecount": 411541,
+    "selected_linecount": 9
+  },
+  "ancillary_files": [
+    {
+      "file": "indirect-symbols.txt",
+      "sha256": "ed961cf932af8d5e04e4979cbcb1fd5c7c77c32831a6a450f1afed53947af0dc",
+      "bytes": 896495
+    },
+    {
+      "file": "literal-fact-checks.json",
+      "sha256": "2cb2b8b5d9663868766c4ccbc0188a5123b5fea4da20023afc378f54214550bc",
+      "bytes": 520
+    },
+    {
+      "file": "macho-identity.txt",
+      "sha256": "e8e59a7cfd31c40f30991a8ac731fd74a50675d9c67ab5ee92133d506d887772",
+      "bytes": 20134
+    },
+    {
+      "file": "per-group-preparation-constrained-cfg.json",
+      "sha256": "38b2e70ce36a1a9d0b8b75e86904d6a1a7284a218e02195bf91fb4f2feaece6d",
+      "bytes": 7682
+    },
+    {
+      "file": "RNA_GizmoGroup-chained-fixups.txt",
+      "sha256": "89221f88901c062496fbd00deb98ac6e58946ccb75115909ff6cd0285125df3b",
+      "bytes": 766
+    },
+    {
+      "file": "RNA_GizmoGroup-dyld-info.txt",
+      "sha256": "321d4010e7ee9527d94bc2a5a48f14d7129b35a217003a1bd0dd3d2aba71ac61",
+      "bytes": 9618
+    },
+    {
+      "file": "RNA_GizmoGroup-static-data.json",
+      "sha256": "35c91b560236840a3761a4fe8e13c8aaddfd336adeb4b116d12f1a345627a70b",
+      "bytes": 770
+    },
+    {
+      "file": "symbols.txt",
+      "sha256": "5cca93b2154abc2ee2a7631305a7d7fdc19834300057185a9f9ad8fd35e2abbb",
+      "bytes": 40350200
+    }
+  ]
+}

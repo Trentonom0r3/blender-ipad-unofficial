@@ -1,5 +1,5 @@
 {
-  "status": "NATIVE_FULL_PACKAGE_PASS_ACTUAL_COMPILED_REVIEW_PENDING_NOT_READY",
+  "status": "PASS_NATIVE_FULL_PACKAGE_AND_BOUNDED_COMPILED_VERIFICATION_READY_FOR_DEVICE_CHECK",
   "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
   "run": 40459756217,
   "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40459756217",
@@ -16,10 +16,10 @@
     "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40459756217"
   },
   "host_validation": "source-verification.json (full826runtime997.130s +final5232cold/current58; no final-driver frozen-full claim)",
-  "native_package_compiled": "Native/preflight/fullIPA PASS; new actual compiled independent reviews PENDING",
+  "native_package_compiled": "PASS all aggregate gates; raw owner negative independently resolved without modification",
   "device_acceptance": false,
   "goal": "UNFINISHED",
-  "utc": "2026-10-27T06:36:42.874448+00:00",
+  "utc": "2026-10-27T11:09:23.689682+00:00",
   "watcher_status": "FINISHED_EXIT1_RAW_OWNER_UNPROVED_AREA_ALL113_SCOPE_DUMPS_COLLECTED",
   "artifact": 12714931825,
   "ipa_bytes": 248692550,
@@ -30,5 +30,24 @@
   "native_firstsize_init": "passed",
   "native_sizing": "passed",
   "weight_cleanup": "passed",
-  "actual_scope_dumps": 113
+  "actual_scope_dumps": 113,
+  "ready_for_device_check": true,
+  "independent_compiled_reviews": {
+    "independent-compiled-opaque-guard-review.json": {
+      "status": "PASS_BOUNDED_CHANGED_OPAQUE_GUARD_AND_PROPAGATION",
+      "sha256": "a2819134b6d5957ccbaf22554406c220d575b987945e55d73c5554d19432682c"
+    },
+    "independent-preserved-gates-review.json": {
+      "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+      "sha256": "5db95b4d33634e549488ac242c14a002eaf65803f7c8e8398e7387d16100e49e"
+    },
+    "independent-preserved-owner-stack-cfg-proof.json": {
+      "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_NORMAL_RETURN_CFG",
+      "sha256": "4eab98636465cc58a132d6ee086438a074100d999b44178b20c798a5615a400d"
+    },
+    "independent-compiled-preserved-input-render-review.json": {
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_COMPILED_PRESERVED_INPUT_RENDER",
+      "sha256": "6a90b573509388ab43d9167715dbb9cf238f32a524e48f5f681b25ea6cf5bac1"
+    }
+  }
 }

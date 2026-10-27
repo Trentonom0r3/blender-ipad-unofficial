@@ -1,0 +1,346 @@
+{
+  "schema": 1,
+  "scope": "Single actual group preparation iteration; ordinary return/fallthrough from direct callees. Calls treated as sites; this graph does not prove callees memory/lifetime safety.",
+  "entry": "0x100b3f9e4",
+  "entry_edges": [
+    "initial traversal 0x100b3f9c4 unconditional b\u21920x100b3f9e4",
+    "subsequent traversal 0x100b3f9dc next-group load;0x100b3f9e0 null guard;nonnull fallthrough\u21920x100b3f9e4"
+  ],
+  "stop_boundaries": [
+    "0x100b3f9dc",
+    "0x100b3faf4"
+  ],
+  "constraints": [
+    {
+      "pc": "0x100b3f9f8",
+      "forced_successor": "0x100b3f9fc",
+      "condition": "current group has nonnull type (required for nonnull type.rna_ext.call)"
+    },
+    {
+      "pc": "0x100b3fa00",
+      "forced_successor": "0x100b3fa04",
+      "condition": "current group type.rna_ext.call is nonnull"
+    },
+    {
+      "pc": "0x100b3fa0c",
+      "forced_successor": "0x100b3fa10",
+      "condition": "CTX_wm_region(C) is nonnull current native region; explicit caller invariant"
+    }
+  ],
+  "reachable_instruction_nodes": 74,
+  "store_pcs": [
+    "0x100b3fa14",
+    "0x100b3fa1c"
+  ],
+  "callback_sites": [
+    {
+      "callback_site": "0x100b3fa38",
+      "instruction": [
+        "bl",
+        "0x100b3e344 <__Z24WM_gizmo_group_type_pollPK8bContextPK16wmGizmoGroupType>"
+      ],
+      "reachable": true,
+      "both_stores_dominate": true,
+      "store_dominators": [
+        "0x100b3fa14",
+        "0x100b3fa1c"
+      ]
+    },
+    {
+      "callback_site": "0x100b3fa58",
+      "instruction": [
+        "bl",
+        "0x100b3e344 <__Z24WM_gizmo_group_type_pollPK8bContextPK16wmGizmoGroupType>"
+      ],
+      "reachable": true,
+      "both_stores_dominate": true,
+      "store_dominators": [
+        "0x100b3fa14",
+        "0x100b3fa1c"
+      ]
+    },
+    {
+      "callback_site": "0x100b3f9d0",
+      "instruction": [
+        "bl",
+        "0x100b3ce14 <__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup>"
+      ],
+      "reachable": true,
+      "both_stores_dominate": true,
+      "store_dominators": [
+        "0x100b3fa14",
+        "0x100b3fa1c"
+      ]
+    },
+    {
+      "callback_site": "0x100b3fa94",
+      "instruction": [
+        "blr",
+        "x8"
+      ],
+      "reachable": true,
+      "both_stores_dominate": true,
+      "store_dominators": [
+        "0x100b3fa14",
+        "0x100b3fa1c"
+      ]
+    }
+  ],
+  "ensure_block_incoming_edges": [
+    {
+      "from": "0x100b3fa6c",
+      "to": "0x100b3f9c8",
+      "instruction": [
+        "tbz",
+        "w26, #0x1, 0x100b3f9c8 <__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep+0x6c>"
+      ]
+    },
+    {
+      "from": "0x100b3fa7c",
+      "to": "0x100b3f9c8",
+      "instruction": [
+        "b",
+        "0x100b3f9c8 <__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep+0x6c>"
+      ]
+    }
+  ],
+  "explanation": "Ascending instruction addresses are not execution order. The first unconditional branch skips the earlier ensure block. After visibility, nonnull extension/current-region constraints force both stores; later modal/poll/refresh gates branch backwards to ensure. False poll/hidden/empty cases reach next-group boundary without rollback.",
+  "adjacency": {
+    "0x100b3f9c8": [
+      "0x100b3f9cc"
+    ],
+    "0x100b3f9cc": [
+      "0x100b3f9d0"
+    ],
+    "0x100b3f9d0": [
+      "0x100b3f9d4"
+    ],
+    "0x100b3f9d4": [
+      "0x100b3f9d8"
+    ],
+    "0x100b3f9d8": [
+      "0x100b3f9dc",
+      "0x100b3fa80"
+    ],
+    "0x100b3f9dc": [],
+    "0x100b3f9e4": [
+      "0x100b3f9e8"
+    ],
+    "0x100b3f9e8": [
+      "0x100b3f9ec"
+    ],
+    "0x100b3f9ec": [
+      "0x100b3f9f0"
+    ],
+    "0x100b3f9f0": [
+      "0x100b3f9f4",
+      "0x100b3f9dc"
+    ],
+    "0x100b3f9f4": [
+      "0x100b3f9f8"
+    ],
+    "0x100b3f9f8": [
+      "0x100b3f9fc"
+    ],
+    "0x100b3f9fc": [
+      "0x100b3fa00"
+    ],
+    "0x100b3fa00": [
+      "0x100b3fa04"
+    ],
+    "0x100b3fa04": [
+      "0x100b3fa08"
+    ],
+    "0x100b3fa08": [
+      "0x100b3fa0c"
+    ],
+    "0x100b3fa0c": [
+      "0x100b3fa10"
+    ],
+    "0x100b3fa10": [
+      "0x100b3fa14"
+    ],
+    "0x100b3fa14": [
+      "0x100b3fa18"
+    ],
+    "0x100b3fa18": [
+      "0x100b3fa1c"
+    ],
+    "0x100b3fa1c": [
+      "0x100b3fa20"
+    ],
+    "0x100b3fa20": [
+      "0x100b3fa24",
+      "0x100b3fa50"
+    ],
+    "0x100b3fa24": [
+      "0x100b3fa28"
+    ],
+    "0x100b3fa28": [
+      "0x100b3fa2c"
+    ],
+    "0x100b3fa2c": [
+      "0x100b3fa30"
+    ],
+    "0x100b3fa30": [
+      "0x100b3fa34",
+      "0x100b3fa64"
+    ],
+    "0x100b3fa34": [
+      "0x100b3fa38"
+    ],
+    "0x100b3fa38": [
+      "0x100b3fa3c"
+    ],
+    "0x100b3fa3c": [
+      "0x100b3fa40",
+      "0x100b3f9dc"
+    ],
+    "0x100b3fa40": [
+      "0x100b3fa44"
+    ],
+    "0x100b3fa44": [
+      "0x100b3fa48"
+    ],
+    "0x100b3fa48": [
+      "0x100b3fa4c",
+      "0x100b3f9dc"
+    ],
+    "0x100b3fa4c": [
+      "0x100b3fa6c"
+    ],
+    "0x100b3fa50": [
+      "0x100b3fa54"
+    ],
+    "0x100b3fa54": [
+      "0x100b3fa58"
+    ],
+    "0x100b3fa58": [
+      "0x100b3fa5c"
+    ],
+    "0x100b3fa5c": [
+      "0x100b3fa60",
+      "0x100b3f9dc"
+    ],
+    "0x100b3fa60": [
+      "0x100b3fa6c"
+    ],
+    "0x100b3fa64": [
+      "0x100b3fa68"
+    ],
+    "0x100b3fa68": [
+      "0x100b3fa6c",
+      "0x100b3f9dc"
+    ],
+    "0x100b3fa6c": [
+      "0x100b3fa70",
+      "0x100b3f9c8"
+    ],
+    "0x100b3fa70": [
+      "0x100b3fa74"
+    ],
+    "0x100b3fa74": [
+      "0x100b3fa78"
+    ],
+    "0x100b3fa78": [
+      "0x100b3fa7c"
+    ],
+    "0x100b3fa7c": [
+      "0x100b3f9c8"
+    ],
+    "0x100b3fa80": [
+      "0x100b3fa84"
+    ],
+    "0x100b3fa84": [
+      "0x100b3fa88"
+    ],
+    "0x100b3fa88": [
+      "0x100b3fa8c",
+      "0x100b3fa98"
+    ],
+    "0x100b3fa8c": [
+      "0x100b3fa90"
+    ],
+    "0x100b3fa90": [
+      "0x100b3fa94"
+    ],
+    "0x100b3fa94": [
+      "0x100b3fa98"
+    ],
+    "0x100b3fa98": [
+      "0x100b3fa9c"
+    ],
+    "0x100b3fa9c": [
+      "0x100b3faa0",
+      "0x100b3faac"
+    ],
+    "0x100b3faa0": [
+      "0x100b3f9dc"
+    ],
+    "0x100b3faa4": [
+      "0x100b3faa8"
+    ],
+    "0x100b3faa8": [
+      "0x100b3faac",
+      "0x100b3f9dc"
+    ],
+    "0x100b3faac": [
+      "0x100b3fab0"
+    ],
+    "0x100b3fab0": [
+      "0x100b3fab4"
+    ],
+    "0x100b3fab4": [
+      "0x100b3fab8",
+      "0x100b3faa4"
+    ],
+    "0x100b3fab8": [
+      "0x100b3fabc",
+      "0x100b3fad8"
+    ],
+    "0x100b3fabc": [
+      "0x100b3fac0"
+    ],
+    "0x100b3fac0": [
+      "0x100b3fac4"
+    ],
+    "0x100b3fac4": [
+      "0x100b3fac8"
+    ],
+    "0x100b3fac8": [
+      "0x100b3facc"
+    ],
+    "0x100b3facc": [
+      "0x100b3fad0"
+    ],
+    "0x100b3fad0": [
+      "0x100b3fad4"
+    ],
+    "0x100b3fad4": [
+      "0x100b3fad8"
+    ],
+    "0x100b3fad8": [
+      "0x100b3fadc",
+      "0x100b3faa4"
+    ],
+    "0x100b3fadc": [
+      "0x100b3fae0"
+    ],
+    "0x100b3fae0": [
+      "0x100b3fae4"
+    ],
+    "0x100b3fae4": [
+      "0x100b3fae8"
+    ],
+    "0x100b3fae8": [
+      "0x100b3faec"
+    ],
+    "0x100b3faec": [
+      "0x100b3faf0"
+    ],
+    "0x100b3faf0": [
+      "0x100b3faa4"
+    ]
+  },
+  "parser_notes": "Actual branch target is parsed only from the operand before demangled comment and only full code addresses >=0x100000000; immediate bit numbers such as #0x1 are not branch targets. Earlier undercounted draft replaced before final review delivery."
+}

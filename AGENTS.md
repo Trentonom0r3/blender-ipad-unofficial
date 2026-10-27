@@ -1,3 +1,35 @@
+## Exact corrected Knife PAN IPA verified for device check — 2026-10-27 UTC
+
+Production3438226bb2dbb90adf22917d12860cb5471719f0/run40459756217 PASSED hosted
+preflight/nativeiOSRelease/full downloaded3368CRC/arm64/iPhoneOS5.0.0/whole exactUI/
+defaultbars/toolbar/pinnedtools129icons/exact9Base/native-onlyMoreTools.
+Artifact12714931825; IPA248692550bytes/SHA256
+29f2b0837b7ab1a8b32056c7a5a8d04223e530f6fce4820cc882f350697c4237.
+BinaryUUID9B4D9B4B-AE3C-3310-8C05-9C532ED55675/SHA256
+ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404.
+THREE independent ACTUAL compiled reviews pass: opaque guard/field+BOTH pre-callback
+stores/emptygroup refusal/fullcached propagation; preserved HUD/Weight; and actual
+GHOST/nativebridge/renderer reconciliation146ranges.144ranges exact under resolved
+relocations;2additivefunctions preserve oldinstructions/edges and have separate
+newguard proof. Corrected74-node per-groupCFG resolves backwardensure-init block.
+Raw HUD owner checker negative retained: fresh actual327/167instruction localframe/
+normalreturnCFG proves savedSP+8 area-before-region restores dominate return.
+Nativefirstsize/init/Weight pass. No source/checker weakening; these bounded static
+obligations are not globalheap/CFG/GPU/UIKit/runtimegeometry/Undo/device proof.
+
+Ready for exact iPad check; NO exactdevice acceptance or full-goal completion.
+Read gizmo-prepare-audit/native-package-verification.json and currentbinary reviews.
+Watcher94222 finishedexit1 solely unresolvedrawchecker interpretation now manually
+resolved; no live verifier or unchanged rebuild. Full goal unfinished; keep working
+without devicewait. Scope remains ORIGINAL ALREADY-LIVE Knife: nohandler/samebatch/
+custominitialDOWN ordinaryfallback remains. Ordinarycursor/down/up/tablet/order,
+Circle/Transform nativePAN controls and all acceptedUI/history/ownership retained.
+Only2native targets differ from30da0be;134prior/all7UI/all13GHOST exact.
+Source/host validation full826runtime997.130s plus final5232cold/current58 remains
+honestly combined; no final5232 frozenfull claim. Native Node premodalPAN source/
+stockhost gap has read-only contracts, no correctiveNode source yet; do not apply
+blanket reorder/suppression or expandimports/deepcamera by inference.
+
 ## Corrected Knife PAN IPA compiled/downloaded; actual review pending — 2026-10-27 UTC
 
 Production3438226bb2dbb90adf22917d12860cb5471719f0/run40459756217 PASSED hosted

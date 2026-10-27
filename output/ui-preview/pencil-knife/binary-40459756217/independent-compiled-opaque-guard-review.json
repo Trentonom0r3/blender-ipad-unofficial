@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "review": "independent_actual_arm64_opaque_python_group_preparation_and_guard_propagation",
+  "created_utc": "2026-10-27T11:06:24.989613+00:00",
+  "status": "PASS_BOUNDED_CHANGED_OPAQUE_GUARD_AND_PROPAGATION",
+  "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+  "run": "40459756217",
+  "binary_uuid": "9B4D9B4B-AE3C-3310-8C05-9C532ED55675",
+  "binary_sha256": "ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404",
+  "fresh_evidence_directory": "independent-opaque-fresh-audit",
+  "fresh_manifest": "independent-opaque-fresh-audit/manifest.json",
+  "fresh_manifest_sha256": "ebf2cd2e7b395e68ec9de4b54ceadb30cf19d7c84e62f5bfcd3c3433f79cd6cd",
+  "fresh_unique_current_ranges": 37,
+  "obligations": [
+    {
+      "id": "exact_binary_identity",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Fresh SHA256 ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404; own macho-identity.txt LC_UUID 9B4D9B4B-AE3C-3310-8C05-9C532ED55675",
+        "35 fresh unique exact-symbol ARM64 ranges plus exact old draw-function comparison; manifest retains command, range, aliases and hashes."
+      ],
+      "conclusion": "All current instruction facts below refer to downloaded run40459756217, not prior package or model."
+    },
+    {
+      "id": "actual_rna_extension_call_offset_registration_trampoline_copy",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "RNA_struct_register 0x1012520f0 loads StructRNA+0xa0. _RNA_GizmoGroup at 0x106bd9fa0 has +0xa0 slot0x106bda040. LLVM dyld-info resolves its chained rebase to actual rna_GizmoGroup_register 0x1014dc27c.",
+        "pyrna_register_class 0x10151136c receives registration pointer into x22; 0x1015113a0..3a4 constructs x5=0x10151af2c (actual bpy_class_call); x4=validate and x6=free; BLR x22 at0x1015113bc.",
+        "rna_GizmoGroup_register 0x1014dc2a0 saves x5 in x20; stack candidate x28=SP+0x120 at0x1014dc2c8. 0x1014dc4b4 stores x20/call at candidate+0xf0 and x19/free at+0xf8; data stored+0xe0; RNA struct+0xe8.",
+        "0x1014dc4f4 stores poll/setup trampolines at+0x90/+0x98; 0x1014dc520 stores refresh/draw_prepare trampolines at+0xa0/+0xa8. Values resolve to0x1014dd2b0/4ec/5f0/6f4 via literal ADRP+ADD.",
+        "0x1014dc53c..548 passes BPY_RNA_gizmogroup_wrapper0x1014fc994 as x0 and SP+0x120 candidate as x1 to WM_gizmogrouptype_append_ptr0x100b3e980. Append preserves userdata x19=x1, wrapper x20=x0, creates actual0x110-byte destination x21, passes x0=x21/x1=x19 at0x100b3e9e0..9e8.",
+        "Wrapper0x1014fc9a0..9b0 preserves destination+0xd8, calls actual imported memcpy0x104b754c0 with x0=actual destination/x1=candidate/x2=0x110, then restores only+0xd8. Therefore+0xf0 copied unchanged.",
+        "Actual script poll0x1014dd314..32c loads type+0xf0 and BLR with C,PointerRNA,FunctionRNA,ParameterList. Setup0x1014dd558/570, refresh0x1014dd65c/674 and draw_prepare0x1014dd760/778 perform same f0 load/BLR from group.type."
+      ],
+      "conclusion": "The guarded field is actual supported Python extension dispatch call, independently connected from Python registration through actual allocated type copy and actual callback trampolines. This does not assume a modeled structure ABI."
+    },
+    {
+      "id": "cheap_native_drawstep_gate_preserved",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "WM_gizmomap_draw0x100b3f988..994 calls unchanged context drawstep gate first. Per group0x100b3f9e4..9f0 calls wm_gizmogroup_is_visible_in_drawstep before extension branch.",
+        "Visibility helper0x100b3d098..c4 reads only drawstep and group.type.flag bit0 at+0x100 for native2D/3D; no script/poll/setup callback or BLR. Invalid drawstep assertion route unchanged.",
+        "Null extension takes0x100b3fa00\u21920x100b3fa20 without CTX getter or either sticky store."
+      ],
+      "conclusion": "The new reservation follows the cheap native drawstep gate and is absent on native-null extension route."
+    },
+    {
+      "id": "both_sticky_stores_dominate_preparation_callbacks",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Actual x22=current group, x19=C.0x100b3f9f4 loads group+0x10 type;0x100b3f9fc loads type+0xf0; nonnull follows0x100b3fa04..08 CTX_wm_region(C). With current nonnull region,0x100b3fa10 loads region.runtime+0x128,0x100b3fa14 strb1\u2192runtime+1;0x100b3fa18 reloads same runtime,0x100b3fa1c strb1\u2192runtime+3. w27 initialized1 at0x100b3f9c0.",
+        "Only after stores: modal/exclusion logic0x100b3fa20..68; poll call sites0x100b3fa38 and0x100b3fa58 with x0=C/x1=type; ensure_init0x100b3f9c8..d0 reached by backwards branch after modal/poll gates; draw_prepare0x100b3fa80..94 loads type+0xa8 and BLR(C,group).",
+        "Poll helper0x100b3e37c..398 loads type+0x90 and BR(C,type). Ensure_init cold0x104a5eb38..48 loads type+0x98 setup and BLR(C,group), optional setup_keymap0x104a5eb70..7c follows; warm0x100b3ce6c..74 sets refresh bit then tails refresh; actual refresh0x100b3cf90..fb0 loads type+0xa0 and BR(C,group)."
+      ],
+      "conclusion": "For an eligible supported script group and valid current region, BOTH Finger overlay-blocked and Knife unknown markers are set before every preparation callback in the actual draw traversal. C/context native lifetime and nonnull-region caller preconditions are explicit."
+    },
+    {
+      "id": "concrete_current_group_cfg_store_dominance",
+      "status": "PASS_BOUNDED_CONSTRAINED_ACTUAL_CFG",
+      "evidence": [
+        "Own per-group-preparation-constrained-cfg.json parses actual fresh instructions and retains all74 reachable nodes/edges, exact entry/exit boundaries, explicit nonnull type/call/region assumptions and computed dominators. Correct full-address target parsing explicitly excludes immediate bit numbers.",
+        "Initial0x100b3f9c4 unconditionally branches to group iteration0x100b3f9e4, skipping earlier-address ensure block0x100b3f9c8. Subsequent group load0x100b3f9dc\u2192nonnull0x100b3f9e0 also enters0x100b3f9e4.",
+        "The only incoming edges to ensure-block0x100b3f9c8 are0x100b3fa6c (refresh bit clear) and0x100b3fa7c (after clearing bit). Both occur after guard block0x100b3f9f4..fa1c and modal/poll gates, not before it.",
+        "Computed nonnull-script/current-region per-iteration dominators contain BOTH store0x100b3fa14 and0x100b3fa1c for poll calls0x100b3fa38/fa58, ensure-init0x100b3f9d0 and draw_prepare BLR0x100b3fa94.",
+        "CTX_wm_region0x1000b3b88 reads C+0x30 and tailcalls ctx_wm_python_context_get0x1000b4230; it is NOT claimed to be a direct-field-only getter. Region-null branch0x100b3fa0c\u2192fa20 explicitly skips stores. The graph assumes actual current region nonnull. Native offscreen0x100b4c188..190 binds x24 region into same C before actual region draws0x100b4c404/48c/54c; fresh native context/Python override behavior remains an inherited context precondition, separate from this group-callback dominance proof.",
+        "Fresh ctx_wm_python_context_get0x1000b4230..43dc saves fallback x3; C+0x88 null0x1000b4260..64 skips Python context-member lookup, checks main thread0x1000b4268, and returns fallback0x1000b4270. Nonnull Python-context branch0x1000b430c calls BPY_context_member_get and may use an RNA-typed region override. Such override/native draw ownership invariants are not discharged here."
+      ],
+      "conclusion": "Within a current group iteration there is no nonnull-script+nonnull-current-region path to any preparation callback before both stores. This resolves nonascending block layout concretely, without claiming callback mutation/global CFG/native lifetime safety."
+    },
+    {
+      "id": "empty_false_poll_hidden_self_unlink_keep_executed_fact",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "False poll at0x100b3fa3c/fa5c skips directly to next group0x100b3f9dc after markers; no sticky rollback.",
+        "Group hidden check0x100b3f9d4..d8 occurs after ensure-init and reservation; empty group0x100b3fa98..aa0 skips next group only after potential draw_prepare and both markers.",
+        "No store-zero to runtime+1/+3 in WM_gizmomap_draw after reservation. Group list may be empty before selected-list draw0x100b3fb00..0c; earlier sticky facts already exist."
+      ],
+      "conclusion": "Reservation does not depend on final poll success, initialized/visible gizmos, a nonempty selected list, or the group still being linked after callback. No arbitrary callback mutation or freed native region safety claim."
+    },
+    {
+      "id": "native_null_callback_order_matches_old_actual_binary",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Fresh exact old30da0be draw dump: visibility0x100b3f9e8; native modal/poll at0x100b3fa08/fa28; ensure_init0x100b3f9cc; hide gate0x100b3f9d0; draw_prepare0x100b3fa64; first gizmo load0x100b3fa68.",
+        "Current null-f0 skip0x100b3fa00\u2192fa20 yields the same modal bypass/exclusion and poll\u2192ensure-init\u2192hide\u2192draw_prepare\u2192per-gizmo sequence, with same C/group/type arguments and same actual poll/ensure helpers."
+      ],
+      "conclusion": "Native builtin callback sequencing and modal poll bypass remain unchanged. Byte equality of complete relocated functions is not claimed."
+    },
+    {
+      "id": "fresh_capture_refuses_script_before_any_gizmo_or_hide_gate",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Capture x20=output at0x10164e9ac. For visible WINDOW with runtime.gizmomap,0x10164f3d8 calls pure group-list getter;0x10164f3e0 obtains group x27; group traversal0x10164f400 advances raw next.",
+        "0x10164f408..414 loads type/tag_remove/hide/init only to serialize into state kind4, fast and realloc paths rejoin0x10164f588.0x10164f58c reloads actual group.type x19.",
+        "Whether navigation enabled0x10164f594 or disabled0x10164f5cc, nonnull type reaches0x10164f5d4 ldr type+0xf0; nonnull extension0x10164f5d8\u21920x10164f5e4 strb0\u2192output+0x44 settled. Null type also reaches same clear.",
+        "Only0x10164f5e8 then loads group.gizmos first+0x18; empty0x10164f5ec advances next group. No tag_remove/hide/init conditional precedes extension refusal; their old selected-gizmo gates are later0x10164f7bc..7d4. A navigation ID match still reaches f0 refusal."
+      ],
+      "conclusion": "Every current script group in an inspected visible WINDOW region conservatively refuses fresh Knife hierarchy, including empty, hidden, uninitialized and tagged-for-removal groups, before per-gizmo iteration. Offscreen/invisible regions remain outside visible input acquisition by existing region gates."
+    },
+    {
+      "id": "capture_no_script_callback_or_retained_authority",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Fresh capture has no BLR/BR. Direct calls resolve CTX getters, current native window metadata/list membership/group-list, imported new/delete/memcpy/strcmp and native vector exception/assert paths. f0 is tested, never invoked.",
+        "Native group identity/tag/hide/init/gizmo state are copied as integers into output state vectors; new branch stores only settled=false. No new handler, bContext, operator, RNA, callback lease or retained native authority is created."
+      ],
+      "conclusion": "The conservative fresh check is callback-free under existing fresh-context/native lifetime preconditions. This is a bounded call-path review, not a global heap/CFG proof."
+    },
+    {
+      "id": "fresh_refusal_reaches_completed_publish_and_current_probe",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Inlined publication at compositor_end0x10163ebb0..bd8 requires drawn/callbacks-observed/no opaque window/previous native.settled;0x10163ebe8 recaptures with actual C/win/output,0x10163ebf0..f8 requires new output.settled at output+0x44 before equality0x10163ec04.",
+        "0x10163ec0c stores complete; failed guards reach0x10163f17c false.0x10163f488..490 moves drawn snapshot to presented, else0x10163f498 clears presented.complete;0x10163f49c clears pending.",
+        "Current0x101640894..8b4 refuses pending/windowID/incomplete;0x1016408dc..8e0 recaptures to SP;0x1016408e8..8f0 requires SP+0x44 settled before equality. ED probe0x10163ff84 calls current and rejects false."
+      ],
+      "conclusion": "Script metadata refusal is consumed for completed publication and each fresh action probe; matching older state cannot override unsettled."
+    },
+    {
+      "id": "knife_full_draw_unknown_marker_persisted_in_texture_stamp",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Actual offscreen0x100b4c188..190 sets current region;0x100b4c224..238 captures same C/win/area/region before scope. Runtime+3 reset0x100b4c244 before region draw0x100b4c404/48c/54c. HUD draw_end0x100b4c5a0 occurs before stamp finish.",
+        "Eligible full finish verifies before/after scope memcmp0x100b4c65c..66c;0x100b4c6c4 reads current runtime+3,0x100b4c6c8 writes next.unknown at SP+0x491. Next baseSP+0x2d0 gives unknown offset0x1c1.",
+        "0x100b4c790..79c writes fresh nonzero content/valid,0x100b4c7a0..7ac memcpy456bytes from nextSP+0x2d0 into buffer+0x18, preserving unknown at buffer+0x1d9. Failed finish copies zero-invalid next or explicitly clears buffer.valid0x100b4c748; native allocation/lifetime boundaries unchanged."
+      ],
+      "conclusion": "A supported preparation callback can remove its group or leave zero gizmos and still leaves its executed opaque fact in the actual drawn texture stamp."
+    },
+    {
+      "id": "knife_cached_composition_and_later_overlay_unknown_preserved",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Onscreen0x100b48824/34 resets transient runtime+1/+3 before area presentation, leaving saved buffer stamps intact. Area-layer actual viewport/offscreen transfer0x100b4af60/aed4 precedes region receipt0x100b4af0c.",
+        "Receipt0x10163e888..898 binds actual area/region/buffer and footprint;0x10163e908..914 memcpy0x1c8 from current buffer+0x18 into composition.canvas(SP+0x28); push_back0x10163e924 retains complete copied stamp, including unknown. No token mint or unknown recomputation on cached presentation.",
+        "Compositor publication0x10163f35c..36c ORs current region.runtime+3 into each same-area/same-region copied composition+0x1e9; owner conflict later0x10163f474 can only set unknown further. Existing texture token is not retagged."
+      ],
+      "conclusion": "Cached texture carries the persistent opaque fact even after transient reset or script self-removal; an opaque overlay executed after blit also adds a sticky unknown fact to copied composition."
+    },
+    {
+      "id": "knife_probe_consumes_texture_composition_and_current_unknown",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Probe0x1016402a0..2dc requires live buffer/nonstereo/valid at+0x1d8/notunknown at+0x1d9/nonzero content+0x1d0/full32value scope match.",
+        "Same area/region/buffer composition0x101640344..35c then requires valid+0x1e8/notunknown+0x1e9/full scope at+0x28/content+0x1e0 equal saved buffer content0x101640360..39c.",
+        "After composition coverage,0x101640498..4a0 reads current region.runtime+3 and rejects nonzero; fresh native hierarchy refusal was already consumed through current0x10163ff84."
+      ],
+      "conclusion": "Original-live Knife admission fails for persistent preparation pixels, cached opaque texture, completed composition unknown, current overlays, or still-present script metadata. This review does not grant initial tool prediction or new action authority."
+    },
+    {
+      "id": "finger_full_and_cached_unknown_marker_reaches_publication",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "evidence": [
+        "Full redraw runtime+1 reset0x100b4c314 before actual region drawing. Eligible Finger finish0x100b4c9fc..ca04 reads runtime+1 into buffer+0x300 after fresh owner/geometry checks and generation handling. Invalid finish clears generation at0x100b4c7f0.",
+        "Actual area presentation calls Finger record0x100b4af28. Record0x100b4b658..668 reads saved buffer/generation;0x100b4b6cc reads buffer+0x300; fast0x100b4b710 and realloc0x100b4b82c store that byte into candidate+0x50. No reclassification on cached presentation.",
+        "Missing symbol wm_ipad_finger_paint_publish resolves to actual inlined onscreen path.0x100b49790..7dc re-finds current area/region membership, buffer and exact generation.0x100b497e4..7e8 refuses candidate+0x50;0x100b497ec..7f0 refuses current runtime+1 before result construction/subtraction."
+      ],
+      "conclusion": "The second pre-callback marker conservatively blocks Finger paint through both fresh texture and cached candidate paths; current later overlay is separately checked. Full Finger ownership/recognizer semantics are outside this changed-guard scope."
+    }
+  ],
+  "pending_changed_scope_obligations": [],
+  "findings": [],
+  "scope_limits": [
+    "No production/test/build edits, dispatch or checker weakening; only independent audit artifacts written.",
+    "No aggregate ready or device acceptance claim. Preserved producer/bridge/HUD/Weight reviews remain separate gates. Raw automated HUD owner failure is not modified or discharged here.",
+    "Branch/argument inspection is bounded to new opaque guard, conservative native capture refusal and existing full/cached marker consumers. No complete native renderer, global heap/lifetime/CFG, arbitrary C pointer mutation, GPU execution/backend/hardware completion, UIKit composition, or device proof.",
+    "Nonnull live current region and ordinary native object lifetime are preconditions to drawing marker stores; when CTX_wm_region is null actual compiled code skips markers. Current native offscreen caller binds region before draw; invalid arbitrary callbacks that free/replace native owners are not modeled as safe.",
+    "Hidden/uninitialized/removal-tagged refers to groups inside an otherwise visible eligible WINDOW region; existing area/region visibility and valid geometry gates remain.",
+    "The former old30da0be supported preparation-pixel gap remains preserved in its old review and real stock5.1.2 evidence. This current correction is conservative refusal; it does not make arbitrary script pixels measurable.",
+    "The context getter is NOT callback-free in arbitrary Python override state. Current group dominance is explicitly conditional on CTX_wm_region yielding the actual live draw region; fresh acquisition context safety belongs to the separate native bridge review. This guard audit does not infer arbitrary Python context override equivalence from field names."
+  ],
+  "historical_negative": "../binary-40252354359/independent-compiled-render-hierarchy-review.json",
+  "checks": {
+    "current_draw_reads_type_extension_f0": true,
+    "before_callback_finger_store": true,
+    "before_callback_knife_store": true,
+    "capture_extension_f0": true,
+    "capture_clear_settled_before_first_gizmo": true,
+    "capture_no_indirect_calls": true,
+    "exact_memcpy_import": true,
+    "RNA_GizmoGroup_registration_rebase_resolved": true
+  }
+}

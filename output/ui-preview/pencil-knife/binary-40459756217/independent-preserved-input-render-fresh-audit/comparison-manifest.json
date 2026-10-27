@@ -1,0 +1,2514 @@
+{
+  "metadata": {
+    "created_utc": "2026-10-27T11:00:32.524686+00:00",
+    "old_uuid": "fa474b4b9c763bf5a323f7edfc6742c0",
+    "new_uuid": "9b4d9b4bae3c33108c059c532ed55675",
+    "old_sha256": "cb1877c82e946918c33d358a3553e336ed695ec8c2a40622494fb300fffc47e0",
+    "new_sha256": "ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404",
+    "symbols": 146,
+    "equal": 144,
+    "changed_or_unresolved": 2,
+    "method": "Fresh llvm-objdump address ranges from independently parsed actual Mach-O nlist. Every nonaddress instruction/register/immediate, local branch offset and indirect call register retained; external controls resolve symbol/import identity. ADRP page and consuming add/load offsets normalized together to actual reference identity; ObjC ivar cells include actual int32 offsets, selector refs decode chained rebases to actual selector strings, imports decode actual indirect or dyld bind. No symbol-name/count-only PASS; changed or unresolved instructions remain explicit.",
+    "notes": "Function equivalence under ordinary native binding/lifetime contracts only. Names/offset resolution does not by itself establish mutable runtime global contents or global heap equivalence."
+  },
+  "functions": [
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer forgetKnifePanContact]",
+      "old_start": "0x1010aa0ec",
+      "old_end": "0x1010aa15c",
+      "new_start": "0x1010aa11c",
+      "new_end": "0x1010aa18c",
+      "old_instruction_count": 28,
+      "new_instruction_count": 28,
+      "normalized_equal": true,
+      "old_dump": "4fea77b2410b-old.asm",
+      "new_dump": "4fea77b2410b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "fc39c38d8ec2d74e351feb12494e9e1bef36d18fe343e4dad97506807ecd36fd",
+      "new_bytes_sha256": "fc39c38d8ec2d74e351feb12494e9e1bef36d18fe343e4dad97506807ecd36fd"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer gestureUsesFinger]",
+      "old_start": "0x1010aa244",
+      "old_end": "0x1010aa270",
+      "new_start": "0x1010aa274",
+      "new_end": "0x1010aa2a0",
+      "old_instruction_count": 11,
+      "new_instruction_count": 11,
+      "normalized_equal": true,
+      "old_dump": "c21a4e7510f4-old.asm",
+      "new_dump": "c21a4e7510f4-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "b551e593d6d645aef3f612f046f88187fe33225405ae6f34204f25b5c1022849",
+      "new_bytes_sha256": "b551e593d6d645aef3f612f046f88187fe33225405ae6f34204f25b5c1022849"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer gestureUsesPencil]",
+      "old_start": "0x1010aa218",
+      "old_end": "0x1010aa244",
+      "new_start": "0x1010aa248",
+      "new_end": "0x1010aa274",
+      "old_instruction_count": 11,
+      "new_instruction_count": 11,
+      "normalized_equal": true,
+      "old_dump": "f5527d3b0971-old.asm",
+      "new_dump": "f5527d3b0971-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "3bdc7bad970a63c811b9571ff7a38cb477b6db1e433ad02ab55295d308b12449",
+      "new_bytes_sha256": "3bdc7bad970a63c811b9571ff7a38cb477b6db1e433ad02ab55295d308b12449"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer getCachedTranslation]",
+      "old_start": "0x1010aa3c8",
+      "old_end": "0x1010aa3dc",
+      "new_start": "0x1010aa3f8",
+      "new_end": "0x1010aa40c",
+      "old_instruction_count": 5,
+      "new_instruction_count": 5,
+      "normalized_equal": true,
+      "old_dump": "e33c7061b5c6-old.asm",
+      "new_dump": "e33c7061b5c6-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "0d412288063525a2e76c248138c2d4cb793a2b55d0e4dcc7ed6e4c5dfd3a0cf5",
+      "new_bytes_sha256": "0d412288063525a2e76c248138c2d4cb793a2b55d0e4dcc7ed6e4c5dfd3a0cf5"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer getRelativeTranslation:]",
+      "old_start": "0x1010aa398",
+      "old_end": "0x1010aa3b4",
+      "new_start": "0x1010aa3c8",
+      "new_end": "0x1010aa3e4",
+      "old_instruction_count": 7,
+      "new_instruction_count": 7,
+      "normalized_equal": true,
+      "old_dump": "459ca3806806-old.asm",
+      "new_dump": "459ca3806806-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "d220c0be129b0ca5b9481869ad1490541427e4beb32ad4dbea71b2e620f0bafa",
+      "new_bytes_sha256": "d220c0be129b0ca5b9481869ad1490541427e4beb32ad4dbea71b2e620f0bafa"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer getScaledTouchPoint:]",
+      "old_start": "0x1010aa2c8",
+      "old_end": "0x1010aa330",
+      "new_start": "0x1010aa2f8",
+      "new_end": "0x1010aa360",
+      "old_instruction_count": 26,
+      "new_instruction_count": 26,
+      "normalized_equal": true,
+      "old_dump": "1b5b4330978d-old.asm",
+      "new_dump": "1b5b4330978d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "545dafc3fe3dd2224db79caa705c93b7db054ac3371f67a3b1b98ed6f3210756",
+      "new_bytes_sha256": "7e499efc78bf6692efeab07446440f33bfbde27f2f88733badded9a7fa4e13da"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer getScaledTranslation:]",
+      "old_start": "0x1010aa330",
+      "old_end": "0x1010aa398",
+      "new_start": "0x1010aa360",
+      "new_end": "0x1010aa3c8",
+      "old_instruction_count": 26,
+      "new_instruction_count": 26,
+      "normalized_equal": true,
+      "old_dump": "961f1b333136-old.asm",
+      "new_dump": "961f1b333136-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "9e9b3317db58875fb2bd47c8767145467dfb723512a0de9ca99a15db1dcc5236",
+      "new_bytes_sha256": "69f4a51123e29f62611e5a5061e81c937d1d588fa051e9f1df6afe62cb8e547b"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer invalidateTouchStream]",
+      "old_start": "0x1010aa0b0",
+      "old_end": "0x1010aa0ec",
+      "new_start": "0x1010aa0e0",
+      "new_end": "0x1010aa11c",
+      "old_instruction_count": 15,
+      "new_instruction_count": 15,
+      "normalized_equal": true,
+      "old_dump": "ed67689ceb79-old.asm",
+      "new_dump": "ed67689ceb79-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "ff3a33d01ad1a0255353b413ac29cdfcbc2a7330e616b7751281f926a52613af",
+      "new_bytes_sha256": "6d04c33fc97b83245ddb02551934537441c3aee9cec82f74b2ce68175282726f"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer omitKnifePairedPan]",
+      "old_start": "0x1010aa208",
+      "old_end": "0x1010aa218",
+      "new_start": "0x1010aa238",
+      "new_end": "0x1010aa248",
+      "old_instruction_count": 4,
+      "new_instruction_count": 4,
+      "normalized_equal": true,
+      "old_dump": "aceaee811581-old.asm",
+      "new_dump": "aceaee811581-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "ba6b2efe92edcc0e2522fef755ea36bb9cd94fde696a6642504e9df9c7160d9c",
+      "new_bytes_sha256": "ba6b2efe92edcc0e2522fef755ea36bb9cd94fde696a6642504e9df9c7160d9c"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+      "old_start": "0x1010aa270",
+      "old_end": "0x1010aa2a8",
+      "new_start": "0x1010aa2a0",
+      "new_end": "0x1010aa2d8",
+      "old_instruction_count": 14,
+      "new_instruction_count": 14,
+      "normalized_equal": true,
+      "old_dump": "05d977fa34f7-old.asm",
+      "new_dump": "05d977fa34f7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "bb37b462071657b6034b763d2652f158725be9f3cfc268f4edc422b418a3d66e",
+      "new_bytes_sha256": "bb37b462071657b6034b763d2652f158725be9f3cfc268f4edc422b418a3d66e"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer pencilSample]",
+      "old_start": "0x1010aa2a8",
+      "old_end": "0x1010aa2c8",
+      "new_start": "0x1010aa2d8",
+      "new_end": "0x1010aa2f8",
+      "old_instruction_count": 8,
+      "new_instruction_count": 8,
+      "normalized_equal": true,
+      "old_dump": "262ceabe5669-old.asm",
+      "new_dump": "262ceabe5669-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "32a7937fb93f61c01416b57c004c8af07e84896ef8ccedecef86d17a9bf71c3c",
+      "new_bytes_sha256": "32a7937fb93f61c01416b57c004c8af07e84896ef8ccedecef86d17a9bf71c3c"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer recognizeKnifePan]",
+      "old_start": "0x1010aa15c",
+      "old_end": "0x1010aa208",
+      "new_start": "0x1010aa18c",
+      "new_end": "0x1010aa238",
+      "old_instruction_count": 43,
+      "new_instruction_count": 43,
+      "normalized_equal": true,
+      "old_dump": "40b421ee2cef-old.asm",
+      "new_dump": "40b421ee2cef-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "ec4cab6fbe38b4b2e4397c40988234d49684136fbd59bfa73681d093d0b4ce84",
+      "new_bytes_sha256": "ec4cab6fbe38b4b2e4397c40988234d49684136fbd59bfa73681d093d0b4ce84"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer reset]",
+      "old_start": "0x1010a9fc0",
+      "old_end": "0x1010aa094",
+      "new_start": "0x1010a9ff0",
+      "new_end": "0x1010aa0c4",
+      "old_instruction_count": 53,
+      "new_instruction_count": 53,
+      "normalized_equal": true,
+      "old_dump": "22a518fa1d28-old.asm",
+      "new_dump": "22a518fa1d28-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "835bc81b288a0abb374c152c1935f86078ab6af3d3e9c22ea843a6dc089baed6",
+      "new_bytes_sha256": "2933d0f662a6720b09ecbda322a72759b0c0f4ffa3702302476b12d9fc112934"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer setCachedTranslation:]",
+      "old_start": "0x1010aa3b4",
+      "old_end": "0x1010aa3c8",
+      "new_start": "0x1010aa3e4",
+      "new_end": "0x1010aa3f8",
+      "old_instruction_count": 5,
+      "new_instruction_count": 5,
+      "normalized_equal": true,
+      "old_dump": "bb084fc6305b-old.asm",
+      "new_dump": "bb084fc6305b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm"
+      ],
+      "old_bytes_sha256": "5bd496b56d9f3f32ba95bc7145ce95d026e5c9f8fd86e496e9d6c68973cae65d",
+      "new_bytes_sha256": "5bd496b56d9f3f32ba95bc7145ce95d026e5c9f8fd86e496e9d6c68973cae65d"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer touchStreamAllowed]",
+      "old_start": "0x1010aa094",
+      "old_end": "0x1010aa0b0",
+      "new_start": "0x1010aa0c4",
+      "new_end": "0x1010aa0e0",
+      "old_instruction_count": 7,
+      "new_instruction_count": 7,
+      "normalized_equal": true,
+      "old_dump": "dfb76cc247a8-old.asm",
+      "new_dump": "dfb76cc247a8-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-accessors.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-reset-omit.asm"
+      ],
+      "old_bytes_sha256": "eb5cfc2604b7e6cd65b35427ea7c2111bc6accdf50a81236f78ae9d8dbaff4a8",
+      "new_bytes_sha256": "eb5cfc2604b7e6cd65b35427ea7c2111bc6accdf50a81236f78ae9d8dbaff4a8"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer touchesBegan:withEvent:]",
+      "old_start": "0x1010a8d34",
+      "old_end": "0x1010a9390",
+      "new_start": "0x1010a8d64",
+      "new_end": "0x1010a93c0",
+      "old_instruction_count": 407,
+      "new_instruction_count": 407,
+      "normalized_equal": true,
+      "old_dump": "bb17edff9a8e-old.asm",
+      "new_dump": "bb17edff9a8e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\physical-touch-begin.asm"
+      ],
+      "old_bytes_sha256": "962857078cca4970d22493c59cfd1ab3cc792e029ed6146f4a89803edcf11f67",
+      "new_bytes_sha256": "f5ce96b68df16aa165d07df488d1dd6a830e7c59ce1878ae63467f4f5e208cfe"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer touchesCancelled:withEvent:]",
+      "old_start": "0x1010a9b68",
+      "old_end": "0x1010a9fc0",
+      "new_start": "0x1010a9b98",
+      "new_end": "0x1010a9ff0",
+      "old_instruction_count": 278,
+      "new_instruction_count": 278,
+      "normalized_equal": true,
+      "old_dump": "5a176fc92d66-old.asm",
+      "new_dump": "5a176fc92d66-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-move-end-cancel.asm"
+      ],
+      "old_bytes_sha256": "350f1d42e9bee172377c91baac621f417c8d722a8ae89833728829e86cea40b9",
+      "new_bytes_sha256": "21d7421efa46ee4e7cbf2fb265d71201e38a83d2e4d4b7d48ad86b93e421e23b"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer touchesEnded:withEvent:]",
+      "old_start": "0x1010a9710",
+      "old_end": "0x1010a9b68",
+      "new_start": "0x1010a9740",
+      "new_end": "0x1010a9b98",
+      "old_instruction_count": 278,
+      "new_instruction_count": 278,
+      "normalized_equal": true,
+      "old_dump": "57c537551f3b-old.asm",
+      "new_dump": "57c537551f3b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-move-end-cancel.asm"
+      ],
+      "old_bytes_sha256": "70fc01375263134ef9a3c908237b9c03747fdef8d00eaa4a8552e5f9f9037be1",
+      "new_bytes_sha256": "1d27320298e02948904addef03fa728f7a233c2bdd54d73db54d03fe052b0b96"
+    },
+    {
+      "symbol": "-[GHOSTUIPanGestureRecognizer touchesMoved:withEvent:]",
+      "old_start": "0x1010a9390",
+      "old_end": "0x1010a9710",
+      "new_start": "0x1010a93c0",
+      "new_end": "0x1010a9740",
+      "old_instruction_count": 224,
+      "new_instruction_count": 224,
+      "normalized_equal": true,
+      "old_dump": "e2b0bbf5ac23-old.asm",
+      "new_dump": "e2b0bbf5ac23-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\recognizer-move-end-cancel.asm"
+      ],
+      "old_bytes_sha256": "e65e7e76db68c018d2a3c953b7ae71794542480ecf2740d8c1cb59d1f32b8f59",
+      "new_bytes_sha256": "df884e1e4e5ace4c4e84a949696b3384d6ee48737e394f5a60e6d5f5c652d4c5"
+    },
+    {
+      "symbol": "-[GHOSTUIWindow cancelPointerCapture]",
+      "old_start": "0x1010ad02c",
+      "old_end": "0x1010ad2fc",
+      "new_start": "0x1010ad05c",
+      "new_end": "0x1010ad32c",
+      "old_instruction_count": 180,
+      "new_instruction_count": 180,
+      "normalized_equal": true,
+      "old_dump": "2655d34df2db-old.asm",
+      "new_dump": "2655d34df2db-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\pointer-capture-cancel.asm"
+      ],
+      "old_bytes_sha256": "6231095690ce8fdc3d19961bed8cc3c12be77728dccab806458f8e8ef384e879",
+      "new_bytes_sha256": "2caba2d80c32824abba686d717cae2760313f3d552f382d4cd2a91b0297686a9"
+    },
+    {
+      "symbol": "-[GHOSTUIWindow generateUserInputEvents:]",
+      "old_start": "0x1010ab108",
+      "old_end": "0x1010abf20",
+      "new_start": "0x1010ab138",
+      "new_end": "0x1010abf50",
+      "old_instruction_count": 902,
+      "new_instruction_count": 902,
+      "normalized_equal": true,
+      "old_dump": "372c427ef3d6-old.asm",
+      "new_dump": "372c427ef3d6-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\ordinary-event-generation.asm"
+      ],
+      "old_bytes_sha256": "ec6a1e60d2790e5ebc68fb03d156012f5e1d512fc2e78629159450e9b7cb66ce",
+      "new_bytes_sha256": "b6327650d54677b9f5ce66671b5b549540065a355719e3f394ccd9316a0be002"
+    },
+    {
+      "symbol": "-[GHOSTUIWindow handlePan:]",
+      "old_start": "0x1010ad2fc",
+      "old_end": "0x1010adfd0",
+      "new_start": "0x1010ad32c",
+      "new_end": "0x1010ae000",
+      "old_instruction_count": 821,
+      "new_instruction_count": 821,
+      "normalized_equal": true,
+      "old_dump": "6d9c1361d648-old.asm",
+      "new_dump": "6d9c1361d648-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\pan-routing-and-events.asm",
+        "binary-40252354359\\independent-producer-fresh-audit\\producer-ordinary-precision.asm"
+      ],
+      "old_bytes_sha256": "59d9140927f6afbdb5fcf81e2e11fee5ea8dc7f4bce3183590b8d658430c4f71",
+      "new_bytes_sha256": "80abfacc0543a36c41efe0b4e30e5f153c8626b8eaae2558c631141239423d63"
+    },
+    {
+      "symbol": "_MEM_callocN",
+      "old_start": "0x100ae42a8",
+      "old_end": "0x100ae42b4",
+      "new_start": "0x100ae42a8",
+      "new_end": "0x100ae42b4",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "f519b00f15e0-old.asm",
+      "new_dump": "f519b00f15e0-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae42a8-_MEM_callocN.asm"
+      ],
+      "old_bytes_sha256": "aa9b212b81614edfb21e5686442ca0d667ff0548f8e3566faf43d8971fcb5b87",
+      "new_bytes_sha256": "aa9b212b81614edfb21e5686442ca0d667ff0548f8e3566faf43d8971fcb5b87"
+    },
+    {
+      "symbol": "_MEM_calloc_arrayN",
+      "old_start": "0x100ae42b4",
+      "old_end": "0x100ae42c0",
+      "new_start": "0x100ae42b4",
+      "new_end": "0x100ae42c0",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "1b364a7866f2-old.asm",
+      "new_dump": "1b364a7866f2-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae42b4-_MEM_calloc_arrayN.asm"
+      ],
+      "old_bytes_sha256": "d83561e5e845d17062fb38620bf27b9a9f1f99d22f8dc2db5efe579a84ca7ada",
+      "new_bytes_sha256": "d83561e5e845d17062fb38620bf27b9a9f1f99d22f8dc2db5efe579a84ca7ada"
+    },
+    {
+      "symbol": "_MEM_freeN",
+      "old_start": "0x100ae4298",
+      "old_end": "0x100ae42a8",
+      "new_start": "0x100ae4298",
+      "new_end": "0x100ae42a8",
+      "old_instruction_count": 4,
+      "new_instruction_count": 4,
+      "normalized_equal": true,
+      "old_dump": "c102ae6a6d78-old.asm",
+      "new_dump": "c102ae6a6d78-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae4298-_MEM_freeN.asm"
+      ],
+      "old_bytes_sha256": "c30230c0569d711d750dad257f227df16068282019b86b916ed2f6c1c44e50b4",
+      "new_bytes_sha256": "c30230c0569d711d750dad257f227df16068282019b86b916ed2f6c1c44e50b4"
+    },
+    {
+      "symbol": "__Z10CTX_createv",
+      "old_start": "0x1000b1128",
+      "old_end": "0x1000b114c",
+      "new_start": "0x1000b1128",
+      "new_end": "0x1000b114c",
+      "old_instruction_count": 9,
+      "new_instruction_count": 9,
+      "normalized_equal": true,
+      "old_dump": "154639fb62b2-old.asm",
+      "new_dump": "154639fb62b2-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b1128-CTX_create.asm"
+      ],
+      "old_bytes_sha256": "f8636ee6d97eec1cfa28150dc17593baba1c39f5384b6b402f868c326408896d",
+      "new_bytes_sha256": "717cbd98f267ddceba29c5e2b045baa37d48ac0c32fbc28787b25e13b0a60c39"
+    },
+    {
+      "symbol": "__Z13BLI_findindexPK8ListBasePKv",
+      "old_start": "0x10078ff60",
+      "old_end": "0x10078ff8c",
+      "new_start": "0x10078ff60",
+      "new_end": "0x10078ff8c",
+      "old_instruction_count": 11,
+      "new_instruction_count": 11,
+      "normalized_equal": true,
+      "old_dump": "c5c10e1277f7-old.asm",
+      "new_dump": "c5c10e1277f7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\10078ff60-__Z13BLI_findindexPK8ListBasePKv.asm"
+      ],
+      "old_bytes_sha256": "b75d9c05dd20a88240e91403016a1f2ac727029262b37393cabc7654a1a758a5",
+      "new_bytes_sha256": "b75d9c05dd20a88240e91403016a1f2ac727029262b37393cabc7654a1a758a5"
+    },
+    {
+      "symbol": "__Z13CTX_wm_windowPK8bContext",
+      "old_start": "0x1000b4218",
+      "old_end": "0x1000b4230",
+      "new_start": "0x1000b4218",
+      "new_end": "0x1000b4230",
+      "old_instruction_count": 6,
+      "new_instruction_count": 6,
+      "normalized_equal": true,
+      "old_dump": "e787e980a511-old.asm",
+      "new_dump": "e787e980a511-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4218-__Z13CTX_wm_windowPK8bContext.asm"
+      ],
+      "old_bytes_sha256": "d547195f07e840d249ba3a5091d808826aabb99ec1204bf93b416ea6db7cc625",
+      "new_bytes_sha256": "7f05e71c1e3807b81390ab7911c485e6b3d870a1d62f296904dfc87e0981ae15"
+    },
+    {
+      "symbol": "__Z13DRW_draw_viewPK8bContext",
+      "old_start": "0x10103ec38",
+      "old_end": "0x10103f01c",
+      "new_start": "0x10103ec68",
+      "new_end": "0x10103f04c",
+      "old_instruction_count": 249,
+      "new_instruction_count": 249,
+      "normalized_equal": true,
+      "old_dump": "37eef2070845-old.asm",
+      "new_dump": "37eef2070845-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10103ec38-DRW_draw_view.asm"
+      ],
+      "old_bytes_sha256": "53e94fe4329302619d9a1a11cf32bb5549f19de70aa476153492a72b264d797c",
+      "new_bytes_sha256": "6faed69b4f324b6facd56446578825a9a902eb453ea3f18bb219eff293661122"
+    },
+    {
+      "symbol": "__Z13wm_ghost_exitv",
+      "old_start": "0x100b96c68",
+      "old_end": "0x100b96ca0",
+      "new_start": "0x100b96c98",
+      "new_end": "0x100b96cd0",
+      "old_instruction_count": 14,
+      "new_instruction_count": 14,
+      "normalized_equal": true,
+      "old_dump": "04801d481135-old.asm",
+      "new_dump": "04801d481135-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\registry-background-exit.asm",
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b96c68-wm_ghost_exit.asm"
+      ],
+      "old_bytes_sha256": "bb24909aa10bd307b43d6519d776b13546e3bb8b3010a019ae0b0a38f575a557",
+      "new_bytes_sha256": "bb24909aa10bd307b43d6519d776b13546e3bb8b3010a019ae0b0a38f575a557"
+    },
+    {
+      "symbol": "__Z13wm_ghost_initP8bContext",
+      "old_start": "0x100b95f68",
+      "old_end": "0x100b96020",
+      "new_start": "0x100b95f98",
+      "new_end": "0x100b96050",
+      "old_instruction_count": 46,
+      "new_instruction_count": 46,
+      "normalized_equal": true,
+      "old_dump": "8ff3a6ba09b1-old.asm",
+      "new_dump": "8ff3a6ba09b1-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\registry-init.asm",
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b95f68-wm_ghost_init.asm"
+      ],
+      "old_bytes_sha256": "8c43f571df50a2d1c178cf16ef3da4f4caa0d8a2144c8ffe47732d5a2a597e82",
+      "new_bytes_sha256": "2edeb37108c97279abba83476d67538b28ce5d2a8d7b561160b36fde0c27f08f"
+    },
+    {
+      "symbol": "__Z13wm_ghost_initP8bContext.cold.1",
+      "old_start": "0x104a60d94",
+      "old_end": "0x104a60df4",
+      "new_start": "0x104a60dd4",
+      "new_end": "0x104a60e34",
+      "old_instruction_count": 24,
+      "new_instruction_count": 24,
+      "normalized_equal": true,
+      "old_dump": "a63e2eee1fc8-old.asm",
+      "new_dump": "a63e2eee1fc8-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\104a60d94-wm_ghost_init.asm"
+      ],
+      "old_bytes_sha256": "b4c46f20cc54be222bfcc379d217b33b85cc14146268a0d67ef72ebf1a9ea9ea",
+      "new_bytes_sha256": "a02785c13b44070bd591ce8a4f4e49b0e688bfee16d7fc74e6ddd555912ff71a"
+    },
+    {
+      "symbol": "__Z14CTX_wm_managerPK8bContext",
+      "old_start": "0x1000b4200",
+      "old_end": "0x1000b4208",
+      "new_start": "0x1000b4200",
+      "new_end": "0x1000b4208",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "741712b7b1b0-old.asm",
+      "new_dump": "741712b7b1b0-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4200-__Z14CTX_wm_managerPK8bContext.asm"
+      ],
+      "old_bytes_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+      "new_bytes_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025"
+    },
+    {
+      "symbol": "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+      "old_start": "0x1000b4aa8",
+      "old_end": "0x1000b4b1c",
+      "new_start": "0x1000b4aa8",
+      "new_end": "0x1000b4b1c",
+      "old_instruction_count": 29,
+      "new_instruction_count": 29,
+      "normalized_equal": true,
+      "old_dump": "843ec240a4b1-old.asm",
+      "new_dump": "843ec240a4b1-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4aa8-CTX_wm_area_set.asm"
+      ],
+      "old_bytes_sha256": "16a2d4f86caa4833f7478f6d588613e3161eb5083b617e634fbfa2a0f7a98c72",
+      "new_bytes_sha256": "4e23dd5ff3935e536c35bdbf26629a99181df5f58520d46bbef436f6c2c3fc94"
+    },
+    {
+      "symbol": "__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep",
+      "old_start": "0x100b3f95c",
+      "old_end": "0x100b3fc00",
+      "new_start": "0x100b3f95c",
+      "new_end": "0x100b3fc30",
+      "old_instruction_count": 169,
+      "new_instruction_count": 181,
+      "normalized_equal": false,
+      "old_dump": "4b39175bce6f-old.asm",
+      "new_dump": "4b39175bce6f-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3f95c-WM_gizmomap_draw.asm"
+      ],
+      "old_bytes_sha256": "2c863548b0d32a450e646d11fa94ea38ed52c7935b286faa38a28a61ca6b8d3d",
+      "new_bytes_sha256": "9f75fcf5497707db61a1f0b2447aa16da6b3e7249bf58a7ed60051e36b7efaf7",
+      "diff": "4b39175bce6f.diff"
+    },
+    {
+      "symbol": "__Z16WM_operator_freeP10wmOperator",
+      "old_start": "0x100b4302c",
+      "old_end": "0x100b4314c",
+      "new_start": "0x100b4305c",
+      "new_end": "0x100b4317c",
+      "old_instruction_count": 72,
+      "new_instruction_count": 72,
+      "normalized_equal": true,
+      "old_dump": "6a18de68215f-old.asm",
+      "new_dump": "6a18de68215f-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b4302c-__Z16WM_operator_freeP10wmOperator.asm"
+      ],
+      "old_bytes_sha256": "2d2400b4dee8a88bb3ad355427954e9e4a0ee5436336cfbc61a6de31bf833883",
+      "new_bytes_sha256": "5aa4ebb284c8ce214e6edd00763a49d220bb7556987e5c6b30cd1a781fa31ac9"
+    },
+    {
+      "symbol": "__Z17CTX_wm_region_setP8bContextP7ARegion",
+      "old_start": "0x1000b4b1c",
+      "old_end": "0x1000b4b90",
+      "new_start": "0x1000b4b1c",
+      "new_end": "0x1000b4b90",
+      "old_instruction_count": 29,
+      "new_instruction_count": 29,
+      "normalized_equal": true,
+      "old_dump": "54e56b6a3173-old.asm",
+      "new_dump": "54e56b6a3173-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4b1c-CTX_wm_region_set.asm"
+      ],
+      "old_bytes_sha256": "76a862eb2f89bd948b1c0a37a312992f10e5bcdf3e93c59833bc51aadbe4e9d0",
+      "new_bytes_sha256": "ede715fb04f66fb5c7973a91dbe99c087216b50d4f667190650dffa1c1083a59"
+    },
+    {
+      "symbol": "__Z17CTX_wm_window_setP8bContextP8wmWindow",
+      "old_start": "0x1000b4964",
+      "old_end": "0x1000b4a28",
+      "new_start": "0x1000b4964",
+      "new_end": "0x1000b4a28",
+      "old_instruction_count": 49,
+      "new_instruction_count": 49,
+      "normalized_equal": true,
+      "old_dump": "2fe5ff9b27fb-old.asm",
+      "new_dump": "2fe5ff9b27fb-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4964-CTX_wm_window_set.asm"
+      ],
+      "old_bytes_sha256": "55a5f07829c6019c041ec6003a9c8acdf39698b740ebf5af2c30075f0ae00ada",
+      "new_bytes_sha256": "6d19cad78323708be13814c3c0fc7e57335863ea8ee0231719eda9b87dcb65ba"
+    },
+    {
+      "symbol": "__Z17DRW_draw_gizmo_2dPK8bContextP7ARegion",
+      "old_start": "0x101066e64",
+      "old_end": "0x101066e90",
+      "new_start": "0x101066e94",
+      "new_end": "0x101066ec0",
+      "old_instruction_count": 11,
+      "new_instruction_count": 11,
+      "normalized_equal": true,
+      "old_dump": "1dddefe74a4e-old.asm",
+      "new_dump": "1dddefe74a4e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101066e64-DRW_draw_gizmo_2d.asm"
+      ],
+      "old_bytes_sha256": "d41a0aa7953485e51a80d6a0e6ae4b8e139a081c2e8fa2458decce8c5bb929a0",
+      "new_bytes_sha256": "ed76a3d82dd37d602f789b798e6e8ad2373665dcf47c4a32f5276dd60af11f3f"
+    },
+    {
+      "symbol": "__Z17DRW_draw_gizmo_3dPK8bContextP7ARegion",
+      "old_start": "0x101066e4c",
+      "old_end": "0x101066e64",
+      "new_start": "0x101066e7c",
+      "new_end": "0x101066e94",
+      "old_instruction_count": 6,
+      "new_instruction_count": 6,
+      "normalized_equal": true,
+      "old_dump": "795fabf88bfd-old.asm",
+      "new_dump": "795fabf88bfd-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101066e4c-DRW_draw_gizmo_3d.asm"
+      ],
+      "old_bytes_sha256": "219585115109e8c5743f28ab2525aa05e99dd5e9c5b5c2f626b475b43979c2fa",
+      "new_bytes_sha256": "a2d175c8eaeb0da9f17ed304d72f52e0bfab65d1ed3f50ec082bd333b4d1e563"
+    },
+    {
+      "symbol": "__Z17ED_region_do_drawP8bContextP7ARegion",
+      "old_start": "0x10161fe64",
+      "old_end": "0x101620b1c",
+      "new_start": "0x10161fe94",
+      "new_end": "0x101620b4c",
+      "old_instruction_count": 814,
+      "new_instruction_count": 814,
+      "normalized_equal": true,
+      "old_dump": "e264b0b45e34-old.asm",
+      "new_dump": "e264b0b45e34-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10161fe64-ED_region_do_draw.asm"
+      ],
+      "old_bytes_sha256": "0174d21fdd4899fbd648931e55a28eff49656dfddc31b89bab17aa75ab63bd69",
+      "new_bytes_sha256": "5abd843f92db26c8e1fd8f1128d7250a3cd88da954740aa17d2cc05d1703d169"
+    },
+    {
+      "symbol": "__Z17GPU_texture_clearPN7blender3gpu7TextureE14eGPUDataFormatPKv",
+      "old_start": "0x100a642ec",
+      "old_end": "0x100a642f8",
+      "new_start": "0x100a642ec",
+      "new_end": "0x100a642f8",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "964a75098d9a-old.asm",
+      "new_dump": "964a75098d9a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a642ec-GPU_texture_clear.asm"
+      ],
+      "old_bytes_sha256": "e4c1d05da0a68594fe256fc9379aade1c55a78d60fa7f10a5c873438f9c9674f",
+      "new_bytes_sha256": "e4c1d05da0a68594fe256fc9379aade1c55a78d60fa7f10a5c873438f9c9674f"
+    },
+    {
+      "symbol": "__Z17GPU_viewport_bindP11GPUViewportiPK4rcti",
+      "old_start": "0x100a66dfc",
+      "old_end": "0x100a66e68",
+      "new_start": "0x100a66dfc",
+      "new_end": "0x100a66e68",
+      "old_instruction_count": 27,
+      "new_instruction_count": 27,
+      "normalized_equal": true,
+      "old_dump": "7cb14e584167-old.asm",
+      "new_dump": "7cb14e584167-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a66dfc-GPU_viewport_bind.asm"
+      ],
+      "old_bytes_sha256": "88bb1e4e3cb57d50ed537726cca336ad17d14971f886c0b71b796dd22099362a",
+      "new_bytes_sha256": "34620aa3f23a02ecdfa980065a43498c9a3e518bdafeb1b732d3a121ca3bc671"
+    },
+    {
+      "symbol": "__Z17GPU_viewport_freeP11GPUViewport",
+      "old_start": "0x100a67a78",
+      "old_end": "0x100a67ad4",
+      "new_start": "0x100a67a78",
+      "new_end": "0x100a67ad4",
+      "old_instruction_count": 23,
+      "new_instruction_count": 23,
+      "normalized_equal": true,
+      "old_dump": "e7d37ffade95-old.asm",
+      "new_dump": "e7d37ffade95-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a67a78-GPU_viewport_free.asm"
+      ],
+      "old_bytes_sha256": "90b51a589c52bc9a8346845f0c5b9c46c30052b7e4f955243dc73cccfde57bbe",
+      "new_bytes_sha256": "5bd36f38a04495d3edea05de3ab8eb40d22dde0aa8a5932bce9dc364705e4d74"
+    },
+    {
+      "symbol": "__Z18CTX_wm_manager_setP8bContextP15wmWindowManager",
+      "old_start": "0x1000b4954",
+      "old_end": "0x1000b4964",
+      "new_start": "0x1000b4954",
+      "new_end": "0x1000b4964",
+      "old_instruction_count": 4,
+      "new_instruction_count": 4,
+      "normalized_equal": true,
+      "old_dump": "150dc5f4ccd0-old.asm",
+      "new_dump": "150dc5f4ccd0-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4954-CTX_wm_manager_set.asm"
+      ],
+      "old_bytes_sha256": "5caaf5a617747893d32f5427e8550267700773d591a00eabc4e0bc3b5a0a43a1",
+      "new_bytes_sha256": "5caaf5a617747893d32f5427e8550267700773d591a00eabc4e0bc3b5a0a43a1"
+    },
+    {
+      "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE",
+      "old_start": "0x100ae55a8",
+      "old_end": "0x100ae5674",
+      "new_start": "0x100ae55a8",
+      "new_end": "0x100ae5674",
+      "old_instruction_count": 51,
+      "new_instruction_count": 51,
+      "normalized_equal": true,
+      "old_dump": "7f1c50a61429-old.asm",
+      "new_dump": "7f1c50a61429-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae55a8-__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.asm"
+      ],
+      "old_bytes_sha256": "8c59dab449d1e46ffbf039ce0db9bc6ec410b72cad64ab06c2f230de85484fa5",
+      "new_bytes_sha256": "ea96dfa79c800f6aaacfe6484f50e6524dc6cff4ca00e47e24b70384659f3a9a"
+    },
+    {
+      "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.1",
+      "old_start": "0x104a5ea14",
+      "old_end": "0x104a5ea28",
+      "new_start": "0x104a5ea54",
+      "new_end": "0x104a5ea68",
+      "old_instruction_count": 5,
+      "new_instruction_count": 5,
+      "normalized_equal": true,
+      "old_dump": "702e161379cb-old.asm",
+      "new_dump": "702e161379cb-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\104a5ea14-__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.1.asm"
+      ],
+      "old_bytes_sha256": "976bea7a35398241ecb11ea47ed1439ebabb20e46492aff4944c7e7b4b0ac201",
+      "new_bytes_sha256": "e676403a52c5821efdc264cb6327835403cebb1da6c657edc09e3c8005d46bb3"
+    },
+    {
+      "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.2",
+      "old_start": "0x104a5ea28",
+      "old_end": "0x104a5ea44",
+      "new_start": "0x104a5ea68",
+      "new_end": "0x104a5ea84",
+      "old_instruction_count": 7,
+      "new_instruction_count": 7,
+      "normalized_equal": true,
+      "old_dump": "17b562f36d00-old.asm",
+      "new_dump": "17b562f36d00-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\104a5ea28-__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.2.asm"
+      ],
+      "old_bytes_sha256": "dbe3586d9c1953c6b9c3e85e30f0713473fc87594e367d6947c62fdb452473af",
+      "new_bytes_sha256": "800927b9eb8ca895c86916bb84cacc1132db509d6730f069190f92e7d4364e9f"
+    },
+    {
+      "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.3",
+      "old_start": "0x104a5ea44",
+      "old_end": "0x104a5ea58",
+      "new_start": "0x104a5ea84",
+      "new_end": "0x104a5ea98",
+      "old_instruction_count": 5,
+      "new_instruction_count": 5,
+      "normalized_equal": true,
+      "old_dump": "acdf7a8fc956-old.asm",
+      "new_dump": "acdf7a8fc956-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\104a5ea44-__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.3.asm"
+      ],
+      "old_bytes_sha256": "88a46b6d907fb2b38d23e04a0616645b3942cf2ddc1c09e005d5456b96a5a851",
+      "new_bytes_sha256": "a1465db1e61675b13377cf57e4078ae53c8e776a1b1d491f758f81eea2d5c791"
+    },
+    {
+      "symbol": "__Z19BKE_view_layer_findPK5ScenePKc",
+      "old_start": "0x100221a98",
+      "old_end": "0x100221ad8",
+      "new_start": "0x100221a98",
+      "new_end": "0x100221ad8",
+      "old_instruction_count": 16,
+      "new_instruction_count": 16,
+      "normalized_equal": true,
+      "old_dump": "ec0600253fa7-old.asm",
+      "new_dump": "ec0600253fa7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100221a98-__Z19BKE_view_layer_findPK5ScenePKc.asm"
+      ],
+      "old_bytes_sha256": "31194c30dc47801f96c1ae09eb884f4a0d5dd3ca8f37626367e62553043da99b",
+      "new_bytes_sha256": "60b111e141b65b21eecbe14105c8c8c214b029d8d84e1f44194ec657251b95c1"
+    },
+    {
+      "symbol": "__Z19CTX_wm_region_popupPK8bContext",
+      "old_start": "0x1000b4458",
+      "old_end": "0x1000b4460",
+      "new_start": "0x1000b4458",
+      "new_end": "0x1000b4460",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "34d91b347996-old.asm",
+      "new_dump": "34d91b347996-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4458-__Z19CTX_wm_region_popupPK8bContext.asm"
+      ],
+      "old_bytes_sha256": "095bb56e13b6dfde16ade0b592279392884c282a7c7810cb58472b839de552de",
+      "new_bytes_sha256": "095bb56e13b6dfde16ade0b592279392884c282a7c7810cb58472b839de552de"
+    },
+    {
+      "symbol": "__Z19ED_ipad_panels_drawP8bContextP8wmWindow",
+      "old_start": "0x1016422c0",
+      "old_end": "0x101642f60",
+      "new_start": "0x1016422f0",
+      "new_end": "0x101642f90",
+      "old_instruction_count": 808,
+      "new_instruction_count": 808,
+      "normalized_equal": true,
+      "old_dump": "41427747023b-old.asm",
+      "new_dump": "41427747023b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\1016422c0-ED_ipad_panels_draw.asm"
+      ],
+      "old_bytes_sha256": "05116d3e70bcb88c6650b6911b4d2834b725cc517cd7f0302ca7f3cf38bcbff0",
+      "new_bytes_sha256": "f9d4d03bfaeb3f675479715fc81393979ab11f036020abe8d9dbe334d5c03633"
+    },
+    {
+      "symbol": "__Z19GPU_viewport_createv",
+      "old_start": "0x100a66d6c",
+      "old_end": "0x100a66db0",
+      "new_start": "0x100a66d6c",
+      "new_end": "0x100a66db0",
+      "old_instruction_count": 17,
+      "new_instruction_count": 17,
+      "normalized_equal": true,
+      "old_dump": "60795513a475-old.asm",
+      "new_dump": "60795513a475-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a66d6c-GPU_viewport_create.asm"
+      ],
+      "old_bytes_sha256": "0f2c0ff7e4c553c112a7715e1dc2a998dccdf07c202a137fb764672b8f03bc2d",
+      "new_bytes_sha256": "b2eeca9c30d1b90c3f809943ecff3bf21d41bc28ed07af5886f8f1e95560ff62"
+    },
+    {
+      "symbol": "__Z20MEM_lockfree_callocNmPKc",
+      "old_start": "0x100ae5ca0",
+      "old_end": "0x100ae5d14",
+      "new_start": "0x100ae5ca0",
+      "new_end": "0x100ae5d14",
+      "old_instruction_count": 29,
+      "new_instruction_count": 29,
+      "normalized_equal": true,
+      "old_dump": "975cfe2c12ff-old.asm",
+      "new_dump": "975cfe2c12ff-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae5ca0-__Z20MEM_lockfree_callocNmPKc.asm"
+      ],
+      "old_bytes_sha256": "0bd988bc2d6bafad471fa6532fbdf6e44963940a739936bc126b859d365fa5c0",
+      "new_bytes_sha256": "296eb6d11546b68f6ac37aea167c21bbc2c6a1276755eb25ffc4f856ad169f5c"
+    },
+    {
+      "symbol": "__Z20WM_operatortype_findPKcb",
+      "old_start": "0x100b7c754",
+      "old_end": "0x100b7c9d0",
+      "new_start": "0x100b7c784",
+      "new_end": "0x100b7ca00",
+      "old_instruction_count": 159,
+      "new_instruction_count": 159,
+      "normalized_equal": true,
+      "old_dump": "915f03aa2111-old.asm",
+      "new_dump": "915f03aa2111-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b7c754-__Z20WM_operatortype_findPKcb.asm"
+      ],
+      "old_bytes_sha256": "0a17ba47bd5b496f01db17ed85f6c8e5abe671957a2baa7505fcd429f686eb48",
+      "new_bytes_sha256": "4980cc4aba916aa2b333bd12e6c0772993b8093da0de72e23e9b24ee66db81b0"
+    },
+    {
+      "symbol": "__Z21GPU_texture_create_2dPKciiiN7blender3gpu13TextureFormatE16eGPUTextureUsagePKf",
+      "old_start": "0x100a639b4",
+      "old_end": "0x100a639ec",
+      "new_start": "0x100a639b4",
+      "new_end": "0x100a639ec",
+      "old_instruction_count": 14,
+      "new_instruction_count": 14,
+      "normalized_equal": true,
+      "old_dump": "3bbeb26b9245-old.asm",
+      "new_dump": "3bbeb26b9245-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a639b4-GPU_texture_create_2d.asm"
+      ],
+      "old_bytes_sha256": "bc569f6b092e253d36e8fa9560b540638b1873e114ea364ea13927a37416fa99",
+      "new_bytes_sha256": "bc569f6b092e253d36e8fa9560b540638b1873e114ea364ea13927a37416fa99"
+    },
+    {
+      "symbol": "__Z22ED_region_draw_cb_drawPK8bContextP7ARegioni",
+      "old_start": "0x101b4dc0c",
+      "old_end": "0x101b4dd30",
+      "new_start": "0x101b4dc44",
+      "new_end": "0x101b4dd68",
+      "old_instruction_count": 73,
+      "new_instruction_count": 73,
+      "normalized_equal": true,
+      "old_dump": "d14dc395ec77-old.asm",
+      "new_dump": "d14dc395ec77-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101b4dc0c-ED_region_draw_cb_draw.asm"
+      ],
+      "old_bytes_sha256": "4f7bc1f1f6305d9c65c039a2782ca3429b593d08a766d0bfda7e93f8468abe8f",
+      "new_bytes_sha256": "b05a13c225e9067412358300ed56387106d4ddc1523aae4b38d3bd8155e81594"
+    },
+    {
+      "symbol": "__Z22WM_gizmo_group_refreshPK8bContextP12wmGizmoGroup",
+      "old_start": "0x100b3ceb8",
+      "old_end": "0x100b3cfb4",
+      "new_start": "0x100b3ceb8",
+      "new_end": "0x100b3cfb4",
+      "old_instruction_count": 63,
+      "new_instruction_count": 63,
+      "normalized_equal": true,
+      "old_dump": "16be93b6d1f7-old.asm",
+      "new_dump": "16be93b6d1f7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3ceb8-WM_gizmo_group_refresh.asm"
+      ],
+      "old_bytes_sha256": "5abfea7264ac3b58f95a70b6d72a4f5a435fa863eba7cbb844e84b4252c906ba",
+      "new_bytes_sha256": "ce3318499757f2ffac39e15f0b1f0017f05efd356b5e78164a608fd8a7ef58b7"
+    },
+    {
+      "symbol": "__Z22WM_gizmomap_group_listP10wmGizmoMap",
+      "old_start": "0x100b3f848",
+      "old_end": "0x100b3f850",
+      "new_start": "0x100b3f848",
+      "new_end": "0x100b3f850",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "c397fbf9a22d-old.asm",
+      "new_dump": "c397fbf9a22d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3f848-WM_gizmomap_group_list.asm"
+      ],
+      "old_bytes_sha256": "16e21e8466298640b30a77c6d532a726afc0cf074bb54d17bfaed901b400f570",
+      "new_bytes_sha256": "16e21e8466298640b30a77c6d532a726afc0cf074bb54d17bfaed901b400f570"
+    },
+    {
+      "symbol": "__Z22WM_operatortype_appendPFvP14wmOperatorTypeE",
+      "old_start": "0x100b7c9d0",
+      "old_end": "0x100b7ca98",
+      "new_start": "0x100b7ca00",
+      "new_end": "0x100b7cac8",
+      "old_instruction_count": 50,
+      "new_instruction_count": 50,
+      "normalized_equal": true,
+      "old_dump": "374ce4fa2a91-old.asm",
+      "new_dump": "374ce4fa2a91-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b7c9d0-__Z22WM_operatortype_appendPFvP14wmOperatorTypeE.asm"
+      ],
+      "old_bytes_sha256": "5b27b2643da07b2552437d9b2677a6efb311b62578f8b164c4127200ca49b536",
+      "new_bytes_sha256": "abc3f12d13c1a44aa10e5d78881ba57e7689ef03e7d0ce8d9930eea721aeb446"
+    },
+    {
+      "symbol": "__Z22knifetool_modal_keymapP11wmKeyConfig",
+      "old_start": "0x101c36a14",
+      "old_end": "0x101c36a7c",
+      "new_start": "0x101c36a4c",
+      "new_end": "0x101c36ab4",
+      "old_instruction_count": 26,
+      "new_instruction_count": 26,
+      "normalized_equal": true,
+      "old_dump": "ed61c2324ef2-old.asm",
+      "new_dump": "ed61c2324ef2-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c36a14-__Z22knifetool_modal_keymapP11wmKeyConfig.asm"
+      ],
+      "old_bytes_sha256": "10d80ff9256e053dd47aa9f8d4487610e6b1eafc2864e370e876ec17dd59af73",
+      "new_bytes_sha256": "0798791431b268854d0504f9ac48988e7677dadd1a78a8d862c275496634d3ba"
+    },
+    {
+      "symbol": "__Z23CTX_wm_region_popup_setP8bContextP7ARegion",
+      "old_start": "0x1000b4b90",
+      "old_end": "0x1000b4b98",
+      "new_start": "0x1000b4b90",
+      "new_end": "0x1000b4b98",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "de6ecc692497-old.asm",
+      "new_dump": "de6ecc692497-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4b90-__Z23CTX_wm_region_popup_setP8bContextP7ARegion.asm"
+      ],
+      "old_bytes_sha256": "55a1599b679f87dfb56520f0d35f07e90aa68899adca72db4aa999da003ecacf",
+      "new_bytes_sha256": "55a1599b679f87dfb56520f0d35f07e90aa68899adca72db4aa999da003ecacf"
+    },
+    {
+      "symbol": "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_",
+      "old_start": "0x10163fd9c",
+      "old_end": "0x101640748",
+      "new_start": "0x10163fdcc",
+      "new_end": "0x101640778",
+      "old_instruction_count": 619,
+      "new_instruction_count": 619,
+      "normalized_equal": true,
+      "old_dump": "f3dca3c5a43d-old.asm",
+      "new_dump": "f3dca3c5a43d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\10163fd9c-ED_ipad_knife_pan_probe.asm",
+        "binary-40252354359\\independent-render-fresh-audit\\10163fd9c-ED_ipad_knife_pan_probe.asm"
+      ],
+      "old_bytes_sha256": "212fa1405c15709ef0e44684d75ae43de42482d01a383e0b6b8f96bf8a5fdc10",
+      "new_bytes_sha256": "4c310543fa157f2b400fd4d69a16916892dba6bca35509c68e723fc54669861b"
+    },
+    {
+      "symbol": "__Z23view3d_main_region_drawPK8bContextP7ARegion",
+      "old_start": "0x102243b48",
+      "old_end": "0x102243c64",
+      "new_start": "0x102243b80",
+      "new_end": "0x102243c9c",
+      "old_instruction_count": 71,
+      "new_instruction_count": 71,
+      "normalized_equal": true,
+      "old_dump": "8176897bef75-old.asm",
+      "new_dump": "8176897bef75-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\102243b48-view3d_main_region_draw.asm"
+      ],
+      "old_bytes_sha256": "aabf56e1e1edcd9adde42817b4b5c91719b014cbbfd56b75b43d1ad8327e4834",
+      "new_bytes_sha256": "acd9175d95a5980598e0e406a2a4deaf5761ecc688f45e5d1187504d5fd2ce53"
+    },
+    {
+      "symbol": "__Z24BKE_workspace_active_getP21WorkSpaceInstanceHook",
+      "old_start": "0x10072a094",
+      "old_end": "0x10072a09c",
+      "new_start": "0x10072a094",
+      "new_end": "0x10072a09c",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "7872f33180d1-old.asm",
+      "new_dump": "7872f33180d1-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\10072a094-__Z24BKE_workspace_active_getP21WorkSpaceInstanceHook.asm"
+      ],
+      "old_bytes_sha256": "4197ad96213c98161e13fbfd6185a724b5570ba296d316558cbd5cc5c1842369",
+      "new_bytes_sha256": "4197ad96213c98161e13fbfd6185a724b5570ba296d316558cbd5cc5c1842369"
+    },
+    {
+      "symbol": "__Z24ED_mesh_knife_modal_typePK14wmOperatorType",
+      "old_start": "0x101c36a7c",
+      "old_end": "0x101c36ad8",
+      "new_start": "0x101c36ab4",
+      "new_end": "0x101c36b10",
+      "old_instruction_count": 23,
+      "new_instruction_count": 23,
+      "normalized_equal": true,
+      "old_dump": "7a0e5293b586-old.asm",
+      "new_dump": "7a0e5293b586-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c36a7c-ED_mesh_knife_modal_type.asm"
+      ],
+      "old_bytes_sha256": "75434e63774ef7530c5b24223d9b214154f1234ecbf158185b46b4f3ad3bce6a",
+      "new_bytes_sha256": "4f0f4543b84a913e2c13b225ddafa22c03673e42d7bbca103aefa9d2744ad56f"
+    },
+    {
+      "symbol": "__Z24WM_gizmo_group_type_pollPK8bContextPK16wmGizmoGroupType",
+      "old_start": "0x100b3e344",
+      "old_end": "0x100b3e3b0",
+      "new_start": "0x100b3e344",
+      "new_end": "0x100b3e3b0",
+      "old_instruction_count": 27,
+      "new_instruction_count": 27,
+      "normalized_equal": true,
+      "old_dump": "416610c6fb3e-old.asm",
+      "new_dump": "416610c6fb3e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3e344-WM_gizmo_group_type_poll.asm"
+      ],
+      "old_bytes_sha256": "403cf07c0ab6ea65d9d6e8fee7e6d3bd99da1a9cd21a509c929989ab2648ce94",
+      "new_bytes_sha256": "403cf07c0ab6ea65d9d6e8fee7e6d3bd99da1a9cd21a509c929989ab2648ce94"
+    },
+    {
+      "symbol": "__Z24wm_ghost_init_backgroundv",
+      "old_start": "0x100b96bfc",
+      "old_end": "0x100b96c68",
+      "new_start": "0x100b96c2c",
+      "new_end": "0x100b96c98",
+      "old_instruction_count": 27,
+      "new_instruction_count": 27,
+      "normalized_equal": true,
+      "old_dump": "1683e6d6ed58-old.asm",
+      "new_dump": "1683e6d6ed58-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\registry-background-exit.asm",
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b96bfc-wm_ghost_init_background.asm"
+      ],
+      "old_bytes_sha256": "61c71fe29cb49ed913c932e4f1c8864fd578875314a59d03989d66d998bdab47",
+      "new_bytes_sha256": "ba77fbc1332a8797ae8189fa806c7db47f9177a1d536ffeeb3ecec3d6654ddbd"
+    },
+    {
+      "symbol": "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup",
+      "old_start": "0x100b3ce14",
+      "old_end": "0x100b3ce78",
+      "new_start": "0x100b3ce14",
+      "new_end": "0x100b3ce78",
+      "old_instruction_count": 25,
+      "new_instruction_count": 25,
+      "normalized_equal": true,
+      "old_dump": "d318e9f6737e-old.asm",
+      "new_dump": "d318e9f6737e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3ce14-WM_gizmogroup_ensure_init.asm"
+      ],
+      "old_bytes_sha256": "ef9aa173c0018be274328e8c32e1fa06ff8eda4f0442eccd344a1172d54b8e4c",
+      "new_bytes_sha256": "5208df9e2fc81df9955186ca7ca64a9ca2e72e90d5a425b5c6b3b015b043ed35"
+    },
+    {
+      "symbol": "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup.cold.1",
+      "old_start": "0x104a5ead8",
+      "old_end": "0x104a5eb70",
+      "new_start": "0x104a5eb18",
+      "new_end": "0x104a5ebb0",
+      "old_instruction_count": 38,
+      "new_instruction_count": 38,
+      "normalized_equal": true,
+      "old_dump": "c925320d49fd-old.asm",
+      "new_dump": "c925320d49fd-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\104a5ead8-WM_gizmogroup_ensure_init.asm"
+      ],
+      "old_bytes_sha256": "567c8b91bc2fcf980a3c3d5d8fcea289aeb4d633b6159351ec088cf0d397631e",
+      "new_bytes_sha256": "8c8ac39780f410b9ab2883a749979f0eefaea7b816f64a6a57b83b721fc6f8b9"
+    },
+    {
+      "symbol": "__Z26ED_ipad_hud_compositor_endP8bContextP8wmWindowRNSt3__16vectorI20IPadHUDPresentedRectNS3_9allocatorIS5_EEEE",
+      "old_start": "0x10163ea40",
+      "old_end": "0x10163f9dc",
+      "new_start": "0x10163ea70",
+      "new_end": "0x10163fa0c",
+      "old_instruction_count": 999,
+      "new_instruction_count": 999,
+      "normalized_equal": true,
+      "old_dump": "fe92555df5d9-old.asm",
+      "new_dump": "fe92555df5d9-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10163ea40-ED_ipad_hud_compositor_end.asm"
+      ],
+      "old_bytes_sha256": "10be66ae4a6c1bfc08ec8b95af780ef76bea2824791aca038178fe635423d0da",
+      "new_bytes_sha256": "a926f5e1fe396fff76732aaf08fbe854daa5f1be548f3b3c9276c0bbe75867b8"
+    },
+    {
+      "symbol": "__Z26ED_mesh_knife_modal_originPK10wmOperatorR20MeshKnifeModalOrigin",
+      "old_start": "0x101c37600",
+      "old_end": "0x101c376cc",
+      "new_start": "0x101c37638",
+      "new_end": "0x101c37704",
+      "old_instruction_count": 51,
+      "new_instruction_count": 51,
+      "normalized_equal": true,
+      "old_dump": "10279234cfc7-old.asm",
+      "new_dump": "10279234cfc7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c37600-ED_mesh_knife_modal_origin.asm"
+      ],
+      "old_bytes_sha256": "1d121a19d6eef05cb144c4ba7363aff67a372a08b4752154fbd4364c79366695",
+      "new_bytes_sha256": "57b941f784eb372a45575f30748e5b93cd4b29aeb7039a4cbe96a9ee0f88b06d"
+    },
+    {
+      "symbol": "__Z26MEM_lockfree_calloc_arrayNmmPKc",
+      "old_start": "0x100ae5d94",
+      "old_end": "0x100ae5e58",
+      "new_start": "0x100ae5d94",
+      "new_end": "0x100ae5e58",
+      "old_instruction_count": 49,
+      "new_instruction_count": 49,
+      "normalized_equal": true,
+      "old_dump": "5817651128d6-old.asm",
+      "new_dump": "5817651128d6-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae5d94-__Z26MEM_lockfree_calloc_arrayNmmPKc.asm"
+      ],
+      "old_bytes_sha256": "3b383dd263a199b053433b41c98ecb8905ed6b6a161c400b9cdbbf24ced346e2",
+      "new_bytes_sha256": "ee29953ca4bf1349d2df6b156d6b763bf8f880a9c11aa8f2a2c5a37bd58873f2"
+    },
+    {
+      "symbol": "__Z26WM_event_add_modal_handlerP8bContextP10wmOperator",
+      "old_start": "0x100b59560",
+      "old_end": "0x100b595b4",
+      "new_start": "0x100b59590",
+      "new_end": "0x100b595e4",
+      "old_instruction_count": 21,
+      "new_instruction_count": 21,
+      "normalized_equal": true,
+      "old_dump": "34c85257f1fb-old.asm",
+      "new_dump": "34c85257f1fb-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b59560-__Z26WM_event_add_modal_handlerP8bContextP10wmOperator.asm"
+      ],
+      "old_bytes_sha256": "8b73f95bff9a38d82ac0b2d7950ffe5e18780b43028a75cfcb72aa2fbf5c59b2",
+      "new_bytes_sha256": "334629e0ad1756e4f05687d84a8bd7310e7967e11c3712b3fbde17b20d625f35"
+    },
+    {
+      "symbol": "__Z26WM_ipad_knife_owner_regionPK8bContextP8wmWindowRK16wmIPadKnifeOwnerb",
+      "old_start": "0x100b50d20",
+      "old_end": "0x100b50f08",
+      "new_start": "0x100b50d50",
+      "new_end": "0x100b50f38",
+      "old_instruction_count": 122,
+      "new_instruction_count": 122,
+      "normalized_equal": true,
+      "old_dump": "8ef9b5ded556-old.asm",
+      "new_dump": "8ef9b5ded556-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b50d20-WM_ipad_knife_owner_region.asm"
+      ],
+      "old_bytes_sha256": "a94a180e1233d325c3757bb23224030e708c6c6f82379b5a8cad831545c3a616",
+      "new_bytes_sha256": "503f7f3acc552ef5e906e5ad7bde250620ae51173c64d3898c1dcec6df5c0454"
+    },
+    {
+      "symbol": "__Z26WM_operatortype_append_ptrPFvP14wmOperatorTypePvES1_",
+      "old_start": "0x100b7cbcc",
+      "old_end": "0x100b7cc9c",
+      "new_start": "0x100b7cbfc",
+      "new_end": "0x100b7cccc",
+      "old_instruction_count": 52,
+      "new_instruction_count": 52,
+      "normalized_equal": true,
+      "old_dump": "83afea979020-old.asm",
+      "new_dump": "83afea979020-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b7cbcc-__Z26WM_operatortype_append_ptrPFvP14wmOperatorTypePvES1_.asm"
+      ],
+      "old_bytes_sha256": "32c3f3b40ebb9e46c5e7ba05786387e21f7bfa6ece730ae2f31050d70a9fdfcb",
+      "new_bytes_sha256": "35611423e834c3c4fda6773a1705dea4e121159223ac7ea3ab87c677f5cbc498"
+    },
+    {
+      "symbol": "__Z27GPU_texture_create_2d_arrayPKciiiiN7blender3gpu13TextureFormatE16eGPUTextureUsagePKf",
+      "old_start": "0x100a639ec",
+      "old_end": "0x100a63a20",
+      "new_start": "0x100a639ec",
+      "new_end": "0x100a63a20",
+      "old_instruction_count": 13,
+      "new_instruction_count": 13,
+      "normalized_equal": true,
+      "old_dump": "d4c2619eab87-old.asm",
+      "new_dump": "d4c2619eab87-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a639ec-GPU_texture_create_2d.asm"
+      ],
+      "old_bytes_sha256": "e8e2ed412db8531fece68dc813b6b22b656f83bd6837aaadef9165aa09e44c69",
+      "new_bytes_sha256": "e8e2ed412db8531fece68dc813b6b22b656f83bd6837aaadef9165aa09e44c69"
+    },
+    {
+      "symbol": "__Z27GPU_viewport_draw_to_screenP11GPUViewportiPK4rcti",
+      "old_start": "0x100a67868",
+      "old_end": "0x100a67874",
+      "new_start": "0x100a67868",
+      "new_end": "0x100a67874",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "0c8394e63106-old.asm",
+      "new_dump": "0c8394e63106-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a67868-GPU_viewport_draw_to_screen.asm"
+      ],
+      "old_bytes_sha256": "08f7b355965de63fa9deed8ed38444171217b32016d0b7cde97221db3b8af067",
+      "new_bytes_sha256": "08f7b355965de63fa9deed8ed38444171217b32016d0b7cde97221db3b8af067"
+    },
+    {
+      "symbol": "__Z27WM_ipad_knife_owner_capturePK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner",
+      "old_start": "0x100b503e0",
+      "old_end": "0x100b5066c",
+      "new_start": "0x100b50410",
+      "new_end": "0x100b5069c",
+      "old_instruction_count": 163,
+      "new_instruction_count": 163,
+      "normalized_equal": true,
+      "old_dump": "c9d47c39a3d0-old.asm",
+      "new_dump": "c9d47c39a3d0-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b503e0-WM_ipad_knife_owner_capture.asm"
+      ],
+      "old_bytes_sha256": "4213c9e2b04dd27a3562e4cc5e33875bd4e7981684794cabecfdaad14b91d874",
+      "new_bytes_sha256": "83df0d8114ff41cbc457329ba775603b5e1882d0c6f7313601bdd8e904f86565"
+    },
+    {
+      "symbol": "__Z27WM_ipad_knife_owner_presentPK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner",
+      "old_start": "0x100b50ae4",
+      "old_end": "0x100b50d20",
+      "new_start": "0x100b50b14",
+      "new_end": "0x100b50d50",
+      "old_instruction_count": 143,
+      "new_instruction_count": 143,
+      "normalized_equal": true,
+      "old_dump": "3535bba64d94-old.asm",
+      "new_dump": "3535bba64d94-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b50ae4-WM_ipad_knife_owner_present.asm"
+      ],
+      "old_bytes_sha256": "c02de8637582fe70f8907c30948e14f447b26d988cf7ab17163e155d00b3ad8a",
+      "new_bytes_sha256": "b2d2d5bd25607a30dfe1b42a5e2212c0b2928ea69c9ef0d6051122a42816b5f6"
+    },
+    {
+      "symbol": "__Z27WM_window_get_active_screenPK8wmWindow",
+      "old_start": "0x104a60494",
+      "old_end": "0x104a604c4",
+      "new_start": "0x104a604d4",
+      "new_end": "0x104a60504",
+      "old_instruction_count": 12,
+      "new_instruction_count": 12,
+      "normalized_equal": true,
+      "old_dump": "b74d8ff75c26-old.asm",
+      "new_dump": "b74d8ff75c26-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\104a60494-__Z27WM_window_get_active_screenPK8wmWindow.asm"
+      ],
+      "old_bytes_sha256": "562d99a9d1213f643f7cd0038303542abcfa58d0e51de4a996068d3ef97f560b",
+      "new_bytes_sha256": "67a6e357768c0344211aefe08375cab4f73006d5b4de7d51850e71c2a24ed940"
+    },
+    {
+      "symbol": "__Z28BKE_view_layer_find_with_aovP5SceneP12ViewLayerAOV",
+      "old_start": "0x1002251f0",
+      "old_end": "0x100225234",
+      "new_start": "0x1002251f0",
+      "new_end": "0x100225234",
+      "old_instruction_count": 17,
+      "new_instruction_count": 17,
+      "normalized_equal": true,
+      "old_dump": "5a9694f95523-old.asm",
+      "new_dump": "5a9694f95523-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1002251f0-__Z28BKE_view_layer_find_with_aovP5SceneP12ViewLayerAOV.asm"
+      ],
+      "old_bytes_sha256": "2c9730c6d4909a83f789c994edc8613516bb30e422cd1ddf2e9190a5cc82d6cc",
+      "new_bytes_sha256": "2c9730c6d4909a83f789c994edc8613516bb30e422cd1ddf2e9190a5cc82d6cc"
+    },
+    {
+      "symbol": "__Z28ED_ipad_hud_compositor_beginP8bContextP8wmWindow",
+      "old_start": "0x10163d018",
+      "old_end": "0x10163dd58",
+      "new_start": "0x10163d048",
+      "new_end": "0x10163dd88",
+      "old_instruction_count": 848,
+      "new_instruction_count": 848,
+      "normalized_equal": true,
+      "old_dump": "bcb24058ec43-old.asm",
+      "new_dump": "bcb24058ec43-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10163d018-ED_ipad_hud_compositor_begin.asm"
+      ],
+      "old_bytes_sha256": "a1546f1946306c23c2782bd624db4645b95c320da1fcc9ad0c2be295042e0f94",
+      "new_bytes_sha256": "55d00fcb7bf605019b85e51526f24cdaaacedf1851f7cf23350e5f7b6eaea4ac"
+    },
+    {
+      "symbol": "__Z28GPU_offscreen_draw_to_screenP12GPUOffScreenii",
+      "old_start": "0x1008f4514",
+      "old_end": "0x1008f4570",
+      "new_start": "0x1008f4514",
+      "new_end": "0x1008f4570",
+      "old_instruction_count": 23,
+      "new_instruction_count": 23,
+      "normalized_equal": true,
+      "old_dump": "8bdca69d9156-old.asm",
+      "new_dump": "8bdca69d9156-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\1008f4514-GPU_offscreen_draw_to_screen.asm"
+      ],
+      "old_bytes_sha256": "c8637d861b4c899408fdff8b4305c98c0787b8e8fe27212861853395d1cff0e9",
+      "new_bytes_sha256": "c8637d861b4c899408fdff8b4305c98c0787b8e8fe27212861853395d1cff0e9"
+    },
+    {
+      "symbol": "__Z29WM_event_add_modal_handler_exP8wmWindowP7ScrAreaP7ARegionP10wmOperator",
+      "old_start": "0x100b58fa0",
+      "old_end": "0x100b59510",
+      "new_start": "0x100b58fd0",
+      "new_end": "0x100b59540",
+      "old_instruction_count": 348,
+      "new_instruction_count": 348,
+      "normalized_equal": true,
+      "old_dump": "e9001cfca9bf-old.asm",
+      "new_dump": "e9001cfca9bf-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b58fa0-__Z29WM_event_add_modal_handler_exP8wmWindowP7ScrAreaP7ARegionP10wmOperator.asm"
+      ],
+      "old_bytes_sha256": "69d9247cab8714e2484ecea1f76716a96d1a163c50117b850ad90d43ae8bba47",
+      "new_bytes_sha256": "d5b5680fbe728bd20fad39dfdb41ddbe0318b15f30cefcf7889d9b3851c01d05"
+    },
+    {
+      "symbol": "__Z29WM_operator_touch_lifetime_idPK10wmOperator",
+      "old_start": "0x100b42de4",
+      "old_end": "0x100b42f30",
+      "new_start": "0x100b42e14",
+      "new_end": "0x100b42f60",
+      "old_instruction_count": 83,
+      "new_instruction_count": 83,
+      "normalized_equal": true,
+      "old_dump": "d78ba5246543-old.asm",
+      "new_dump": "d78ba5246543-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b42de4-__Z29WM_operator_touch_lifetime_idPK10wmOperator.asm"
+      ],
+      "old_bytes_sha256": "1b426b06ef6dc82d8b8555437007e6e7362a66e2d64030ec76c5423a816f2ca5",
+      "new_bytes_sha256": "1b426b06ef6dc82d8b8555437007e6e7362a66e2d64030ec76c5423a816f2ca5"
+    },
+    {
+      "symbol": "__Z30GPU_viewport_draw_to_screen_exP11GPUViewportiPK4rctibb",
+      "old_start": "0x100a6745c",
+      "old_end": "0x100a67558",
+      "new_start": "0x100a6745c",
+      "new_end": "0x100a67558",
+      "old_instruction_count": 63,
+      "new_instruction_count": 63,
+      "normalized_equal": true,
+      "old_dump": "e1a2a55e3c74-old.asm",
+      "new_dump": "e1a2a55e3c74-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a6745c-GPU_viewport_draw_to_screen.asm",
+        "binary-40252354359\\independent-render-fresh-audit\\100a6745c-GPU_viewport_draw_to_screen_ex.asm"
+      ],
+      "old_bytes_sha256": "80d60248c44deea1dfa7fbce9d7006002c88cd9f8e6f3a7b769e4264ad51a3fa",
+      "new_bytes_sha256": "80d60248c44deea1dfa7fbce9d7006002c88cd9f8e6f3a7b769e4264ad51a3fa"
+    },
+    {
+      "symbol": "__Z31BKE_workspace_active_screen_getPK21WorkSpaceInstanceHook",
+      "old_start": "0x10072a12c",
+      "old_end": "0x10072a138",
+      "new_start": "0x10072a12c",
+      "new_end": "0x10072a138",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "1a708cbd1c48-old.asm",
+      "new_dump": "1a708cbd1c48-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\10072a12c-__Z31BKE_workspace_active_screen_getPK21WorkSpaceInstanceHook.asm"
+      ],
+      "old_bytes_sha256": "1e858f2ccf63cc4d040de84d97b02cd58c767640a19b043ead17975175966cbc",
+      "new_bytes_sha256": "1e858f2ccf63cc4d040de84d97b02cd58c767640a19b043ead17975175966cbc"
+    },
+    {
+      "symbol": "__Z31BKE_workspace_layout_screen_getPK15WorkSpaceLayout",
+      "old_start": "0x10072a288",
+      "old_end": "0x10072a290",
+      "new_start": "0x10072a288",
+      "new_end": "0x10072a290",
+      "old_instruction_count": 2,
+      "new_instruction_count": 2,
+      "normalized_equal": true,
+      "old_dump": "e576791aeaf8-old.asm",
+      "new_dump": "e576791aeaf8-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\10072a288-__Z31BKE_workspace_layout_screen_getPK15WorkSpaceLayout.asm"
+      ],
+      "old_bytes_sha256": "dfb556a413c8bda5332942d0202e8d5f1e52f45158aec3676294cf11ad5909cb",
+      "new_bytes_sha256": "dfb556a413c8bda5332942d0202e8d5f1e52f45158aec3676294cf11ad5909cb"
+    },
+    {
+      "symbol": "__Z32GPU_viewport_bind_from_offscreenP11GPUViewportP12GPUOffScreenb",
+      "old_start": "0x100a670f0",
+      "old_end": "0x100a6716c",
+      "new_start": "0x100a670f0",
+      "new_end": "0x100a6716c",
+      "old_instruction_count": 31,
+      "new_instruction_count": 31,
+      "normalized_equal": true,
+      "old_dump": "823dc8b44b4b-old.asm",
+      "new_dump": "823dc8b44b4b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a670f0-GPU_viewport_bind.asm"
+      ],
+      "old_bytes_sha256": "9cbe65bf0a76cd5242ca829baefcefa0b200ab62253e1b165d6d9e1b95130f1c",
+      "new_bytes_sha256": "9cbe65bf0a76cd5242ca829baefcefa0b200ab62253e1b165d6d9e1b95130f1c"
+    },
+    {
+      "symbol": "__Z33ED_mesh_knife_draw_callback_knownPK10wmOperatorPK7ARegionPKvPFvPK8bContextPS2_PvES6_i",
+      "old_start": "0x101c376cc",
+      "old_end": "0x101c377a8",
+      "new_start": "0x101c37704",
+      "new_end": "0x101c377e0",
+      "old_instruction_count": 55,
+      "new_instruction_count": 55,
+      "normalized_equal": true,
+      "old_dump": "f2bbc562ea1e-old.asm",
+      "new_dump": "f2bbc562ea1e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c376cc-ED_mesh_knife_draw_callback_known.asm",
+        "binary-40252354359\\independent-render-fresh-audit\\101c376cc-ED_mesh_knife_draw_callback_known.asm"
+      ],
+      "old_bytes_sha256": "28b39dd8f445be871c17d143d13599544abe62ed0583891204021a8cec85817b",
+      "new_bytes_sha256": "f619d27926cbfeed7b7af2bfd9e9dc1e3204ab26ca49f6cf9dd91df3a5299724"
+    },
+    {
+      "symbol": "__Z33WM_ipad_knife_draw_callback_knownPK8bContextPK7ARegionPKvPFvS1_PS2_PvES6_iR16wmIPadKnifeOwner",
+      "old_start": "0x100b513f4",
+      "old_end": "0x100b516a0",
+      "new_start": "0x100b51424",
+      "new_end": "0x100b516d0",
+      "old_instruction_count": 171,
+      "new_instruction_count": 171,
+      "normalized_equal": true,
+      "old_dump": "af009f627342-old.asm",
+      "new_dump": "af009f627342-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b513f4-WM_ipad_knife_draw_callback_known.asm",
+        "binary-40252354359\\independent-render-fresh-audit\\100b513f4-WM_ipad_knife_draw_callback_known.asm"
+      ],
+      "old_bytes_sha256": "2056b63d72778c942d986e6eebc4c076a01fe2fe461ee19ceb35b74a4884cda2",
+      "new_bytes_sha256": "48a3123496e6c5f2684f534a6a193df63b2afcd69be0a4ebdce99e19417631f3"
+    },
+    {
+      "symbol": "__Z34BKE_view_layer_find_rgba_attributePK5ScenePK9ViewLayerPKcPf",
+      "old_start": "0x100366dec",
+      "old_end": "0x100366f6c",
+      "new_start": "0x100366dec",
+      "new_end": "0x100366f6c",
+      "old_instruction_count": 96,
+      "new_instruction_count": 96,
+      "normalized_equal": true,
+      "old_dump": "6ce8c3c8b073-old.asm",
+      "new_dump": "6ce8c3c8b073-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100366dec-__Z34BKE_view_layer_find_rgba_attributePK5ScenePK9ViewLayerPKcPf.asm"
+      ],
+      "old_bytes_sha256": "b7eefbf0aaf3049ee7c76b456cc2b7f200065dba014901b77948888929ae26e9",
+      "new_bytes_sha256": "9df28340ea5c4fc78b7a56f165840b5610f91c61c28ef48f704b7607bd14748b"
+    },
+    {
+      "symbol": "__Z34ED_region_knife_pan_callbacks_safePK8bContextPK7ARegionR16wmIPadKnifeOwner",
+      "old_start": "0x101b4d9e8",
+      "old_end": "0x101b4dc0c",
+      "new_start": "0x101b4da20",
+      "new_end": "0x101b4dc44",
+      "old_instruction_count": 137,
+      "new_instruction_count": 137,
+      "normalized_equal": true,
+      "old_dump": "ef979cc29ab6-old.asm",
+      "new_dump": "ef979cc29ab6-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101b4d9e8-ED_region_knife_pan_callbacks_safe.asm",
+        "binary-40252354359\\independent-render-fresh-audit\\101b4d9e8-ED_region_knife_pan_callbacks_safe.asm"
+      ],
+      "old_bytes_sha256": "136a119aecd89d1073c3143ef623d9e58d7a515ea4c71e2fe1d9cdbec97e302a",
+      "new_bytes_sha256": "34e991931fc0cf38831ef0dd5661d6880c25e1e2d6589286c50387a6ba584b67"
+    },
+    {
+      "symbol": "__Z34MEM_lockfree_calloc_arrayN_alignedmmmPKc",
+      "old_start": "0x100ae5fd4",
+      "old_end": "0x100ae6094",
+      "new_start": "0x100ae5fd4",
+      "new_end": "0x100ae6094",
+      "old_instruction_count": 48,
+      "new_instruction_count": 48,
+      "normalized_equal": true,
+      "old_dump": "cacb00cd715c-old.asm",
+      "new_dump": "cacb00cd715c-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100ae5fd4-__Z34MEM_lockfree_calloc_arrayN_alignedmmmPKc.asm"
+      ],
+      "old_bytes_sha256": "c703c7fe3701ac5a03fbd0997773f1d1a85a171c63c952bf932c78b7ecf3764f",
+      "new_bytes_sha256": "9289a04879cb6e4fe6feccd6851cbc337a50938ce9a9465686d99e6eb4bbef83"
+    },
+    {
+      "symbol": "__Z34WM_ipad_knife_canvas_scope_capturePK8bContextP8wmWindowP7ScrAreaP7ARegionRNSt3__15arrayIyLm32EEE",
+      "old_start": "0x100b50f08",
+      "old_end": "0x100b513f4",
+      "new_start": "0x100b50f38",
+      "new_end": "0x100b51424",
+      "old_instruction_count": 315,
+      "new_instruction_count": 315,
+      "normalized_equal": true,
+      "old_dump": "e95dfd971083-old.asm",
+      "new_dump": "e95dfd971083-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b50f08-WM_ipad_knife_canvas_scope_capture.asm"
+      ],
+      "old_bytes_sha256": "31d792473c2dd6b250bab682c8d51736bf2d90e64a5b1fcfaf5469047efddc9c",
+      "new_bytes_sha256": "49a9f9fd8eb4c70450bbc7e1349aaafce680c2f435a3681fc7b8a9fd1837a339"
+    },
+    {
+      "symbol": "__Z34WM_operator_touch_lifetime_matchesPK10wmOperatory",
+      "old_start": "0x100b42f30",
+      "old_end": "0x100b4302c",
+      "new_start": "0x100b42f60",
+      "new_end": "0x100b4305c",
+      "old_instruction_count": 63,
+      "new_instruction_count": 63,
+      "normalized_equal": true,
+      "old_dump": "42362e7b9ec9-old.asm",
+      "new_dump": "42362e7b9ec9-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b42f30-__Z34WM_operator_touch_lifetime_matchesPK10wmOperatory.asm"
+      ],
+      "old_bytes_sha256": "6499d12e2f401ae4c093526e043470696ebf9b0c530eca180304c6eac72ad6d0",
+      "new_bytes_sha256": "6499d12e2f401ae4c093526e043470696ebf9b0c530eca180304c6eac72ad6d0"
+    },
+    {
+      "symbol": "__Z35BKE_view_layer_find_from_collectionPK5SceneP15LayerCollection",
+      "old_start": "0x1002224b4",
+      "old_end": "0x1002224f4",
+      "new_start": "0x1002224b4",
+      "new_end": "0x1002224f4",
+      "old_instruction_count": 16,
+      "new_instruction_count": 16,
+      "normalized_equal": true,
+      "old_dump": "afdeb1536307-old.asm",
+      "new_dump": "afdeb1536307-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1002224b4-__Z35BKE_view_layer_find_from_collectionPK5SceneP15LayerCollection.asm"
+      ],
+      "old_bytes_sha256": "d9b0bba142d23300a32418d3e37585d902d5d7b08a70a5061238ee54b4c3e8a6",
+      "new_bytes_sha256": "d9b0bba142d23300a32418d3e37585d902d5d7b08a70a5061238ee54b4c3e8a6"
+    },
+    {
+      "symbol": "__Z35BKE_view_layer_find_with_lightgroupP5SceneP19ViewLayerLightgroup",
+      "old_start": "0x100225328",
+      "old_end": "0x10022536c",
+      "new_start": "0x100225328",
+      "new_end": "0x10022536c",
+      "old_instruction_count": 17,
+      "new_instruction_count": 17,
+      "normalized_equal": true,
+      "old_dump": "b669feb4ebb9-old.asm",
+      "new_dump": "b669feb4ebb9-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100225328-__Z35BKE_view_layer_find_with_lightgroupP5SceneP19ViewLayerLightgroup.asm"
+      ],
+      "old_bytes_sha256": "44474469c1d1a3e2367507c460437f10b6ebeebaac88a547f60c662cfd940859",
+      "new_bytes_sha256": "44474469c1d1a3e2367507c460437f10b6ebeebaac88a547f60c662cfd940859"
+    },
+    {
+      "symbol": "__Z37WM_gizmomap_drawstep_from_gizmo_groupPK12wmGizmoGroup",
+      "old_start": "0x100b3f8e4",
+      "old_end": "0x100b3f8f4",
+      "new_start": "0x100b3f8e4",
+      "new_end": "0x100b3f8f4",
+      "old_instruction_count": 4,
+      "new_instruction_count": 4,
+      "normalized_equal": true,
+      "old_dump": "1a63e183a410-old.asm",
+      "new_dump": "1a63e183a410-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b3f8e4-WM_gizmomap_draw.asm"
+      ],
+      "old_bytes_sha256": "6fe6f2b67a6fab028e54660629ef807e54e1fc822c2bb02ffce76da7bdcd6e46",
+      "new_bytes_sha256": "6fe6f2b67a6fab028e54660629ef807e54e1fc822c2bb02ffce76da7bdcd6e46"
+    },
+    {
+      "symbol": "__Z40ED_ipad_knife_hierarchy_region_presentedP8bContextP8wmWindowP7ScrAreaP7ARegionRK4rcti",
+      "old_start": "0x10163e6dc",
+      "old_end": "0x10163e910",
+      "new_start": "0x10163e70c",
+      "new_end": "0x10163e940",
+      "old_instruction_count": 141,
+      "new_instruction_count": 141,
+      "normalized_equal": true,
+      "old_dump": "0c4db70a4f78-old.asm",
+      "new_dump": "0c4db70a4f78-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10163e6dc-ED_ipad_knife_hierarchy_region_presented.asm"
+      ],
+      "old_bytes_sha256": "bb5bf716c256f3551dfb994ec930ca946f1bb2e9e9b626132c8aad7fb45163ee",
+      "new_bytes_sha256": "6c24448f9638033033e15fb06c919d3e593120b62f31d4678ac6d767322fc95f"
+    },
+    {
+      "symbol": "__Z40ED_ipad_knife_hierarchy_window_callbacksP8bContextP8wmWindowb",
+      "old_start": "0x10163e504",
+      "old_end": "0x10163e624",
+      "new_start": "0x10163e534",
+      "new_end": "0x10163e654",
+      "old_instruction_count": 72,
+      "new_instruction_count": 72,
+      "normalized_equal": true,
+      "old_dump": "784819c12968-old.asm",
+      "new_dump": "784819c12968-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10163e504-ED_ipad_knife_hierarchy_window_callbacks.asm"
+      ],
+      "old_bytes_sha256": "bef00b62c39273d92d94d6f0b5025be820e6615ac31a164773f8d170c13be6a1",
+      "new_bytes_sha256": "0ae3e889dfc34d181004a62d34670191f8d5dec24c5b2a3959c8386376438faf"
+    },
+    {
+      "symbol": "__Z8CTX_freeP8bContext",
+      "old_start": "0x1000b11c8",
+      "old_end": "0x1000b1210",
+      "new_start": "0x1000b11c8",
+      "new_end": "0x1000b1210",
+      "old_instruction_count": 18,
+      "new_instruction_count": 18,
+      "normalized_equal": true,
+      "old_dump": "b4d322593d55-old.asm",
+      "new_dump": "b4d322593d55-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b11c8-CTX_free.asm"
+      ],
+      "old_bytes_sha256": "da2bdadf7c53a0b7f3315501ead61ac026c3f28c85936344c8d6e97a72498d91",
+      "new_bytes_sha256": "da2bdadf7c53a0b7f3315501ead61ac026c3f28c85936344c8d6e97a72498d91"
+    },
+    {
+      "symbol": "__ZL14knifetool_drawPK8bContextP7ARegionPv",
+      "old_start": "0x101c377a8",
+      "old_end": "0x101c37e40",
+      "new_start": "0x101c377e0",
+      "new_end": "0x101c37e78",
+      "old_instruction_count": 422,
+      "new_instruction_count": 422,
+      "normalized_equal": true,
+      "old_dump": "78f0b9633dbc-old.asm",
+      "new_dump": "78f0b9633dbc-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c377a8-__ZL14knifetool_drawPK8bContextP7ARegionPv.asm"
+      ],
+      "old_bytes_sha256": "eb8928e2d92b3ccb557d0dac23d77e2a4700d2d4741b2b3e71cfe147f2ad293b",
+      "new_bytes_sha256": "4e2b45ec33a4402fdbd940ad8c0e00bacf7652e03d2393cbef802347c631c3cd"
+    },
+    {
+      "symbol": "__ZL15knifetool_modalP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101c36dd0",
+      "old_end": "0x101c375d8",
+      "new_start": "0x101c36e08",
+      "new_end": "0x101c37610",
+      "old_instruction_count": 514,
+      "new_instruction_count": 514,
+      "normalized_equal": true,
+      "old_dump": "79bcd12817ff-old.asm",
+      "new_dump": "79bcd12817ff-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c36dd0-__ZL15knifetool_modalP8bContextP10wmOperatorPK7wmEvent.asm"
+      ],
+      "old_bytes_sha256": "4d3258b96de40467d95cf2da8beef17ee7554643ad716b07bc309989adf78445",
+      "new_bytes_sha256": "9fab28a84006fb0222369924588e7e21aa9ffb724b50c31d978e48db453ac43d"
+    },
+    {
+      "symbol": "__ZL16knifetool_cancelP8bContextP10wmOperator",
+      "old_start": "0x101c375d8",
+      "old_end": "0x101c37600",
+      "new_start": "0x101c37610",
+      "new_end": "0x101c37638",
+      "old_instruction_count": 10,
+      "new_instruction_count": 10,
+      "normalized_equal": true,
+      "old_dump": "c8fb92cf452f-old.asm",
+      "new_dump": "c8fb92cf452f-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c375d8-__ZL16knifetool_cancelP8bContextP10wmOperator.asm"
+      ],
+      "old_bytes_sha256": "356dc9aafe1b6e7db2081f0ed7e69e680e51739ec9f502657f56c6a0f7d7c079",
+      "new_bytes_sha256": "356dc9aafe1b6e7db2081f0ed7e69e680e51739ec9f502657f56c6a0f7d7c079"
+    },
+    {
+      "symbol": "__ZL16knifetool_invokeP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101c36ad8",
+      "old_end": "0x101c36dd0",
+      "new_start": "0x101c36b10",
+      "new_end": "0x101c36e08",
+      "old_instruction_count": 190,
+      "new_instruction_count": 190,
+      "normalized_equal": true,
+      "old_dump": "28a3df918306-old.asm",
+      "new_dump": "28a3df918306-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c36ad8-__ZL16knifetool_invokeP8bContextP10wmOperatorPK7wmEvent.asm"
+      ],
+      "old_bytes_sha256": "606a3a7228aa4bbd8c2cc11e2ff2d1f237055e7db7cd774e5e02b81b028cba2e",
+      "new_bytes_sha256": "2a799715072ee84288b45708951e17747e8b5eccaec255d89bae2755672281d6"
+    },
+    {
+      "symbol": "__ZL20knifetool_draw_anglePK16KnifeTool_OpDataPKfS3_S3_S3_S3_S3_f",
+      "old_start": "0x101c3f524",
+      "old_end": "0x101c3fa28",
+      "new_start": "0x101c3f55c",
+      "new_end": "0x101c3fa60",
+      "old_instruction_count": 321,
+      "new_instruction_count": 321,
+      "normalized_equal": true,
+      "old_dump": "837da651c258-old.asm",
+      "new_dump": "837da651c258-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c3f524-__ZL20knifetool_draw_anglePK16KnifeTool_OpDataPKfS3_S3_S3_S3_S3_f.asm"
+      ],
+      "old_bytes_sha256": "5d8bb89675846b57ffbec5a3f1fa55c1772ce21821e73d3872c31758410aa28f",
+      "new_bytes_sha256": "04f8d7066d5e55728a6cc3f4a960a9776c0ad159c3ce540f2a5254ee92e02e80"
+    },
+    {
+      "symbol": "__ZL22wm_draw_area_offscreenP8bContextP8wmWindowP7ScrAreab",
+      "old_start": "0x100b4bf1c",
+      "old_end": "0x100b4ca90",
+      "new_start": "0x100b4bf4c",
+      "new_end": "0x100b4cac0",
+      "old_instruction_count": 733,
+      "new_instruction_count": 733,
+      "normalized_equal": true,
+      "old_dump": "e25d910d45e7-old.asm",
+      "new_dump": "e25d910d45e7-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b4bf1c-wm_draw_area_offscreen.asm"
+      ],
+      "old_bytes_sha256": "535cb24b3a40e1a29d6c92b6d0aa633ce6efd9cef2fd005b35e541a1ffbe1182",
+      "new_bytes_sha256": "6d3f70f620f0092e694e6de46a4d9fefa7d055a89e0abda37263c04c2dc836d7"
+    },
+    {
+      "symbol": "__ZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineType",
+      "old_start": "0x10103f01c",
+      "old_end": "0x10103f3ac",
+      "new_start": "0x10103f04c",
+      "new_end": "0x10103f3dc",
+      "old_instruction_count": 228,
+      "new_instruction_count": 228,
+      "normalized_equal": true,
+      "old_dump": "f50e11ed3ca9-old.asm",
+      "new_dump": "f50e11ed3ca9-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10103f01c-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "570c08e8914856844dec90c68316616b47e36c55037d3620e4bf3e9f57b68fa0",
+      "new_bytes_sha256": "047db1ce708650f1083e57361cc11145cbb655e7e9b8a272bba37122b2a545b3"
+    },
+    {
+      "symbol": "__ZL23wm_draw_window_onscreenP8bContextP8wmWindowi",
+      "old_start": "0x100b48730",
+      "old_end": "0x100b49d88",
+      "new_start": "0x100b48760",
+      "new_end": "0x100b49db8",
+      "old_instruction_count": 1430,
+      "new_instruction_count": 1430,
+      "normalized_equal": true,
+      "old_dump": "78d34c2f83e4-old.asm",
+      "new_dump": "78d34c2f83e4-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b48730-wm_draw_window_onscreen.asm"
+      ],
+      "old_bytes_sha256": "7c58686cd2fec54ea88c63457c57888fbf99b554699d593ba32b8d70737b12de",
+      "new_bytes_sha256": "e37192e8a6b5bc66f396fdef46114c5e588b819552ea00f6feea328c5a86f907"
+    },
+    {
+      "symbol": "__ZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_",
+      "old_start": "0x100b96914",
+      "old_end": "0x100b96bfc",
+      "new_start": "0x100b96944",
+      "new_end": "0x100b96c2c",
+      "old_instruction_count": 186,
+      "new_instruction_count": 186,
+      "normalized_equal": true,
+      "old_dump": "0bb8f57776e8-old.asm",
+      "new_dump": "0bb8f57776e8-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b96914-wm_ipad_knife_pan_probe.asm"
+      ],
+      "old_bytes_sha256": "eea5149de6f8560c23d6b80feef6b5866731776b146ba4a993af61755a6d0cd6",
+      "new_bytes_sha256": "b55990fd5bcf694594df4c4fa031dc700c2e1dcf122ecedd2fe234cd43e8026a"
+    },
+    {
+      "symbol": "__ZL24wm_ipad_knife_owner_readP8wmWindowP17wmEventHandler_OpmmbR16wmIPadKnifeOwner",
+      "old_start": "0x100b5066c",
+      "old_end": "0x100b50ae4",
+      "new_start": "0x100b5069c",
+      "new_end": "0x100b50b14",
+      "old_instruction_count": 286,
+      "new_instruction_count": 286,
+      "normalized_equal": true,
+      "old_dump": "cb8a78a0eb2d-old.asm",
+      "new_dump": "cb8a78a0eb2d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b5066c-wm_ipad_knife_owner_read.asm"
+      ],
+      "old_bytes_sha256": "ab787cac3633fe82f7ed68700003e5399b9974384eca78da1b9ac972d71459f5",
+      "new_bytes_sha256": "ef9246ae77f8441a7ac30520e776c47828afb27aba4a118afcf0cac52357d287"
+    },
+    {
+      "symbol": "__ZL25ctx_wm_python_context_getPK8bContextPKcPK9StructRNAPv",
+      "old_start": "0x1000b4230",
+      "old_end": "0x1000b43e0",
+      "new_start": "0x1000b4230",
+      "new_end": "0x1000b43e0",
+      "old_instruction_count": 108,
+      "new_instruction_count": 108,
+      "normalized_equal": true,
+      "old_dump": "d92d04f5738d-old.asm",
+      "new_dump": "d92d04f5738d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\1000b4230-__ZL25ctx_wm_python_context_getPK8bContextPKcPK9StructRNAPv.asm"
+      ],
+      "old_bytes_sha256": "6ede06e825e85310118dda4d5ee624d761ff25acd47ae2612add6c70cea7fd83",
+      "new_bytes_sha256": "17670f054386953a55dc32161c33da7ac77f0e6851a28f580a31a7c6c7ecde6d"
+    },
+    {
+      "symbol": "__ZL25wm_draw_window_area_layerP8bContextP8wmWindowiiR22wmIPadFingerPaintFrame",
+      "old_start": "0x100b4ade0",
+      "old_end": "0x100b4b35c",
+      "new_start": "0x100b4ae10",
+      "new_end": "0x100b4b38c",
+      "old_instruction_count": 351,
+      "new_instruction_count": 351,
+      "normalized_equal": true,
+      "old_dump": "877a134a314b-old.asm",
+      "new_dump": "877a134a314b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b4ade0-wm_draw_window_area_layer.asm"
+      ],
+      "old_bytes_sha256": "80a33876f17f3220b6c84e1b3ee115461a5dab489d5d7d1e956761bfb0822377",
+      "new_bytes_sha256": "45af2e35ee1ebc6372c3d129cb0c9a6f4eaecfd82846a8c01afec87eba8060b8"
+    },
+    {
+      "symbol": "__ZL26gpu_viewport_textures_freeP11GPUViewport",
+      "old_start": "0x100a66e68",
+      "old_end": "0x100a66f04",
+      "new_start": "0x100a66e68",
+      "new_end": "0x100a66f04",
+      "old_instruction_count": 39,
+      "new_instruction_count": 39,
+      "normalized_equal": true,
+      "old_dump": "90d282b5cd75-old.asm",
+      "new_dump": "90d282b5cd75-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a66e68-gpu_viewport_textures_free.asm"
+      ],
+      "old_bytes_sha256": "95487018538496361d092246e424f0a19c9546c6ecf57a3704a7adbf85c8de39",
+      "new_bytes_sha256": "95487018538496361d092246e424f0a19c9546c6ecf57a3704a7adbf85c8de39"
+    },
+    {
+      "symbol": "__ZL28gpu_viewport_textures_createP11GPUViewport",
+      "old_start": "0x100a66f04",
+      "old_end": "0x100a670f0",
+      "new_start": "0x100a66f04",
+      "new_end": "0x100a670f0",
+      "old_instruction_count": 123,
+      "new_instruction_count": 123,
+      "normalized_equal": true,
+      "old_dump": "e8a6ee981c06-old.asm",
+      "new_dump": "e8a6ee981c06-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a66f04-gpu_viewport_textures_create.asm"
+      ],
+      "old_bytes_sha256": "8d759608e58a226818192a431731cf623b408afd52e281b59e871e79789770a3",
+      "new_bytes_sha256": "bba971afb19a0a2156b0ffaae6b2f3ea5a177e4ad86f023b90ea0683ac570a59"
+    },
+    {
+      "symbol": "__ZL28wm_draw_region_blend_receiptP7ARegionibP4rcti",
+      "old_start": "0x100b48258",
+      "old_end": "0x100b484f0",
+      "new_start": "0x100b48288",
+      "new_end": "0x100b48520",
+      "old_instruction_count": 166,
+      "new_instruction_count": 166,
+      "normalized_equal": true,
+      "old_dump": "2b45f95e0f35-old.asm",
+      "new_dump": "2b45f95e0f35-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b48258-wm_draw_region_blend_receipt.asm"
+      ],
+      "old_bytes_sha256": "b0fdc413444298ba0a9c18d32dda4eb7a33e596f10d3341503c5741c2b4a7ae6",
+      "new_bytes_sha256": "4a946614850f3ec35647aefd6ef0931019eb71dc3ade17864d0baec2e6b1b9cb"
+    },
+    {
+      "symbol": "__ZL28wm_draw_region_buffer_createP5SceneP7ARegionbb",
+      "old_start": "0x100b4aa2c",
+      "old_end": "0x100b4ac64",
+      "new_start": "0x100b4aa5c",
+      "new_end": "0x100b4ac94",
+      "old_instruction_count": 142,
+      "new_instruction_count": 142,
+      "normalized_equal": true,
+      "old_dump": "ad4d4debf26e-old.asm",
+      "new_dump": "ad4d4debf26e-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100b4aa2c-wm_draw_region_buffer_create.asm"
+      ],
+      "old_bytes_sha256": "460d859ef298125dbc227ddb4fd728aa8085ffe19f3bf83642cd259fe845b4c8",
+      "new_bytes_sha256": "ddf2bf270de8c6d2ca8f46fcbdb6a256eb2449fddc0d9f52f19b06e512634a68"
+    },
+    {
+      "symbol": "__ZL29knifetool_draw_visible_anglesPK16KnifeTool_OpData",
+      "old_start": "0x101c3f0e8",
+      "old_end": "0x101c3f524",
+      "new_start": "0x101c3f120",
+      "new_end": "0x101c3f55c",
+      "old_instruction_count": 271,
+      "new_instruction_count": 271,
+      "normalized_equal": true,
+      "old_dump": "27b7950daa37-old.asm",
+      "new_dump": "27b7950daa37-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c3f0e8-__ZL29knifetool_draw_visible_anglesPK16KnifeTool_OpData.asm"
+      ],
+      "old_bytes_sha256": "a9c5a13e23f699b3d65815a31837d699a1762af4aa702d715e8c11cf765b80ec",
+      "new_bytes_sha256": "239764aa307e2f472e8ddc81c055ab03cf7a9bd7998daa24fda8831bdd212e64"
+    },
+    {
+      "symbol": "__ZL30gpu_viewport_draw_colormanagedP11GPUViewportiPK4rctfS3_bb",
+      "old_start": "0x100a67558",
+      "old_end": "0x100a67868",
+      "new_start": "0x100a67558",
+      "new_end": "0x100a67868",
+      "old_instruction_count": 196,
+      "new_instruction_count": 196,
+      "normalized_equal": true,
+      "old_dump": "0db20c203573-old.asm",
+      "new_dump": "0db20c203573-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\100a67558-gpu_viewport_draw_colormanaged.asm"
+      ],
+      "old_bytes_sha256": "7f4cb15f25e301122a43e94b62f444b5f3177563ea005976de35a446ee2c3ba9",
+      "new_bytes_sha256": "19bcc40f6f60bd0d6df0931e3559bc7dfba81e4933a87d9fab562c32fa597068"
+    },
+    {
+      "symbol": "__ZL30rna_gizmogroup_draw_prepare_cbPK8bContextP12wmGizmoGroup",
+      "old_start": "0x1014dd6c4",
+      "old_end": "0x1014dd7c8",
+      "new_start": "0x1014dd6f4",
+      "new_end": "0x1014dd7f8",
+      "old_instruction_count": 65,
+      "new_instruction_count": 65,
+      "normalized_equal": true,
+      "old_dump": "750eb1a069cd-old.asm",
+      "new_dump": "750eb1a069cd-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\1014dd6c4-rna_gizmogroup_draw_prepare_cb.asm"
+      ],
+      "old_bytes_sha256": "21cf00f906fb1558318adeb540e900ff82f9c39b9b58e4cff8538672592cf5cf",
+      "new_bytes_sha256": "863c946ae2f39192da45dee271f4b36abad9d5c4e4f80624bd150ca7a9f633c6"
+    },
+    {
+      "symbol": "__ZL32knifetool_draw_visible_distancesPK16KnifeTool_OpData",
+      "old_start": "0x101c3ee80",
+      "old_end": "0x101c3f0e8",
+      "new_start": "0x101c3eeb8",
+      "new_end": "0x101c3f120",
+      "old_instruction_count": 154,
+      "new_instruction_count": 154,
+      "normalized_equal": true,
+      "old_dump": "df15a963583a-old.asm",
+      "new_dump": "df15a963583a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101c3ee80-__ZL32knifetool_draw_visible_distancesPK16KnifeTool_OpData.asm"
+      ],
+      "old_bytes_sha256": "4327646cdc949cd4bcdb108ea7a3820174c8b169110dc7db034b7a78d2b5e3ce",
+      "new_bytes_sha256": "9f02ec163bcafc9bff42a9dcad25838df0913aa4c3e077559927905587f94750"
+    },
+    {
+      "symbol": "__ZL33WIDGETGROUP_navigate_draw_preparePK8bContextP12wmGizmoGroup",
+      "old_start": "0x102251434",
+      "old_end": "0x102251a5c",
+      "new_start": "0x10225146c",
+      "new_end": "0x102251a94",
+      "old_instruction_count": 394,
+      "new_instruction_count": 394,
+      "normalized_equal": true,
+      "old_dump": "0da07779ec38-old.asm",
+      "new_dump": "0da07779ec38-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\102251434-WIDGETGROUP_navigate_draw_prepare.asm"
+      ],
+      "old_bytes_sha256": "a14e7c915c6823a17614ab2aa965df06acbdd01dc37462a77e4f1b6eaeeb053e",
+      "new_bytes_sha256": "a37f5cb67ce0333a0beaa6121760e94fd305571b2f8dc8185100210822f3d9ed"
+    },
+    {
+      "symbol": "__ZN12_GLOBAL__N_126IPadKnifeHierarchySnapshotaSEOS0_",
+      "old_start": "0x10164e5f8",
+      "old_end": "0x10164e778",
+      "new_start": "0x10164e628",
+      "new_end": "0x10164e7a8",
+      "old_instruction_count": 96,
+      "new_instruction_count": 96,
+      "normalized_equal": true,
+      "old_dump": "f4e06ff00920-old.asm",
+      "new_dump": "f4e06ff00920-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10164e5f8-IPadKnifeHierarchySnapshotaSE.asm"
+      ],
+      "old_bytes_sha256": "2ad61a47830addd3c805ce1faba9ecafb362dfca976f522545ec1ce5a6998cfa",
+      "new_bytes_sha256": "796c86188bb4cbfe6121863fc45d7c9e4d538e69c56d90aeedeb798ddb0183eb"
+    },
+    {
+      "symbol": "__ZN12_GLOBAL__N_128ipad_knife_hierarchy_currentEP8bContextP8wmWindow",
+      "old_start": "0x1016407a4",
+      "old_end": "0x101640950",
+      "new_start": "0x1016407d4",
+      "new_end": "0x101640980",
+      "old_instruction_count": 107,
+      "new_instruction_count": 107,
+      "normalized_equal": true,
+      "old_dump": "08f75cb4778d-old.asm",
+      "new_dump": "08f75cb4778d-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\1016407a4-ipad_knife_hierarchy_current.asm"
+      ],
+      "old_bytes_sha256": "070bdd03dce93032471a55be37b731dc808e9e29472ebb97882dea89fc568759",
+      "new_bytes_sha256": "f7a493d75dac2f7ee7d3fc2c3233451049848a5c4f1d1e1c60a578c8b878a63c"
+    },
+    {
+      "symbol": "__ZN12_GLOBAL__N_133ipad_knife_hierarchy_native_equalERKNS_24IPadKnifeHierarchyNativeES2_",
+      "old_start": "0x10164fd3c",
+      "old_end": "0x10164fe34",
+      "new_start": "0x10164fd74",
+      "new_end": "0x10164fe6c",
+      "old_instruction_count": 62,
+      "new_instruction_count": 62,
+      "normalized_equal": true,
+      "old_dump": "90b3ba23c810-old.asm",
+      "new_dump": "90b3ba23c810-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10164fd3c-ipad_knife_hierarchy_native_equal.asm"
+      ],
+      "old_bytes_sha256": "89f767820549d349370ae20863e1de9ef0613aae44fa3b28b5e0e6c06a093461",
+      "new_bytes_sha256": "78dba9ad52b5a9262bf02a32336284a423d53c411a2ad56496ff0b82647c85b3"
+    },
+    {
+      "symbol": "__ZN12_GLOBAL__N_135ipad_knife_hierarchy_native_captureEP8bContextP8wmWindowRNS_24IPadKnifeHierarchyNativeE",
+      "old_start": "0x10164e954",
+      "old_end": "0x10164fd3c",
+      "new_start": "0x10164e984",
+      "new_end": "0x10164fd74",
+      "old_instruction_count": 1274,
+      "new_instruction_count": 1276,
+      "normalized_equal": false,
+      "old_dump": "3eeddbbc923a-old.asm",
+      "new_dump": "3eeddbbc923a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10164e954-ipad_knife_hierarchy_native_capture.asm"
+      ],
+      "old_bytes_sha256": "a8151ab3ab66549a3860f736921bb6adc6dfb403a64b172968da940f9b7d1c93",
+      "new_bytes_sha256": "e20d04e6f943e94f681ff0d3756acf7137d99f99998f4935cbf1b50ac2be6c7a",
+      "diff": "3eeddbbc923a.diff"
+    },
+    {
+      "symbol": "__ZN18GHOST_EventManager12getNumEventsE16GHOST_TEventType",
+      "old_start": "0x101096c0c",
+      "old_end": "0x101096ce4",
+      "new_start": "0x101096c3c",
+      "new_end": "0x101096d14",
+      "old_instruction_count": 54,
+      "new_instruction_count": 54,
+      "normalized_equal": true,
+      "old_dump": "c2ba45653b6f-old.asm",
+      "new_dump": "c2ba45653b6f-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\key-event-count.asm"
+      ],
+      "old_bytes_sha256": "a8e11814e7b16da080b2dc18cc807570b2ee0335077d16d2b6f531bd4a73784b",
+      "new_bytes_sha256": "a8e11814e7b16da080b2dc18cc807570b2ee0335077d16d2b6f531bd4a73784b"
+    },
+    {
+      "symbol": "__ZN18GHOST_EventManager9pushEventEPK12GHOST_IEvent",
+      "old_start": "0x101096ce4",
+      "old_end": "0x101096d80",
+      "new_start": "0x101096d14",
+      "new_end": "0x101096db0",
+      "old_instruction_count": 39,
+      "new_instruction_count": 39,
+      "normalized_equal": true,
+      "old_dump": "4fc9e5888082-old.asm",
+      "new_dump": "4fc9e5888082-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\key-event-count.asm"
+      ],
+      "old_bytes_sha256": "221c27444ffa4f605cc505d4d74a437a9c9a35986e5e233fffeae72886825615",
+      "new_bytes_sha256": "221c27444ffa4f605cc505d4d74a437a9c9a35986e5e233fffeae72886825615"
+    },
+    {
+      "symbol": "__ZN5ghost3ios14GestureContact5beginENS0_11TouchDeviceEmRKNS0_12PencilSampleE",
+      "old_start": "0x1010a7350",
+      "old_end": "0x1010a74fc",
+      "new_start": "0x1010a7380",
+      "new_end": "0x1010a752c",
+      "old_instruction_count": 107,
+      "new_instruction_count": 107,
+      "normalized_equal": true,
+      "old_dump": "03a9745af8dd-old.asm",
+      "new_dump": "03a9745af8dd-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\contact-begin.asm"
+      ],
+      "old_bytes_sha256": "58074923c1cbaf93fb2a323106679dc7bc1063e81a419921aea0dec65bc77bad",
+      "new_bytes_sha256": "58074923c1cbaf93fb2a323106679dc7bc1063e81a419921aea0dec65bc77bad"
+    },
+    {
+      "symbol": "__ZN5ghost3ios25pencil_knife_pan_at_startEPKviiy",
+      "old_start": "0x1010a67d8",
+      "old_end": "0x1010a6a20",
+      "new_start": "0x1010a6808",
+      "new_end": "0x1010a6a50",
+      "old_instruction_count": 146,
+      "new_instruction_count": 146,
+      "normalized_equal": true,
+      "old_dump": "50aa62d9a10b-old.asm",
+      "new_dump": "50aa62d9a10b-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\start-recognize-wrappers.asm"
+      ],
+      "old_bytes_sha256": "0834be9d59b00a3ac2468b16d4478c4fc85b95c25781733c301aef400a836806",
+      "new_bytes_sha256": "0186af01f481197dac8f2fcf425eba94334ee83ce7462e4659a8b004091c61d1"
+    },
+    {
+      "symbol": "__ZN5ghost3ios26pencil_knife_pan_recognizeEPKvRKNS0_21PencilKnifePanContactE",
+      "old_start": "0x1010a6a20",
+      "old_end": "0x1010a6c28",
+      "new_start": "0x1010a6a50",
+      "new_end": "0x1010a6c58",
+      "old_instruction_count": 130,
+      "new_instruction_count": 130,
+      "normalized_equal": true,
+      "old_dump": "96aa9599c110-old.asm",
+      "new_dump": "96aa9599c110-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-producer-fresh-audit\\start-recognize-wrappers.asm"
+      ],
+      "old_bytes_sha256": "ea0cef7286048bea5914f17497a6d717fe680f1f4efc942d578d7d42e8a5a106",
+      "new_bytes_sha256": "7dc68edfdcc158678e517db3ada4cb1974b7a249e4ce3e01ed6a03d1c70052d4"
+    },
+    {
+      "symbol": "__ZN7blender11FunctionRefIFbR6ObjectEE11callback_fnIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_0EEblS2_",
+      "old_start": "0x101041550",
+      "old_end": "0x10104155c",
+      "new_start": "0x101041580",
+      "new_end": "0x10104158c",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "439592bda7c6-old.asm",
+      "new_dump": "439592bda7c6-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101041550-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "cd2541972f95a84dcf8c4b4c4b767f7ddcbca6efda155b8fb6aedf7afb343460",
+      "new_bytes_sha256": "14d89d69e543b5df1487c9a7e56325cca19ef89a352794074073a61a32e17f0d"
+    },
+    {
+      "symbol": "__ZN7blender11FunctionRefIFvRNS_4draw9ObjectRefEEE11callback_fnIZZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeENK3$_1clER17DupliCacheManagerR15ExtractionGraphEUlS3_E_EEvlS3_",
+      "old_start": "0x10104155c",
+      "old_end": "0x10104156c",
+      "new_start": "0x10104158c",
+      "new_end": "0x10104159c",
+      "old_instruction_count": 4,
+      "new_instruction_count": 4,
+      "normalized_equal": true,
+      "old_dump": "750a649df961-old.asm",
+      "new_dump": "750a649df961-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\10104155c-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "7d7d7dd5853477758fbe47f9dc95aa8688567de5aa1fa521108ef9c03bd0e24d",
+      "new_bytes_sha256": "7d7d7dd5853477758fbe47f9dc95aa8688567de5aa1fa521108ef9c03bd0e24d"
+    },
+    {
+      "symbol": "__ZNK5ghost3ios21PencilKnifePanContact5validEv",
+      "old_start": "0x101640748",
+      "old_end": "0x1016407a4",
+      "new_start": "0x101640778",
+      "new_end": "0x1016407d4",
+      "old_instruction_count": 23,
+      "new_instruction_count": 23,
+      "normalized_equal": true,
+      "old_dump": "11b290f3aee2-old.asm",
+      "new_dump": "11b290f3aee2-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\101640748-__ZNK5ghost3ios21PencilKnifePanContact5validEv.asm"
+      ],
+      "old_bytes_sha256": "460b81061e9c3c4497c778572e3268a9751f563a107236e1c51d5548cd482ff0",
+      "new_bytes_sha256": "460b81061e9c3c4497c778572e3268a9751f563a107236e1c51d5548cd482ff0"
+    },
+    {
+      "symbol": "__ZNKSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE11target_typeEv",
+      "old_start": "0x101040b50",
+      "old_end": "0x101040b5c",
+      "new_start": "0x101040b80",
+      "new_end": "0x101040b8c",
+      "old_instruction_count": 3,
+      "new_instruction_count": 3,
+      "normalized_equal": true,
+      "old_dump": "fa4684febcbf-old.asm",
+      "new_dump": "fa4684febcbf-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040b50-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "8cb198105fe3d6b653e81a48eb79eaff0bf636f1c4729e0efbb525d872ed1de3",
+      "new_bytes_sha256": "8cb198105fe3d6b653e81a48eb79eaff0bf636f1c4729e0efbb525d872ed1de3"
+    },
+    {
+      "symbol": "__ZNKSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE6targetERKSt9type_info",
+      "old_start": "0x101040aec",
+      "old_end": "0x101040b50",
+      "new_start": "0x101040b1c",
+      "new_end": "0x101040b80",
+      "old_instruction_count": 25,
+      "new_instruction_count": 25,
+      "normalized_equal": true,
+      "old_dump": "c908d178c1be-old.asm",
+      "new_dump": "c908d178c1be-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040aec-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "e366cf627135c7f9fcf5fbc81933783317e590ffb53496f67c767fbef1892608",
+      "new_bytes_sha256": "db545e4e72bddddcf7c8020f7ad81da029004987cbd8b5bf324f8e57f47fdc41"
+    },
+    {
+      "symbol": "__ZNKSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE7__cloneEPNS0_6__baseISD_EE",
+      "old_start": "0x101040a70",
+      "old_end": "0x101040a90",
+      "new_start": "0x101040aa0",
+      "new_end": "0x101040ac0",
+      "old_instruction_count": 8,
+      "new_instruction_count": 8,
+      "normalized_equal": true,
+      "old_dump": "64533db25726-old.asm",
+      "new_dump": "64533db25726-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a70-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "e42ee15e385073fcc3f11686f1f7a42f83cf33c34cf44265a45258a4409a9cf4",
+      "new_bytes_sha256": "e42ee15e385073fcc3f11686f1f7a42f83cf33c34cf44265a45258a4409a9cf4"
+    },
+    {
+      "symbol": "__ZNKSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE7__cloneEv",
+      "old_start": "0x101040a30",
+      "old_end": "0x101040a70",
+      "new_start": "0x101040a60",
+      "new_end": "0x101040aa0",
+      "old_instruction_count": 16,
+      "new_instruction_count": 16,
+      "normalized_equal": true,
+      "old_dump": "1b583a5cf266-old.asm",
+      "new_dump": "1b583a5cf266-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a30-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "36e9a53ec76ffcc36970e032216443cf92b664e81598f6155bfe1c6d8dabbdd6",
+      "new_bytes_sha256": "a09b863caa003de522275d8db7c153bb5109ae3f4d36b1f1ce13734cf7da9a46"
+    },
+    {
+      "symbol": "__ZNSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE18destroy_deallocateEv",
+      "old_start": "0x101040a94",
+      "old_end": "0x101040a98",
+      "new_start": "0x101040ac4",
+      "new_end": "0x101040ac8",
+      "old_instruction_count": 1,
+      "new_instruction_count": 1,
+      "normalized_equal": true,
+      "old_dump": "c737e591100a-old.asm",
+      "new_dump": "c737e591100a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a94-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "f08315de3f43bddf3a8ef922922a55903fb13db17c8b16ce2b131337ae5fe4d5",
+      "new_bytes_sha256": "f802fe86a75a3e4c7afb549a96d5ba38dcabbd901078a18d619e3cf698616248"
+    },
+    {
+      "symbol": "__ZNSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEE7destroyEv",
+      "old_start": "0x101040a90",
+      "old_end": "0x101040a94",
+      "new_start": "0x101040ac0",
+      "new_end": "0x101040ac4",
+      "old_instruction_count": 1,
+      "new_instruction_count": 1,
+      "normalized_equal": true,
+      "old_dump": "b9714bc5242a-old.asm",
+      "new_dump": "b9714bc5242a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a90-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91",
+      "new_bytes_sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91"
+    },
+    {
+      "symbol": "__ZNSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEED0Ev",
+      "old_start": "0x101040a2c",
+      "old_end": "0x101040a30",
+      "new_start": "0x101040a5c",
+      "new_end": "0x101040a60",
+      "old_instruction_count": 1,
+      "new_instruction_count": 1,
+      "normalized_equal": true,
+      "old_dump": "6b430af645af-old.asm",
+      "new_dump": "6b430af645af-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a2c-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "5c3f7e8f33c04419098b45fe6aabee5c182238a2e510b55f993d5b3d32f540bf",
+      "new_bytes_sha256": "9463deb158599c49ce352b62412fcbb9f3eb0839661fb66383a199036556fc40"
+    },
+    {
+      "symbol": "__ZNSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEED1Ev",
+      "old_start": "0x101040a28",
+      "old_end": "0x101040a2c",
+      "new_start": "0x101040a58",
+      "new_end": "0x101040a5c",
+      "old_instruction_count": 1,
+      "new_instruction_count": 1,
+      "normalized_equal": true,
+      "old_dump": "c132c5fe1966-old.asm",
+      "new_dump": "c132c5fe1966-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a28-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91",
+      "new_bytes_sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91"
+    },
+    {
+      "symbol": "__ZNSt3__110__function6__funcIZL23drw_draw_render_loop_3dR10DRWContextP16RenderEngineTypeE3$_1NS_9allocatorIS6_EEFvR17DupliCacheManagerR15ExtractionGraphEEclESA_SC_",
+      "old_start": "0x101040a98",
+      "old_end": "0x101040aec",
+      "new_start": "0x101040ac8",
+      "new_end": "0x101040b1c",
+      "old_instruction_count": 21,
+      "new_instruction_count": 21,
+      "normalized_equal": true,
+      "old_dump": "2f1f9dd4f08a-old.asm",
+      "new_dump": "2f1f9dd4f08a-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-render-fresh-audit\\101040a98-drw_draw_render_loop_3d.asm"
+      ],
+      "old_bytes_sha256": "90c3ca4f2ef8eb3de787f5fe15770ab37505563447546875f82d37b58d9898f2",
+      "new_bytes_sha256": "544b5749e6004bd332e504d1edaad813407a4bff29891a55996a0315902c0581"
+    },
+    {
+      "symbol": "__ZNSt3__112__hash_tableIPN7nanovdb10HostBufferENS_4hashIS3_EENS_8equal_toIS3_EENS_9allocatorIS3_EEE14__erase_uniqueIS3_EEmRKT_",
+      "old_start": "0x100b43d40",
+      "old_end": "0x100b43e64",
+      "new_start": "0x100b43d70",
+      "new_end": "0x100b43e94",
+      "old_instruction_count": 73,
+      "new_instruction_count": 73,
+      "normalized_equal": true,
+      "old_dump": "3f30a68b0d44-old.asm",
+      "new_dump": "3f30a68b0d44-new.asm",
+      "prior_actual_evidence": [
+        "binary-40252354359\\independent-native-bridge-fresh-audit\\100b43d40-__ZNSt3__112__hash_tableINS_17__hash_value_typeIP10wmOperatoryEENS_22__unordered_map_hasherIS3_S4_NS_4hashIS3_EENS_8equal_toI.asm"
+      ],
+      "old_bytes_sha256": "56b3132f3fef3462ab64c3dd9da558258cbeaa4ac4503adcb8d4350637edc700",
+      "new_bytes_sha256": "6d47818b7ee0606b0267a11f0424fe1587827a8f0a17dfce589b963c4c0cfd6b"
+    }
+  ]
+}

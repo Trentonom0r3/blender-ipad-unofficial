@@ -1,0 +1,29 @@
+{
+  "method": "exact Mach-O LC_SEGMENT_64 VA-to-file-offset translation",
+  "symbol": "_RNA_GizmoGroup",
+  "start": "0x106bd9fa0",
+  "file_offset": "0x6bd9fa0",
+  "words": [
+    {
+      "offset": "0x90",
+      "address": "0x106bda030",
+      "value": "0x200000014dc258"
+    },
+    {
+      "offset": "0xa0",
+      "address": "0x106bda040",
+      "value": "0x100000014dc27c"
+    },
+    {
+      "offset": "0xa8",
+      "address": "0x106bda048",
+      "value": "0x100000014dc674"
+    },
+    {
+      "offset": "0xb0",
+      "address": "0x106bda050",
+      "value": "0x300000014dc6f4"
+    }
+  ],
+  "note": "Words are on-disk chained-pointer encodings, not runtime addresses. Exact resolved rebases are retained in RNA_GizmoGroup-dyld-info.txt."
+}

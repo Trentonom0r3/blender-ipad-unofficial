@@ -1,0 +1,59 @@
+{
+  "status": "PASS_NATIVE_PACKAGE_AND_BOUNDED_ACTUAL_COMPILED_VERIFICATION",
+  "utc": "2026-10-27T11:09:23.689682+00:00",
+  "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+  "run": 40459756217,
+  "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40459756217",
+  "artifact": 12714931825,
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\ipa-40459756217\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248692550,
+    "sha256": "29f2b0837b7ab1a8b32056c7a5a8d04223e530f6fce4820cc882f350697c4237",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary_uuid": "9B4D9B4B-AE3C-3310-8C05-9C532ED55675",
+  "binary_sha256": "ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404",
+  "source_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "package_gates": "Full3368CRC/arm64/iPhoneOS5.0.0/whole exact UI/defaultbars/toolbar/pinned tools129icons/exact9Base/native-onlyMoreTools PASS",
+  "independent_compiled_reviews": {
+    "independent-compiled-opaque-guard-review.json": {
+      "status": "PASS_BOUNDED_CHANGED_OPAQUE_GUARD_AND_PROPAGATION",
+      "sha256": "a2819134b6d5957ccbaf22554406c220d575b987945e55d73c5554d19432682c"
+    },
+    "independent-preserved-gates-review.json": {
+      "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+      "sha256": "5db95b4d33634e549488ac242c14a002eaf65803f7c8e8398e7387d16100e49e"
+    },
+    "independent-preserved-owner-stack-cfg-proof.json": {
+      "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_NORMAL_RETURN_CFG",
+      "sha256": "4eab98636465cc58a132d6ee086438a074100d999b44178b20c798a5615a400d"
+    },
+    "independent-compiled-preserved-input-render-review.json": {
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_COMPILED_PRESERVED_INPUT_RENDER",
+      "sha256": "6a90b573509388ab43d9167715dbb9cf238f32a524e48f5f681b25ea6cf5bac1"
+    }
+  },
+  "raw_owner_audit": {
+    "status": "Raw negative preserved unchanged; fresh independent getter/SP+8/orderedrestore/167instruction postmutation normalreturnCFG proof resolves exact bounded obligation",
+    "raw_sha256": "268dda6aefaf2d56f17746f2e3b359ef4305e1cf6c9e6f3bbfcd9f976afda167",
+    "source_or_checker_weakened": false
+  },
+  "aggregate_dependencies_resolved": [
+    "Opaque group guard and propagation accepted by separate changed-scope review",
+    "Fresh current-binary HUD/Weight review accepted; input/render review separate dependencies now closed"
+  ],
+  "source_host_validation": "source-verification.json: full826runtime997.130s at runner2b8 plus exact5232cold/current58; no final5232 frozenfull claim",
+  "visible_scope": "Already-live original native Knife: omit duplicated paired Pencil PAN while ordinarypointer packets stay exact; retain native Finish/Cancel and conservative opaque script preparation-pixel exclusion",
+  "deliberate_limits": [
+    "Initial nohandler/samebatch/custom DOWN retains ordinary PAN; no broad first-contact fix",
+    "Static branch/argument/actualinstruction reconciliation under supported native ABI/context/registration/lifetime assumptions, not globalheap/CFG/UIKit/GPU/history proof",
+    "No exact iPad device acceptance or broad launch/workflow acceptance follows"
+  ],
+  "device_acceptance": false,
+  "ready_for_device_check": true,
+  "goal": "UNFINISHED"
+}
