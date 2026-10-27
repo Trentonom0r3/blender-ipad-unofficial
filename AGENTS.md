@@ -1,3 +1,22 @@
+## Exact opaque-gizmo correction build dispatched — 2026-10-27 UTC
+
+Validated production3438226bb2dbb90adf22917d12860cb5471719f0 builds ONCE in
+run40459756217; exact head confirmed. Watcher94222/.cache/watch-pencil-gizmo-prepare-build.py
+log.cache/gizmo-prepare-build-watch-40459756217.log owns SAME run/wait/fullIPA/
+preservedHUD-Weight/newactual preparation+hierarchy dumps. No native/package/
+compiled/device success yet. Read gizmo-prepare-audit/build-checkpoint.json and
+source-verification.json. Never dispatch unchanged source; no ready claim before
+full downloaded archive and ACTUAL compiled field/store/callback/refusal reviews.
+
+Full826runtime997.130s passed191 unchangedinputs/preflight/diff. Finalrunner-only
+4pinned-source fetch setup is independently reviewed and cold/current58 passes;
+190otherinputs/generatedC++/assertions exact. No final5232 frozen-full claim.
+Two source targets only;134others/all7UI/all13GHOST exact30da0be. Independent
+source/native/literal and prerequisite reviews pass; original failures preserved.
+Opaque group preparation pixel gap caught before delivery; old30da0be package
+not corrected. Preserve all accepted UI/input/history and lifetime guards. Full
+personal goal remains unfinished; continue independent work without device waits.
+
 ## Opaque preparation pixels corrected; coherent source validated — 2026-10-27 UTC
 
 Exact candidate patcha9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1
