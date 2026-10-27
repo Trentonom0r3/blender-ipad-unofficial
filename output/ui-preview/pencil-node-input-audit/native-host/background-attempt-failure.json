@@ -1,0 +1,8 @@
+{
+  "status": "OBSERVED_BACKGROUND_SIMULATION_ACCESS_VIOLATION",
+  "command_scope": "Stock Blender5.1.2 --background --factory-startup --enable-event-simulate; attempted public Window.event_simulate before GUI native event state exists",
+  "exit_code": 1,
+  "stdout": "Error: EXCEPTION_ACCESS_VIOLATION at 0x00007FF66DAC6520; blender.exe; thread 00002564; build ec6e62d40fa9",
+  "consequence": "Do not use background event simulation for this probe. The source requires native eventstate; a missing background eventstate is an inference for this crash. Disposable initialized GUI run succeeds.",
+  "production_or_device_effect": false
+}

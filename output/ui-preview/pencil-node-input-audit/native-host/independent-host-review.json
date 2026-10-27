@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T06:26:35.476635+00:00",
+  "status": "PASS_BOUNDED_STOCK_NATIVE_WM_CHARACTERIZATION",
+  "review_scope": "Independent read-only review of saved probe, native host result, images and exact target/stock public simulator sources. No GUI process was launched and no production/test/CI source was edited.",
+  "assessment_sha256": "53a8dc38209a6b4b8531487be19410ae9d47c80771bd9b1344840e59b3df7bc6",
+  "verified_evidence_count": 13,
+  "observed_controls_verified": [
+    {
+      "case": "Native unhandled TRACKPADPAN positive",
+      "event_delta": [
+        4,
+        2
+      ],
+      "view_origin_delta": [
+        -1.956787109375,
+        -0.9784011840820312
+      ],
+      "interpretation": "Real native View2D coordinates changed. Probe does not directly write those coordinates between before/after; effect is not a model counter."
+    },
+    {
+      "case": "Correctly selected native title; 1px cursor without PAN",
+      "view_origin_delta": [
+        0.0,
+        0.0
+      ],
+      "modal_operators": [],
+      "node_location": [
+        -220.0,
+        160.0
+      ],
+      "interpretation": "Native node selection succeeds; no viewport displacement or native transform modal is observed at the subthreshold sample."
+    },
+    {
+      "case": "Correctly selected title; PAN1px then same-position cursor",
+      "view_origin_delta": [
+        -0.48919677734375,
+        0.0
+      ],
+      "modal_operators": [],
+      "release_preserves_view": true,
+      "interpretation": "Returned actual Event prev_xy gives nonzero PAN delta1; native graph origin moves before modal acquisition while node RNA location stays unchanged."
+    },
+    {
+      "case": "12px cursor native macro acquisition, PAN3px, release",
+      "view_origin_delta": [
+        0.0,
+        0.0
+      ],
+      "modal_before": [
+        "NODE_OT_translate_attach"
+      ],
+      "modal_after_pan": [
+        "NODE_OT_translate_attach"
+      ],
+      "modal_after_release": [],
+      "interpretation": "Native NODE_OT_translate_attach ownership is observed and persists through PAN, then disappears on release. This is not proof of a completed geometric move because node.location remains unchanged."
+    }
+  ],
+  "api_source_review": {
+    "actual_event_observations": "send() calls public Window.event_simulate and immediately records returned native Event.mouse_x/y, mouse_prev_x/y, is_tablet and is_mouse_absolute. It does not fabricate an event counter or overwrite Event fields.",
+    "native_modals": "Driver reads Window.modal_operators directly. Target rna_wm.cc:1073-1089 iterates actual WM operator handlers; declaration2821-2833 is a read-only collection. The screenshots show native translate footer state after acquisition.",
+    "simulator_input_limits": "Target rna_wm_api.cc:700-782 and stock714-796 copy eventstate, accept current x/y and modifiers, clear tablet data and call WM_event_add_simulate; no public prev_xy/delta argument exists. API definition stock883-901 shows event is the returned output, not an additional input.",
+    "mousemove_prev_semantics": "Target wm_event_system.cc:197-224 and stock196-223 copy simulated MOUSEMOVE current coordinates into both eventstate.prev_xy and event.prev_xy. Therefore a directly following same-position simulated PAN has zero delta. Nonzero logged PAN is seeded using preceding motion at a distinct point.",
+    "readonly_previous_coords": "Target rna_wm.cc:2544-2553 clears PROP_EDITABLE for Event.mouse_prev_x/y. No forbidden field write or native ABI injection appears in probe.",
+    "reorder_limit": "The stated NO_FAITHFUL_SAME_PAYLOAD_ORDER_REPLAY is supported for reversing this same two-event pair through the examined public API: preserving a nonzero PAN delta would require changing coordinates or adding another seeding event. It is not a claim that every imaginable scripted native event sequence is impossible.",
+    "simulator_route_limit": "Public simulation queues native WM events but bypasses actual GHOST ingestion/coalescing and clears tablet provenance. This is host WM evidence, not a physical Pencil replay."
+  },
+  "visual_review": {
+    "inspected": [
+      "attempt-2-native-title/native-node-before.png",
+      "attempt-2-native-title/native-node-translate.png"
+    ],
+    "finding": "Native Shader Editor, two actual nodes, selected value node and native transform status/footer are visible. Images support valid native title targeting and modal acquisition; numeric one-pixel viewport change is established by native View2D reads, not image measurement."
+  },
+  "preserved_failures_review": "Background crash evidence explicitly labels missing eventstate cause as inference. First DPI-invalid title attempt is retained and excluded; its successful unhandled PAN control does not stand in for title controls. Accepted evidence comes from attempt2.",
+  "nonblocking_precision_notes": [
+    "Logged drag_threshold_mouse3/tablet10 are preference values. Effective drag threshold is scaled by UI_SCALE_FAC in target WM_event_drag_threshold; 1px is still below both. Avoid labeling3 as a universal effective pixel threshold.",
+    "title_press_node_xy in driver is descriptive arithmetic rather than an inverse transform of actual window coordinates. Actual selection, computed DPI-correct window point and screenshots support title hit; do not reuse that metadata as a precise measured node-space coordinate.",
+    "Native Window.modal_operators observes root macro NODE_OT_translate_attach, not its active child identity. The macro/transform source trace supplies child semantics; raw host result alone should not claim a child callback trace.",
+    "Source input line range target700-801 extends past simulator body782. The relevant behavior is supported within700-782; extra ending lines do not add evidence."
+  ],
+  "unsupported_inferences_rejected": [
+    "No target5.0 iOS compiled behavior, UIKit/Pencil device scheduling, native socket link, completed node move/Undo parity, Circle/proportional parity or event reorder parity follows from these host controls.",
+    "Unchanged node.location after acquisition and cleanup must not be described as a completed moved-node workflow.",
+    "Process exit file records both owned PIDs inactive at its timestamp; this review does not inspect unrelated user app processes."
+  ],
+  "production_action": "None proposed. Existing current production/native-build gate remains owned by root; this review adds bounded evidence only.",
+  "evidence": [
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/probe.py",
+      "sha256": "d4a2e313fcfd5777674870b8ce3fae2a6cb3b6b539bb7538acd1c38340d3bb5a",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/host-result.json",
+      "sha256": "8222f6312b73e7a64113d3947eb0a0e6032ab20341b57202552bb2bcc17c15d4",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/attempt-2-native-title/probe.py",
+      "sha256": "c40dfa6d9a8525eaebb3976473fbb405454d0ea139fb8d87555338f6231845a4",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/attempt-2-native-title/host-result.json",
+      "sha256": "eba0266a2e84c2aedf3a057e09e219760490fb0fe02871daee42ff73acc7a840",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/process-exit-check.json",
+      "sha256": "0f12d22558ff759dee9681ab326049070e0bfcae49116e453da210a9f3e91f8e",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/background-attempt-failure.json",
+      "sha256": "9ae4c79edb37849c67bde8292700f720d2e565c73869718d06586828c95f9f55",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/attempt-2-native-title/native-node-before.png",
+      "sha256": "fd5ed16659b84bdb929022819d51e1c5e5d3eece920ec6a1993eb308ff73685d",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/attempt-2-native-title/native-node-pan-subthreshold.png",
+      "sha256": "d1d217b19d1ab49ac84ad91ed549c486daaf09f5a7a40324ed55a863ee35bb01",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/attempt-2-native-title/native-node-translate.png",
+      "sha256": "ab42d94d92795b6259902b6baae286d966aa8529b84e5cd0c4c0d42ba5acacb1",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm_api.cc",
+      "sha256": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/stock-source/ec6e62d40fa9/source/blender/makesrna/intern/rna_wm_api.cc",
+      "sha256": "7226042072a427df648269318a82764edd09d1d891e5bac626e1dcf7e81a7bda",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/stock-source/ec6e62d40fa9/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "4541e7a90f5e52715d4cd4fd3ce2a99aa1114b9ae3b7a6d2db71bc5b506a9820",
+      "matches_assessment": true
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/assessment.json",
+      "sha256": "53a8dc38209a6b4b8531487be19410ae9d47c80771bd9b1344840e59b3df7bc6"
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm.cc",
+      "sha256": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6"
+    }
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "ci_edits": false,
+  "native_execution_by_reviewer": false,
+  "native_build_started": false,
+  "device_acceptance": false
+}

@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T06:23:36.059263+00:00",
+  "status": "NATIVE_STOCK_HOST_SUBTHRESHOLD_PAN_BASELINE_OBSERVED",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "binary": "D:\\Program Files\\blender.exe",
+    "background": false
+  },
+  "target_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_source_context": "3438226bb2dbb90adf22917d12860cb5471719f0; independent native build40459756217 remains owned by parent",
+  "observed_controls": [
+    {
+      "case": "Unhandled native PAN positive control",
+      "native_event_delta": [
+        4,
+        2
+      ],
+      "view_origin_delta": [
+        -1.956787109375,
+        -0.9784011840820312
+      ],
+      "result": "Actual native View2D moved; confirms supported simulated TRACKPADPAN reaches native navigation."
+    },
+    {
+      "case": "Native noninteractive node title press, 1px cursor only",
+      "node_selected": true,
+      "native_mouse_drag_threshold": 3,
+      "view_origin_delta": [
+        0.0,
+        0.0
+      ],
+      "modal_operators": [],
+      "node_location": [
+        -220.0,
+        160.0
+      ]
+    },
+    {
+      "case": "Same title press, 1px PAN then same-position cursor",
+      "node_selected": true,
+      "native_pan_delta": [
+        1,
+        0
+      ],
+      "view_origin_delta": [
+        -0.48919677734375,
+        0.0
+      ],
+      "modal_operators": [],
+      "node_location": [
+        -220.0,
+        160.0
+      ],
+      "release_preserves_changed_view": true
+    },
+    {
+      "case": "12px cursor acquires native node translate; then PAN3px",
+      "modal_before_pan": [
+        "NODE_OT_translate_attach"
+      ],
+      "native_pan_delta": [
+        3,
+        0
+      ],
+      "view_origin_delta": [
+        0.0,
+        0.0
+      ],
+      "modal_after_pan": [
+        "NODE_OT_translate_attach"
+      ],
+      "modal_after_release": []
+    }
+  ],
+  "public_api_analysis": {
+    "parameters": [
+      "type",
+      "value",
+      "unicode",
+      "x",
+      "y",
+      "shift",
+      "ctrl",
+      "alt",
+      "oskey",
+      "hyper",
+      "event"
+    ],
+    "trackpadpan_enum_value": 14,
+    "event_mouse_prev_fields_readonly": true,
+    "controlled_pan_method": "A preceding supported MOUSEMOVE seeds eventstate.prev_xy; event_simulate(TRACKPADPAN,x=current_x,y=current_y) copies that prev_xy and queues an actual native wmEvent. Logged returned Event.xy/prev_xy prove actual nonzero deltas before native dispatch.",
+    "target_pinned_rna_source_lines": [
+      700,
+      801
+    ],
+    "target_pinned_wm_simulator_lines": [
+      197,
+      229
+    ],
+    "stock_rna_source_lines": [
+      714,
+      797
+    ],
+    "stock_wm_simulator_lines": [
+      196,
+      228
+    ],
+    "reorder_control_status": "NO_FAITHFUL_SAME_PAYLOAD_ORDER_REPLAY",
+    "reorder_control_reason": "No public prev/delta input. MOUSEMOVE simulation sets eventstate.prev_xy equal to its current xy; following same-position PAN therefore has zero delta. Changing PAN xy to restore delta changes cursor position. Writing read-only Event fields, queue fabrication and native ABI injection were not used. No cursor-before-PAN parity result is claimed."
+  },
+  "interpretation": "At stock native WM level a correctly hit/selected node title can remain premodal for a subthreshold cursor, while the preceding real PAN moves View2D. Once native NODE_OT_translate_attach is active, a nonzero PAN leaves View2D unchanged. This independently executes the bounded source distinction; it is not a target Pencil trace or a correction.",
+  "limits": [
+    "Stock Windows Blender5.1.2 reported build ec6e62d40fa9; target is pinned Blender5.0 with iOS overlay. No target compiled behavior, UIKit input, Pencil tablet provenance, device experience, GHOST ingestion or coalescing was exercised.",
+    "Public event_simulate resets tablet data; returned events report is_tablet=false. Mouse drag threshold3 differs from native tablet threshold10. One pixel is below both, but this is not a physical Pencil replay.",
+    "Only ShaderNodeTree native title was hit and selected. Native socket/node.link, custom keymaps, multiple samples, region transitions, Circle and proportional-transform parity were not executed.",
+    "Native translate ownership was observed through Window.modal_operators, and cleanup through its removal. The acquisition sample itself leaves node.location unchanged; this is not evidence of a completed moved-node operation or Undo parity.",
+    "Python timer spaces samples; this is bounded real native WM behavior, not proof of physical device scheduling. No source reorder or suppression follows."
+  ],
+  "preserved_failures": [
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-host\\background-attempt-failure.json",
+      "result": "Background API simulation crashed before initialized GUI native eventstate. Recorded failure; no user-app process involved."
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-host\\host-result.json",
+      "result": "First GUI attempt correctly proved unhandled PAN but title coordinates missed native title owing to DPI conversion. It never selected/acquired a node; exclude its title controls. Driver/raw results remain intact."
+    }
+  ],
+  "process_exit": {
+    "utc": "2026-10-27T06:23:35.8171465Z",
+    "owned_probe_processes": [
+      {
+        "pid": 21220,
+        "alive": false
+      },
+      {
+        "pid": 41424,
+        "alive": false
+      }
+    ]
+  },
+  "production_edits": false,
+  "test_edits": false,
+  "ci_edits": false,
+  "native_build_started": false,
+  "device_acceptance": false,
+  "evidence": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\probe.py",
+      "sha256": "d4a2e313fcfd5777674870b8ce3fae2a6cb3b6b539bb7538acd1c38340d3bb5a"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\host-result.json",
+      "sha256": "8222f6312b73e7a64113d3947eb0a0e6032ab20341b57202552bb2bcc17c15d4"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\attempt-2-native-title\\probe.py",
+      "sha256": "c40dfa6d9a8525eaebb3976473fbb405454d0ea139fb8d87555338f6231845a4"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\attempt-2-native-title\\host-result.json",
+      "sha256": "eba0266a2e84c2aedf3a057e09e219760490fb0fe02871daee42ff73acc7a840"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\process-exit-check.json",
+      "sha256": "0f12d22558ff759dee9681ab326049070e0bfcae49116e453da210a9f3e91f8e"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\background-attempt-failure.json",
+      "sha256": "9ae4c79edb37849c67bde8292700f720d2e565c73869718d06586828c95f9f55"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\attempt-2-native-title\\native-node-before.png",
+      "sha256": "fd5ed16659b84bdb929022819d51e1c5e5d3eece920ec6a1993eb308ff73685d"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\attempt-2-native-title\\native-node-pan-subthreshold.png",
+      "sha256": "d1d217b19d1ab49ac84ad91ed549c486daaf09f5a7a40324ed55a863ee35bb01"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\attempt-2-native-title\\native-node-translate.png",
+      "sha256": "ab42d94d92795b6259902b6baae286d966aa8529b84e5cd0c4c0d42ba5acacb1"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\makesrna\\intern\\rna_wm_api.cc",
+      "sha256": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\windowmanager\\intern\\wm_event_system.cc",
+      "sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\stock-source\\ec6e62d40fa9\\source\\blender\\makesrna\\intern\\rna_wm_api.cc",
+      "sha256": "7226042072a427df648269318a82764edd09d1d891e5bac626e1dcf7e81a7bda"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\native-host\\stock-source\\ec6e62d40fa9\\source\\blender\\windowmanager\\intern\\wm_event_system.cc",
+      "sha256": "4541e7a90f5e52715d4cd4fd3ce2a99aa1114b9ae3b7a6d2db71bc5b506a9820"
+    }
+  ]
+}

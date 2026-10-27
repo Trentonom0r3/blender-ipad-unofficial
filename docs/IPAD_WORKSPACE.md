@@ -1,3 +1,34 @@
+## Corrected Knife PAN IPA compiled/downloaded; actual review pending — 2026-10-27 UTC
+
+Production3438226bb2dbb90adf22917d12860cb5471719f0/run40459756217 PASSED hosted
+preflight/nativeiOSRelease/full downloaded3368CRC/arm64/iPhoneOS5.0.0/wholeexactUI/
+defaultbars/toolbar/pinnedtools129icons/exact9Base/native-onlyMoreTools.
+Artifact12714931825; IPA248692550bytes/SHA256
+29f2b0837b7ab1a8b32056c7a5a8d04223e530f6fce4820cc882f350697c4237.
+BinaryUUID9B4D9B4B-AE3C-3310-8C05-9C532ED55675/SHA256
+ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404.
+Watcher94222 finishedexit1: raw HUD owner checker cannot prove restoredarea at
+0x10163c864 then region0x10163c870; retain rawnegative and independently resolve
+actual savedarea/stack/normalreturnCFG (priorSP+8 shape is not freshproof).
+Nativefirstsize/init and nativeWeight cleanup automatedPASS. All113 actualscope
+dumps collected. NEW actual opaque-group field/BOTH stores-before-callback,
+emptygroup freshrefusal/fullcached presentation and preserved producer/bridge/
+HUD/Weight independent compiled reviews remain PENDING. NOT READY/no exactdevice
+acceptance; no new verifier or unchanged rebuild. Read gizmo-prepare-audit/
+native-package-checkpoint.json and binary-40459756217/knife-call-sites.json.
+Names/markers/instruction inventories are not actual branch/argument proof.
+
+Source/host/finalrunner combined validation remains PASS (826runtime997.130s +
+exact5232cold/current58; no final5232 frozenfull claim). Only2native sections differ;
+134others/all7UI/all13GHOST exact30da0be. No further source until currentgate closes.
+Next Node source+independently reviewed stock5.1.2 host proves1px premodal PAN
+movesView2D by-0.4891968 while noPAN0; active roottranslate macro blocks3pxPAN.
+Generic reorder fails Circle selection parity. Nativeinvoke-only policy needs
+positivePAN provenance/mixed-source merge/customintent/actualnativecontrols proof;
+NO correctiveNode source exists. Full personal goal unfinished, no devicewaits.
+Ordinary91percent/22weekly; resetOct27 10:46:30UTC/05:46:30Chicago; resume05:53.
+0resetcredits; never redeem without newhumanrequest. Preserve allsource/evidence.
+
 ## Exact opaque-gizmo correction build dispatched — 2026-10-27 UTC
 
 Validated production3438226bb2dbb90adf22917d12860cb5471719f0 builds ONCE in

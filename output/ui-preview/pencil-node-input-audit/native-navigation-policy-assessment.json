@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T06:33:37.107633+00:00",
+  "status": "CONDITIONALLY_USEFUL_NATIVE_POLICY_NOT_READY_FOR_IMPLEMENTATION",
+  "question": "Could positive actual physical-Pencil precision-PAN source provenance allow only native view2d.pan/zoom INVOKE refusal in a Node Editor WINDOW, preserving packet order/counts/deltas and advanced native modal PAN handlers?",
+  "answer": "The native invoke boundary can prevent the measured immediate View2D mutation without a suppression lease or source reorder. This is structurally viable as an explicit bounded navigation policy. Current events do not carry the required physical provenance; mixed-source coalescence and intentional custom View2D invocation are concrete policy limits. No unqualified safety or workflow completion is established.",
+  "production_context": {
+    "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "build_run": 40459756217,
+    "gate": "Current opaque-gizmo native build/package/compiled verification remains independent and must close before production expansion.",
+    "canonical_overlay_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1"
+  },
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "baseline_evidence": [
+    {
+      "path": "source-contract.json",
+      "sha256": "82f4d86d04eb11241d51eed7f2440ab006e5acf902c08ea1b26084b32cd22c7d",
+      "finding": "Premodal PAN reaches native View2D; active link/transform modals prevent ordinary navigation."
+    },
+    {
+      "path": "scheduling-order-assessment.json",
+      "sha256": "b26cdd84d6220cc9f3873a85e4c384d7b6356ed26e6e5e3ed781ddc2379a290c",
+      "finding": "Packet reorder has Circle selection-order counterexample and does not remove subthreshold navigation."
+    },
+    {
+      "path": "native-host/assessment.json",
+      "sha256": "53a8dc38209a6b4b8531487be19410ae9d47c80771bd9b1344840e59b3df7bc6",
+      "finding": "Stock5.1.2 native selected node title:1px PAN shifts graph while premodal; native active translate blocks PAN."
+    },
+    {
+      "path": "native-host/independent-host-review.json",
+      "sha256": "ec8ae81dfe289d42a0306727fbac8914feaf293b66d33c45b4d4e2054a5b6fc2",
+      "finding": "Independent bounded host controls reviewed; no target/Pencil/reorder proof."
+    }
+  ],
+  "supported_boundary": [
+    {
+      "fact": "Invocation has an early point before View2D resources or mutation.",
+      "evidence": "current view2d_ops.cc view_pan_invoke232-251; view_zoomdrag_invoke1162-1167; pinned equivalents232-251,1159-1167.",
+      "consequence": "A refusal before init avoids view data allocation, V2D_IS_NAVIGATING, modal cursor/timer installation, pan/zoom application and sync. Do not call pan cancel/exit on uninitialized customdata."
+    },
+    {
+      "fact": "A terminal status without PASS_THROUGH consumes ordinary keymap dispatch.",
+      "evidence": "current wm_event_system.cc3761-3775; operator lifecycle1665,1727-1796.",
+      "consequence": "CANCELLED uses normal operator-free; FINISHED uses native finish and possible last-property storage. PASS_THROUGH would permit later keymaps/handlers to retry and is not a reliable navigation refusal. No final return-value choice is implemented by this audit."
+    },
+    {
+      "fact": "Already-live pan/zoom are separate modal callbacks.",
+      "evidence": "current view2d_ops.cc293-361,1277-1410; invoke callbacks as above.",
+      "consequence": "An invoke-only policy can leave an explicit native pan/zoom modal alive and native. Native step zoom, eventless exec, NDOF, pinch MOUSEZOOM and other editors are outside the proposed domain."
+    },
+    {
+      "fact": "Circle/Transform/link modal dispatch has priority over ordinary View2D invocation.",
+      "evidence": "current WM6897-6932 plus previous source-contract.json; native Circle/Transform advanced PAN mappings.",
+      "consequence": "Preserving the exact PAN packet and order avoids the prior Circle radius/selection counterexample for handlers that consume/process PAN directly. This does not prove semantics of handlers that delegate to View2D invoke."
+    },
+    {
+      "fact": "Current Node UI/sidebar is a different region domain.",
+      "evidence": "Node WINDOW keymapflag in space_node.cc1806-1812; View2D category-gutter behavior after init at pan261.",
+      "consequence": "Requiring actual current SPACE_NODE/RGN_TYPE_WINDOW excludes ordinary Node UI/sidebar regions. Same-window embedded widgets keep their prior UI priority; context overrides and native handlers intentionally invoking View2D remain a boundary."
+    }
+  ],
+  "current_provenance_state": {
+    "positive_physical_source_available": "GHOSTUIPanGestureRecognizer owns GestureContact; begin captures device from actual UITouch, identity and scalar serial before superclass action; update/end match identity; pencil_down combines device identity and live down. Current GHOST_NavigationIOS.hh121-154 and GHOST_WindowIOS.mm422-507,542-545.",
+    "ordinary_branch_available": "handlePan1552-1707 resolves ring/HUD/pointer capture and finger branches before the ordinary Pencil precision branch. Its Changed PAN is emitted1721-1734. A future label must describe this exact physical branch, not arbitrary pencil_used/current_pencil_touch/hover/tablet state.",
+    "trackpad_does_not_carry_it": "Current GHOST_Types.h706-721 carries subtype,x,y,deltaX,deltaY,inversion,numFingers only. GHOST_WindowIOS.mm1127-1137 creates ordinary one-finger Trackpad Scroll without physical source/pair provenance.",
+    "wm_does_not_carry_it": "WM_types.hh681-725 has flags for repeat/consecutive/fingers/pinch/cancel/direct-tool/direct-finger; none proves this physical Pencil ordinary paired PAN. Existing paint fields827+ are a distinct admitted ownership protocol and must not be reused.",
+    "unsafe_inferences": "numFingers1 also covers finger/hardware routes. WM tablet state is inherited and can reflect earlier cursor/hover; current WM trackpad ingestion copies eventstate before mapping PAN. Neither tablet source nor absence of Finger flag proves Pencil.",
+    "classification_not_grant": "A physical-source label could only justify this explicitly scoped denial policy. It must never admit a node handler, grant a Pencil paint lease, synthesize a press/release, bypass native polling, retain pointers or claim a live native modal owner."
+  },
+  "concrete_limits_and_blockers": [
+    {
+      "issue": "Mixed-source trackpad coalescing",
+      "evidence": "current wm_event_add_trackpad8614-8633 merges adjacent same-type packets when only TOUCH_PINCH agrees; sums previous delta then copies newest event.",
+      "why_it_matters": "A new tag copied from the newest event can falsely label merged hardware/finger delta as Pencil, or lose Pencil provenance. OR-merging can deny legitimate hardware motion; AND/conservative clearing avoids false refusal but allows mixed Pencil delta to navigate. Comparing tags to stop merging changes baseline coalescing.",
+      "required_decision": "Preserving baseline packet coalescing requires conservative all-contributors source evidence or clearing the label on ambiguity and explicitly accepting incomplete coverage. This audit does not change merge rules or claim mixed-stream coverage."
+    },
+    {
+      "issue": "Intentional custom View2D invocation is indistinguishable",
+      "evidence": "current WM1943-1960 forwards supplied event;1692-1701 copies it unchanged into invoke. Customized TRACKPADPAN to view2d.pan/zoom or another native handler forwarding the tagged event reaches the same callback/context.",
+      "why_it_matters": "Physical Pencil source+NODE WINDOW does not prove unintended navigation. Such a policy changes an intentional custom View2D invocation too, while arbitrary handlers processing PAN directly stay packet/order exact.",
+      "required_decision": "Do not claim preservation of every possible advanced/custom View2D invoke. Either accept an explicit Pencil precision navigation policy for this domain or provide additional actual-dispatch causality; no speculative initial tool/keymap prediction follows."
+    },
+    {
+      "issue": "Physical contact does not prove an enqueued native left press",
+      "evidence": "current GHOST generator1081-1098 can skip pointer events when a distinct paint contact owns the shared pointer, while PAN1127 is not a pointer_event. Ordinary producer1714-1729 emits according to recognizer state and has no separate ordinary enqueued-down receipt.",
+      "why_it_matters": "GestureContact.down proves physical UIKit source state, not that GHOST/WM accepted a matching native DOWN or owns a node operation. Reusing a paint receipt or an unleased release would violate the existing contract.",
+      "required_decision": "A denial-only physical-source policy can be assessed without granting ownership, but its metadata must not be named or consumed as proof of an accepted pair or node owner. Any stronger pair/press claim needs independent evidence."
+    },
+    {
+      "issue": "Earlier WM mutation and bookkeeping remain unchanged",
+      "evidence": "current WM8913-8915,9036-9096 updates shared xy and appends/coalesces PAN;6761-6779 updates consecutive gesture state before handlers; terminal refusal cannot undo these.",
+      "why_it_matters": "The policy only prevents native View2D invoke mutation. Cursor prev_xy, shared pointer/click state, current region routing, gesture-chain state and later native admission remain exact baseline effects.",
+      "required_decision": "No claim that this fixes producer ownership, callback interleaving, multi-source queue state, old pointer behavior or all node admission. It must not restore old pointers or introduce a CTX provider."
+    },
+    {
+      "issue": "New metadata itself is observable",
+      "evidence": "WM event is copied into modal invocations and explicit native operator calls.",
+      "why_it_matters": "Preserving bytes/order except one new value is not broad callback neutrality: custom handlers may inspect flags or forward the event. Existing masks and simulator/default construction paths need proof of default false and non-inheritance.",
+      "required_decision": "The tag must be positive, per-event, default-clear for all other producers/simulation/replays, and not inherited via eventstate or synthetic housekeeping; exact field layout/constructor/flag-mask proof remains future work."
+    }
+  ],
+  "remaining_required_proof_before_any_future_source": [
+    "Close current40459756217 native/package/actual-compiled gate first; no same-SHA rebuild or production expansion is authorized by this report.",
+    "Define the policy domain precisely: actual physical ordinary Pencil source versus accepted pointer pair, supported modifiers, NODE WINDOW versus UI/sidebar and direct/delegated native View2D invokes. Record intentional custom navigation limitation.",
+    "Trace every GHOST Trackpad constructor/C-api/platform default and wmEvent copy/state-mask/housekeeping path. Current source lacks the metadata, so no existing flag can safely implement the policy.",
+    "Prove tag preservation/clearing under adjacent Pencil/finger/hardware PAN, zero-delta cursor-only samples, omitted paint/Knife PAN, filtered pointers, queued old contacts, simulation and serial exhaustion; do not silently change baseline coalescing.",
+    "Execute actual native source controls for pre-init terminal no-PASS status, zero customdata cleanup, no V2D_NAVIGATING/timer/cache/last-property surprises, no fallback duplicate invocation, and unchanged native polling failure.",
+    "Compare native node title/socket acquisition with multiple below-threshold pairs, pointer state/prev_press state/region matching/coordinates and actual graph origin. The desired effect is refusal of View2D mutation; native edit admission must remain owned by the original operator path.",
+    "Positive native Circle SIZE annulus selection and proportional-transform controls must retain packet count/order/delta and state, plus already-live explicit pan/zoom, finger scroll, hardware trackpad, native panels, modifiers and custom/delegated View2D calls with the policy limitation explicit.",
+    "Target iOS compiled proof and actual device/Pencil checks remain distinct. No target behavior or interaction comfort follows from stock host/source evidence."
+  ],
+  "primary_source_hashes": [
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc"
+    },
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_query.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_query.cc",
+      "sha256": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a"
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/intern/ghost/GHOST_Types.h",
+      "sha256": "a5b8ea1db7defae5bc92a65470f75cec5a5d051891f91056bc9ce739e7940776"
+    }
+  ],
+  "current_source_hashes": [
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/intern/GHOST_WindowIOS.mm",
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34"
+    },
+    {
+      "path": "intern/ghost/GHOST_NavigationIOS.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/GHOST_NavigationIOS.hh",
+      "sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8"
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/GHOST_Types.h",
+      "sha256": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/WM_types.hh",
+      "sha256": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "sha256": "4810c0fddc3dd5327ae4327aeba9256fb66d85976c7a322738172cf62234b40f"
+    }
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "ci_edits": false,
+  "new_native_execution": false,
+  "new_gui_probe": false,
+  "native_build_started": false,
+  "device_acceptance": false,
+  "parent_contract_refinement": {
+    "utc": "2026-10-27T06:34:26.132484+00:00",
+    "status": "FUTURE_CONTRACT_ONLY_NO_IMPLEMENTATION",
+    "actual_dispatch_profile": "Before considering a native navigation refusal, establish the actual chosen unmodified native View2D keymap-item profile only AFTER native keymap poll and event match. Current WM wm_handlers_do_keymap_with_keymap_handler5493-5502 supplies that actual dispatch boundary. This is not an initial tool/keymap predictor.",
+    "custom_and_delegated_calls": "A future contract must distinguish that matched native path from customized item/poll/property/callback profiles and explicit/delegated invokes. A source tag alone cannot do so. Any bounded dispatch receipt would need expiry/non-forwarding/lifetime proof; no design or runtime implementation is supplied here.",
+    "coalescing": "Keep the existing merge decision and numeric delta accumulation exactly. Provenance may remain positive only when all merged contributors satisfy the accepted source/profile equality; conservatively AND/clear on mixed or unknown provenance. This avoids refusing hardware/finger contribution, while explicitly leaving mixed packets outside coverage.",
+    "required_native_controls": [
+      "Actual chosen stock View2D item after matching/poll: positive; changed keymap item/operator/property/poll/profile, explicit/delegated invoke: unchanged fallback; callbacks changing the candidate context must not reuse old dispatch evidence.",
+      "Adjacent all-positive PAN merges retain identical summed delta and baseline merge count; positive+hardware, hardware+positive, positive+finger, unknown/stale source combinations clear metadata in both orders without changing merge rules or delta.",
+      "No copied receipt grants edit ownership, enters paint fields or survives forwarding/reentrant callbacks/housekeeping/simulation. No stored raw keymap/item/context pointer is accepted as a lifetime guarantee.",
+      "Retain pre-init no-PASS cleanup and native Circle/Transform/live-pan/zoom/finger/hardware/UI tests already listed; current source3438226 and run40459756217 remain unchanged."
+    ]
+  }
+}
