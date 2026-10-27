@@ -1,0 +1,40 @@
+{
+  "status": "PASS_EXACT_CANONICAL_LF_RECONCILIATION",
+  "utc": "2026-10-27T11:28:10.324276+00:00",
+  "initial_indexed_contract_hash_check": false,
+  "cause": "Reviewer JSON used CRLF; scoped text eol=lf normalized index bytes. Initial root plan recorded raw working-tree hashes.",
+  "rows": [
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/node-precision-transport-contract.json",
+      "original_crlf_sha256": "47494df233389b6cf9d09e5280d632614fdf85f0b5b0905a60d517b68be230b9",
+      "original_crlf_lines": 730,
+      "canonical_lf_sha256": "1adde762f4522b42abd109fd81ab2e48d37c2fb0892046be31cbdff2e746b6b6",
+      "canonical_equals_index": true,
+      "parsed_json_identical": true,
+      "original_reconstructs_exactly": true,
+      "local_original_archive": ".cache/node-design-original-crlf-node-precision-transport-contract.json"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/node-default-dispatch-contract.json",
+      "original_crlf_sha256": "3c53c3f87eafe2d40ac67ae4f1bc95a8a0a7dbab1f9a07ec559c29fc087d489f",
+      "original_crlf_lines": 1269,
+      "canonical_lf_sha256": "24c211b98be385a71b103fc8306af47b5a99d7396c75d3efc38e31cfe4e9202a",
+      "canonical_equals_index": true,
+      "parsed_json_identical": true,
+      "original_reconstructs_exactly": true,
+      "local_original_archive": ".cache/node-design-original-crlf-node-default-dispatch-contract.json"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/native-invocation-next-contract.json",
+      "original_crlf_sha256": "82d3fbb198fe2c28ba61315cb35ce71e2fabb52c2295f3a0b62be87709001c18",
+      "original_crlf_lines": 130,
+      "canonical_lf_sha256": "879b93f8f3c8dedb3fda24d21b18f3989136a13eff7167c65b64767a3e1c2a20",
+      "canonical_equals_index": true,
+      "parsed_json_identical": true,
+      "original_reconstructs_exactly": true,
+      "local_original_archive": ".cache/node-design-original-crlf-native-invocation-next-contract.json"
+    }
+  ],
+  "assertions_source_or_test_changes": false,
+  "production_change": false
+}
