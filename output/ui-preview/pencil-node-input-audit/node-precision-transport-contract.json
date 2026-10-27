@@ -1,0 +1,730 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T11:21:17.223274+00:00",
+  "status": "BOUNDED_DESIGN_AUDIT_TRANSPORT_FEASIBLE_NO_IMPLEMENTATION_OR_VALIDATION",
+  "question": "Can the actual ordinary physical-Pencil precision PAN carry source-class metadata through the existing GHOST Trackpad and WM path, without changing packet count/order/data/coalescing or claiming ownership?",
+  "answer": "Yes, as a narrow source-class bit with explicit constructor defaults, ingestion type checks, conservative all-contributors merge and public synthetic-enqueue clearing. It is sufficient input to consider a separately reviewed denial-only native View2D dispatch policy. It is not accepted-DOWN proof, pairing proof, current contact liveness, a lease, a node tool claim or complete mixed-input coverage.",
+  "work_scope": {
+    "production_source_edits": false,
+    "tests_or_CI_edits": false,
+    "build_started": false,
+    "prototype_or_implementation_milestone": false,
+    "artifact_changes": "This JSON and immutable pinned-source audit cache only. No production/test/CI/build edit, compile, runtime test or device acceptance is asserted."
+  },
+  "context": {
+    "repository": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial",
+    "observed_checkout_head": "b0c985787f194ed90f7f898d619c781924bee168",
+    "tracked_status_before_artifact": "git status --short --untracked-files=no returned empty",
+    "production_source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "production_run": 40459756217,
+    "current_gate": "Parent reports exact current IPA/package/three bounded compiled audits closed; no exact device acceptance/full-goal completion. This report independently audits source transport only.",
+    "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "canonical_overlay_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+    "current_materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+    "source_authentication": "All168 downloaded pinned files (163 complete GHOST text sources/headers plus five exact WM/RNA/DNA files) match Git blob SHA1 from the immutable pinned recursive tree; tree truncated=false. See pinned-source-manifest.json. Current overlay materializations have individual raw SHA256 below."
+  },
+  "baseline_artifacts": [
+    {
+      "path": "source-contract.json",
+      "sha256": "82f4d86d04eb11241d51eed7f2440ab006e5acf902c08ea1b26084b32cd22c7d"
+    },
+    {
+      "path": "scheduling-order-assessment.json",
+      "sha256": "b26cdd84d6220cc9f3873a85e4c384d7b6356ed26e6e5e3ed781ddc2379a290c"
+    },
+    {
+      "path": "native-navigation-policy-assessment.json",
+      "sha256": "77fb0afae5525b6387dd9e236ed3b632f28112b02cdf3ba62839c79921321fca"
+    },
+    {
+      "path": "sourcecache/pinned-source-manifest.json",
+      "sha256": "89cb756b5cd3eb518aa8aab11c8de9384a2e6d173c0bd7d9e299801b9b4f4be9"
+    }
+  ],
+  "proposed_minimal_connected_change": [
+    {
+      "file": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "change": "Add bool physical_pencil_precision_pan=false to UserInputEvent. Set it only inside the existing ordinary precision PAN emission condition1725-1729, to sender.state==UIGestureRecognizerStateChanged && [sender pencilContactDown]. Pass it only through PAN_GESTURE1127-1137 to the Trackpad constructor. No other UserInputEvent consumer or packet is relabeled.",
+      "why": "The ordinary branch is reached after hardware ownership/ring/HUD/native pointer-capture/finger routes return. Existing paint and Knife conditions already determine whether PAN exists; this metadata only describes a PAN that the unchanged code emits. Set neither a global nor recognizer lease."
+    },
+    {
+      "file": "intern/ghost/GHOST_Types.h",
+      "change": "Add char is_physical_pencil_precision_pan after isDirectionInverted and before numFingers in GHOST_TEventTrackpadData. Exactly0 means no positive classification; exactly1 means actual physical Pencil ordinary precision PAN.",
+      "layout": "On the ordinary32-bit enum/int/uint ABI this consumes former padding byte21, keeps numFingers offset24 and total size28/alignment4; this is a source-layout inference, NOT a compiled/native layout result. Verify offsetof/sizeof against exact target and host headers before relying on it. All old value fields and enum subtype values remain unchanged. No C++ default member initializer in this shared C-compatible typedef."
+    },
+    {
+      "file": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "change": "Append bool physical_pencil_precision_pan=false after existing uint numFingers=1. Explicitly assign payload char from it as0/1 in constructor body.",
+      "why": "trackpad_event_data_ currently has no value-initializing brace/default constructor; merely adding a char field would leave it indeterminate. Default argument plus explicit assignment makes every unchanged real backend construction negative. Existing arguments, payload values and order stay identical."
+    },
+    {
+      "file": "source/blender/windowmanager/WM_types.hh",
+      "change": "Add WM_EVENT_IS_PENCIL_PRECISION_PAN=(1<<9), document event-local physical source class only, and move ENUM_OPERATORS(eWM_EventFlag,...) maximum to this new bit. Use the existing eWM_EventFlag wmEvent.flag storage.",
+      "why": "Bit9 is unused in this exact enum; no wmEvent layout, constructor, pointer or lifetime state is needed. BLI_utildefines.h568-570 masks complement to declared max: leaving DIRECT_FINGER as max can strip the source bit during unrelated existing flag-clear operations."
+    },
+    {
+      "file": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "change": "Only GHOST_kEventTrackpad ingestion may set the new flag, requiring source char==1 AND subtype==GHOST_kTrackpadEventScroll AND numFingers==1 after ordinary mapping to MOUSEPAN. Keep existing event.flag=0 at8915 and do not add the bit to event_state_flag_mask. In wm_event_add_trackpad preserve the existing merge predicate/count/order/xy/deltas, and set the result source bit only if the newest packet and every merged contributor have it. Public WM_event_add must clear only this new bit in its queued copy, which also covers WM_event_add_simulate.",
+      "why": "The transient flag naturally clears at the next GHOST ingestion and never enters shared eventstate. The public enqueue wrapper otherwise makes exact cloned/forged replay metadata possible. Actual Trackpad ingestion calls internal enqueue, so public synthetic clearing does not alter its genuine label. Do not change generic internal enqueue semantics or reject/fork a mixed merge."
+    }
+  ],
+  "physical_source_admission_boundary": {
+    "actual_capture": "ios_touch_device175-184 classifies UITouchTypePencil directly. Pan touchesBegan422-471 captures GestureContact using the physical UITouch identity before [super touchesBegan] can deliver the action. GestureContact121-154 records kind/identity/down and refuses replacing an extant identity; Pencil sampling update checks that identity.",
+    "live_source_check": "pencilContactDown544 calls GestureContact::pencil_down: down && touch && device==Pencil. It is stronger than gestureUsesPencil (which can survive a terminal until reset), pencil_used (also used for hover and tap UI), shared current_pencil_touch, pressure, numFingers or inherited wmTabletData.",
+    "recognizer_lifecycle": "TouchStreamAllowed is tested at1554. touchesMoved updates the matching identity before super. End/Cancel update before super and clear down after the terminal callback; reset clears actor, admission and captures before superclass reset. The label is never set for terminal packets. A stale Changed action with no live down still keeps its baseline PAN but receives no positive source bit.",
+    "ordinary_route": "Only handlePan ordinary precision path1700-1747 after higher-priority returns; existing PAN validity guards paint ticket absence/Knife omission/nonzero relative translation remain exactly intact. The tag does not require, create, inspect or prove an admitted DOWN. It never consumes owner evidence or captures coordinates/serials/region values.",
+    "known_class_only": "Multiple all-Pencil contributors can be from distinct physical contacts because no identity/serial is transported. That is intentional: the label proves only source class, not contact continuity. No native consumer may use it to admit editing or infer an owner."
+  },
+  "constructor_audit": {
+    "scope": "All163 exact pinned intern/ghost text files downloaded and searched for GHOST_EventTrackpad, GHOST_TEventTrackpadData and GHOST_kEventTrackpad. Current overlay iOS file supersedes pinned iOS. No overlay targets replace EventTrackpad/Cocoa/Wayland/Win32.",
+    "current_constructors": [
+      {
+        "source": "pinned-non-iOS",
+        "path": "intern/ghost/intern/GHOST_SystemCocoa.mm",
+        "constructor_lines": [
+          1778,
+          1794,
+          1808,
+          1816
+        ],
+        "count": 4,
+        "default_for_new_source_label": "false at every existing call except current iOS PAN_GESTURE1129, which alone passes the new per-packet classification"
+      },
+      {
+        "source": "pinned-non-iOS",
+        "path": "intern/ghost/intern/GHOST_SystemWayland.cc",
+        "constructor_lines": [
+          4138,
+          4442,
+          4453
+        ],
+        "count": 3,
+        "default_for_new_source_label": "false at every existing call except current iOS PAN_GESTURE1129, which alone passes the new per-packet classification"
+      },
+      {
+        "source": "pinned-non-iOS",
+        "path": "intern/ghost/intern/GHOST_SystemWin32.cc",
+        "constructor_lines": [
+          1620,
+          1630
+        ],
+        "count": 2,
+        "default_for_new_source_label": "false at every existing call except current iOS PAN_GESTURE1129, which alone passes the new per-packet classification"
+      },
+      {
+        "source": "current-iOS",
+        "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+        "constructor_lines": [
+          1129,
+          1141,
+          1169,
+          1229,
+          1811,
+          2729
+        ],
+        "count": 6,
+        "default_for_new_source_label": "false at every existing call except current iOS PAN_GESTURE1129, which alone passes the new per-packet classification"
+      }
+    ],
+    "counts": "Fifteen current effective constructions: six current iOS + four Cocoa + three Wayland + two Win32. The three pinned old iOS constructors are historical replaced source, not added current producers.",
+    "no_other_producer": "No X11, SDL, headless, C API or other GHOST source/header directly constructs/writes Trackpad payload in this exact tree. GHOST_EventPrinter only names the event type. The only payload writer is the shared EventTrackpad constructor; WM reads it. Custom external native producers remain responsible for zero initialization; this is not a security boundary against code that can fabricate native events.",
+    "ios_defaults": "PAN_GESTURE_TWO_FINGERS1141, PAN_GESTURE_THREE_FINGERS1169, PINCH1229, handleIndirectPan1811, and GCMouse fallback2729 all omit the new argument and therefore explicitly initialize false. Ordinary finger scroll uses the same PAN_GESTURE case but its UserInputEvent field stays defaultfalse. Taps, hover, ring, HUD/direct tools, paint and release have no source label even if pencil_used/tablet says Pencil.",
+    "queue_transport": "GHOST_EventTrackpad data_ points to its embedded payload. GHOST_System pushEvent and EventManager push-front/pop-back/consumer dispatch pass the same object without source inference/serialization or a separate lifetime record. No new allocation, callback, pointer, owner map or UIWindow/WM/operator reference crosses the seam."
+  },
+  "mixed_source_merge_contract": {
+    "existing_rule": "wm_event_add_trackpad8614-8634 merges adjacent equal event->type with equal TOUCH_PINCH bit, adds previous xy-prev_xy to incoming delta, frees previous packet and enqueues a complete copy of newest event with accumulated prev_xy.",
+    "proposed_rule": "Keep that exact predicate and arithmetic. Before freeing previous packet, calculate all_source = newest_has_source && previous_has_source; previous_has_source already describes all contributors to its aggregate. After the existing copy, clear only the new bit when all_source is false. No-merge result retains the incoming source bit.",
+    "cases": [
+      {
+        "contributors": [
+          "Pencil",
+          "Pencil"
+        ],
+        "source": true
+      },
+      {
+        "contributors": [
+          "Pencil",
+          "hardware/finger/unknown"
+        ],
+        "source": false
+      },
+      {
+        "contributors": [
+          "hardware/finger/unknown",
+          "Pencil"
+        ],
+        "source": false
+      },
+      {
+        "contributors": [
+          "Pencil",
+          "unknown",
+          "Pencil"
+        ],
+        "source": false
+      },
+      {
+        "contributors": [
+          "unknown",
+          "unknown"
+        ],
+        "source": false
+      }
+    ],
+    "why_not_OR_or_latest": "OR falsely marks hardware delta as Pencil; copying newest alone also falsely marks hardware-before-Pencil and loses Pencil-before-hardware provenance. Source equality used to block merging changes baseline counts/coalescing; it is out of scope.",
+    "incomplete_coverage": "A mixed aggregate intentionally falls back to ordinary native navigation, so its Pencil component may still move the node graph. This source-only design cannot simultaneously preserve existing coalescing and identify the Pencil portion of an unknown aggregate. Report that limitation rather than claim complete protection.",
+    "other_metadata": "Keep newest event modifiers, tablet, flags other than this bit, and coordinates exactly as current merge. The source class proves neither all-contributor modifiers nor same physical contact. Consumer policy evaluates the actual resulting dispatch and cannot infer either."
+  },
+  "non_inheritance_and_copy_audit": [
+    {
+      "path": "GHOST actor reset",
+      "evidence": "GHOST_NavigationIOS.hh154; GHOST_WindowIOS.mm497-507",
+      "result": "GestureContact reset value-clears device/identity/serial/down. UserInputEvent false default makes each fresh object negative until the exact ordinary PAN emission assignment. No new persistent actor field is proposed."
+    },
+    {
+      "path": "All GHOST payload construction",
+      "evidence": "EventTrackpad.hh27-45 + fifteen effective calls",
+      "result": "Explicit constructor0/1 assignment covers every old call and new tagged call; no indeterminate padding read. Default0 is used for all other backends/subtypes/inputs."
+    },
+    {
+      "path": "Every real GHOST ingestion",
+      "evidence": "wm_event_system.cc8910-8925",
+      "result": "event=*eventstate is immediately followed by flag=0. Only the Trackpad case can subsequently set the new bit. Cursor/button/keyboard/wheel/touch/Pencil-ring/IME and other cases retain0 for it."
+    },
+    {
+      "path": "Shared eventstate",
+      "evidence": "wm_window.cc972-980; wm_event_system.cc8653-8666,9005-9009,9062-9064,7033-7034",
+      "result": "State is calloc initialized. Keyboard/button copies only REPEAT; Trackpad updates xy only; cursor updates xy/absolute-motion/tilt; dispatch updates prev_xy only. New bit never enters eventstate and therefore cannot contaminate the next hardware/Pencil/housekeeping input."
+    },
+    {
+      "path": "Public event enqueue and simulation",
+      "evidence": "wm_event_system.cc225-259; pinned rna_wm_api.cc749-782",
+      "result": "Current public WM_event_add simply copies all flags; mandatory proposed clearing of the new bit at this public wrapper removes source status from cloned/manual/replayed events. WM_event_add_simulate goes through that wrapper. RNA event_simulate already resets flags=0 and offers no source parameter. GHOST ingestion is disabled in simulate mode8748-8757."
+    },
+    {
+      "path": "Retained handled event",
+      "evidence": "wm_event_system.cc303-329,8580-8607",
+      "result": "event_last_handled retains the historical original source flag as part of the same value event; it is not an eventstate/lease. Housekeeping motion copied from it sets flag=0. File-load transfer of this history pointer409-410 does not create new physical input. No new retained pointer or lifetime is introduced."
+    },
+    {
+      "path": "Housekeeping cursor and UI cancellation",
+      "evidence": "wm_event_system.cc1001-1006,7063-7072,8585-8605; wm_window.cc1834-1841",
+      "result": "All zero event.flag before enqueue/dispatch. Inbetween mousemove additionally masks to DIRECT_TOOL only8568 and cannot gain the new PAN flag."
+    },
+    {
+      "path": "File selector, drag/drop, timers, XR, status probes",
+      "evidence": "wm_event_system.cc7095-7110,9539-9553,9875-9880; wm_window.cc2024-2053,2183-2193",
+      "result": "All inspected synthetic flows zero flags or use a zero-created event; public enqueue clearing additionally covers copied external/manual enqueue. This does not require adding source fields to timers or pointer packets."
+    },
+    {
+      "path": "Cross-window cursor/button forwarding",
+      "evidence": "wm_event_system.cc9014-9031,9204-9225",
+      "result": "Copies destination eventstate, which cannot contain the new bit. It does not copy tagged Trackpad flags; Trackpad has no cross-window forwarding branch. Existing coordinate/tablet/modifier behavior stays unchanged."
+    },
+    {
+      "path": "Native operator/event dispatch copies",
+      "evidence": "wm_event_system.cc1692-1701; modal dispatch preserves current same physical event by design",
+      "result": "A copied event used to invoke a native operator retains source class for that SAME dispatch; mval changes only. Do not clear within ordinary operator invocation, or the actual View2D consumer loses provenance. Context overrides/custom forwarded native invocation remain a policy boundary; source metadata cannot distinguish intentional navigation from unwanted navigation."
+    },
+    {
+      "path": "Generic internal enqueue",
+      "evidence": "wm_event_system.cc215-223 and all23 call sites (24 textual occurrences including definition) in current file",
+      "result": "Keep full value copy for actual Trackpad ingestion. Every other audited internal call originates a zero flag or safe eventstate (cursor/button cross-window copies); public callers go through the clearing wrapper. Do not add a generic test which treats absence of tablet or fingers as provenance."
+    }
+  ],
+  "unchanged_contract": [
+    "No event_list reorder/insertion/removal, no pointer-event or terminal rewrite, no PAN suppression at producer, no coalescing split or predicate change.",
+    "No changes to x/y/translation/quantization/scaling/delta accumulation/inversion/numFingers/modifiers/tablet snapshots/pressure/tilt/hover or current native PAN modal mappings.",
+    "No new generation/serial/region/origin field, raw pointer, ownership state, contact lease, queue barrier, scheduling reorder, accepted-DOWN assumption, paint-ticket reuse or lifetime privilege.",
+    "Only a separately reviewed consumer may use this bit, for denial of the actual chosen unmodified native View2D invoke in current Node Editor WINDOW. No editing/operator-acquisition action is admitted by it."
+  ],
+  "risks_and_limits": [
+    "Layout/padding reuse is inference until actual target/host header sizeof/offsetof and compiled constructor loads/stores are checked. C++ struct byte offsets must not be guessed in a harness.",
+    "Adding a new patched header means exact pinned preflight/cache/new-file retrieval and native build coverage must include GHOST_EventTrackpad.hh. No such change or compile has been done here.",
+    "Missing/ambiguous/invalid/stale/live-down-false metadata yields ordinary fallback and incomplete protection. It must never become a broader suppression rule.",
+    "This bit cannot prove a left press reached WM, identify one physical contact, establish native tool intent, demonstrate a current owner or resolve custom View2D forwarding. Public replay clearing prevents accidental synthetic inheritance, not malicious native-code fabrication.",
+    "Changing ENUM_OPERATORS max is necessary to preserve the new bit across existing complement operations. Verify all old bits remain exact; bit3 already has historical FORCE_DRAG/TWO_FINGERS alias and should not be repurposed.",
+    "Context customization/actual keymap/evaluated RNA identity/native consumer status and live advanced control parity are owned by the separate policy/consumer reviews. This report does not approve broad view2d.pan/zoom refusal or claim preservation of every advanced workflow.",
+    "Source audit and existing stock-host evidence are not target UIKit, binary, simulator or real Pencil acceptance."
+  ],
+  "proposed_connected_test_plan_not_executed": [
+    {
+      "boundary": "Actual producer + shared constructor",
+      "controls": [
+        "Compile actual extracted untouched/modified ordinary handlePan and generator seams with actual UserInputEvent and actual EventTrackpad header; use value controls for physical Pencil before-super actor capture, live Changed, zero delta, Began, End/Cancel/Failed, reset and stale action.",
+        "For tagged PAN assert identical original packet list/order/count, integer x/y/delta/inversion/fingers and all cursor/down/up/tablet payload values; only new scalar differs.",
+        "Actual finger with nearby Pencil/hover, indirect/hardware, ring, HUD/direct tool, valid paint, omitted Knife PAN, 2/3-finger and pinch routes remain untagged. All real backend constructor signatures compile with old arguments and emit0."
+      ]
+    },
+    {
+      "boundary": "Actual WM ingestion + merge + public replay",
+      "controls": [
+        "Connect real GHOST_TEventTrackpadData to real wm_event_add_ghostevent and actual wm_event_add_trackpad, not a mirrored model; valid tag exactly1/Scroll/one finger maps only to MOUSEPAN sourcebit. Malformedchar2, other subtype/fingercount staysnegative.",
+        "Use old source as expected-failure/control where positive provenance cannot survive; freeze exact driver/source hashes so empty/stale extracted code cannot PASS.",
+        "All-Pencil pair and longer chains retainbit; both mixed orders and Pencil/unknown/Pencil clearbit with exact same event count and accumulated xy/prev_xy as baseline; nonmerged paths unchanged.",
+        "Tagged PAN followed by all other source types, shared-state/window transition, queue-empty addmousemove, prepend housekeeping, timers/UIcancel/fileselect/drop/XR and public WM_event_add/simulate copies never inheritbit. Assert eventstate flags contain only native permitted REPEAT.",
+        "Verify existing flags survive unrelated clear operations after enum maximum update and ordinary old flags/control behavior remain exact.",
+        "Inject a copied tagged real event through public WM_event_add and WM_event_add_simulate and assert sourcebit0 while all original flags/data survive; inject the same actual GHOST packet through private ingestion/trackpad/intern path and assert sourcebit1. This directly tests that replay protection does not strip genuine input."
+      ]
+    },
+    {
+      "boundary": "Actual native consumer and controls",
+      "controls": [
+        "Parent consumer harness must connect resulting real wmEvent to actual selected native dispatch/admission boundary, with true current NODE_EDITOR/WINDOW, native RNA identity and evaluated customized/default keymap evidence; verify no source grant/ownership assumption.",
+        "Tagged pure Pencil premodal node-pan candidate has no graph shift while exact cursor/down/up remains; untagged/mixed/hardware/finger, modifiers, other regions/editors/subtypes and explicit live native navigation controls retain baseline behavior.",
+        "Native Circle SIZE/select order, Transform proportional-size, node-link, translate_attach, active explicit View2D modals, custom View2D invocation/forwarding and Undo/selection/geometry controls must be exercised; record intentional policy tradeoffs rather than blanket parity claims."
+      ]
+    },
+    {
+      "boundary": "Only after separately authorized coherent implementation",
+      "controls": [
+        "Freeze coherent overlay/source inputs and run appropriate retained/full source/host/preflight checks; independent review including all13 existing GHOST controls; exact native build once, full IPA verification and actual changed constructor/bridge/consumer binary argument/branch proof.",
+        "Device matrix on exact resulting IPA with Pencil Pro and concurrent external input, subthreshold motion, links/titles, modified/advanced controls, cancel/terminal/window changes. No current audit substitutes for this acceptance."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "intern/ghost/GHOST_NavigationIOS.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/GHOST_NavigationIOS.hh",
+      "sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+      "lines": [
+        [
+          42,
+          49
+        ],
+        [
+          53,
+          59
+        ],
+        [
+          121,
+          155
+        ]
+      ],
+      "role": "Existing actual actor classification, admission and reset; no change needed."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/intern/GHOST_WindowIOS.mm",
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34",
+      "lines": [
+        [
+          66,
+          105
+        ],
+        [
+          175,
+          185
+        ],
+        [
+          422,
+          507
+        ],
+        [
+          516,
+          545
+        ],
+        [
+          943,
+          954
+        ],
+        [
+          1068,
+          1178
+        ],
+        [
+          1227,
+          1239
+        ],
+        [
+          1552,
+          1747
+        ],
+        [
+          1811,
+          1814
+        ],
+        [
+          2729,
+          2734
+        ]
+      ],
+      "role": "Current producer, ordinary precision branch and all six current iOS Trackpad call sites."
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/GHOST_Types.h",
+      "sha256": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff",
+      "lines": [
+        [
+          693,
+          721
+        ]
+      ],
+      "role": "Current shared Trackpad payload, no positive Pencil precision source field."
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/WM_types.hh",
+      "sha256": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67",
+      "lines": [
+        [
+          681,
+          726
+        ],
+        [
+          821,
+          833
+        ]
+      ],
+      "role": "Current event flags and existing enum flag storage; bit9 available."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b",
+      "lines": [
+        [
+          215,
+          259
+        ],
+        [
+          303,
+          350
+        ],
+        [
+          1001,
+          1006
+        ],
+        [
+          1692,
+          1701
+        ],
+        [
+          7033,
+          7073
+        ],
+        [
+          7095,
+          7110
+        ],
+        [
+          8558,
+          8634
+        ],
+        [
+          8652,
+          8666
+        ],
+        [
+          8748,
+          8757
+        ],
+        [
+          8910,
+          8946
+        ],
+        [
+          8994,
+          9031
+        ],
+        [
+          9036,
+          9097
+        ],
+        [
+          9182,
+          9225
+        ],
+        [
+          9539,
+          9553
+        ],
+        [
+          9875,
+          9880
+        ]
+      ],
+      "role": "Current ingestion, coalescing, public enqueue/simulation, event-state and housekeeping copies."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_window.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_window.cc",
+      "sha256": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+      "lines": [
+        [
+          972,
+          980
+        ],
+        [
+          1834,
+          1841
+        ],
+        [
+          2024,
+          2053
+        ],
+        [
+          2183,
+          2193
+        ]
+      ],
+      "role": "Zero-created state, activation/drop/timer synthetic events."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_files.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_files.cc",
+      "sha256": "0bfe3f41cf929696e1bd76f2429711d9bb55bdd638831f6c595d17908719e3f4",
+      "lines": [
+        [
+          409,
+          412
+        ]
+      ],
+      "role": "File replacement transfers existing state/history pointers; no positive producer."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm.cc",
+      "sha256": "cecfe0d153fede9837c8080014b964a16d8c2e53e4ca557009955b191829d82a",
+      "lines": [
+        [
+          169,
+          178
+        ]
+      ],
+      "role": "Window read initialization nulls event-state/history."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "sha256": "52af467ec2571e1108516c9d770a249b7bb6cd124f016bd20ee6b3ff2fb0a18f",
+      "lines": [
+        [
+          17,
+          51
+        ]
+      ],
+      "role": "Exact pinned shared constructor used by all reviewed backends; not an existing overlay target."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_SystemCocoa.mm",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_SystemCocoa.mm",
+      "sha256": "442c8f00b6c402ce1cc129557bfac83f898fb686922885b412d27c21389317e0",
+      "lines": [
+        [
+          1778,
+          1786
+        ],
+        [
+          1794,
+          1802
+        ],
+        [
+          1808,
+          1809
+        ],
+        [
+          1816,
+          1824
+        ]
+      ],
+      "role": "Four real Cocoa Trackpad constructors."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_SystemWayland.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_SystemWayland.cc",
+      "sha256": "0ccfa09a5fc9dde91ed85b0e951ee7ebc2e2e6eb87ddcdf6cc7873ed670885fc",
+      "lines": [
+        [
+          4138,
+          4151
+        ],
+        [
+          4442,
+          4450
+        ],
+        [
+          4453,
+          4461
+        ]
+      ],
+      "role": "Three real Wayland Trackpad constructors."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_SystemWin32.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_SystemWin32.cc",
+      "sha256": "51ad48881481154774b7d21fad565717ff71b3135a24c18079beea87227c7f46",
+      "lines": [
+        [
+          1620,
+          1628
+        ],
+        [
+          1630,
+          1638
+        ]
+      ],
+      "role": "Two real Win32 Trackpad constructors."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_Event.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_Event.hh",
+      "sha256": "f0b80ef56dc9c7d359276526fef4e0167c759bf85f8b76b889569b7e60642403",
+      "lines": [
+        [
+          24,
+          56
+        ],
+        [
+          59,
+          69
+        ]
+      ],
+      "role": "Payload stays embedded in event object; source label adds no pointer or allocation."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventManager.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_EventManager.cc",
+      "sha256": "7e30dde27bc20cb20fb7e7b59c861d3ae0b8e65dc64c898f3d4b18fc76e93736",
+      "lines": [
+        [
+          48,
+          86
+        ]
+      ],
+      "role": "Pointer queue FIFO dispatches the same event object/data; no Trackpad value serialization or source rewrite."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_System.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_System.cc",
+      "sha256": "0209ef7f2329e8a449ae0aba0c1f3eb2ba6ebb1daabcaeaba1d6aac86d6810f5",
+      "lines": [
+        [
+          182,
+          189
+        ]
+      ],
+      "role": "System forwards existing event to EventManager."
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_C-api.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/intern/ghost/intern/GHOST_C-api.cc",
+      "sha256": "1d48bb634afb347376eb70521d7ec24f7737bf7d6e7d3894b28d35db8e65f267",
+      "lines": [
+        [
+          537,
+          542
+        ]
+      ],
+      "role": "C API returns event payload; no C API Trackpad constructor/writer exists in audited GHOST tree."
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/sourcecache/source/blender/makesrna/intern/rna_wm_api.cc",
+      "sha256": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105",
+      "lines": [
+        [
+          712,
+          782
+        ],
+        [
+          844,
+          868
+        ]
+      ],
+      "role": "Python event_simulate copies state then explicitly zeroes flags; no source-input property."
+    },
+    {
+      "path": "source/blender/blenlib/BLI_utildefines.h",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.preflight-cache/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenlib/BLI_utildefines.h",
+      "sha256": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312",
+      "lines": [
+        [
+          554,
+          584
+        ]
+      ],
+      "role": "ENUM_OPERATORS complement clips to (2*declared_max-1), requiring maximum update."
+    }
+  ],
+  "exact_proposed_declarations_and_algorithms_report_only": {
+    "new_helpers": "None needed for transport. Existing producer, constructor, WM ingestion, public enqueue and merge methods retain their signatures apart from the final defaulted constructor parameter. A separately reviewed native consumer/helper is outside this transport report.",
+    "UserInputEvent_member": "bool physical_pencil_precision_pan = false;",
+    "GHOST_TEventTrackpadData_fields_in_order": "GHOST_TTrackpadEventSubTypes subtype; int32_t x; int32_t y; int32_t deltaX; int32_t deltaY; char isDirectionInverted; char is_physical_pencil_precision_pan; uint numFingers;",
+    "GHOST_EventTrackpad_constructor_signature": "GHOST_EventTrackpad(uint64_t msec, GHOST_IWindow *window, GHOST_TTrackpadEventSubTypes subtype, int32_t x, int32_t y, int32_t deltaX, int32_t deltaY, bool isDirectionInverted, uint numFingers = 1, bool physical_pencil_precision_pan = false)",
+    "GHOST_EventTrackpad_constructor_assignment": "trackpad_event_data_.is_physical_pencil_precision_pan = physical_pencil_precision_pan ? 1 : 0;",
+    "ordinary_handlePan_assignment_placement": "Inside the EXISTING if (!event_info.pencil_paint.valid() && !omit_knife_paired_pan && !CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) block immediately before its existing PAN_GESTURE add_event: event_info.physical_pencil_precision_pan = sender.state == UIGestureRecognizerStateChanged && [sender pencilContactDown];",
+    "PAN_generator_constructor_arguments": "Existing arguments remain exactly (time, window, GHOST_kTrackpadEventScroll, location.x, location.y, translation.x, translation.y, false, 1), followed ONLY in PAN_GESTURE by event_info.physical_pencil_precision_pan.",
+    "WM_enum_and_maximum": "WM_EVENT_IS_PENCIL_PRECISION_PAN = (1 << 9); ENUM_OPERATORS(eWM_EventFlag, WM_EVENT_IS_PENCIL_PRECISION_PAN);",
+    "WM_ghost_ingestion_assignment": "In the existing Trackpad branch after subtype mapping: if (pd->is_physical_pencil_precision_pan == 1 && pd->subtype == GHOST_kTrackpadEventScroll && pd->numFingers == 1) { event.flag |= WM_EVENT_IS_PENCIL_PRECISION_PAN; }",
+    "public_WM_event_add_signature_unchanged": "wmEvent *WM_event_add(wmWindow *win, const wmEvent *event_to_add)",
+    "public_WM_event_add_body_shape": "wmEvent *event = wm_event_add_intern(win, event_to_add); event->flag &= ~WM_EVENT_IS_PENCIL_PRECISION_PAN; return event;",
+    "public_clearing_effect": "Only the new classification bit clears in the queued COPY; caller event and every old bit/data field remain exact. The public wrapper is a synthetic/requeue boundary. Actual GHOST Trackpad branch9036-9097 calls private wm_event_add_trackpad8614, which calls private wm_event_add_intern8629 directly; it never calls public WM_event_add. Thus genuine internal transport keeps the label. WM_event_add_simulate does call public WM_event_add234, intentionally clearing copied/replayed source claims.",
+    "merge_signature_unchanged": "static wmEvent *wm_event_add_trackpad(wmWindow *win, const wmEvent *event, int deltax, int deltay)",
+    "merge_algorithm_in_order": [
+      "Initialize local bool all_physical_pencil_precision_pan = (event->flag & WM_EVENT_IS_PENCIL_PRECISION_PAN) != 0.",
+      "Keep the existing same-type/equal-TOUCH_PINCH merge condition unchanged.",
+      "Within that condition and BEFORE wm_event_free_last(win), AND all_physical_pencil_precision_pan with ((event_last->flag & WM_EVENT_IS_PENCIL_PRECISION_PAN) != 0). Keep both existing delta additions and free exactly as they are.",
+      "Keep wm_event_add_intern(win,event) and both existing prev_xy assignments unchanged.",
+      "After the copied result exists, if !all_physical_pencil_precision_pan then clear only WM_EVENT_IS_PENCIL_PRECISION_PAN in event_new->flag. A true result requires newest and all recursively merged contributors already true; never OR, last-writer promote, reconstruct or stop merging.",
+      "Multiple distinct physical Pencil contacts can still yield true when every contributor has the sourceclass; this intentionally proves no samecontact/serial/accepted-pair property."
+    ],
+    "existing_signatures_retained": [
+      "- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender",
+      "- (void)generateUserInputEvents:(const UserInputEvent &)event_info",
+      "- (BOOL)pencilContactDown",
+      "void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, const int type, const void *customdata, const uint64_t event_time_ms)",
+      "wmEvent *WM_event_add_simulate(wmWindow *win, const wmEvent *event_to_add)"
+    ],
+    "affected_production_files_transport_only": [
+      "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "intern/ghost/GHOST_Types.h",
+      "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "source/blender/windowmanager/WM_types.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc"
+    ],
+    "existing_Ghost_sources_not_changed": [
+      "GHOST_NavigationIOS.hh",
+      "Cocoa",
+      "Wayland",
+      "Win32",
+      "all pointer/button/tablet/ring event classes and other iOS producer branches"
+    ],
+    "pending_not_done": "No proposal text in this report has been applied to production, test, CI or build code. Exact source extraction/connected fixtures/retained suites/native build/compiled review/device controls are prospective gates only."
+  },
+  "source_review_checkpoints": {
+    "all_effective_constructor_count": 15,
+    "all_pinned_ghost_text_files": 163,
+    "all_authenticated_downloaded_files": 168,
+    "wm_event_add_intern_occurrences_in_current_file": [
+      215,
+      227,
+      7071,
+      8571,
+      8607,
+      8629,
+      9106,
+      9111,
+      9129,
+      9135,
+      9140,
+      9145,
+      9150,
+      9155,
+      9222,
+      9225,
+      9394,
+      9436,
+      9447,
+      9478,
+      9490,
+      9510,
+      9522,
+      9529
+    ],
+    "definition_included": true
+  }
+}

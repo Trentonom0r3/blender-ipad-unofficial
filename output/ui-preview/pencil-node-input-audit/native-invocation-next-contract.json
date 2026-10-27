@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "status": "CONDITIONALLY_VALID_NATIVE_INVOKE_BOUNDARY_NO_IMPLEMENTATION",
+  "repository": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial",
+  "production_source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+  "production_run": 40459756217,
+  "production_gate": "native-package-verification.json confirms package and bounded actual compiled reviews passed; no exact device acceptance",
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "current_materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+  "question": "Can exact matched regular stock-equivalent View2D dispatch carry a private scalar to refuse only physical ordinary Pencil PAN at native invocation after actual successful poll and before operator allocation?",
+  "conclusion": "Yes as a bounded explicit navigation policy, conditional on complete profile and transport contracts and a callback-free eligible corridor. Return OPERATOR_CANCELLED alone immediately inside successful WM_operator_poll branch before CTX manager/id snapshots and wm_operator_create. This is source-contract review only; no proposed guard exists in production and no native test execution is claimed.",
+  "exact_contract": [
+    "Only wm_handlers_do_keymap_with_keymap_handler can create private enum None/StockPan/StockCtrlZoom after actual native WM_keymap_poll and wm_eventmatch. No field/receipt is placed on wmEvent, window, context, keymap, operator, or handler.",
+    "Require actual current region handlers, static native default View2D handler, no handler flags/poll, dynamic getter, post callback/user_data, keymap_tool, and exact canonical full25-item default/effective raw profile as independently reviewed by dispatch-contract agent.",
+    "Pass scalar only as stack arguments along this regular call to wm_handler_operator_call then wm_operator_invoke. All explicit, delegated, gizmo, modal, macro, simulation and other call sites remain None by default. Do not derive eligibility from an operator name inside the general invoke function.",
+    "Before actual WM_operator_poll, require positive current physical ordinary Pencil PAN metadata and exact type/value/modifier/keymodifier/domain for scalar kind. Reject active CTX_py_dict_get(C), then use native Node WINDOW context. No stored raw pointer is a new lifetime guarantee.",
+    "Require actual resolved native operator identity in view2d_ops.cc with a narrow pure same-TU helper. Compare native poll/exec/invoke/modal/cancel callbacks, expected blocking/grab flags, absent pyop_poll/RNA extension and empty macro list. Exact registry lookup/name alone is insufficient for broad native replacement claims.",
+    "Let actual WM_operator_poll execute once in its original position; preserve poll_only and failed-poll behavior. After success recheck helper, no Python override, fresh Node WINDOW/type/modifier/provenance. No raw keymap/item/context pointer carried as new evidence through callbacks.",
+    "On admitted success return OPERATOR_CANCELLED alone before wm_operator_create and before any op-id snapshots/lifecycle setup. Do not call WM_operator_free, native cancel, exit, report handling, last-properties, finished, undo, modal or UI-cancel functions for an uncreated operator.",
+    "The scalar is a denial policy only. It is not proof of native LEFT DOWN delivery, node owner acquisition, socket hit, operation intent, paint ownership or a durable suppression lease. Keep ordinary packet order, counts and delta/coalescence rules unchanged."
+  ],
+  "source_findings": [
+    {
+      "source": "current wm_event_system.cc:1643-1665",
+      "finding": "poll_only returns WM_operator_poll directly; ordinary retval starts OPERATOR_PASS_THROUGH; successful poll branch reaches wm_operator_create1665. A return directly after successful poll precedes wmOperator/PointerRNA/property/report allocations and all invoke setup."
+    },
+    {
+      "source": "current wm_event_system.cc:1513-1599;1665-1796",
+      "finding": "wm_operator_create allocates operator, ptr/properties/reports and recursive macro operators. Early denial bypasses all; no customdata exists and no native cancel/exit/free callback may be used. It also bypasses last-property init/store, logging the created operator, report refresh, undo-depth updates, invoke/exec and lifecycle handling."
+    },
+    {
+      "source": "current wm_event_system.cc:3761-3775",
+      "finding": "CANCELLED without PASS_THROUGH maps to WM_HANDLER_BREAK. CANCELLED|PASS_THROUGH would map CONTINUE and allow fallback; FINISHED would enter unrelated finish lifecycle if returned by a created op. Proposed early direct CANCELLED needs no operator lifecycle cleanup."
+    },
+    {
+      "source": "current wm_event_system.cc:5474-5525;5925-5946",
+      "finding": "Actual regular chosen item is dispatched after keymap poll and event match. BREAK stops subsequent keymap items/maps; post callback would still run and tooltip clears for non-timer. Eligible contract rejects post callbacks. Existing tooltip clearing remains same break bookkeeping as normal successful pan."
+    },
+    {
+      "source": "current wm_event_system.cc:877-880;6032-6038;6074-6240",
+      "finding": "Only timer and WINDEACTIVATE are always-pass; MOUSEPAN BREAK is not cleared. PAN is neither mouse motion nor keyboard/button; refusal does not synthesize/cancel drag. Gesture branch only potentially clears click when previous type is a modifier, same handled-PAN effect as baseline FINISHED."
+    },
+    {
+      "source": "current wm_event_system.cc:1132-1151;1815-1818",
+      "finding": "WM_operator_poll itself does not clear poll messages: it polls macros, then pyop_poll or poll. CTX_wm_operator_poll_msg_clear is in explicit/delegated wm_operator_call_internal, a None route, not regular matched handler->invoke. Canonical macro-empty/pyop-null native poll avoids arbitrary operator callback chains."
+    },
+    {
+      "source": "pinned context.cc:287-319;791-809;846-859; bpy_interface.cc:774-848",
+      "finding": "Native region/area getters consult Python override dictionary. BPY_context_member_get may PySequence_Fast a value, permitting user code. Excluding CTX_py_dict_get before new policy context reads and actual poll creates a testable callback-free eligible corridor; it does not repair pre-existing native context lifetime behavior."
+    },
+    {
+      "source": "current view2d_ops.cc:117-135;137-165;232-291;724-766;1162-1200",
+      "finding": "Canonical pan poll reads region and lock offsets. Zoom poll reads region/area and lock zoom. Native invokes allocate/init after poll; pan init sets V2D_IS_NAVIGATING and invoke immediately applies MOUSEPAN. Preallocation refusal prevents those View2D effects, redraw/sync/mousemove/timer/cursor/modal installation."
+    },
+    {
+      "source": "current view2d_ops.cc:372-395;1413-1444; pinned wm_operator_type.cc:106-134; rna_wm.cc:1810-1831",
+      "finding": "Native pan/zoom definitions assign exact callbacks/flags. Native append calloc leaves RNA extension null. Ordinary Python register cannot replace these registered native names because it can only unregister an existing nonnull rna_ext.srna. This excludes supported Python name spoof but not every native C++ registry mutation; same-TU identity helper keeps proof local."
+    },
+    {
+      "source": "current wm_event_system.cc:3475-3510;3673-3727;6897-6932; view2d_ops.cc:293-361;1277-1410",
+      "finding": "Already-live modal branch is separate from regular new invocation and gets scalar None. Higher-priority native modal handlers retain direct PAN first. Existing pan/zoom modal callbacks, Circle SIZE and transform proportional PAN do not need or receive the scalar."
+    },
+    {
+      "source": "current wm_event_system.cc:8913-8915;9036-9096;6761-6779;6514-6572",
+      "finding": "Queue ingestion/eventstate.xy, delta prev_xy, consecutive-gesture bookkeeping, hovered region routing and mval occur before the proposed boundary. They remain baseline effects; no global shared pointer or node admission fix is established."
+    }
+  ],
+  "preserved_domains_conditional": [
+    "Circle selection radius/selection order and transform proportional-size handling remain native because PAN packet/order/delta and their live modal branch are unchanged.",
+    "Already-live node link/translate_attach ownership remains native; no new owner or press/release is synthesized.",
+    "Already-live explicit native pan/zoom remain modal; explicit/delegated fresh invokes have scalar None even when passed the same physical wmEvent.",
+    "Any changed custom View2D item, property, poll/profile, alternate keyconfig, dynamic/tool/gizmo handler, post callback or different operator route falls back to unchanged native execution.",
+    "Hardware/finger PAN and mixed/unknown provenance retain native behavior only if transport is default-clear, non-inheriting and conservatively clears mixed contributors in both merge orders.",
+    "Node UI/sidebar/headers, other editors, step zoom, MOUSEZOOM pinch, NDOF, eventless exec, locked interface/region, and callbacks are outside eligibility and follow baseline."
+  ],
+  "concrete_limits": [
+    "Canonical stock Pencil PAN navigation is deliberately denied within this exact Node WINDOW domain, including intentional use of that stock physical route. Exact matching cannot infer subjective edit intent; do not promise all desired native navigation.",
+    "Mixed-source conservative clear intentionally leaves some Pencil-containing packets able to navigate. No false all-source guarantee.",
+    "CTX getters can execute override code; no blanket callback-free assertion is valid without the explicit no-Python-override eligibility check.",
+    "Native registration guard protects ordinary Python replacement, not arbitrary native pointer mutation or lifetime corruption. Retain existing supported native main-thread/registry/context assumptions; do not add broad lifetime machinery.",
+    "Earlier queue/shared-pointer/click/gesture/region state remains baseline. No prevention of all node failures or device comfort follows from this source review."
+  ],
+  "required_connected_source_tests": [
+    "Extract or otherwise execute the actual post-implementation regular matched function->handler->invoke bodies with actual View2D profile helper. Positive Pan and CtrlZoom must call native poll once, return exact CANCELLED, produce handler BREAK, invoke zero lower items/handlers, and allocate/create/free zero operators/properties/reports/customdata.",
+    "Instrument native invoke/exec/cancel/modal, last-properties init/store, finished/reports/undo depth, View2D init/apply/nav flags, redraw/sync/addmousemove, modal cursor/timer and handler additions: eligible refusal must leave all zero/unchanged; tooltip clearing should retain normal native BREAK behavior.",
+    "Poll false must return original PASS_THROUGH/CONTINUE, skip denial and create, and allow following matching item/handler exactly as baseline. poll_only must return original bool status and never take denial. Locked interface/locked region must retain their earlier native short-circuits.",
+    "Reject callback mutations before eligibility: changed native poll/invoke/exec/modal/cancel/flags, pyop_poll, RNA extension and macro; execute their unchanged baseline when scalar None. A Python override containing callback-capable sequence must be rejected before policy context/poll reads; retain original native route assumptions.",
+    "Explicit WM_operator_name_call with same positive wmEvent, delegated call from another native handler, gizmo/tool/dynamic/custom/post callbacks and eventless exec must all get None; no scalar survives forwarding, reentrant call, copied event, context override or macro.",
+    "After multiple below-threshold PAN/cursor pairs prove v2d.cur unchanged under positive policy while native click/drag state and later node socket/title acquisition are unchanged except intended unshifted coordinate basis; separate already-live node modal controls.",
+    "Execute actual native Circle SIZE positive/negative annulus selection through final immediate release and proportional transform radius/output controls, plus already-live explicit pan/zoom, hardware/finger/mixed-source, Node UI fields/gizmos and alternate/custom profile controls. Compare state/selection IDs, not packet counts alone.",
+    "Keep transport all-positive/mixed-order/copy-clear/housekeeping controls independent but connected. Then compile iOS and inspect actual new scalar/guard/call arguments plus exact unchanged existing input/render gates; real device checks remain separate."
+  ],
+  "new_native_execution": false,
+  "production_edits": false,
+  "test_edits": false,
+  "ci_edits": false,
+  "native_build_started": false,
+  "device_acceptance": false,
+  "utc": "2026-10-27T11:23:07.7949586Z",
+  "source_hashes": [
+    {
+      "path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    {
+      "path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/WM_types.hh",
+      "sha256": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67"
+    },
+    {
+      "path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "sha256": "4810c0fddc3dd5327ae4327aeba9256fb66d85976c7a322738172cf62234b40f"
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc",
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/python/intern/bpy_interface.cc",
+      "sha256": "8dbd1b901ec4de8b0624f2b16b6a7295f1f2fff015520e328a3dc20ad1bb288b"
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm.cc",
+      "sha256": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6"
+    },
+    {
+      "path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_operator_type.cc",
+      "sha256": "cc227a37bcfe40c958f6cdc352966726d67b8c5343199a9c2de7b4e2c52f6707"
+    }
+  ]
+}

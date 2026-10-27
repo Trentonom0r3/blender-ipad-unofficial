@@ -1,3 +1,30 @@
+## Node navigation correction: connected plan, no implementation yet — 2026-10-27 UTC
+
+The exact corrected Knife build 40459756217 at 3438226 is fully verified for an
+exact iPad check. All three independent actual compiled reviews now pass; the raw
+HUD checker negative is retained and freshly resolved by the local stack/CFG proof.
+No exact device acceptance exists. No unchanged rebuild or live verifier is needed.
+Evidence-only b0c9857 records the completed package gate.
+
+Read output/ui-preview/pencil-node-input-audit/node-connected-implementation-plan.json
+and its three hashed contracts. No Node production/test/CI edits or native test
+execution exist. The next coherent increment carries positive ordinary physical
+Pencil PAN classification to only the actually chosen stock-value View2D route in
+a Node WINDOW, then refuses before operator allocation after real native polling.
+It preserves packets, order, coalescing and native modal controls. Mixed streams
+fall back; value-identical custom history is explicitly inside the stock-value
+policy. No accepted DOWN, owner, lease or general lifetime proof follows.
+
+First prove actual native registration/copy raw fields for the canonical 25-item
+map. Then connect producer, default-false constructor, WM AND coalescing/replay
+clearing, private scalar dispatch, no-Python-context/native callback profile and
+preallocation refusal as one increment. Run connected actual-source O0/O2 and
+historical controls, affected/full checks, preflight and independent final review
+before one exact build and full package/compiled verification. The detailed plan
+records all limitations and test obligations. Existing user authorization applies;
+there is no pending approval. Keep the full goal unfinished and work without
+waiting for device feedback. Preserve all accepted UI/input/history and evidence.
+
 ## Exact corrected Knife PAN IPA verified for device check — 2026-10-27 UTC
 
 Production3438226bb2dbb90adf22917d12860cb5471719f0/run40459756217 PASSED hosted

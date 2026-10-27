@@ -1,0 +1,1269 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-27T11:23:20.581134+00:00",
+  "status": "STRUCTURALLY_VIABLE_STOCK_VALUE_DISPATCH_CONTRACT_ONLY_REQUIRED_NATIVE_CHECKS_PENDING",
+  "question": "Can a denial-only policy distinguish the actually chosen canonical stock-value native View2D PAN/Ctrl-PAN invocation after native keymap poll/event match/operator poll, while leaving different custom and explicit/delegated invocations on their native path?",
+  "answer": "Yes at a bounded private call-chain extension: derive only a scalar stock profile at the actual matched ordinary static keymap call; validate builtin callback identity before the existing native poll; after that exact poll succeeds, return OPERATOR_CANCELLED before allocation. This is a source-backed design contract, not implemented, compiled, tested native or device behavior. Positive physical-Pencil metadata does not currently exist. A canonical-value policy deliberately includes value-identical customization history; it cannot prove historical human intent.",
+  "repository": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial",
+  "repository_head": "b0c985787f194ed90f7f898d619c781924bee168",
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "current_materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+  "canonical_overlay_patch": {
+    "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/patches/blender-ipad.patch",
+    "bytes": 5872861,
+    "sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1"
+  },
+  "production_baseline": {
+    "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "run_id": 40459756217,
+    "gate_status": "CLOSED_PASS_NATIVE_PACKAGE_AND_THREE_BOUNDED_ACTUAL_COMPILED_REVIEWS",
+    "gate_report": {
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-knife/gizmo-prepare-audit/native-package-verification.json",
+      "bytes": 3453,
+      "sha256": "c4434043fbaf2473b8b961bee4cee84d9b2c689a9d9fe3906b597b948ce69055"
+    },
+    "device_acceptance": false,
+    "full_personal_goal_complete": false,
+    "unchanged_rebuild_needed": false
+  },
+  "policy_domain": [
+    "Only a future positively classified ordinary physical-Pencil precision Changed MOUSEPAN with all coalesced contributors positive. No tablet-state, hover, numFingers-alone, negative-Finger inference, paint receipt or initial-tool prediction.",
+    "Actual current native Node Editor SPACE_NODE / RGN_TYPE_WINDOW ordinary region handler list; no Python context override; original mutable caller event and native priority/order/count/deltas retained.",
+    "Only actual selected stock-equivalent ordinary pan (event modifier 0) or Ctrl-PAN zoom (event modifier KM_CTRL); event type MOUSEPAN, value KM_NOTHING, raw keymodifier EVENT_NONE; different modifiers and all other event types fall back.",
+    "Actual registered static native View2D default handler and effective stock-equivalent 25-item map. Different item/map/handler/property/callback profiles, dynamic and tool/gizmo paths, explicit calls and macro delegation receive private policy None.",
+    "Denial prevents only default native View2D invocation mutation. It does not grant or predict a node edit owner, synthesize DOWN/CURSOR/UP, change click-drag state, restore earlier coordinates or undo ingestion/bookkeeping."
+  ],
+  "exact_extension": {
+    "private_scalar": "Conceptual enum with exactly None, StockPan, StockCtrlZoom; default None at every existing call site other than the one actual accepted matched regular-keymap dispatch. No pointer, event flag, global, context store, thread local or forwarded receipt carries this profile.",
+    "classifier_inputs": [
+      "const bContext *C",
+      "const wmEvent *event (actual mutable caller event viewed read-only)",
+      "const ListBase *handlers",
+      "const wmEventHandler_Keymap *handler",
+      "const wmKeyMap *actually_matched_keymap",
+      "const wmKeyMapItem *actually_matched_item"
+    ],
+    "classifier_timing": "Inside wm_handlers_do_keymap_with_keymap_handler, only after WM_keymap_poll(C,keymap) has returned true and wm_eventmatch(event,kmi) has returned true (current5493-5502). It inspects the actual present registered values, not an earlier prediction. It must not call WM_keymap_poll, WM_operator_poll, RNA equality/property getters, keyconfig update, context providers, dynamic getters or post callbacks.",
+    "classifier_no_pointer_escape": "Traverse current native lists and compare membership before dereferencing the supplied addresses. Return only the scalar. Do not retain handler/map/item/property/context/window pointers for the later operator-poll boundary. Native list/object validity assumptions remain the same as the actual dispatcher.",
+    "private_flow": "Add the scalar only to private wm_handler_operator_call (current3475+) and private wm_operator_invoke (1643+). The actual selected path passes it at5501 and3727. Existing modal, gizmo, dropbox, public operator-call and poll-only calls pass/default None. No public WM_operator_name_call API accepts the scalar.",
+    "pre_poll_operator_validation": "In wm_operator_invoke, before the existing actual WM_operator_poll, discard eligibility unless a pure native View2D profile inspection verifies exact native callback function pointers and flags, no macro children, no Python poll and no RNA extension. Because view_pan_* and view_zoom* are static to view2d_ops.cc, a future pure direct query in that translation unit may compare these addresses. It is an ordinary non-callback inspection function, does not call any callbacks or retain its input. Name plus rna_ext alone is weaker and is not the preferred profile proof.",
+    "actual_poll": "Keep the existing WM_operator_poll(C,ot) call and its false path exactly. Accepted profile has empty ot->macro and pyop_poll nullptr, so only validated builtin view_pan_poll/view_zoom_poll runs. With CTX_py_dict_get(C)==nullptr these polls use native WM context getters and raw View2D locks; they do not invoke arbitrary Python/keymap/property callbacks.",
+    "post_poll_refusal": "Immediately inside successful WM_operator_poll at current1659, before undo/register ID reads1661-1662 and wm_operator_create1665, re-read actual event type/value/modifiers/keymodifier/positive physical metadata and fresh native current context. Require the same scalar kind and exact native operator profile. Return OPERATOR_CANCELLED with no PASS_THROUGH only if all current conditions still hold. Do not re-read old KMI/map/context pointers. If any condition fails, continue baseline invocation.",
+    "no_allocation_result": "Returning before wm_operator_create means no operator allocation, customdata, report list, invoke event copy, last-properties initialization/storage, undo/register manipulation, cursor/timer/modal installation or View2D init/apply/exit/cancel. Do not call cancellation/cleanup for an operator which was never created. wm_handler_operator_call maps this status to WM_HANDLER_BREAK at3761-3775, preventing later fallback dispatch. Existing handler-break tooltip/event bookkeeping remains native.",
+    "original_event": "Continue passing the original wmEvent * into wm_handler_operator_call. Do not blindly local-copy the caller event to attach a profile: baseline modal/handler paths intentionally mutate that original event. The existing const event_temp copy inside wm_operator_invoke1692-1701 remains at its original point for ordinary non-denied invokes.",
+    "reentrancy": "A custom/delegated callback can forward a physical event but cannot forward this private scalar. Eligibility is never written to event/global/context state and expires with this one call. Only the verified builtin no-callback poll lies between scalar validation and denial.",
+    "python_override_order": "Mandatory short-circuit ordering: inspect CTX_py_dict_get(C) before any CTX_wm_area/region/window getter in the classifier and before entering the eligible actual operator-poll corridor. Non-null means policy None. Recheck raw CTX_py_dict_get immediately after actual native poll, before fresh context getters and denial. The existing ordinary poll/dispatch path still runs for excluded override contexts; do not clear the dict or call a provider.",
+    "native_profile_query_inputs": [
+      "const wmOperatorType *ot (current registered type, inspected synchronously only)",
+      "scalar kind None/StockPan/StockCtrlZoom; no context, KMI, keymap, event or cached owner pointer required by this query"
+    ],
+    "active_preset_inspection": "WM_keyconfig_active is static to wm_keymap.cc. A future raw membership/profile inspection may live in that translation unit and use its existing lookup, or reproduce its non-callback current keyconfigs/U.keyconfigstr lookup. Do not call the setter/update. This is profile inspection, not a new epoch or generation protocol."
+  },
+  "canonical_membership_and_values": {
+    "handler": [
+      "handlers equals the current region->runtime->handlers list and handler is a current member",
+      "handler->head.type WM_HANDLER_TYPE_KEYMAP; native flags zero; head.poll nullptr",
+      "handler->keymap is exact current registered defaultconf View2D pointer, not merely same name",
+      "dynamic.keymap_fn and dynamic.user_data nullptr; post.post_fn and post.user_data nullptr; keymap_tool nullptr"
+    ],
+    "configuration": [
+      "Current wm/defaultconf/userconf pointers are live native runtime configuration entries; active preset is defaultconf (conservative restriction). Do not manufacture or update any config.",
+      "Default map is a current member of defaultconf->keymaps with exact View2D / SPACE_EMPTY / RGN_TYPE_WINDOW, empty owner_id, null poll/poll_modal_item/modal_items and nonmodal/nontool/nondiff/nonuser stock shape.",
+      "Actually matched map equals the current registered userconf View2D effective map and is a live member, KEYMAP_USER set, no KEYMAP_UPDATE or KEYMAP_USER_MODIFIED, no modal/tool/diff/unknown behavioral flags. If no effective user map, fall back even if baseline would use default directly.",
+      "Both current default and effective maps have exactly the canonical ordered25 items below, no extras, no differing fields or assigned properties. Presentation-only EXPANDED/CHILDREN_EXPANDED flags may be ignored.",
+      "Default KEYMAP_UPDATE and default-item KMI_UPDATE are deliberately ignored: these flags persist from normal setup and are not pending-update authority. Effective map/items must be UPDATE-clear; USER_MODIFIED is an additional conservative veto, not origin proof. No global pending-update getter/update or whole-map-generation machinery is required for this actual-value policy."
+    ],
+    "item_ids": [
+      "Actually matched KMI is a live member of actually matched map and is precisely canonical position5 or17. Find corresponding live default item by readonly id and require it is the same canonical position.",
+      "Every ID in each25-item map is positive and unique; pairwise ordered default/effective IDs agree. Reject absent/duplicate/negative/ambiguous IDs and malformed counters. Do not hardcode IDs5 or17: those are canonical positions, not stable id numbers.",
+      "IDs are readonly through RNA, but only distinguish correspondence inside this registered configuration. WM_keymap_clear does not reset kmi_id; Python reload/reconstruction and ID overflow defeat historical provenance. Conservative fallback on nonpositive or ambiguous IDs."
+    ],
+    "raw_item_fields": [
+      "Compare bounded null-terminated idname to canonical native name; type, val, direction, five modifier scalars, keymodifier, propvalue and raw maptype to canonical values below.",
+      "Raw maptype is zero in this native calloc-based registration; RNA map_type getter instead derives type from event code. Do not conflate raw storage with derived RNA map category.",
+      "KMI_INACTIVE and KMI_USER_MODIFIED absent; effective KMI_UPDATE absent. Compare KMI_REPEAT_IGNORE to canonical repeat setting (all except positions15/16 ignore repeat); permit presentation-only KMI_EXPANDED and reject unknown bits.",
+      "propvalue_str is empty for nonmodal stock entries. No dereference of external/string/RNA dynamic callbacks."
+    ],
+    "raw_properties": [
+      "All canonical generator entries have None properties. Native WM_operator_properties_alloc creates an empty IDP_GROUP; sanitize changes schema flags without assigning the pan/zoom property values.",
+      "For both maps inspect existing raw IDProperty headers/lists: group type, zero len, null child first/last; no assigned properties. Require existing ptr/data coherence (ptr->data == kmi->properties), owner_id nullptr and ptr->type == freshly registered native operator srna. Do not allocate/reset/sanitize/read via RNA.",
+      "Reject explicit default-valued deltax/deltay/use_cursor_init or any other assigned property: structural emptiness is stronger than effective RNA value equality. Any additional header/ancestor/UI-data restrictions must first be confirmed against an actual native baseline; do not invent defaults to force a match.",
+      "Do not use WM_keymap_item_compare (conflict relation) or wm_keymap_item_equals_result/RNA_struct_equals (may traverse RNA). Literal raw bounded comparison is required."
+    ],
+    "matched_event_profiles": {
+      "StockPan": {
+        "canonical_position": 5,
+        "native_operator": "VIEW2D_OT_pan",
+        "type": "MOUSEPAN (0x000e)",
+        "val": "KM_NOTHING (0)",
+        "modifier": "0",
+        "keymodifier": "EVENT_NONE"
+      },
+      "StockCtrlZoom": {
+        "canonical_position": 17,
+        "native_operator": "VIEW2D_OT_zoom",
+        "type": "MOUSEPAN (0x000e)",
+        "val": "KM_NOTHING (0)",
+        "modifier": "KM_CTRL only",
+        "keymodifier": "EVENT_NONE"
+      }
+    },
+    "inventory_count": 25,
+    "inventory": [
+      {
+        "position_1_based": 1,
+        "generated_entry": [
+          "view2d.scroller_activate",
+          {
+            "type": "LEFTMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroller_activate",
+          "type": "LEFTMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 2,
+        "generated_entry": [
+          "view2d.scroller_activate",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroller_activate",
+          "type": "MIDDLEMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 3,
+        "generated_entry": [
+          "view2d.pan",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_pan",
+          "type": "MIDDLEMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 4,
+        "generated_entry": [
+          "view2d.pan",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_pan",
+          "type": "MIDDLEMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_MOD_HELD",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 5,
+        "generated_entry": [
+          "view2d.pan",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_pan",
+          "type": "MOUSEPAN",
+          "val": "KM_ANY",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 6,
+        "generated_entry": [
+          "view2d.scroll_right",
+          {
+            "type": "WHEELDOWNMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_right",
+          "type": "WHEELDOWNMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_MOD_HELD",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 7,
+        "generated_entry": [
+          "view2d.scroll_right",
+          {
+            "type": "WHEELRIGHTMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_right",
+          "type": "WHEELRIGHTMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 8,
+        "generated_entry": [
+          "view2d.scroll_left",
+          {
+            "type": "WHEELUPMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_left",
+          "type": "WHEELUPMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_MOD_HELD",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 9,
+        "generated_entry": [
+          "view2d.scroll_left",
+          {
+            "type": "WHEELLEFTMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_left",
+          "type": "WHEELLEFTMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 10,
+        "generated_entry": [
+          "view2d.scroll_down",
+          {
+            "type": "WHEELDOWNMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_down",
+          "type": "WHEELDOWNMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_MOD_HELD",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 11,
+        "generated_entry": [
+          "view2d.scroll_up",
+          {
+            "type": "WHEELUPMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_up",
+          "type": "WHEELUPMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_MOD_HELD",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 12,
+        "generated_entry": [
+          "view2d.ndof",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_ndof",
+          "type": "NDOF_MOTION",
+          "val": "KM_ANY",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 13,
+        "generated_entry": [
+          "view2d.zoom_out",
+          {
+            "type": "WHEELOUTMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom_out",
+          "type": "WHEELOUTMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 14,
+        "generated_entry": [
+          "view2d.zoom_in",
+          {
+            "type": "WHEELINMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom_in",
+          "type": "WHEELINMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 15,
+        "generated_entry": [
+          "view2d.zoom_out",
+          {
+            "type": "NUMPAD_MINUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom_out",
+          "type": "NUMPAD_MINUS",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "0",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 16,
+        "generated_entry": [
+          "view2d.zoom_in",
+          {
+            "type": "NUMPAD_PLUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom_in",
+          "type": "NUMPAD_PLUS",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "0",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 17,
+        "generated_entry": [
+          "view2d.zoom",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY",
+            "ctrl": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom",
+          "type": "MOUSEPAN",
+          "val": "KM_ANY",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_MOD_HELD",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 18,
+        "generated_entry": [
+          "view2d.smoothview",
+          {
+            "type": "TIMER1",
+            "value": "ANY",
+            "any": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_smoothview",
+          "type": "TIMER1",
+          "val": "KM_ANY",
+          "direction": "KM_ANY",
+          "shift": "KM_ANY",
+          "ctrl": "KM_ANY",
+          "alt": "KM_ANY",
+          "oskey": "KM_ANY",
+          "hyper": "KM_ANY",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 19,
+        "generated_entry": [
+          "view2d.scroll_down",
+          {
+            "type": "WHEELDOWNMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_down",
+          "type": "WHEELDOWNMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 20,
+        "generated_entry": [
+          "view2d.scroll_up",
+          {
+            "type": "WHEELUPMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_up",
+          "type": "WHEELUPMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 21,
+        "generated_entry": [
+          "view2d.scroll_right",
+          {
+            "type": "WHEELDOWNMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_right",
+          "type": "WHEELDOWNMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 22,
+        "generated_entry": [
+          "view2d.scroll_left",
+          {
+            "type": "WHEELUPMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_scroll_left",
+          "type": "WHEELUPMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 23,
+        "generated_entry": [
+          "view2d.zoom",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom",
+          "type": "MIDDLEMOUSE",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_MOD_HELD",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 24,
+        "generated_entry": [
+          "view2d.zoom",
+          {
+            "type": "TRACKPADZOOM",
+            "value": "ANY"
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom",
+          "type": "MOUSEZOOM",
+          "val": "KM_ANY",
+          "direction": "KM_ANY",
+          "shift": "KM_NOTHING",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      },
+      {
+        "position_1_based": 25,
+        "generated_entry": [
+          "view2d.zoom_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        "required_runtime_values": {
+          "idname": "VIEW2D_OT_zoom_border",
+          "type": "B",
+          "val": "KM_PRESS",
+          "direction": "KM_ANY",
+          "shift": "KM_MOD_HELD",
+          "ctrl": "KM_NOTHING",
+          "alt": "KM_NOTHING",
+          "oskey": "KM_NOTHING",
+          "hyper": "KM_NOTHING",
+          "keymodifier": "EVENT_NONE",
+          "raw_maptype": 0,
+          "propvalue": 0,
+          "behavior_flag": "KMI_REPEAT_IGNORE",
+          "properties": "native allocated raw-empty IDP_GROUP / no assigned properties"
+        }
+      }
+    ]
+  },
+  "native_operator_profile": {
+    "pan": {
+      "idname": "VIEW2D_OT_pan",
+      "exec": "view_pan_exec",
+      "invoke": "view_pan_invoke",
+      "modal": "view_pan_modal",
+      "cancel": "view_pan_cancel",
+      "poll": "view_pan_poll",
+      "flags": "OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY"
+    },
+    "zoom": {
+      "idname": "VIEW2D_OT_zoom",
+      "exec": "view_zoomdrag_exec",
+      "invoke": "view_zoomdrag_invoke",
+      "modal": "view_zoomdrag_modal",
+      "cancel": "view_zoomdrag_cancel",
+      "poll": "view_zoom_poll",
+      "flags": "OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY"
+    },
+    "common": "Fresh registered lookup agrees with ot; macro list empty; pyop_poll null; RNA extension srna/call/free absent. Exact callback address comparison is a pure value check, not callback execution.",
+    "replacement_guards": "Pinned rna_Operator_register1809-1829 refuses replacing a registered builtin because its rna_ext.srna is absent; Macro register has equivalent guard. bpy_rna.cc10339-10345 refuses direct builtin unregister unless STRUCT_RUNTIME. Native registry add_new enforces unique name. These are ordinary supported RNA/registry boundaries, not defense against arbitrary native memory mutation, ctypes corruption or a separately modified Blender binary.",
+    "macro_boundary": "WM_operator_poll recurses macro children before parent poll. A macro must never carry a non-None profile. Ordinary macro child invocations call their native callbacks directly and remain unchanged; there is no global/source-tag-only refusal in View2D callbacks.",
+    "context_boundary": "CTX_wm_area/region/window read Python override dict when present; accepted profile requires CTX_py_dict_get null before context getters. Fresh native region/area/window membership and current Node WINDOW must be checked after actual native poll. Do not add a CTX provider or retain old context pointers."
+  },
+  "counterexamples_and_honest_limits": [
+    {
+      "case": "Name or KMI_USER_MODIFIED alone",
+      "finding": "A defaultconf RNA addition receives a positive id, has no user-modified flag, and is copied into effective userconf. A mutable default counterpart alone therefore accepts a customized different map. Strict literal25 inventory and actual live membership reject that difference."
+    },
+    {
+      "case": "Different custom current profile",
+      "finding": "A custom modifier/operator/property/order/addon/tool/dynamic/post/poll/inventory change is outside the strict profile and retains baseline behavior. An unrelated stock route in a customized View2D inventory is deliberately not covered."
+    },
+    {
+      "case": "Value-identical custom history",
+      "finding": "Setting then restoring values, reimporting an identical stock map, or deliberately reconstructing a stock-equivalent registration may end in the same inspected values. No readonly ID/flag/default counterpart proves historical birth or intent. Such a state is explicitly inside this stock-equivalent navigation policy; the contract does not claim preservation of every possible human intention."
+    },
+    {
+      "case": "Default update bits",
+      "finding": "Rejecting default KEYMAP_UPDATE/KMI_UPDATE would reject normal stock setup. wm_keymap.cc2166-2173 explicitly documents only userconf update flags are cleared."
+    },
+    {
+      "case": "Pending preferences not yet materialized",
+      "finding": "This policy observes the actual dispatch maps now. It does not predict what a future update will install or infer an owner from pending preferences. Effective dirty values veto eligibility. No global keymap generation/extra callback is necessary."
+    },
+    {
+      "case": "Custom callback destroys or mutates native dispatcher structures",
+      "finding": "Existing dispatch itself dereferences keymap/kmi around callbacks and debug logging. The contract assumes the valid native structures required by baseline WM dispatch; it adds no stronger general arbitrary-callback lifetime safety claim. Custom handler/map/operator callbacks are not admitted to the denial path."
+    },
+    {
+      "case": "Mixed-source events",
+      "finding": "Keep baseline coalescing and delta accumulation. Positive provenance must conservatively clear on mixed/unknown contributors; mixed packets may still navigate. Physical source is denial eligibility only, never accepted DOWN or modal ownership."
+    },
+    {
+      "case": "Already handled native PAN",
+      "finding": "Circle SIZE, proportional-transform PAN, node link/translate modal and explicit live pan/zoom keep existing packet/order/native modal routing. Denial reaches only the ordinary matched default invocation after higher handlers passed."
+    },
+    {
+      "case": "A native custom poll resets its own callback pointer",
+      "finding": "A post-poll null pointer alone cannot prove a native callback did not run and restore a stock-looking state. KeyMap.poll/handler poll/dynamic/post fields are not writable through the shown supported RNA API, and the intended baseline is this fixed native binary with supported RNA keymap edits. Arbitrary separately supplied native handlers, self-mutating native callbacks, raw memory modification or native reentrant registry surgery are not proved safe by this contract. If such native callback histories are included in future scope, capture a callback-free-corridor scalar before the existing handler/keymap poll and require it at the actual matched classification, without retaining old pointers; no denial should occur after a tainted callback. Do not silently expand this baseline assumption."
+    }
+  ],
+  "required_connected_native_checks_before_any_implementation_acceptance": [
+    "Agree one coherent implementation/test plan covering transport, conservative coalescing, this actual selected-dispatch profile, native refusal and preserved controls before production changes; no source/test/CI edit is supplied here.",
+    "Execute extracted actual patched regular-keymap dispatcher -> actual wm_handler_operator_call -> actual wm_operator_invoke -> actual WM_operator_poll at O0 and O2, with real native matcher/profile logic and controlled dependency seams. A marker/helper-only fixture is insufficient. Freeze/hash the exact current materialization and driver.",
+    "Positive ordinary stock Pan and CtrlZoom: physical provenance positive, strict current registered25 signature, actual keymap poll/match/native operator poll success; OPERATOR_CANCELLED, WM_HANDLER_BREAK, zero operator allocations/invoke calls/init/apply/last-properties/report/undo/modal/timer/cursor changes and no later fallback duplicate. Compare actual current v2d.cur.",
+    "Python override ordering control: a malformed/sequence override whose CTX getter would run Python remains entirely excluded before classifier context lookup and before eligible native operator poll; after-poll raw dict recheck precedes all fresh CTX getters. Actual override/delegated baseline effects stay unchanged, and normal noneligible WM_operator_poll does not clear poll-message state.",
+    "Native pan locked-offset and zoom locked-scale/3D context poll failures retain baseline status/fallback; actual poll runs once and no denial is inferred from an item match alone. Interface lock retains baseline behavior.",
+    "Verify stock registration/import/copy actual native raw maptype0, KM_ANY direction, repeat flags, empty property/pointer shape and default persistent update bits against actual baseline. Preserve raw failures; refine a wrong contract instead of weakening fixtures.",
+    "Negative profile matrix: same-name nonmember map/handler/item; wrong configuration, active preset, owner_id, map flags/poll/modal metadata; effective dirty/modified; negative/missing/duplicate id; changed order/count; extra addon; changed event/modifier/keymodifier/repeat/direction/maptype/propvalue; explicit default-valued or nested property; mismatched PointerRNA data/type/owner. Each must run normal existing path, not be consumed.",
+    "Dynamic, tool, gizmo, handler poll and post callback paths preserve exact old callback count/context/event effects. A post callback must not receive a newly cancelled invocation because such a handler is excluded.",
+    "Operator profile negatives for changed invoke/poll/exec/modal/cancel/flags, pyop_poll, RNA extension and macro list: preserve native dispatch and callbacks. Actual supported Python builtin duplicate registration/direct unregister guards remain failing as before; do not invent a supported builtin replacement.",
+    "Explicit WM_operator_name_call/_ptr, Python invokes/context overrides, eventless exec, macro parent/child, nested/reentrant delegated calls and forwarded/copied positive physical events retain policy None and their native effects. No scalar survives in an event/context/global.",
+    "Original mutable event identity/side effects control: callback-enabled excluded paths can mutate the caller event and native dispatch sees those mutations exactly. No blanket local copy is introduced to transport the scalar.",
+    "Canonical value-identical history positive case is explicitly expected to fall within policy; different custom history ending in different inspected current values is negative. Presentation-only expanded flags can remain eligible. Do not call this historical authenticity proof.",
+    "Native source transport/coalescing controls: all-positive contributors preserve summed delta/count/order; Pencil+hardware/finger/unknown in both orders clears metadata with unchanged merge decision/delta; default clear for other constructors/platforms/simulation/replay/eventstate/housekeeping and no accidental inherited tablet authorization.",
+    "Positive stock Circle annulus/radius/selection-order and proportional-transform PAN controls, already-live node link/root translate macros, explicit live pan/zoom, finger/hardware trackpad, native panels/HUD/rings, modifiers and native UI priority remain baseline. Keep the earlier failed generic reorder control as historical negative.",
+    "Compare premodal node title/socket admission across several below-threshold pairs with actual native graph origin, original drag-start/current coordinates and native acquisition. Refusing default navigation does not prove correct node-edit ownership.",
+    "Run affected and complete source/host gates only after coherent source; native iOS compiled field/branch/no-allocation proof and full exact downloaded package are later distinct gates. Stock5.1.2 host evidence is not pinned5.0.0 target or physical Pencil/device proof; no unchanged build is authorized."
+  ],
+  "source_evidence": [
+    {
+      "source": "current wm_event_system.cc",
+      "lines": [
+        5493,
+        5498,
+        5501,
+        5502,
+        3727,
+        1643,
+        1659,
+        1665,
+        1692,
+        1701,
+        3761,
+        3775,
+        7549,
+        7566,
+        7694,
+        7836,
+        9605,
+        9620
+      ],
+      "fact": "Actual regular matched call; private invoke; poll-before-create; cancellation action mapping; calloc static/dynamic handlers and actual effective-map getter."
+    },
+    {
+      "source": "pinned wm_keymap.cc",
+      "lines": [
+        64,
+        69,
+        115,
+        121,
+        188,
+        203,
+        223,
+        247,
+        473,
+        505,
+        540,
+        548,
+        551,
+        565,
+        609,
+        614,
+        748,
+        811,
+        869,
+        879,
+        1846,
+        1856,
+        1920,
+        1987,
+        2034,
+        2048,
+        2147,
+        2155,
+        2166,
+        2173
+      ],
+      "fact": "Raw copies/properties/equality; ID assignment; poll callbacks; default/user patching; actual list membership; flags and effective lookup; documented default-dirty limitation."
+    },
+    {
+      "source": "pinned DNA_windowmanager_types.h",
+      "lines": [
+        341,
+        402,
+        412,
+        431,
+        448,
+        492
+      ],
+      "fact": "Exact KMI/KM scalar fields, readonly-associated ID storage, poll fields and flags."
+    },
+    {
+      "source": "pinned blender_default.py and bl_keymap_utils/io.py",
+      "lines": {
+        "blender_default.py": [
+          938,
+          978
+        ],
+        "io.py": [
+          249,
+          276
+        ]
+      },
+      "fact": "Canonical25 ordered items, PAN position5 and CtrlZoom17; actual importer passes tuples to RNA new without assigned properties."
+    },
+    {
+      "source": "pinned rna_wm_api.cc",
+      "lines": [
+        305,
+        355,
+        478,
+        512,
+        1286,
+        1308
+      ],
+      "fact": "Native keymap creation maps event/modifier/direction; repeat false default becomes KMI_REPEAT_IGNORE; default config mutable."
+    },
+    {
+      "source": "pinned rna_wm.cc and bpy_rna.cc",
+      "lines": {
+        "rna_wm.cc": [
+          1523,
+          1526,
+          1809,
+          1829,
+          1987,
+          2011,
+          2859,
+          2883,
+          3185,
+          3188,
+          3308,
+          3319
+        ],
+        "bpy_rna.cc": [
+          10334,
+          10345
+        ]
+      },
+      "fact": "ID readonly and negative-ID user-defined meaning; builtin duplicate registration/unregister guards; default/user exposed through RNA."
+    },
+    {
+      "source": "current view2d_ops.cc",
+      "lines": [
+        117,
+        135,
+        232,
+        269,
+        372,
+        392,
+        723,
+        745,
+        1162,
+        1167,
+        1413,
+        1438
+      ],
+      "fact": "Native callback profiles and noncallback pan/zoom poll; first actual allocation/apply comes later inside invoke."
+    },
+    {
+      "source": "pinned context.cc and wm_operators.cc",
+      "lines": {
+        "context.cc": [
+          287,
+          318,
+          764,
+          805,
+          846,
+          856
+        ],
+        "wm_operators.cc": [
+          732,
+          799
+        ]
+      },
+      "fact": "WM context getters can consult Python overrides; existing operator properties allocation and sanitize semantics."
+    },
+    {
+      "source": "current area.cc",
+      "lines": [
+        2086,
+        2090
+      ],
+      "fact": "Native ED_KEYMAP_VIEW2D adds the static defaultconf View2D handler to region handlers."
+    },
+    {
+      "source": "pinned wm.cc + wm_keymap.cc",
+      "lines": {
+        "wm.cc": [
+          421,
+          429
+        ],
+        "wm_keymap.cc": [
+          294,
+          305,
+          370,
+          382
+        ]
+      },
+      "fact": "Default/addon/user configurations are created through native WM_keyconfig_new and appended to current runtime keyconfigs; active preset lookup is raw and static to wm_keymap.cc."
+    }
+  ],
+  "primary_source_hashes": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_keymap.cc",
+      "bytes": 73426,
+      "sha256": "97431d8c05931dc06ebf9f07eb58ab32ba7674035f3710f2d717da99a4c4cb0c"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_system.cc",
+      "bytes": 231881,
+      "sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_operator_type.cc",
+      "bytes": 18432,
+      "sha256": "cc227a37bcfe40c958f6cdc352966726d67b8c5343199a9c2de7b4e2c52f6707"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_operators.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_operators.cc",
+      "bytes": 150668,
+      "sha256": "79afac970b6ccf05f962bd1c291529cf882ac8020536a8805757bd9565a23290"
+    },
+    {
+      "path": "source/blender/windowmanager/wm_event_system.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/wm_event_system.hh",
+      "bytes": 5651,
+      "sha256": "85336bbca0494ee4e27d986e810c9679a9cc397a68710e592052c84f87c56b00"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/WM_types.hh",
+      "bytes": 46248,
+      "sha256": "bbcc3a3841173567afe8cafb64939be321c55f662cbea9fba897f0a2a6d10d9e"
+    },
+    {
+      "path": "source/blender/windowmanager/wm_event_types.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/wm_event_types.hh",
+      "bytes": 18763,
+      "sha256": "af50f513498701f4e34dcbc675da4418174ba0fef6a4a2c7c2d6c7e874717477"
+    },
+    {
+      "path": "source/blender/makesdna/DNA_windowmanager_types.h",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesdna/DNA_windowmanager_types.h",
+      "bytes": 16375,
+      "sha256": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9"
+    },
+    {
+      "path": "source/blender/makesdna/DNA_ID.h",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesdna/DNA_ID.h",
+      "bytes": 46359,
+      "sha256": "1308dc563c96add243136e3bd33edb4fc3468fb971eb10ad91c7a46cb202e59a"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_wm.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm.cc",
+      "bytes": 133468,
+      "sha256": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/intern/rna_wm_api.cc",
+      "bytes": 60247,
+      "sha256": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105"
+    },
+    {
+      "path": "source/blender/python/intern/bpy_rna.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/python/intern/bpy_rna.cc",
+      "bytes": 331922,
+      "sha256": "a767f71a2f5633d3c402d7e7ca800dd1f62b74a6cc425ed7043b91d76d71ef82"
+    },
+    {
+      "path": "source/blender/blenkernel/intern/context.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/context.cc",
+      "bytes": 41910,
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "bytes": 72860,
+      "sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc"
+    },
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "bytes": 439100,
+      "sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577"
+    },
+    {
+      "path": "scripts/modules/bl_keymap_utils/io.py",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/scripts/modules/bl_keymap_utils/io.py",
+      "bytes": 10890,
+      "sha256": "11df0e89811939749d46a4d8ea3443e6091d4f954234697b981daeb9f83b61fa"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm.cc",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm.cc",
+      "bytes": 17961,
+      "sha256": "486152ba156f110abe99eb3aaa2a39b1c3cc671d5a4ff287ec2940b21bb7a03e"
+    },
+    {
+      "path": "source/blender/blenkernel/BKE_context.hh",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/.cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/BKE_context.hh",
+      "bytes": 17565,
+      "sha256": "6cf6c16a8dc393e6422c9e26dd157caabab44a128effcf57dfb1efd99e1c918c"
+    }
+  ],
+  "current_source_hashes": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/intern/wm_event_system.cc",
+      "bytes": 360934,
+      "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b"
+    },
+    {
+      "path": "source/blender/windowmanager/wm_event_system.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/wm_event_system.hh",
+      "bytes": 6429,
+      "sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/windowmanager/WM_types.hh",
+      "bytes": 48057,
+      "sha256": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/interface/view2d/view2d_ops.cc",
+      "bytes": 73012,
+      "sha256": "4810c0fddc3dd5327ae4327aeba9256fb66d85976c7a322738172cf62234b40f"
+    },
+    {
+      "path": "source/blender/editors/screen/area.cc",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/source/blender/editors/screen/area.cc",
+      "bytes": 154812,
+      "sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/intern/GHOST_WindowIOS.mm",
+      "bytes": 150646,
+      "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34"
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "absolute_path": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir/intern/ghost/GHOST_Types.h",
+      "bytes": 41264,
+      "sha256": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff"
+    }
+  ],
+  "prior_evidence_hashes": [
+    {
+      "path": "source-contract.json",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/source-contract.json",
+      "bytes": 28952,
+      "sha256": "82f4d86d04eb11241d51eed7f2440ab006e5acf902c08ea1b26084b32cd22c7d"
+    },
+    {
+      "path": "scheduling-order-assessment.json",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/scheduling-order-assessment.json",
+      "bytes": 11563,
+      "sha256": "b26cdd84d6220cc9f3873a85e4c384d7b6356ed26e6e5e3ed781ddc2379a290c"
+    },
+    {
+      "path": "native-navigation-policy-assessment.json",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-navigation-policy-assessment.json",
+      "bytes": 18087,
+      "sha256": "77fb0afae5525b6387dd9e236ed3b632f28112b02cdf3ba62839c79921321fca"
+    },
+    {
+      "path": "native-host/assessment.json",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/assessment.json",
+      "bytes": 9492,
+      "sha256": "53a8dc38209a6b4b8531487be19410ae9d47c80771bd9b1344840e59b3df7bc6"
+    },
+    {
+      "path": "native-host/independent-host-review.json",
+      "absolute_path": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-input-audit/native-host/independent-host-review.json",
+      "bytes": 11253,
+      "sha256": "ec8ae81dfe289d42a0306727fbac8914feaf293b66d33c45b4d4e2054a5b6fc2"
+    }
+  ],
+  "performed_here": {
+    "primary_fixed_pin_cache_fetches": [
+      "wm_keymap.cc",
+      "DNA_windowmanager_types.h",
+      "rna_wm.cc",
+      "rna_wm_api.cc",
+      "wm_event_system.hh",
+      "scripts/modules/bl_keymap_utils/io.py"
+    ],
+    "executed": "Only exact pinned Python km_view2d(None) generator to enumerate25 canonical tuples; no Blender native invocation, UI probe, tests or build.",
+    "production_edits": false,
+    "test_edits": false,
+    "ci_edits": false,
+    "native_execution": false,
+    "new_native_build": false,
+    "device_acceptance": false,
+    "whole_goal_complete": false
+  }
+}
