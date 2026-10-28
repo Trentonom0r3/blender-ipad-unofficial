@@ -1,0 +1,40 @@
+{
+  "status": "NATIVE_ARM64_FIELD_MAPPING_FROM_ACTUAL_LOAD_STORE_SITES_AND_PINNED_NATIVE_STRUCT_DECLARATIONS_NOT_MODEL_OFFSETS",
+  "headers": [
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/connected-workflow-default/materialized/source/blender/windowmanager/WM_types.hh",
+      "sha256": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/connected-workflow-default/materialized/source/blender/windowmanager/wm_event_system.hh",
+      "sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-input-audit/sourcecache/source/blender/makesdna/DNA_windowmanager_types.h",
+      "sha256": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9"
+    },
+    {
+      "path": ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesdna/DNA_ID.h",
+      "sha256": "1308dc563c96add243136e3bd33edb4fc3468fb971eb10ad91c7a46cb202e59a"
+    },
+    {
+      "path": ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesdna/DNA_ID_enums.h",
+      "sha256": "e016734689962611932e60f0c6b08846d1a3cbaa3fb0de708fb1ca2a5552cb6b"
+    },
+    {
+      "path": ".cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesrna/RNA_types.hh",
+      "sha256": "fe5d6610904d49c5d04b1b53c86a3391d4fbfc3d86ba54f0468d40ed094803c8"
+    }
+  ],
+  "fields": {
+    "wmEvent": "type+0x10 val+0x12 modifier+0x2a keymodifier+0x2c flag+0x7c",
+    "ScrArea": "spacetype+0x48 regionbase+0x78",
+    "ARegion": "regiontype+0xc0 runtime+0x128; runtime.handlers+0x328",
+    "wmEventHandler_Keymap": "head.type+0x10 flag+0x14 poll+0x18; default keymap+0x20; post_fn/user_data+0x28/+0x30; dynamic fn/user_data+0x38/+0x40; keymap_tool+0x48",
+    "wmKeyMap": "items+0x10/+0x18 diff_items+0x20/+0x28 idname+0x30 spaceid+0x70 regionid+0x72 owner_id+0x74 flag+0xf4 kmi_id+0xf6 poll+0xf8 poll_modal_item+0x100 modal_items+0x108. Actual ensure alloc0x110 and same field stores at0x100b7595c/60/70/9c.",
+    "wmKeyMapItem": "prev+8 idname+0x10 properties+0x50 propvalue_str+0x58 propvalue+0x98 type+0x9a val+0x9c direction+0x9d five modifiers+0x9e..a2 keymodifier+0xaa flag+0xac maptype+0xad id+0xae ptr+0xb0",
+    "IDProperty": "type+0x10 (IDP_GROUP=6); group.first+0x60 group.last+0x68 len+0x78; derived from native DNA_ID.h fixed ARM64 pointer/short/int sizes, actual map helper loads these fields.",
+    "PointerRNA": "owner_id+0 type+8 data+0x10 native declaration; actual RNA_pointer_create_discrete and WM_operator_properties_alloc newly dumped corroborate prefix. Ancestors not inspected by policy.",
+    "wmOperatorType": "exec+0x28 invoke+0x38 cancel+0x40 modal+0x48 poll+0x50 srna+0x88 macro.first/last+0xa0/+0xa8 pyop_poll+0xb8 rna_ext.data/srna/call/free+0xc0/+0xc8/+0xd0/+0xd8 flag+0xe4; actual registration stores and profile loads agree."
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_NORMAL_RETURN_CFG",
+  "run": 40728695044,
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "scope_start": "0x10163cffc",
+  "scope_end_exclusive": "0x10163d518",
+  "owner_instruction_count": 327,
+  "post_mutation_entry": "0x10163d29c",
+  "post_mutation_reachable_instruction_count": 167,
+  "all_post_mutation_normal_return_sites": [
+    "0x10163d154"
+  ],
+  "saved_area": {
+    "getter_call": "0x10163d27c",
+    "store": "0x10163d280",
+    "slot": "SP+0x8",
+    "reload": "0x10163d300",
+    "restoration_call": "0x10163d304"
+  },
+  "saved_region": {
+    "getter_call": "0x10163d288",
+    "callee_saved_assignment": "0x10163d28c:x26",
+    "restoration_argument": "0x10163d30c:x1=x26",
+    "restoration_call": "0x10163d310"
+  },
+  "context": "Entry x0 is copied into callee-saved x19 at0x10163d02c. Every inspected getter and restore uses x0=x19.",
+  "stack_frame": "Prologue saves0x60 bytes then reserves0x1a0 local bytes. SP remains fixed between saved getter and both restorations; SP+8 is written only at0x10163d280 and reloaded at0x10163d300. Native local object buffers start SP+0x10 and SP+0xd0, disjoint from SP+8. External output x20/x23 is assumed valid and disjoint from caller-local frame.",
+  "actual_getter_semantics": "CTX_wm_area and CTX_wm_region load raw C+0x28/C+0x30 as fallback x3 then tailcall ctx_wm_python_context_get0x1000b4230. Resolver saves fallback in x19; no usable Python override returns fallback on main thread or null otherwise via0x1000b4270. Typed override can return result+0x30 via0x1000b4334/0x1000b4340. The saved values are getter results, not asserted equivalent to raw fields.",
+  "actual_setter_semantics": "Area setter0x1000b4ac8 advances x0 by0x88, then0x1000b4acc stp x1,xzr,[x0,#-0x60] writes C+0x28 and clears C+0x30. Region setter0x1000b4b40 writes C+0x30. Both may clear Python context members. Exact ordered restore calls preserve the original getter values under stated normal-call assumptions.",
+  "CFG_conclusion": "Fresh complete327-instruction function has167 instructions reachable after the first area mutation returns. Its only reachable normal ret is0x10163d154. Deleting area-restore node0x10163d304 disconnects region restore and all normal returns; deleting region-restore node0x10163d310 disconnects all normal returns. All normal postmutation paths therefore execute area then region restoration.",
+  "checks": {
+    "instruction_0x10163d02c": true,
+    "instruction_0x10163d278": true,
+    "instruction_0x10163d280": true,
+    "instruction_0x10163d284": true,
+    "instruction_0x10163d28c": true,
+    "instruction_0x10163d290": true,
+    "instruction_0x10163d294": true,
+    "instruction_0x10163d2fc": true,
+    "instruction_0x10163d300": true,
+    "instruction_0x10163d308": true,
+    "instruction_0x10163d30c": true,
+    "call_target_0x10163d27c": true,
+    "call_target_0x10163d288": true,
+    "call_target_0x10163d298": true,
+    "call_target_0x10163d304": true,
+    "call_target_0x10163d310": true,
+    "complete_contiguous_owner_body": true,
+    "no_unsupported_owner_transfer": true,
+    "postmutation_reachable_167": true,
+    "exact_one_postmutation_return": true,
+    "area_restore_reachable": true,
+    "region_restore_reachable": true,
+    "area_restore_dominates_region_restore": true,
+    "area_restore_dominates_all_normal_returns": true,
+    "region_restore_dominates_all_normal_returns": true,
+    "C_and_saved_region_callee_saved_unchanged_until_restored": true,
+    "SP_fixed_until_ordered_restoration": true,
+    "no_direct_SP_stores_after_saved_area_before_reload": true,
+    "saved_area_slot_only_direct_save_reload": true,
+    "area_get_loads_raw_plus28_as_fallback": true,
+    "region_get_loads_raw_plus30_as_fallback": true,
+    "area_get_tailcalls_actual_python_resolver": true,
+    "region_get_tailcalls_actual_python_resolver": true,
+    "resolver_saves_fallback_in_x19": true,
+    "resolver_thread_select_fallback_or_null": true,
+    "resolver_typed_override_loads_result": true,
+    "area_set_advances_C_plus88": true,
+    "area_set_writes_area_and_clears_region": true,
+    "region_set_advances_C_plus88": true,
+    "region_set_writes_C_plus30": true
+  },
+  "unexpected_register_writes": [],
+  "unexpected_SP_changes": [],
+  "direct_SP_accesses_after_save_before_restore": [
+    {
+      "address": "0x10163d300",
+      "instruction": "ldr x1, [sp, #0x8]"
+    },
+    {
+      "address": "0x10163d338",
+      "instruction": "ldp q0, q1, [sp, #0x150]"
+    },
+    {
+      "address": "0x10163d344",
+      "instruction": "ldr q0, [sp, #0x170]"
+    },
+    {
+      "address": "0x10163d34c",
+      "instruction": "ldp q0, q1, [sp, #0x110]"
+    },
+    {
+      "address": "0x10163d358",
+      "instruction": "ldp q0, q1, [sp, #0x130]"
+    },
+    {
+      "address": "0x10163d364",
+      "instruction": "ldp q0, q1, [sp, #0xd0]"
+    },
+    {
+      "address": "0x10163d370",
+      "instruction": "ldp q0, q1, [sp, #0xf0]"
+    },
+    {
+      "address": "0x10163d380",
+      "instruction": "ldr x9, [sp, #0x180]"
+    }
+  ],
+  "evidence_manifest": "independent-preserved-evidence/owner-stack-cfg/scope-manifest.json",
+  "CFG_certificate": "independent-preserved-evidence/owner-stack-cfg/owner-normal-return-cfg.json",
+  "raw_owner_negative_retained": {
+    "status": "failed",
+    "issues": [
+      "Post-mutation exit has incomplete ordered restoration at 0x10163d154",
+      "Saved region restored before saved area at 0x10163d310"
+    ],
+    "limitations": [
+      "Unproved area argument at 0x10163d304"
+    ],
+    "instruction_states": 375,
+    "mutation_calls": [
+      "0x10163d298"
+    ],
+    "restoration_calls": [
+      "0x10163d310"
+    ],
+    "post_mutation_return_sites": [
+      "0x10163d154"
+    ],
+    "setter_calls": [
+      [
+        "0x10163d298",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "A"
+      ],
+      [
+        "0x10163d304",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "?"
+      ],
+      [
+        "0x10163d310",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "SR"
+      ],
+      [
+        "0x10163d330",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "?"
+      ]
+    ]
+  },
+  "raw_owner_audit_sha256_unchanged": "d3df3ab125fe6897a2c340e052cee78a509f8752f7cd8b4c33426cf5329a009f",
+  "assumptions": [
+    "AAPCS native calls return normally to the following instruction, preserve x19/x26 and valid caller-local-frame storage. Called code obeys object bounds for explicitly passed local buffers.",
+    "External output owner storage in x20/x23 is valid and disjoint from this caller-local frame. Context and native heap objects are valid at each inspected access.",
+    "This is a concrete intraprocedural normal-return CFG proof, overapproximating both successors of every conditional branch. It excludes exceptions, nonlocal exits, arbitrary heap aliases/OOB writes, global WM/UIKit state and reentrant callback mutations."
+  ],
+  "does_not_claim": [
+    "No global heap/CFG/allocator/reentrancy safety proof.",
+    "No guarantee Python override values equal raw context fields or that Python override dictionaries are restored by native setters.",
+    "No first-frame live geometry, GPU/UIKit runtime, overall Undo/history or device acceptance."
+  ],
+  "production_or_checker_changes": false,
+  "device_acceptance": false,
+  "completed_utc": "2026-10-28T21:13:37.208719+00:00"
+}

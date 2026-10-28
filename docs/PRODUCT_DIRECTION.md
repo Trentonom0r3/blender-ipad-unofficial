@@ -1,24 +1,31 @@
-## Exact Pencil Node correction native build dispatched — 2026-10-28 UTC
+## Pencil Node package fully verified for exact device check — 2026-10-28 UTC
 
-Validated source3d7b248aa298c3dcb7cf1c188d279702405e81a3 builds ONCE in
-run40728695044; exact head confirmed. Watcher unified28198, script
-.cache/watch-pencil-node-navigation-build.py and log
-.cache/node-navigation-build-watch-40728695044.log own SAME run, full downloaded
-IPA/package and actual new/preserved scope collection. Inspect actual process and
-node-build-checkpoint.json before replacement. No native/package/compiled/device
-success yet; never dispatch unchanged source or call pending checks passed.
+Production3d7b248aa298c3dcb7cf1c188d279702405e81a3/run40728695044 PASSED hosted
+preflight/native iOS Release/full downloaded3368 CRC/arm64/iPhoneOS5.0.0/whole exact
+UI/default bars/toolbar/pinned tools129icons/exact9Base/native-onlyMoreTools and
+whole7Python+3defaultbar/tool files. Artifact12835522930; IPA248687335bytes/SHA256
+1b3372bed4aa2a6d30f257ac0f26bdc7d15078abf2751f0ac4d211a54d47565d.
+BinaryUUID304A549C-32F4-3519-9753-23020BC014CC/SHA256
+8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275.
 
-Source full835/835669.772s/235unchanged inputs,138-file preflight/diff and
-independent bounded source/native/test/literal reviews pass. Exact7 changes,
-131 prior runtime targets/all7 interaction Python are preserved. Ready source is
-committed/pushed; later checkpoint changes are evidence/docs only. On native
-success finish whole exact IPA and actual branch/argument/alias proof of physical
-classification, conservative queue, chosen stock dispatch and preallocation
-refusal, plus fresh preserved HUD/Weight obligations. Names/models alone are not
-compiled/device proof. Source profile/mixed/custom/native-context boundaries stay
-explicit. Earlier3438226/run40459756217 remains fully verified, device unconfirmed.
-Keep all accepted UI/input/history, all evidence and selection-collapsed.png.
-Full personal goal remains unfinished; continue independently without devicewait.
+FOUR independent ACTUAL compiled reviews pass: new physical transport/queue;
+chosen canonical stock dispatch/native callback profile/poll/preallocation
+refusal; preserved HUD/Weight; preserved renderer/gizmo/Knife bridge and native
+controls. Real table/fixup/field/call arguments and instruction bodies checked.
+Raw HUD checker negative retained; fresh327/167 instruction stack/normalreturn
+proof establishes actual area restore0x10163d304 before region0x10163d310. Native
+firstsize/init and Weight cleanup pass. Watcher28198 finished1 only rawinterpreter
+limitation; no live verifier or unchanged rebuild. No source/checker weakened.
+
+Read pencil-node-input-audit/node-native-package-verification.json and current
+binary reviews. Ready for exact iPad check; NO exact device acceptance or fullgoal
+completion. Source835/835669.772s/235unchangedinputs/138preflight/diff/independent
+review passes; only7targets change,131 prior/all7Python retained. Positive source
+is denial-only, never ownership/press/lease proof. Mixed/custom/ambiguous routes
+fall back; native advanced controls/pointer order remain. Source/host/SDK/package/
+compiled/device evidence stays separate; no global heap/CFG/GPU/UIKit/history
+claim. Continue coherent Pencil workflow work without device waits, preserving
+all accepted UI/input/history/evidence and selection-collapsed.png.
 
 ## Exact corrected Knife PAN IPA verified for device check — 2026-10-27 UTC
 

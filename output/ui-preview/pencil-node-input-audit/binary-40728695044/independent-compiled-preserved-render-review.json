@@ -1,0 +1,1729 @@
+{
+  "status": "PASS_BOUNDED_RECONCILED_ACTUAL_COMPILED_PRESERVED_RENDER_GIZMO_NATIVE_BRIDGE",
+  "created_utc": "2026-10-28T21:28:36.759776+00:00",
+  "run": "40728695044",
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "baseline_run": "40459756217",
+  "baseline_sha256": "ad23c2160e7583d61af2342082c07e67748919349f306a83802eb54d621bf404",
+  "scope": "Preserved renderer/compositor/higher UI/opaque group guards/native Knife fresh context/owner/scope/draw identity plus bounded native View2D pan/zoom, Circle and Transform body equivalence. Changed Node physical producer, ingestion/queue/dispatch and HUD/Weight are separate reviewers.",
+  "method": {
+    "actual_complete_ranges": 173,
+    "all_actual_instruction_equivalent": true,
+    "native_control_ranges": 37,
+    "actual_ADRP_consumer_references": 724,
+    "old_actual_chained_fixups": 411538,
+    "new_actual_chained_fixups": 411563,
+    "data_reference_count": 643,
+    "code_reference_count": 81,
+    "actual_strings_verified": 253,
+    "semantic_data_mismatches": 0,
+    "description": "Fresh exact nlist-instance boundaries and llvm-objdump ranges. Same opcodes/registers/nonaddress immediates/local branch offsets and resolved actual external targets. Address pages and consumers jointly resolved, including local CFG tracing until register overwrite. Duplicate local symbol names are distinguished by actual ordered occurrence. Native global initial pointers, import binds, RNA registration and referenced raw values decode actual chained fixups. C strings compare every byte through NUL; unrelated adjacent pool bytes remain raw evidence.",
+    "prior_detailed_actual_reviews": [
+      {
+        "file": "pencil-knife\\binary-40459756217\\independent-compiled-preserved-input-render-review.json",
+        "sha256": "6a90b573509388ab43d9167715dbb9cf238f32a524e48f5f681b25ea6cf5bac1",
+        "status": "PASS_BOUNDED_RECONCILED_ACTUAL_COMPILED_PRESERVED_INPUT_RENDER",
+        "purpose": "Detailed prior actual argument/branch analysis; current comparison and field/data evidence above provide fresh reconciliation, not source identity alone."
+      },
+      {
+        "file": "pencil-knife\\binary-40459756217\\independent-compiled-opaque-guard-review.json",
+        "sha256": "a2819134b6d5957ccbaf22554406c220d575b987945e55d73c5554d19432682c",
+        "status": "PASS_BOUNDED_CHANGED_OPAQUE_GUARD_AND_PROPAGATION",
+        "purpose": "Detailed prior actual argument/branch analysis; current comparison and field/data evidence above provide fresh reconciliation, not source identity alone."
+      }
+    ]
+  },
+  "obligations": [
+    {
+      "id": "native_bridge_registry_keyqueue_and_own_context",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Normal init stores current exact Knife bridge into same actual shared registry; background/exit clear before lifecycle calls. Fresh bridge resolves current Main/WM/unique ghostwin membership and native queued keyboard refusal, owns an empty CTX with actual calloc binding, and frees it before normal result. Query guard cleanup and all native membership/refusal edges are preserved.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b95ff0",
+          "current": "0x100b96a04"
+        },
+        {
+          "prior": "0x100b96000",
+          "current": "0x100b96a14"
+        },
+        {
+          "prior": "0x100b96c50",
+          "current": "0x100b97664"
+        },
+        {
+          "prior": "0x100b96ca4",
+          "current": "0x100b976b8"
+        },
+        {
+          "prior": "0x100b96944",
+          "current": "0x100b97358"
+        },
+        {
+          "prior": "0x100b96b4c",
+          "current": "0x100b97560"
+        },
+        {
+          "prior": "0x100b96b84",
+          "current": "0x100b97598"
+        },
+        {
+          "prior": "0x1000b1128",
+          "current": "0x1000b1128"
+        },
+        {
+          "prior": "0x1000b11c8",
+          "current": "0x1000b11c8"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z10CTX_createv",
+          "new_start": "0x1000b1128",
+          "new_end": "0x1000b114c",
+          "instruction_count": 9,
+          "fresh_dump": "154639fb62b2-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z13CTX_wm_windowPK8bContext",
+          "new_start": "0x1000b4218",
+          "new_end": "0x1000b4230",
+          "instruction_count": 6,
+          "fresh_dump": "e787e980a511-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z13wm_ghost_exitv",
+          "new_start": "0x100b976ac",
+          "new_end": "0x100b976e4",
+          "instruction_count": 14,
+          "fresh_dump": "04801d481135-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z13wm_ghost_initP8bContext",
+          "new_start": "0x100b969ac",
+          "new_end": "0x100b96a64",
+          "instruction_count": 46,
+          "fresh_dump": "8ff3a6ba09b1-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z13wm_ghost_initP8bContext.cold.1",
+          "new_start": "0x104a61974",
+          "new_end": "0x104a619d4",
+          "instruction_count": 24,
+          "fresh_dump": "a63e2eee1fc8-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z14CTX_wm_managerPK8bContext",
+          "new_start": "0x1000b4200",
+          "new_end": "0x1000b4208",
+          "instruction_count": 2,
+          "fresh_dump": "741712b7b1b0-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+          "new_start": "0x1000b4aa8",
+          "new_end": "0x1000b4b1c",
+          "instruction_count": 29,
+          "fresh_dump": "843ec240a4b1-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z17CTX_wm_region_setP8bContextP7ARegion",
+          "new_start": "0x1000b4b1c",
+          "new_end": "0x1000b4b90",
+          "instruction_count": 29,
+          "fresh_dump": "54e56b6a3173-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z17CTX_wm_window_setP8bContextP8wmWindow",
+          "new_start": "0x1000b4964",
+          "new_end": "0x1000b4a28",
+          "instruction_count": 49,
+          "fresh_dump": "2fe5ff9b27fb-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z18CTX_wm_manager_setP8bContextP15wmWindowManager",
+          "new_start": "0x1000b4954",
+          "new_end": "0x1000b4964",
+          "instruction_count": 4,
+          "fresh_dump": "150dc5f4ccd0-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE",
+          "new_start": "0x100ae55a8",
+          "new_end": "0x100ae5674",
+          "instruction_count": 51,
+          "fresh_dump": "7f1c50a61429-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.1",
+          "new_start": "0x104a5f5f4",
+          "new_end": "0x104a5f608",
+          "instruction_count": 5,
+          "fresh_dump": "702e161379cb-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.2",
+          "new_start": "0x104a5f608",
+          "new_end": "0x104a5f624",
+          "instruction_count": 7,
+          "fresh_dump": "17b562f36d00-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z18MEM_lockfree_freeNPvN11mem_guarded8internal14AllocationTypeE.cold.3",
+          "new_start": "0x104a5f624",
+          "new_end": "0x104a5f638",
+          "instruction_count": 5,
+          "fresh_dump": "acdf7a8fc956-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z20MEM_lockfree_callocNmPKc",
+          "new_start": "0x100ae5ca0",
+          "new_end": "0x100ae5d14",
+          "instruction_count": 29,
+          "fresh_dump": "975cfe2c12ff-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z24wm_ghost_init_backgroundv",
+          "new_start": "0x100b97640",
+          "new_end": "0x100b976ac",
+          "instruction_count": 27,
+          "fresh_dump": "1683e6d6ed58-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26MEM_lockfree_calloc_arrayNmmPKc",
+          "new_start": "0x100ae5d94",
+          "new_end": "0x100ae5e58",
+          "instruction_count": 49,
+          "fresh_dump": "5817651128d6-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z34MEM_lockfree_calloc_arrayN_alignedmmmPKc",
+          "new_start": "0x100ae5fd4",
+          "new_end": "0x100ae6094",
+          "instruction_count": 48,
+          "fresh_dump": "cacb00cd715c-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z8CTX_freeP8bContext",
+          "new_start": "0x1000b11c8",
+          "new_end": "0x1000b1210",
+          "instruction_count": 18,
+          "fresh_dump": "b4d322593d55-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_",
+          "new_start": "0x100b97358",
+          "new_end": "0x100b97640",
+          "instruction_count": 186,
+          "fresh_dump": "0bb8f57776e8-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL25ctx_wm_python_context_getPK8bContextPKcPK9StructRNAPv",
+          "new_start": "0x1000b4230",
+          "new_end": "0x1000b43e0",
+          "instruction_count": 108,
+          "fresh_dump": "d92d04f5738d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN18GHOST_EventManager12getNumEventsE16GHOST_TEventType",
+          "new_start": "0x10109764c",
+          "new_end": "0x101097724",
+          "instruction_count": 54,
+          "fresh_dump": "c2ba45653b6f-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": [
+        "Physical wrappers/Node producer and changed WM ingestion/dispatch are assigned separately. Fresh native CTX keeps Python provider/destructor fields zero; arbitrary external Python context overrides remain outside that path."
+      ]
+    },
+    {
+      "id": "original_registered_owner_lifetimes_and_exact_draw",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Actual handler membership precedes dereference; original operator lifetime is checked before op fields, exact registered native Knife type/invoke/modal/cancel and same saved23-owner values are required. Native scope32 child membership/UID/geometry checks and exact draw node/handle/function/data/phase comparisons remain. No callback/provider/tool Cancel is invoked by the query.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b50410",
+          "current": "0x100b50434"
+        },
+        {
+          "prior": "0x100b5069c",
+          "current": "0x100b506c0"
+        },
+        {
+          "prior": "0x100b507d0",
+          "current": "0x100b507f4"
+        },
+        {
+          "prior": "0x100b50f38",
+          "current": "0x100b50f5c"
+        },
+        {
+          "prior": "0x100b51424",
+          "current": "0x100b51448"
+        },
+        {
+          "prior": "0x101b4da20",
+          "current": "0x101b4e4c0"
+        },
+        {
+          "prior": "0x101c37704",
+          "current": "0x101c381a4"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z16WM_operator_freeP10wmOperator",
+          "new_start": "0x100b4305c",
+          "new_end": "0x100b4317c",
+          "instruction_count": 72,
+          "fresh_dump": "6a18de68215f-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z22WM_operatortype_appendPFvP14wmOperatorTypeE",
+          "new_start": "0x100b7d414",
+          "new_end": "0x100b7d4dc",
+          "instruction_count": 50,
+          "fresh_dump": "374ce4fa2a91-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z24ED_mesh_knife_modal_typePK14wmOperatorType",
+          "new_start": "0x101c37554",
+          "new_end": "0x101c375b0",
+          "instruction_count": 23,
+          "fresh_dump": "7a0e5293b586-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26ED_mesh_knife_modal_originPK10wmOperatorR20MeshKnifeModalOrigin",
+          "new_start": "0x101c380d8",
+          "new_end": "0x101c381a4",
+          "instruction_count": 51,
+          "fresh_dump": "10279234cfc7-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26WM_event_add_modal_handlerP8bContextP10wmOperator",
+          "new_start": "0x100b59620",
+          "new_end": "0x100b59674",
+          "instruction_count": 21,
+          "fresh_dump": "34c85257f1fb-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26WM_ipad_knife_owner_regionPK8bContextP8wmWindowRK16wmIPadKnifeOwnerb",
+          "new_start": "0x100b50d74",
+          "new_end": "0x100b50f5c",
+          "instruction_count": 122,
+          "fresh_dump": "8ef9b5ded556-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26WM_operatortype_append_ptrPFvP14wmOperatorTypePvES1_",
+          "new_start": "0x100b7d610",
+          "new_end": "0x100b7d6e0",
+          "instruction_count": 52,
+          "fresh_dump": "83afea979020-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z27WM_ipad_knife_owner_capturePK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner",
+          "new_start": "0x100b50434",
+          "new_end": "0x100b506c0",
+          "instruction_count": 163,
+          "fresh_dump": "c9d47c39a3d0-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z27WM_ipad_knife_owner_presentPK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner",
+          "new_start": "0x100b50b38",
+          "new_end": "0x100b50d74",
+          "instruction_count": 143,
+          "fresh_dump": "3535bba64d94-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z29WM_event_add_modal_handler_exP8wmWindowP7ScrAreaP7ARegionP10wmOperator",
+          "new_start": "0x100b59060",
+          "new_end": "0x100b595d0",
+          "instruction_count": 348,
+          "fresh_dump": "e9001cfca9bf-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z29WM_operator_touch_lifetime_idPK10wmOperator",
+          "new_start": "0x100b42e14",
+          "new_end": "0x100b42f60",
+          "instruction_count": 83,
+          "fresh_dump": "d78ba5246543-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z33ED_mesh_knife_draw_callback_knownPK10wmOperatorPK7ARegionPKvPFvPK8bContextPS2_PvES6_i",
+          "new_start": "0x101c381a4",
+          "new_end": "0x101c38280",
+          "instruction_count": 55,
+          "fresh_dump": "f2bbc562ea1e-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z33WM_ipad_knife_draw_callback_knownPK8bContextPK7ARegionPKvPFvS1_PS2_PvES6_iR16wmIPadKnifeOwner",
+          "new_start": "0x100b51448",
+          "new_end": "0x100b516f4",
+          "instruction_count": 171,
+          "fresh_dump": "af009f627342-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z34ED_region_knife_pan_callbacks_safePK8bContextPK7ARegionR16wmIPadKnifeOwner",
+          "new_start": "0x101b4e4c0",
+          "new_end": "0x101b4e6e4",
+          "instruction_count": 137,
+          "fresh_dump": "ef979cc29ab6-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z34WM_ipad_knife_canvas_scope_capturePK8bContextP8wmWindowP7ScrAreaP7ARegionRNSt3__15arrayIyLm32EEE",
+          "new_start": "0x100b50f5c",
+          "new_end": "0x100b51448",
+          "instruction_count": 315,
+          "fresh_dump": "e95dfd971083-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z34WM_operator_touch_lifetime_matchesPK10wmOperatory",
+          "new_start": "0x100b42f60",
+          "new_end": "0x100b4305c",
+          "instruction_count": 63,
+          "fresh_dump": "42362e7b9ec9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL24wm_ipad_knife_owner_readP8wmWindowP17wmEventHandler_OpmmbR16wmIPadKnifeOwner",
+          "new_start": "0x100b506c0",
+          "new_end": "0x100b50b38",
+          "instruction_count": 286,
+          "fresh_dump": "cb8a78a0eb2d-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "fresh_full_draw_new_content_token_fail_closed",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Actual offscreen before/after scope capture and ED_region_do_draw connection are equivalent. Full nonpartial/nonstereo eligible finish mints a fresh monotonic token; before/after32scope or owner/allocation/partial/stereo failure replaces or invalidates the stamp. Token exhaustion remains zero-invalid. There is no cached retagging.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b4c224",
+          "current": "0x100b4c224"
+        },
+        {
+          "prior": "0x100b4c244",
+          "current": "0x100b4c244"
+        },
+        {
+          "prior": "0x100b4c404",
+          "current": "0x100b4c404"
+        },
+        {
+          "prior": "0x100b4c5a4",
+          "current": "0x100b4c5a4"
+        },
+        {
+          "prior": "0x100b4c65c",
+          "current": "0x100b4c65c"
+        },
+        {
+          "prior": "0x100b4c6c4",
+          "current": "0x100b4c6c4"
+        },
+        {
+          "prior": "0x100b4c748",
+          "current": "0x100b4c748"
+        },
+        {
+          "prior": "0x100b4c770",
+          "current": "0x100b4c770"
+        },
+        {
+          "prior": "0x100b4c7ac",
+          "current": "0x100b4c7ac"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z17ED_region_do_drawP8bContextP7ARegion",
+          "new_start": "0x101620934",
+          "new_end": "0x1016215ec",
+          "instruction_count": 814,
+          "fresh_dump": "e264b0b45e34-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL22wm_draw_area_offscreenP8bContextP8wmWindowP7ScrAreab",
+          "new_start": "0x100b4bf4c",
+          "new_end": "0x100b4cac0",
+          "instruction_count": 733,
+          "fresh_dump": "e25d910d45e7-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL28wm_draw_region_buffer_createP5SceneP7ARegionbb",
+          "new_start": "0x100b4aa5c",
+          "new_end": "0x100b4ac94",
+          "instruction_count": 142,
+          "fresh_dump": "ad4d4debf26e-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "actual_transfer_cached_exact_stamp_and_completed_composition",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Native transfer/batch arguments and footprint-after-draw connection are preserved. Cached receipt copies exact allocation/content/scope/owner/unknown stamp; compositor begin/publish/current retain pending/completed/windowID/current native equality and all visible split-region union coverage requirements. No token is minted on cached presentation.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b4af60",
+          "current": "0x100b4af60"
+        },
+        {
+          "prior": "0x10163e888",
+          "current": "0x10163f328"
+        },
+        {
+          "prior": "0x10163e908",
+          "current": "0x10163f3a8"
+        },
+        {
+          "prior": "0x10163e924",
+          "current": "0x10163f3c4"
+        },
+        {
+          "prior": "0x10163ebb0",
+          "current": "0x10163f650"
+        },
+        {
+          "prior": "0x10163ebe8",
+          "current": "0x10163f688"
+        },
+        {
+          "prior": "0x10163ebf0",
+          "current": "0x10163f690"
+        },
+        {
+          "prior": "0x10163f488",
+          "current": "0x10163ff28"
+        },
+        {
+          "prior": "0x101640894",
+          "current": "0x101641334"
+        },
+        {
+          "prior": "0x1016408dc",
+          "current": "0x10164137c"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z17GPU_viewport_bindP11GPUViewportiPK4rcti",
+          "new_start": "0x100a66dfc",
+          "new_end": "0x100a66e68",
+          "instruction_count": 27,
+          "fresh_dump": "7cb14e584167-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z17GPU_viewport_freeP11GPUViewport",
+          "new_start": "0x100a67a78",
+          "new_end": "0x100a67ad4",
+          "instruction_count": 23,
+          "fresh_dump": "e7d37ffade95-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z19GPU_viewport_createv",
+          "new_start": "0x100a66d6c",
+          "new_end": "0x100a66db0",
+          "instruction_count": 17,
+          "fresh_dump": "60795513a475-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26ED_ipad_hud_compositor_endP8bContextP8wmWindowRNSt3__16vectorI20IPadHUDPresentedRectNS3_9allocatorIS5_EEEE",
+          "new_start": "0x10163f510",
+          "new_end": "0x1016404ac",
+          "instruction_count": 999,
+          "fresh_dump": "fe92555df5d9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z27GPU_viewport_draw_to_screenP11GPUViewportiPK4rcti",
+          "new_start": "0x100a67868",
+          "new_end": "0x100a67874",
+          "instruction_count": 3,
+          "fresh_dump": "0c8394e63106-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z28ED_ipad_hud_compositor_beginP8bContextP8wmWindow",
+          "new_start": "0x10163dae8",
+          "new_end": "0x10163e828",
+          "instruction_count": 848,
+          "fresh_dump": "bcb24058ec43-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z30GPU_viewport_draw_to_screen_exP11GPUViewportiPK4rctibb",
+          "new_start": "0x100a6745c",
+          "new_end": "0x100a67558",
+          "instruction_count": 63,
+          "fresh_dump": "e1a2a55e3c74-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z32GPU_viewport_bind_from_offscreenP11GPUViewportP12GPUOffScreenb",
+          "new_start": "0x100a670f0",
+          "new_end": "0x100a6716c",
+          "instruction_count": 31,
+          "fresh_dump": "823dc8b44b4b-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z40ED_ipad_knife_hierarchy_region_presentedP8bContextP8wmWindowP7ScrAreaP7ARegionRK4rcti",
+          "new_start": "0x10163f1ac",
+          "new_end": "0x10163f3e0",
+          "instruction_count": 141,
+          "fresh_dump": "0c4db70a4f78-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL25wm_draw_window_area_layerP8bContextP8wmWindowiiR22wmIPadFingerPaintFrame",
+          "new_start": "0x100b4ae10",
+          "new_end": "0x100b4b38c",
+          "instruction_count": 351,
+          "fresh_dump": "877a134a314b-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL26gpu_viewport_textures_freeP11GPUViewport",
+          "new_start": "0x100a66e68",
+          "new_end": "0x100a66f04",
+          "instruction_count": 39,
+          "fresh_dump": "90d282b5cd75-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL28gpu_viewport_textures_createP11GPUViewport",
+          "new_start": "0x100a66f04",
+          "new_end": "0x100a670f0",
+          "instruction_count": 123,
+          "fresh_dump": "e8a6ee981c06-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL28wm_draw_region_blend_receiptP7ARegionibP4rcti",
+          "new_start": "0x100b48288",
+          "new_end": "0x100b48520",
+          "instruction_count": 166,
+          "fresh_dump": "2b45f95e0f35-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL30gpu_viewport_draw_colormanagedP11GPUViewportiPK4rctfS3_bb",
+          "new_start": "0x100a67558",
+          "new_end": "0x100a67868",
+          "instruction_count": 196,
+          "fresh_dump": "0db20c203573-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_128ipad_knife_hierarchy_currentEP8bContextP8wmWindow",
+          "new_start": "0x101641274",
+          "new_end": "0x101641420",
+          "instruction_count": 107,
+          "fresh_dump": "08f75cb4778d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_133ipad_knife_hierarchy_native_equalERKNS_24IPadKnifeHierarchyNativeES2_",
+          "new_start": "0x101650814",
+          "new_end": "0x10165090c",
+          "instruction_count": 62,
+          "fresh_dump": "90b3ba23c810-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": [
+        "This is CPU control/argument evidence, not GPU backend or hardware completion. Prior null-color suspicion retains its explicit native allocation/lifetime boundary."
+      ]
+    },
+    {
+      "id": "higher_ui_current_completed_callbacks_drags_and_sticky_pixels",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Full rails/panels/buttons and native headers/sidebar/floating/split geometry retain current/completed precedence. Window callbacks and drags record opaque fact before actual drawing; unknown region callbacks, selected nonnavigation gizmos and paintcursor mark before arbitrary draws. Later self-removal cannot clear executed facts; immediate current lists independently refuse.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b48910",
+          "current": "0x100b48910"
+        },
+        {
+          "prior": "0x100b48940",
+          "current": "0x100b48940"
+        },
+        {
+          "prior": "0x100b4899c",
+          "current": "0x100b4899c"
+        },
+        {
+          "prior": "0x100b489c0",
+          "current": "0x100b489c0"
+        },
+        {
+          "prior": "0x10163e534",
+          "current": "0x10163efd4"
+        },
+        {
+          "prior": "0x101b4dc44",
+          "current": "0x101b4e6e4"
+        },
+        {
+          "prior": "0x100b3fb24",
+          "current": "0x100b3fb24"
+        },
+        {
+          "prior": "0x100b3fb2c",
+          "current": "0x100b3fb2c"
+        },
+        {
+          "prior": "0x100b3fb40",
+          "current": "0x100b3fb40"
+        },
+        {
+          "prior": "0x1016422f0",
+          "current": "0x101642d90"
+        },
+        {
+          "prior": "0x1016402a0",
+          "current": "0x101640d40"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep",
+          "new_start": "0x100b3f95c",
+          "new_end": "0x100b3fc30",
+          "instruction_count": 181,
+          "fresh_dump": "4b39175bce6f-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z19ED_ipad_panels_drawP8bContextP8wmWindow",
+          "new_start": "0x101642d90",
+          "new_end": "0x101643a30",
+          "instruction_count": 808,
+          "fresh_dump": "41427747023b-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z22ED_region_draw_cb_drawPK8bContextP7ARegioni",
+          "new_start": "0x101b4e6e4",
+          "new_end": "0x101b4e808",
+          "instruction_count": 73,
+          "fresh_dump": "d14dc395ec77-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_",
+          "new_start": "0x10164086c",
+          "new_end": "0x101641218",
+          "instruction_count": 619,
+          "fresh_dump": "f3dca3c5a43d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z37WM_gizmomap_drawstep_from_gizmo_groupPK12wmGizmoGroup",
+          "new_start": "0x100b3f8e4",
+          "new_end": "0x100b3f8f4",
+          "instruction_count": 4,
+          "fresh_dump": "1a63e183a410-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z40ED_ipad_knife_hierarchy_window_callbacksP8bContextP8wmWindowb",
+          "new_start": "0x10163efd4",
+          "new_end": "0x10163f0f4",
+          "instruction_count": 72,
+          "fresh_dump": "784819c12968-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL23wm_draw_window_onscreenP8bContextP8wmWindowi",
+          "new_start": "0x100b48760",
+          "new_end": "0x100b49db8",
+          "instruction_count": 1430,
+          "fresh_dump": "78d34c2f83e4-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL25wm_draw_window_area_layerP8bContextP8wmWindowiiR22wmIPadFingerPaintFrame",
+          "new_start": "0x100b4ae10",
+          "new_end": "0x100b4b38c",
+          "instruction_count": 351,
+          "fresh_dump": "877a134a314b-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_135ipad_knife_hierarchy_native_captureEP8bContextP8wmWindowRNS_24IPadKnifeHierarchyNativeE",
+          "new_start": "0x10164f424",
+          "new_end": "0x101650814",
+          "instruction_count": 1276,
+          "fresh_dump": "3eeddbbc923a-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "actual_rna_extension_field_registration_copy_dispatch",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Actual _RNA_GizmoGroup registration cell decodes to current rna_GizmoGroup_register. Python registration supplies bpy_class_call in x5; registrar stores it at candidate+f0, allocated0x110-byte type wrapper memcpy preserves f0, and actual poll/setup/refresh/draw_prepare trampolines load/dispatch same f0. Current field meaning is bound by real initialized pointer values and complete actual instruction equivalence.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x1012520f0",
+          "current": "0x101252b90"
+        },
+        {
+          "prior": "0x1015113a0",
+          "current": "0x101511e40"
+        },
+        {
+          "prior": "0x1015113bc",
+          "current": "0x101511e5c"
+        },
+        {
+          "prior": "0x1014dc4b4",
+          "current": "0x1014dcf54"
+        },
+        {
+          "prior": "0x1014dc4f4",
+          "current": "0x1014dcf94"
+        },
+        {
+          "prior": "0x1014dc520",
+          "current": "0x1014dcfc0"
+        },
+        {
+          "prior": "0x1014dc53c",
+          "current": "0x1014dcfdc"
+        },
+        {
+          "prior": "0x100b3e9e0",
+          "current": "0x100b3e9e0"
+        },
+        {
+          "prior": "0x1014fc9a0",
+          "current": "0x1014fd440"
+        },
+        {
+          "prior": "0x1014dd314",
+          "current": "0x1014dddb4"
+        },
+        {
+          "prior": "0x1014dd558",
+          "current": "0x1014ddff8"
+        },
+        {
+          "prior": "0x1014dd65c",
+          "current": "0x1014de0fc"
+        },
+        {
+          "prior": "0x1014dd760",
+          "current": "0x1014de200"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z19RNA_struct_registerP9StructRNA",
+          "new_start": "0x101252b90",
+          "new_end": "0x101252b98",
+          "instruction_count": 2,
+          "fresh_dump": "04a5083cd50a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26BPY_RNA_gizmogroup_wrapperP16wmGizmoGroupTypePv",
+          "new_start": "0x1014fd434",
+          "new_end": "0x1014fd494",
+          "instruction_count": 24,
+          "fresh_dump": "264279ac4bad-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z28WM_gizmogrouptype_append_ptrPFvP16wmGizmoGroupTypePvES1_",
+          "new_start": "0x100b3e980",
+          "new_end": "0x100b3ea08",
+          "instruction_count": 34,
+          "fresh_dump": "aff1d1c44f20-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL14bpy_class_callP8bContextP10PointerRNAP11FunctionRNAP13ParameterList",
+          "new_start": "0x10151b9cc",
+          "new_end": "0x10151c218",
+          "instruction_count": 531,
+          "fresh_dump": "08747903257f-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL20pyrna_register_classP7_objectS0_",
+          "new_start": "0x101511cf4",
+          "new_end": "0x101511fe0",
+          "instruction_count": 187,
+          "fresh_dump": "9574b542fb66-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL20pyrna_register_classP7_objectS0_.cold.1",
+          "new_start": "0x104a658b8",
+          "new_end": "0x104a65984",
+          "instruction_count": 51,
+          "fresh_dump": "3fb6f9867f84-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL22rna_gizmogroup_poll_cbPK8bContextP16wmGizmoGroupType",
+          "new_start": "0x1014ddd50",
+          "new_end": "0x1014dde6c",
+          "instruction_count": 71,
+          "fresh_dump": "5449b3287b02-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL23rna_GizmoGroup_registerP4MainP10ReportListPvPKcPFiP10PointerRNAS3_PbEPFiP8bContextS7_P11FunctionRNAP13ParameterListEPFvS3_E",
+          "new_start": "0x1014dcd1c",
+          "new_end": "0x1014dd114",
+          "instruction_count": 254,
+          "fresh_dump": "f2ea9a4580c2-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL23rna_gizmogroup_setup_cbPK8bContextP12wmGizmoGroup",
+          "new_start": "0x1014ddf8c",
+          "new_end": "0x1014de090",
+          "instruction_count": 65,
+          "fresh_dump": "32d49cd134ff-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL25rna_gizmogroup_refresh_cbPK8bContextP12wmGizmoGroup",
+          "new_start": "0x1014de090",
+          "new_end": "0x1014de194",
+          "instruction_count": 65,
+          "fresh_dump": "0c1b4cde04e3-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL30rna_gizmogroup_draw_prepare_cbPK8bContextP12wmGizmoGroup",
+          "new_start": "0x1014de194",
+          "new_end": "0x1014de298",
+          "instruction_count": 65,
+          "fresh_dump": "750eb1a069cd-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "both_opaque_markers_before_all_preparation_callbacks",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Current actual74-node per-group constrained CFG proves Finger runtime+1 and Knife runtime+3 stores dominate both poll calls, backwards ensure-init block and draw_prepare BLR. Cheap native drawstep gate remains earlier; null extension bypasses both stores. False poll, hide, empty selected list or later unlink has no marker rollback.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b3f9f4",
+          "current": "0x100b3f9f4"
+        },
+        {
+          "prior": "0x100b3f9fc",
+          "current": "0x100b3f9fc"
+        },
+        {
+          "prior": "0x100b3fa08",
+          "current": "0x100b3fa08"
+        },
+        {
+          "prior": "0x100b3fa14",
+          "current": "0x100b3fa14"
+        },
+        {
+          "prior": "0x100b3fa1c",
+          "current": "0x100b3fa1c"
+        },
+        {
+          "prior": "0x100b3fa38",
+          "current": "0x100b3fa38"
+        },
+        {
+          "prior": "0x100b3fa58",
+          "current": "0x100b3fa58"
+        },
+        {
+          "prior": "0x100b3f9d0",
+          "current": "0x100b3f9d0"
+        },
+        {
+          "prior": "0x100b3fa94",
+          "current": "0x100b3fa94"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z13CTX_wm_regionPK8bContext",
+          "new_start": "0x1000b3b88",
+          "new_end": "0x1000b3ba0",
+          "instruction_count": 6,
+          "fresh_dump": "9f226274a10c-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z16WM_gizmomap_drawP10wmGizmoMapPK8bContext24eWM_GizmoFlagMapDrawStep",
+          "new_start": "0x100b3f95c",
+          "new_end": "0x100b3fc30",
+          "instruction_count": 181,
+          "fresh_dump": "4b39175bce6f-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z17CTX_wm_region_setP8bContextP7ARegion",
+          "new_start": "0x1000b4b1c",
+          "new_end": "0x1000b4b90",
+          "instruction_count": 29,
+          "fresh_dump": "54e56b6a3173-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z19CTX_wm_region_popupPK8bContext",
+          "new_start": "0x1000b4458",
+          "new_end": "0x1000b4460",
+          "instruction_count": 2,
+          "fresh_dump": "34d91b347996-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z22WM_gizmo_group_refreshPK8bContextP12wmGizmoGroup",
+          "new_start": "0x100b3ceb8",
+          "new_end": "0x100b3cfb4",
+          "instruction_count": 63,
+          "fresh_dump": "16be93b6d1f7-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z23CTX_wm_region_popup_setP8bContextP7ARegion",
+          "new_start": "0x1000b4b90",
+          "new_end": "0x1000b4b98",
+          "instruction_count": 2,
+          "fresh_dump": "de6ecc692497-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z24WM_gizmo_group_type_pollPK8bContextPK16wmGizmoGroupType",
+          "new_start": "0x100b3e344",
+          "new_end": "0x100b3e3b0",
+          "instruction_count": 27,
+          "fresh_dump": "416610c6fb3e-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup",
+          "new_start": "0x100b3ce14",
+          "new_end": "0x100b3ce78",
+          "instruction_count": 25,
+          "fresh_dump": "d318e9f6737e-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z25WM_gizmogroup_ensure_initPK8bContextP12wmGizmoGroup.cold.1",
+          "new_start": "0x104a5f6b8",
+          "new_end": "0x104a5f750",
+          "instruction_count": 38,
+          "fresh_dump": "c925320d49fd-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z36wm_gizmogroup_is_visible_in_drawstepPK12wmGizmoGroup24eWM_GizmoFlagMapDrawStep",
+          "new_start": "0x100b3d098",
+          "new_end": "0x100b3d0f4",
+          "instruction_count": 23,
+          "fresh_dump": "91dd62a7a481-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z37WM_gizmomap_drawstep_from_gizmo_groupPK12wmGizmoGroup",
+          "new_start": "0x100b3f8e4",
+          "new_end": "0x100b3f8f4",
+          "instruction_count": 4,
+          "fresh_dump": "1a63e183a410-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": [
+        "Dominance is explicitly conditional on nonnull script type/call and CTX_wm_region returning actual live current native region. The actual getter can consult Python overrides in arbitrary external contexts; no stronger claim is inferred."
+      ]
+    },
+    {
+      "id": "empty_hidden_script_refusal_without_callback",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Current nativecapture tests actual type+f0 and clears output.settled+44 before first gizmo-list read, regardless of nav enabled, empty/hidden/uninitialized/tagged-removal group. No indirect call appears in full current capture. Refusal is consumed by completed publication and each fresh current probe before equality can admit.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x10164f58c",
+          "current": "0x10165002c"
+        },
+        {
+          "prior": "0x10164f5d4",
+          "current": "0x101650074"
+        },
+        {
+          "prior": "0x10164f5d8",
+          "current": "0x101650078"
+        },
+        {
+          "prior": "0x10164f5e4",
+          "current": "0x101650084"
+        },
+        {
+          "prior": "0x10164f5e8",
+          "current": "0x101650088"
+        },
+        {
+          "prior": "0x10163ebe8",
+          "current": "0x10163f688"
+        },
+        {
+          "prior": "0x10163ebf0",
+          "current": "0x10163f690"
+        },
+        {
+          "prior": "0x1016408dc",
+          "current": "0x10164137c"
+        },
+        {
+          "prior": "0x1016408e8",
+          "current": "0x101641388"
+        },
+        {
+          "prior": "0x10163ff84",
+          "current": "0x101640a24"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_",
+          "new_start": "0x10164086c",
+          "new_end": "0x101641218",
+          "instruction_count": 619,
+          "fresh_dump": "f3dca3c5a43d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26ED_ipad_hud_compositor_endP8bContextP8wmWindowRNSt3__16vectorI20IPadHUDPresentedRectNS3_9allocatorIS5_EEEE",
+          "new_start": "0x10163f510",
+          "new_end": "0x1016404ac",
+          "instruction_count": 999,
+          "fresh_dump": "fe92555df5d9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_128ipad_knife_hierarchy_currentEP8bContextP8wmWindow",
+          "new_start": "0x101641274",
+          "new_end": "0x101641420",
+          "instruction_count": 107,
+          "fresh_dump": "08f75cb4778d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_135ipad_knife_hierarchy_native_captureEP8bContextP8wmWindowRNS_24IPadKnifeHierarchyNativeE",
+          "new_start": "0x10164f424",
+          "new_end": "0x101650814",
+          "instruction_count": 1276,
+          "fresh_dump": "3eeddbbc923a-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": [
+        "Group refusal concerns groups in an eligible visible WINDOW region under existing native lifetime/context invariants. It is not arbitrary freed-memory safety."
+      ]
+    },
+    {
+      "id": "opaque_full_cached_finger_knife_propagation",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Actual Knife full finish copies runtime+3 into persistent buffer stamp, cached presentation copies it unchanged, publication ORs later runtime unknown and EDprobe checks texture/composition/current unknown. Finger runtime+1 similarly reaches buffer+300, cached candidate+50 and current/publication refusal. Native preparation callback self-removal cannot erase already recorded pixels.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x100b4c6c4",
+          "current": "0x100b4c6c4"
+        },
+        {
+          "prior": "0x100b4c6c8",
+          "current": "0x100b4c6c8"
+        },
+        {
+          "prior": "0x100b4c7a0",
+          "current": "0x100b4c7a0"
+        },
+        {
+          "prior": "0x10163e908",
+          "current": "0x10163f3a8"
+        },
+        {
+          "prior": "0x10163f35c",
+          "current": "0x10163fdfc"
+        },
+        {
+          "prior": "0x1016402a0",
+          "current": "0x101640d40"
+        },
+        {
+          "prior": "0x101640344",
+          "current": "0x101640de4"
+        },
+        {
+          "prior": "0x101640498",
+          "current": "0x101640f38"
+        },
+        {
+          "prior": "0x100b4c9fc",
+          "current": "0x100b4c9fc"
+        },
+        {
+          "prior": "0x100b4b6cc",
+          "current": "0x100b4b6cc"
+        },
+        {
+          "prior": "0x100b4b710",
+          "current": "0x100b4b710"
+        },
+        {
+          "prior": "0x100b497e4",
+          "current": "0x100b497e4"
+        },
+        {
+          "prior": "0x100b497ec",
+          "current": "0x100b497ec"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_",
+          "new_start": "0x10164086c",
+          "new_end": "0x101641218",
+          "instruction_count": 619,
+          "fresh_dump": "f3dca3c5a43d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z26ED_ipad_hud_compositor_endP8bContextP8wmWindowRNSt3__16vectorI20IPadHUDPresentedRectNS3_9allocatorIS5_EEEE",
+          "new_start": "0x10163f510",
+          "new_end": "0x1016404ac",
+          "instruction_count": 999,
+          "fresh_dump": "fe92555df5d9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z28ED_ipad_finger_paint_captureP8bContextR20IPadFingerPaintOwner",
+          "new_start": "0x10164260c",
+          "new_end": "0x101642790",
+          "instruction_count": 97,
+          "fresh_dump": "c12583de9d0a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z40ED_ipad_knife_hierarchy_region_presentedP8bContextP8wmWindowP7ScrAreaP7ARegionRK4rcti",
+          "new_start": "0x10163f1ac",
+          "new_end": "0x10163f3e0",
+          "instruction_count": 141,
+          "fresh_dump": "0c4db70a4f78-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL22wm_draw_area_offscreenP8bContextP8wmWindowP7ScrAreab",
+          "new_start": "0x100b4bf4c",
+          "new_end": "0x100b4cac0",
+          "instruction_count": 733,
+          "fresh_dump": "e25d910d45e7-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL23wm_draw_window_onscreenP8bContextP8wmWindowi",
+          "new_start": "0x100b48760",
+          "new_end": "0x100b49db8",
+          "instruction_count": 1430,
+          "fresh_dump": "78d34c2f83e4-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL27wm_ipad_finger_paint_recordP8bContextP8wmWindowP7ScrAreaP7ARegionR22wmIPadFingerPaintFrameRK4rctib",
+          "new_start": "0x100b4b4c0",
+          "new_end": "0x100b4b89c",
+          "instruction_count": 247,
+          "fresh_dump": "c48ffcd34b9f-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "builtin_navigation_geometry_and_exact_owner_receipt",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "Native navigation group/gizmo flags, matrix/scale, finite/nonnegative/overflow checks and footprint arithmetic are preserved; supported builtin identity registration boundary remains. EDprobe independently consumes exact completed32scope/content/allocation and fresh same23owner, current callback proof and original only modal handler. Initial no-handler/custom/same-batch ordinary fallback remains.",
+      "current_actual_anchor_mapping": [
+        {
+          "prior": "0x10164f7f0",
+          "current": "0x101650290"
+        },
+        {
+          "prior": "0x10164fb3c",
+          "current": "0x1016505dc"
+        },
+        {
+          "prior": "0x10164fc18",
+          "current": "0x1016506b8"
+        },
+        {
+          "prior": "0x1016402d8",
+          "current": "0x101640d78"
+        },
+        {
+          "prior": "0x101640564",
+          "current": "0x101641004"
+        },
+        {
+          "prior": "0x101640718",
+          "current": "0x1016411b8"
+        }
+      ],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z23ED_ipad_knife_pan_probeP8bContextP8wmWindowbRKN5ghost3ios21PencilKnifePanContactERS5_",
+          "new_start": "0x10164086c",
+          "new_end": "0x101641218",
+          "instruction_count": 619,
+          "fresh_dump": "f3dca3c5a43d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z33ED_mesh_knife_draw_callback_knownPK10wmOperatorPK7ARegionPKvPFvPK8bContextPS2_PvES6_i",
+          "new_start": "0x101c381a4",
+          "new_end": "0x101c38280",
+          "instruction_count": 55,
+          "fresh_dump": "f2bbc562ea1e-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL33WIDGETGROUP_navigate_draw_preparePK8bContextP12wmGizmoGroup",
+          "new_start": "0x102252020",
+          "new_end": "0x102252648",
+          "instruction_count": 394,
+          "fresh_dump": "0da07779ec38-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN12_GLOBAL__N_135ipad_knife_hierarchy_native_captureEP8bContextP8wmWindowRNS_24IPadKnifeHierarchyNativeE",
+          "new_start": "0x10164f424",
+          "new_end": "0x101650814",
+          "instruction_count": 1276,
+          "fresh_dump": "3eeddbbc923a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZNK5ghost3ios21PencilKnifePanContact5validEv",
+          "new_start": "0x101641218",
+          "new_end": "0x101641274",
+          "instruction_count": 23,
+          "fresh_dump": "11b290f3aee2-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": []
+    },
+    {
+      "id": "retained_native_pan_zoom_circle_transform_controls",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_ARM64",
+      "conclusion": "37 exact native control registrations/invoke/modal/apply/cancel/helper ranges retain actual complete instruction and local-edge behavior with resolved external targets and exact referenced data/strings. VIEW2D pan callbacks are actual instance0, distinct from identically mangled Clip locals. These bodies preserve ordinary control operations; new Node selected-dispatch and event transport belong to their separate reviews.",
+      "current_actual_anchor_mapping": [],
+      "fresh_full_ranges": [
+        {
+          "symbol": "__Z23VIEW3D_OT_select_circleP14wmOperatorType",
+          "new_start": "0x10226eadc",
+          "new_end": "0x10226eb68",
+          "instruction_count": 35,
+          "fresh_dump": "8c43fbfc193c-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z23WM_gesture_circle_modalP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x100b71b14",
+          "new_end": "0x100b71d48",
+          "instruction_count": 141,
+          "fresh_dump": "7c3c75bb0b99-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z24WM_gesture_circle_cancelP8bContextP10wmOperator",
+          "new_start": "0x100b71d48",
+          "new_end": "0x100b71db8",
+          "instruction_count": 28,
+          "fresh_dump": "7448d54e9089-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__Z24WM_gesture_circle_invokeP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x100b71968",
+          "new_end": "0x100b71a5c",
+          "instruction_count": 61,
+          "fresh_dump": "f21cc5fd6fc0-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL13VIEW2D_OT_panP14wmOperatorType",
+          "new_start": "0x101fe5e58",
+          "new_end": "0x101fe5f4c",
+          "instruction_count": 61,
+          "fresh_dump": "b055d8912ee9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL13view_pan_execP8bContextP10wmOperator@@instance0",
+          "new_start": "0x101fe55e8",
+          "new_end": "0x101fe56f0",
+          "instruction_count": 66,
+          "fresh_dump": "3c5036c241a9-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL13view_pan_pollP8bContext",
+          "new_start": "0x101fe55c0",
+          "new_end": "0x101fe55e8",
+          "instruction_count": 10,
+          "fresh_dump": "6cf13730e704-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL14VIEW2D_OT_zoomP14wmOperatorType",
+          "new_start": "0x101fe64f8",
+          "new_end": "0x101fe6604",
+          "instruction_count": 67,
+          "fresh_dump": "180580d995e6-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL14view_pan_applyP8bContextP10wmOperator",
+          "new_start": "0x101fe6974",
+          "new_end": "0x101fe6a5c",
+          "instruction_count": 58,
+          "fresh_dump": "fa50cdcb3efc-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL14view_pan_modalP8bContextP10wmOperatorPK7wmEvent@@instance0",
+          "new_start": "0x101fe594c",
+          "new_end": "0x101fe5af4",
+          "instruction_count": 106,
+          "fresh_dump": "87a806db2977-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL14view_zoom_pollP8bContext",
+          "new_start": "0x101fe4d38",
+          "new_end": "0x101fe4d84",
+          "instruction_count": 19,
+          "fresh_dump": "76aafec2c737-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL15view_pan_cancelP8bContextP10wmOperator@@instance0",
+          "new_start": "0x101fe5af4",
+          "new_end": "0x101fe5b3c",
+          "instruction_count": 18,
+          "fresh_dump": "a059f67c067b-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL15view_pan_invokeP8bContextP10wmOperatorPK7wmEvent@@instance0",
+          "new_start": "0x101fe56f0",
+          "new_end": "0x101fe594c",
+          "instruction_count": 151,
+          "fresh_dump": "3ee257d4acc2-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL16view_zoomin_execP8bContextP10wmOperator",
+          "new_start": "0x101fe73c4",
+          "new_end": "0x101fe7520",
+          "instruction_count": 87,
+          "fresh_dump": "3ee4ed20214a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL17VIEW2D_OT_zoom_inP14wmOperatorType",
+          "new_start": "0x101fe6320",
+          "new_end": "0x101fe640c",
+          "instruction_count": 59,
+          "fresh_dump": "ae3a67b1d9af-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL17view_zoomout_execP8bContextP10wmOperator",
+          "new_start": "0x101fe78ec",
+          "new_end": "0x101fe7a48",
+          "instruction_count": 87,
+          "fresh_dump": "cc570de08353-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL18VIEW2D_OT_zoom_outP14wmOperatorType",
+          "new_start": "0x101fe640c",
+          "new_end": "0x101fe64f8",
+          "instruction_count": 59,
+          "fresh_dump": "48bdf4997922-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL18view_zoomdrag_execP8bContextP10wmOperator",
+          "new_start": "0x101fe4d84",
+          "new_end": "0x101fe4e6c",
+          "instruction_count": 58,
+          "fresh_dump": "079ec787dfb3-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL18view_zoomin_invokeP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101fe72f0",
+          "new_end": "0x101fe73c4",
+          "instruction_count": 53,
+          "fresh_dump": "71430ccdf77a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL19view_zoomdrag_applyP8bContextP10wmOperator",
+          "new_start": "0x101fe6738",
+          "new_end": "0x101fe6974",
+          "instruction_count": 143,
+          "fresh_dump": "9b74fe2fd316-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL19view_zoomdrag_modalP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101fe51bc",
+          "new_end": "0x101fe5534",
+          "instruction_count": 222,
+          "fresh_dump": "d1963a2f4b26-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL19view_zoomout_invokeP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101fe7818",
+          "new_end": "0x101fe78ec",
+          "instruction_count": 53,
+          "fresh_dump": "d19a31a5e14d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL19view_zoomstep_applyP8bContextP10wmOperator",
+          "new_start": "0x101fe7520",
+          "new_end": "0x101fe7818",
+          "instruction_count": 190,
+          "fresh_dump": "72e30a36e058-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL20view_zoomdrag_cancelP8bContextP10wmOperator",
+          "new_start": "0x101fe5534",
+          "new_end": "0x101fe55c0",
+          "instruction_count": 35,
+          "fresh_dump": "5a3c2468f814-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL20view_zoomdrag_invokeP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101fe4e6c",
+          "new_end": "0x101fe51bc",
+          "instruction_count": 212,
+          "fresh_dump": "931b7f677e57-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL21VIEW2D_OT_zoom_borderP14wmOperatorType",
+          "new_start": "0x101fe6604",
+          "new_end": "0x101fe665c",
+          "instruction_count": 22,
+          "fresh_dump": "72d3240663df-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL25view3d_circle_select_execP8bContextP10wmOperator",
+          "new_start": "0x10226eb9c",
+          "new_end": "0x10226fcd4",
+          "instruction_count": 1102,
+          "fresh_dump": "01c198b6081c-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL26view3d_circle_select_modalP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x10226eb68",
+          "new_end": "0x10226eb9c",
+          "instruction_count": 13,
+          "fresh_dump": "b86b1163441c-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZL27view3d_circle_select_cancelP8bContextP10wmOperator",
+          "new_start": "0x10226fcd4",
+          "new_end": "0x10226fcf8",
+          "instruction_count": 9,
+          "fresh_dump": "94f934cf786a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transform13initTransformEP8bContextPNS1_9TransInfoEP10wmOperatorPK7wmEventi",
+          "new_start": "0x101ea7450",
+          "new_end": "0x101ea7af4",
+          "instruction_count": 425,
+          "fresh_dump": "57e36ccaf91d-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transform14transformApplyEP8bContextPNS1_9TransInfoE",
+          "new_start": "0x101ea7ef0",
+          "new_end": "0x101ea7f68",
+          "instruction_count": 30,
+          "fresh_dump": "a6e2ac9aeb42-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transform14transformEventEPNS1_9TransInfoEP10wmOperatorPK7wmEvent",
+          "new_start": "0x101ea5e54",
+          "new_end": "0x101ea689c",
+          "instruction_count": 658,
+          "fresh_dump": "0e79884e3c1a-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transformL14transform_execEP8bContextP10wmOperator",
+          "new_start": "0x101ef31d0",
+          "new_end": "0x101ef32e0",
+          "instruction_count": 68,
+          "fresh_dump": "486087c1f464-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transformL15transform_modalEP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101ef32e0",
+          "new_end": "0x101ef34a8",
+          "instruction_count": 114,
+          "fresh_dump": "91ca813f4d13-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transformL16transform_cancelEP8bContextP10wmOperator",
+          "new_start": "0x101ef34a8",
+          "new_end": "0x101ef34e0",
+          "instruction_count": 14,
+          "fresh_dump": "1eea76dc3083-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transformL16transform_invokeEP8bContextP10wmOperatorPK7wmEvent",
+          "new_start": "0x101ef2fe0",
+          "new_end": "0x101ef31d0",
+          "instruction_count": 124,
+          "fresh_dump": "02a92a25e9b6-new.asm",
+          "equivalent": true
+        },
+        {
+          "symbol": "__ZN7blender2ed9transformL22TRANSFORM_OT_translateEP14wmOperatorType",
+          "new_start": "0x101ef1e1c",
+          "new_end": "0x101ef1eec",
+          "instruction_count": 52,
+          "fresh_dump": "ce8c23ff86a1-new.asm",
+          "equivalent": true
+        }
+      ],
+      "limits": [
+        "Bounded body/reference equivalence is not full native modal runtime, arbitrary callback, geometry/Undo/history or device certification."
+      ]
+    }
+  ],
+  "fresh_opaque_guard_cfg": {
+    "file": "fresh-per-group-preparation-constrained-cfg.json",
+    "reachable_nodes": 74,
+    "all_four_callback_sites_both_markers_dominate": true,
+    "capture_no_indirect_calls": true
+  },
+  "initial_evidence_limitations_resolved": [
+    "Two compositor ADRP registers cross a branch past linear overwrites. Fresh bounded local CFG def-use tracing resolves their actual later global consumers; pages were not blindly masked.",
+    "A native pan poll apparent extended range arose from duplicate local names omitted from the first boundary list. Fresh exact full nlist text boundaries and explicit duplicate instances resolve the range; actual old/current poll body is equivalent.",
+    "51 raw32 data differences occur only after referenced C-string NUL; complete actual strings are identical. Raw windows are retained and explicit string dispositions close them."
+  ],
+  "findings": [],
+  "pending_within_assigned_scope": [],
+  "remaining_separate_reviews": [
+    "Changed Node transport and actual WM queue/selected dispatch semantics.",
+    "Fresh preserved HUD/Weight review."
+  ],
+  "limits": [
+    "Bounded static actual arm64 evidence under ordinary dyld bindings and supported native registration/lifetime contracts. No global heap/CFG/native memory safety, arbitrary pointer mutation/interposition or all-callees equivalence.",
+    "GPU submission/backend/hardware completion, UIKit scheduling/composition, geometry/Undo/history/native modal runtime and exact device acceptance remain outside this review.",
+    "Current draw marker proof requires CTX_wm_region to yield the actual live draw region. Arbitrary Python context overrides are not discharged. Fresh bridge uses its own empty context with provider fields zero.",
+    "Native allocation/lifetime failure boundaries from prior renderer review remain explicit. No unrelated callback-family expansion or initial future-Knife prediction is claimed."
+  ],
+  "evidence_directory": "independent-preserved-render-fresh-audit",
+  "evidence_files": [
+    "comparison-manifest.json",
+    "concrete-address-references.json",
+    "changed-or-unresolved.json",
+    "actual-reference-fixup-reconciliation.json",
+    "actual-native-field-bindings.json",
+    "actual-string-and-data-dispositions.json",
+    "fresh-per-group-preparation-constrained-cfg.json",
+    "native-control-reconciliation.json",
+    "native-control-selection.json"
+  ],
+  "activity": {
+    "production_edits": false,
+    "test_edits": false,
+    "checker_edits": false,
+    "builds": false,
+    "tests_run": false,
+    "evidence_only_writes": true
+  },
+  "ready_claim": false,
+  "device_acceptance": false,
+  "global_cfg_claim": false
+}

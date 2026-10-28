@@ -1,0 +1,71 @@
+{
+  "status": "PASS_BOUNDED_FRESH_NATIVE_FIRSTSIZE_INIT_AND_WEIGHT_CALLBACK",
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "run": 40728695044,
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "evidence": "scope-manifest.json and fresh llvm-objdump range dumps",
+  "new_region_firstsize": {
+    "allocation_call": "0x101f9166c",
+    "created_region_alias": "x21 from allocation result at 0x101f91670",
+    "fresh_provenance": "BKE_area_find_region_type result x22==0 on creation edge at 0x101f91630. No x22 write until 0x101f917ac; normal AAPCS calls preserve x22, so cbz x22 at 0x101f91728 must target 0x101f91790. Other hidden/regiondata arms also enter size/init block.",
+    "forced_cfg_edge": [
+      "0x101f91728",
+      "0x101f91790"
+    ],
+    "native_size_call": "0x101f917c4",
+    "floating_init_call": "0x101f917cc",
+    "postcreation_layout_queries": [
+      "0x101f91750",
+      "0x101f91864"
+    ],
+    "precreation_intent_query": "0x101f915a8 precedes allocation; no after-sizing claim applies to it.",
+    "cfg_instruction_count": 270,
+    "postcreation_reachable_count": 200,
+    "cfg_external_edges": [],
+    "domination_checks": {
+      "0x101f917cc": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f91750": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f91864": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f91590": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      }
+    },
+    "size_arguments": "x20=C, x19=original area at entry. CTX_wm_manager(C) at 0x101f917a8 saved in x22 at 0x101f917ac; CTX_wm_window(C) at 0x101f917b4 returned to x1 at 0x101f917b8; x0=x22 and x2=x19 before size call. Floating init gets x0=x21 at 0x101f917c8.",
+    "size_bit": "0x101f91798 calls tag helper with x0=x19,x1=x21. Helper sets area+0x52 bit3 if not set (0x10162185c/860); sizes tests same bit (0x101622954/958).",
+    "native_type_init": "Factory 0x101f90dd4 forms actual hud_region_init 0x101f9125c at 0x101f90e44/48 and stores type+0x18 at 0x101f90e4c, type id8 at 0x101f90e58. New region runtime+0x170 stores type lookup at 0x101f916c8. Sizes loads runtime+0x170 then type+0x18 at 0x101622a94/a98/a9c and nonnull init called 0x101622aac with x0=manager x21,x1=iterated region x23.",
+    "init_chain": "hud_region_init saves region x19; calls panelsinit 0x101625ff8 at 0x101f9126c with original manager/region. Panels calls UI_view2d_region_reinit at 0x10162601c with x0=region+0x10,w1=4,signed +0xb8/+0xba dimensions in w2/w3, then adds native keymap handler. HUD init calls UI_region_handlers_add 0x101f91280 with region.runtime+0x328.",
+    "floating_profile": "0x1016237a8..3854 computes visibility and region width/height +0xb8/+0xba from +0xa8/+0xb0 rect, then initializes region+0x50 rect."
+  },
+  "weight_cancel": {
+    "status": "PASS_BOUNDED",
+    "start": "0x101dd952c",
+    "end_exclusive": "0x101dd9534",
+    "instruction_count": 2,
+    "argument_flow": "C x0 and op x1 unchanged; ldr x2,[x1,#0x60] obtains op.customdata; b 0x101dc12f8 tails to actual generic paint_stroke_cancel. No custom nulling, duplicate native done or separate deletion path.",
+    "generic_scope_inspected": "Fresh 0x101dc12f8..139c saves stroke x2 in x19,C x0 in x20; conditional callbacks read stroke+0x438/+0x440; tailcall paint_stroke_free at 0x101dc1398. Control-flow inspection only; arbitrary callback/allocator safety not proved."
+  },
+  "scope_limits": [
+    "Concrete local CFG overapproximates branch conditions except freshly established x22==0. Native callees must return normally and preserve AAPCS callee-saved registers/frame.",
+    "Native type registry-to-lookup validity, valid heap objects and no intervening reentrant changes remain assumptions. Actual factory slots and init arguments are inspected, not global runtime heap state.",
+    "No global heap/CFG/allocator/reentrancy, UIKit/GPU/live geometry, generic Weight completion correctness, Undo or device acceptance claim.",
+    "Fresh native review is distinct from package/model/host evidence."
+  ],
+  "production_or_checker_edits": false,
+  "device_acceptance": false,
+  "completed_utc": "2026-10-28T21:14:02.622602+00:00"
+}

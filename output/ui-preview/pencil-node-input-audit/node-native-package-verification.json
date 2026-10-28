@@ -1,0 +1,98 @@
+{
+  "status": "PASS_NATIVE_PACKAGE_AND_FOUR_BOUNDED_ACTUAL_COMPILED_REVIEWS",
+  "utc": "2026-10-28T21:30:49.225139+00:00",
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "run": 40728695044,
+  "url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/40728695044",
+  "artifact": 12835522930,
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\ipa-40728695044\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248687335,
+    "sha256": "1b3372bed4aa2a6d30f257ac0f26bdc7d15078abf2751f0ac4d211a54d47565d",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "binary_bytes": 160457808,
+  "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "package_gates": {
+    "full_crc_entries": 3368,
+    "arm64_iPhoneOS": "PASS",
+    "version": "5.0.0",
+    "whole_exact_interaction_UI": "PASS",
+    "default_bars_toolbar_native_tools": "PASS",
+    "native_icons": 129,
+    "exact_nine_Base_native_only_MoreTools": "PASS",
+    "whole_python_overlay_files": 7,
+    "default_bar_and_tool_files": 3
+  },
+  "independent_compiled_reviews": [
+    {
+      "file": "independent-compiled-node-transport-review.json",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED_NODE_TRANSPORT",
+      "sha256_canonical_utf8_lf": "f3a4ad28b92a93f8aaec1758afcae1cbeb749941cc6504c67f8fd9cac8acd8ec",
+      "sha256_original_raw": "db54dc4549b06d0c155c72285fa252d98cc940ed4069336ebe4ef3609f547746"
+    },
+    {
+      "file": "independent-compiled-node-dispatch-review.json",
+      "status": "PASS_BOUNDED_ACTUAL_COMPILED_NODE_SELECTED_DISPATCH_NATIVE_PROFILE_AND_PREALLOCATION_REFUSAL",
+      "sha256_canonical_utf8_lf": "0693b059b885a20298b2a02414f8e61ce2227e4b47b5bb49629c57e6de68cbd3",
+      "sha256_original_raw": "ae679529c3286f604124bd0bd2daaa46a448bf3eed1bdbdbeb3f14e762a454ec"
+    },
+    {
+      "file": "independent-preserved-gates-review.json",
+      "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+      "sha256_canonical_utf8_lf": "eb7a64789d9c4755a93da0cb623a9a38631f59cfd2d3a753dbbff35ff7c3c005",
+      "sha256_original_raw": "679edec02af8446e0ba94a6c1bf2aae8030811bb2d48f54b82991ed502a542b6"
+    },
+    {
+      "file": "independent-compiled-preserved-render-review.json",
+      "status": "PASS_BOUNDED_RECONCILED_ACTUAL_COMPILED_PRESERVED_RENDER_GIZMO_NATIVE_BRIDGE",
+      "sha256_canonical_utf8_lf": "b0d3c8040e286ad5b93055dc60510c6f2a6b5e2d39f6ddd28a9b9416121aa25e",
+      "sha256_original_raw": "d0155c50d4d3c040e9632745129e55fccc5da2632efd6af148f5d5e2342d2ebd"
+    }
+  ],
+  "raw_owner_negative_retained_and_freshly_resolved": {
+    "status": "PASS_FRESH_BOUNDED_PRESERVED_GATES_RESOLVED",
+    "run": 40728695044,
+    "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+    "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+    "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+    "raw_automated_owner_status": "FAILED retained unchanged; unsupported saved-area SP+8 flow is resolved only by independent fresh actual argument/stack/normal-return CFG evidence.",
+    "raw_audit_sha256_unchanged": "d3df3ab125fe6897a2c340e052cee78a509f8752f7cd8b4c33426cf5329a009f",
+    "manual_proof": "independent-preserved-owner-stack-cfg-proof.json",
+    "actual_flow": "Area getter0x10163d27c -> saved SP+8 store0x10163d280 -> reload0x10163d300 -> area setter0x10163d304, then saved x26 -> region setter0x10163d310; original C is x19.",
+    "normal_return_CFG": "Fresh complete327 instructions;167 reachable after mutation; only normal ret0x10163d154. Area restore dominates region restore and every normal return; region restore dominates every normal return.",
+    "source_or_checker_changes": false,
+    "no_device_proof": true
+  },
+  "review_dependency_resolution": "New physical transport, chosen dispatch/native profile/preallocation refusal, preserved launch/Weight and unchanged renderer/gizmo/Knife bridge/native controls each independently reviewed for this exact binary. Cross-review dependencies closed by these four reports.",
+  "source_host_validation": {
+    "full_tests": 835,
+    "seconds": 669.772,
+    "unchanged_final_inputs": 235,
+    "pinned_preflight_targets": 138,
+    "diff_check": "PASS",
+    "raw_native_source_match": 138,
+    "prior_runtime_targets_retained": 131,
+    "interaction_python_unchanged": 7
+  },
+  "visible_scope": "Targets unwanted canvas movement before ordinary Pencil node dragging acquires its native owner, only for actually chosen canonical stock-value Node WINDOW pan/CtrlZoom. Existing pointer sequence and native controls remain baseline; ambiguous/mixed/custom routes fall back.",
+  "compiled_scope": "Actual branch/call/argument/native-field/data and bounded normal-CFG checks; full immutable selected instruction/reference reconciliation under explicit native ABI/lifetime/binding assumptions.",
+  "limitations": [
+    "No exact iPad/Pencil acceptance, UIKit timing, runtime node socket/title edit/history/Undo or whole pointer ABI proof.",
+    "No global heap/allocator/reentrancy/CFG/GPU completion or arbitrary native callback lifetime claim.",
+    "Physical source classification grants no delivered DOWN, contact identity, node owner or lease.",
+    "Mixed-source coalescing and changed/custom/ambiguous profiles retain native fallback. Initial/no-handler/same-batch/custom Knife DOWN remains its prior ordinary fallback.",
+    "Normal saved-context proof restores actual getter values; it does not assert equality to raw fields under arbitrary Python overrides.",
+    "Raw owner checker failure remains unchanged; fresh exact saved-stack and normal-return proof resolves only its bounded missed shape."
+  ],
+  "ready_for_device_check": true,
+  "device_acceptance": false,
+  "whole_goal_complete": false,
+  "unchanged_rebuild_needed": false
+}

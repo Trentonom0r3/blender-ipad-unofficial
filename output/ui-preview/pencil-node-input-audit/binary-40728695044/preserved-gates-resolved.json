@@ -1,0 +1,14 @@
+{
+  "status": "PASS_FRESH_BOUNDED_PRESERVED_GATES_RESOLVED",
+  "run": 40728695044,
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "raw_automated_owner_status": "FAILED retained unchanged; unsupported saved-area SP+8 flow is resolved only by independent fresh actual argument/stack/normal-return CFG evidence.",
+  "raw_audit_sha256_unchanged": "d3df3ab125fe6897a2c340e052cee78a509f8752f7cd8b4c33426cf5329a009f",
+  "manual_proof": "independent-preserved-owner-stack-cfg-proof.json",
+  "actual_flow": "Area getter0x10163d27c -> saved SP+8 store0x10163d280 -> reload0x10163d300 -> area setter0x10163d304, then saved x26 -> region setter0x10163d310; original C is x19.",
+  "normal_return_CFG": "Fresh complete327 instructions;167 reachable after mutation; only normal ret0x10163d154. Area restore dominates region restore and every normal return; region restore dominates every normal return.",
+  "source_or_checker_changes": false,
+  "no_device_proof": true
+}

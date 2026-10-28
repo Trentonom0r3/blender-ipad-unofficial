@@ -1,0 +1,2503 @@
+{
+  "entry": "0x10163d29c",
+  "nodes": [
+    {
+      "address": "0x10163cffc",
+      "instruction": "stp x28, x27, [sp, #-0x60]!",
+      "successors": [
+        "0x10163d000"
+      ]
+    },
+    {
+      "address": "0x10163d000",
+      "instruction": "stp x26, x25, [sp, #0x10]",
+      "successors": [
+        "0x10163d004"
+      ]
+    },
+    {
+      "address": "0x10163d004",
+      "instruction": "stp x24, x23, [sp, #0x20]",
+      "successors": [
+        "0x10163d008"
+      ]
+    },
+    {
+      "address": "0x10163d008",
+      "instruction": "stp x22, x21, [sp, #0x30]",
+      "successors": [
+        "0x10163d00c"
+      ]
+    },
+    {
+      "address": "0x10163d00c",
+      "instruction": "stp x20, x19, [sp, #0x40]",
+      "successors": [
+        "0x10163d010"
+      ]
+    },
+    {
+      "address": "0x10163d010",
+      "instruction": "stp x29, x30, [sp, #0x50]",
+      "successors": [
+        "0x10163d014"
+      ]
+    },
+    {
+      "address": "0x10163d014",
+      "instruction": "add x29, sp, #0x50",
+      "successors": [
+        "0x10163d018"
+      ]
+    },
+    {
+      "address": "0x10163d018",
+      "instruction": "sub sp, sp, #0x1a0",
+      "successors": [
+        "0x10163d01c"
+      ]
+    },
+    {
+      "address": "0x10163d01c",
+      "instruction": "mov x20, x4",
+      "successors": [
+        "0x10163d020"
+      ]
+    },
+    {
+      "address": "0x10163d020",
+      "instruction": "mov x22, x3",
+      "successors": [
+        "0x10163d024"
+      ]
+    },
+    {
+      "address": "0x10163d024",
+      "instruction": "mov x24, x2",
+      "successors": [
+        "0x10163d028"
+      ]
+    },
+    {
+      "address": "0x10163d028",
+      "instruction": "mov x21, x1",
+      "successors": [
+        "0x10163d02c"
+      ]
+    },
+    {
+      "address": "0x10163d02c",
+      "instruction": "mov x19, x0",
+      "successors": [
+        "0x10163d030"
+      ]
+    },
+    {
+      "address": "0x10163d030",
+      "instruction": "add x8, sp, #0xd0",
+      "successors": [
+        "0x10163d034"
+      ]
+    },
+    {
+      "address": "0x10163d034",
+      "instruction": "movi.16b v0, #0x0",
+      "successors": [
+        "0x10163d038"
+      ]
+    },
+    {
+      "address": "0x10163d038",
+      "instruction": "stur q0, [x8, #0x84]",
+      "successors": [
+        "0x10163d03c"
+      ]
+    },
+    {
+      "address": "0x10163d03c",
+      "instruction": "stur q0, [x8, #0x74]",
+      "successors": [
+        "0x10163d040"
+      ]
+    },
+    {
+      "address": "0x10163d040",
+      "instruction": "stur q0, [x8, #0x94]",
+      "successors": [
+        "0x10163d044"
+      ]
+    },
+    {
+      "address": "0x10163d044",
+      "instruction": "stur q0, [x8, #0xa4]",
+      "successors": [
+        "0x10163d048"
+      ]
+    },
+    {
+      "address": "0x10163d048",
+      "instruction": "stur xzr, [x8, #0xb4]",
+      "successors": [
+        "0x10163d04c"
+      ]
+    },
+    {
+      "address": "0x10163d04c",
+      "instruction": "stur q0, [x8, #0x44]",
+      "successors": [
+        "0x10163d050"
+      ]
+    },
+    {
+      "address": "0x10163d050",
+      "instruction": "stur q0, [x8, #0x34]",
+      "successors": [
+        "0x10163d054"
+      ]
+    },
+    {
+      "address": "0x10163d054",
+      "instruction": "stur q0, [x8, #0x54]",
+      "successors": [
+        "0x10163d058"
+      ]
+    },
+    {
+      "address": "0x10163d058",
+      "instruction": "stur q0, [x8, #0x64]",
+      "successors": [
+        "0x10163d05c"
+      ]
+    },
+    {
+      "address": "0x10163d05c",
+      "instruction": "stur q0, [x8, #0x4]",
+      "successors": [
+        "0x10163d060"
+      ]
+    },
+    {
+      "address": "0x10163d060",
+      "instruction": "stur q0, [x8, #0x14]",
+      "successors": [
+        "0x10163d064"
+      ]
+    },
+    {
+      "address": "0x10163d064",
+      "instruction": "stur q0, [x8, #0x24]",
+      "successors": [
+        "0x10163d068"
+      ]
+    },
+    {
+      "address": "0x10163d068",
+      "instruction": "ldp q1, q2, [sp, #0x150]",
+      "successors": [
+        "0x10163d06c"
+      ]
+    },
+    {
+      "address": "0x10163d06c",
+      "instruction": "stur q1, [x4, #0x84]",
+      "successors": [
+        "0x10163d070"
+      ]
+    },
+    {
+      "address": "0x10163d070",
+      "instruction": "stur q2, [x4, #0x94]",
+      "successors": [
+        "0x10163d074"
+      ]
+    },
+    {
+      "address": "0x10163d074",
+      "instruction": "ldr q1, [sp, #0x170]",
+      "successors": [
+        "0x10163d078"
+      ]
+    },
+    {
+      "address": "0x10163d078",
+      "instruction": "stur q1, [x4, #0xa4]",
+      "successors": [
+        "0x10163d07c"
+      ]
+    },
+    {
+      "address": "0x10163d07c",
+      "instruction": "ldur q1, [x8, #0xac]",
+      "successors": [
+        "0x10163d080"
+      ]
+    },
+    {
+      "address": "0x10163d080",
+      "instruction": "str q1, [x4, #0xb0]",
+      "successors": [
+        "0x10163d084"
+      ]
+    },
+    {
+      "address": "0x10163d084",
+      "instruction": "ldp q1, q2, [sp, #0x110]",
+      "successors": [
+        "0x10163d088"
+      ]
+    },
+    {
+      "address": "0x10163d088",
+      "instruction": "stur q1, [x4, #0x44]",
+      "successors": [
+        "0x10163d08c"
+      ]
+    },
+    {
+      "address": "0x10163d08c",
+      "instruction": "stur q2, [x4, #0x54]",
+      "successors": [
+        "0x10163d090"
+      ]
+    },
+    {
+      "address": "0x10163d090",
+      "instruction": "ldp q1, q2, [sp, #0x130]",
+      "successors": [
+        "0x10163d094"
+      ]
+    },
+    {
+      "address": "0x10163d094",
+      "instruction": "stur q1, [x4, #0x64]",
+      "successors": [
+        "0x10163d098"
+      ]
+    },
+    {
+      "address": "0x10163d098",
+      "instruction": "stur q2, [x4, #0x74]",
+      "successors": [
+        "0x10163d09c"
+      ]
+    },
+    {
+      "address": "0x10163d09c",
+      "instruction": "ldp q1, q2, [sp, #0xd0]",
+      "successors": [
+        "0x10163d0a0"
+      ]
+    },
+    {
+      "address": "0x10163d0a0",
+      "instruction": "stur q1, [x4, #0x4]",
+      "successors": [
+        "0x10163d0a4"
+      ]
+    },
+    {
+      "address": "0x10163d0a4",
+      "instruction": "stur q2, [x4, #0x14]",
+      "successors": [
+        "0x10163d0a8"
+      ]
+    },
+    {
+      "address": "0x10163d0a8",
+      "instruction": "ldp q1, q2, [sp, #0xf0]",
+      "successors": [
+        "0x10163d0ac"
+      ]
+    },
+    {
+      "address": "0x10163d0ac",
+      "instruction": "stur q1, [x4, #0x24]",
+      "successors": [
+        "0x10163d0b0"
+      ]
+    },
+    {
+      "address": "0x10163d0b0",
+      "instruction": "str wzr, [x4]",
+      "successors": [
+        "0x10163d0b4"
+      ]
+    },
+    {
+      "address": "0x10163d0b4",
+      "instruction": "stur q2, [x4, #0x34]",
+      "successors": [
+        "0x10163d0b8"
+      ]
+    },
+    {
+      "address": "0x10163d0b8",
+      "instruction": "mov x23, x4",
+      "successors": [
+        "0x10163d0bc"
+      ]
+    },
+    {
+      "address": "0x10163d0bc",
+      "instruction": "str q0, [x23, #0xc0]!",
+      "successors": [
+        "0x10163d0c0"
+      ]
+    },
+    {
+      "address": "0x10163d0c0",
+      "instruction": "stp q0, q0, [x23, #0xf0]",
+      "successors": [
+        "0x10163d0c4"
+      ]
+    },
+    {
+      "address": "0x10163d0c4",
+      "instruction": "stp q0, q0, [x23, #0xd0]",
+      "successors": [
+        "0x10163d0c8"
+      ]
+    },
+    {
+      "address": "0x10163d0c8",
+      "instruction": "stp q0, q0, [x23, #0xb0]",
+      "successors": [
+        "0x10163d0cc"
+      ]
+    },
+    {
+      "address": "0x10163d0cc",
+      "instruction": "stp q0, q0, [x23, #0x90]",
+      "successors": [
+        "0x10163d0d0"
+      ]
+    },
+    {
+      "address": "0x10163d0d0",
+      "instruction": "stp q0, q0, [x23, #0x70]",
+      "successors": [
+        "0x10163d0d4"
+      ]
+    },
+    {
+      "address": "0x10163d0d4",
+      "instruction": "stp q0, q0, [x23, #0x50]",
+      "successors": [
+        "0x10163d0d8"
+      ]
+    },
+    {
+      "address": "0x10163d0d8",
+      "instruction": "stp q0, q0, [x23, #0x30]",
+      "successors": [
+        "0x10163d0dc"
+      ]
+    },
+    {
+      "address": "0x10163d0dc",
+      "instruction": "stp q0, q0, [x23, #0x10]",
+      "successors": [
+        "0x10163d0e0"
+      ]
+    },
+    {
+      "address": "0x10163d0e0",
+      "instruction": "add x8, x23, #0x10d",
+      "successors": [
+        "0x10163d0e4"
+      ]
+    },
+    {
+      "address": "0x10163d0e4",
+      "instruction": "str xzr, [x8]",
+      "successors": [
+        "0x10163d0e8"
+      ]
+    },
+    {
+      "address": "0x10163d0e8",
+      "instruction": "bl 0x1000b4200 <__Z14CTX_wm_managerPK8bContext>",
+      "successors": [
+        "0x10163d0ec"
+      ]
+    },
+    {
+      "address": "0x10163d0ec",
+      "instruction": "mov x8, x0",
+      "successors": [
+        "0x10163d0f0"
+      ]
+    },
+    {
+      "address": "0x10163d0f0",
+      "instruction": "mov w0, #0x0",
+      "successors": [
+        "0x10163d0f4"
+      ]
+    },
+    {
+      "address": "0x10163d0f4",
+      "instruction": "cbz x21, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d0f8",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d0f8",
+      "instruction": "cbz x8, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d0fc",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d0fc",
+      "instruction": "add x0, x8, #0x1a0",
+      "successors": [
+        "0x10163d100"
+      ]
+    },
+    {
+      "address": "0x10163d100",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x10163d104"
+      ]
+    },
+    {
+      "address": "0x10163d104",
+      "instruction": "bl 0x10078ff60 <__Z13BLI_findindexPK8ListBasePKv>",
+      "successors": [
+        "0x10163d108"
+      ]
+    },
+    {
+      "address": "0x10163d108",
+      "instruction": "cmn w0, #0x1",
+      "successors": [
+        "0x10163d10c"
+      ]
+    },
+    {
+      "address": "0x10163d10c",
+      "instruction": "b.eq 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d110",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d110",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x10163d114"
+      ]
+    },
+    {
+      "address": "0x10163d114",
+      "instruction": "bl 0x104a61074 <__Z27WM_window_get_active_screenPK8wmWindow>",
+      "successors": [
+        "0x10163d118"
+      ]
+    },
+    {
+      "address": "0x10163d118",
+      "instruction": "cbz x0, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d11c",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d11c",
+      "instruction": "adrp x8, 0x106d8c000 <_build_commit_date>",
+      "successors": [
+        "0x10163d120"
+      ]
+    },
+    {
+      "address": "0x10163d120",
+      "instruction": "add x8, x8, #0x28",
+      "successors": [
+        "0x10163d124"
+      ]
+    },
+    {
+      "address": "0x10163d124",
+      "instruction": "ldrb w8, [x8, #0xc21]",
+      "successors": [
+        "0x10163d128"
+      ]
+    },
+    {
+      "address": "0x10163d128",
+      "instruction": "tbnz w8, #0x0, 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d12c",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d12c",
+      "instruction": "ldrb w8, [x0, #0x1ee]",
+      "successors": [
+        "0x10163d130"
+      ]
+    },
+    {
+      "address": "0x10163d130",
+      "instruction": "cbz w8, 0x10163d158 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x15c>",
+      "successors": [
+        "0x10163d134",
+        "0x10163d158"
+      ]
+    },
+    {
+      "address": "0x10163d134",
+      "instruction": "mov w0, #0x0",
+      "successors": [
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d138",
+      "instruction": "add sp, sp, #0x1a0",
+      "successors": [
+        "0x10163d13c"
+      ]
+    },
+    {
+      "address": "0x10163d13c",
+      "instruction": "ldp x29, x30, [sp, #0x50]",
+      "successors": [
+        "0x10163d140"
+      ]
+    },
+    {
+      "address": "0x10163d140",
+      "instruction": "ldp x20, x19, [sp, #0x40]",
+      "successors": [
+        "0x10163d144"
+      ]
+    },
+    {
+      "address": "0x10163d144",
+      "instruction": "ldp x22, x21, [sp, #0x30]",
+      "successors": [
+        "0x10163d148"
+      ]
+    },
+    {
+      "address": "0x10163d148",
+      "instruction": "ldp x24, x23, [sp, #0x20]",
+      "successors": [
+        "0x10163d14c"
+      ]
+    },
+    {
+      "address": "0x10163d14c",
+      "instruction": "ldp x26, x25, [sp, #0x10]",
+      "successors": [
+        "0x10163d150"
+      ]
+    },
+    {
+      "address": "0x10163d150",
+      "instruction": "ldp x28, x27, [sp], #0x60",
+      "successors": [
+        "0x10163d154"
+      ]
+    },
+    {
+      "address": "0x10163d154",
+      "instruction": "ret ",
+      "successors": []
+    },
+    {
+      "address": "0x10163d158",
+      "instruction": "mov x8, x0",
+      "successors": [
+        "0x10163d15c"
+      ]
+    },
+    {
+      "address": "0x10163d15c",
+      "instruction": "mov w0, #0x0",
+      "successors": [
+        "0x10163d160"
+      ]
+    },
+    {
+      "address": "0x10163d160",
+      "instruction": "cbz x24, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d164",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d164",
+      "instruction": "ldrb w9, [x8, #0x1ef]",
+      "successors": [
+        "0x10163d168"
+      ]
+    },
+    {
+      "address": "0x10163d168",
+      "instruction": "cbnz w9, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d16c",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d16c",
+      "instruction": "mov x28, x8",
+      "successors": [
+        "0x10163d170"
+      ]
+    },
+    {
+      "address": "0x10163d170",
+      "instruction": "add x0, x8, #0x1c0",
+      "successors": [
+        "0x10163d174"
+      ]
+    },
+    {
+      "address": "0x10163d174",
+      "instruction": "mov x1, x24",
+      "successors": [
+        "0x10163d178"
+      ]
+    },
+    {
+      "address": "0x10163d178",
+      "instruction": "bl 0x10078ff60 <__Z13BLI_findindexPK8ListBasePKv>",
+      "successors": [
+        "0x10163d17c"
+      ]
+    },
+    {
+      "address": "0x10163d17c",
+      "instruction": "mov x8, x0",
+      "successors": [
+        "0x10163d180"
+      ]
+    },
+    {
+      "address": "0x10163d180",
+      "instruction": "mov w0, #0x0",
+      "successors": [
+        "0x10163d184"
+      ]
+    },
+    {
+      "address": "0x10163d184",
+      "instruction": "cbz x22, 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d188",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d188",
+      "instruction": "cmn w8, #0x1",
+      "successors": [
+        "0x10163d18c"
+      ]
+    },
+    {
+      "address": "0x10163d18c",
+      "instruction": "b.eq 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d190",
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d190",
+      "instruction": "add x0, x24, #0x78",
+      "successors": [
+        "0x10163d194"
+      ]
+    },
+    {
+      "address": "0x10163d194",
+      "instruction": "mov x1, x22",
+      "successors": [
+        "0x10163d198"
+      ]
+    },
+    {
+      "address": "0x10163d198",
+      "instruction": "bl 0x10078ff60 <__Z13BLI_findindexPK8ListBasePKv>",
+      "successors": [
+        "0x10163d19c"
+      ]
+    },
+    {
+      "address": "0x10163d19c",
+      "instruction": "cmn w0, #0x1",
+      "successors": [
+        "0x10163d1a0"
+      ]
+    },
+    {
+      "address": "0x10163d1a0",
+      "instruction": "b.eq 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1a4",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1a4",
+      "instruction": "ldrh w8, [x22, #0xc0]",
+      "successors": [
+        "0x10163d1a8"
+      ]
+    },
+    {
+      "address": "0x10163d1a8",
+      "instruction": "cmp w8, #0x8",
+      "successors": [
+        "0x10163d1ac"
+      ]
+    },
+    {
+      "address": "0x10163d1ac",
+      "instruction": "b.ne 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1b0",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1b0",
+      "instruction": "ldr x8, [x22, #0x128]",
+      "successors": [
+        "0x10163d1b4"
+      ]
+    },
+    {
+      "address": "0x10163d1b4",
+      "instruction": "ldr x9, [x8, #0x168]",
+      "successors": [
+        "0x10163d1b8"
+      ]
+    },
+    {
+      "address": "0x10163d1b8",
+      "instruction": "cbz x9, 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1bc",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1bc",
+      "instruction": "ldrb w9, [x24, #0x48]",
+      "successors": [
+        "0x10163d1c0"
+      ]
+    },
+    {
+      "address": "0x10163d1c0",
+      "instruction": "cmp w9, #0x1",
+      "successors": [
+        "0x10163d1c4"
+      ]
+    },
+    {
+      "address": "0x10163d1c4",
+      "instruction": "b.ne 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1c8",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1c8",
+      "instruction": "ldr w9, [x24, #0xd8]",
+      "successors": [
+        "0x10163d1cc"
+      ]
+    },
+    {
+      "address": "0x10163d1cc",
+      "instruction": "cmp w9, #0x4",
+      "successors": [
+        "0x10163d1d0"
+      ]
+    },
+    {
+      "address": "0x10163d1d0",
+      "instruction": "b.eq 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1d4",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1d4",
+      "instruction": "ldrh w8, [x8, #0x368]",
+      "successors": [
+        "0x10163d1d8"
+      ]
+    },
+    {
+      "address": "0x10163d1d8",
+      "instruction": "cbz w8, 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1dc",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1dc",
+      "instruction": "ldrh w8, [x22, #0xc4]",
+      "successors": [
+        "0x10163d1e0"
+      ]
+    },
+    {
+      "address": "0x10163d1e0",
+      "instruction": "mov w9, #0x403",
+      "successors": [
+        "0x10163d1e4"
+      ]
+    },
+    {
+      "address": "0x10163d1e4",
+      "instruction": "tst w8, w9",
+      "successors": [
+        "0x10163d1e8"
+      ]
+    },
+    {
+      "address": "0x10163d1e8",
+      "instruction": "b.ne 0x10163d134 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x138>",
+      "successors": [
+        "0x10163d1ec",
+        "0x10163d134"
+      ]
+    },
+    {
+      "address": "0x10163d1ec",
+      "instruction": "str xzr, [sp, #0x180]",
+      "successors": [
+        "0x10163d1f0"
+      ]
+    },
+    {
+      "address": "0x10163d1f0",
+      "instruction": "movi.16b v0, #0x0",
+      "successors": [
+        "0x10163d1f4"
+      ]
+    },
+    {
+      "address": "0x10163d1f4",
+      "instruction": "stp q0, q0, [sp, #0x160]",
+      "successors": [
+        "0x10163d1f8"
+      ]
+    },
+    {
+      "address": "0x10163d1f8",
+      "instruction": "stp q0, q0, [sp, #0x140]",
+      "successors": [
+        "0x10163d1fc"
+      ]
+    },
+    {
+      "address": "0x10163d1fc",
+      "instruction": "stp q0, q0, [sp, #0x120]",
+      "successors": [
+        "0x10163d200"
+      ]
+    },
+    {
+      "address": "0x10163d200",
+      "instruction": "stp q0, q0, [sp, #0x100]",
+      "successors": [
+        "0x10163d204"
+      ]
+    },
+    {
+      "address": "0x10163d204",
+      "instruction": "stp q0, q0, [sp, #0xe0]",
+      "successors": [
+        "0x10163d208"
+      ]
+    },
+    {
+      "address": "0x10163d208",
+      "instruction": "str q0, [sp, #0xd0]",
+      "successors": [
+        "0x10163d20c"
+      ]
+    },
+    {
+      "address": "0x10163d20c",
+      "instruction": "str xzr, [sp, #0xc0]",
+      "successors": [
+        "0x10163d210"
+      ]
+    },
+    {
+      "address": "0x10163d210",
+      "instruction": "stp q0, q0, [sp, #0xa0]",
+      "successors": [
+        "0x10163d214"
+      ]
+    },
+    {
+      "address": "0x10163d214",
+      "instruction": "stp q0, q0, [sp, #0x80]",
+      "successors": [
+        "0x10163d218"
+      ]
+    },
+    {
+      "address": "0x10163d218",
+      "instruction": "stp q0, q0, [sp, #0x60]",
+      "successors": [
+        "0x10163d21c"
+      ]
+    },
+    {
+      "address": "0x10163d21c",
+      "instruction": "stp q0, q0, [sp, #0x40]",
+      "successors": [
+        "0x10163d220"
+      ]
+    },
+    {
+      "address": "0x10163d220",
+      "instruction": "stp q0, q0, [sp, #0x20]",
+      "successors": [
+        "0x10163d224"
+      ]
+    },
+    {
+      "address": "0x10163d224",
+      "instruction": "str q0, [sp, #0x10]",
+      "successors": [
+        "0x10163d228"
+      ]
+    },
+    {
+      "address": "0x10163d228",
+      "instruction": "add x3, sp, #0x10",
+      "successors": [
+        "0x10163d22c"
+      ]
+    },
+    {
+      "address": "0x10163d22c",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d230"
+      ]
+    },
+    {
+      "address": "0x10163d230",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x10163d234"
+      ]
+    },
+    {
+      "address": "0x10163d234",
+      "instruction": "mov x2, x24",
+      "successors": [
+        "0x10163d238"
+      ]
+    },
+    {
+      "address": "0x10163d238",
+      "instruction": "bl 0x100b50b38 <__Z27WM_ipad_knife_owner_presentPK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner>",
+      "successors": [
+        "0x10163d23c"
+      ]
+    },
+    {
+      "address": "0x10163d23c",
+      "instruction": "cbz w0, 0x10163d264 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x268>",
+      "successors": [
+        "0x10163d240",
+        "0x10163d264"
+      ]
+    },
+    {
+      "address": "0x10163d240",
+      "instruction": "mov x25, x0",
+      "successors": [
+        "0x10163d244"
+      ]
+    },
+    {
+      "address": "0x10163d244",
+      "instruction": "add x3, sp, #0xd0",
+      "successors": [
+        "0x10163d248"
+      ]
+    },
+    {
+      "address": "0x10163d248",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d24c"
+      ]
+    },
+    {
+      "address": "0x10163d24c",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x10163d250"
+      ]
+    },
+    {
+      "address": "0x10163d250",
+      "instruction": "mov x2, x24",
+      "successors": [
+        "0x10163d254"
+      ]
+    },
+    {
+      "address": "0x10163d254",
+      "instruction": "bl 0x100b50434 <__Z27WM_ipad_knife_owner_capturePK8bContextP8wmWindowP7ScrAreaR16wmIPadKnifeOwner>",
+      "successors": [
+        "0x10163d258"
+      ]
+    },
+    {
+      "address": "0x10163d258",
+      "instruction": "tbnz w0, #0x0, 0x10163d278 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x27c>",
+      "successors": [
+        "0x10163d25c",
+        "0x10163d278"
+      ]
+    },
+    {
+      "address": "0x10163d25c",
+      "instruction": "mov w25, #0x0",
+      "successors": [
+        "0x10163d260"
+      ]
+    },
+    {
+      "address": "0x10163d260",
+      "instruction": "b 0x10163d314 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x318>",
+      "successors": [
+        "0x10163d314"
+      ]
+    },
+    {
+      "address": "0x10163d264",
+      "instruction": "ldrh w8, [x22, #0xc4]",
+      "successors": [
+        "0x10163d268"
+      ]
+    },
+    {
+      "address": "0x10163d268",
+      "instruction": "ubfx w8, w8, #7, #1",
+      "successors": [
+        "0x10163d26c"
+      ]
+    },
+    {
+      "address": "0x10163d26c",
+      "instruction": "mov x25, x0",
+      "successors": [
+        "0x10163d270"
+      ]
+    },
+    {
+      "address": "0x10163d270",
+      "instruction": "bic w8, w8, w0",
+      "successors": [
+        "0x10163d274"
+      ]
+    },
+    {
+      "address": "0x10163d274",
+      "instruction": "tbnz w8, #0x0, 0x10163d25c <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x260>",
+      "successors": [
+        "0x10163d278",
+        "0x10163d25c"
+      ]
+    },
+    {
+      "address": "0x10163d278",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d27c"
+      ]
+    },
+    {
+      "address": "0x10163d27c",
+      "instruction": "bl 0x1000b3ba0 <__Z11CTX_wm_areaPK8bContext>",
+      "successors": [
+        "0x10163d280"
+      ]
+    },
+    {
+      "address": "0x10163d280",
+      "instruction": "str x0, [sp, #0x8]",
+      "successors": [
+        "0x10163d284"
+      ]
+    },
+    {
+      "address": "0x10163d284",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d288"
+      ]
+    },
+    {
+      "address": "0x10163d288",
+      "instruction": "bl 0x1000b3b88 <__Z13CTX_wm_regionPK8bContext>",
+      "successors": [
+        "0x10163d28c"
+      ]
+    },
+    {
+      "address": "0x10163d28c",
+      "instruction": "mov x26, x0",
+      "successors": [
+        "0x10163d290"
+      ]
+    },
+    {
+      "address": "0x10163d290",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d294"
+      ]
+    },
+    {
+      "address": "0x10163d294",
+      "instruction": "mov x1, x24",
+      "successors": [
+        "0x10163d298"
+      ]
+    },
+    {
+      "address": "0x10163d298",
+      "instruction": "bl 0x1000b4aa8 <__Z15CTX_wm_area_setP8bContextP7ScrArea>",
+      "successors": [
+        "0x10163d29c"
+      ]
+    },
+    {
+      "address": "0x10163d29c",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d2a0"
+      ]
+    },
+    {
+      "address": "0x10163d2a0",
+      "instruction": "cbz w25, 0x10163d2c8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2cc>",
+      "successors": [
+        "0x10163d2a4",
+        "0x10163d2c8"
+      ]
+    },
+    {
+      "address": "0x10163d2a4",
+      "instruction": "mov x1, x22",
+      "successors": [
+        "0x10163d2a8"
+      ]
+    },
+    {
+      "address": "0x10163d2a8",
+      "instruction": "bl 0x101f9045c <__Z32UI_ipad_knife_hud_geometry_readyPK8bContextPK7ARegion>",
+      "successors": [
+        "0x10163d2ac"
+      ]
+    },
+    {
+      "address": "0x10163d2ac",
+      "instruction": "cbz w0, 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d2b0",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d2b0",
+      "instruction": "add x2, sp, #0xd0",
+      "successors": [
+        "0x10163d2b4"
+      ]
+    },
+    {
+      "address": "0x10163d2b4",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d2b8"
+      ]
+    },
+    {
+      "address": "0x10163d2b8",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x10163d2bc"
+      ]
+    },
+    {
+      "address": "0x10163d2bc",
+      "instruction": "mov w3, #0x0",
+      "successors": [
+        "0x10163d2c0"
+      ]
+    },
+    {
+      "address": "0x10163d2c0",
+      "instruction": "bl 0x100b50d74 <__Z26WM_ipad_knife_owner_regionPK8bContextP8wmWindowRK16wmIPadKnifeOwnerb>",
+      "successors": [
+        "0x10163d2c4"
+      ]
+    },
+    {
+      "address": "0x10163d2c4",
+      "instruction": "b 0x10163d2d4 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2d8>",
+      "successors": [
+        "0x10163d2d4"
+      ]
+    },
+    {
+      "address": "0x10163d2c8",
+      "instruction": "mov x1, x24",
+      "successors": [
+        "0x10163d2cc"
+      ]
+    },
+    {
+      "address": "0x10163d2cc",
+      "instruction": "mov x2, x22",
+      "successors": [
+        "0x10163d2d0"
+      ]
+    },
+    {
+      "address": "0x10163d2d0",
+      "instruction": "bl 0x101f91434 <__Z25UI_ipad_corner_hud_windowP8bContextP7ScrAreaP7ARegion>",
+      "successors": [
+        "0x10163d2d4"
+      ]
+    },
+    {
+      "address": "0x10163d2d4",
+      "instruction": "mov x27, x0",
+      "successors": [
+        "0x10163d2d8"
+      ]
+    },
+    {
+      "address": "0x10163d2d8",
+      "instruction": "cbz x0, 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d2dc",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d2dc",
+      "instruction": "add x0, x24, #0x78",
+      "successors": [
+        "0x10163d2e0"
+      ]
+    },
+    {
+      "address": "0x10163d2e0",
+      "instruction": "mov x1, x27",
+      "successors": [
+        "0x10163d2e4"
+      ]
+    },
+    {
+      "address": "0x10163d2e4",
+      "instruction": "bl 0x10078ff60 <__Z13BLI_findindexPK8ListBasePKv>",
+      "successors": [
+        "0x10163d2e8"
+      ]
+    },
+    {
+      "address": "0x10163d2e8",
+      "instruction": "cmn w0, #0x1",
+      "successors": [
+        "0x10163d2ec"
+      ]
+    },
+    {
+      "address": "0x10163d2ec",
+      "instruction": "b.eq 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d2f0",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d2f0",
+      "instruction": "ldrh w8, [x27, #0xc0]",
+      "successors": [
+        "0x10163d2f4"
+      ]
+    },
+    {
+      "address": "0x10163d2f4",
+      "instruction": "cbz w8, 0x10163d31c <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x320>",
+      "successors": [
+        "0x10163d2f8",
+        "0x10163d31c"
+      ]
+    },
+    {
+      "address": "0x10163d2f8",
+      "instruction": "mov w25, #0x0",
+      "successors": [
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d2fc",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d300"
+      ]
+    },
+    {
+      "address": "0x10163d300",
+      "instruction": "ldr x1, [sp, #0x8]",
+      "successors": [
+        "0x10163d304"
+      ]
+    },
+    {
+      "address": "0x10163d304",
+      "instruction": "bl 0x1000b4aa8 <__Z15CTX_wm_area_setP8bContextP7ScrArea>",
+      "successors": [
+        "0x10163d308"
+      ]
+    },
+    {
+      "address": "0x10163d308",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d30c"
+      ]
+    },
+    {
+      "address": "0x10163d30c",
+      "instruction": "mov x1, x26",
+      "successors": [
+        "0x10163d310"
+      ]
+    },
+    {
+      "address": "0x10163d310",
+      "instruction": "bl 0x1000b4b1c <__Z17CTX_wm_region_setP8bContextP7ARegion>",
+      "successors": [
+        "0x10163d314"
+      ]
+    },
+    {
+      "address": "0x10163d314",
+      "instruction": "mov x0, x25",
+      "successors": [
+        "0x10163d318"
+      ]
+    },
+    {
+      "address": "0x10163d318",
+      "instruction": "b 0x10163d138 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x13c>",
+      "successors": [
+        "0x10163d138"
+      ]
+    },
+    {
+      "address": "0x10163d31c",
+      "instruction": "ldr x8, [x27, #0x128]",
+      "successors": [
+        "0x10163d320"
+      ]
+    },
+    {
+      "address": "0x10163d320",
+      "instruction": "ldrh w8, [x8, #0x368]",
+      "successors": [
+        "0x10163d324"
+      ]
+    },
+    {
+      "address": "0x10163d324",
+      "instruction": "cbz w8, 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d328",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d328",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d32c"
+      ]
+    },
+    {
+      "address": "0x10163d32c",
+      "instruction": "mov x1, x27",
+      "successors": [
+        "0x10163d330"
+      ]
+    },
+    {
+      "address": "0x10163d330",
+      "instruction": "bl 0x1000b4b1c <__Z17CTX_wm_region_setP8bContextP7ARegion>",
+      "successors": [
+        "0x10163d334"
+      ]
+    },
+    {
+      "address": "0x10163d334",
+      "instruction": "cbz w25, 0x10163d420 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x424>",
+      "successors": [
+        "0x10163d338",
+        "0x10163d420"
+      ]
+    },
+    {
+      "address": "0x10163d338",
+      "instruction": "ldp q0, q1, [sp, #0x150]",
+      "successors": [
+        "0x10163d33c"
+      ]
+    },
+    {
+      "address": "0x10163d33c",
+      "instruction": "stur q0, [x20, #0x88]",
+      "successors": [
+        "0x10163d340"
+      ]
+    },
+    {
+      "address": "0x10163d340",
+      "instruction": "stur q1, [x20, #0x98]",
+      "successors": [
+        "0x10163d344"
+      ]
+    },
+    {
+      "address": "0x10163d344",
+      "instruction": "ldr q0, [sp, #0x170]",
+      "successors": [
+        "0x10163d348"
+      ]
+    },
+    {
+      "address": "0x10163d348",
+      "instruction": "stur q0, [x20, #0xa8]",
+      "successors": [
+        "0x10163d34c"
+      ]
+    },
+    {
+      "address": "0x10163d34c",
+      "instruction": "ldp q0, q1, [sp, #0x110]",
+      "successors": [
+        "0x10163d350"
+      ]
+    },
+    {
+      "address": "0x10163d350",
+      "instruction": "stur q0, [x20, #0x48]",
+      "successors": [
+        "0x10163d354"
+      ]
+    },
+    {
+      "address": "0x10163d354",
+      "instruction": "stur q1, [x20, #0x58]",
+      "successors": [
+        "0x10163d358"
+      ]
+    },
+    {
+      "address": "0x10163d358",
+      "instruction": "ldp q0, q1, [sp, #0x130]",
+      "successors": [
+        "0x10163d35c"
+      ]
+    },
+    {
+      "address": "0x10163d35c",
+      "instruction": "stur q0, [x20, #0x68]",
+      "successors": [
+        "0x10163d360"
+      ]
+    },
+    {
+      "address": "0x10163d360",
+      "instruction": "stur q1, [x20, #0x78]",
+      "successors": [
+        "0x10163d364"
+      ]
+    },
+    {
+      "address": "0x10163d364",
+      "instruction": "ldp q0, q1, [sp, #0xd0]",
+      "successors": [
+        "0x10163d368"
+      ]
+    },
+    {
+      "address": "0x10163d368",
+      "instruction": "stur q0, [x20, #0x8]",
+      "successors": [
+        "0x10163d36c"
+      ]
+    },
+    {
+      "address": "0x10163d36c",
+      "instruction": "stur q1, [x20, #0x18]",
+      "successors": [
+        "0x10163d370"
+      ]
+    },
+    {
+      "address": "0x10163d370",
+      "instruction": "ldp q0, q1, [sp, #0xf0]",
+      "successors": [
+        "0x10163d374"
+      ]
+    },
+    {
+      "address": "0x10163d374",
+      "instruction": "stur q0, [x20, #0x28]",
+      "successors": [
+        "0x10163d378"
+      ]
+    },
+    {
+      "address": "0x10163d378",
+      "instruction": "mov w8, #0x1",
+      "successors": [
+        "0x10163d37c"
+      ]
+    },
+    {
+      "address": "0x10163d37c",
+      "instruction": "str w8, [x20]",
+      "successors": [
+        "0x10163d380"
+      ]
+    },
+    {
+      "address": "0x10163d380",
+      "instruction": "ldr x9, [sp, #0x180]",
+      "successors": [
+        "0x10163d384"
+      ]
+    },
+    {
+      "address": "0x10163d384",
+      "instruction": "stur q1, [x20, #0x38]",
+      "successors": [
+        "0x10163d388"
+      ]
+    },
+    {
+      "address": "0x10163d388",
+      "instruction": "adrp x8, 0x106d8c000 <_build_commit_date>",
+      "successors": [
+        "0x10163d38c"
+      ]
+    },
+    {
+      "address": "0x10163d38c",
+      "instruction": "add x8, x8, #0x28",
+      "successors": [
+        "0x10163d390"
+      ]
+    },
+    {
+      "address": "0x10163d390",
+      "instruction": "ldr x8, [x8]",
+      "successors": [
+        "0x10163d394"
+      ]
+    },
+    {
+      "address": "0x10163d394",
+      "instruction": "stp x9, x8, [x20, #0xb8]",
+      "successors": [
+        "0x10163d398"
+      ]
+    },
+    {
+      "address": "0x10163d398",
+      "instruction": "stp x21, x28, [x20, #0xc8]",
+      "successors": [
+        "0x10163d39c"
+      ]
+    },
+    {
+      "address": "0x10163d39c",
+      "instruction": "str x24, [x20, #0xd8]",
+      "successors": [
+        "0x10163d3a0"
+      ]
+    },
+    {
+      "address": "0x10163d3a0",
+      "instruction": "ldr w8, [x28, #0x144]",
+      "successors": [
+        "0x10163d3a4"
+      ]
+    },
+    {
+      "address": "0x10163d3a4",
+      "instruction": "str x8, [x20, #0xe8]",
+      "successors": [
+        "0x10163d3a8"
+      ]
+    },
+    {
+      "address": "0x10163d3a8",
+      "instruction": "ldrsw x8, [x21, #0xc0]",
+      "successors": [
+        "0x10163d3ac"
+      ]
+    },
+    {
+      "address": "0x10163d3ac",
+      "instruction": "str x8, [x20, #0x118]",
+      "successors": [
+        "0x10163d3b0"
+      ]
+    },
+    {
+      "address": "0x10163d3b0",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d3b4"
+      ]
+    },
+    {
+      "address": "0x10163d3b4",
+      "instruction": "bl 0x1000b4200 <__Z14CTX_wm_managerPK8bContext>",
+      "successors": [
+        "0x10163d3b8"
+      ]
+    },
+    {
+      "address": "0x10163d3b8",
+      "instruction": "ldr w8, [x0, #0x144]",
+      "successors": [
+        "0x10163d3bc"
+      ]
+    },
+    {
+      "address": "0x10163d3bc",
+      "instruction": "str x8, [x20, #0x120]",
+      "successors": [
+        "0x10163d3c0"
+      ]
+    },
+    {
+      "address": "0x10163d3c0",
+      "instruction": "add x8, x23, #0x104",
+      "successors": [
+        "0x10163d3c4"
+      ]
+    },
+    {
+      "address": "0x10163d3c4",
+      "instruction": "str x22, [x20, #0x168]",
+      "successors": [
+        "0x10163d3c8"
+      ]
+    },
+    {
+      "address": "0x10163d3c8",
+      "instruction": "ldr x9, [x22, #0x128]",
+      "successors": [
+        "0x10163d3cc"
+      ]
+    },
+    {
+      "address": "0x10163d3cc",
+      "instruction": "ldr x9, [x9, #0x168]",
+      "successors": [
+        "0x10163d3d0"
+      ]
+    },
+    {
+      "address": "0x10163d3d0",
+      "instruction": "str x9, [x20, #0x170]",
+      "successors": [
+        "0x10163d3d4"
+      ]
+    },
+    {
+      "address": "0x10163d3d4",
+      "instruction": "ldr x9, [x22, #0x128]",
+      "successors": [
+        "0x10163d3d8"
+      ]
+    },
+    {
+      "address": "0x10163d3d8",
+      "instruction": "ldr x9, [x9, #0x350]",
+      "successors": [
+        "0x10163d3dc"
+      ]
+    },
+    {
+      "address": "0x10163d3dc",
+      "instruction": "str x9, [x20, #0x178]",
+      "successors": [
+        "0x10163d3e0"
+      ]
+    },
+    {
+      "address": "0x10163d3e0",
+      "instruction": "ldur q0, [x22, #0xa8]",
+      "successors": [
+        "0x10163d3e4"
+      ]
+    },
+    {
+      "address": "0x10163d3e4",
+      "instruction": "str q0, [x8]",
+      "successors": [
+        "0x10163d3e8"
+      ]
+    },
+    {
+      "address": "0x10163d3e8",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x10163d3ec"
+      ]
+    },
+    {
+      "address": "0x10163d3ec",
+      "instruction": "bl 0x100b982c8 <__Z24WM_window_native_pixel_xPK8wmWindow>",
+      "successors": [
+        "0x10163d3f0"
+      ]
+    },
+    {
+      "address": "0x10163d3f0",
+      "instruction": "str w0, [x20, #0x1b8]",
+      "successors": [
+        "0x10163d3f4"
+      ]
+    },
+    {
+      "address": "0x10163d3f4",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x10163d3f8"
+      ]
+    },
+    {
+      "address": "0x10163d3f8",
+      "instruction": "bl 0x100b98300 <__Z24WM_window_native_pixel_yPK8wmWindow>",
+      "successors": [
+        "0x10163d3fc"
+      ]
+    },
+    {
+      "address": "0x10163d3fc",
+      "instruction": "str w0, [x20, #0x1bc]",
+      "successors": [
+        "0x10163d400"
+      ]
+    },
+    {
+      "address": "0x10163d400",
+      "instruction": "adrp x8, 0x106d8c000 <_build_commit_date>",
+      "successors": [
+        "0x10163d404"
+      ]
+    },
+    {
+      "address": "0x10163d404",
+      "instruction": "add x8, x8, #0xe08",
+      "successors": [
+        "0x10163d408"
+      ]
+    },
+    {
+      "address": "0x10163d408",
+      "instruction": "ldr s0, [x8, #0x2654]",
+      "successors": [
+        "0x10163d40c"
+      ]
+    },
+    {
+      "address": "0x10163d40c",
+      "instruction": "str s0, [x20, #0x1c0]",
+      "successors": [
+        "0x10163d410"
+      ]
+    },
+    {
+      "address": "0x10163d410",
+      "instruction": "mov w8, #0x1",
+      "successors": [
+        "0x10163d414"
+      ]
+    },
+    {
+      "address": "0x10163d414",
+      "instruction": "mov w25, #0x1",
+      "successors": [
+        "0x10163d418"
+      ]
+    },
+    {
+      "address": "0x10163d418",
+      "instruction": "strb w8, [x20, #0x1d4]",
+      "successors": [
+        "0x10163d41c"
+      ]
+    },
+    {
+      "address": "0x10163d41c",
+      "instruction": "b 0x10163d2fc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x300>",
+      "successors": [
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d420",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d424"
+      ]
+    },
+    {
+      "address": "0x10163d424",
+      "instruction": "mov x1, x23",
+      "successors": [
+        "0x10163d428"
+      ]
+    },
+    {
+      "address": "0x10163d428",
+      "instruction": "bl 0x101f928bc <__Z23UI_ipad_context_captureP8bContextPy>",
+      "successors": [
+        "0x10163d42c"
+      ]
+    },
+    {
+      "address": "0x10163d42c",
+      "instruction": "cbz w0, 0x10163d2fc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x300>",
+      "successors": [
+        "0x10163d430",
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d430",
+      "instruction": "ldr x8, [x20, #0xc8]",
+      "successors": [
+        "0x10163d434"
+      ]
+    },
+    {
+      "address": "0x10163d434",
+      "instruction": "cmp x8, x21",
+      "successors": [
+        "0x10163d438"
+      ]
+    },
+    {
+      "address": "0x10163d438",
+      "instruction": "b.ne 0x10163d2fc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x300>",
+      "successors": [
+        "0x10163d43c",
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d43c",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d440"
+      ]
+    },
+    {
+      "address": "0x10163d440",
+      "instruction": "bl 0x100b90d58 <__Z30WM_toolsystem_ref_from_contextPK8bContext>",
+      "successors": [
+        "0x10163d444"
+      ]
+    },
+    {
+      "address": "0x10163d444",
+      "instruction": "add x8, x0, #0x10",
+      "successors": [
+        "0x10163d448"
+      ]
+    },
+    {
+      "address": "0x10163d448",
+      "instruction": "adrp x9, 0x104b98000 <_zlibVersion+0x104b98000>",
+      "successors": [
+        "0x10163d44c"
+      ]
+    },
+    {
+      "address": "0x10163d44c",
+      "instruction": "add x9, x9, #0x94",
+      "successors": [
+        "0x10163d450"
+      ]
+    },
+    {
+      "address": "0x10163d450",
+      "instruction": "cmp x0, #0x0",
+      "successors": [
+        "0x10163d454"
+      ]
+    },
+    {
+      "address": "0x10163d454",
+      "instruction": "csel x1, x9, x8, eq",
+      "successors": [
+        "0x10163d458"
+      ]
+    },
+    {
+      "address": "0x10163d458",
+      "instruction": "add x0, x23, #0x68",
+      "successors": [
+        "0x10163d45c"
+      ]
+    },
+    {
+      "address": "0x10163d45c",
+      "instruction": "mov w2, #0x40",
+      "successors": [
+        "0x10163d460"
+      ]
+    },
+    {
+      "address": "0x10163d460",
+      "instruction": "bl 0x10081a008 <__Z11BLI_strncpyPcPKcm>",
+      "successors": [
+        "0x10163d464"
+      ]
+    },
+    {
+      "address": "0x10163d464",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d468"
+      ]
+    },
+    {
+      "address": "0x10163d468",
+      "instruction": "bl 0x1000b4200 <__Z14CTX_wm_managerPK8bContext>",
+      "successors": [
+        "0x10163d46c"
+      ]
+    },
+    {
+      "address": "0x10163d46c",
+      "instruction": "mov x27, x0",
+      "successors": [
+        "0x10163d470"
+      ]
+    },
+    {
+      "address": "0x10163d470",
+      "instruction": "ldr x8, [x0, #0x5c0]",
+      "successors": [
+        "0x10163d474"
+      ]
+    },
+    {
+      "address": "0x10163d474",
+      "instruction": "cbz x8, 0x10163d494 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x498>",
+      "successors": [
+        "0x10163d478",
+        "0x10163d494"
+      ]
+    },
+    {
+      "address": "0x10163d478",
+      "instruction": "ldr x8, [x8, #0xe0]",
+      "successors": [
+        "0x10163d47c"
+      ]
+    },
+    {
+      "address": "0x10163d47c",
+      "instruction": "cbz x8, 0x10163d494 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x498>",
+      "successors": [
+        "0x10163d480",
+        "0x10163d494"
+      ]
+    },
+    {
+      "address": "0x10163d480",
+      "instruction": "str x8, [x20, #0x1a0]",
+      "successors": [
+        "0x10163d484"
+      ]
+    },
+    {
+      "address": "0x10163d484",
+      "instruction": "ldr x9, [x8]",
+      "successors": [
+        "0x10163d488"
+      ]
+    },
+    {
+      "address": "0x10163d488",
+      "instruction": "str x9, [x20, #0x1a8]",
+      "successors": [
+        "0x10163d48c"
+      ]
+    },
+    {
+      "address": "0x10163d48c",
+      "instruction": "ldr x8, [x8, #0x8]",
+      "successors": [
+        "0x10163d490"
+      ]
+    },
+    {
+      "address": "0x10163d490",
+      "instruction": "str x8, [x20, #0x1b0]",
+      "successors": [
+        "0x10163d494"
+      ]
+    },
+    {
+      "address": "0x10163d494",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x10163d498"
+      ]
+    },
+    {
+      "address": "0x10163d498",
+      "instruction": "bl 0x100b838d4 <__Z21WM_operator_last_redoPK8bContext>",
+      "successors": [
+        "0x10163d49c"
+      ]
+    },
+    {
+      "address": "0x10163d49c",
+      "instruction": "cbz x0, 0x10163d3c0 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x3c4>",
+      "successors": [
+        "0x10163d4a0",
+        "0x10163d3c0"
+      ]
+    },
+    {
+      "address": "0x10163d4a0",
+      "instruction": "mov x24, x0",
+      "successors": [
+        "0x10163d4a4"
+      ]
+    },
+    {
+      "address": "0x10163d4a4",
+      "instruction": "ldr x8, [x27, #0x5c0]",
+      "successors": [
+        "0x10163d4a8"
+      ]
+    },
+    {
+      "address": "0x10163d4a8",
+      "instruction": "add x0, x8, #0x68",
+      "successors": [
+        "0x10163d4ac"
+      ]
+    },
+    {
+      "address": "0x10163d4ac",
+      "instruction": "mov x1, x24",
+      "successors": [
+        "0x10163d4b0"
+      ]
+    },
+    {
+      "address": "0x10163d4b0",
+      "instruction": "bl 0x10078ff60 <__Z13BLI_findindexPK8ListBasePKv>",
+      "successors": [
+        "0x10163d4b4"
+      ]
+    },
+    {
+      "address": "0x10163d4b4",
+      "instruction": "cmn w0, #0x1",
+      "successors": [
+        "0x10163d4b8"
+      ]
+    },
+    {
+      "address": "0x10163d4b8",
+      "instruction": "b.eq 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d4bc",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d4bc",
+      "instruction": "bl 0x100b7d104 <__Z31WM_operatortypes_registered_getv>",
+      "successors": [
+        "0x10163d4c0"
+      ]
+    },
+    {
+      "address": "0x10163d4c0",
+      "instruction": "cbz x1, 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d4c4",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d4c4",
+      "instruction": "ldr x8, [x24, #0x58]",
+      "successors": [
+        "0x10163d4c8"
+      ]
+    },
+    {
+      "address": "0x10163d4c8",
+      "instruction": "lsl x9, x1, #3",
+      "successors": [
+        "0x10163d4cc"
+      ]
+    },
+    {
+      "address": "0x10163d4cc",
+      "instruction": "ldr x25, [x0]",
+      "successors": [
+        "0x10163d4d0"
+      ]
+    },
+    {
+      "address": "0x10163d4d0",
+      "instruction": "cmp x25, x8",
+      "successors": [
+        "0x10163d4d4"
+      ]
+    },
+    {
+      "address": "0x10163d4d4",
+      "instruction": "b.eq 0x10163d4ec <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x4f0>",
+      "successors": [
+        "0x10163d4d8",
+        "0x10163d4ec"
+      ]
+    },
+    {
+      "address": "0x10163d4d8",
+      "instruction": "mov w25, #0x0",
+      "successors": [
+        "0x10163d4dc"
+      ]
+    },
+    {
+      "address": "0x10163d4dc",
+      "instruction": "add x0, x0, #0x8",
+      "successors": [
+        "0x10163d4e0"
+      ]
+    },
+    {
+      "address": "0x10163d4e0",
+      "instruction": "subs x9, x9, #0x8",
+      "successors": [
+        "0x10163d4e4"
+      ]
+    },
+    {
+      "address": "0x10163d4e4",
+      "instruction": "b.ne 0x10163d4cc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x4d0>",
+      "successors": [
+        "0x10163d4e8",
+        "0x10163d4cc"
+      ]
+    },
+    {
+      "address": "0x10163d4e8",
+      "instruction": "b 0x10163d2fc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x300>",
+      "successors": [
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d4ec",
+      "instruction": "cbz x25, 0x10163d2fc <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x300>",
+      "successors": [
+        "0x10163d4f0",
+        "0x10163d2fc"
+      ]
+    },
+    {
+      "address": "0x10163d4f0",
+      "instruction": "ldr x8, [x25, #0xe8]",
+      "successors": [
+        "0x10163d4f4"
+      ]
+    },
+    {
+      "address": "0x10163d4f4",
+      "instruction": "cbz x8, 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d4f8",
+        "0x10163d2f8"
+      ]
+    },
+    {
+      "address": "0x10163d4f8",
+      "instruction": "str x24, [x20, #0x180]",
+      "successors": [
+        "0x10163d4fc"
+      ]
+    },
+    {
+      "address": "0x10163d4fc",
+      "instruction": "mov x0, x24",
+      "successors": [
+        "0x10163d500"
+      ]
+    },
+    {
+      "address": "0x10163d500",
+      "instruction": "bl 0x100b42e14 <__Z29WM_operator_touch_lifetime_idPK10wmOperator>",
+      "successors": [
+        "0x10163d504"
+      ]
+    },
+    {
+      "address": "0x10163d504",
+      "instruction": "stp x0, x25, [x20, #0x188]",
+      "successors": [
+        "0x10163d508"
+      ]
+    },
+    {
+      "address": "0x10163d508",
+      "instruction": "ldr x8, [x25, #0xe8]",
+      "successors": [
+        "0x10163d50c"
+      ]
+    },
+    {
+      "address": "0x10163d50c",
+      "instruction": "str x8, [x20, #0x198]",
+      "successors": [
+        "0x10163d510"
+      ]
+    },
+    {
+      "address": "0x10163d510",
+      "instruction": "cbnz x0, 0x10163d3c0 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x3c4>",
+      "successors": [
+        "0x10163d514",
+        "0x10163d3c0"
+      ]
+    },
+    {
+      "address": "0x10163d514",
+      "instruction": "b 0x10163d2f8 <__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE+0x2fc>",
+      "successors": [
+        "0x10163d2f8"
+      ]
+    }
+  ],
+  "postmutation_reachable": [
+    "0x10163d138",
+    "0x10163d13c",
+    "0x10163d140",
+    "0x10163d144",
+    "0x10163d148",
+    "0x10163d14c",
+    "0x10163d150",
+    "0x10163d154",
+    "0x10163d29c",
+    "0x10163d2a0",
+    "0x10163d2a4",
+    "0x10163d2a8",
+    "0x10163d2ac",
+    "0x10163d2b0",
+    "0x10163d2b4",
+    "0x10163d2b8",
+    "0x10163d2bc",
+    "0x10163d2c0",
+    "0x10163d2c4",
+    "0x10163d2c8",
+    "0x10163d2cc",
+    "0x10163d2d0",
+    "0x10163d2d4",
+    "0x10163d2d8",
+    "0x10163d2dc",
+    "0x10163d2e0",
+    "0x10163d2e4",
+    "0x10163d2e8",
+    "0x10163d2ec",
+    "0x10163d2f0",
+    "0x10163d2f4",
+    "0x10163d2f8",
+    "0x10163d2fc",
+    "0x10163d300",
+    "0x10163d304",
+    "0x10163d308",
+    "0x10163d30c",
+    "0x10163d310",
+    "0x10163d314",
+    "0x10163d318",
+    "0x10163d31c",
+    "0x10163d320",
+    "0x10163d324",
+    "0x10163d328",
+    "0x10163d32c",
+    "0x10163d330",
+    "0x10163d334",
+    "0x10163d338",
+    "0x10163d33c",
+    "0x10163d340",
+    "0x10163d344",
+    "0x10163d348",
+    "0x10163d34c",
+    "0x10163d350",
+    "0x10163d354",
+    "0x10163d358",
+    "0x10163d35c",
+    "0x10163d360",
+    "0x10163d364",
+    "0x10163d368",
+    "0x10163d36c",
+    "0x10163d370",
+    "0x10163d374",
+    "0x10163d378",
+    "0x10163d37c",
+    "0x10163d380",
+    "0x10163d384",
+    "0x10163d388",
+    "0x10163d38c",
+    "0x10163d390",
+    "0x10163d394",
+    "0x10163d398",
+    "0x10163d39c",
+    "0x10163d3a0",
+    "0x10163d3a4",
+    "0x10163d3a8",
+    "0x10163d3ac",
+    "0x10163d3b0",
+    "0x10163d3b4",
+    "0x10163d3b8",
+    "0x10163d3bc",
+    "0x10163d3c0",
+    "0x10163d3c4",
+    "0x10163d3c8",
+    "0x10163d3cc",
+    "0x10163d3d0",
+    "0x10163d3d4",
+    "0x10163d3d8",
+    "0x10163d3dc",
+    "0x10163d3e0",
+    "0x10163d3e4",
+    "0x10163d3e8",
+    "0x10163d3ec",
+    "0x10163d3f0",
+    "0x10163d3f4",
+    "0x10163d3f8",
+    "0x10163d3fc",
+    "0x10163d400",
+    "0x10163d404",
+    "0x10163d408",
+    "0x10163d40c",
+    "0x10163d410",
+    "0x10163d414",
+    "0x10163d418",
+    "0x10163d41c",
+    "0x10163d420",
+    "0x10163d424",
+    "0x10163d428",
+    "0x10163d42c",
+    "0x10163d430",
+    "0x10163d434",
+    "0x10163d438",
+    "0x10163d43c",
+    "0x10163d440",
+    "0x10163d444",
+    "0x10163d448",
+    "0x10163d44c",
+    "0x10163d450",
+    "0x10163d454",
+    "0x10163d458",
+    "0x10163d45c",
+    "0x10163d460",
+    "0x10163d464",
+    "0x10163d468",
+    "0x10163d46c",
+    "0x10163d470",
+    "0x10163d474",
+    "0x10163d478",
+    "0x10163d47c",
+    "0x10163d480",
+    "0x10163d484",
+    "0x10163d488",
+    "0x10163d48c",
+    "0x10163d490",
+    "0x10163d494",
+    "0x10163d498",
+    "0x10163d49c",
+    "0x10163d4a0",
+    "0x10163d4a4",
+    "0x10163d4a8",
+    "0x10163d4ac",
+    "0x10163d4b0",
+    "0x10163d4b4",
+    "0x10163d4b8",
+    "0x10163d4bc",
+    "0x10163d4c0",
+    "0x10163d4c4",
+    "0x10163d4c8",
+    "0x10163d4cc",
+    "0x10163d4d0",
+    "0x10163d4d4",
+    "0x10163d4d8",
+    "0x10163d4dc",
+    "0x10163d4e0",
+    "0x10163d4e4",
+    "0x10163d4e8",
+    "0x10163d4ec",
+    "0x10163d4f0",
+    "0x10163d4f4",
+    "0x10163d4f8",
+    "0x10163d4fc",
+    "0x10163d500",
+    "0x10163d504",
+    "0x10163d508",
+    "0x10163d50c",
+    "0x10163d510",
+    "0x10163d514"
+  ],
+  "normal_returns": [
+    "0x10163d154"
+  ]
+}

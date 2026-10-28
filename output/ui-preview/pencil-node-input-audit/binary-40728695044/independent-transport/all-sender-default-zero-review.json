@@ -1,0 +1,168 @@
+{
+  "actual_direct_call_enumeration": "Fresh full __text ARM64 BL decoding to actual _objc_msgSend$generateUserInputEvents: stub0x104b78620; 15 physical call sites cover joined compiler paths for22 source constructions. This enumeration is bounded to this binary and supported native dispatch, not arbitrary code fabrication.",
+  "calls": [
+    {
+      "method": "handleTap",
+      "call": "0x1010ad1cc",
+      "event_base_from_sp": "0x30",
+      "source_byte_from_sp": "0x9d",
+      "zero_word_stores": [
+        "0x1010ad0c0"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "cancelPointerCapture",
+      "call": "0x1010adb10",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010adaac"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "cancelPointerCapture",
+      "call": "0x1010adccc",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010adc78"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handlePan",
+      "call": "0x1010ae35c",
+      "event_base_from_sp": "0x50",
+      "source_byte_from_sp": "0xbd",
+      "zero_word_stores": [
+        "0x1010ae2e4"
+      ],
+      "classification": "default zero; only handlePan ordinary precision overwrite is separately proved"
+    },
+    {
+      "method": "handlePan",
+      "call": "0x1010ae480",
+      "event_base_from_sp": "0x50",
+      "source_byte_from_sp": "0xbd",
+      "zero_word_stores": [
+        "0x1010ae388"
+      ],
+      "classification": "default zero; only handlePan ordinary precision overwrite is separately proved"
+    },
+    {
+      "method": "handlePan",
+      "call": "0x1010ae9e0",
+      "event_base_from_sp": "0x50",
+      "source_byte_from_sp": "0xbd",
+      "zero_word_stores": [
+        "0x1010ae4d0",
+        "0x1010ae5a0",
+        "0x1010ae7a4",
+        "0x1010ae8a8"
+      ],
+      "classification": "default zero; only handlePan ordinary precision overwrite is separately proved"
+    },
+    {
+      "method": "handleIndirectPan",
+      "call": "0x1010aedb0",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010aed70"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handleIndirectPan",
+      "call": "0x1010aee38",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010aedf8"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handlePan2f",
+      "call": "0x1010aefd0",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010aef90"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handlePan2f",
+      "call": "0x1010af0e0",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010aefe4",
+        "0x1010af09c"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handlePan3f",
+      "call": "0x1010af254",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010af210"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handleHover",
+      "call": "0x1010af5c0",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010af588",
+        "0x1010af668"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "handleZoom",
+      "call": "0x1010af838",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010af7e8"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "pencilInteractionDidTap",
+      "call": "0x1010afa38",
+      "event_base_from_sp": "0x10",
+      "source_byte_from_sp": "0x7d",
+      "zero_word_stores": [
+        "0x1010af9f0"
+      ],
+      "classification": "zero at every path to this call"
+    },
+    {
+      "method": "pencilInteraction:didReceiveSqueeze:",
+      "call": "0x1010afd60",
+      "event_base_from_sp": "0x0",
+      "source_byte_from_sp": "0x6d",
+      "zero_word_stores": [
+        "0x1010afcb4",
+        "0x1010afd08"
+      ],
+      "classification": "zero at every path to this call"
+    }
+  ],
+  "source_reconciliation": {
+    "producer_original_body_exact_after_removing_only_added_classification_assignment": true,
+    "generator_original_body_exact_after_removing_only_added_constructor_argument": true,
+    "baseline_source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "baseline_json_sha256": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd",
+    "note": "Supplementary original-source oracle; compiled conclusions below come from actual emitted instructions, fields and arguments. No test suite or target was executed by this review."
+  }
+}

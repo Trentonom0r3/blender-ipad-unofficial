@@ -1,0 +1,85 @@
+{
+  "scope": "Every actual B/BL instruction in Mach-O __text targeting these exact private addresses; no arbitrary indirect-pointer proof",
+  "sites": [
+    {
+      "site": "0x100b4ed8c",
+      "kind": "BL",
+      "target": "0x100b5d30c",
+      "target_name": "wm_operator_invoke",
+      "containing_symbol": "__ZL25wm_operator_call_internalP8bContextP14wmOperatorTypeP10PointerRNAP10ReportListN7blender2wm13OpCallContextEbPK7wmEvent",
+      "containing_symbol_start": "0x100b4ebdc"
+    },
+    {
+      "site": "0x100b4edf0",
+      "kind": "BL",
+      "target": "0x100b5d30c",
+      "target_name": "wm_operator_invoke",
+      "containing_symbol": "__ZL25wm_operator_call_internalP8bContextP14wmOperatorTypeP10PointerRNAP10ReportListN7blender2wm13OpCallContextEbPK7wmEvent",
+      "containing_symbol_start": "0x100b4ebdc"
+    },
+    {
+      "site": "0x100b4ee44",
+      "kind": "B",
+      "target": "0x100b5d30c",
+      "target_name": "wm_operator_invoke",
+      "containing_symbol": "__ZL25wm_operator_call_internalP8bContextP14wmOperatorTypeP10PointerRNAP10ReportListN7blender2wm13OpCallContextEbPK7wmEvent",
+      "containing_symbol_start": "0x100b4ebdc"
+    },
+    {
+      "site": "0x100b51d78",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__Z41WM_event_ipad_pencil_paint_owner_teardownP8bContextP8wmWindowPK7ScrAreaPK7ARegionyyy",
+      "containing_symbol_start": "0x100b51a94"
+    },
+    {
+      "site": "0x100b52990",
+      "kind": "BL",
+      "target": "0x100b5d30c",
+      "target_name": "wm_operator_invoke",
+      "containing_symbol": "__ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb23eIPadNodeView2DDispatch",
+      "containing_symbol_start": "0x100b524d0"
+    },
+    {
+      "site": "0x100b558c8",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__Z20wm_event_do_handlersP8bContext",
+      "containing_symbol_start": "0x100b550cc"
+    },
+    {
+      "site": "0x100b55a38",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__Z20wm_event_do_handlersP8bContext",
+      "containing_symbol_start": "0x100b550cc"
+    },
+    {
+      "site": "0x100b5ea00",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__ZL21wm_handlers_do_internP8bContextP8wmWindowP7wmEventP8ListBase",
+      "containing_symbol_start": "0x100b5e348"
+    },
+    {
+      "site": "0x100b5ee10",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__ZL21wm_handlers_do_internP8bContextP8wmWindowP7wmEventP8ListBase",
+      "containing_symbol_start": "0x100b5e348"
+    },
+    {
+      "site": "0x100b60680",
+      "kind": "BL",
+      "target": "0x100b524d0",
+      "target_name": "wm_handler_operator_call",
+      "containing_symbol": "__ZL40wm_handlers_do_keymap_with_gizmo_handlerP8bContextP7wmEventP8ListBaseP20wmEventHandler_GizmoP12wmGizmoGroupP8wmKeyMapbPb",
+      "containing_symbol_start": "0x100b6035c"
+    }
+  ]
+}

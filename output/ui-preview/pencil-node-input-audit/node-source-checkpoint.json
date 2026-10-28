@@ -1,6 +1,6 @@
 {
   "utc": "2026-10-27T16:22:25.818323+00:00",
-  "status": "VALIDATED_EXACT_SOURCE_COMMITTED_NATIVE_BUILD_IN_PROGRESS",
+  "status": "PASS_NATIVE_PACKAGE_AND_FOUR_BOUNDED_ACTUAL_COMPILED_REVIEWS",
   "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
   "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
   "previous_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
@@ -90,5 +90,11 @@
     "Prepared .cache/watch-pencil-node-navigation-build.py RUN FULLSHA owns package and scopes; new compiled obligations plus fresh preserved HUD/Weight review remain required. Device acceptance stays separate."
   ],
   "source_commit": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
-  "native_build_run": 40728695044
+  "native_build_run": 40728695044,
+  "native_success": true,
+  "downloaded_package_verified": true,
+  "actual_compiled_review": "FOUR_INDEPENDENT_BOUNDED_PASS",
+  "ready_for_device_check": true,
+  "watcher_final_exitcode": 1,
+  "watcher_exit_reason": "Original raw owner interpreter shape missed; fresh bounded proof resolves it without checker/source changes. All package/scopes were collected."
 }

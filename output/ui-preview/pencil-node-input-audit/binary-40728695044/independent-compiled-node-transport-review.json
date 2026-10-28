@@ -1,0 +1,109 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_NODE_TRANSPORT",
+  "created_utc": "2026-10-28T21:23:55.295967+00:00",
+  "reviewer": "independent node407_compiled_transport agent",
+  "run": "40728695044",
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "scope": "Actual physical ordinary Pencil Changed PAN classification, default-false UserInputEvent and six emitted iOS Trackpad constructions, exact payload-to-WM admission, private queue AND coalescing/public replay clearing/noninheritance, and original ordinary packet-field/order reconciliation. Dispatcher/native-invocation and renderer/HUD/Weight reviews are separate.",
+  "method": {
+    "tools": "Fresh LLVM22.1.5 llvm-objdump address-safe dumps, independently parsed actual Mach-O UUID/nlist/segment bytes and objc ivar cells, actual indirect-import table, full-text ARM64 call/address-producer scans, then manual argument/field/branch tracing. No host model ABI is used as target proof.",
+    "raw_comparison": "Fresh40459756217 and40728695044 full handlePan/generator disassemblies and relocation-resolved raw diffs retained. They are changed, not declared instruction-identical. Generator902->904 instructions; producer821->836. Changes are explicitly reconciled below by actual field mapping, register/stack dataflow and packet ordering. Counts alone establish no semantics.",
+    "collector_resolution": "Collector GHOST_EventTrackpad matching symbols are D1/D0 destructor aliases at0x10003dd30/0x100a6af74, not constructors. Actual constructors are inlined in generator/indirect/GC producers. Missing pencil_down, wm_event_add_trackpad and wm_event_add_intern are resolved in selector/ingestion/public bodies, not waived.",
+    "source_only_controls": "Untouched Cocoa4/Wayland3/Win322 calls omit the appended default argument in authenticated pinned source. They are not emitted into the iOS target; this report makes no compiled non-iOS claim. The retained11-backend-call fixture consists of those9 plus2 iOS hardware paths, not11 additional native constructors."
+  },
+  "actual_layout": {
+    "UserInputEvent": "event_list+0; num_events+0x28; location+0x30; translation+0x40; distance+0x50; pencil_used+0x58; tablet_valid+0x59; tablet_snapshot+0x5c; direct_touch+0x6c; NEW source+0x6d; cancelled+0x6e; direct_tool+0x6f; direct_finger+0x70; finger_generation+0x78; HUD generation/serial+0x80/+0x88; PencilPaintContact+0x90. These are actual producer stores/generator loads, not assumed host offsets.",
+    "GHOST_EventTrackpad": "All six constructions allocate0x48 bytes. data_ at object+0x20 points to embedded object+0x28. Payload subtype+0, xy+4/+8, deltas+0xc/+0x10, invert+0x14, NEW source+0x15, numFingers+0x18. New byte is former padding; old concrete field positions and0x48 allocation remain unchanged. No debug sizeof claim is needed.",
+    "wmEvent": "Actual full queued copy0xb0 bytes; flag+0x7c; type+0x10; xy+0x14/+0x18; prev_xy+0x94/+0x98. Window eventstate+0xf0 and runtime+0x168; runtime queue first/last+0/+8."
+  },
+  "obligations": [
+    {
+      "id": "physical_source",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "proof": [
+        "Actual recognizer gesture_contact ivar cell0x106627f5c contains24. pencilContactDown0x1010aacb0..aace4 loads this own object field, requires down byte+0x18==1, nonzero touch+8, device word+0==2, then returns cset eq0/1. It does not read shared current_pencil_touch, tablet pressure, a WM event, or an owner record.",
+        "touchesBegan fresh admission/count==1 gates0x1010a97bc..97ec; actual UITouch type mapping table0x10513c4f0 is[1,3,2,3], so type2 Pencil becomes native TouchDevice2. Calls actual GestureContact::begin0x1010a987c with x0=self+actual gesture_contact offset, w1=physical kind, x2=the enumerated UITouch, x3=sample. begin0x1010a7d90..7e04 refuses existing/nonidentity/Unknown, stores kind/touch and down1. This occurs before actual objc_msgSendSuper2 import call0x1010a9d84. Failed/finger/unknown capture cannot create device2 from pressure.",
+        "Actual Ended/Cancelled update before superclass dispatch and clear down only for the same nonzero touch after superclass: Ended0x1010aa4b4 then0x1010aa534..5554; corresponding Cancelled body is retained fresh. Reset0x1010aaa60..aaa8c zeroes device/touch/serial/down before superclass0x1010aaaa8. This establishes bounded physical state classification, not accepted DOWN or contact lifetime.",
+        "handlePan ordinary branch0x1010ae4a0 first requires pencil_pan after existing pointer/ring/HUD/finger routes. Existing paint-valid/Knife-omit/nonzero-delta guards0x1010ae684..6bc decide whether PAN is emitted. Only after delta stored0x1010ae6c0, state==2 Changed0x1010ae6c8..6d0 calls pencilContactDown0x1010ae6d8; other state takes explicit w0=0 at0x1010ae920. Join stores0/1 at sp+0xbd=event+0x6d at0x1010ae924. PAN event1 is appended0x1010ae930 regardless of that result. Changed cursor0 is appended after PAN0x1010ae93c..95c. No source-class false result drops or reorders a packet.",
+        "All22 UserInputEvent source constructions compile to15 actual generator call sites. Fresh whole-text call enumeration and every branch initializer were inspected: word-zero covers the newbyte at each construction, including terminal/hover/Pencil UI/finger/indirect/pinch and no-event paths. Only the one ordinary handlePan overwrite can be positive; see all-sender-default-zero-review.json.",
+        "Generator dispatch0x1010abce4..abde0 selects event_list1 only for the positive argument.0x1010abe2c loads event+0x6d;0x1010abe68 stores it at object+0x3d, with subtype1, invert0, fingers1 and original converted xy/deltas. data_ points to that embedded payload and the same event goes to pushEvent x1. No cursor/down/up branch reads the new field.",
+        "All other five actual iOS Trackpad cases store source0: PINCH0x1010abcb8 strh wzr atobject+0x3c; 3-finger0x1010ac0e4 strh1; 2-finger0x1010ac344 strh1; indirect0x1010aec34 strh1; GC fallback0x1010b11e8 strh1 with w24=1 established0x1010b1148. Little-endian halfword1 preserves invert1 and writes source0. Whole-text address-producer scan for actual vtable0x1063ff438/+0x10 resolves only these six construction sites in three functions."
+      ]
+    },
+    {
+      "id": "wm_ingestion",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "proof": [
+        "wm_event_add_ghostevent saves actual payload in x20. Actual eventtype dispatch table0x104fcd64a entry4 routes GHOST Trackpad5 to0x100b5a728. Native dx/dy loads and Y sign0x100b5a728..730 are retained. Scroll subtype1 maps MOUSEPAN14; other scroll/default mappings still run but cannot receive the flag without exact subtype1.",
+        "After the eventstate0xb0 copy to local sp+0x50,0x100b5a580 unconditionally clears local flag atsp+0xcc before the eventtype table. Trackpad admission0x100b5b5a0 requires w9(subtype)==1;0x100b5b5a8..5bc requires payload unsigned byte+0x15==1 and word+0x18==1. Only then0x100b5b5c0..5c4 stores0x200 bit9. Unknown byte values, hardware/finger default0, two/three-finger, magnify/touch-pinch/rotate/smart-magnify all retain fallback.",
+        "Coordinates remain pd+4/+8 -> localxy -> native screen-coordinate conversion0x100b5b5e0..5f4 -> eventstate.xy0x100b5b5f8..604. val becomes0. Direction/finger bits are applied independently0x100b5b60c..648. Trackpad never copies the new flag into eventstate. Native button/key state helper0x100b5c3f0..3f8 copies only flag&2(REPEAT); simulate0x100b4d9b8..9c0 does the same.",
+        "Housekeeping motion cannot inherit it: current wm_event_do_handlers first generated-copy path clears flags with str xzr atnew+0x7c0x100b55348, then adds only existing FORCE_DRAG value8(bit3); end synthesized motion explicitly str wzr atnew+0x7c0x100b56d00. Existing mousemove replacement flags are masked to DIRECT_TOOL0x80 at0x100b5c00c..014. All are fresh current instructions.",
+        "Exact eWM_EventFlag source declares bit9 maximum and ENUM_OPERATORS maximum is moved to that bit. Actual public/mixed-clear mask0x1ff preserves all legal preexisting bits0..8 and clearsbit9. This is not a claim about fabricated flags above the exact enum domain. The unrelated cold.7 numeric0x200 is EVENT type, not a classification store: actual outlined helper0x100b628b0 stores it as halfword through type pointer x0 and stores val1 through x1. No markers-only interpretation is used."
+      ]
+    },
+    {
+      "id": "wm_coalescing_replay",
+      "status": "PASS_BOUNDED_ACTUAL_ARM64",
+      "proof": [
+        "Actual inlined wm_event_add_trackpad starts0x100b5b64c: fetch runtime queue tail, require equal type at0x100b5b658..664 and equal TOUCH_PINCH via xor/tbnz bit5 at0x100b5b668..670. Source class does not participate in merge eligibility, packet removal, delta accumulation or order.",
+        "On a merge0x100b5b674..690, oldxy and oldprev are loaded, BLI_poptail called once, then old x-prev_x and y-prev_y are added to incoming w21/w22.0x100b5b694 ANDs oldflag with incomingflag in a temporary summary register. Original local incomingevent flags atsp+0xcc are unchanged by this summary. Old event cleanup remains0x100b5b69c..6bc and0x100b5b988..9a0. No-merge skips this block with summary=incoming flags.",
+        "0x100b5b9a4 tests summary&0x200; cset eq records clear-needed. Private insertion is actual calloc0xb0 plus full local-event copy0x100b5b9cc..ba00 and BLI_addtail0x100b5ba0c, bypassing public replay clearing. New prevxy=xy-accumulateddelta at0x100b5ba10..1c. Only if clear-needed0x100b5ba20..2c applies flag&0x1ff to newcopy. Therefore P+P retainsbit9; P+nonP and nonP+P both clear; no-contributor-false can become true. Existing deltas/count/order and all other incomingflags are preserved.",
+        "WM_event_add0x100b4d7f4..85c reads caller through x19 into a separate new0xb0 allocation x21 and adds the newcopy.0x100b4d860..868 loads/stores ONLY that newcopy flag+0x7c with mask0x1ff before return. Caller record is never a store destination. Private wm_event_add_intern is inlined without this clear on the admitted physical branch.",
+        "WM_event_add_simulate inlines publiccopy+clear: fresh allocation/copied input0x100b4d8c0..92c;0x100b4d934..93c clears newcopy bit9 before eventstate work. Simulated coords and button bookkeeping retain native logic; stateflag mask remains2. Public/delegated replay through WM_event_add cannot retain physical authority. This is a native entrypoint contract, not protection against arbitrary native code writing private memory."
+      ]
+    },
+    {
+      "id": "original_packet_paths",
+      "status": "PASS_BOUNDED_ACTUAL_FIELD_AND_ORDER_RECONCILIATION",
+      "proof": [
+        "Fresh old/current raw full-method comparisons are retained rather than called equal. Generator old902/new904 instruction changes consist of one aligned ldp replacing two ldur PaintContact loads, precise new UserInputEvent offset reads, new sourcebyte load/store in ordinary PAN, three default strb->strh source-zero writes, and the PAN constructor register/store reordering that still writes every oldfield and numFingers1 before the same push. Existing normal-path branches/paint-ticket/retired-serial/terminal/cursor payload logic retain their decisions and call data. Exception landing pads relocate; no global exception/heap proof is claimed.",
+        "Actual old UserInfo offsets to new loads reconcile: PaintContact+0x88->0x90 (first32byte capture; new0x1010abbb4), direct_tool+0x6e->0x6f, direct_finger+0x6f->0x70, finger_generation+0x70->0x78, HUDpair+0x78->0x80. New actual cursor0x1010ac4c8..c570 and down0x1010ac3cc..c454 use those exact newfields and preserve destination GHOST payload positions, xy conversion, tabletsnapshot and contact locals. UP reads cancelled/direct_tool contiguous halfword+0x6e and direct_finger+0x70;0x1010ac660 onward preserves original terminal fields and owner retirement. No new sourcebyte is loaded by these branches.",
+        "Generator loop still advances x26 exactly once0x1010abcd4 and checks original num_events+0x28, without a new source-class branch. Native eventtype IDs0,5,6 still share original pointer gate; PAN1 remains before the subsequent cursor0. Original painting live-ticket and same-contact suppression is unchanged: only actual pointer types take that gate, while pre-existing paint/Knife omissions determine whether PAN was put in the list. The new metadata never selects owner/lease/contact state.",
+        "Producer actual Began constructs event-list packed cursor0/down5 from immutable bytes0x104fc66c8=0000000005000000, count2 at0x1010ae648..650, relative translation retained d8/d9, then optional PAN1. Changed appends PAN1 before cursor0. Ended/Cancelled/Failed retain only UP6 and paint-valid cancellation flag at0x1010ae960..9d4. Existing paint-valid/Knife-omit branches remain before newmetadata; no classification failure changes these packets.",
+        "Producer register/stack layout changes are reconciled explicitly: old saved tilt-pair sp+0x28 becomes new x23; sample/device pair x21 is saved with x23 across ring allocation and restored0x1010adf74; ordinary pencil snapshot stores x22/x23 atsp+0xac/base+0x64, valid/pencil bits257 atsp+0xa8. Old PaintContactsp+0xd8 moves to newsp+0xe0; valid triple checks move accordingly0x1010ae684..6a4. Pointer/HUD/finger branches similarly store new cancelled/direct_tool/direct_finger and generation offsets, while concrete GHOST destinations remain unchanged. No ordinary down/up/tablet/coordinate/modifier rewrite follows.",
+        "Supplementary exact source oracle independently confirms both original method bodies byte-exact to3438226 after removing only the new producer assignment / generator final constructor argument; source_reconciliation records this. This corroborates the manually reviewed changed compiled fields and order, and is not substituted for actual emitted instruction proof.",
+        "terminal-tablet-pointer-field-reconciliation.json supplies complete fresh old/current LEFT_BUTTON_DOWN, CURSOR_MOVE and LEFT_BUTTON_UP constructor cores. Each is exactly instruction/register/destination/call-equivalent after mapping ONLY actual shifted UserInputEvent source fields and equivalent ldr/ldur encodings. Original UPcancel byte is now +0x6e, verified producer store sp+0xbe at base sp+0x50 -> generator ldrh +0x6e -> GHOSTButton object+0x3c -> WMpayload+0x14==1 -> POINTER_CANCEL0x40. Physical source+0x6d is distinct. No model offset109 from an old package is used."
+      ]
+    }
+  ],
+  "source_reconciliation": {
+    "producer_original_body_exact_after_removing_only_added_classification_assignment": true,
+    "generator_original_body_exact_after_removing_only_added_constructor_argument": true,
+    "baseline_source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "baseline_json_sha256": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd",
+    "note": "Supplementary original-source oracle; compiled conclusions below come from actual emitted instructions, fields and arguments. No test suite or target was executed by this review."
+  },
+  "limitations": [
+    "No target execution, UIKit timing, accepted DOWN, actor/serial continuity across coalesced contributors, owner, lease, node/modal edit completion, global CFG/heap, device behavior or Undo/history proof.",
+    "All-positive aggregates can contain distinct physical Pencil contacts; mixed contributors intentionally lose classification and follow native fallback.",
+    "Original same-batch/no-handler/custominitial Knife fallback and paint receipts remain bounded to their existing contracts; renderer/native bridge/HUD/Weight are reviewed separately.",
+    "Supported source/runtime validity assumptions apply; no arbitrary native event fabrication, ObjC replacement, callback-registry corruption or concurrent mutation theorem.",
+    "Native dispatcher/private scalar/preallocation refusal review is outside this report; full goal and device acceptance remain unconfirmed."
+  ],
+  "production_source_edits": false,
+  "test_or_CI_edits": false,
+  "new_build_dispatched": false,
+  "device_acceptance": false,
+  "ready_for_device_check": false,
+  "whole_goal_complete": false,
+  "evidence_directory": "binary-40728695044/independent-transport",
+  "evidence_manifest_sha256": "5d994b883410775570c1af1dbbf0e8fc8917ebcdede284bc4187d2236e035c2a",
+  "earlier_report_sha256_before_terminal_addendum": "530d739afb0b9b18565d35dd8df9ea3fbc55f37f09a10000bc9aabc8f401c4c3",
+  "terminal_tablet_pointer_addendum": {
+    "file": "independent-transport/terminal-tablet-pointer-field-reconciliation.json",
+    "status": "PASS_BOUNDED_ACTUAL_TERMINAL_TABLET_AND_POINTER_FIELDS",
+    "sha256": "acc88a190c8a7914d51cf02596d609e2c7b62db4a452e7ea62c9e614eb5f8577"
+  },
+  "actual_materialized_seven_changed_source_sha256": {
+    "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "source/blender/editors/interface/view2d/view2d_ops.cc": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "source/blender/editors/include/UI_view2d.hh": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f"
+  }
+}

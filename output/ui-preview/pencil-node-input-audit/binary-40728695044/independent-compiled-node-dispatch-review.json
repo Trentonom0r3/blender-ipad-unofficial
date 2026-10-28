@@ -1,0 +1,86 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_COMPILED_NODE_SELECTED_DISPATCH_NATIVE_PROFILE_AND_PREALLOCATION_REFUSAL",
+  "run": 40728695044,
+  "source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "binary": "Blender",
+  "binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "blocking_findings": [],
+  "identity_verification": "Fresh direct llvm-objdump Mach-O LC_UUID + SHA256 independently verified; no old binary report substituted.",
+  "evidence_directory": "independent-node-dispatch-evidence",
+  "evidence_files": {
+    "fresh_scopes": "scope-manifest.json",
+    "actual_canonical25": "canonical25-actual-data.json",
+    "exhaustive_direct_private_call_scan": "private-direct-call-sites.json",
+    "native_abi": "native-abi-field-witness.json",
+    "library_stub_aliases": "resolved-library-stubs.txt"
+  },
+  "actual_selected_dispatch": {
+    "status": "PASS_BOUNDED",
+    "inlining": "wm_handlers_do_keymap_with_keymap_handler, wm_eventmatch and wm_ipad_node_view2d_dispatch are inlined in actual wm_handlers_do_intern0x100b5e348..0x100b5ffa4 (1815 instructions), freshly dumped. No unresolved wrapper is counted as proof.",
+    "selection_order": "Actual effective map x22 is passed with C to WM_keymap_poll0x100b5eae4 or0x100b5eb08 (mutually exclusive debug branches); false branch skips item dispatch. Success loads actual items at0x100b5eb10. Inlined wm_eventmatch0x100b5eb6c..ed28 checks inactive/repeat/native user event mapping, type/value/direction/five modifiers/keymodifier; each mismatch advances current item at0x100b5eb64. Only selected match enters node helper block0x100b5ed2c.",
+    "original_event": "Original incoming wmEvent* saved from x2 into callee-saved x20 at0x100b5e36c and passed x1=x20 into event helper0x100b5ed64 and x3=x20 into handler0x100b5ee10; handler saves x3=x20 and passes x2=x20 into invoke0x100b52990. No policy event copy; ordinary downstream event-temp copy remains after operator creation.",
+    "event_context": "Actual helper0x100b5d8f8..d9e4 first rejects null C/event/None; raw getter0x1000b1ebc is ldr x0,[C+0x88],ret. Nonnull raw dict at0x100b5d92c rejects before getters0x100b5d99c/d9a8. Event flag+0x7c &0x3f8 must equal0x200 (positive bit9, conflictbits3..8 clear), type+0x10==0xe, val+0x12==0, keymodifier+0x2c==0; scalar only1/2 and modifier+0x2a exactly0/2. Current area+0x48==0x10 (Node), region nonnull and regiontype+0xc0==0 (WINDOW), BLI_findindex(area+0x78,region)>=0.",
+    "handler_membership": "0x100b5ed84..ede8 requires current region.runtime, handlers pointer == runtime+0x328; BLI_findindex(handlers,handler)>=0; head.type5 at+0x10, flags0+0x14, poll0+0x18; dynamic+0x38/+0x40, post+0x28/+0x30 zero.0x100b5f110 rejects nonnull keymap_tool+0x48.",
+    "config_membership_active": "0x100b5f118..f19c requires wm/runtime/defaultconf+0xc8/userconf+0xd8 present, distinct; both members of runtime.keyconfigs+0x88 via actual BLI_findindex; raw configured preset loop0x100b5f174..f1a0 compares config.idname+0x10 to U.keyconfigstr using resolved actual strncmp stub0x104b76c54 length64, permits first matching defaultconf or absent match default fallback. No config update/setter.",
+    "maps": "map_find0x100b5ffa4..6000c walks actual config.keymaps+0x90, exact bounded View2D nullterminated name plus spaceid0/regionid0; second matching map returnsnull.0x100b5f1a8/f1b4 resolves both default/effective maps; default nonnull, handler.keymap+0x20 equals default; actual matched keymap savedsp+0x60 equals effective; kmi_id counters equal atf1d4..e0. Null effective also fails pointer comparison because actual dispatched keymap is nonnull.",
+    "raw25": "Fresh actual chained-fixup table at0x1063a5f00:25 rows of40 bytes. Every pointer validated as a format6 chain location and decoded to its native cstring; exact names/eight integer fields match current production table and pinned native event enums. map_is loop0x100b600cc..602b4 validates exactly25 items, prev links, final nextnull and items.last==last item. Positive item.id<=kmi_id checked0x100b600e0..f4; nested earlier-ID loop0x100b601e8..fc rejects duplicates. Raw idname/type/val/direction/five modifiers/keymodifier/maptype/propvalue/propvalue_str/flag checks0x100b60114..1d8; no RNA comparison/property callback used.",
+    "flags": "Map default allowed presentation|UPDATE: masks -0x4d and expected USER0; effective allowed presentation|USER: mask -0xf and expected USER2 at0x100b6003c..6c. Thus effective UPDATE/USER_MODIFIED/modal/tool/diff/unknown flags reject. Actual native WM_keymap_ensure0x100b75998..9a0 ORs UPDATE0x40 into newly registered map, corroborating persistent default UPDATE. Item masks default0xf5 ignores EXPANDED2 and UPDATE8, effective0xfd ignores EXPANDED2 only; compare canonical flag16 except positions15/16 flag0.",
+    "raw_properties_schema": "0x100b60204..288 loads existing properties/ptr; actual WM_operatortype_find(expected.idname,quiet=true) with fresh registered srna+0x88 when found, otherwise exact RNA_OperatorProperties address0x106bc2698 (valid no-NDOF generic schema corridor; fallback applies to absent expected types generally). Require props!=null,type6,len0,group.first/lastnull,ptr!=null,ptr.data==properties,owner_idnull,nonnull expected_type and ptr.type==expected_type. No property allocation/reset/RNA getter in comparison.",
+    "correspondence_selection": "Default map_is called0x100b5f1f8 with effective=false, matchednull and default IDs atx29-0xd0; effective called0x100b5f214 with effective=true, matched=x26 actual selected item and IDs sp+0x1f0. Unrolled25 ordered-ID comparisons0x100b5f21c..f3a8 all branch None on mismatch. Scalar1/2 and expected index4/16 selected from actual modifier0/2 at0x100b5ed34..54.0x100b5f3ac..b8 loads actual matched index and returns scalar only equal expected; all rejects load w7=0 at0x100b5edec or equivalent initialized paths."
+  },
+  "private_scalar": {
+    "status": "PASS_BOUNDED",
+    "all_direct_sites": "Fresh raw ARM64 B/BL scan of all Mach-O __text identifies4 invoke and6 handler direct sites; each call-site freshly redumped. This is exhaustive direct-target coverage, not an arbitrary indirect pointer proof.",
+    "positive_chain": "Only regular selected call0x100b5ee10 can receive nonzero w7; handler saves x7 in callee-saved x24 at0x100b524f0, then forwards x7=x24 at0x100b5298c to invoke. Invoke saves incoming x7 in x21 at0x100b5d348. No pointer receipt/profile is stored in event/global/context/keymap/handler; only private call registers/callee-saved stack spills.",
+    "none_sites": "Handler callers0x100b51d78,0x100b558c8,0x100b55a38,0x100b5ea00,0x100b60680 all explicitly w7=0. All3 invoke edges from public/delegated call_internal0x100b4ed8c,0x100b4edf0,0x100b4ee44 explicitly w7=0. WM_operator_name_call[_ptr] wrappers route through that internal caller. Gizmo call0x100b60680 explicitlyNone. Dynamic/post/tool/noncanonical regular paths fall back through w7=0. Existing modal handler.type3 stays native modal branch; selected policy requires handler.type5.",
+    "regular_props": "Eligible head.type5 with keymap_tool+0x48null takes0x100b526e0..f0 ->0x100b527b4: x23=null,w21=1. It uses supplied KMI PointerRNA; no tool-properties initialization path. After refusal,0x100b52998 takes w21bit0 branch, skipping propertiesfree/native tool completion; unchanged empty stack temporary list bypasses MEM_freeN at0x100b52a28."
+  },
+  "native_profile": {
+    "status": "PASS_BOUNDED",
+    "pure_helper": "Actual0x101fe4c24..4d38 is69 instructions, no calls/indirect transfers; only reads/comparisons andreturns. Requires flag0x14==BLOCKING|GRAB_CURSOR_XY, pyop_poll+0xb8null, macrofirst/last+0xa0/+0xa8null, all4 rna_ext fields+0xc0/+0xc8/+0xd0/+0xd8null.",
+    "callback_addresses": {
+      "Pan": {
+        "poll": "0x101fe55c0",
+        "exec": "0x101fe55e8",
+        "invoke": "0x101fe56f0",
+        "modal": "0x101fe594c",
+        "cancel": "0x101fe5af4"
+      },
+      "CtrlZoom": {
+        "poll": "0x101fe4d38",
+        "exec": "0x101fe4d84",
+        "invoke": "0x101fe4e6c",
+        "modal": "0x101fe51bc",
+        "cancel": "0x101fe5534"
+      }
+    },
+    "registration_witness": "Addresses independently resolved from actual ADRP+ADD arithmetic, llvm-nm aliases and native VIEW2D_OT_pan0x101fe5e58 stores at0x101fe5ea8/ec0 with flag0x14 at0x101fe5ec8; VIEW2D_OT_zoom0x101fe64f8 stores at0x101fe6544/558/55c with flag0x14 at0x101fe6564. No reliance on common names (other same-named view_pan funcs exist at0x10211...)."
+  },
+  "native_poll_preallocation": {
+    "status": "PASS_BOUNDED",
+    "poll_only": "w5!=0 at0x100b5d334 calls actual WM_operator_poll once0x100b5d340 and branches directlyepilogue; no new policy/classifier before poll-only.",
+    "accepted_corridor": "Normal invoke: event_context at0x100b5d368 then exact native profile0x100b5d37c; failure clears x21 scalar at0x100b5d384. Original real WM_operator_poll once0x100b5d390. False returns PASS_THROUGH8 at0x100b5d3c8. Success freshly rechecks rawdict/event/native context helper0x100b5d3a4 and exact profile0x100b5d3b8. Full success mov w0,2 CANCELLED alone0x100b5d3c0 then unconditional epilogue0x100b5d3c4->80c->828ret. Any recheckfailure continues original invoke at0x100b5d3d0.",
+    "native_poll_resolution": "Actual WM_operator_poll0x100b4eb14 checks macro.first+0xa0, pyop_poll+0xb8 then nativepoll+0x50. Accepted profile has empty macro/nullpyop, so exactly verified native Pan/Zoom poll occurs, no macro/Python callback. Pan poll0x101fe55c0 reads region View2D pan-lock bits. Zoom poll0x101fe4d38 reads native region/View3D context and zoom-lockbits. Getter resolver0x1000b4230 checks same rawC+0x88 at0x1000b4260/64; null corridor calls BLI_thread_is_main then returns raw area/region, no BPY/provider branch. Native view3d getter0x1000b44e8 returnsnull for Node area spacetype16.",
+    "before_lifecycle": "CANCELLED edge skips first invoke WM-manager read0x100b5d3d4, undo/register-IDreads0x100b5d3dc..404 and operator allocation0x100b5d414. No operator/properties/report/customdata allocation, native init/apply/exit/cancel/free, last-properties, undo, modal-handler,cursor,timer or redraw lifecycle is executed inside this refusal corridor. Ordinary outer dispatcher logging/tooltip bookkeeping remains and is not a global no-allocation claim."
+  },
+  "handler_result": {
+    "status": "PASS_BOUNDED",
+    "status_mapping": "Actual invoke return saved x27 at0x100b52994. CANCELLED2 skips special9/12 cases0x100b52d1c..28, then0x100b52818/1c computes1 & ~(2>>3)=1 (WM_HANDLER_BREAK). PASS_THROUGH8 computes1 & ~(8>>3)=0 (CONTINUE).",
+    "consumption": "Actual regular loop ORs returned action0x100b5ee40/44; bit0 at0x100b5eb5c..60 leads break0x100b5f3bc, avoiding lower items. Actual postcallback snapshot is null for eligible handler.0x100b5eb3c..44 breaks lower keymaps for actionbit0;0x100b5f3e8..418 retains tooltipclear; outer0x100b5fc68..84 breaks lower handlers. For MOUSEPAN14, always-pass mask computed0x100b5e6e8..700 is0 (not event0x104 or0x110..11f), so BREAK is not stripped.",
+    "preserved_fallback": "Noneligible event/context/map/property/callback type, custom/dynamic/tool/gizmo, explicit/public/delegated paths receive None or fail profile and enter the native poll/invoke behavior. False poll stays PASS_THROUGH. No dispatch to native pan/zoom init is substituted on refusal.",
+    "cross_review_dependency": "Fresh unchanged native pan/zoom/Circle/Transform body reconciliation is assigned to /root/gizmo_unchanged_compiled_reconcile and must be aggregated separately by root; this report does not certify their behavior or device results."
+  },
+  "scope_limits": [
+    "Valid current native WM lists/objects/registration and ordinary main-thread AAPCS call/return behavior are assumptions. No arbitrary corrupted heap/list/registry, global CFG, allocator, exception/nonlocal exit or reentrancy proof.",
+    "Raw no-Python-dict/native callback corridor is statically inspected; no arbitrary context-provider or callback safety claim outside that corridor. Caller-owned pointers must remain valid under native dispatcher assumptions.",
+    "Value-identical customization history is intentionally included in stock-value policy; no historical human intent or keymap provenance certification. Native event rawflags/classification/coalescing are separate independent transport evidence.",
+    "Bounded refusal denies one chosen stock-value invocation. No delivered DOWN, contact identity, node socket/title ownership, node edit lifecycle, history/Undo correctness or product-goal completion follows.",
+    "Native/package/host/model/device evidence remain separate. No target runtime geometry, UIKit/GPU, performance, subjective input quality or exact device acceptance is claimed."
+  ],
+  "production_or_checker_changes": false,
+  "tests_or_ci_changes": false,
+  "new_build_dispatch": false,
+  "device_acceptance": false,
+  "completed_utc": "2026-10-28T21:24:03.267470+00:00"
+}

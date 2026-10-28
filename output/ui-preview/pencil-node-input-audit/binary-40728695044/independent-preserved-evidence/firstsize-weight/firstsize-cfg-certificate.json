@@ -1,0 +1,2229 @@
+{
+  "uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "entry_after_creation_call": "0x101f91670",
+  "creation_call": "0x101f9166c",
+  "forced_edge": [
+    "0x101f91728",
+    "0x101f91790"
+  ],
+  "forced_edge_reason": "x22 is zero on unique creation edge at0x101f91630; no x22 write before0x101f91728; AAPCS preserves x22 across normal calls.",
+  "instruction_count": 270,
+  "reachable_from_creation_call_inclusive": 200,
+  "reachable_after_creation_call": 199,
+  "normal_returns": [
+    "0x101f91590"
+  ],
+  "checks": {
+    "0x101f917cc": {
+      "reachable": true,
+      "native_size_dominates": true,
+      "floating_init_dominates": true
+    },
+    "0x101f91750": {
+      "reachable": true,
+      "native_size_dominates": true,
+      "floating_init_dominates": true
+    },
+    "0x101f91864": {
+      "reachable": true,
+      "native_size_dominates": true,
+      "floating_init_dominates": true
+    },
+    "0x101f91590": {
+      "reachable": true,
+      "native_size_dominates": true,
+      "floating_init_dominates": true
+    }
+  },
+  "nodes": [
+    {
+      "address": "0x101f91548",
+      "instruction": "sub sp, sp, #0xa0",
+      "successors": [
+        "0x101f9154c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9154c",
+      "instruction": "stp x26, x25, [sp, #0x50]",
+      "successors": [
+        "0x101f91550"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91550",
+      "instruction": "stp x24, x23, [sp, #0x60]",
+      "successors": [
+        "0x101f91554"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91554",
+      "instruction": "stp x22, x21, [sp, #0x70]",
+      "successors": [
+        "0x101f91558"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91558",
+      "instruction": "stp x20, x19, [sp, #0x80]",
+      "successors": [
+        "0x101f9155c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9155c",
+      "instruction": "stp x29, x30, [sp, #0x90]",
+      "successors": [
+        "0x101f91560"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91560",
+      "instruction": "add x29, sp, #0x90",
+      "successors": [
+        "0x101f91564"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91564",
+      "instruction": "mov x19, x1",
+      "successors": [
+        "0x101f91568"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91568",
+      "instruction": "mov x20, x0",
+      "successors": [
+        "0x101f9156c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9156c",
+      "instruction": "bl 0x1000b3ba0 <__Z11CTX_wm_areaPK8bContext>",
+      "successors": [
+        "0x101f91570"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91570",
+      "instruction": "cmp x0, x19",
+      "successors": [
+        "0x101f91574"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91574",
+      "instruction": "b.eq 0x101f91594 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x4c>",
+      "successors": [
+        "0x101f91578",
+        "0x101f91594"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91578",
+      "instruction": "ldp x29, x30, [sp, #0x90]",
+      "successors": [
+        "0x101f9157c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9157c",
+      "instruction": "ldp x20, x19, [sp, #0x80]",
+      "successors": [
+        "0x101f91580"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91580",
+      "instruction": "ldp x22, x21, [sp, #0x70]",
+      "successors": [
+        "0x101f91584"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91584",
+      "instruction": "ldp x24, x23, [sp, #0x60]",
+      "successors": [
+        "0x101f91588"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91588",
+      "instruction": "ldp x26, x25, [sp, #0x50]",
+      "successors": [
+        "0x101f9158c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9158c",
+      "instruction": "add sp, sp, #0xa0",
+      "successors": [
+        "0x101f91590"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91590",
+      "instruction": "ret ",
+      "successors": [],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91594",
+      "instruction": "movi.16b v0, #0x0",
+      "successors": [
+        "0x101f91598"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91598",
+      "instruction": "stur q0, [sp, #0x3e]",
+      "successors": [
+        "0x101f9159c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9159c",
+      "instruction": "stp q0, q0, [sp, #0x20]",
+      "successors": [
+        "0x101f915a0"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915a0",
+      "instruction": "add x1, sp, #0x20",
+      "successors": [
+        "0x101f915a4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915a4",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f915a8"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915a8",
+      "instruction": "bl 0x101f900a8 <__ZL21ipad_knife_hud_layoutPK8bContextR18IPadKnifeHUDLayout>",
+      "successors": [
+        "0x101f915ac"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915ac",
+      "instruction": "ldr x8, [sp, #0x20]",
+      "successors": [
+        "0x101f915b0"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915b0",
+      "instruction": "cmp x8, #0x0",
+      "successors": [
+        "0x101f915b4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915b4",
+      "instruction": "csel w24, wzr, w0, eq",
+      "successors": [
+        "0x101f915b8"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915b8",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x101f915bc"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915bc",
+      "instruction": "mov w1, #0x8",
+      "successors": [
+        "0x101f915c0"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915c0",
+      "instruction": "bl 0x1003d66f0 <__Z25BKE_area_find_region_typePK7ScrAreai>",
+      "successors": [
+        "0x101f915c4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915c4",
+      "instruction": "mov x22, x0",
+      "successors": [
+        "0x101f915c8"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915c8",
+      "instruction": "cbz x0, 0x101f91620 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xd8>",
+      "successors": [
+        "0x101f915cc",
+        "0x101f91620"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915cc",
+      "instruction": "tbnz w24, #0x0, 0x101f91620 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xd8>",
+      "successors": [
+        "0x101f915d0",
+        "0x101f91620"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915d0",
+      "instruction": "ldr x8, [x22, #0x120]",
+      "successors": [
+        "0x101f915d4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915d4",
+      "instruction": "cbz x8, 0x101f91620 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xd8>",
+      "successors": [
+        "0x101f915d8",
+        "0x101f91620"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915d8",
+      "instruction": "ldrb w9, [x8, #0x3]",
+      "successors": [
+        "0x101f915dc"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915dc",
+      "instruction": "cmp w9, #0x1",
+      "successors": [
+        "0x101f915e0"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915e0",
+      "instruction": "b.ne 0x101f91624 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xdc>",
+      "successors": [
+        "0x101f915e4",
+        "0x101f91624"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915e4",
+      "instruction": "strb wzr, [x8, #0x3]",
+      "successors": [
+        "0x101f915e8"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915e8",
+      "instruction": "mov x0, x22",
+      "successors": [
+        "0x101f915ec"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915ec",
+      "instruction": "bl 0x1016203a8 <__Z20ED_region_tag_redrawP7ARegion>",
+      "successors": [
+        "0x101f915f0"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915f0",
+      "instruction": "ldrh w8, [x22, #0xc4]",
+      "successors": [
+        "0x101f915f4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915f4",
+      "instruction": "tbz w8, #0x7, 0x101f91624 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xdc>",
+      "successors": [
+        "0x101f915f8",
+        "0x101f91624"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915f8",
+      "instruction": "orr w8, w8, #0x1",
+      "successors": [
+        "0x101f915fc"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f915fc",
+      "instruction": "strh w8, [x22, #0xc4]",
+      "successors": [
+        "0x101f91600"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91600",
+      "instruction": "add x0, x22, #0xa8",
+      "successors": [
+        "0x101f91604"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91604",
+      "instruction": "mov w1, #0x0",
+      "successors": [
+        "0x101f91608"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91608",
+      "instruction": "mov w2, #0x0",
+      "successors": [
+        "0x101f9160c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9160c",
+      "instruction": "mov w3, #0x0",
+      "successors": [
+        "0x101f91610"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91610",
+      "instruction": "mov w4, #0x0",
+      "successors": [
+        "0x101f91614"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91614",
+      "instruction": "bl 0x1007fcfb4 <__Z13BLI_rcti_initP4rctiiiii>",
+      "successors": [
+        "0x101f91618"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91618",
+      "instruction": "mov x0, x22",
+      "successors": [
+        "0x101f9161c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9161c",
+      "instruction": "b 0x101f91978 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x430>",
+      "successors": [
+        "0x101f91978"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91620",
+      "instruction": "tbnz w24, #0x0, 0x101f91630 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xe8>",
+      "successors": [
+        "0x101f91624",
+        "0x101f91630"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91624",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f91628"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91628",
+      "instruction": "bl 0x101f912c8 <__Z21UI_ipad_corner_canvasP8bContext>",
+      "successors": [
+        "0x101f9162c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9162c",
+      "instruction": "cbz x0, 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91630",
+        "0x101f91578"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91630",
+      "instruction": "cbz x22, 0x101f91658 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x110>",
+      "successors": [
+        "0x101f91634",
+        "0x101f91658"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91634",
+      "instruction": "ldrh w8, [x22, #0xc4]",
+      "successors": [
+        "0x101f91638"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91638",
+      "instruction": "tbz w8, #0x7, 0x101f91640 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0xf8>",
+      "successors": [
+        "0x101f9163c",
+        "0x101f91640"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9163c",
+      "instruction": "tbz w24, #0x0, 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91640",
+        "0x101f91578"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91640",
+      "instruction": "ldr x0, [x19, #0x58]",
+      "successors": [
+        "0x101f91644"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91644",
+      "instruction": "mov w1, #0x8",
+      "successors": [
+        "0x101f91648"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91648",
+      "instruction": "bl 0x1003d5264 <__Z22BKE_regiontype_from_idPK9SpaceTypei>",
+      "successors": [
+        "0x101f9164c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9164c",
+      "instruction": "mov x21, x22",
+      "successors": [
+        "0x101f91650"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91650",
+      "instruction": "cbnz x0, 0x101f916cc <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x184>",
+      "successors": [
+        "0x101f91654",
+        "0x101f916cc"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91654",
+      "instruction": "b 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91578"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91658",
+      "instruction": "ldr x0, [x19, #0x58]",
+      "successors": [
+        "0x101f9165c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9165c",
+      "instruction": "mov w1, #0x8",
+      "successors": [
+        "0x101f91660"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91660",
+      "instruction": "bl 0x1003d5264 <__Z22BKE_regiontype_from_idPK9SpaceTypei>",
+      "successors": [
+        "0x101f91664"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91664",
+      "instruction": "cbz x0, 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91668",
+        "0x101f91578"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91668",
+      "instruction": "mov x23, x0",
+      "successors": [
+        "0x101f9166c"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9166c",
+      "instruction": "bl 0x1003d59f8 <__Z19BKE_area_region_newv>",
+      "successors": [
+        "0x101f91670"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91670",
+      "instruction": "mov x21, x0",
+      "successors": [
+        "0x101f91674"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91674",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x101f91678"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91678",
+      "instruction": "mov w1, #0x0",
+      "successors": [
+        "0x101f9167c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9167c",
+      "instruction": "bl 0x1003d66f0 <__Z25BKE_area_find_region_typePK7ScrAreai>",
+      "successors": [
+        "0x101f91680"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91680",
+      "instruction": "cbz x0, 0x101f91698 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x150>",
+      "successors": [
+        "0x101f91684",
+        "0x101f91698"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91684",
+      "instruction": "mov x1, x0",
+      "successors": [
+        "0x101f91688"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91688",
+      "instruction": "add x0, x19, #0x78",
+      "successors": [
+        "0x101f9168c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9168c",
+      "instruction": "mov x2, x21",
+      "successors": [
+        "0x101f91690"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91690",
+      "instruction": "bl 0x100790668 <__Z20BLI_insertlinkbeforeP8ListBasePvS1_>",
+      "successors": [
+        "0x101f91694"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91694",
+      "instruction": "b 0x101f916a4 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x15c>",
+      "successors": [
+        "0x101f916a4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91698",
+      "instruction": "add x0, x19, #0x78",
+      "successors": [
+        "0x101f9169c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9169c",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x101f916a0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916a0",
+      "instruction": "bl 0x10078fe74 <__Z11BLI_addtailP8ListBasePv>",
+      "successors": [
+        "0x101f916a4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916a4",
+      "instruction": "mov w8, #0x8",
+      "successors": [
+        "0x101f916a8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916a8",
+      "instruction": "movk w8, #0x7, lsl #16",
+      "successors": [
+        "0x101f916ac"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916ac",
+      "instruction": "str w8, [x21, #0xc0]",
+      "successors": [
+        "0x101f916b0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916b0",
+      "instruction": "mov w8, #0x1",
+      "successors": [
+        "0x101f916b4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916b4",
+      "instruction": "strh w8, [x21, #0xca]",
+      "successors": [
+        "0x101f916b8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916b8",
+      "instruction": "ldrh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f916bc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916bc",
+      "instruction": "orr w8, w8, #0x4",
+      "successors": [
+        "0x101f916c0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916c0",
+      "instruction": "strh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f916c4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916c4",
+      "instruction": "ldr x8, [x21, #0x128]",
+      "successors": [
+        "0x101f916c8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916c8",
+      "instruction": "str x23, [x8, #0x170]",
+      "successors": [
+        "0x101f916cc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916cc",
+      "instruction": "ldr x23, [x21, #0x120]",
+      "successors": [
+        "0x101f916d0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916d0",
+      "instruction": "mov x0, x23",
+      "successors": [
+        "0x101f916d4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916d4",
+      "instruction": "cbnz x23, 0x101f91718 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x1d0>",
+      "successors": [
+        "0x101f916d8",
+        "0x101f91718"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916d8",
+      "instruction": "adrp x8, 0x10665b000 <__ZZN7blender3gpu13ProfileReport3getEvE9singleton+0x298>",
+      "successors": [
+        "0x101f916dc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916dc",
+      "instruction": "add x8, x8, #0x760",
+      "successors": [
+        "0x101f916e0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916e0",
+      "instruction": "ldr x8, [x8]",
+      "successors": [
+        "0x101f916e4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916e4",
+      "instruction": "adrp x3, 0x104d57000 <__ZL3hex+0x1875cd>",
+      "successors": [
+        "0x101f916e8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916e8",
+      "instruction": "add x3, x3, #0x61c",
+      "successors": [
+        "0x101f916ec"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916ec",
+      "instruction": "mov w25, #0x1",
+      "successors": [
+        "0x101f916f0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916f0",
+      "instruction": "mov w0, #0x1",
+      "successors": [
+        "0x101f916f4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916f4",
+      "instruction": "mov w1, #0x38",
+      "successors": [
+        "0x101f916f8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916f8",
+      "instruction": "mov w2, #0x8",
+      "successors": [
+        "0x101f916fc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f916fc",
+      "instruction": "blr x8",
+      "successors": [
+        "0x101f91700"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91700",
+      "instruction": "mov w8, #0xffff",
+      "successors": [
+        "0x101f91704"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91704",
+      "instruction": "strh w8, [x0]",
+      "successors": [
+        "0x101f91708"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91708",
+      "instruction": "mov w8, #-0x1",
+      "successors": [
+        "0x101f9170c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9170c",
+      "instruction": "str w8, [x0, #0x30]",
+      "successors": [
+        "0x101f91710"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91710",
+      "instruction": "strb w25, [x0, #0x2]",
+      "successors": [
+        "0x101f91714"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91714",
+      "instruction": "str x0, [x21, #0x120]",
+      "successors": [
+        "0x101f91718"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91718",
+      "instruction": "strb w24, [x0, #0x3]",
+      "successors": [
+        "0x101f9171c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9171c",
+      "instruction": "ldrh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f91720"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91720",
+      "instruction": "tbnz w8, #0x0, 0x101f91788 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x240>",
+      "successors": [
+        "0x101f91724",
+        "0x101f91788"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91724",
+      "instruction": "cbz x23, 0x101f91790 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x248>",
+      "successors": [
+        "0x101f91728",
+        "0x101f91790"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91728",
+      "instruction": "cbz x22, 0x101f91790 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x248>",
+      "successors": [
+        "0x101f91790"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9172c",
+      "instruction": "ldr x8, [x21, #0x128]",
+      "successors": [
+        "0x101f91730"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91730",
+      "instruction": "ldrh w8, [x8, #0x368]",
+      "successors": [
+        "0x101f91734"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91734",
+      "instruction": "cbz w8, 0x101f91790 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x248>",
+      "successors": [
+        "0x101f91738",
+        "0x101f91790"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f91738",
+      "instruction": "cbz w24, 0x101f917d4 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x28c>",
+      "successors": [
+        "0x101f9173c",
+        "0x101f917d4"
+      ],
+      "reachable_after_creation": false
+    },
+    {
+      "address": "0x101f9173c",
+      "instruction": "movi.16b v0, #0x0",
+      "successors": [
+        "0x101f91740"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91740",
+      "instruction": "stur q0, [sp, #0x3e]",
+      "successors": [
+        "0x101f91744"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91744",
+      "instruction": "stp q0, q0, [sp, #0x20]",
+      "successors": [
+        "0x101f91748"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91748",
+      "instruction": "add x1, sp, #0x20",
+      "successors": [
+        "0x101f9174c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9174c",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f91750"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91750",
+      "instruction": "bl 0x101f900a8 <__ZL21ipad_knife_hud_layoutPK8bContextR18IPadKnifeHUDLayout>",
+      "successors": [
+        "0x101f91754"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91754",
+      "instruction": "tbz w0, #0x0, 0x101f91760 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x218>",
+      "successors": [
+        "0x101f91758",
+        "0x101f91760"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91758",
+      "instruction": "ldr x22, [sp, #0x20]",
+      "successors": [
+        "0x101f9175c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9175c",
+      "instruction": "cbnz x22, 0x101f917e4 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x29c>",
+      "successors": [
+        "0x101f91760",
+        "0x101f917e4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91760",
+      "instruction": "ldrh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f91764"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91764",
+      "instruction": "orr w8, w8, #0x1",
+      "successors": [
+        "0x101f91768"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91768",
+      "instruction": "strh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f9176c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9176c",
+      "instruction": "add x0, x21, #0xa8",
+      "successors": [
+        "0x101f91770"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91770",
+      "instruction": "mov w1, #0x0",
+      "successors": [
+        "0x101f91774"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91774",
+      "instruction": "mov w2, #0x0",
+      "successors": [
+        "0x101f91778"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91778",
+      "instruction": "mov w3, #0x0",
+      "successors": [
+        "0x101f9177c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9177c",
+      "instruction": "mov w4, #0x0",
+      "successors": [
+        "0x101f91780"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91780",
+      "instruction": "bl 0x1007fcfb4 <__Z13BLI_rcti_initP4rctiiiii>",
+      "successors": [
+        "0x101f91784"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91784",
+      "instruction": "b 0x101f91974 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x42c>",
+      "successors": [
+        "0x101f91974"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91788",
+      "instruction": "and w8, w8, #0xfffe",
+      "successors": [
+        "0x101f9178c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9178c",
+      "instruction": "strh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f91790"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91790",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x101f91794"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91794",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x101f91798"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91798",
+      "instruction": "bl 0x101621850 <__Z30ED_area_tag_region_size_updateP7ScrAreaP7ARegion>",
+      "successors": [
+        "0x101f9179c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9179c",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x101f917a0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917a0",
+      "instruction": "bl 0x1016203a8 <__Z20ED_region_tag_redrawP7ARegion>",
+      "successors": [
+        "0x101f917a4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917a4",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f917a8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917a8",
+      "instruction": "bl 0x1000b4200 <__Z14CTX_wm_managerPK8bContext>",
+      "successors": [
+        "0x101f917ac"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917ac",
+      "instruction": "mov x22, x0",
+      "successors": [
+        "0x101f917b0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917b0",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f917b4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917b4",
+      "instruction": "bl 0x1000b4218 <__Z13CTX_wm_windowPK8bContext>",
+      "successors": [
+        "0x101f917b8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917b8",
+      "instruction": "mov x1, x0",
+      "successors": [
+        "0x101f917bc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917bc",
+      "instruction": "mov x0, x22",
+      "successors": [
+        "0x101f917c0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917c0",
+      "instruction": "mov x2, x19",
+      "successors": [
+        "0x101f917c4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917c4",
+      "instruction": "bl 0x101622954 <__Z27ED_area_update_region_sizesP15wmWindowManagerP8wmWindowP7ScrArea>",
+      "successors": [
+        "0x101f917c8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917c8",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x101f917cc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917cc",
+      "instruction": "bl 0x1016237a8 <__Z23ED_region_floating_initP7ARegion>",
+      "successors": [
+        "0x101f917d0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917d0",
+      "instruction": "cbnz w24, 0x101f9173c <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x1f4>",
+      "successors": [
+        "0x101f917d4",
+        "0x101f9173c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917d4",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f917d8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917d8",
+      "instruction": "bl 0x101f912c8 <__Z21UI_ipad_corner_canvasP8bContext>",
+      "successors": [
+        "0x101f917dc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917dc",
+      "instruction": "mov x22, x0",
+      "successors": [
+        "0x101f917e0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917e0",
+      "instruction": "cbz x22, 0x101f91760 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x218>",
+      "successors": [
+        "0x101f917e4",
+        "0x101f91760"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917e4",
+      "instruction": "ldrh w8, [x21, #0xc4]",
+      "successors": [
+        "0x101f917e8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917e8",
+      "instruction": "mov w9, #0x1",
+      "successors": [
+        "0x101f917ec"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917ec",
+      "instruction": "bic w8, w9, w8, lsr #1",
+      "successors": [
+        "0x101f917f0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917f0",
+      "instruction": "ldr x9, [x21, #0x128]",
+      "successors": [
+        "0x101f917f4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917f4",
+      "instruction": "strh w8, [x9, #0x368]",
+      "successors": [
+        "0x101f917f8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917f8",
+      "instruction": "add x0, x22, #0x10",
+      "successors": [
+        "0x101f917fc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f917fc",
+      "instruction": "add x2, sp, #0x1c",
+      "successors": [
+        "0x101f91800"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91800",
+      "instruction": "add x3, sp, #0x18",
+      "successors": [
+        "0x101f91804"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91804",
+      "instruction": "mov w1, #0x1",
+      "successors": [
+        "0x101f91808"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91808",
+      "instruction": "bl 0x101fe1cc0 <__Z27UI_view2d_scroller_size_getPK6View2DbPfS2_>",
+      "successors": [
+        "0x101f9180c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9180c",
+      "instruction": "ldr x8, [x22, #0x128]",
+      "successors": [
+        "0x101f91810"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91810",
+      "instruction": "ldr s0, [x8, #0x160]",
+      "successors": [
+        "0x101f91814"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91814",
+      "instruction": "scvtf s0, s0",
+      "successors": [
+        "0x101f91818"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91818",
+      "instruction": "ldr s1, [sp, #0x18]",
+      "successors": [
+        "0x101f9181c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9181c",
+      "instruction": "fcmp s1, s0",
+      "successors": [
+        "0x101f91820"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91820",
+      "instruction": "fcsel s0, s0, s1, mi",
+      "successors": [
+        "0x101f91824"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91824",
+      "instruction": "str s0, [sp, #0x18]",
+      "successors": [
+        "0x101f91828"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91828",
+      "instruction": "ldur q1, [x21, #0xa8]",
+      "successors": [
+        "0x101f9182c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9182c",
+      "instruction": "str q1, [sp]",
+      "successors": [
+        "0x101f91830"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91830",
+      "instruction": "ldr w8, [x21, #0xa8]",
+      "successors": [
+        "0x101f91834"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91834",
+      "instruction": "ldr x9, [x21, #0x128]",
+      "successors": [
+        "0x101f91838"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91838",
+      "instruction": "ldr w10, [x9, #0x198]",
+      "successors": [
+        "0x101f9183c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9183c",
+      "instruction": "sub w23, w8, w10",
+      "successors": [
+        "0x101f91840"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91840",
+      "instruction": "ldr w8, [x21, #0xb0]",
+      "successors": [
+        "0x101f91844"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91844",
+      "instruction": "ldr w9, [x9, #0x19c]",
+      "successors": [
+        "0x101f91848"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91848",
+      "instruction": "sub w25, w8, w9",
+      "successors": [
+        "0x101f9184c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9184c",
+      "instruction": "cbz w24, 0x101f91890 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x348>",
+      "successors": [
+        "0x101f91850",
+        "0x101f91890"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91850",
+      "instruction": "movi.16b v0, #0x0",
+      "successors": [
+        "0x101f91854"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91854",
+      "instruction": "stur q0, [sp, #0x3e]",
+      "successors": [
+        "0x101f91858"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91858",
+      "instruction": "stp q0, q0, [sp, #0x20]",
+      "successors": [
+        "0x101f9185c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9185c",
+      "instruction": "add x1, sp, #0x20",
+      "successors": [
+        "0x101f91860"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91860",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f91864"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91864",
+      "instruction": "bl 0x101f900a8 <__ZL21ipad_knife_hud_layoutPK8bContextR18IPadKnifeHUDLayout>",
+      "successors": [
+        "0x101f91868"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91868",
+      "instruction": "tbz w0, #0x0, 0x101f9188c <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x344>",
+      "successors": [
+        "0x101f9186c",
+        "0x101f9188c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9186c",
+      "instruction": "ldr w8, [sp, #0x28]",
+      "successors": [
+        "0x101f91870"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91870",
+      "instruction": "ldr w9, [sp, #0x30]",
+      "successors": [
+        "0x101f91874"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91874",
+      "instruction": "sub w8, w8, w23",
+      "successors": [
+        "0x101f91878"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91878",
+      "instruction": "scvtf s1, w8",
+      "successors": [
+        "0x101f9187c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9187c",
+      "instruction": "sub w8, w9, w25",
+      "successors": [
+        "0x101f91880"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91880",
+      "instruction": "scvtf s0, w8",
+      "successors": [
+        "0x101f91884"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91884",
+      "instruction": "stp s0, s1, [sp, #0x18]",
+      "successors": [
+        "0x101f91888"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91888",
+      "instruction": "b 0x101f91890 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x348>",
+      "successors": [
+        "0x101f91890"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9188c",
+      "instruction": "ldr s0, [sp, #0x18]",
+      "successors": [
+        "0x101f91890"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91890",
+      "instruction": "ldr s1, [sp, #0x1c]",
+      "successors": [
+        "0x101f91894"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91894",
+      "instruction": "fcvtzs w8, s1",
+      "successors": [
+        "0x101f91898"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91898",
+      "instruction": "add w8, w23, w8",
+      "successors": [
+        "0x101f9189c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9189c",
+      "instruction": "ldr w9, [sp]",
+      "successors": [
+        "0x101f918a0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918a0",
+      "instruction": "ldr w10, [sp, #0x8]",
+      "successors": [
+        "0x101f918a4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918a4",
+      "instruction": "sub w1, w8, w9",
+      "successors": [
+        "0x101f918a8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918a8",
+      "instruction": "fcvtzs w8, s0",
+      "successors": [
+        "0x101f918ac"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918ac",
+      "instruction": "add w8, w25, w8",
+      "successors": [
+        "0x101f918b0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918b0",
+      "instruction": "sub w2, w8, w10",
+      "successors": [
+        "0x101f918b4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918b4",
+      "instruction": "mov x0, sp",
+      "successors": [
+        "0x101f918b8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918b8",
+      "instruction": "bl 0x1007fd340 <__Z18BLI_rcti_translateP4rctiii>",
+      "successors": [
+        "0x101f918bc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918bc",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f918c0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918c0",
+      "instruction": "bl 0x1000b4218 <__Z13CTX_wm_windowPK8bContext>",
+      "successors": [
+        "0x101f918c4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918c4",
+      "instruction": "mov x1, x0",
+      "successors": [
+        "0x101f918c8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918c8",
+      "instruction": "mov x4, sp",
+      "successors": [
+        "0x101f918cc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918cc",
+      "instruction": "add x5, sp, #0x20",
+      "successors": [
+        "0x101f918d0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918d0",
+      "instruction": "mov x0, x20",
+      "successors": [
+        "0x101f918d4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918d4",
+      "instruction": "mov x2, x19",
+      "successors": [
+        "0x101f918d8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918d8",
+      "instruction": "mov x3, x22",
+      "successors": [
+        "0x101f918dc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918dc",
+      "instruction": "bl 0x10163c6c8 <__Z24ED_ipad_hud_exposed_rectP8bContextP8wmWindowP7ScrAreaPK7ARegionRK4rctiRS8_>",
+      "successors": [
+        "0x101f918e0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918e0",
+      "instruction": "cbz w0, 0x101f918f8 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x3b0>",
+      "successors": [
+        "0x101f918e4",
+        "0x101f918f8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918e4",
+      "instruction": "ldr w8, [sp, #0x20]",
+      "successors": [
+        "0x101f918e8"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918e8",
+      "instruction": "tbnz w24, #0x0, 0x101f918f0 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x3a8>",
+      "successors": [
+        "0x101f918ec",
+        "0x101f918f0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918ec",
+      "instruction": "ldr w23, [x22, #0xa8]",
+      "successors": [
+        "0x101f918f0"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918f0",
+      "instruction": "sub w8, w8, w23",
+      "successors": [
+        "0x101f918f4"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918f4",
+      "instruction": "b 0x101f91918 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x3d0>",
+      "successors": [
+        "0x101f91918"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918f8",
+      "instruction": "ldr x8, [x22, #0x128]",
+      "successors": [
+        "0x101f918fc"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f918fc",
+      "instruction": "ldr w8, [x8, #0x158]",
+      "successors": [
+        "0x101f91900"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91900",
+      "instruction": "cbz w24, 0x101f91910 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x3c8>",
+      "successors": [
+        "0x101f91904",
+        "0x101f91910"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91904",
+      "instruction": "ldr w9, [x22, #0xa8]",
+      "successors": [
+        "0x101f91908"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91908",
+      "instruction": "sub w9, w9, w23",
+      "successors": [
+        "0x101f9190c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9190c",
+      "instruction": "b 0x101f91914 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x3cc>",
+      "successors": [
+        "0x101f91914"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91910",
+      "instruction": "mov w9, #0x0",
+      "successors": [
+        "0x101f91914"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91914",
+      "instruction": "add w8, w9, w8",
+      "successors": [
+        "0x101f91918"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91918",
+      "instruction": "scvtf s0, w8",
+      "successors": [
+        "0x101f9191c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9191c",
+      "instruction": "ldr s1, [sp, #0x1c]",
+      "successors": [
+        "0x101f91920"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91920",
+      "instruction": "fcmp s1, s0",
+      "successors": [
+        "0x101f91924"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91924",
+      "instruction": "fcsel s0, s0, s1, mi",
+      "successors": [
+        "0x101f91928"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91928",
+      "instruction": "str s0, [sp, #0x1c]",
+      "successors": [
+        "0x101f9192c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9192c",
+      "instruction": "ldr x8, [x21, #0x128]",
+      "successors": [
+        "0x101f91930"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91930",
+      "instruction": "ldr s1, [x8, #0x198]",
+      "successors": [
+        "0x101f91934"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91934",
+      "instruction": "scvtf s2, s1",
+      "successors": [
+        "0x101f91938"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91938",
+      "instruction": "ldr s1, [sp, #0x18]",
+      "successors": [
+        "0x101f9193c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9193c",
+      "instruction": "fcmp s0, s2",
+      "successors": [
+        "0x101f91940"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91940",
+      "instruction": "b.ne 0x101f91954 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x40c>",
+      "successors": [
+        "0x101f91944",
+        "0x101f91954"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91944",
+      "instruction": "ldr s2, [x8, #0x19c]",
+      "successors": [
+        "0x101f91948"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91948",
+      "instruction": "scvtf s2, s2",
+      "successors": [
+        "0x101f9194c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9194c",
+      "instruction": "fcmp s1, s2",
+      "successors": [
+        "0x101f91950"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91950",
+      "instruction": "b.eq 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91954",
+        "0x101f91578"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91954",
+      "instruction": "fcvtzs w9, s0",
+      "successors": [
+        "0x101f91958"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91958",
+      "instruction": "str w9, [x8, #0x198]",
+      "successors": [
+        "0x101f9195c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9195c",
+      "instruction": "fcvtzs w8, s1",
+      "successors": [
+        "0x101f91960"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91960",
+      "instruction": "ldr x9, [x21, #0x128]",
+      "successors": [
+        "0x101f91964"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91964",
+      "instruction": "str w8, [x9, #0x19c]",
+      "successors": [
+        "0x101f91968"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91968",
+      "instruction": "mov x0, x19",
+      "successors": [
+        "0x101f9196c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9196c",
+      "instruction": "mov x1, x21",
+      "successors": [
+        "0x101f91970"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91970",
+      "instruction": "bl 0x101621850 <__Z30ED_area_tag_region_size_updateP7ScrAreaP7ARegion>",
+      "successors": [
+        "0x101f91974"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91974",
+      "instruction": "mov x0, x21",
+      "successors": [
+        "0x101f91978"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f91978",
+      "instruction": "bl 0x1016203a8 <__Z20ED_region_tag_redrawP7ARegion>",
+      "successors": [
+        "0x101f9197c"
+      ],
+      "reachable_after_creation": true
+    },
+    {
+      "address": "0x101f9197c",
+      "instruction": "b 0x101f91578 <__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea+0x30>",
+      "successors": [
+        "0x101f91578"
+      ],
+      "reachable_after_creation": true
+    }
+  ]
+}

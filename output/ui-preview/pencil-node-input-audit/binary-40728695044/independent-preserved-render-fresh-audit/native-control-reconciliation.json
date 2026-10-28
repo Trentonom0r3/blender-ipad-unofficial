@@ -1,0 +1,672 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_NATIVE_CONTROL_BODY_EQUIVALENCE",
+  "functions": [
+    {
+      "symbol": "__Z23VIEW3D_OT_select_circleP14wmOperatorType",
+      "old_start": "0x10226df28",
+      "old_end": "0x10226dfb4",
+      "new_start": "0x10226eadc",
+      "new_end": "0x10226eb68",
+      "old_instruction_count": 35,
+      "new_instruction_count": 35,
+      "normalized_equal": true,
+      "old_dump": "8c43fbfc193c-old.asm",
+      "new_dump": "8c43fbfc193c-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "e933ca0a8253cc1be1c26ac8da30915d5ccb5b6388702abb9e266903aefcc673",
+      "new_bytes_sha256": "3e7827860034bf237559c87e286d73d74167eeae6f2c06a838e0c9689435e9cd"
+    },
+    {
+      "symbol": "__Z23WM_gesture_circle_modalP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x100b71100",
+      "old_end": "0x100b71334",
+      "new_start": "0x100b71b14",
+      "new_end": "0x100b71d48",
+      "old_instruction_count": 141,
+      "new_instruction_count": 141,
+      "normalized_equal": true,
+      "old_dump": "7c3c75bb0b99-old.asm",
+      "new_dump": "7c3c75bb0b99-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "046d319c129ed4b716db3b8b46e26edeaf70a1410cfde76483886a50e3088a4c",
+      "new_bytes_sha256": "3bef746cd39ce671c50ec6e2bd29ee21617a460af750ea11b6f2ac9234df0bf7"
+    },
+    {
+      "symbol": "__Z24WM_gesture_circle_cancelP8bContextP10wmOperator",
+      "old_start": "0x100b71334",
+      "old_end": "0x100b713a4",
+      "new_start": "0x100b71d48",
+      "new_end": "0x100b71db8",
+      "old_instruction_count": 28,
+      "new_instruction_count": 28,
+      "normalized_equal": true,
+      "old_dump": "7448d54e9089-old.asm",
+      "new_dump": "7448d54e9089-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "c3a73be1684afc72ce12eb8ce98276c291d586ac1665c5e57f3af60dc1bc1ea8",
+      "new_bytes_sha256": "f3f63f8697c297a71fb814be43286e68a4605bcd599830ffe0f165c2e67abcdf"
+    },
+    {
+      "symbol": "__Z24WM_gesture_circle_invokeP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x100b70f54",
+      "old_end": "0x100b71048",
+      "new_start": "0x100b71968",
+      "new_end": "0x100b71a5c",
+      "old_instruction_count": 61,
+      "new_instruction_count": 61,
+      "normalized_equal": true,
+      "old_dump": "f21cc5fd6fc0-old.asm",
+      "new_dump": "f21cc5fd6fc0-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "f093418d0c2bd16094a8e912e7f408097a854731418ef8b428ff49fdb07b4185",
+      "new_bytes_sha256": "d50fe0b3e0afdf7dfbf67a246ba0b94e62a0bb701f9cd58eac6cb59857e0d5cb"
+    },
+    {
+      "symbol": "__ZL13VIEW2D_OT_panP14wmOperatorType",
+      "old_start": "0x101fe44a0",
+      "old_end": "0x101fe4594",
+      "new_start": "0x101fe5e58",
+      "new_end": "0x101fe5f4c",
+      "old_instruction_count": 61,
+      "new_instruction_count": 61,
+      "normalized_equal": true,
+      "old_dump": "b055d8912ee9-old.asm",
+      "new_dump": "b055d8912ee9-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "3b8d8ca6ac66695a79cf0f24a0c3b718cf80ebe86cb39411358ca632bd69c23b",
+      "new_bytes_sha256": "d806985a96257e1a5dbc638238add50250734794a75106ccca3ed2a0c5bce2de"
+    },
+    {
+      "symbol": "__ZL13view_pan_execP8bContextP10wmOperator@@instance0",
+      "old_start": "0x101fe4d80",
+      "old_end": "0x101fe4e88",
+      "new_start": "0x101fe55e8",
+      "new_end": "0x101fe56f0",
+      "old_instruction_count": 66,
+      "new_instruction_count": 66,
+      "normalized_equal": true,
+      "old_dump": "3c5036c241a9-old.asm",
+      "new_dump": "3c5036c241a9-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "4c8c5a7bd9d7d033a224d4ee0947dfc73a5b4612cef86f31b26cd0a465104532",
+      "new_bytes_sha256": "1edd3e31cbc22997bb21117df802ef82e523b840d9603dea438a33a0239fc0d0"
+    },
+    {
+      "symbol": "__ZL13view_pan_pollP8bContext",
+      "old_start": "0x101fe52d4",
+      "old_end": "0x101fe52fc",
+      "new_start": "0x101fe55c0",
+      "new_end": "0x101fe55e8",
+      "old_instruction_count": 10,
+      "new_instruction_count": 10,
+      "normalized_equal": true,
+      "old_dump": "6cf13730e704-old.asm",
+      "new_dump": "6cf13730e704-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "93fe876a3276518c5021958f85317a7fa27470c75a5f7a81a5ba30f45ccc75a7",
+      "new_bytes_sha256": "f34f1ad09c567249f99d24eb98910573d3c8eeae4586e0f2a5131a3efd8e16a5"
+    },
+    {
+      "symbol": "__ZL14VIEW2D_OT_zoomP14wmOperatorType",
+      "old_start": "0x101fe4b40",
+      "old_end": "0x101fe4c4c",
+      "new_start": "0x101fe64f8",
+      "new_end": "0x101fe6604",
+      "old_instruction_count": 67,
+      "new_instruction_count": 67,
+      "normalized_equal": true,
+      "old_dump": "180580d995e6-old.asm",
+      "new_dump": "180580d995e6-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "dbf1975c2a99d48f68ad17656d22d5920b351a4774b56a05980e8b1617640b3f",
+      "new_bytes_sha256": "c6a1d621bbdc6b7d83df3baa61e01d7b3ae531d9146025043a8e7d983a46d1ac"
+    },
+    {
+      "symbol": "__ZL14view_pan_applyP8bContextP10wmOperator",
+      "old_start": "0x101fe52fc",
+      "old_end": "0x101fe53e4",
+      "new_start": "0x101fe6974",
+      "new_end": "0x101fe6a5c",
+      "old_instruction_count": 58,
+      "new_instruction_count": 58,
+      "normalized_equal": true,
+      "old_dump": "fa50cdcb3efc-old.asm",
+      "new_dump": "fa50cdcb3efc-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "9ab2cba0655d42dcc801f49e205a541578372c959553b1dfd9c510310ec8ea04",
+      "new_bytes_sha256": "34837379eb2a97ba3d0c5611c2c58983fc11a98e616345e449745aa7b82197b0"
+    },
+    {
+      "symbol": "__ZL14view_pan_modalP8bContextP10wmOperatorPK7wmEvent@@instance0",
+      "old_start": "0x101fe50e4",
+      "old_end": "0x101fe528c",
+      "new_start": "0x101fe594c",
+      "new_end": "0x101fe5af4",
+      "old_instruction_count": 106,
+      "new_instruction_count": 106,
+      "normalized_equal": true,
+      "old_dump": "87a806db2977-old.asm",
+      "new_dump": "87a806db2977-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "8ed3c5eb68bab02d12d4fde042c8a4d41b557d7bad580b2bb4656c21c0b99d6a",
+      "new_bytes_sha256": "a84625d96df9ff7f39504dc93724cb6364ab4f1930037dca6866c2c5223739c8"
+    },
+    {
+      "symbol": "__ZL14view_zoom_pollP8bContext",
+      "old_start": "0x101fe5ea8",
+      "old_end": "0x101fe5ef4",
+      "new_start": "0x101fe4d38",
+      "new_end": "0x101fe4d84",
+      "old_instruction_count": 19,
+      "new_instruction_count": 19,
+      "normalized_equal": true,
+      "old_dump": "76aafec2c737-old.asm",
+      "new_dump": "76aafec2c737-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "a93f97231795040f3567fbac900d55da19aabe70dc92cb86c3e62e39fb4bdb3a",
+      "new_bytes_sha256": "2d9cca5a7d8648e0e72f226ab75ce18c0c9a88c3f56ffbd78ce61be30e05a4d9"
+    },
+    {
+      "symbol": "__ZL15view_pan_cancelP8bContextP10wmOperator@@instance0",
+      "old_start": "0x101fe528c",
+      "old_end": "0x101fe52d4",
+      "new_start": "0x101fe5af4",
+      "new_end": "0x101fe5b3c",
+      "old_instruction_count": 18,
+      "new_instruction_count": 18,
+      "normalized_equal": true,
+      "old_dump": "a059f67c067b-old.asm",
+      "new_dump": "a059f67c067b-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "352a94d62ea4167aa2df405396623dc7d8acc702564a7f9226df636cb51fa72f",
+      "new_bytes_sha256": "1eea850fb1c4c89a8e2c526672385fed6d964b72b85216fd7d53aeafb0676d0e"
+    },
+    {
+      "symbol": "__ZL15view_pan_invokeP8bContextP10wmOperatorPK7wmEvent@@instance0",
+      "old_start": "0x101fe4e88",
+      "old_end": "0x101fe50e4",
+      "new_start": "0x101fe56f0",
+      "new_end": "0x101fe594c",
+      "old_instruction_count": 151,
+      "new_instruction_count": 151,
+      "normalized_equal": true,
+      "old_dump": "3ee257d4acc2-old.asm",
+      "new_dump": "3ee257d4acc2-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "99224d9c18dddbd6b7f68dd553dde207529e1935d3d2e1dbf376c028bd9f9cd4",
+      "new_bytes_sha256": "2893cd159bd635768e4e0376bd6009eca2a91922a87f02dffa50572f4fc4d77c"
+    },
+    {
+      "symbol": "__ZL16view_zoomin_execP8bContextP10wmOperator",
+      "old_start": "0x101fe5d4c",
+      "old_end": "0x101fe5ea8",
+      "new_start": "0x101fe73c4",
+      "new_end": "0x101fe7520",
+      "old_instruction_count": 87,
+      "new_instruction_count": 87,
+      "normalized_equal": true,
+      "old_dump": "3ee4ed20214a-old.asm",
+      "new_dump": "3ee4ed20214a-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "4355b055cc36b12d260e30c83328cddd5ff78dfd037494d3c61599a70883f95b",
+      "new_bytes_sha256": "4ec62a9dcb7ccf12de4dba38b5e02afa79110e934ab39d5834792aff30245dfa"
+    },
+    {
+      "symbol": "__ZL17VIEW2D_OT_zoom_inP14wmOperatorType",
+      "old_start": "0x101fe4968",
+      "old_end": "0x101fe4a54",
+      "new_start": "0x101fe6320",
+      "new_end": "0x101fe640c",
+      "old_instruction_count": 59,
+      "new_instruction_count": 59,
+      "normalized_equal": true,
+      "old_dump": "ae3a67b1d9af-old.asm",
+      "new_dump": "ae3a67b1d9af-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "8024a9b493c15d8b59eef69ee0c977df7bde3e88620af8e43aa3baea8ede5b29",
+      "new_bytes_sha256": "7c4cec31cea2dae492d4ed7eada3a8b9d78057de6fea81d727c668f333b9376c"
+    },
+    {
+      "symbol": "__ZL17view_zoomout_execP8bContextP10wmOperator",
+      "old_start": "0x101fe62c0",
+      "old_end": "0x101fe641c",
+      "new_start": "0x101fe78ec",
+      "new_end": "0x101fe7a48",
+      "old_instruction_count": 87,
+      "new_instruction_count": 87,
+      "normalized_equal": true,
+      "old_dump": "cc570de08353-old.asm",
+      "new_dump": "cc570de08353-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "b6e70ef4c2b13fa9c85dee684b9037144f9dcaeed370040f112e99ee753f788d",
+      "new_bytes_sha256": "bec255085399b7d48c73dd34c4ea52ff8edaef6247a779551f2ca09d62e49bbe"
+    },
+    {
+      "symbol": "__ZL18VIEW2D_OT_zoom_outP14wmOperatorType",
+      "old_start": "0x101fe4a54",
+      "old_end": "0x101fe4b40",
+      "new_start": "0x101fe640c",
+      "new_end": "0x101fe64f8",
+      "old_instruction_count": 59,
+      "new_instruction_count": 59,
+      "normalized_equal": true,
+      "old_dump": "48bdf4997922-old.asm",
+      "new_dump": "48bdf4997922-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "028e8bb54a68d64eff08072430fb963c9f42f7ea5b46eb112d665c0b5e609195",
+      "new_bytes_sha256": "95bb1799c49f948d1e5e50f89d00256d0a7132835205e8084873c664f5bcb8c3"
+    },
+    {
+      "symbol": "__ZL18view_zoomdrag_execP8bContextP10wmOperator",
+      "old_start": "0x101fe641c",
+      "old_end": "0x101fe6504",
+      "new_start": "0x101fe4d84",
+      "new_end": "0x101fe4e6c",
+      "old_instruction_count": 58,
+      "new_instruction_count": 58,
+      "normalized_equal": true,
+      "old_dump": "079ec787dfb3-old.asm",
+      "new_dump": "079ec787dfb3-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "55174986a1eb1bb2b721985739248f362447d63f608f4b74b246fe709dbc00fc",
+      "new_bytes_sha256": "b26741fc332ef30ea014aef82cab350f08b5a7af34424b7f948ed335f5bbe16f"
+    },
+    {
+      "symbol": "__ZL18view_zoomin_invokeP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101fe5c78",
+      "old_end": "0x101fe5d4c",
+      "new_start": "0x101fe72f0",
+      "new_end": "0x101fe73c4",
+      "old_instruction_count": 53,
+      "new_instruction_count": 53,
+      "normalized_equal": true,
+      "old_dump": "71430ccdf77a-old.asm",
+      "new_dump": "71430ccdf77a-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "52d0afee3ab70d84063fd62e45bffc6d4fcda79dc607aa3e95267b8a20c5a600",
+      "new_bytes_sha256": "d7c1a0b2138c51d623cb646768eea451a005535e5d5dc51861ac3fa8fa1ee32d"
+    },
+    {
+      "symbol": "__ZL19view_zoomdrag_applyP8bContextP10wmOperator",
+      "old_start": "0x101fe6c58",
+      "old_end": "0x101fe6e94",
+      "new_start": "0x101fe6738",
+      "new_end": "0x101fe6974",
+      "old_instruction_count": 143,
+      "new_instruction_count": 143,
+      "normalized_equal": true,
+      "old_dump": "9b74fe2fd316-old.asm",
+      "new_dump": "9b74fe2fd316-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "7e245a557dbe6297ad2dbd2b7c9f0bddfe1d1358eaebdb562ec89c9cf38190c8",
+      "new_bytes_sha256": "6df06b08f06b932c72633c8f434e726d371fde9df541fa5f9183a914707c0198"
+    },
+    {
+      "symbol": "__ZL19view_zoomdrag_modalP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101fe6854",
+      "old_end": "0x101fe6bcc",
+      "new_start": "0x101fe51bc",
+      "new_end": "0x101fe5534",
+      "old_instruction_count": 222,
+      "new_instruction_count": 222,
+      "normalized_equal": true,
+      "old_dump": "d1963a2f4b26-old.asm",
+      "new_dump": "d1963a2f4b26-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "a4bccd217fbe13496b4832354816810b3495c9b6ad9acbae1bd9c9bb0c26657f",
+      "new_bytes_sha256": "ea9d0e6a821bc561ba77eae0d833425624d04992a751065b85c39a2511ebb746"
+    },
+    {
+      "symbol": "__ZL19view_zoomout_invokeP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101fe61ec",
+      "old_end": "0x101fe62c0",
+      "new_start": "0x101fe7818",
+      "new_end": "0x101fe78ec",
+      "old_instruction_count": 53,
+      "new_instruction_count": 53,
+      "normalized_equal": true,
+      "old_dump": "d19a31a5e14d-old.asm",
+      "new_dump": "d19a31a5e14d-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "f95e98f656192cfa9d7fa2156d039c8284d8c3ba2dbfc4c49482bbb415c1a40a",
+      "new_bytes_sha256": "d59ace3d69d76cd92f63615eff07079be8fe24a32e37dc0951e7f1b466c4ce31"
+    },
+    {
+      "symbol": "__ZL19view_zoomstep_applyP8bContextP10wmOperator",
+      "old_start": "0x101fe5ef4",
+      "old_end": "0x101fe61ec",
+      "new_start": "0x101fe7520",
+      "new_end": "0x101fe7818",
+      "old_instruction_count": 190,
+      "new_instruction_count": 190,
+      "normalized_equal": true,
+      "old_dump": "72e30a36e058-old.asm",
+      "new_dump": "72e30a36e058-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "13901b0590b566bf181b228cf50fc08334b3ce819418bf4c179b6f6b56da8cd9",
+      "new_bytes_sha256": "dd14a9a0d6df488f213665f1512f6814534c2ad543cfe92fc3ff68c725df52da"
+    },
+    {
+      "symbol": "__ZL20view_zoomdrag_cancelP8bContextP10wmOperator",
+      "old_start": "0x101fe6bcc",
+      "old_end": "0x101fe6c58",
+      "new_start": "0x101fe5534",
+      "new_end": "0x101fe55c0",
+      "old_instruction_count": 35,
+      "new_instruction_count": 35,
+      "normalized_equal": true,
+      "old_dump": "5a3c2468f814-old.asm",
+      "new_dump": "5a3c2468f814-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "6acf30caff7c3d9fbadfaa5ccf630b7e6e47da161b8895a89b895445a49a4831",
+      "new_bytes_sha256": "2336781ad33552b6fb29a596c90d300f30aab034a5cfbcb2eae235f0efae83bf"
+    },
+    {
+      "symbol": "__ZL20view_zoomdrag_invokeP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101fe6504",
+      "old_end": "0x101fe6854",
+      "new_start": "0x101fe4e6c",
+      "new_end": "0x101fe51bc",
+      "old_instruction_count": 212,
+      "new_instruction_count": 212,
+      "normalized_equal": true,
+      "old_dump": "931b7f677e57-old.asm",
+      "new_dump": "931b7f677e57-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "7f5f1c4ef63f481d30824b800e9e6764409e4e16f83086405531954968a70c31",
+      "new_bytes_sha256": "7c3c9c48d69bcdc8913e98d3051ac022302327cc1a776106bb5d6c31ac242bb9"
+    },
+    {
+      "symbol": "__ZL21VIEW2D_OT_zoom_borderP14wmOperatorType",
+      "old_start": "0x101fe4c4c",
+      "old_end": "0x101fe4ca4",
+      "new_start": "0x101fe6604",
+      "new_end": "0x101fe665c",
+      "old_instruction_count": 22,
+      "new_instruction_count": 22,
+      "normalized_equal": true,
+      "old_dump": "72d3240663df-old.asm",
+      "new_dump": "72d3240663df-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "78eca343d4d057a7b212af925d1ec3cce3089b83f5a7f7b9b805e1205032a003",
+      "new_bytes_sha256": "cb0ce37a101347536b95f1f129ca82d8241620e8976d5d66c948a8fcc4769e24"
+    },
+    {
+      "symbol": "__ZL25view3d_circle_select_execP8bContextP10wmOperator",
+      "old_start": "0x10226dfe8",
+      "old_end": "0x10226f120",
+      "new_start": "0x10226eb9c",
+      "new_end": "0x10226fcd4",
+      "old_instruction_count": 1102,
+      "new_instruction_count": 1102,
+      "normalized_equal": true,
+      "old_dump": "01c198b6081c-old.asm",
+      "new_dump": "01c198b6081c-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "a1483f42a88acd61c1f1d356c463932861542c776b9e9439c3b7beb38bbd0c8f",
+      "new_bytes_sha256": "70b598ec600089db52c00897e145c1900c25021b2987ae41e53739116a01f3ea"
+    },
+    {
+      "symbol": "__ZL26view3d_circle_select_modalP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x10226dfb4",
+      "old_end": "0x10226dfe8",
+      "new_start": "0x10226eb68",
+      "new_end": "0x10226eb9c",
+      "old_instruction_count": 13,
+      "new_instruction_count": 13,
+      "normalized_equal": true,
+      "old_dump": "b86b1163441c-old.asm",
+      "new_dump": "b86b1163441c-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "88b6db3171b23e236d34f2204e66dad234db2557883ff303cc65ffcfacec4fb3",
+      "new_bytes_sha256": "ac2c24c798589e46665b2d5cdc5e403d0a012b40d99bb4e70fbb8ada64d5b9aa"
+    },
+    {
+      "symbol": "__ZL27view3d_circle_select_cancelP8bContextP10wmOperator",
+      "old_start": "0x10226f120",
+      "old_end": "0x10226f144",
+      "new_start": "0x10226fcd4",
+      "new_end": "0x10226fcf8",
+      "old_instruction_count": 9,
+      "new_instruction_count": 9,
+      "normalized_equal": true,
+      "old_dump": "94f934cf786a-old.asm",
+      "new_dump": "94f934cf786a-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "bf27a840d843bb13bfb517c9743422c5ace4e9d34d25bdd96398bc839e77fee1",
+      "new_bytes_sha256": "58553459486f0bc3ee1a03b8a1b325778b34b8a04eecd05f08f44a4f18f5f9ed"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transform13initTransformEP8bContextPNS1_9TransInfoEP10wmOperatorPK7wmEventi",
+      "old_start": "0x101ea69b0",
+      "old_end": "0x101ea7054",
+      "new_start": "0x101ea7450",
+      "new_end": "0x101ea7af4",
+      "old_instruction_count": 425,
+      "new_instruction_count": 425,
+      "normalized_equal": true,
+      "old_dump": "57e36ccaf91d-old.asm",
+      "new_dump": "57e36ccaf91d-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "3851ddda2f2efddabf047b98744c0ea061b26b95ab0d3cbb5ad52206ffdc607c",
+      "new_bytes_sha256": "7d8c52245c7cd09c35ec81937f1604344ecc672624dbec4f8120472e5963aec9"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transform14transformApplyEP8bContextPNS1_9TransInfoE",
+      "old_start": "0x101ea7450",
+      "old_end": "0x101ea74c8",
+      "new_start": "0x101ea7ef0",
+      "new_end": "0x101ea7f68",
+      "old_instruction_count": 30,
+      "new_instruction_count": 30,
+      "normalized_equal": true,
+      "old_dump": "a6e2ac9aeb42-old.asm",
+      "new_dump": "a6e2ac9aeb42-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "f7bbf8e5ff5bd3e559d8f429c5b095428736cec2444982cb117888e6efbecbb2",
+      "new_bytes_sha256": "f7bbf8e5ff5bd3e559d8f429c5b095428736cec2444982cb117888e6efbecbb2"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transform14transformEventEPNS1_9TransInfoEP10wmOperatorPK7wmEvent",
+      "old_start": "0x101ea53b4",
+      "old_end": "0x101ea5dfc",
+      "new_start": "0x101ea5e54",
+      "new_end": "0x101ea689c",
+      "old_instruction_count": 658,
+      "new_instruction_count": 658,
+      "normalized_equal": true,
+      "old_dump": "0e79884e3c1a-old.asm",
+      "new_dump": "0e79884e3c1a-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "ac66b0b324ee3a3cf7f48da5f026ad84b1fe31dd98b2d001361753e0ad9591f0",
+      "new_bytes_sha256": "f1c87947a6ae9d716acc8075b2ac2fffd7e2c5ca775b9d01d6b0c6c989c7a428"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transformL14transform_execEP8bContextP10wmOperator",
+      "old_start": "0x101ef2730",
+      "old_end": "0x101ef2840",
+      "new_start": "0x101ef31d0",
+      "new_end": "0x101ef32e0",
+      "old_instruction_count": 68,
+      "new_instruction_count": 68,
+      "normalized_equal": true,
+      "old_dump": "486087c1f464-old.asm",
+      "new_dump": "486087c1f464-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "69bd9b60703260d6be44af427eca16e3474ad2fbcadcf67cd6af6791cedd207e",
+      "new_bytes_sha256": "89ef9cc5448a63c0beae0e54ff3dded35f7f2441ae103fe4eb5a8d6a04f3de4c"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transformL15transform_modalEP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101ef2840",
+      "old_end": "0x101ef2a08",
+      "new_start": "0x101ef32e0",
+      "new_end": "0x101ef34a8",
+      "old_instruction_count": 114,
+      "new_instruction_count": 114,
+      "normalized_equal": true,
+      "old_dump": "91ca813f4d13-old.asm",
+      "new_dump": "91ca813f4d13-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "44fb82d3fee18ab1226d242027c66714bde8d1c1cf03c4bf9061b16c0bc3dc88",
+      "new_bytes_sha256": "3aa58bc47f3a47cdb622fdcd62ed26c821146428e8b52e7990d5fec194bc458b"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transformL16transform_cancelEP8bContextP10wmOperator",
+      "old_start": "0x101ef2a08",
+      "old_end": "0x101ef2a40",
+      "new_start": "0x101ef34a8",
+      "new_end": "0x101ef34e0",
+      "old_instruction_count": 14,
+      "new_instruction_count": 14,
+      "normalized_equal": true,
+      "old_dump": "1eea76dc3083-old.asm",
+      "new_dump": "1eea76dc3083-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "42a6b5705efbdf372d9f3d67d2b63e7981bc959b923db9d440186c58530281f3",
+      "new_bytes_sha256": "42a6b5705efbdf372d9f3d67d2b63e7981bc959b923db9d440186c58530281f3"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transformL16transform_invokeEP8bContextP10wmOperatorPK7wmEvent",
+      "old_start": "0x101ef2540",
+      "old_end": "0x101ef2730",
+      "new_start": "0x101ef2fe0",
+      "new_end": "0x101ef31d0",
+      "old_instruction_count": 124,
+      "new_instruction_count": 124,
+      "normalized_equal": true,
+      "old_dump": "02a92a25e9b6-old.asm",
+      "new_dump": "02a92a25e9b6-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "bac308951207caf3cf5abdaece20b407e74610cf8888fd36ef66cc06469c7099",
+      "new_bytes_sha256": "1c16bf4eddf3c95dd0f197c5c765ea314aa463d971e8b6da7470de19df8a23be"
+    },
+    {
+      "symbol": "__ZN7blender2ed9transformL22TRANSFORM_OT_translateEP14wmOperatorType",
+      "old_start": "0x101ef137c",
+      "old_end": "0x101ef144c",
+      "new_start": "0x101ef1e1c",
+      "new_end": "0x101ef1eec",
+      "old_instruction_count": 52,
+      "new_instruction_count": 52,
+      "normalized_equal": true,
+      "old_dump": "ce8c23ff86a1-old.asm",
+      "new_dump": "ce8c23ff86a1-new.asm",
+      "prior_actual_evidence": [
+        "Fresh old/native registration-connected retained control range"
+      ],
+      "scope_group": "native_controls",
+      "old_bytes_sha256": "e8240454cecf7f0b2ae74ea681c578e53131b5880bf0146f540cacf6d074c167",
+      "new_bytes_sha256": "9c599e34c9d07e28c04039bf1fda2e6d68e99c2fba463d8cb7e9bdd230cbaa6a"
+    }
+  ],
+  "conclusion": "Same complete opcode/register/nonaddress immediate/local branch graph and actual external callee/string/data identities for selected View2D pan/zoom, Circle and Transform registrations/helpers. Duplicate local View2D and Clip names use exact ordered nlist instances. Selected/private Node dispatch and event transport are reviewed separately. This does not certify whole modal runtime behavior or all downstream callees."
+}
