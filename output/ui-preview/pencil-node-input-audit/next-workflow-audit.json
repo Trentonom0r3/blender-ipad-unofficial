@@ -1,0 +1,31 @@
+{
+  "status": "READ_ONLY_NEXT_WORKFLOW_FACTS_NO_CORRECTIVE_SOURCE",
+  "utc": "2026-10-28T21:38:20.569397+00:00",
+  "verified_source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "verified_run": 40728695044,
+  "topic": "Remaining initial/same-batch Knife physical-Pencil PAN navigation",
+  "current_source_facts": [
+    "Native Knife explicitly returns OPERATOR_PASS_THROUGH for MOUSEPAN/MOUSEZOOM/MOUSEROTATE; the new Node policy is SPACE_NODE-only and does not change this route.",
+    "Existing producer omission requires the same original live Knife owner at physical Begin and recognition; initial/no-handler/custom DOWN remains fallback.",
+    "The now-shipped physical PAN class is source classification only; it provides neither accepted DOWN nor original Knife ownership or intent."
+  ],
+  "exact_native_excerpt": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\mesh\\editmesh_knife.cc",
+    "line_start": 4449,
+    "text": "        ED_region_tag_redraw(kcd->region);\n        return OPERATOR_PASS_THROUGH;\n    }\n  }\n  else { /* non-modal-mapped events */\n    switch (event->type) {\n      case MOUSEPAN:\n      case MOUSEZOOM:\n      case MOUSEROTATE:\n      case WHEELUPMOUSE:\n      case WHEELDOWNMOUSE:\n      case NDOF_MOTION:\n        return OPERATOR_PASS_THROUGH;\n      case MOUSEMOVE: /* Mouse moved somewhere to select another loop. */\n        if (kcd->mode != MODE_PANNING) {\n          knifetool_update_mval(kcd, mval);"
+  },
+  "source_sha256": {
+    "knife": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+    "ios": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+  },
+  "next_required_read_only_audit": [
+    "Trace actual initial DOWN through native Knife registration and the subsequent ordinary navigation match, including current modifier/profile/region context.",
+    "Establish fresh registered owner/context and actual chosen native View3D operator/custom-keymap behavior before proposing semantic denial. No tool-name prediction or inferred same-origin lease.",
+    "Preserve Circle/Transform native advanced PAN, direct navigation controls, multi-finger/hardware, explicit/delegated custom navigation, original cursor/down/up/terminal order and native Knife multi-cut/Stop/Finish/Cancel history.",
+    "If a bounded correction is supported, require connected actual-source/current-native controls before any coherent source edit/build. Otherwise document fallback limits and choose another confirmed visible workflow gap."
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "new_execution_or_device_proof": false,
+  "whole_goal_complete": false
+}
