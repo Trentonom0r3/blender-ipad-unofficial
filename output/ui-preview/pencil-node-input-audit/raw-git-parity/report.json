@@ -1,0 +1,1857 @@
+{
+  "status": "PASS_RAW_GIT_APPLY_AND_ALL138_MATERIALIZATION_PARITY",
+  "utc": "2026-10-28T16:14:17.304125+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "records": {
+    "production3438226": {
+      "tree": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-raw-git-production3438226-hm62h65h",
+      "targets": 136,
+      "patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+      "files": [
+        {
+          "path": "build_files/cmake/platform/platform_apple.cmake",
+          "sha256": "485c4cd54295b61e57bd40e9f3c85edd08b9b834b4d6bdb05aae848bd925d270",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_Types.h",
+          "sha256": "a6cb3e7ab5edb855139535b10a2985177ecbe4b329c32139ddf0e53d6fb3acff",
+          "materialization_exists": true,
+          "materialization_match": false
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ContextIOS.mm",
+          "sha256": "43e2b4205373c4831576ad30373c477c50a73277aa60fb227e8e267079d494c4",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventButton.hh",
+          "sha256": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventCursor.hh",
+          "sha256": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_SystemIOS.mm",
+          "sha256": "b6ae830e97b0cb8aee878e67325f3f846f0c62819fa2d6a20996601555fb1d4b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+          "sha256": "82a772d30c6ddb39875887eceeb1b3d4a032a87ef22ba561e6e34fd5273bbf34",
+          "materialization_exists": true,
+          "materialization_match": false
+        },
+        {
+          "path": "release/ios/Blender.app/Info.plist",
+          "sha256": "51eb53185c56a7ec7b8a96b0e9c01ffa189021a8fabc672203923e3ff6ec9d8d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+          "sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/__init__.py",
+          "sha256": "55b4b636adef9b3e7970d85458671c1c6432517e4790eaf49ece0ba89ceee3fe",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_filebrowser.py",
+          "sha256": "cec2fecec5a8df8b4f8441ced0b1292b133ccc1d01b4c665b5add39ba92502ec",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_properties.py",
+          "sha256": "fc361190c256f4c28768b6ab0464b8246fa1cb5f3560ab742b1e6f5a0ccb98c2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_topbar.py",
+          "sha256": "143492fe8c988f4ffed803574a842c7a9ffe8c2282ab7917f3bf6ad7afc27580",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_view3d_toolbar.py",
+          "sha256": "8657ad123a3b84d1cc42b4b6deb96ef06ea5bc092195d1ad5374449be62cbd54",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_screen.hh",
+          "sha256": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_undo_system.hh",
+          "sha256": "8cbd5750ebd687c509ef29c85eb9dfce02f18562ad1b9c7663d8fd1192dd5485",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_wm_runtime.hh",
+          "sha256": "823b1863151d4adb829375c05682a34a9337c9ed327f57dfd7d41ab35f3f328f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/intern/screen.cc",
+          "sha256": "5614d2280b49d786740739c93e6667a797945ce833347247f9752b46c56642e7",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/intern/undo_system.cc",
+          "sha256": "fe1f89950d28f4c0b4a1cdcdeedc4b4830390fafed27153985b388fb83dd754d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_mesh.hh",
+          "sha256": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_undo.hh",
+          "sha256": "e2e90f2abdae9a1d11f74125c07aef3dacd4e15910a223dbb7787a75812ec7bb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface_c.hh",
+          "sha256": "16fd94a7cc9355adfd73340932348f97dedf6c0afe96350f0fa5aa59700db408",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface_layout.hh",
+          "sha256": "41d7a2c7f081f323231603cbf0fcaa99227c1ace28acbc39f99a976fde7c78a8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface.cc",
+          "sha256": "66c7c6025231bd4235fbe1ed263273dffac0f8f62935c2bacbd2ad5485590e51",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_handlers.cc",
+          "sha256": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_intern.hh",
+          "sha256": "0187590d4233ada5850b5b443450889a130fec23d5ce47b9d439d30d61739a5c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_layout.cc",
+          "sha256": "4080e610b6308a8604aa34cf89a521f65df13b050f918644b59b29fc63be2bf5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_panel.cc",
+          "sha256": "71c12f7d42b6f93f2f1c14e9a941ba69e0aea73ae09f94a0369644bf2ab59f62",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_query.cc",
+          "sha256": "3d9423fb2b5a3c041d48568fd931af5b2556d41f6c8bf5c58a14dc6b75e66d21",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_widgets.cc",
+          "sha256": "32f23e1fcf1a2f2bd913014511e42780209e5630a04674faa013b95f5cf6ce9b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_hud.cc",
+          "sha256": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_menu_pie.cc",
+          "sha256": "37320b559762a17e8a3d366240d77e4c7fac75dbf68df41959b0bf231f01fa92",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_menu_popup.cc",
+          "sha256": "a06fab93a76d59f6003fffe9ba3df998d90ae187b0d9dd06151b02564dfbfd47",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_popup.cc",
+          "sha256": "17c81ee0417a079addc1a063227acf5aea003db5f1be4b681ab5137e3c4709d6",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+          "sha256": "4810c0fddc3dd5327ae4327aeba9256fb66d85976c7a322738172cf62234b40f",
+          "materialization_exists": true,
+          "materialization_match": false
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_bevel.cc",
+          "sha256": "4bf08d77e99987a7e98812674b7b67621efeeb7fd1c8d09de2340448566effe8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_extrude.cc",
+          "sha256": "d86c6e1e7be191f915f6335b539de1b59ac1fd90b7ebac4737dbb9dbacdbb19e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_undo.cc",
+          "sha256": "c7a94b40332f770821c4ef4574c56c7d6f8a2dff40a0e2c7e049d5f24d986626",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/CMakeLists.txt",
+          "sha256": "25628efeafd01a5209126a341f184d6a879a93aa8c09d5ee6e7373647641c814",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/area.cc",
+          "sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/area_query.cc",
+          "sha256": "13b6de668fab2a367ca6be3235ea4afa71815dcb503517a95750bf6e8cd83af9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_draw.cc",
+          "sha256": "d71797c42fc61762fa7aec0b5079d3445f39527f8b71abf97ae9044f2bcc68ca",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_intern.hh",
+          "sha256": "daa8ac24dd1329d3cc5436dc3ff3f752e768195e4849018e00bdaff06a61b5e9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_edit.cc",
+          "sha256": "2fc67eca41f7514c27a6ad616524d06ecb089a8c6723bab60392edf33c2a8e64",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ops.cc",
+          "sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/workspace_layout_edit.cc",
+          "sha256": "08758ce03646155c3f90ab1520e710c0f8cd89ea29919bde6e5e3f4b544beddb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_cursor.cc",
+          "sha256": "7ef177776247ab13495e23a20d074d10f90e5d7e69457f29efdbb3bbcd22b6a3",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image_ops_paint.cc",
+          "sha256": "ac7f84fb289fd746b94d34b3ba18070b9840e7f0ad9bb0aa5a9f23220641d655",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_vertex.cc",
+          "sha256": "99c255f156ab150c0ea880bfa3d305657fbdb16eb7d05da46606e71d7eed52df",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_weight.cc",
+          "sha256": "deb44043a25f2892f580edc07bcbb35415e4bdd6acf324dcb43051f9cd78e44b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt.cc",
+          "sha256": "bf591bda9e81bd33aa2cd175ea7c5840e8de2f4227e6a94eda7147e4a3c97b18",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_api/spacetypes.cc",
+          "sha256": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_image/space_image.cc",
+          "sha256": "a133ba6ebe052de38485ef687646596b7cf231b4ffccc86a098cc17ad0dcc3c9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/space_view3d.cc",
+          "sha256": "a2d13fe2accb36798b304bf7b3cf49946416d9d5d65c1d31d537874cb9ce5a62",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_buttons.cc",
+          "sha256": "87631c9b654300f45f228dadbbf06a20e265a8a981c7fa7934b0ffd28415a67f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_gizmo_navigate.cc",
+          "sha256": "9138fe86169a84c1dec4aca720f8d89330dd910f458c9f3e943702247df6e6e5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate.cc",
+          "sha256": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate_view_move.cc",
+          "sha256": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc",
+          "sha256": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_select.cc",
+          "sha256": "a9f418317438b4cf27584d1baf5c4542429e20f530d89fe38c2787726ee9a05c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform.cc",
+          "sha256": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform.hh",
+          "sha256": "5d91e00d60bcc0ea72ac1fd1c0ce023b70bf9c3ea9dc908bd221d9cb5eab8aeb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform_ops.cc",
+          "sha256": "10e1e2229bd8d99795dd27f682c50c6765051b7d0c04add78fe1f360e9034d71",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/undo/ed_undo.cc",
+          "sha256": "163d6d7fbdb9cb5a3d8eda522d239e9abfd62c4b4daeb796d5a4eb4ae1e0f8f0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesdna/DNA_screen_types.h",
+          "sha256": "0d229ba6ab03532459cfdf64c848b9131a2b0769cad782cb524f21396649ea95",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_screen.cc",
+          "sha256": "9645011cce38dada04c81e9da1102072f77e8ddf8eb280430c3db6c9ce3ea157",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_space.cc",
+          "sha256": "6a780ff3498ac394e30251b7c704c5da3b467e844588203d5ba4de691d8fad99",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_ui_api.cc",
+          "sha256": "f2e81922bda7ec26c904305f9f4ff1c7e6bc4c75eeb659188cc126df5bffa192",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_wm.cc",
+          "sha256": "f869b1a052a9dc20a6a05cb9a45a1d0eb2c15678eb1872bec9efd74fcec0ab34",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/intern/bpy_operator_wrap.cc",
+          "sha256": "26cacca3a156762523e1eb6950531c25997ff7116de4aceff186686a44b13c44",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_api.hh",
+          "sha256": "9bcc33f0b962021991b6cd8f3fed498261058fd00a464c4c9962185e30a81b29",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_toolsystem.hh",
+          "sha256": "9036b190956d3c49f0785f04a2eb4b05f2188c3c97bb42b5ccd82c4b436f67bd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_types.hh",
+          "sha256": "bced1d7349a30bdb69d9ee5891984e72db8a0614a578ef5910fcaa681484ae67",
+          "materialization_exists": true,
+          "materialization_match": false
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/WM_gizmo_types.hh",
+          "sha256": "1fcfd08f7a41125212a5d6d28fab6fbab605037fccebbeeeafe4ce7ee3673996",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo.cc",
+          "sha256": "a725e071d3b0ea9edee4a9d7e30c618089353a57e5a6a9853500125c6e1682ba",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc",
+          "sha256": "a018ae67adce2935bcfe21727b3cd94e06a62a44454c85105eed292649003b3d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+          "sha256": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm.cc",
+          "sha256": "cecfe0d153fede9837c8080014b964a16d8c2e53e4ca557009955b191829d82a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_draw.cc",
+          "sha256": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+          "sha256": "cf4285315df57df25f954e50d1748ae07d4f2a100e3a70bdbb0ad9107689f44b",
+          "materialization_exists": true,
+          "materialization_match": false
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_files.cc",
+          "sha256": "0bfe3f41cf929696e1bd76f2429711d9bb55bdd638831f6c595d17908719e3f4",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+          "sha256": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+          "sha256": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_operators.cc",
+          "sha256": "919c98dcbf53bfc889a222f15141d6276de913a0fb3bf34c79d02ff297860a48",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_toolsystem.cc",
+          "sha256": "f5f29b043b01808ec55265977fe5dbf760ea829ef004dc1f7903886084bd6adc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_window.cc",
+          "sha256": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm.hh",
+          "sha256": "126a674634a417da2319fc97da8432cbe66ed0806d9857fe5528ef188c38c7aa",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_draw.hh",
+          "sha256": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_event_types.hh",
+          "sha256": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_files.hh",
+          "sha256": "19ef9ad9758168fb0addcc7f516ecd87e4d32bd28bf76120584356e3bd8faf6d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_NavigationIOS.hh",
+          "sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_ProjectImport-api.hh",
+          "sha256": "5b24ef510dd5c3355c490c821d2989e234762b80baaa47569d33b346c5f577ea",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventPencilRing.hh",
+          "sha256": "11c4d85b78114f22b518fc7790aa7147c49526374792c50f88b4a15721056689",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectExportIOS.hh",
+          "sha256": "375f57b93b6d76f9b3a4487ef87a3cd538ba904424c9354d1a94eb860b0f89ec",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectImportIOS.hh",
+          "sha256": "3654a7299f8c4c7ae270691f842f2201d2eef8626f2db24f07fde056030c0764",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectRecentIOS.hh",
+          "sha256": "d8de7d5fc456e487021e2e45f32a0731e4d215f8974a4ce74032e634e205c888",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectSaveIOS.hh",
+          "sha256": "b20b2be5276c30c73eea3847b993a4154b062af1c73c9318c49a58ca2d9090f3",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_view3d_ipad.py",
+          "sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_undo_touch.hh",
+          "sha256": "0d080b594e8feb61e2738b8a746e265383cb3fec9af840a2279397ddf762bf24",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_ipad_panels.hh",
+          "sha256": "4f21bd297c75d8541f7edc417390ce5d9987587d19c8a3d9f460ca1cae451cbb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_ring_browse.hh",
+          "sha256": "76865f81917efcd6ddaf6deaea2ece0787f4ac27ba58ccc6f2247d038e125469",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_rna.hh",
+          "sha256": "f0f40784915232cdf3da63793e6e2570575b79814d6c4be68f820bea56d64952",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_tool_ring.hh",
+          "sha256": "d069b782b2c4b6dbac07d6639b3a28eab11895dca7fad955d260e57066e8135d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/ipad_workspace_panels.hh",
+          "sha256": "f0502de4746b710eaceb9d44bff1f7ed52c132f74d3f5385d69c59168ce919e8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ipad_layout_history.cc",
+          "sha256": "70d73c281c41902d59bd6ae76967dfdae82d237586bf8eefbdac2cf08195a827",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ipad_panels.cc",
+          "sha256": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_ipad_portable_write.hh",
+          "sha256": "cc82815567b06bf712cfcf050313742152ba66d84a0c76618cefec6c1516f029",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_event_system.hh",
+          "sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_add.cc",
+          "sha256": "f291c6cd53316478807df16a6f97ed4df21e632990b0974637db61bce184df3e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/scene/scene_edit.cc",
+          "sha256": "7642fcf5efd8fbf40b5df6aea4fa69c016f0d3068ff47ecf7bfe4eaa586ec5ee",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image.cc",
+          "sha256": "4e2b20a388825294105f37ffec3db27dbce9f150792035abc6fc30fb3e76f71f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt_ops.cc",
+          "sha256": "84e60d20cc35420815dfe654f31b818c59f0b1f55885465570eb14f48404d7a2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_modes.cc",
+          "sha256": "d6ce59b062ff77a9c659843e35c8b8c9f3587b68b5a4913d2031517547c43a5f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_object.hh",
+          "sha256": "73c7b9c7e1e1ed43f76204d1a63441553f9c4347b31e47d3a6684a4e340a7aea",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_select.cc",
+          "sha256": "799e9309a180806d1e89ea407afbf8b3b25318b4f030edfbd59c4390b4c27021",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt_undo.cc",
+          "sha256": "cfe65097694f1649c5d1deee914e80d9d7132f1686c7390f975965e62c6ba1cd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_edit.cc",
+          "sha256": "e16b79564eea8c92e616f194d3d59d6ee614dc9d942832b884ed50ab694d7bb0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_tools.cc",
+          "sha256": "f1a812686c3b603a468a46a16e6ba3f060f19a25725e74fe26c9325f25fa6d1f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_main_api.cc",
+          "sha256": "c7ba565aefd8b190c648de131f8c3b2372da7371041fb6497bd20202387c991d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_intern.hh",
+          "sha256": "855d3bd3ef08d575c838b7d877b19122089fdb4e2f562b19c988b1829c1cfb61",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image_proj.cc",
+          "sha256": "684a1307d9e1d7dcb67a9444c6bc85f14281d24e2f946c96e9c916e58c9a5abd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_screen.hh",
+          "sha256": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_layer.cc",
+          "sha256": "63253ee915f9c35116a1b9bde420dcfc0d43175b4c1696e12bc02fd9c75259ce",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_select.cc",
+          "sha256": "da78e6a7bbdca1da16511ff48ecb1eda3bc8c593d645a6650534fb1180875c71",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_object.cc",
+          "sha256": "9db7e308d751814723532f533dd990a7728974e3daedb5ad43fbee18b58920c8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_ID.cc",
+          "sha256": "63b39443cf049d63fee8a99291017a74d6315ca3e811747af2fafca05bda6685",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/RNA_access.hh",
+          "sha256": "eadfbba1ce79692ce267a0fc984a6393eda3e46419bcdf22fb0f555423479139",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_mesh.cc",
+          "sha256": "b117dd6ffa3a8ab5dee64a7fa5f2db3c8cfa92a26492bf86d96fec48202c5151",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_mesh_api.cc",
+          "sha256": "571f3f0276a8bd62de6aa630882c729827d120121b81890512afeb71670e334e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_access.cc",
+          "sha256": "d91074e2b2f62449bdd19a0832b0764f0e76a3513f4278fbcbbb2d5892db5c3b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/intern/bpy_rna.cc",
+          "sha256": "2b8a55c5254db2dec13add8622881def7c2442cfc0d2ca412e911d68da285022",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/BPY_extern.hh",
+          "sha256": "94ce61cd7a95ef7809ffaee3e121d3828a735071f0060d05199a7a776fa1a688",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface.hh",
+          "sha256": "d5d3019108bf4a804e0bd7bd767afd691b558eb4cb88d94090a722a314f3b9b0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_knife.cc",
+          "sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/CMakeLists.txt",
+          "sha256": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_ipad_knife.hh",
+          "sha256": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684",
+          "materialization_exists": true,
+          "materialization_match": true
+        }
+      ]
+    },
+    "node_candidate": {
+      "tree": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-raw-git-node_candidate-8iyqu5py",
+      "targets": 138,
+      "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+      "files": [
+        {
+          "path": "build_files/cmake/platform/platform_apple.cmake",
+          "sha256": "485c4cd54295b61e57bd40e9f3c85edd08b9b834b4d6bdb05aae848bd925d270",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_Types.h",
+          "sha256": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ContextIOS.mm",
+          "sha256": "43e2b4205373c4831576ad30373c477c50a73277aa60fb227e8e267079d494c4",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventButton.hh",
+          "sha256": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventCursor.hh",
+          "sha256": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_SystemIOS.mm",
+          "sha256": "b6ae830e97b0cb8aee878e67325f3f846f0c62819fa2d6a20996601555fb1d4b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+          "sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "release/ios/Blender.app/Info.plist",
+          "sha256": "51eb53185c56a7ec7b8a96b0e9c01ffa189021a8fabc672203923e3ff6ec9d8d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+          "sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/__init__.py",
+          "sha256": "55b4b636adef9b3e7970d85458671c1c6432517e4790eaf49ece0ba89ceee3fe",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_filebrowser.py",
+          "sha256": "cec2fecec5a8df8b4f8441ced0b1292b133ccc1d01b4c665b5add39ba92502ec",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_properties.py",
+          "sha256": "fc361190c256f4c28768b6ab0464b8246fa1cb5f3560ab742b1e6f5a0ccb98c2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_topbar.py",
+          "sha256": "143492fe8c988f4ffed803574a842c7a9ffe8c2282ab7917f3bf6ad7afc27580",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_view3d_toolbar.py",
+          "sha256": "8657ad123a3b84d1cc42b4b6deb96ef06ea5bc092195d1ad5374449be62cbd54",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_screen.hh",
+          "sha256": "d89fb469d44fdce8892834551acd4f48f7d5820d02585b978cd95e918906906c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_undo_system.hh",
+          "sha256": "8cbd5750ebd687c509ef29c85eb9dfce02f18562ad1b9c7663d8fd1192dd5485",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_wm_runtime.hh",
+          "sha256": "823b1863151d4adb829375c05682a34a9337c9ed327f57dfd7d41ab35f3f328f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/intern/screen.cc",
+          "sha256": "5614d2280b49d786740739c93e6667a797945ce833347247f9752b46c56642e7",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/intern/undo_system.cc",
+          "sha256": "fe1f89950d28f4c0b4a1cdcdeedc4b4830390fafed27153985b388fb83dd754d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_mesh.hh",
+          "sha256": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_undo.hh",
+          "sha256": "e2e90f2abdae9a1d11f74125c07aef3dacd4e15910a223dbb7787a75812ec7bb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface_c.hh",
+          "sha256": "16fd94a7cc9355adfd73340932348f97dedf6c0afe96350f0fa5aa59700db408",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface_layout.hh",
+          "sha256": "41d7a2c7f081f323231603cbf0fcaa99227c1ace28acbc39f99a976fde7c78a8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface.cc",
+          "sha256": "66c7c6025231bd4235fbe1ed263273dffac0f8f62935c2bacbd2ad5485590e51",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_handlers.cc",
+          "sha256": "28788b0e441550b1ce87cb99f7851c821c53acff972f57d4dd9bd5f682b05cdd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_intern.hh",
+          "sha256": "0187590d4233ada5850b5b443450889a130fec23d5ce47b9d439d30d61739a5c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_layout.cc",
+          "sha256": "4080e610b6308a8604aa34cf89a521f65df13b050f918644b59b29fc63be2bf5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_panel.cc",
+          "sha256": "71c12f7d42b6f93f2f1c14e9a941ba69e0aea73ae09f94a0369644bf2ab59f62",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_query.cc",
+          "sha256": "3d9423fb2b5a3c041d48568fd931af5b2556d41f6c8bf5c58a14dc6b75e66d21",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_widgets.cc",
+          "sha256": "32f23e1fcf1a2f2bd913014511e42780209e5630a04674faa013b95f5cf6ce9b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_hud.cc",
+          "sha256": "1ec31317274c2d84d064a6b3cbd4a84ee56a5a1ac56fcdad77603c9fa7a4352e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_menu_pie.cc",
+          "sha256": "37320b559762a17e8a3d366240d77e4c7fac75dbf68df41959b0bf231f01fa92",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_menu_popup.cc",
+          "sha256": "a06fab93a76d59f6003fffe9ba3df998d90ae187b0d9dd06151b02564dfbfd47",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/regions/interface_region_popup.cc",
+          "sha256": "17c81ee0417a079addc1a063227acf5aea003db5f1be4b681ab5137e3c4709d6",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+          "sha256": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_bevel.cc",
+          "sha256": "4bf08d77e99987a7e98812674b7b67621efeeb7fd1c8d09de2340448566effe8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_extrude.cc",
+          "sha256": "d86c6e1e7be191f915f6335b539de1b59ac1fd90b7ebac4737dbb9dbacdbb19e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_undo.cc",
+          "sha256": "c7a94b40332f770821c4ef4574c56c7d6f8a2dff40a0e2c7e049d5f24d986626",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/CMakeLists.txt",
+          "sha256": "25628efeafd01a5209126a341f184d6a879a93aa8c09d5ee6e7373647641c814",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/area.cc",
+          "sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/area_query.cc",
+          "sha256": "13b6de668fab2a367ca6be3235ea4afa71815dcb503517a95750bf6e8cd83af9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_draw.cc",
+          "sha256": "d71797c42fc61762fa7aec0b5079d3445f39527f8b71abf97ae9044f2bcc68ca",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_intern.hh",
+          "sha256": "daa8ac24dd1329d3cc5436dc3ff3f752e768195e4849018e00bdaff06a61b5e9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_edit.cc",
+          "sha256": "2fc67eca41f7514c27a6ad616524d06ecb089a8c6723bab60392edf33c2a8e64",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ops.cc",
+          "sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/workspace_layout_edit.cc",
+          "sha256": "08758ce03646155c3f90ab1520e710c0f8cd89ea29919bde6e5e3f4b544beddb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_cursor.cc",
+          "sha256": "7ef177776247ab13495e23a20d074d10f90e5d7e69457f29efdbb3bbcd22b6a3",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image_ops_paint.cc",
+          "sha256": "ac7f84fb289fd746b94d34b3ba18070b9840e7f0ad9bb0aa5a9f23220641d655",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_vertex.cc",
+          "sha256": "99c255f156ab150c0ea880bfa3d305657fbdb16eb7d05da46606e71d7eed52df",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_weight.cc",
+          "sha256": "deb44043a25f2892f580edc07bcbb35415e4bdd6acf324dcb43051f9cd78e44b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt.cc",
+          "sha256": "bf591bda9e81bd33aa2cd175ea7c5840e8de2f4227e6a94eda7147e4a3c97b18",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_api/spacetypes.cc",
+          "sha256": "ba6a3ba54c3baadf568dc1231b47a5ec1b49a0d4dac22abe5f106766dff3add0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_image/space_image.cc",
+          "sha256": "a133ba6ebe052de38485ef687646596b7cf231b4ffccc86a098cc17ad0dcc3c9",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/space_view3d.cc",
+          "sha256": "a2d13fe2accb36798b304bf7b3cf49946416d9d5d65c1d31d537874cb9ce5a62",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_buttons.cc",
+          "sha256": "87631c9b654300f45f228dadbbf06a20e265a8a981c7fa7934b0ffd28415a67f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_gizmo_navigate.cc",
+          "sha256": "9138fe86169a84c1dec4aca720f8d89330dd910f458c9f3e943702247df6e6e5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate.cc",
+          "sha256": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate_view_move.cc",
+          "sha256": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc",
+          "sha256": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_view3d/view3d_select.cc",
+          "sha256": "a9f418317438b4cf27584d1baf5c4542429e20f530d89fe38c2787726ee9a05c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform.cc",
+          "sha256": "d8717e60cee07e8e13d1bfa02ba43a4d9db3c0305a06fef933c8d468db790abb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform.hh",
+          "sha256": "5d91e00d60bcc0ea72ac1fd1c0ce023b70bf9c3ea9dc908bd221d9cb5eab8aeb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/transform/transform_ops.cc",
+          "sha256": "10e1e2229bd8d99795dd27f682c50c6765051b7d0c04add78fe1f360e9034d71",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/undo/ed_undo.cc",
+          "sha256": "163d6d7fbdb9cb5a3d8eda522d239e9abfd62c4b4daeb796d5a4eb4ae1e0f8f0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesdna/DNA_screen_types.h",
+          "sha256": "0d229ba6ab03532459cfdf64c848b9131a2b0769cad782cb524f21396649ea95",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_screen.cc",
+          "sha256": "9645011cce38dada04c81e9da1102072f77e8ddf8eb280430c3db6c9ce3ea157",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_space.cc",
+          "sha256": "6a780ff3498ac394e30251b7c704c5da3b467e844588203d5ba4de691d8fad99",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_ui_api.cc",
+          "sha256": "f2e81922bda7ec26c904305f9f4ff1c7e6bc4c75eeb659188cc126df5bffa192",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_wm.cc",
+          "sha256": "f869b1a052a9dc20a6a05cb9a45a1d0eb2c15678eb1872bec9efd74fcec0ab34",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/intern/bpy_operator_wrap.cc",
+          "sha256": "26cacca3a156762523e1eb6950531c25997ff7116de4aceff186686a44b13c44",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_api.hh",
+          "sha256": "9bcc33f0b962021991b6cd8f3fed498261058fd00a464c4c9962185e30a81b29",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_toolsystem.hh",
+          "sha256": "9036b190956d3c49f0785f04a2eb4b05f2188c3c97bb42b5ccd82c4b436f67bd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_types.hh",
+          "sha256": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/WM_gizmo_types.hh",
+          "sha256": "1fcfd08f7a41125212a5d6d28fab6fbab605037fccebbeeeafe4ce7ee3673996",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo.cc",
+          "sha256": "a725e071d3b0ea9edee4a9d7e30c618089353a57e5a6a9853500125c6e1682ba",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc",
+          "sha256": "a018ae67adce2935bcfe21727b3cd94e06a62a44454c85105eed292649003b3d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+          "sha256": "de14f6c5fa08b458ee72ec65d03091ed6dede42a340ede08edd0e13103acafb7",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm.cc",
+          "sha256": "cecfe0d153fede9837c8080014b964a16d8c2e53e4ca557009955b191829d82a",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_draw.cc",
+          "sha256": "2a9ddcc29a0903439d2c911ebcf36196d1aebadb86a4dd202744c98618a4127c",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+          "sha256": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_files.cc",
+          "sha256": "0bfe3f41cf929696e1bd76f2429711d9bb55bdd638831f6c595d17908719e3f4",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+          "sha256": "ae7a9d8f383e334be9b70ec2406403b544e9208862fe3a56820c4e38d08d201e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+          "sha256": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_operators.cc",
+          "sha256": "919c98dcbf53bfc889a222f15141d6276de913a0fb3bf34c79d02ff297860a48",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_toolsystem.cc",
+          "sha256": "f5f29b043b01808ec55265977fe5dbf760ea829ef004dc1f7903886084bd6adc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_window.cc",
+          "sha256": "5e260f6f93ec0f557df528eb688e25f632adeb0deedd5351b3dc8a893f924db5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm.hh",
+          "sha256": "126a674634a417da2319fc97da8432cbe66ed0806d9857fe5528ef188c38c7aa",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_draw.hh",
+          "sha256": "5dc01cb2048b9eb857cc29d71355f9c6afb5fa4be7ecb2ca0cf9af269dab80d5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_event_types.hh",
+          "sha256": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_files.hh",
+          "sha256": "19ef9ad9758168fb0addcc7f516ecd87e4d32bd28bf76120584356e3bd8faf6d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_NavigationIOS.hh",
+          "sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/GHOST_ProjectImport-api.hh",
+          "sha256": "5b24ef510dd5c3355c490c821d2989e234762b80baaa47569d33b346c5f577ea",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventPencilRing.hh",
+          "sha256": "11c4d85b78114f22b518fc7790aa7147c49526374792c50f88b4a15721056689",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectExportIOS.hh",
+          "sha256": "375f57b93b6d76f9b3a4487ef87a3cd538ba904424c9354d1a94eb860b0f89ec",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectImportIOS.hh",
+          "sha256": "3654a7299f8c4c7ae270691f842f2201d2eef8626f2db24f07fde056030c0764",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectRecentIOS.hh",
+          "sha256": "d8de7d5fc456e487021e2e45f32a0731e4d215f8974a4ce74032e634e205c888",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_ProjectSaveIOS.hh",
+          "sha256": "b20b2be5276c30c73eea3847b993a4154b062af1c73c9318c49a58ca2d9090f3",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "scripts/startup/bl_ui/space_view3d_ipad.py",
+          "sha256": "4d2755ce62a107491f1a828a78d678aa8f6dd556983b2d85b3ef915aabfc4319",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/blenkernel/BKE_undo_touch.hh",
+          "sha256": "0d080b594e8feb61e2738b8a746e265383cb3fec9af840a2279397ddf762bf24",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_ipad_panels.hh",
+          "sha256": "4f21bd297c75d8541f7edc417390ce5d9987587d19c8a3d9f460ca1cae451cbb",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_ring_browse.hh",
+          "sha256": "76865f81917efcd6ddaf6deaea2ece0787f4ac27ba58ccc6f2247d038e125469",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_rna.hh",
+          "sha256": "f0f40784915232cdf3da63793e6e2570575b79814d6c4be68f820bea56d64952",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/interface/interface_ipad_tool_ring.hh",
+          "sha256": "d069b782b2c4b6dbac07d6639b3a28eab11895dca7fad955d260e57066e8135d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/ipad_workspace_panels.hh",
+          "sha256": "f0502de4746b710eaceb9d44bff1f7ed52c132f74d3f5385d69c59168ce919e8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ipad_layout_history.cc",
+          "sha256": "70d73c281c41902d59bd6ae76967dfdae82d237586bf8eefbdac2cf08195a827",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/screen/screen_ipad_panels.cc",
+          "sha256": "5385a2b9619c075ad995d2849b05a7480f1e5ffeff769c79bdeb8fb1aec5e404",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/intern/wm_ipad_portable_write.hh",
+          "sha256": "cc82815567b06bf712cfcf050313742152ba66d84a0c76618cefec6c1516f029",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/wm_event_system.hh",
+          "sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_add.cc",
+          "sha256": "f291c6cd53316478807df16a6f97ed4df21e632990b0974637db61bce184df3e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/scene/scene_edit.cc",
+          "sha256": "7642fcf5efd8fbf40b5df6aea4fa69c016f0d3068ff47ecf7bfe4eaa586ec5ee",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image.cc",
+          "sha256": "4e2b20a388825294105f37ffec3db27dbce9f150792035abc6fc30fb3e76f71f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt_ops.cc",
+          "sha256": "84e60d20cc35420815dfe654f31b818c59f0b1f55885465570eb14f48404d7a2",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_modes.cc",
+          "sha256": "d6ce59b062ff77a9c659843e35c8b8c9f3587b68b5a4913d2031517547c43a5f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_object.hh",
+          "sha256": "73c7b9c7e1e1ed43f76204d1a63441553f9c4347b31e47d3a6684a4e340a7aea",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_select.cc",
+          "sha256": "799e9309a180806d1e89ea407afbf8b3b25318b4f030edfbd59c4390b4c27021",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/sculpt_undo.cc",
+          "sha256": "cfe65097694f1649c5d1deee914e80d9d7132f1686c7390f975965e62c6ba1cd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_edit.cc",
+          "sha256": "e16b79564eea8c92e616f194d3d59d6ee614dc9d942832b884ed50ab694d7bb0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/space_outliner/outliner_tools.cc",
+          "sha256": "f1a812686c3b603a468a46a16e6ba3f060f19a25725e74fe26c9325f25fa6d1f",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_main_api.cc",
+          "sha256": "c7ba565aefd8b190c648de131f8c3b2372da7371041fb6497bd20202387c991d",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_intern.hh",
+          "sha256": "855d3bd3ef08d575c838b7d877b19122089fdb4e2f562b19c988b1829c1cfb61",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/sculpt_paint/paint_image_proj.cc",
+          "sha256": "684a1307d9e1d7dcb67a9444c6bc85f14281d24e2f946c96e9c916e58c9a5abd",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/ED_screen.hh",
+          "sha256": "66e2a0ef86345725f0b51effc9809d557ce37dd30bdcc50648759fa91aeba350",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_layer.cc",
+          "sha256": "63253ee915f9c35116a1b9bde420dcfc0d43175b4c1696e12bc02fd9c75259ce",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/object/object_select.cc",
+          "sha256": "da78e6a7bbdca1da16511ff48ecb1eda3bc8c593d645a6650534fb1180875c71",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_object.cc",
+          "sha256": "9db7e308d751814723532f533dd990a7728974e3daedb5ad43fbee18b58920c8",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_ID.cc",
+          "sha256": "63b39443cf049d63fee8a99291017a74d6315ca3e811747af2fafca05bda6685",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/RNA_access.hh",
+          "sha256": "eadfbba1ce79692ce267a0fc984a6393eda3e46419bcdf22fb0f555423479139",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_mesh.cc",
+          "sha256": "b117dd6ffa3a8ab5dee64a7fa5f2db3c8cfa92a26492bf86d96fec48202c5151",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_mesh_api.cc",
+          "sha256": "571f3f0276a8bd62de6aa630882c729827d120121b81890512afeb71670e334e",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/makesrna/intern/rna_access.cc",
+          "sha256": "d91074e2b2f62449bdd19a0832b0764f0e76a3513f4278fbcbbb2d5892db5c3b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/intern/bpy_rna.cc",
+          "sha256": "2b8a55c5254db2dec13add8622881def7c2442cfc0d2ca412e911d68da285022",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/python/BPY_extern.hh",
+          "sha256": "94ce61cd7a95ef7809ffaee3e121d3828a735071f0060d05199a7a776fa1a688",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_interface.hh",
+          "sha256": "d5d3019108bf4a804e0bd7bd767afd691b558eb4cb88d94090a722a314f3b9b0",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/mesh/editmesh_knife.cc",
+          "sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/CMakeLists.txt",
+          "sha256": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/windowmanager/WM_ipad_knife.hh",
+          "sha256": "beccae1923d6af94fcc7ba25f00a771304132ab0c5d6e9be88d68cd379a6e684",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+          "sha256": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+          "materialization_exists": true,
+          "materialization_match": true
+        },
+        {
+          "path": "source/blender/editors/include/UI_view2d.hh",
+          "sha256": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f",
+          "materialization_exists": true,
+          "materialization_match": true
+        }
+      ]
+    }
+  },
+  "changed_runtime_targets": [
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "new_overlay_target": false,
+      "added_runtime_lines": 2,
+      "removed_runtime_lines": 0
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "new_overlay_target": false,
+      "added_runtime_lines": 5,
+      "removed_runtime_lines": 1
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "new_overlay_target": false,
+      "added_runtime_lines": 19,
+      "removed_runtime_lines": 0
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "new_overlay_target": false,
+      "added_runtime_lines": 4,
+      "removed_runtime_lines": 2
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "new_overlay_target": false,
+      "added_runtime_lines": 274,
+      "removed_runtime_lines": 5
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "new_overlay_target": true
+    },
+    {
+      "path": "source/blender/editors/include/UI_view2d.hh",
+      "new_overlay_target": true
+    }
+  ],
+  "unchanged_runtime_targets": [
+    "build_files/cmake/platform/platform_apple.cmake",
+    "intern/ghost/intern/GHOST_ContextIOS.mm",
+    "intern/ghost/intern/GHOST_EventButton.hh",
+    "intern/ghost/intern/GHOST_EventCursor.hh",
+    "intern/ghost/intern/GHOST_SystemIOS.mm",
+    "release/ios/Blender.app/Info.plist",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py",
+    "scripts/startup/bl_ui/__init__.py",
+    "scripts/startup/bl_ui/space_filebrowser.py",
+    "scripts/startup/bl_ui/space_properties.py",
+    "scripts/startup/bl_ui/space_topbar.py",
+    "scripts/startup/bl_ui/space_view3d_toolbar.py",
+    "source/blender/blenkernel/BKE_screen.hh",
+    "source/blender/blenkernel/BKE_undo_system.hh",
+    "source/blender/blenkernel/BKE_wm_runtime.hh",
+    "source/blender/blenkernel/intern/screen.cc",
+    "source/blender/blenkernel/intern/undo_system.cc",
+    "source/blender/editors/include/ED_mesh.hh",
+    "source/blender/editors/include/ED_undo.hh",
+    "source/blender/editors/include/UI_interface_c.hh",
+    "source/blender/editors/include/UI_interface_layout.hh",
+    "source/blender/editors/interface/interface.cc",
+    "source/blender/editors/interface/interface_handlers.cc",
+    "source/blender/editors/interface/interface_intern.hh",
+    "source/blender/editors/interface/interface_layout.cc",
+    "source/blender/editors/interface/interface_panel.cc",
+    "source/blender/editors/interface/interface_query.cc",
+    "source/blender/editors/interface/interface_widgets.cc",
+    "source/blender/editors/interface/regions/interface_region_hud.cc",
+    "source/blender/editors/interface/regions/interface_region_menu_pie.cc",
+    "source/blender/editors/interface/regions/interface_region_menu_popup.cc",
+    "source/blender/editors/interface/regions/interface_region_popup.cc",
+    "source/blender/editors/mesh/editmesh_bevel.cc",
+    "source/blender/editors/mesh/editmesh_extrude.cc",
+    "source/blender/editors/mesh/editmesh_undo.cc",
+    "source/blender/editors/screen/CMakeLists.txt",
+    "source/blender/editors/screen/area.cc",
+    "source/blender/editors/screen/area_query.cc",
+    "source/blender/editors/screen/screen_draw.cc",
+    "source/blender/editors/screen/screen_intern.hh",
+    "source/blender/editors/screen/screen_edit.cc",
+    "source/blender/editors/screen/screen_ops.cc",
+    "source/blender/editors/screen/workspace_layout_edit.cc",
+    "source/blender/editors/sculpt_paint/paint_cursor.cc",
+    "source/blender/editors/sculpt_paint/paint_image_ops_paint.cc",
+    "source/blender/editors/sculpt_paint/paint_vertex.cc",
+    "source/blender/editors/sculpt_paint/paint_weight.cc",
+    "source/blender/editors/sculpt_paint/sculpt.cc",
+    "source/blender/editors/space_api/spacetypes.cc",
+    "source/blender/editors/space_image/space_image.cc",
+    "source/blender/editors/space_view3d/space_view3d.cc",
+    "source/blender/editors/space_view3d/view3d_buttons.cc",
+    "source/blender/editors/space_view3d/view3d_gizmo_navigate.cc",
+    "source/blender/editors/space_view3d/view3d_navigate.cc",
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc",
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc",
+    "source/blender/editors/space_view3d/view3d_select.cc",
+    "source/blender/editors/transform/transform.cc",
+    "source/blender/editors/transform/transform.hh",
+    "source/blender/editors/transform/transform_ops.cc",
+    "source/blender/editors/undo/ed_undo.cc",
+    "source/blender/makesdna/DNA_screen_types.h",
+    "source/blender/makesrna/intern/rna_screen.cc",
+    "source/blender/makesrna/intern/rna_space.cc",
+    "source/blender/makesrna/intern/rna_ui_api.cc",
+    "source/blender/makesrna/intern/rna_wm.cc",
+    "source/blender/python/intern/bpy_operator_wrap.cc",
+    "source/blender/windowmanager/WM_api.hh",
+    "source/blender/windowmanager/WM_toolsystem.hh",
+    "source/blender/windowmanager/gizmo/WM_gizmo_types.hh",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo.cc",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_group.cc",
+    "source/blender/windowmanager/gizmo/intern/wm_gizmo_map.cc",
+    "source/blender/windowmanager/intern/wm.cc",
+    "source/blender/windowmanager/intern/wm_draw.cc",
+    "source/blender/windowmanager/intern/wm_files.cc",
+    "source/blender/windowmanager/intern/wm_gesture_ops.cc",
+    "source/blender/windowmanager/intern/wm_operator_type.cc",
+    "source/blender/windowmanager/intern/wm_operators.cc",
+    "source/blender/windowmanager/intern/wm_toolsystem.cc",
+    "source/blender/windowmanager/intern/wm_window.cc",
+    "source/blender/windowmanager/wm.hh",
+    "source/blender/windowmanager/wm_draw.hh",
+    "source/blender/windowmanager/wm_event_types.hh",
+    "source/blender/windowmanager/wm_files.hh",
+    "intern/ghost/GHOST_NavigationIOS.hh",
+    "intern/ghost/GHOST_ProjectImport-api.hh",
+    "intern/ghost/intern/GHOST_EventPencilRing.hh",
+    "intern/ghost/intern/GHOST_ProjectExportIOS.hh",
+    "intern/ghost/intern/GHOST_ProjectImportIOS.hh",
+    "intern/ghost/intern/GHOST_ProjectRecentIOS.hh",
+    "intern/ghost/intern/GHOST_ProjectSaveIOS.hh",
+    "scripts/startup/bl_ui/space_view3d_ipad.py",
+    "source/blender/blenkernel/BKE_undo_touch.hh",
+    "source/blender/editors/include/ED_ipad_panels.hh",
+    "source/blender/editors/interface/interface_ipad_ring_browse.hh",
+    "source/blender/editors/interface/interface_ipad_rna.hh",
+    "source/blender/editors/interface/interface_ipad_tool_ring.hh",
+    "source/blender/editors/screen/ipad_workspace_panels.hh",
+    "source/blender/editors/screen/screen_ipad_layout_history.cc",
+    "source/blender/editors/screen/screen_ipad_panels.cc",
+    "source/blender/windowmanager/intern/wm_ipad_portable_write.hh",
+    "source/blender/windowmanager/wm_event_system.hh",
+    "source/blender/editors/object/object_add.cc",
+    "source/blender/editors/scene/scene_edit.cc",
+    "source/blender/editors/sculpt_paint/paint_image.cc",
+    "source/blender/editors/sculpt_paint/sculpt_ops.cc",
+    "source/blender/editors/object/object_modes.cc",
+    "source/blender/editors/include/ED_object.hh",
+    "source/blender/editors/space_outliner/outliner_select.cc",
+    "source/blender/editors/sculpt_paint/sculpt_undo.cc",
+    "source/blender/editors/space_outliner/outliner_edit.cc",
+    "source/blender/editors/space_outliner/outliner_tools.cc",
+    "source/blender/makesrna/intern/rna_main_api.cc",
+    "source/blender/editors/sculpt_paint/paint_intern.hh",
+    "source/blender/editors/sculpt_paint/paint_image_proj.cc",
+    "source/blender/editors/include/ED_screen.hh",
+    "source/blender/makesrna/intern/rna_layer.cc",
+    "source/blender/editors/object/object_select.cc",
+    "source/blender/makesrna/intern/rna_object.cc",
+    "source/blender/makesrna/intern/rna_ID.cc",
+    "source/blender/makesrna/RNA_access.hh",
+    "source/blender/makesrna/intern/rna_mesh.cc",
+    "source/blender/makesrna/intern/rna_mesh_api.cc",
+    "source/blender/makesrna/intern/rna_access.cc",
+    "source/blender/python/intern/bpy_rna.cc",
+    "source/blender/python/BPY_extern.hh",
+    "source/blender/editors/include/UI_interface.hh",
+    "source/blender/editors/mesh/editmesh_knife.cc",
+    "source/blender/windowmanager/CMakeLists.txt",
+    "source/blender/windowmanager/WM_ipad_knife.hh"
+  ],
+  "unchanged_interaction_python": [
+    "scripts/presets/keyconfig/keymap_data/blender_default.py",
+    "scripts/startup/bl_ui/__init__.py",
+    "scripts/startup/bl_ui/space_filebrowser.py",
+    "scripts/startup/bl_ui/space_properties.py",
+    "scripts/startup/bl_ui/space_topbar.py",
+    "scripts/startup/bl_ui/space_view3d_toolbar.py",
+    "scripts/startup/bl_ui/space_view3d_ipad.py"
+  ],
+  "materialization_mismatches": [],
+  "explanation": "Large outer patch diff minimizes/regroups selected unified sections; raw native runtime comparison proves no hidden prior changes beyond seven intended targets.",
+  "device_proof": false,
+  "git_runtime_options": [
+    "-c",
+    "core.autocrlf=false",
+    "-c",
+    "core.eol=lf"
+  ],
+  "initial_attempts": "First runner used inverted needs_upstream flag and aborted before apply. Next raw Git used Windows global CRLF conversion; all138 differences were proved LF-equivalent with no semantic mismatch. Final explicit per-command LF options reproduce native checkout bytes; no persistent Git configuration or source changes."
+}

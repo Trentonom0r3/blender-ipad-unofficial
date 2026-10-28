@@ -1,0 +1,102 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_NATIVE_KEYMAP_BASELINE_O0_O2",
+  "report": "baseline-report.json",
+  "report_sha256": "7f29f6c8007e8723efff1a9bddca29f2fed9e06588f81fdcec757db9e065ad11",
+  "executions": [
+    {
+      "optimization": "0",
+      "assertions": 13070,
+      "ndof_profiles": [
+        true,
+        false
+      ]
+    },
+    {
+      "optimization": "2",
+      "assertions": 13070,
+      "ndof_profiles": [
+        true,
+        false
+      ]
+    }
+  ],
+  "positive_baseline": {
+    "canonical_count": 25,
+    "actual_python_functions": [
+      "km_view2d(None)",
+      "keymap_init_from_data"
+    ],
+    "actual_native_path": [
+      "WM_keyconfig_new -> runtime.keyconfigs membership",
+      "rna_KeyMaps_new -> WM_keymap_ensure -> wm_keymap_new",
+      "rna_KeyMap_item_new -> WM_keymap_add_item -> keymap_event_set + wm_keymap_item_properties_set + keymap_item_set_id + update_tag",
+      "WM_operator_properties_alloc -> create_group -> IDP_New IDP_GROUP -> WM_operator_properties_create -> RNA_pointer_create_discrete",
+      "WM_operator_properties_sanitize with scalar descriptors populated by actual native registrations/helpers",
+      "wm_keymap_patch_update no-addon/no-user branch -> wm_keymap_copy -> wm_keymap_item_copy -> IDP_CopyProperty/IDP_CopyGroup",
+      "rna_KeyMap_item_new_from_item -> WM_keymap_add_item_copy",
+      "wm_eventmatch actual native body"
+    ],
+    "default_map_flags": 64,
+    "effective_map_flags": 2,
+    "default_item_flags": {
+      "normal": 24,
+      "repeat_positions_15_16": 8
+    },
+    "effective_item_flags": {
+      "normal": 16,
+      "repeat_positions_15_16": 0
+    },
+    "raw_maptype": 0,
+    "raw_direction": -1,
+    "pan_zoom_item_val": -1,
+    "physical_pan_event_val": 0,
+    "actual_native_event_matches": true,
+    "empty_group": {
+      "name": "wmOpItemProp",
+      "type": 6,
+      "subtype": 0,
+      "flag": 0,
+      "len": 0,
+      "totallen": 0,
+      "list_children": null,
+      "pointer": null,
+      "ui_data": null
+    },
+    "pointer": {
+      "owner_id": null,
+      "data": "same raw IDProperty",
+      "ancestors": "empty",
+      "type": "currently registered operator srna, or generic RNA_OperatorProperties when operator absent"
+    },
+    "fresh_ids": [
+      1,
+      25
+    ],
+    "clear_reimport_ids": [
+      26,
+      50
+    ],
+    "copy_target_counter_73_assigns_id": 74
+  },
+  "necessary_contract_refinement": {
+    "ndof_optional_registration": "Canonical item12 exists in km_view2d(None) independently of WITH_INPUT_NDOF native registration. Both actual native allocation/copy profiles passed. A classifier requiring registered operator/srna for every canonical nonmatched item rejects the legitimate NDOF-disabled baseline. Nonmatched unavailable operator may legitimately have PointerRNA.type == &RNA_OperatorProperties; pan/zoom actually selected operator must still meet exact native identity.",
+    "item_vs_event_values": "No contract correction: inventory item val is KM_ANY(-1), while matched_event_profiles refers to physical event val KM_NOTHING(0). Actual matcher proves this distinction."
+  },
+  "default_update_caveat": "Actual add tags default map/items. Actual canonical effective map copy clears UPDATE in copied map/items without changing original source defaults. Actual effective test-and-clear leaves defaults tagged. No execution of whole WM_keyconfig_update lifecycle is claimed.",
+  "scope": "Portable extraction executes actual native algorithm bodies with explicit allocator, vector, scalar-schema, registry and primitive string/context boundaries. This is prerequisite source/host evidence, not complete native Blender translation units, target iOS package, global callback/lifetime authenticity or physical Pencil/device proof.",
+  "initial_failure_history": "initial-host-boundary-compile-failures.json honestly records two initial host compilation repairs and overwritten raw-log limitation. Native algorithms and assertions were not weakened.",
+  "production_edits": false,
+  "ci_edits": false,
+  "whole_goal_complete": false,
+  "final_cold_report": "cold-default-report.json",
+  "final_cold_report_sha256": "4d4529b3ad860ad40892342a7f513101dba2fc952c12c4912875e2ecaeaa8516",
+  "final_cold_execution_assertions": [
+    13070,
+    13070
+  ],
+  "final_cold_default_test": "PASS as first of all4defaultdrivers; actual preflight had fetched only fixedpin sources into initially empty disposable checkout.",
+  "cold_validation_scope": "../cold-default-validation/assessment.json",
+  "utc_final_checkpoint": "2026-10-28T16:13:28.420374+00:00",
+  "final_all5_driver_cold_validation": "../cold-final-nine/assessment.json",
+  "final_all5_driver_cold_status": "PASS9/9 at exact final current inputs; no combined prior8 claim required"
+}

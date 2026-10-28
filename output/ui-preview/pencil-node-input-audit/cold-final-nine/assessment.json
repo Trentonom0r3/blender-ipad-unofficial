@@ -1,0 +1,117 @@
+{
+  "utc": "2026-10-28T16:27:56.426021+00:00",
+  "status": "PASS_FINAL_FIVE_DRIVER_COLD_DEFAULT_NINE",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "ci_workflow": ".github/workflows/preflight.yml:192",
+  "ci_workflow_sha256": "6ff01de0685a0d6c6a5dd80b11d4f69f5d52563c17c8d14ab0ef2cc0cda73110",
+  "host_scope": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.5",
+    "exact_ci_selection_argv": [
+      "C:/Program Files/Python313/python.exe",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "build",
+      "-p",
+      "test_pencil_node_*.py",
+      "-v"
+    ],
+    "note": "The exact CI discovery selection/default source paths were executed on this Windows host. The hosted Ubuntu job itself was not executed by this check."
+  },
+  "cold_preparation": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-cold-final-nine-__0rk7y4",
+    "no_ignored_materialization_or_source_cache_or_output_or_binaries_copied": true,
+    "actual_pinned_source_preflight": "PASS138",
+    "preflight_elapsed_seconds": 14.753308,
+    "preflight_log": "01-preflight.log"
+  },
+  "final_default_test_run": {
+    "test_count": 9,
+    "drivers": 5,
+    "result": "PASS",
+    "unittest_elapsed_seconds": 65.691,
+    "command_elapsed_seconds": 66.561407,
+    "all234_test_code_input_bytes_unchanged": true,
+    "source_dir_or_source_root_argument_supplied": false,
+    "log": "02-node-discovery.log"
+  },
+  "included_evidence": {
+    "producer_to_native_workflow": {
+      "status": "PASS_BOUNDED_ACTUAL_PRODUCER_TO_NATIVE_DISPATCH",
+      "actual_current_outputs": [
+        "14 actual producer-to-native workflow scenarios passed\n",
+        "14 actual producer-to-native workflow scenarios passed\n"
+      ],
+      "precise_original_source_negatives": [
+        {
+          "optimization": "-O0",
+          "case": "old-producer",
+          "returncode": 17,
+          "diagnostic": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+        },
+        {
+          "optimization": "-O0",
+          "case": "old-invoke",
+          "returncode": 17,
+          "diagnostic": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+        },
+        {
+          "optimization": "-O2",
+          "case": "old-producer",
+          "returncode": 17,
+          "diagnostic": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+        },
+        {
+          "optimization": "-O2",
+          "case": "old-invoke",
+          "returncode": 17,
+          "diagnostic": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+        }
+      ],
+      "generated_cpp_sha256": "cf0a2365b02f985fcfebd31eadad0d6b63356778c7190d72aad6de00c68a21da"
+    },
+    "native_keymap_baseline": {
+      "assertions_per_optimization": [
+        13070,
+        13070
+      ],
+      "ndof_profiles": "present and absent; actual default/effective raw initialization/copy"
+    },
+    "raw_map_classifier_regular_dispatch_native_invoke": {
+      "outputs": [
+        "connected actual raw-import/classifier/regular-handler/private-call/invoke/poll/View2D scenarios passed 492\n",
+        "connected actual raw-import/classifier/regular-handler/private-call/invoke/poll/View2D scenarios passed 492\n"
+      ],
+      "generated_cpp_sha256": "b36f346898f8d88764dfd1045862bc5bc4ee5a645b05aa3f4e05ce7131bbbfae"
+    },
+    "native_invoke_and_historical_controls": {
+      "reports": [
+        "current-O0.json",
+        "current-O2.json",
+        "historical-O0.json",
+        "historical-O2.json"
+      ],
+      "required_historical_failure_exit": 17,
+      "whole_actual_invoke_poll_native_View2D_and_positive_Circle_Transform_controls": true
+    },
+    "precision_transport": {
+      "status": "PASS_BOUNDED_CONNECTED_TRANSPORT",
+      "runs": 16,
+      "actual_default_backend_calls": 11,
+      "old_fields_and_packets_exact": true
+    }
+  },
+  "prior_cold_failure_preserved": "../cold-default-validation/03-standalone-dispatch-first-failure.log",
+  "final_run_after_prerequisite_fix": true,
+  "combined_prior8_run_needed_for_this_final9_claim": false,
+  "reports_and_hashes": "artifact-manifest.json",
+  "scope_limits": [
+    "These are portable actual-source O0/O2 host probes with explicitly instrumented model/context/RNA/registry/allocator/geometry/rendering boundaries.",
+    "No target iOS build, package, compiled target instruction review, physical Pencil/device acceptance, global lifetime proof, native wmEvent ABI proof, node graph ownership/acquisition/history/Undo or whole-goal completion follows.",
+    "Root complete host suite, final independent source review, exact native build and package gates remain distinct."
+  ],
+  "production_or_test_or_ci_edits_in_this_final_validation": false,
+  "whole_goal_complete": false
+}

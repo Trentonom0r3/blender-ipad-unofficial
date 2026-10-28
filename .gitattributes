@@ -13,3 +13,7 @@ output/ui-preview/pencil-node-input-audit/node-precision-transport-contract.json
 output/ui-preview/pencil-node-input-audit/node-default-dispatch-contract.json text eol=lf
 output/ui-preview/pencil-node-input-audit/native-invocation-next-contract.json text eol=lf
 output/ui-preview/pencil-node-input-audit/node-connected-implementation-plan.json text eol=lf
+
+# Keep new Node regression inputs identical across Windows and native CI.
+build/test_pencil_node_*.py text eol=lf
+build/tests/node_*/** text eol=lf

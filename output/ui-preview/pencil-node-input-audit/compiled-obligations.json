@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-28T16:19:44.571112+00:00",
+  "status": "WATCHER_PREPARED_NOT_STARTED_COMPILED_OBLIGATIONS_PENDING",
+  "watcher": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\watch-pencil-node-navigation-build.py",
+    "sha256": "2462cadf7a2c092c064c1cb920f2bca1c5007771a2ee446cf2525415655b87c1",
+    "usage": "python .cache/watch-pencil-node-navigation-build.py RUN_ID FULL_SOURCE_SHA",
+    "dispatches_build": false,
+    "started": false,
+    "run_id": null,
+    "source_revision": null,
+    "syntax_and_import_check": "PASS; imported only, main not executed",
+    "collection_groups": {
+      "physical_ghost": [
+        "pencil_knife_pan_keyboard_queue_clear",
+        "pencil_knife_pan_at_start",
+        "pencil_knife_pan_recognize",
+        "-[GHOSTUIPanGestureRecognizer touchesBegan:withEvent:]",
+        "-[GHOSTUIPanGestureRecognizer recognizeKnifePan]",
+        "-[GHOSTUIPanGestureRecognizer omitKnifePairedPan]",
+        "-[GHOSTUIPanGestureRecognizer forgetKnifePanContact]",
+        "-[GHOSTUIPanGestureRecognizer reset]",
+        "-[GHOSTUIPanGestureRecognizer invalidateTouchStream]",
+        "-[GHOSTUIWindow handlePan:]",
+        "-[GHOSTUIWindow generateUserInputEvents:]",
+        "-[GHOSTUIWindow cancelPointerCapture]"
+      ],
+      "native_fresh_bridge": [
+        "wm_ipad_knife_pan_probe",
+        "wm_ghost_init",
+        "wm_ghost_init_background",
+        "wm_ghost_exit",
+        "ED_ipad_knife_pan_probe",
+        "WM_ipad_knife_canvas_scope_capture",
+        "WM_ipad_knife_owner_capture",
+        "WM_ipad_knife_owner_present",
+        "wm_ipad_knife_owner_read",
+        "WM_ipad_knife_owner_region",
+        "CTX_create",
+        "CTX_free",
+        "CTX_wm_manager_set",
+        "CTX_wm_window_set",
+        "CTX_wm_area_set",
+        "CTX_wm_region_set"
+      ],
+      "actual_native_draw": [
+        "wm_ipad_knife_canvas_content_next",
+        "wm_ipad_knife_canvas_stamp_finish",
+        "wm_draw_area_offscreen",
+        "wm_draw_window_onscreen",
+        "wm_draw_window_area_layer",
+        "wm_draw_region_blit",
+        "wm_draw_region_blend",
+        "ED_ipad_knife_hierarchy_region_presented",
+        "ipad_knife_hierarchy_publish",
+        "ipad_knife_hierarchy_current",
+        "ipad_knife_hierarchy_native_capture",
+        "ipad_knife_hierarchy_native_equal",
+        "ED_ipad_knife_hierarchy_window_callbacks",
+        "ed_region_draw_cb_draw",
+        "ED_region_knife_pan_callbacks_safe",
+        "WM_ipad_knife_draw_callback_known",
+        "ED_mesh_knife_draw_callback_known",
+        "gizmos_draw_list",
+        "wm_paintcursor_draw"
+      ],
+      "retained_native_semantics": [
+        "knifetool_modal",
+        "knifetool_invoke",
+        "ED_mesh_knife_modal_origin",
+        "ED_mesh_knife_modal_type",
+        "WM_ipad_knife_hud_scope_active",
+        "WM_ipad_knife_action_queue",
+        "wm_ipad_knife_hud_dispatch",
+        "wm_handler_operator_call",
+        "wm_event_add_ghostevent",
+        "wm_event_add_trackpad",
+        "wm_event_do_handlers"
+      ],
+      "preserved_hud_launch": [
+        "ipad_hud_owner_capture",
+        "UI_ipad_corner_hud_refresh",
+        "ED_area_update_region_sizes",
+        "hud_region_layout"
+      ],
+      "opaque_group_preparation": [
+        "WM_gizmomap_draw",
+        "gizmomap_prepare_drawing",
+        "WM_gizmogroup_ensure_init",
+        "WM_gizmo_group_type_poll",
+        "wm_gizmogroup_is_visible_in_drawstep",
+        "rna_gizmogroup_draw_prepare_cb",
+        "rna_gizmogroup_poll_cb",
+        "rna_gizmogroup_setup_cb",
+        "rna_gizmogroup_refresh_cb",
+        "rna_GizmoGroup_register",
+        "wm_gizmogrouptype_append",
+        "ipad_knife_hierarchy_native_capture",
+        "ipad_knife_hierarchy_current",
+        "ED_ipad_knife_pan_probe",
+        "wm_ipad_knife_canvas_stamp_finish"
+      ],
+      "node_physical_transport": [
+        "-[GHOSTUIWindow handlePan:]",
+        "-[GHOSTUIWindow generateUserInputEvents:]",
+        "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+        "pencil_down",
+        "GHOST_EventTrackpad",
+        "wm_event_add_ghostevent",
+        "wm_event_add_trackpad",
+        "wm_event_add_intern",
+        "WM_event_add",
+        "WM_event_add_simulate"
+      ],
+      "node_selected_dispatch": [
+        "wm_ipad_node_view2d_event_context",
+        "wm_ipad_node_view2d_string_is",
+        "wm_ipad_node_view2d_map_find",
+        "wm_ipad_node_view2d_map_is",
+        "wm_ipad_node_view2d_dispatch",
+        "wm_handlers_do_keymap_with_keymap_handler",
+        "WM_keymap_poll",
+        "wm_eventmatch",
+        "wm_handler_operator_call"
+      ],
+      "node_native_invocation": [
+        "ED_view2d_native_pan_zoom_type_is",
+        "wm_operator_invoke",
+        "WM_operator_poll",
+        "wm_operator_create",
+        "wm_operator_call_internal",
+        "WM_operator_name_call",
+        "WM_operator_name_call_ptr",
+        "wm_handlers_do_keymap_with_gizmo_handler",
+        "CTX_py_dict_get",
+        "CTX_wm_region",
+        "CTX_wm_area"
+      ],
+      "node_native_view2d_and_modal_controls": [
+        "view_pan_poll",
+        "view_pan_init",
+        "view_pan_apply_ex",
+        "view_pan_apply",
+        "view_pan_exit",
+        "view_pan_exec",
+        "view_pan_invoke",
+        "view_pan_modal",
+        "view_pan_cancel",
+        "view_zoom_poll",
+        "view_zoomdrag_init",
+        "view_zoomdrag_apply",
+        "view_zoomdrag_exit",
+        "view_zoomdrag_exec",
+        "view_zoomdrag_invoke",
+        "view_zoomdrag_modal",
+        "view_zoomdrag_cancel",
+        "VIEW2D_OT_pan",
+        "VIEW2D_OT_zoom",
+        "WM_gesture_circle_modal",
+        "gesture_circle_apply",
+        "transformEvent",
+        "calculatePropRatio"
+      ]
+    },
+    "family": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit"
+  },
+  "candidate_source": {
+    "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+    "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "overlay_targets": 138,
+    "prior_sections_retained": 131,
+    "seven_python_ui_sections_byte_exact": true,
+    "changed_source_hashes": {
+      "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+      "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+      "source/blender/editors/interface/view2d/view2d_ops.cc": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+      "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+      "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+      "source/blender/editors/include/UI_view2d.hh": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f",
+      "pinned:source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    "git_commit": null,
+    "native_build_started": false
+  },
+  "baseline_verified_package": {
+    "source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "run": 40459756217,
+    "binary_uuid": "9B4D9B4B-AE3C-3310-8C05-9C532ED55675",
+    "gate": "Prior package and bounded actual compiled reviews passed; not evidence for the new Node source",
+    "device_acceptance": false
+  },
+  "pre_dispatch_requirements": [
+    "Finish final coherent CI preparation and cold portability checks, affected/full frozen runtime suite, pinned138-source preflight/diff and exact independent final source/native/literal/test review.",
+    "Commit and push only that coherent validated increment; dispatch that exact source once. Supply its existing run and full source SHA to this watcher. No unchanged rebuild and no parallel replacement watcher."
+  ],
+  "package_gates": {
+    "inherited_verifier": "build/verify_compact_ipa.py unchanged",
+    "required": [
+      "Exact successful run/head/artifact identity; complete downloaded IPA and full ZIP CRC; arm64 Mach-O executable, iPhoneOS bundle5.0.0 and expected bundle ID/startup.blend.",
+      "Inherited exact whole interaction UI and toolbar, default viewport header/native tool definitions, extracted pinned129 native icon files, exact nine direct Base/native-only More Tools contract and existing ring/Files/native control checks.",
+      "Additional watcher whole-file comparison for all7 Python overlay targets reconstructed by raw git apply against the exact revision pin, plus default viewport/status bars and native tool definitions.",
+      "Record actual binary UUID/SHA and all source/package artifact hashes; package verification does not close changed compiled or device gates."
+    ]
+  },
+  "new_compiled_obligations": [
+    {
+      "id": "physical_source",
+      "title": "Changed ordinary physical Pencil PAN source and constructor byte",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "-[GHOSTUIWindow handlePan:]",
+        "-[GHOSTUIWindow generateUserInputEvents:]",
+        "-[GHOSTUIPanGestureRecognizer pencilContactDown]",
+        "GHOST_EventTrackpad"
+      ],
+      "compiled_proof_required": "Trace actual ordinary precision branch after paint-contact and original Knife omission checks. Exactly Changed plus native pencilContactDown produces the local classification, while all other UserInputEvent construction starts false. Trace the generator argument and inlined or standalone constructor to the actual GHOST_TEventTrackpadData byte: false stores0 and true stores1. Verify no cursor/down/up/order/coordinates/tablet/modifier/terminal rewrite or new packet omission. Resolve all prior defaulted constructor callers and actual ABI field offsets; a symbol or source string is insufficient."
+    },
+    {
+      "id": "wm_ingestion",
+      "title": "Native GHOST ingestion and non-inheriting housekeeping",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_event_add_ghostevent",
+        "wm_event_do_handlers"
+      ],
+      "compiled_proof_required": "Trace the actual payload byte load and conjunction byte==1 AND subtype Scroll AND numFingers1 to the new WM flag bit9. Prove every nonpositive/unknown/hardware/finger/pinch producer retains fallback, and inspect actual event/eventstate initialization and propagation so a prior flag cannot be inherited by unrelated events. Preserve all native coordinate/tablet/eventstate and queue bookkeeping; names and bit immediates alone do not establish control flow."
+    },
+    {
+      "id": "wm_coalescing_replay",
+      "title": "AND coalescing and public replay clearing",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_event_add_trackpad",
+        "wm_event_add_intern",
+        "WM_event_add",
+        "WM_event_add_simulate"
+      ],
+      "compiled_proof_required": "Resolve actual queue-tail same-type/pinch merge, old delta accumulation and removal, and prove new classification is incoming-positive AND every merged contributor-positive. Both mixed merge orders clear the queued flag without changing native merge order/count/deltas. Resolve actual private internal insertion preserving an admitted physical flag, public WM_event_add clearing only the newly queued copy, and simulate/delegated/public replay routes receiving no physical authority. Caller input must remain unchanged."
+    },
+    {
+      "id": "chosen_dispatch",
+      "title": "Actually chosen static stock-value regular View2D dispatch",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_handlers_do_keymap_with_keymap_handler",
+        "wm_ipad_node_view2d_dispatch",
+        "wm_ipad_node_view2d_map_is",
+        "wm_ipad_node_view2d_map_find",
+        "wm_ipad_node_view2d_string_is",
+        "WM_keymap_poll",
+        "wm_eventmatch"
+      ],
+      "compiled_proof_required": "Trace the actual WM_keymap_poll success and actual selected wm_eventmatch item to the private scalar producer. Prove native Node WINDOW region membership and current region handlers/static default handler, no handler/dynamic/post/tool callbacks, live default/effective configuration membership and active default preset. Resolve exact ordered25 raw item/profile/property/ID checks, positive unique corresponding IDs, empty IDP groups and coherent PointerRNA schema including no-NDOF generic schema. Default persistent UPDATE is allowed; effective UPDATE/USER_MODIFIED/custom behavioral data falls back. Only canonical positions5/17 produce Pan/CtrlZoom. Value-identical customization history is intentionally inside the stock-value policy."
+    },
+    {
+      "id": "private_scalar",
+      "title": "Private non-escaping scalar and unchanged original event",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_handlers_do_keymap_with_keymap_handler",
+        "wm_handler_operator_call",
+        "wm_operator_invoke",
+        "wm_operator_call_internal",
+        "WM_operator_name_call",
+        "WM_operator_name_call_ptr",
+        "wm_handlers_do_keymap_with_gizmo_handler"
+      ],
+      "compiled_proof_required": "Prove actual scalar0/1/2 argument flow only selected regular dispatch -> private handler call -> invoke. No event/global/context/keymap/handler storage carries the scalar; original mutable caller event remains the dispatcher input. All explicit/delegated/public/gizmo/tool/dynamic/modal/macro/poll-only paths retain None. Resolve call-site aliases, tail calls, specialized clones and inlining; a private symbol signature alone is not argument proof."
+    },
+    {
+      "id": "native_profile",
+      "title": "Pure same-translation-unit builtin callback profile",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "ED_view2d_native_pan_zoom_type_is",
+        "VIEW2D_OT_pan",
+        "VIEW2D_OT_zoom",
+        "view_pan_poll",
+        "view_zoom_poll"
+      ],
+      "compiled_proof_required": "Resolve actual pan versus zoom poll/exec/invoke/modal/cancel callback pointer comparisons, exact BLOCKING|GRAB_CURSOR_XY flags, null Python poll, null all4 RNA extension fields and empty macro first/last. Prove this helper calls no context/provider/operator callbacks and retains no input. Trace both invocation-side checks, resolving linker aliases and native registration callback addresses rather than names only. Preserve supported native registration assumptions without claiming arbitrary registry corruption proof."
+    },
+    {
+      "id": "native_poll_refusal",
+      "title": "No-Python-context corridor and refusal before any operator allocation",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_ipad_node_view2d_event_context",
+        "wm_operator_invoke",
+        "WM_operator_poll",
+        "CTX_py_dict_get",
+        "CTX_wm_area",
+        "CTX_wm_region",
+        "wm_operator_create"
+      ],
+      "compiled_proof_required": "Trace raw CTX_py_dict_get short circuit before new context getters and before entering the eligible real native poll. Require current PAN/value/modifier/keymodifier/positive classification, no conflicting touch/pinch/direct/cancel flags and native Node WINDOW membership. Keep actual WM_operator_poll once in its original position and preserve failed-poll and poll-only branches. After success prove a fresh raw dict/context/event/profile recheck, then exact CANCELLED alone before WM/undo/register ID reads and wm_operator_create. There must be no operator/properties/reports/customdata allocation, native init/apply/exit/cancel/free, last-properties, undo, modal handler, cursor, timer or redraw lifecycle on this refusal path."
+    },
+    {
+      "id": "handler_result",
+      "title": "Consumed refusal and preserved native View2D/modal controls",
+      "status": "PENDING_NO_NODE_TARGET_BINARY",
+      "selectors": [
+        "wm_handler_operator_call",
+        "wm_handlers_do_keymap_with_keymap_handler",
+        "view_pan_invoke",
+        "view_pan_modal",
+        "view_zoomdrag_invoke",
+        "view_zoomdrag_modal",
+        "WM_gesture_circle_modal",
+        "transformEvent",
+        "calculatePropRatio"
+      ],
+      "compiled_proof_required": "Resolve CANCELLED without PASS_THROUGH -> handler BREAK and termination of lower matching items/handlers with native tooltip/event bookkeeping. Verify false native poll remains PASS_THROUGH/CONTINUE and ordinary custom/explicit/other editor/other region/pinch/hardware/finger/mixed source routes remain native. Reconcile unchanged pan/zoom bodies and existing higher-priority live modal routing; Circle SIZE/selection ordering and proportional Transform radius handling receive the unchanged PAN stream. No accepted DOWN, socket/title ownership, subjective intent, node edit lifetime, history or Undo proof follows."
+    }
+  ],
+  "preserved_compiled_obligations": [
+    {
+      "id": "original_knife_and_opaque_preparation",
+      "status": "PENDING_FRESH_CURRENT_BINARY_REVIEW",
+      "proof": "Retain inherited original-live Knife physical receipt/queue, strict23value owner and32value scope/fresh native bridge, full/cached token propagation and compositor/current hierarchy. Re-prove opaque script group flags stored before poll/setup/refresh/draw_prepare and empty/hidden group refusal; reconcile untouched producer/render ranges under resolved relocations."
+    },
+    {
+      "id": "hud_context_and_launch",
+      "status": "PENDING_FRESH_CURRENT_BINARY_REVIEW",
+      "proof": "Run unchanged audit_hud_macho. Preserve raw owner negatives/inconclusive output. The latest binary had unsupported saved-area SP+8 reload: if it recurs, require a fresh independent current-binary getter/stack-slot/local-frame/control-flow proof that area-before-region restoration dominates normal returns, plus native first-size/init. Do not reuse the prior binary proof or weaken the checker/source."
+    },
+    {
+      "id": "native_weight_cancel",
+      "status": "PENDING_FRESH_CURRENT_BINARY_REVIEW",
+      "proof": "Retain unchanged native Weight cancellation callback and generic cleanup call/argument ordering. The inherited bounded2-instruction shape check is evidence only for its exact current callback; unresolved aliases/changed shapes need fresh actual review."
+    }
+  ],
+  "review_protocol": [
+    "Collector writes node-call-sites.json and inherited knife-call-sites.json with exact symbol/alias ranges and every call/tail branch listed unreviewed.",
+    "Resolve missing/inlined/specialized functions through actual callers, data offsets, branch conditions, arguments and relocations. A name, string marker, byte immediate, instruction count or call inventory is never a semantic pass.",
+    "Independent changed transport and dispatcher/invocation reviews, plus independent preserved input/render and HUD/Weight reviews, must refer to the exact downloaded UUID/hash.",
+    "Watcher may exit1 after collecting actual changed scopes when the unchanged HUD/Weight checker is failed/inconclusive; this does not waive that gate. Keep raw output and resolve independently."
+  ],
+  "evidence_limits": [
+    "No new Node build, download, target execution or actual compiled branch proof has happened in this preparation task.",
+    "Mixed contributors intentionally lose protection and fall back; value-identical customization history remains inside the current stock-value policy.",
+    "No accepted physical DOWN, node/modal ownership, arbitrary native pointer lifetime/registry corruption, global CFG/heap, UIKit/GPU/runtime geometry, Undo/history or device acceptance is established."
+  ],
+  "dependency_sha256": {
+    ".cache/watch-pencil-node-navigation-build.py": "2462cadf7a2c092c064c1cb920f2bca1c5007771a2ee446cf2525415655b87c1",
+    ".cache/watch-pencil-gizmo-prepare-build.py": "37764327339d9c8467a82422956ecbe1d5addd7e0af821a8b19d92668f816c89",
+    ".cache/watch-pencil-live-knife-pan-build.py": "0885147e5ed128f20ccc46d3b5e1e0bf4d714093fb4c31f5e8685be91bdc0e03",
+    ".cache/watch-pencil-knife-build.py": "0e88c219d94aaf711dbda68dbb24a2e6b7ee46d5d769335d3da6e59ead5e0f7d",
+    ".cache/watch-pointer-assignment-build.py": "015200d82354bc7b32d46fbfd5be41891ffe9630195dda7a9cf4deb898133371",
+    "build/verify_compact_ipa.py": "08bf879a987d115631023966a94b5c7562f551b2ec9ac8ecfbd5781a917ed01e",
+    "build/audit_hud_macho.py": "a3936a24736e4be5876c043504c3e8f630a39ea6f3aaaea1861576d307c8f51e",
+    "build/preflight.py": "94c96c746b6b8928bfadcc1ee9361a1916e5bae055f93148b41255acdccd776d",
+    "build/pencil_ring_contract.py": "afc6d36e5ae9dc47205b6516b545c5e3faccce8f4fcf37f2b577fab0c6d6e0c2"
+  },
+  "device_acceptance": false,
+  "ready_for_device_check": false,
+  "whole_goal_complete": false
+}

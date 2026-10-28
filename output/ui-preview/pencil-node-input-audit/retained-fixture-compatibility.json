@@ -1,0 +1,93 @@
+{
+  "status": "PASS_RETAINED_40_AND_149_ALL_ORIGINAL_ASSERTIONS_AND_HISTORICAL_CONTROLS",
+  "files": {
+    "build/test_pencil_pan_paint_producer.py": {
+      "before_sha256": "36bf95efb244b7555e51282e42c1fbc020ea6d77e6765a91c2176906ff635e2d",
+      "after_sha256": "e14f16d2faf8745c6041090a6c6567b69addb86bb1e68df7c0658cdf2f53a135",
+      "before_assertion_lines": 116,
+      "after_assertion_lines": 117,
+      "all_original_assertion_lines_present_ignoring_indent": true,
+      "missing_original_assertions": [],
+      "new_assertion_lines": [
+        "assert PAN.count(PENCIL_PAN_METADATA) == 1"
+      ],
+      "byte_exact": false,
+      "historical_producer_sha256": "85bf405c365a0bbe0e0b88bb20e3d3c8ccfbe4b31a2e81801bd35976bfe1dcb6",
+      "all_original_scenarios_byte_exact": true,
+      "historical_failures_expected": 3
+    },
+    "build/tests/knife_pan_ghost/run_connected.py": {
+      "before_sha256": "af862bf5414e15e508d1c453a5e61cb0dc549822f6735fffae8f769933b0bce4",
+      "after_sha256": "85f5e45c1ca1012e9f2e2214f8013a3443f638abedc19a102db4a639b1b90845",
+      "before_assertion_lines": 16,
+      "after_assertion_lines": 18,
+      "all_original_assertion_lines_present_ignoring_indent": true,
+      "missing_original_assertions": [],
+      "new_assertion_lines": [
+        "assert PAN.count(PENCIL_PAN_METADATA)==1",
+        "assert IOS.count(GENERATOR_NEW_ARGUMENT)==1"
+      ],
+      "byte_exact": false
+    },
+    "build/tests/knife_pan_ghost/retained-connected-models.inc.cc": {
+      "before_sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+      "after_sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+      "before_assertion_lines": 118,
+      "after_assertion_lines": 118,
+      "all_original_assertion_lines_present_ignoring_indent": true,
+      "missing_original_assertions": [],
+      "new_assertion_lines": [],
+      "byte_exact": true
+    },
+    "build/tests/knife_pan_ghost/scenarios.inc.cc": {
+      "before_sha256": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21",
+      "after_sha256": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21",
+      "before_assertion_lines": 39,
+      "after_assertion_lines": 39,
+      "all_original_assertion_lines_present_ignoring_indent": true,
+      "missing_original_assertions": [],
+      "new_assertion_lines": [],
+      "byte_exact": true
+    }
+  },
+  "scope": "Only retained source-oracle expected classification metadata and declared model dependency compatibility. Actual current PAN and generator execute unchanged; immutable retained model and Knife scenario files are byte-exact. No production edits.",
+  "initial_failures_preserved": [
+    {
+      "path": ".cache/node-retained-paint-pan-first.log",
+      "sha256": "d6f6fd5e9443c427bb776d8fe7b92addeb3316658248ea93ba2a26651c541999"
+    },
+    {
+      "path": ".cache/node-retained-knife-pan-first.log",
+      "sha256": "73b3c464242d2030b01910c5878b5c038d0cd9a31801af39afc741545ca4ed43"
+    }
+  ],
+  "run_logs": [
+    ".cache/node-retained-paint-pan-final.log",
+    ".cache/node-retained-knife-pan-final.log"
+  ],
+  "validation": {
+    "paint_pan": {
+      "tests": 40,
+      "seconds": 20.239,
+      "status": "PASS",
+      "report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\retained-paint-pan\\pencil_pan_connected_report.json",
+      "report_sha256": "980ed8babef702e90c8b5a247aeeb4fa430edfc2869daff9d6980769945e1863",
+      "expected_historical_failures": 3
+    },
+    "knife_pan": {
+      "tests": 149,
+      "seconds": 24.729,
+      "status": "PASS",
+      "report": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-pan-ghost-cuslfqos\\report.json",
+      "report_sha256": "4e3d00f10164880f7a9b54ed1159720a4e2aaf555d9c75a6572879432735e1e3",
+      "underlying_ghost_runs": 16,
+      "expected_historical_failures": 2
+    },
+    "diff_check": "PASS",
+    "production_overlay_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32"
+  },
+  "final_log_sha256": {
+    ".cache/node-retained-paint-pan-final.log": "5c66d4616dfb72255548f5d5ccda5828e393f60444a8b7d528a1e7587b7c4abd",
+    ".cache/node-retained-knife-pan-final.log": "4f82532506a79972f5359debd5ae43dacaa952e736c5eafc5e8dd769c24c0a84"
+  }
+}

@@ -72,19 +72,41 @@ def translate_pan(s,name):
 PAN=function(IOS,'- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender\n{')
 OLD_PAN=function(BASELINE,'- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender\n{')
 ADDITION='  if (sender.state == UIGestureRecognizerStateBegan) {\n    [sender recognizeKnifePan];\n  }\n  const bool omit_knife_paired_pan = [sender omitKnifePairedPan];\n'
-assert PAN.replace(ADDITION,'').replace('!event_info.pencil_paint.valid() && !omit_knife_paired_pan &&','!event_info.pencil_paint.valid() &&')==OLD_PAN
+PENCIL_PAN_METADATA=('      event_info.physical_pencil_precision_pan =\n'
+                     '          sender.state == UIGestureRecognizerStateChanged && [sender pencilContactDown];\n')
+GENERATOR_OLD_ARGUMENT='                                      1));'
+GENERATOR_NEW_ARGUMENT=('                                      1,\n'
+                        '                                      event_info.physical_pencil_precision_pan));')
+assert PAN.count(PENCIL_PAN_METADATA)==1
+assert IOS.count(GENERATOR_NEW_ARGUMENT)==1
+# Only the declared Node classification is normalized in this source oracle.
+# The actual PAN and generator, including their classification, execute below.
+def require_pre_node_pan_scope(PAN):
+ assert PAN.replace(ADDITION,'').replace('!event_info.pencil_paint.valid() && !omit_knife_paired_pan &&','!event_info.pencil_paint.valid() &&')==OLD_PAN
+require_pre_node_pan_scope(PAN.replace(PENCIL_PAN_METADATA,''))
 assert function(old,'void producer(Sender &sender)')==translate_pan(OLD_PAN,'producer')
-for marker in ['- (void)generateUserInputEvents:','- (void)handleIndirectPan:','- (void)handlePan2f:','- (void)handlePan3f:','- (void)handleZoom:','- (void)cancelPointerCapture']:
- assert function(IOS,marker)==function(BASELINE,marker),marker
+def require_other_producer_scopes(IOS):
+ for marker in ['- (void)generateUserInputEvents:','- (void)handleIndirectPan:','- (void)handlePan2f:','- (void)handlePan3f:','- (void)handleZoom:','- (void)cancelPointerCapture']:
+  assert function(IOS,marker)==function(BASELINE,marker),marker
+require_other_producer_scopes(IOS.replace(GENERATOR_NEW_ARGUMENT,GENERATOR_OLD_ARGUMENT))
 # Retained connected generator has only its documented logging translation.
 g=function(IOS,'- (void)generateUserInputEvents:');g=g[g.index('    const GHOST_TabletData event_tablet ='):g.rfind('  }\n}')]
 g=re.sub(r'      IOS_INPUT_LOG\([\s\S]*?\);\n','',g).replace('FALSE','false')
 ret_g=function(old,'void generateUserInputEvents(')
-assert re.sub(r'\s+','',g)==re.sub(r'\s+','',ret_g[ret_g.index('{')+1:ret_g.rfind('}')])
+def require_pre_node_generator_scope(g):
+ assert re.sub(r'\s+','',g)==re.sub(r'\s+','',ret_g[ret_g.index('{')+1:ret_g.rfind('}')])
+require_pre_node_generator_scope(g.replace(GENERATOR_NEW_ARGUMENT,GENERATOR_OLD_ARGUMENT))
 for name in ('GHOST_EventCursor','GHOST_EventButton'):
  actual=current_source('intern/ghost/intern/'+name+'.hh');assert function(old,'class '+name+' :')==function(actual,'class '+name+' :')
 oldnav=old[old.index('/* SPDX-License-Identifier: GPL-2.0-or-later */'):old.index('}  // namespace ghost::ios')+len('}  // namespace ghost::ios')]
 code=replace_once(old,oldnav,NAV.replace('#pragma once',''))
+# The immutable retained model remains a raw historical fixture. Extend only
+# the generated dependency boundary for the actual new field/default argument.
+code=replace_once(code,'bool direct_touch = false;','bool direct_touch = false;\n  bool physical_pencil_precision_pan = false;')
+code=replace_once(code,'struct GHOST_TEventTrackpadData { int subtype,x,y,deltaX,deltaY;bool isDirectionInverted;int numFingers; };','struct GHOST_TEventTrackpadData { int subtype,x,y,deltaX,deltaY;bool isDirectionInverted;int numFingers;char is_physical_pencil_precision_pan; };')
+code=replace_once(code,'GHOST_EventTrackpad(uint64_t t,GHOST_IWindow*w,int s,int x,int y,int dx,int dy,bool inv,int n):','GHOST_EventTrackpad(uint64_t t,GHOST_IWindow*w,int s,int x,int y,int dx,int dy,bool inv,int n,bool physical=false):')
+code=replace_once(code,'d{s,x,y,dx,dy,inv,n}{data_=&d;}','d{s,x,y,dx,dy,inv,n,char(physical)}{data_=&d;}')
+code=replace_once(code,ret_g,'void generateUserInputEvents(const UserInputEvent &event_info) {\n'+g+'\n}')
 code=replace_once(code,function(code,'void producer(Sender &sender)'),translate_pan(PAN,'producer')+'\n'+translate_pan(OLD_PAN,'producer_baseline'))
 code=code[:code.index('int main(){')]
 # Synchronize the retained explicit vector/list adapter after modeled WM consumption.
@@ -134,7 +156,7 @@ def objc(s):
  return s
 helpers='\n'.join(objc(function(IOS,m)) for m in ['static ghost::ios::PencilRingContact ios_ring_contact_at_start(','static ghost::ios::TouchDevice ios_touch_device(','static ghost::ios::PencilSample ios_pencil_sample('])
 methods=[]
-for sig,new in [('- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event','void touchesBegan(const Touches &touches,int event=0)'),('- (void)reset','void reset()'),('- (BOOL)touchStreamAllowed','bool touchStreamAllowed()'),('- (void)invalidateTouchStream','void invalidateTouchStream()'),('- (void)forgetKnifePanContact','void forgetKnifePanContact()'),('- (void)recognizeKnifePan','void recognizeKnifePan()'),('- (BOOL)omitKnifePairedPan','bool omitKnifePairedPan()')]:
+for sig,new in [('- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event','void touchesBegan(const Touches &touches,int event=0)'),('- (void)reset','void reset()'),('- (BOOL)touchStreamAllowed','bool touchStreamAllowed()'),('- (BOOL)pencilContactDown','bool pencilContactDown()'),('- (void)invalidateTouchStream','void invalidateTouchStream()'),('- (void)forgetKnifePanContact','void forgetKnifePanContact()'),('- (void)recognizeKnifePan','void recognizeKnifePan()'),('- (BOOL)omitKnifePairedPan','bool omitKnifePairedPan()')]:
  methods.append(objc(function(recognizer,sig).replace(sig,new)))
 oldsender=function(code,'struct Sender {')+';'
 sender=r'''struct Sender {int state=UIGestureRecognizerStateBegan;bool pencil=true;
@@ -199,5 +221,8 @@ report={'driver_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
  'inputs':{p:sha(value) for p,value in INPUTS.items()},'fixture_inputs':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [FIXTURES/'baseline-GHOST_NavigationIOS.hh',FIXTURES/'baseline-GHOST_WindowIOS.mm',RETAINED,FIXTURES/'native-parity-models.inc.cc',FIXTURES/'scenarios.inc.cc']},
  'generated_source':{'path':str(source_path),'sha256':sha(code)},'native_zoom_actual_functions':native_functions,'circle_transform_source':{'circle':sha(circle),'transform':sha(transform)},'runs':runs,
  'boundaries':['UIKit objects/messages/super scheduling are explicit C++ adapters; actual physical recognizer method bodies execute. No UIKit/device timing proof.','Native scope/content/intent probe is instrumented; actual fresh native bridge/frame queries require separate integrated acceptance.','Queue getNumEvents(type) and pushEvent are actual pinned functions; System lookup/queue clearing/WM scheduling remain adapters.','Preserved producer/generator and native paint/zoom slices execute with retained WM/BKE/context adapters. Initial brush setup/coordinate/tablet transform/native registration are instrumentation.','No native iOS build/compiled target/device/geometry/history/Undo/universal rollback claim. No production patch/test/build edits.']}
+report['generator_unchanged_scope']='Legacy generator is exact after removing only the separately counted new default-false source-classification argument. The actual current generator including that argument executes unchanged.'
+report['node_metadata_extension']={'assignment':PENCIL_PAN_METADATA,'actual_assignment_count':PAN.count(PENCIL_PAN_METADATA),'generator_argument':GENERATOR_NEW_ARGUMENT,'actual_generator_argument_count':IOS.count(GENERATOR_NEW_ARGUMENT),'execution':'Actual PAN and generator compiled unchanged; only read-only scope-oracle views normalize declared metadata.'}
+report['producer_scope_oracle']='Actual baseline exact after removing recognized-Begin/frozen bool read, !omit predicate, and the single separately counted Node classification assignment. Actual candidate compiled unchanged; no simulated-correction fallback.'
 (OUT/'report.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps({'status':report['status'],'runs':len(runs),'report':str(OUT/'report.json')},indent=2))

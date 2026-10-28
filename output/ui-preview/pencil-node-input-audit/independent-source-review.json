@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-28T16:08:05.824710+00:00",
+  "status": "PASS_BOUNDED_INDEPENDENT_SOURCE_REVIEW_WITH_PENDING_GATES",
+  "reviewer_scope": "Independent root WM classifier/private invoke and peer same-TU View2D profile review. Prior authored four transport files are hashed for candidate identity but excluded from independent correctness claim.",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "baseline_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "baseline_source": "3438226bb2dbb90adf22917d12860cb5471719f0",
+  "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "reviewed_source_sha256": {
+    "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "source/blender/editors/interface/view2d/view2d_ops.cc": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "source/blender/editors/include/UI_view2d.hh": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f",
+    "pinned:source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+  },
+  "scope": {
+    "baseline_targets": 136,
+    "candidate_targets": 138,
+    "changed_targets": [
+      "intern/ghost/GHOST_Types.h",
+      "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "source/blender/windowmanager/WM_types.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "source/blender/editors/include/UI_view2d.hh"
+    ],
+    "removed_targets": [],
+    "unchanged_prior_sections": 131,
+    "literal_python_ui_targets": [
+      "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "scripts/startup/bl_ui/__init__.py",
+      "scripts/startup/bl_ui/space_filebrowser.py",
+      "scripts/startup/bl_ui/space_properties.py",
+      "scripts/startup/bl_ui/space_topbar.py",
+      "scripts/startup/bl_ui/space_view3d_toolbar.py",
+      "scripts/startup/bl_ui/space_view3d_ipad.py"
+    ],
+    "all_seven_python_ui_sections_byte_exact": true,
+    "view2d_only_pure_helper_addition": true,
+    "UI_header_only_declaration_addition": true,
+    "retained_WM_function_bodies_byte_exact": {
+      "bool WM_operator_poll(": true,
+      "BLI_INLINE bool wm_eventmatch(": true,
+      "static eHandlerActionFlag wm_handlers_do_keymap_with_gizmo_handler(": true,
+      "static wmEvent *wm_event_add_mousemove(": true,
+      "static wmEvent *wm_event_add_mousemove_to_head(": true
+    }
+  },
+  "findings": [],
+  "checked_obligations": [
+    {
+      "obligation": "Canonical default/effective profile",
+      "result": "PASS source inspection",
+      "evidence": "Literal ordered25 inventory, unique positive IDs and paired IDs/counters; actual chosen index4 or16; baseline-persistent default UPDATE/KMI_UPDATE ignored, effective dirty/modified/unknown flags vetoed; raw empty property group and coherent native pointer/type/owner; static current default/effective/config/region-handler membership."
+    },
+    {
+      "obligation": "Context and modifiers",
+      "result": "PASS source inspection",
+      "evidence": "Positive transient PAN class, MOUSEPAN/KM_NOTHING, no keymodifier, exact0 or KM_CTRL; multitouch/pinch/cancel/tool/finger bits excluded. CTX_py_dict_get short-circuits before new context getters; Node WINDOW belongs to current area regionbase. Checks repeat immediately after real native poll."
+    },
+    {
+      "obligation": "Private scalar isolation",
+      "result": "PASS source inspection",
+      "evidence": "Only actual matched regular handler creates scalar after WM_keymap_poll/wm_eventmatch; stack arguments through private handler/invoke. Existing explicit/delegated/gizmo/modal/XR calls default None. No event/context/window/operator field, provider, global or retained pointer stores the scalar."
+    },
+    {
+      "obligation": "Native callback corridor",
+      "result": "PASS source inspection within existing dispatcher assumptions",
+      "evidence": "Same-TU pure helper compares5 relevant static callbacks, exact blocking/grab flags, empty macro and null pyop/RNA extension before real poll and after success. Actual pan/zoom polls only read native context/View2D flags after absent Python context; no provider callback is introduced."
+    },
+    {
+      "obligation": "Preallocation refusal and routing",
+      "result": "PASS source inspection",
+      "evidence": "poll_only and failed poll preserve original return behavior. Successful eligible poll returns exact CANCELLED before manager/undo/register snapshots and wm_operator_create. No free/cancel/lifecycle/View2D init/apply/timer/modal handling of an uncreated operator. Native mapping returns BREAK; unchanged modal/gizmo bodies default None."
+    },
+    {
+      "obligation": "Literal UI and old input scope",
+      "result": "PASS byte/scope inspection",
+      "evidence": "All7 Python UI sections and131 prior sections byte-exact. View2D differs only by pure profile helper; original pan/zoom bodies untouched. Selected retained WM polling/matcher/gizmo/mousemove bodies exact. No ring/geometry/rails/default bars/toolbar/icons/UI file edits."
+    }
+  ],
+  "limits_and_tradeoffs": [
+    "No historical origin, subjective intent, accepted DOWN, same-contact continuity, edit owner or lifetime authenticity follows. Value-identical current stock history is inside policy; mixed-source aggregates retain native navigation.",
+    "RNA_OperatorProperties fallback is generic for missing native registrations, including legitimately absent NDOF. Selected Pan/Zoom still requires exact same-TU native callbacks; this review does not certify every nonselected registry entry or arbitrary native unregistration/replacement.",
+    "Arbitrary native callbacks before classification may mutate then restore fields. Existing native pointer lifetime, registration, main-thread and dispatcher-context assumptions remain; no arbitrary callback/corruption/concurrent mutation safety claim.",
+    "Existing BREAK tooltip/debug/click/gesture bookkeeping remains native. Zero operator/lifecycle allocation is narrower than no incidental allocation anywhere in dispatch.",
+    "Source/read-only review only. No independent SDK, simulator, target binary or device execution; reported host component passes remain bounded."
+  ],
+  "pending_gates": [
+    "Confirm final actual raw-import/classifier/regular-handler/private-call/invoke/poll/View2D composite run and precise historical controls against frozen current inputs.",
+    "Complete narrow retained producer/Knife metadata fixture repairs without dropping original assertions or negative controls, then affected/full frozen suite and CI preparation.",
+    "Root reports138-file preflight passed; source is uncommitted and not ready for native build until coherent source/host/independent gates close.",
+    "Exact native build once, full downloaded IPA verification, actual compiled transport/scalar/refusal evidence and exact iPad/Pencil acceptance remain separate pending gates."
+  ],
+  "production_or_test_edits_by_review": false,
+  "native_build_ready": false,
+  "device_acceptance": false,
+  "whole_goal_complete": false
+}

@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-28T16:13:28.420374+00:00",
+  "status": "PASS_BOUNDED_ACTUAL_CONNECTED_SOURCE_O0_O2_AND_STANDALONE_COLD_DEFAULT",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "test": "build/test_pencil_node_keymap_dispatch.py",
+  "final_cold_report": "cold-standalone-report.json",
+  "final_cold_report_sha256": "685309066371f0259c8ee63af089180894abf358adfb15b1d842f6bf86958299",
+  "executions": [
+    {
+      "optimization": "O0",
+      "stdout": "connected actual raw-import/classifier/regular-handler/private-call/invoke/poll/View2D scenarios passed 492\n"
+    },
+    {
+      "optimization": "O2",
+      "stdout": "connected actual raw-import/classifier/regular-handler/private-call/invoke/poll/View2D scenarios passed 492\n"
+    }
+  ],
+  "generated_source_sha256": "b36f346898f8d88764dfd1045862bc5bc4ee5a645b05aa3f4e05ce7131bbbfae",
+  "actual_chain": [
+    "actual Python canonical generator/importer",
+    "actual native configuration registration + RNA map/item creation + property allocation + IDP group creation + map/item copy",
+    "actual full25 current-value classifier and matcher",
+    "complete actual regular keymap handler and native keymap poll",
+    "actual nonmodal private handler lookup/interface/tool-properties/invoke/result mapping slice",
+    "whole actual wm_operator_invoke + WM_operator_poll + native View2D pan/zoom state functions"
+  ],
+  "positive_stock_denial": "Both NDOF registration profiles, Pan/CtrlZoom, exact zero allocation/lifecycle/navigation; actual native poll executes once.",
+  "native_fallbacks": "Dirty/custom maps, missing classification, postcallback original-event mutation, delegated policyNone, interface lock and native pan/zoom poll failures retain existing native action/state behavior.",
+  "structural_negatives": "25positions x18raw item/empty-group/PointerRNA mutations plus map/handler/runtime membership/count/order/id controls.",
+  "actual_raw_baseline": "../keymap-baseline/assessment.json",
+  "scope_and_cold_repair_evidence": "../cold-default-validation/assessment.json",
+  "boundaries": [
+    "Exact DNA and PointerRNA declarations; allocator/vector/registry/context/primitive RNA schema/getters/rendering are explicit host boundaries.",
+    "Private-handler modal/Gizmo/Tool post-link branches are outside the nonmodal slice.",
+    "Transport, historical native Circle/Transform and full repository gates remain separately named evidence."
+  ],
+  "production_edits": false,
+  "existing_test_or_ci_edits_in_this_subtask": false,
+  "native_build_or_device_claim": false,
+  "whole_goal_complete": false,
+  "final_all5_driver_cold_validation": "../cold-final-nine/assessment.json",
+  "final_all5_driver_cold_status": "PASS9/9 at exact final current inputs; no combined prior8 claim required"
+}

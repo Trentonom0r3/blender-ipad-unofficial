@@ -1,0 +1,92 @@
+{
+  "utc": "2026-10-27T16:22:25.818323+00:00",
+  "status": "PASS_COHERENT_SOURCE_HOST_AND_FINAL_REVIEW_NATIVE_BUILD_PENDING",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "previous_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
+  "targets": 138,
+  "changed_existing_sections": [
+    "intern/ghost/GHOST_Types.h",
+    "intern/ghost/intern/GHOST_WindowIOS.mm",
+    "source/blender/editors/interface/view2d/view2d_ops.cc",
+    "source/blender/windowmanager/WM_types.hh",
+    "source/blender/windowmanager/intern/wm_event_system.cc"
+  ],
+  "new_existing_upstream_targets": [
+    "intern/ghost/intern/GHOST_EventTrackpad.hh",
+    "source/blender/editors/include/UI_view2d.hh"
+  ],
+  "retained_prior_sections": 131,
+  "sources": [
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "pin_sha256": "a5b8ea1db7defae5bc92a65470f75cec5a5d051891f91056bc9ce739e7940776",
+      "materialized_sha256": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+      "pin_sha256": "52af467ec2571e1108516c9d770a249b7bb6cd124f016bd20ee6b3ff2fb0a18f",
+      "materialized_sha256": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "pin_sha256": "6dfc24bc2c89cb206a04bd3e8e199aecfe3ee3aa066471716073ba72c169942c",
+      "materialized_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_types.hh",
+      "pin_sha256": "bbcc3a3841173567afe8cafb64939be321c55f662cbea9fba897f0a2a6d10d9e",
+      "materialized_sha256": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "pin_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "materialized_sha256": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6"
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "pin_sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc",
+      "materialized_sha256": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495"
+    },
+    {
+      "path": "source/blender/editors/include/UI_view2d.hh",
+      "pin_sha256": "d7473d1c497c97abb18e48cdf7290cc5184324f9f4f0b1bc7e4614e1b76e4d29",
+      "materialized_sha256": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f"
+    }
+  ],
+  "baseline_native": "Root independently executed actual keymap baseline O0/O2 PASS1test3.891s; refreshed agent baseline additionally covers actual WM_keyconfig_new.",
+  "new_checks_so_far": {
+    "baseline": "Actual native import/registration/copy prerequisite PASS O0/O2, root independent wrapper1/1 3.891s; later actual WM_keyconfig_new proved too.",
+    "transport": "PASS1/1 34.973s;16 current/historical O0/O2 outcomes and full header layout/11 old constructor call checks.",
+    "native_invoke": "PASS5/5 ~5.179s;81 scenarios per current/historical binary, four precise old-source denial failures.",
+    "composite_dispatch": "PASS1/1 4.827s;492 scenarios at eachO0/O2 through actual import/copy/classifier/full regular dispatcher/nonmodal private call slice/full invoke/poll/native View2D state.",
+    "pinned_preflight": "PASS138 targets offline.",
+    "retained_first_knife_pan": "FAILED149/1 old metadata source oracle, .cache/node-retained-knife-pan-first.log.",
+    "retained_first_paint_pan": "FAILED import old exact PAN source oracle, .cache/node-retained-paint-pan-first.log.",
+    "retained_repair": "Partial20-line fixture edit saved; agent resumes narrow compatible source/constructor models with all assertions retained.",
+    "full_suite": "PASS835/835669.772s,235unchangedinputs,138-filepreflight/diff",
+    "independent_source_review": "Earlier reviewer found no concrete blocker but quota interrupted report; now resumes fresh actual review.",
+    "CI_cold_portability": "Not yet proven or wired; agent now runs disposable cold checkout.",
+    "new_connected_workflow": "PASS1/1 default6.365s;14 current scenarios eachO0/O2 through actual producer/queue and actual native dispatch/invoke, exact old-producer/old-invoke create1+shift/exit17 controls.",
+    "retained_final_paint_pan": "PASS40/40 20.239s; assertions and historical failures preserved.",
+    "retained_final_knife_pan": "PASS149/149 24.729s; assertions, immutable fixtures and historical controls preserved.",
+    "retained_paint_families": "PASS76/76 41.101s.",
+    "retained_hud_families": "PASS35/35 38.681s.",
+    "raw_git_parity": "PASS138 exact native-LF source reconstruction;131 prior runtime targets/all7 interaction Python unchanged.",
+    "cold_final_nine": "PASS empty-cache preflight138 and exactCIdefault9/9 65.691s,234 inputs unchanged duringcopy/run. Before2 line-ending-only canonicalizations, whose raw hashes/AST/LF/code equivalence are independently reconciled.",
+    "CI": "Exact Node discovery wired in preflight workflow.",
+    "independent_reviews": "Source and bounded test/composition/literal UI reviews pass; pointer snapshot is selected fields plus source parity, not whole native ABI."
+  },
+  "production_committed": false,
+  "native_build_started": false,
+  "device_acceptance": false,
+  "whole_goal_complete": false,
+  "checkpoint_utc": "2026-10-28T16:34:18.321704+00:00",
+  "approval_state": "No unresolved authorization/safety blocker. Last window checkpoint write and reviewer completion were not executed because automatic approval review exhausted ordinary usage; rejection explicitly said quota/review failure, not unsafe action. Fresh ordinary limits0percent now permit continuing authorized work.",
+  "next_required_work": [
+    "Inspect SAME full-suite process/report first, do not rerun unchanged while running.",
+    "Resolve actual full-suite failures or changed inputs before any build. Do not claim pending passed.",
+    "After full frozen/preflight/diff pass aggregate exact source/host evidence, explicitly stage coherent source/tests/CI/docs/bounded evidence only; commit/push and build exact revision once.",
+    "Prepared .cache/watch-pencil-node-navigation-build.py RUN FULLSHA owns package and scopes; new compiled obligations plus fresh preserved HUD/Weight review remain required. Device acceptance stays separate."
+  ]
+}

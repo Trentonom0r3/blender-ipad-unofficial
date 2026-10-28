@@ -1,0 +1,693 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_PRODUCER_TO_NATIVE_DISPATCH",
+  "utc": "2026-10-28T16:22:38.814313+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "driver_sha256": "bec41824731c23df94a6aadf9a7f1de30a4d712afc974c77dda79532a97226c8",
+  "source_root": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\connected-workflow-default\\materialized",
+  "inputs": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "source/blender/windowmanager/wm_event_system.hh": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+    "source/blender/editors/interface/view2d/view2d_ops.cc": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+    "source/blender/editors/include/UI_view2d.hh": "e80b13c99e98dcaabc10bbf363151f5cf748d10c9e51cf8ed3dd31015eac4a8f",
+    "pinned:source/blender/windowmanager/intern/wm_keymap.cc": "97431d8c05931dc06ebf9f07eb58ab32ba7674035f3710f2d717da99a4c4cb0c",
+    "pinned:source/blender/windowmanager/intern/wm_operators.cc": "79afac970b6ccf05f962bd1c291529cf882ac8020536a8805757bd9565a23290",
+    "pinned:source/blender/windowmanager/intern/wm_operator_props.cc": "255980718d8e8ab1d027422804aad396536313ba4f566090920fd5ed23a9b030",
+    "pinned:source/blender/makesrna/intern/rna_wm_api.cc": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105",
+    "pinned:source/blender/makesrna/intern/rna_wm.cc": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6",
+    "pinned:source/blender/makesrna/intern/rna_access.cc": "0e03e433eec9ff17df4b3565a8b5e32e069639d4aac973e8e14a40a208ba1dfe",
+    "pinned:source/blender/makesrna/RNA_types.hh": "fe5d6610904d49c5d04b1b53c86a3391d4fbfc3d86ba54f0468d40ed094803c8",
+    "pinned:source/blender/makesdna/DNA_windowmanager_types.h": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+    "pinned:source/blender/makesdna/DNA_ID.h": "1308dc563c96add243136e3bd33edb4fc3468fb971eb10ad91c7a46cb202e59a",
+    "pinned:source/blender/makesdna/DNA_ID_enums.h": "e016734689962611932e60f0c6b08846d1a3cbaa3fb0de708fb1ca2a5552cb6b",
+    "pinned:source/blender/makesdna/DNA_listBase.h": "6d3197f83dc44b4ef6ae8b61991728eba3f5b99a55a8266297fd72c971e6a227",
+    "pinned:source/blender/blenlib/intern/listbase.cc": "6d4528b8244fcba3302e9d306acb49ee5a03ebefddf590f3a189fa633630ad9a",
+    "pinned:source/blender/blenkernel/intern/idprop.cc": "4caca88dc6249e44f37cc41e8582bf585c0b7b61a91b6077525b770ef72ee33f",
+    "pinned:source/blender/blenkernel/intern/idprop_create.cc": "59bfdde70b21ed82bf3158feca75f22000f87e40b4e09c1cfe110f84a59995de",
+    "pinned:source/blender/blenkernel/BKE_idprop.hh": "9c274da54e28df18830f948ddab145fa15bad3932a3f8869a619d9308af53b29",
+    "pinned:source/blender/windowmanager/WM_keymap.hh": "ebb151fd28556aa53d8d525f82bb8e192f534d0d6e7a7d50d8241f0ed4a44d99",
+    "pinned:source/blender/windowmanager/WM_types.hh": "bbcc3a3841173567afe8cafb64939be321c55f662cbea9fba897f0a2a6d10d9e",
+    "pinned:source/blender/windowmanager/wm_event_types.hh": "af50f513498701f4e34dcbc675da4418174ba0fef6a4a2c7c2d6c7e874717477",
+    "pinned:scripts/presets/keyconfig/keymap_data/blender_default.py": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577",
+    "pinned:scripts/modules/bl_keymap_utils/io.py": "11df0e89811939749d46a4d8ea3443e6091d4f954234697b981daeb9f83b61fa",
+    "pinned:source/blender/editors/interface/view2d/view2d_ops.cc": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc",
+    "pinned:source/blender/windowmanager/intern/wm_event_system.cc": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+    "transport:intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "transport:intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "transport:intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "transport:intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "transport:source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "transport:source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "transport:upstream:source/blender/blenlib/BLI_utildefines.h": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312"
+  },
+  "fixture_sha256": {
+    "build\\tests\\node_precision_transport\\run_connected.py": "e8cf26003d29762cce563fd6413c78e82c1aac6572dac7f263161c7d6427d2f8",
+    "build\\tests\\node_native_invoke\\control_cases.inc.cc": "5864e5f2dc1a9003453ca3f519a4c3152755b0d028aef747ef67d05539095a3d",
+    "build\\tests\\node_keymap_baseline\\baseline.py": "62285a44c6f493afae0f70a40c0ae19ccfc48741bf1db034efe1b565995c49f7",
+    "build\\tests\\node_precision_transport\\scenarios.inc.cc": "c69fce3c7217aa4a0e155b20e25e8449b0edbf8e928e33fc10ec520674b45f6e",
+    "build\\tests\\node_keymap_baseline\\native_boundaries.inc.cc": "bbfc027731df33f869d4164387148d24192bd1fc324748935acaec3e87122bc6",
+    "build\\tests\\node_precision_transport\\queue_models.inc.cc": "82bbbab927d69e4d294d74ec65f02efbd794108d5b55815dbc157acc30b873b2",
+    "build\\tests\\node_precision_transport\\host_models.inc.cc": "17cd1327982de82007dd2770d496b00f3fb6f51a1035fa1198ce74077d34d28d",
+    "build\\tests\\node_native_invoke\\wm_boundaries.inc.cc": "cbc2c14b3190d605387bef90835d5025f0aaccf345d44bc50616acc736d1f97d",
+    "build\\tests\\node_keymap_dispatch\\connected.py": "b5f322e7e7f9bc15c97fdca7b59c35524226ab1aeba954c64bbd40b061491769",
+    "build\\tests\\node_keymap_dispatch\\dependencies.inc.cc": "e890e7fe6ef6bb459bec997b4f783d67176dc091f14ff7bd8ccee2c46301c2e5",
+    "build\\tests\\node_precision_transport\\baseline.json": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd",
+    "build\\tests\\node_keymap_dispatch\\cases.inc.cc": "ec8fa1886ca5b261a440acf208d1b2a91ffc67bc981195d3ef77d098417bed2e",
+    "build\\tests\\node_keymap_baseline\\native_cases.inc.cc": "1fab89eae8dc47df1320d27470ad8e4f351d325ad6216fc76be8e30ddaccfe38",
+    "build\\tests\\node_native_invoke\\control_models.inc.cc": "9ec201903cdce3d1e3f7e6a66f7b2593999e64dd000df6c4f461ce54275b8ab1",
+    "build\\test_pencil_node_native_invoke.py": "c8304bfefc2478a9d32e427d0a0e5ddfb02977bd8983abb52f1f2d7d2131bdde",
+    "build\\tests\\node_native_invoke\\models.inc.cc": "f04d743f61346a2865d6bc49672b3e07a45b61a7500baf8a006abb03c54ed444",
+    "build\\tests\\node_keymap_dispatch\\handler_boundaries.inc.cc": "0fa2e02bae5cf0638357c5f548f7ef4e330db53159a068f4bd39a51c694d877b",
+    "build\\tests\\node_native_invoke\\cases.inc.cc": "28bb569493ef93031158e494502557070c18bcb842350d26f16de2a7f05f57d7",
+    "build\\tests\\node_connected_workflow\\cases.inc.cc": "d79ffee301597290d27b0a15cee482d329fddd649721c754ecfc251acc9aa9d0"
+  },
+  "generated_cpp_sha256": "cf0a2365b02f985fcfebd31eadad0d6b63356778c7190d72aad6de00c68a21da",
+  "executions": [
+    {
+      "optimization": "-O0",
+      "case": "current",
+      "returncode": 0,
+      "stdout": "14 actual producer-to-native workflow scenarios passed\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-producer",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-invoke",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+    },
+    {
+      "optimization": "-O2",
+      "case": "current",
+      "returncode": 0,
+      "stdout": "14 actual producer-to-native workflow scenarios passed\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-producer",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-invoke",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+    }
+  ],
+  "original_invoke_body_sha256": "a9e246da25869206674d4207138869ff5c8739e1541162d8a0b09ff1b66384e0",
+  "composite_metadata": {
+    "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "primary_source_sha256": {
+      "source/blender/windowmanager/intern/wm_keymap.cc": "97431d8c05931dc06ebf9f07eb58ab32ba7674035f3710f2d717da99a4c4cb0c",
+      "source/blender/windowmanager/intern/wm_operators.cc": "79afac970b6ccf05f962bd1c291529cf882ac8020536a8805757bd9565a23290",
+      "source/blender/windowmanager/intern/wm_operator_props.cc": "255980718d8e8ab1d027422804aad396536313ba4f566090920fd5ed23a9b030",
+      "source/blender/makesrna/intern/rna_wm_api.cc": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105",
+      "source/blender/makesrna/intern/rna_wm.cc": "0c6d2c8254243c5dee554cfaf5eb6dff47049d7f6dd229dbf37be6cc7b38c4e6",
+      "source/blender/makesrna/intern/rna_access.cc": "0e03e433eec9ff17df4b3565a8b5e32e069639d4aac973e8e14a40a208ba1dfe",
+      "source/blender/makesrna/RNA_types.hh": "fe5d6610904d49c5d04b1b53c86a3391d4fbfc3d86ba54f0468d40ed094803c8",
+      "source/blender/makesdna/DNA_windowmanager_types.h": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+      "source/blender/makesdna/DNA_ID.h": "1308dc563c96add243136e3bd33edb4fc3468fb971eb10ad91c7a46cb202e59a",
+      "source/blender/makesdna/DNA_ID_enums.h": "e016734689962611932e60f0c6b08846d1a3cbaa3fb0de708fb1ca2a5552cb6b",
+      "source/blender/makesdna/DNA_listBase.h": "6d3197f83dc44b4ef6ae8b61991728eba3f5b99a55a8266297fd72c971e6a227",
+      "source/blender/blenlib/intern/listbase.cc": "6d4528b8244fcba3302e9d306acb49ee5a03ebefddf590f3a189fa633630ad9a",
+      "source/blender/blenkernel/intern/idprop.cc": "4caca88dc6249e44f37cc41e8582bf585c0b7b61a91b6077525b770ef72ee33f",
+      "source/blender/blenkernel/intern/idprop_create.cc": "59bfdde70b21ed82bf3158feca75f22000f87e40b4e09c1cfe110f84a59995de",
+      "source/blender/blenkernel/BKE_idprop.hh": "9c274da54e28df18830f948ddab145fa15bad3932a3f8869a619d9308af53b29",
+      "source/blender/windowmanager/WM_keymap.hh": "ebb151fd28556aa53d8d525f82bb8e192f534d0d6e7a7d50d8241f0ed4a44d99",
+      "source/blender/windowmanager/WM_types.hh": "bbcc3a3841173567afe8cafb64939be321c55f662cbea9fba897f0a2a6d10d9e",
+      "source/blender/windowmanager/wm_event_types.hh": "af50f513498701f4e34dcbc675da4418174ba0fef6a4a2c7c2d6c7e874717477",
+      "scripts/presets/keyconfig/keymap_data/blender_default.py": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577",
+      "scripts/modules/bl_keymap_utils/io.py": "11df0e89811939749d46a4d8ea3443e6091d4f954234697b981daeb9f83b61fa",
+      "source/blender/editors/interface/view2d/view2d_ops.cc": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6"
+    },
+    "source_origins": {
+      "source/blender/windowmanager/intern/wm_keymap.cc": "fixed-pin-cache",
+      "source/blender/windowmanager/intern/wm_operators.cc": "fixed-pin-cache",
+      "source/blender/windowmanager/intern/wm_operator_props.cc": "fixed-pin-cache",
+      "source/blender/makesrna/intern/rna_wm_api.cc": "fixed-pin-cache",
+      "source/blender/makesrna/intern/rna_wm.cc": "fixed-pin-cache",
+      "source/blender/makesrna/intern/rna_access.cc": "fixed-pin-cache",
+      "source/blender/makesrna/RNA_types.hh": "fixed-pin-cache",
+      "source/blender/makesdna/DNA_windowmanager_types.h": "fixed-pin-cache",
+      "source/blender/makesdna/DNA_ID.h": "fixed-pin-cache",
+      "source/blender/makesdna/DNA_ID_enums.h": "fixed-pin-cache",
+      "source/blender/makesdna/DNA_listBase.h": "fixed-pin-cache",
+      "source/blender/blenlib/intern/listbase.cc": "fixed-pin-cache",
+      "source/blender/blenkernel/intern/idprop.cc": "fixed-pin-cache",
+      "source/blender/blenkernel/intern/idprop_create.cc": "fixed-pin-cache",
+      "source/blender/blenkernel/BKE_idprop.hh": "fixed-pin-cache",
+      "source/blender/windowmanager/WM_keymap.hh": "fixed-pin-cache",
+      "source/blender/windowmanager/WM_types.hh": "fixed-pin-cache",
+      "source/blender/windowmanager/wm_event_types.hh": "fixed-pin-cache",
+      "scripts/presets/keyconfig/keymap_data/blender_default.py": "fixed-pin-cache",
+      "scripts/modules/bl_keymap_utils/io.py": "fixed-pin-cache",
+      "source/blender/editors/interface/view2d/view2d_ops.cc": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\connected-workflow-default\\materialized\\source\\blender\\editors\\interface\\view2d\\view2d_ops.cc",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\connected-workflow-default\\materialized\\source\\blender\\windowmanager\\intern\\wm_event_system.cc"
+    },
+    "extracted_native_bodies": [
+      {
+        "path": "source/blender/blenlib/intern/listbase.cc",
+        "signature": "void BLI_addhead(",
+        "sha256": "6cb513384535c7bc62201e26451ebe872b699153e56cbf4d24cdcad7545bbe8e"
+      },
+      {
+        "path": "source/blender/blenlib/intern/listbase.cc",
+        "signature": "void BLI_addtail(",
+        "sha256": "d98d3a7e968918f227e647bd920cb7ddcaa00813e26ceabd631b5d857c7138ee"
+      },
+      {
+        "path": "source/blender/blenlib/intern/listbase.cc",
+        "signature": "void BLI_remlink(",
+        "sha256": "48ff59371464af0f494a8305710382ba5c1d2031c1c651f34fd2f4c01e4475cd"
+      },
+      {
+        "path": "source/blender/blenlib/intern/listbase.cc",
+        "signature": "void BLI_freelinkN(",
+        "sha256": "2155bf681e7f36249ef0d81c27c5d9d85bf490713069a7222e6fd1239bdfb652"
+      },
+      {
+        "path": "source/blender/blenlib/intern/listbase.cc",
+        "signature": "void *BLI_findstring(",
+        "sha256": "47c8c458dd5f876343a957cd8a37accf0618772669fd9f3c7ab5226d1ef0adc8"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop.cc",
+        "signature": "IDProperty *IDP_New(",
+        "sha256": "dd9a62a629828da2289f6b379cf3c652a6142b4c910615c9835da8cc1b069f72"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop_create.cc",
+        "signature": "std::unique_ptr<IDProperty, IDPropertyDeleter> create_group(",
+        "sha256": "c178bd8197f28385eb91804521b65375042fec62ae1bf52aabb6d1a97e5ce47f"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop.cc",
+        "signature": "static IDProperty *idp_generic_copy(",
+        "sha256": "b1c86d522d9195996d75988550ca6c1a47a987474510966a62d9fd825e834ff9"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop.cc",
+        "signature": "static IDProperty *IDP_CopyGroup(",
+        "sha256": "36a26084b6219e044f7cbf57efe8c2e5507b9b870987091ecbdd2460fb9fd4d8"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop.cc",
+        "signature": "IDProperty *IDP_CopyProperty_ex(",
+        "sha256": "59cada8fb5cd5291e23a8533d692167f01d89a3a9390027d4e373997eea9e90c"
+      },
+      {
+        "path": "source/blender/blenkernel/intern/idprop.cc",
+        "signature": "IDProperty *IDP_CopyProperty(",
+        "sha256": "c3028823a1eea5a4ec1d302e0df94fdba1a5d7c8a49be7cbe523393a6e26e1c8"
+      },
+      {
+        "path": "source/blender/makesrna/intern/rna_access.cc",
+        "signature": "PointerRNA RNA_pointer_create_discrete(",
+        "sha256": "da08f34fa9b03bf297ddbd05bb75fc7fdb8b127b717bf3ac7dea895962ce833f"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operators.cc",
+        "signature": "void WM_operator_properties_create_ptr(",
+        "sha256": "d6f2f94d7820bd27455f49c7c9174974bd624afb3bbc6b9689c26b507bf14159"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operators.cc",
+        "signature": "void WM_operator_properties_create(",
+        "sha256": "e411f756e374b38b08228ff4c8c7c55a86f76e25721442b1029dc4dea8a95687"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operators.cc",
+        "signature": "void WM_operator_properties_alloc(",
+        "sha256": "4549fa50533fc3cf653d77a597f0d97d48d4953cbffa830fe5d1f8d3b02444ab"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operators.cc",
+        "signature": "void WM_operator_properties_sanitize(",
+        "sha256": "5c7a6e417abd01e0d67661a9eb08415f1f3223a147cb89e6f72cd83b274e418e"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operators.cc",
+        "signature": "size_t WM_operator_bl_idname(",
+        "sha256": "742b00353794106cfef85e942c3901d174c3040f78648f3c1078cd418aeedf83"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operator_props.cc",
+        "signature": "void WM_operator_properties_border(",
+        "sha256": "22ba290a3237e67ba06765ba6d25cd243f6077b980bb31c1cf05a496eec6d774"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operator_props.cc",
+        "signature": "void WM_operator_properties_gesture_box_ex(",
+        "sha256": "f24030e2e6dacfa91e4eb32e6a47a8a98dfbb688202e7932532367db931d11d0"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operator_props.cc",
+        "signature": "void WM_operator_properties_use_cursor_init(",
+        "sha256": "c5aac3837064f08b9435878c24e88b1165c3c6e1898de5e55b9dc79cba1ed00e"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operator_props.cc",
+        "signature": "void WM_operator_properties_gesture_box(",
+        "sha256": "61c65aa3dd076778a9ceb8728cbc318973b541e4feb3bada5a9fe2db3bf507cb"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_operator_props.cc",
+        "signature": "void WM_operator_properties_gesture_box_zoom(",
+        "sha256": "7535d84c3ea0c3dc46e2d74f54bd6ac9ea0677ff5ab7ebb6c6b8908a9caddcfa"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_scroller_activate(",
+        "sha256": "bc1160c2503bdd34e2b86c3d8214f0ca81c09db64f5b69c881c50d0e9c81da65"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_pan(",
+        "sha256": "d9a0aeb43ef58750ff786b259dabc3872edb57bd44df61815cc0296c2cd5a95b"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_scroll_right(",
+        "sha256": "f717e1d8b6828d2ae8ea43d7d11281e0f4871be00ec9543a6f4d3c1933c79076"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_scroll_left(",
+        "sha256": "4eb80a4c31f114cf1596e1fabfc3a6aec2ad92259f8482c7e0e1e20e7a063e5b"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_scroll_down(",
+        "sha256": "3c1e0d6ca8a63e209286e1df8d67d4480c4462772e41fb17330703c28776f50d"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_scroll_up(",
+        "sha256": "14f5710a5dd07cbe65131d1999870da2bb274e42f063ea16419107bcfc6a2256"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_ndof(",
+        "sha256": "91d9bf8696d54ababa57f32df540d78449f3ccfa37cdf676d2b67e4338dd7972"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_zoom_out(",
+        "sha256": "32c06b4add552f954c9ec27c687ecc5595fb11a64de9811e05b24a277d0af57d"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_zoom_in(",
+        "sha256": "a821aabe98ab1e3fc14b0a46b05fad626ff1a9ad357010e968926ea8504904d8"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_zoom(",
+        "sha256": "49568e288042bbbd6c02e7efd9b9aecafb1eda0446a4d41f2b7686101d90e839"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_smoothview(",
+        "sha256": "c598a09c2bb527a22d61c8dc0da1e5529c2d5368608626c203d9bf5314e3b3c8"
+      },
+      {
+        "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+        "signature": "static void VIEW2D_OT_zoom_border(",
+        "sha256": "67bae5416a89e2f970c9bfefe5db80ad9f2d4c5551b09764b4eb5c5f0978fc66"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "void WM_keyconfig_update_tag(",
+        "sha256": "d859aa5d7d2071d18f4169f3901a62072adf718a7e311ba37438c6eefc5b20ab"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "wmKeyConfig *WM_keyconfig_new(",
+        "sha256": "46134d896150f103eada3460c87e945b281adf270e659a6d627f97b07755e813"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static wmKeyMapItem *wm_keymap_item_copy(",
+        "sha256": "0c46b338a1bd0880f36b2012879c15d7ee12e228aa517290d5ff9b8a08a2a9e1"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static void wm_keymap_item_free_data(",
+        "sha256": "c3d50b29ea386a6ef9f2cff63e0d3c5a86f7f8cfb262167b233a0492ba85dac8"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static void wm_keymap_item_properties_set(",
+        "sha256": "4293f899b1cbf63603fe9b3d5c27af2aee7bba054e3b3b185a25e5fa2e43c3f1"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static wmKeyMapDiffItem *wm_keymap_diff_item_copy(",
+        "sha256": "e8299cec615f676e8d58186c793934bd8f461db3b036171d2d9a0b049039de52"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static void wm_keymap_diff_item_free(",
+        "sha256": "f38c0b82e01e89bcde1fb4de130bf04d209c113188e2de963f2d13f8461c8920"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static wmKeyMap *wm_keymap_new(",
+        "sha256": "a011a119a02784b3aa6f2a5dc112aae478d5d9984de52d54751eab9169a6fe6f"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static wmKeyMap *wm_keymap_copy(",
+        "sha256": "8a192ff14d9ff69adcbc3189af4f354c2d41b8efaa1d87505d9e73d2d1e7749f"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "void WM_keymap_clear(",
+        "sha256": "1a637b5914313878684e6872366d0b1489575727ac19e84e1f59d052051ee2ed"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static void keymap_event_set(",
+        "sha256": "5d90fce8b4220d98ced7e8bc0740d9d117a65f4320d00040275efe999bd176c8"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static void keymap_item_set_id(",
+        "sha256": "1935375d77593271d192e5bf7cb672132557884427853acf25800dcd3d540ed3"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "wmKeyMapItem *WM_keymap_add_item(",
+        "sha256": "8026cd25926bbb7bd2e1ebd989ed177e1be39c4fa9541311a25174e47c5e0058"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "wmKeyMapItem *WM_keymap_add_item_copy(",
+        "sha256": "cfc51b2bcf8eaf5c2d18478dfae90d75797f97346021a5c27c7e5fad7b8ebf1f"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "wmKeyMap *WM_keymap_list_find(",
+        "sha256": "dd1476df2fa7aa9a4b7da6a5f8ad041a8026f938b6bab67301cbcb90959ed47b"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "wmKeyMap *WM_keymap_ensure(",
+        "sha256": "1dd60f1ab520c1a549d9580150d4a71148909928fe6d42b58a0f850e47dd31af"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static wmKeyMap *wm_keymap_patch_update(",
+        "sha256": "09ffd3bc27c4837735e6ddcdf6089d2c36b1337e9eb6a9fa8920f0409303c9b1"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_keymap.cc",
+        "signature": "static bool wm_keymap_test_and_clear_update(",
+        "sha256": "b82481a03b7fd0dff6b52b662d8874d672c35ca232f29df0c59baef6f077be74"
+      },
+      {
+        "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+        "signature": "static int16_t keymap_item_modifier_flag_from_args(",
+        "sha256": "8992ceaae26eb18f38a59f6d8ddff4d8a2037a9dedc0c07408b90aba7f89570d"
+      },
+      {
+        "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+        "signature": "static wmKeyMapItem *rna_KeyMap_item_new(",
+        "sha256": "c170107155a4afacdf3f9490329853a6d4849adc83300ad383da3e6bf332a3aa"
+      },
+      {
+        "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+        "signature": "static wmKeyMapItem *rna_KeyMap_item_new_from_item(",
+        "sha256": "3f09f85541b10a8e2f18cd3728d7890fdd61677d79f4b3eaf42a3a373055a08b"
+      },
+      {
+        "path": "source/blender/makesrna/intern/rna_wm_api.cc",
+        "signature": "static wmKeyMap *rna_KeyMaps_new(",
+        "sha256": "404bc370a541b920b98631e621a553eed758db91089acae84e0349062e08cf6d"
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+        "signature": "BLI_INLINE bool wm_eventmatch(",
+        "sha256": "b1a012614b69f2628de14b10929f76864e53e31e55f31bd0ff2ddbdf353773a5"
+      }
+    ],
+    "generated_inventory": [
+      {
+        "position": 1,
+        "python_idname": "view2d.scroller_activate",
+        "args": {
+          "type": "LEFTMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 2,
+        "python_idname": "view2d.scroller_activate",
+        "args": {
+          "type": "MIDDLEMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 3,
+        "python_idname": "view2d.pan",
+        "args": {
+          "type": "MIDDLEMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 4,
+        "python_idname": "view2d.pan",
+        "args": {
+          "type": "MIDDLEMOUSE",
+          "value": "PRESS",
+          "shift": true
+        }
+      },
+      {
+        "position": 5,
+        "python_idname": "view2d.pan",
+        "args": {
+          "type": "TRACKPADPAN",
+          "value": "ANY"
+        }
+      },
+      {
+        "position": 6,
+        "python_idname": "view2d.scroll_right",
+        "args": {
+          "type": "WHEELDOWNMOUSE",
+          "value": "PRESS",
+          "ctrl": true
+        }
+      },
+      {
+        "position": 7,
+        "python_idname": "view2d.scroll_right",
+        "args": {
+          "type": "WHEELRIGHTMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 8,
+        "python_idname": "view2d.scroll_left",
+        "args": {
+          "type": "WHEELUPMOUSE",
+          "value": "PRESS",
+          "ctrl": true
+        }
+      },
+      {
+        "position": 9,
+        "python_idname": "view2d.scroll_left",
+        "args": {
+          "type": "WHEELLEFTMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 10,
+        "python_idname": "view2d.scroll_down",
+        "args": {
+          "type": "WHEELDOWNMOUSE",
+          "value": "PRESS",
+          "shift": true
+        }
+      },
+      {
+        "position": 11,
+        "python_idname": "view2d.scroll_up",
+        "args": {
+          "type": "WHEELUPMOUSE",
+          "value": "PRESS",
+          "shift": true
+        }
+      },
+      {
+        "position": 12,
+        "python_idname": "view2d.ndof",
+        "args": {
+          "type": "NDOF_MOTION",
+          "value": "ANY"
+        }
+      },
+      {
+        "position": 13,
+        "python_idname": "view2d.zoom_out",
+        "args": {
+          "type": "WHEELOUTMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 14,
+        "python_idname": "view2d.zoom_in",
+        "args": {
+          "type": "WHEELINMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 15,
+        "python_idname": "view2d.zoom_out",
+        "args": {
+          "type": "NUMPAD_MINUS",
+          "value": "PRESS",
+          "repeat": true
+        }
+      },
+      {
+        "position": 16,
+        "python_idname": "view2d.zoom_in",
+        "args": {
+          "type": "NUMPAD_PLUS",
+          "value": "PRESS",
+          "repeat": true
+        }
+      },
+      {
+        "position": 17,
+        "python_idname": "view2d.zoom",
+        "args": {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "ctrl": true
+        }
+      },
+      {
+        "position": 18,
+        "python_idname": "view2d.smoothview",
+        "args": {
+          "type": "TIMER1",
+          "value": "ANY",
+          "any": true
+        }
+      },
+      {
+        "position": 19,
+        "python_idname": "view2d.scroll_down",
+        "args": {
+          "type": "WHEELDOWNMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 20,
+        "python_idname": "view2d.scroll_up",
+        "args": {
+          "type": "WHEELUPMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 21,
+        "python_idname": "view2d.scroll_right",
+        "args": {
+          "type": "WHEELDOWNMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 22,
+        "python_idname": "view2d.scroll_left",
+        "args": {
+          "type": "WHEELUPMOUSE",
+          "value": "PRESS"
+        }
+      },
+      {
+        "position": 23,
+        "python_idname": "view2d.zoom",
+        "args": {
+          "type": "MIDDLEMOUSE",
+          "value": "PRESS",
+          "ctrl": true
+        }
+      },
+      {
+        "position": 24,
+        "python_idname": "view2d.zoom",
+        "args": {
+          "type": "TRACKPADZOOM",
+          "value": "ANY"
+        }
+      },
+      {
+        "position": 25,
+        "python_idname": "view2d.zoom_border",
+        "args": {
+          "type": "B",
+          "value": "PRESS",
+          "shift": true
+        }
+      }
+    ],
+    "executed_python_functions": [
+      "km_view2d",
+      "keymap_init_from_data"
+    ],
+    "boundaries": [
+      "guarded allocation uses tracked host calloc/malloc/new; MEM_dupallocN exact-size tracked copy",
+      "blender::Vector/Span backing uses std::vector; exact native PointerRNA declaration/methods and discrete creation body execute",
+      "RNA scalar schema registration uses host descriptors populated by actual native View2D registrations and actual gesture/cursor property helpers; iteration and primitive RNA type/flag accessors are boundaries; no nested PointerRNA branch is supplied",
+      "operator registry lookup returns the executed native registration descriptor; callback bodies abort because never invoked in keymap baseline",
+      "UTF-8/native string helpers limited to all-ASCII canonical identifiers; actual operator name conversion executes",
+      "WM_keymap_patch_update runs actual no-addon/no-user canonical branch; unexercised diff/legacy/addon helper branches abort",
+      "native event matcher runs actual body; userdef event remapping is identity for positive MOUSEPAN controls",
+      "full Blender translation units, actual guarded allocator/RNA engine, target build and device execution are outside this bounded host fixture"
+    ],
+    "connected_native_invocation_prefix_sha256": "5b8a83b4a32286f5f23f4956317a468c91076653f40f9dc2018029750a5e2a38",
+    "actual_classifier_sha256": "1dd405fd09ae4092f7ee9b2be06a928fec2b24331068ca28f6cee1dc51180728",
+    "actual_regular_handler_sha256": "86f22ebe4c02982358f158198e0baae57697fc8856cfbb9c894e3f6dbd52aa43",
+    "actual_private_call_nonmodal_slice_sha256": "70a4af123278a786a47b9cb8c617efa7699f7d6dc62b355a67959009f66bc761"
+  },
+  "native_abi_or_device_claim": false,
+  "boundaries": [
+    "One compiled program executes actual generated producer/generator/constructor/Trackpad ingestion+merge and actual raw-import/classifier/full regular dispatcher/nonmodal private call slice/full invoke/poll/native View2D bodies.",
+    "The bridge copies exact queued type/value/flags/modifier/keymodifier/xy/prev_xy scalars between explicit host structs. Adapter event constants are synchronized to exact pinned declarations. This is not a native wmEvent ABI/layout proof.",
+    "Non-Trackpad pointer queue barriers use an explicit host adapter while exact actual GHOST pointer payload/order parity is checked. Native pointer ingestion, node selection/hit/acquisition/history and UIKit scheduling are outside this family.",
+    "Mixed hardware-before-Pencil executes actual adjacent Trackpad AND coalescing. Pencil-before-hardware retains its actual paired cursor barrier, so the two native PAN packets remain separate.",
+    "Old producer source is the frozen complete original method; old invoke source is the complete immutable pinned method plus an explicitly disclosed signature-only adapter. Historical required-denial failures are expected controls, not a corrected-source fallback.",
+    "Native allocation/context/RNA/registry/rendering/timer/cursor and geometry application remain the existing named component adapters. No callback/lifetime/device/geometry/history/Undo acceptance is asserted."
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-28T16:11:36.086407+00:00",
+  "status": "NO_FAKE_PASS_FOUND_BOUNDED_TESTS_COLD_CI_GATES_PENDING",
+  "review_scope": "Read-only independent inspection of peer/root baseline, native invoke and composite tests. Previously authored transport fixture excluded from independent test-correctness claim. No test execution in this review.",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "input_sha256": {
+    "build\\test_pencil_node_keymap_baseline.py": "6f97c4fe103cf78946dca87eae50ba06804b1e719da1543df6849acf31358e0b",
+    "build\\test_pencil_node_native_invoke.py": "c8304bfefc2478a9d32e427d0a0e5ddfb02977bd8983abb52f1f2d7d2131bdde",
+    "build\\test_pencil_node_keymap_dispatch.py": "f7e26e7aaa4b61e687b2daf62dc6b8098998d4ae8cddb86960fda67fe3f9cdbc",
+    ".github\\workflows\\preflight.yml": "7ed9482153e5e83838dc7b907f8e172ac9cda31734c7b31f478af1e7ec332286",
+    "build\\tests\\node_keymap_baseline\\baseline.py": "62285a44c6f493afae0f70a40c0ae19ccfc48741bf1db034efe1b565995c49f7",
+    "build\\tests\\node_keymap_baseline\\native_boundaries.inc.cc": "bbfc027731df33f869d4164387148d24192bd1fc324748935acaec3e87122bc6",
+    "build\\tests\\node_keymap_baseline\\native_cases.inc.cc": "1fab89eae8dc47df1320d27470ad8e4f351d325ad6216fc76be8e30ddaccfe38",
+    "build\\tests\\node_native_invoke\\cases.inc.cc": "28bb569493ef93031158e494502557070c18bcb842350d26f16de2a7f05f57d7",
+    "build\\tests\\node_native_invoke\\control_cases.inc.cc": "5864e5f2dc1a9003453ca3f519a4c3152755b0d028aef747ef67d05539095a3d",
+    "build\\tests\\node_native_invoke\\control_models.inc.cc": "9ec201903cdce3d1e3f7e6a66f7b2593999e64dd000df6c4f461ce54275b8ab1",
+    "build\\tests\\node_native_invoke\\models.inc.cc": "f04d743f61346a2865d6bc49672b3e07a45b61a7500baf8a006abb03c54ed444",
+    "build\\tests\\node_native_invoke\\wm_boundaries.inc.cc": "cbc2c14b3190d605387bef90835d5025f0aaccf345d44bc50616acc736d1f97d",
+    "build\\tests\\node_keymap_dispatch\\cases.inc.cc": "ec8fa1886ca5b261a440acf208d1b2a91ffc67bc981195d3ef77d098417bed2e",
+    "build\\tests\\node_keymap_dispatch\\connected.py": "b5f322e7e7f9bc15c97fdca7b59c35524226ab1aeba954c64bbd40b061491769",
+    "build\\tests\\node_keymap_dispatch\\dependencies.inc.cc": "e890e7fe6ef6bb459bec997b4f783d67176dc091f14ff7bd8ccee2c46301c2e5",
+    "build\\tests\\node_keymap_dispatch\\handler_boundaries.inc.cc": "0fa2e02bae5cf0638357c5f548f7ef4e330db53159a068f4bd39a51c694d877b"
+  },
+  "observed_reports": [
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\keymap-baseline\\baseline-report.json",
+      "sha256": "7f29f6c8007e8723efff1a9bddca29f2fed9e06588f81fdcec757db9e065ad11",
+      "generated_cpp_matches": true,
+      "status": "PASS"
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\keymap-dispatch\\dispatch-report.json",
+      "sha256": "dd0222f12389df4a680c989d7545081131e81adf52c4647cb29ceb173ba3b35b",
+      "generated_cpp_matches": true,
+      "status": "PASS"
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-invoke\\current-O0.json",
+      "sha256": "a25d1bb642933bc0d099871f5da8253f2036b8c7c34e405422af8f0c77acfc23",
+      "generated_cpp_matches": true,
+      "output": "81 native-invoke scenarios passed\n",
+      "required_denial_controls": [
+        {
+          "kind": "pan",
+          "returncode": 0,
+          "stderr": ""
+        },
+        {
+          "kind": "zoom",
+          "returncode": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-invoke\\current-O2.json",
+      "sha256": "a3392fcc9e122930ae669a090585cbf123e6a216dfb104b5c172d087d80af6d2",
+      "generated_cpp_matches": true,
+      "output": "81 native-invoke scenarios passed\n",
+      "required_denial_controls": [
+        {
+          "kind": "pan",
+          "returncode": 0,
+          "stderr": ""
+        },
+        {
+          "kind": "zoom",
+          "returncode": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-invoke\\historical-O0.json",
+      "sha256": "d524db4ab925049639deaa6702808ee6854590ac4c1bbfde20c96273e39cceb3",
+      "generated_cpp_matches": true,
+      "output": "81 native-invoke scenarios passed (original navigation failure retained)\n",
+      "required_denial_controls": [
+        {
+          "kind": "pan",
+          "returncode": 17,
+          "stderr": "NODE_REQUIRED_DENIAL_FAILED Pan status=4 creates=1 xmin=-1 ymin=-3\n"
+        },
+        {
+          "kind": "zoom",
+          "returncode": 17,
+          "stderr": "NODE_REQUIRED_DENIAL_FAILED CtrlZoom status=4 creates=1 xmin=1 ymin=3\n"
+        }
+      ]
+    },
+    {
+      "path": "output\\ui-preview\\pencil-node-input-audit\\native-invoke\\historical-O2.json",
+      "sha256": "313583dc53c314f0aa900799d3575c5360bec256b344c501911f3643e3187de3",
+      "generated_cpp_matches": true,
+      "output": "81 native-invoke scenarios passed (original navigation failure retained)\n",
+      "required_denial_controls": [
+        {
+          "kind": "pan",
+          "returncode": 17,
+          "stderr": "NODE_REQUIRED_DENIAL_FAILED Pan status=4 creates=1 xmin=-1 ymin=-3\n"
+        },
+        {
+          "kind": "zoom",
+          "returncode": 17,
+          "stderr": "NODE_REQUIRED_DENIAL_FAILED CtrlZoom status=4 creates=1 xmin=1 ymin=3\n"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "cold-01",
+      "priority": "validation_blocker_until_proven_or_repaired",
+      "path": "build/test_pencil_node_keymap_dispatch.py",
+      "observation": "Default setUpClass reconstructs patched sources with touch.changed_source before explicit preflight.get_source of each needed pinned base. Empty-cache standalone execution may fail before driver setup; a previous baseline/preflight run can hide this.",
+      "required_resolution": "Cold/CI agent must run standalone default dispatch with empty cache and fetch required fixed-pin inputs explicitly if missing. Preserve all test assertions."
+    },
+    {
+      "id": "cold-02",
+      "priority": "validation_blocker_until_proven_or_repaired",
+      "path": "build/tests/node_keymap_dispatch/connected.py",
+      "observation": "build reads all base.PATHS files directly from cache before its later base.build_source call performs fixed-pin fetching. Imported native-invoke module fetches only its own7 paths, not the complete baseline PATHS inventory.",
+      "required_resolution": "Prove cold direct driver/source-dir mode independently of baseline-first warm ordering; fetch complete pinned dependencies before direct reads if needed."
+    },
+    {
+      "id": "ci-01",
+      "priority": "pending_integration",
+      "path": ".github/workflows/preflight.yml",
+      "observation": "Reviewed workflow has explicit individual test commands and currently no Node baseline/transport/native-invoke/composite commands. Root checkpoint explicitly says CI wiring pending.",
+      "required_resolution": "Add intended Node checks to CI and prove actual cold preparation/execution before claiming CI coverage."
+    }
+  ],
+  "positive_review_observations": [
+    "No source policy is inserted into actual source under test: native invoke/poll/View2D bodies are extracted. Definition-name wrappers only count real poll/profile calls and are disclosed. Composite executes actual classifier and whole regular keymap dispatcher; private handler call is an explicitly bounded actual nonmodal slice, not represented as a universal full-handler test.",
+    "Historical native invoke uses pinned original WM_operator_invoke without policy; new current View2D helper is inert on historical path. Current required Pan/CtrlZoom denial returns0; both historical O0/O2 binaries return17 with NODE_REQUIRED_DENIAL_FAILED status4, creates1 and nonzero View2D shift. Generated source hashes match recorded artifacts.",
+    "Native allocation/context/RNA schema/registry/redraw/timer/cursor boundaries are visible adapters. Guard outcome, zero operator creation and View2D invocation effects are not replaced with a constant result stub. Nonselected unexpected callback routes abort rather than silently pass.",
+    "Exact DNA/PointerRNA/native keymap allocation/copy/add/property bodies and actual Python generator/importer entry functions execute in baseline/composite. Both registered and absent NDOF profiles are represented; native schema/refine boundaries are explicit.",
+    "Circle SIZE/modal/release and Transform radius/native falloff controls exercise actual source with explicit selection-exec/final-coordinate adapters. They support bounded source ordering/effect controls, not full native geometry or device acceptance."
+  ],
+  "coverage_limits": [
+    "The492 composite scenarios include450 classifier-only mutation cases; their source eligibility fallbacks are checked, but each does not independently execute full downstream native fallback. Separate targeted native fallback and invoke-profile controls cover selected cases.",
+    "Actual UIKit producer/GHOST/WM transport tests and actual native-import/classifier/invoke tests are separate component families. No single same-TU test here spans real producer output through actual selected native dispatch and invocation; source seam identity and individual family checks do not justify a universal end-to-end lifetime/device claim.",
+    "Private handler modal/Gizmo/Tool post-link branches and outer native handler iteration remain outside composite slice. Native modal controls are separate bounded execution; source review checks unchanged code/default-None call sites.",
+    "No fresh cold execution, full frozen suite, target SDK build, target binary, simulator, node socket/title edit/history/Undo or iPad/Pencil acceptance was performed by this review. Current reports are scoped observations, not claims that unfinished gates passed."
+  ],
+  "production_or_test_edits_by_review": false,
+  "native_build_ready": false,
+  "whole_goal_complete": false
+}

@@ -1,0 +1,79 @@
+{
+  "utc": "2026-10-28T16:13:28.420374+00:00",
+  "status": "PASS_COMBINED_COLD_DEFAULT_AND_FINAL_STANDALONE_PREREQUISITES",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "cold_copy": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-cold-default-v3kbcdn7",
+    "copied_file_count": 266,
+    "copied_ignored_source_materialization": false,
+    "copied_source_cache": false,
+    "copied_output_or_binary": false,
+    "preflight": "PASS138 exact actual pinned-source preflight,13.995657s",
+    "default_all4_drivers": "8/8 PASS53.211s test-runtime (53.918848s command-wall)",
+    "logs": [
+      "01-preflight.log",
+      "02-node-discovery.log"
+    ],
+    "commands": [
+      [
+        "C:/Program Files/Python313/python.exe",
+        "build/preflight.py"
+      ],
+      [
+        "C:/Program Files/Python313/python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "build",
+        "-p",
+        "test_pencil_node_*.py",
+        "-v"
+      ]
+    ]
+  },
+  "independent_standalone": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-dispatch-cold-singleton-8momv9no",
+    "command": [
+      "C:/Program Files/Python313/python.exe",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "build",
+      "-p",
+      "test_pencil_node_keymap_dispatch.py",
+      "-v"
+    ],
+    "original_failure": "0tests, setUpClass missing cached wm_event_system.cc; original returncode5; exact raw log retained",
+    "fix": "Only the new wrapper and new companion prerequisite fetching changed. All five overlaid source bases are fetched before touch.changed_source; all22 fixed-pin baseline dependencies are fetched before companion direct cache reads.",
+    "fixed_cache_absent_at_start": true,
+    "fixed_result": "1/1 PASS7.472s test-runtime (7.639462s command-wall); actual C++ O0/O2 each492scenarios",
+    "logs": [
+      "03-standalone-dispatch-first-failure.log",
+      "04-standalone-dispatch-fixed.log"
+    ]
+  },
+  "combined_validation": {
+    "generated_cpp_before_after_fix_byte_exact": true,
+    "generated_cpp_sha256": "b36f346898f8d88764dfd1045862bc5bc4ee5a645b05aa3f4e05ce7131bbbfae",
+    "case_source_sha_unchanged_from_all4_copy": true,
+    "final_two_python_inputs_have_own_second_all4_run": false,
+    "reason_second_all4_not_required": "The final delta only orders explicit fixed-pin prerequisite acquisition. Exact generated C++ is unchanged and the previously failing standalone empty-cache command now passes. Root full-suite/final source freeze remains separate."
+  },
+  "generated_artifacts_preserved_at": {
+    "baseline": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-keymap-baseline-5b2mwkvk",
+    "original_dispatch": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-keymap-dispatch-t5iwxd74",
+    "final_dispatch": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-keymap-dispatch-3c7ssabz",
+    "native_invoke": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-native-invoke-7bkfns3h",
+    "transport": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\node-precision-_qu6hc9j"
+  },
+  "limits": [
+    "No native iOS translation-unit/package/compiled/device evidence follows from these portable source probes.",
+    "Complete repository/full host suite and independent final source review are root-owned later gates.",
+    "The private handler bridge executes its actual native nonmodal lookup/interface/tool-properties/invoke/result mapping slice; modal/Gizmo/Tool post-link branches are explicitly outside its claimed scope."
+  ],
+  "production_edits": false,
+  "existing_test_or_ci_edits_in_this_subtask": false,
+  "whole_goal_complete": false
+}

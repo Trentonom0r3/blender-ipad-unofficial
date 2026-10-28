@@ -1,0 +1,193 @@
+{
+  "status": "PASS_BOUNDED_CONNECTED_TRANSPORT",
+  "utc": "2026-10-27T16:22:17.742602+00:00",
+  "driver_sha256": "e8cf26003d29762cce563fd6413c78e82c1aac6572dac7f263161c7d6427d2f8",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "old_fields_and_packets_exact": true,
+  "inputs": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "upstream:source/blender/blenlib/BLI_utildefines.h": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312",
+    "upstream:intern/ghost/GHOST_IEvent.hh": "1586407eabf86295d674b3ef61b8767652c7b7a2e06e7f8f7b1e91c61537639d",
+    "intern/ghost/GHOST_IEvent.hh": "1586407eabf86295d674b3ef61b8767652c7b7a2e06e7f8f7b1e91c61537639d",
+    "upstream:intern/ghost/intern/GHOST_Event.hh": "f0b80ef56dc9c7d359276526fef4e0167c759bf85f8b76b889569b7e60642403",
+    "intern/ghost/intern/GHOST_Event.hh": "f0b80ef56dc9c7d359276526fef4e0167c759bf85f8b76b889569b7e60642403",
+    "upstream:intern/ghost/intern/GHOST_SystemCocoa.mm": "442c8f00b6c402ce1cc129557bfac83f898fb686922885b412d27c21389317e0",
+    "upstream:intern/ghost/intern/GHOST_SystemWayland.cc": "0ccfa09a5fc9dde91ed85b0e951ee7ebc2e2e6eb87ddcdf6cc7873ed670885fc",
+    "upstream:intern/ghost/intern/GHOST_SystemWin32.cc": "51ad48881481154774b7d21fad565717ff71b3135a24c18079beea87227c7f46"
+  },
+  "fixture_sha256": {
+    "build\\tests\\node_precision_transport\\baseline.json": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd",
+    "build\\tests\\node_precision_transport\\queue_models.inc.cc": "82bbbab927d69e4d294d74ec65f02efbd794108d5b55815dbc157acc30b873b2",
+    "build\\tests\\node_precision_transport\\scenarios.inc.cc": "c69fce3c7217aa4a0e155b20e25e8449b0edbf8e928e33fc10ec520674b45f6e",
+    "build\\tests\\node_precision_transport\\host_models.inc.cc": "17cd1327982de82007dd2770d496b00f3fb6f51a1035fa1198ce74077d34d28d",
+    "build\\test_pencil_pan_paint_producer.py": "36bf95efb244b7555e51282e42c1fbc020ea6d77e6765a91c2176906ff635e2d"
+  },
+  "generated_source_sha256": "66386eff5aada3bf80c60ecf9e54f777d579bbcbdae2f0af1c60feaeb445149b",
+  "runs": [
+    {
+      "optimization": "-O0",
+      "case": "producer",
+      "returncode": 0,
+      "stdout": "PASS producer\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O0",
+      "case": "constructor",
+      "returncode": 0,
+      "stdout": "PASS constructor\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O0",
+      "case": "queue",
+      "returncode": 0,
+      "stdout": "PASS queue\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O0",
+      "case": "replay",
+      "returncode": 0,
+      "stdout": "PASS replay\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-producer",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: positive == 1, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1648\n",
+      "expected_failure": "positive == 1"
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-ingestion",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: positive == 1, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1686\n",
+      "expected_failure": "positive == 1"
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-merge",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: !tagged, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1694\n",
+      "expected_failure": "!tagged"
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-replay",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: !tagged, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1703\n",
+      "expected_failure": "!tagged"
+    },
+    {
+      "optimization": "-O2",
+      "case": "producer",
+      "returncode": 0,
+      "stdout": "PASS producer\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O2",
+      "case": "constructor",
+      "returncode": 0,
+      "stdout": "PASS constructor\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O2",
+      "case": "queue",
+      "returncode": 0,
+      "stdout": "PASS queue\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O2",
+      "case": "replay",
+      "returncode": 0,
+      "stdout": "PASS replay\n",
+      "stderr": "",
+      "expected_failure": null
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-producer",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: positive == 1, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1648\n",
+      "expected_failure": "positive == 1"
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-ingestion",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: positive == 1, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1686\n",
+      "expected_failure": "positive == 1"
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-merge",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: !tagged, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1694\n",
+      "expected_failure": "!tagged"
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-replay",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: !tagged, file D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\transport-tests-03\\actual-node-precision-transport.cc, line 1703\n",
+      "expected_failure": "!tagged"
+    }
+  ],
+  "header_runs": [
+    {
+      "optimization": "-O0",
+      "returncode": 0
+    },
+    {
+      "optimization": "-O2",
+      "returncode": 0
+    }
+  ],
+  "actual_default_backend_calls": 11,
+  "old_header_controls": [
+    {
+      "optimization": "-O0",
+      "old_callers_valid": true,
+      "missing_source_field_returncode": 1,
+      "expected_failure": "is_physical_pencil_precision_pan"
+    },
+    {
+      "optimization": "-O2",
+      "old_callers_valid": true,
+      "missing_source_field_returncode": 1,
+      "expected_failure": "is_physical_pencil_precision_pan"
+    }
+  ],
+  "boundaries": [
+    "Actual source method bodies and constructor execute with named C++ UIKit/message adapters; no UIKit scheduler or target SDK execution.",
+    "Actual GHOST payload and event headers compile intact with an allocator macro stub; host size/offset proof only, target ABI remains untested.",
+    "WM Trackpad branch, transient flag reset, internal/public enqueue, simulation and coalescer execute; list allocation/scheduling/context/window coordinate transforms use explicit bounded adapters.",
+    "Denial-only physical source class; no accepted DOWN, identity continuity, lease, current owner or complete mixed-stream protection.",
+    "No native build, simulator, target binary, device, graph edit/history/Undo or geometry acceptance from this component test."
+  ]
+}

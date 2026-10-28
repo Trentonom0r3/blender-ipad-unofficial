@@ -1,3 +1,30 @@
+## Pencil Node navigation source validated; native build next — 2026-10-28 UTC
+
+Coherent candidate patch5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32
+passes full835/835 in669.772s with235 frozen inputs unchanged,138-file pinned
+preflight/diff and independent bounded source/native/test/literal UI review.
+Raw Git reconstruction proves all138 materialized targets;131 prior targets/all7
+interaction Python remain exact. Final cold9/default discovery and standalone
+prerequisite repair are recorded honestly, with2 LF-only inputs reconciled and
+final full run covering canonical bytes. See pencil-node-input-audit/
+node-source-verification.json and node-frozen-validation.json.
+
+Only actual ordinary physical Pencil PAN in the selected canonical stock-value
+Node WINDOW route is refused after native poll and before operator allocation.
+Packets/order/coordinates/native advanced controls are retained. Mixed/custom/
+ambiguous routes fall back; no delivered press, owner, lease or general callback
+lifetime proof is claimed. Connected actual source families include14 producer
+through native dispatch scenarios/O0/O2,492 composite scenarios and precise old
+failures. Models/selection snapshots/private handler-slice limits are explicit.
+
+Commit/push this exact coherent source/tests/CI and build ONCE. Prepared watcher
+.cache/watch-pencil-node-navigation-build.py RUN FULLSHA checks whole IPA and
+collects new plus preserved actual compiled obligations; independent semantic
+review remains necessary. No new native/device success or ready claim yet.
+Earlier3438226/run40459756217 remains the fully verified package. Preserve every
+accepted ring/UI/input/history contract, all evidence and selection-collapsed.png.
+The full personal goal remains unfinished; continue without device waits.
+
 ## Node navigation correction: connected plan, no implementation yet — 2026-10-27 UTC
 
 The exact corrected Knife build 40459756217 at 3438226 is fully verified for an

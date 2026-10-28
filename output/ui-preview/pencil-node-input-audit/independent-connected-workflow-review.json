@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-28T16:32:47.117574+00:00",
+  "status": "PASS_BOUNDED_INDEPENDENT_NEW_WORKFLOW_COMPOSITION_WITH_CANONICAL_INPUT_ADDENDUM",
+  "source_patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "reviewed_files_sha256": {
+    "build/test_pencil_node_connected_workflow.py": "47717716034249b5462bffde90534e5ec6e80393bf4386667a3d39884c9bff75",
+    "build/tests/node_connected_workflow/connected.py": "bec41824731c23df94a6aadf9a7f1de30a4d712afc974c77dda79532a97226c8",
+    "build/tests/node_connected_workflow/cases.inc.cc": "d79ffee301597290d27b0a15cee482d329fddd649721c754ecfc251acc9aa9d0",
+    "build/tests/node_precision_transport/run_connected.py": "e8cf26003d29762cce563fd6413c78e82c1aac6572dac7f263161c7d6427d2f8",
+    "build/tests/node_precision_transport/scenarios.inc.cc": "c69fce3c7217aa4a0e155b20e25e8449b0edbf8e928e33fc10ec520674b45f6e",
+    "build/tests/node_precision_transport/queue_models.inc.cc": "82bbbab927d69e4d294d74ec65f02efbd794108d5b55815dbc157acc30b873b2",
+    "build/tests/node_keymap_dispatch/connected.py": "b5f322e7e7f9bc15c97fdca7b59c35524226ab1aeba954c64bbd40b061491769",
+    "build/tests/node_keymap_dispatch/cases.inc.cc": "ec8fa1886ca5b261a440acf208d1b2a91ffc67bc981195d3ef77d098417bed2e",
+    "build/tests/node_keymap_dispatch/handler_boundaries.inc.cc": "5d04910db919e007cfdeabee15c4a1ce67f80177c510e972e2363f47d1cb1464",
+    "build/tests/node_keymap_dispatch/dependencies.inc.cc": "e890e7fe6ef6bb459bec997b4f783d67176dc091f14ff7bd8ccee2c46301c2e5"
+  },
+  "independence": "Reviewer authored neither the new workflow wrapper, driver nor scenarios. Composition review is independent. Reviewer authored the earlier native-invoke fixture; this report does not independently re-certify that underlying helper and instead references peer reviews/current unchanged source identity.",
+  "observed_execution_report": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\connected-workflow-default\\workflow-report.json",
+    "sha256": "dac0fadd7c01dd3aabb928a09ad6489fb83c13d657bd275df95acb7c2d327fd8",
+    "driver_current": true,
+    "generated_CPP_matches": true,
+    "generated_cpp_sha256": "cf0a2365b02f985fcfebd31eadad0d6b63356778c7190d72aad6de00c68a21da",
+    "current_direct_source_hashes_match": {
+      "intern/ghost/intern/GHOST_WindowIOS.mm": true,
+      "intern/ghost/GHOST_NavigationIOS.hh": true,
+      "intern/ghost/GHOST_Types.h": true,
+      "intern/ghost/intern/GHOST_EventTrackpad.hh": true,
+      "source/blender/windowmanager/WM_types.hh": true,
+      "source/blender/windowmanager/intern/wm_event_system.cc": true,
+      "source/blender/windowmanager/wm_event_system.hh": true,
+      "source/blender/editors/interface/view2d/view2d_ops.cc": true,
+      "source/blender/editors/include/UI_view2d.hh": true
+    },
+    "raw_fixture_drift": [
+      {
+        "path": "build\\tests\\node_keymap_dispatch\\handler_boundaries.inc.cc",
+        "recorded_raw_hash": "0fa2e02bae5cf0638357c5f548f7ef4e330db53159a068f4bd39a51c694d877b",
+        "current_raw_hash": "5d04910db919e007cfdeabee15c4a1ce67f80177c510e972e2363f47d1cb1464",
+        "resolved_by": "Independent single-CRLF reconstruction and exact generated-code text equality."
+      }
+    ],
+    "other_recorded_fixture_hashes_current": true,
+    "executions": [
+      {
+        "optimization": "-O0",
+        "case": "current",
+        "returncode": 0,
+        "stdout": "14 actual producer-to-native workflow scenarios passed\n",
+        "stderr": ""
+      },
+      {
+        "optimization": "-O0",
+        "case": "old-producer",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+      },
+      {
+        "optimization": "-O0",
+        "case": "old-invoke",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+      },
+      {
+        "optimization": "-O2",
+        "case": "current",
+        "returncode": 0,
+        "stdout": "14 actual producer-to-native workflow scenarios passed\n",
+        "stderr": ""
+      },
+      {
+        "optimization": "-O2",
+        "case": "old-producer",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-producer action=1 creates=1 shifted=1\n"
+      },
+      {
+        "optimization": "-O2",
+        "case": "old-invoke",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "WORKFLOW_REQUIRED_DENIAL_FAILED original-native-invoke action=1 creates=1 shifted=1\n"
+      }
+    ],
+    "tests_executed_by_this_review": false
+  },
+  "canonical_input_addendum": {
+    "artifact": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\test-input-canonicalization.json",
+    "artifact_sha256": "983a4554a57b2ee7c4cc2b190620745de58e5ea273bd7450c4f344d2876b8a7c",
+    "independent_proof": {
+      "build/test_pencil_node_keymap_baseline.py": {
+        "recorded_before_sha256": "6f97c4fe103cf78946dca87eae50ba06804b1e719da1543df6849acf31358e0b",
+        "current_sha256": "5063c3bbd1e80d5c728b83176055086cbc52c65892b9dd1e2cd26aac5a5a13cd",
+        "independently_reconstructed_single_CRLF_at_line": 42,
+        "canonical_LF_text_identical": true,
+        "Python_AST_identical": true
+      },
+      "build/tests/node_keymap_dispatch/handler_boundaries.inc.cc": {
+        "recorded_before_sha256": "0fa2e02bae5cf0638357c5f548f7ef4e330db53159a068f4bd39a51c694d877b",
+        "current_sha256": "5d04910db919e007cfdeabee15c4a1ce67f80177c510e972e2363f47d1cb1464",
+        "independently_reconstructed_single_CRLF_at_line": 11,
+        "canonical_LF_text_identical": true,
+        "entire_current_body_verbatim_in_generated_namespaces": 2
+      }
+    },
+    "limitation": "Old default workflow/cold9 report raw input hashes must not all be called current. Both changes are independently proven one-CRLF normalization; LF C++ text/Python AST unchanged. Post-canonicalization frozen full suite is a separate pending result."
+  },
+  "findings": [],
+  "checked_obligations": [
+    {
+      "subject": "Actual positive provenance",
+      "result": "PASS bounded inspection",
+      "evidence": "Happy trace creates physical contact through actual GestureContact.begin/ios_touch_device at the disclosed setup boundary, then actual current producer/generator/constructor. It sets neither payload nor WM positive flag directly; actual Changed+pencilContactDown and Trackpad ingestion compute it. No workflow positive classifier or View2D outcome stub is present."
+    },
+    {
+      "subject": "One-program queued-value chain",
+      "result": "PASS bounded inspection",
+      "evidence": "Transport/current-native/old-invoke code is namespaced into one program with component mains removed. Only adapter event constants are synchronized. Queued type/value/flags/modifier/keymodifier/xy/prev_xy are copied exactly and asserted. Workflow happy trace does not use Native Connected::event positive convenience method. Actual import/copy -> classifier/full regular dispatch -> documented nonmodal private slice -> full invoke/poll/View2D execute."
+    },
+    {
+      "subject": "Physical refusal and fallback controls",
+      "result": "PASS bounded inspection",
+      "evidence": "Pure Pan/CtrlZoom assert native poll1, zero allocation/lifecycle and unchanged actual modeled View2D cur. Current14 scenarios cover Pencil/finger1-or3 motions, default hardware, actual hardware-before-physical AND merge with deltas8/6, reverse paired-cursor barrier/twoPAN order, and native navigation fallback for finger/hardware/mixed sources."
+    },
+    {
+      "subject": "Historical controls",
+      "result": "PASS source/report consistency",
+      "evidence": "Frozen original producer is not repaired. Complete immutable pinned invoke is renamed with a disclosed signature-only adapter discarding new scalar. O0/O2 current traces pass; old producer and old invoke each exit17 with actual creates1 and shifted1. Wrapper checks all6 exact outcome categories and driver identity."
+    },
+    {
+      "subject": "Honest bridge boundaries",
+      "result": "PASS with precision note",
+      "evidence": "Non-Trackpad pointer ingestion is a host queue-barrier adapter. Listed scalar copy is not native wmEvent ABI/layout or real pointer ingestion proof. Native node hit/accepted DOWN/modal ownership/history/UIKit timing/device behavior remain excluded."
+    }
+  ],
+  "evidence_precision_notes": [
+    {
+      "severity": "nonblocking_limit",
+      "subject": "Pointer packet snapshot wording",
+      "detail": "packets() serializes order and selected legacy cursor/button fields, not every struct member. Interpret exact actual GHOST pointer payload/order parity as those selected snapshots plus the exact producer/generator source-delta oracle. Complete dynamic payload/ABI claims would exceed this family; native pointer ingestion is expressly excluded."
+    }
+  ],
+  "literal_UI_and_native_source_identity": {
+    "verified_baseline": "3438226bb2dbb90adf22917d12860cb5471719f0",
+    "overlay_targets": 138,
+    "byte_exact_prior_sections": 131,
+    "seven_Python_sections": {
+      "scripts/presets/keyconfig/keymap_data/blender_default.py": {
+        "sha256_utf8_LF": "c6d1f37ca252cef50157411da77c45bf6dddbfd3eee73b7d03e85042b83d8e06",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/__init__.py": {
+        "sha256_utf8_LF": "03367c62d072f1c3ac7b83afd7a1a6b0de390853d82a5b0fc453da0b23b37275",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/space_filebrowser.py": {
+        "sha256_utf8_LF": "7709f10e68dc9b20d00091086c943ae8344b8399f7fe8c71c0e8216c8ad51662",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/space_properties.py": {
+        "sha256_utf8_LF": "07c1ceda1fe5a07d36f45cfcbb611c0abc4230462471e2bd0bd78731deebb8c5",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/space_topbar.py": {
+        "sha256_utf8_LF": "78468327b93cf33989d2ccd8177085bdfaf8b10f6386a1da6721d73831da7f48",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/space_view3d_toolbar.py": {
+        "sha256_utf8_LF": "9aa6d0671a924dbe93ce8af3492c86855a8ac523cf570fe642149779c999a7b8",
+        "byte_exact_baseline": true
+      },
+      "scripts/startup/bl_ui/space_view3d_ipad.py": {
+        "sha256_utf8_LF": "0efcd48c8acb40af5f7241185f53ebc2eae0952d159698e92fe5dedf84fd292c",
+        "byte_exact_baseline": true
+      }
+    },
+    "native_hashes_current_against_prior_peer_review": {
+      "intern/ghost/GHOST_Types.h": true,
+      "intern/ghost/intern/GHOST_WindowIOS.mm": true,
+      "source/blender/editors/interface/view2d/view2d_ops.cc": true,
+      "source/blender/windowmanager/WM_types.hh": true,
+      "source/blender/windowmanager/intern/wm_event_system.cc": true,
+      "intern/ghost/intern/GHOST_EventTrackpad.hh": true,
+      "source/blender/editors/include/UI_view2d.hh": true
+    },
+    "prior_review": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-input-audit\\independent-source-review.json",
+      "sha256": "b83ba66826f2ba8963cda8e22aed797998064575d77411617a1b4c7c9c0173ef",
+      "status": "PASS_BOUNDED_INDEPENDENT_SOURCE_REVIEW_WITH_PENDING_GATES"
+    },
+    "scope": "Independent literal UI preservation/current native identity check. Prior peer review supplies native semantic inspection; self-authored pure profile helper is not independently re-reviewed here."
+  },
+  "pending": [
+    "Final current235-input frozen full suite and remaining CI/final review gates remain separately pending.",
+    "Exact native iOS build/full IPA/fresh independent changed and preserved actual compiled reviews are required.",
+    "No device acceptance or full-goal completion."
+  ],
+  "source_or_test_edits": false,
+  "native_build_started_by_review": false,
+  "ready_for_native_build": false,
+  "device_acceptance": false,
+  "whole_goal_complete": false
+}

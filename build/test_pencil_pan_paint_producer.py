@@ -103,6 +103,15 @@ SUFFIX = SUFFIX_MARKER + SUFFIX
 OLD_MOVEMENT = 'if (!CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {'
 NEW_MOVEMENT = ('if (!event_info.pencil_paint.valid() && !omit_knife_paired_pan &&\n'
                 '        !CGPointEqualToPoint(relative_translation, CGPointMake(0.0f, 0.0f))) {')
+# The Node increment appends one denial-only source classification inside this
+# unchanged PAN packet branch. It is part of the exact source oracle, while the
+# historical producer and every executed scenario remain unchanged.
+PENCIL_PAN_METADATA = ('      event_info.physical_pencil_precision_pan =\n'
+                       '          sender.state == UIGestureRecognizerStateChanged && [sender pencilContactDown];\n')
+PAN_TRANSLATION = '\n      event_info.translation = relative_translation;\n'
+OLD_MOVEMENT += PAN_TRANSLATION
+NEW_MOVEMENT += PAN_TRANSLATION + PENCIL_PAN_METADATA
+assert PAN.count(PENCIL_PAN_METADATA) == 1
 OLD_TERMINAL = '    event_info.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);'
 NEW_TERMINAL = ('    event_info.cancelled = event_info.pencil_paint.valid() &&\n'
                 '                           sender.state != UIGestureRecognizerStateEnded;\n' + OLD_TERMINAL)
@@ -132,6 +141,7 @@ TRANSLATIONS = {
     '[sender getScaledTouchPoint:window]': 'sender.touch_point',
     '[sender getScaledTranslation:window]': 'sender.translation',
     '[sender gestureUsesPencil]': 'sender.pencil',
+    '[sender pencilContactDown]': 'sender.pencilContactDown()',
     '[sender gestureUsesFinger]': '!sender.pencil',
     '[sender pencilSample]': 'sender.sample',
     '[sender pencilPaintContact]': 'sender.contact',
@@ -194,14 +204,14 @@ struct GHOST_TEventButtonData { GHOST_TButton button;GHOST_TabletData tablet;boo
  uint64_t ipad_hud_generation,ipad_hud_serial;bool is_direct_finger;uint64_t ipad_finger_paint_generation;
  uint64_t ipad_pencil_paint_serial,ipad_pencil_paint_generation;uintptr_t ipad_pencil_paint_region;
  int32_t ipad_pencil_paint_origin_x,ipad_pencil_paint_origin_y; };
-struct GHOST_TEventTrackpadData { int subtype,x,y,deltaX,deltaY;bool isDirectionInverted;int numFingers; };
+struct GHOST_TEventTrackpadData { int subtype,x,y,deltaX,deltaY;bool isDirectionInverted;int numFingers;char is_physical_pencil_precision_pan; };
 struct GHOST_Event { void *data_=nullptr;int type;GHOST_Event(uint64_t,int t,GHOST_IWindow*):type(t){}
  virtual ~GHOST_Event()=default; };
 CONSTRUCTORS
 // Trackpad/key storage models the ABI; actual generator arguments execute.
 struct GHOST_EventTrackpad:GHOST_Event { GHOST_TEventTrackpadData d;
- GHOST_EventTrackpad(uint64_t t,GHOST_IWindow*w,int s,int x,int y,int dx,int dy,bool inv,int n):
- GHOST_Event(t,GHOST_kEventTrackpad,w),d{s,x,y,dx,dy,inv,n}{data_=&d;} };
+ GHOST_EventTrackpad(uint64_t t,GHOST_IWindow*w,int s,int x,int y,int dx,int dy,bool inv,int n,bool physical=false):
+ GHOST_Event(t,GHOST_kEventTrackpad,w),d{s,x,y,dx,dy,inv,n,char(physical)}{data_=&d;} };
 struct GHOST_EventKey:GHOST_Event { int key;GHOST_EventKey(uint64_t t,int type,GHOST_IWindow*w,int k,bool,void*):
  GHOST_Event(t,type,w),key(k){} };
 struct System { std::vector<GHOST_Event*> queue; uint64_t getMilliSeconds(){return 19;}
@@ -234,6 +244,7 @@ struct Sender {int state=UIGestureRecognizerStateBegan;bool pencil=true;
  TOUCH_FORGET_KNIFE
  TOUCH_RECOGNIZE_KNIFE
  TOUCH_OMIT_KNIFE
+ TOUCH_PENCIL_DOWN
  CGPoint touch_point{110,100},translation{10,0},cached;
  ghost::ios::PencilSample sample{true,.4f,.2f,-.1f};ghost::ios::PencilPaintContact contact;
  ghost::ios::HUDContact hud;ghost::ios::PencilRingContact ring;
@@ -261,7 +272,7 @@ enum { LEFTMOUSE=100,MIDDLEMOUSE,KM_PRESS,KM_RELEASE,KM_NOTHING,MOUSEMOVE,MOUSEP
  OPERATOR_CANCELLED=4,OPERATOR_PASS_THROUGH=8,WM_HANDLER_HANDLED=16,
  WM_EVENT_IS_TOUCH_PINCH=1,WM_EVENT_IS_POINTER_CANCEL=2,WM_EVENT_IS_DIRECT_TOOL=4,
  WM_EVENT_IS_DIRECT_FINGER=8,WM_EVENT_SCROLL_INVERT=16,WM_EVENT_MULTITOUCH_TWO_FINGERS=32,
- WM_EVENT_MULTITOUCH_THREE_FINGERS=64,WM_PENCIL_PAINT_PHASE_NONE=0,
+ WM_EVENT_MULTITOUCH_THREE_FINGERS=64,WM_EVENT_IS_PENCIL_PRECISION_PAN=(1<<9),WM_PENCIL_PAINT_PHASE_NONE=0,
  WM_PENCIL_PAINT_PHASE_PREPRESS=1,WM_PENCIL_PAINT_PHASE_BEGIN=2,
  WM_PENCIL_PAINT_PHASE_MOTION=3,WM_PENCIL_PAINT_PHASE_END=4,WM_HANDLER_TYPE_OP=1,
  WM_HANDLER_DO_FREE=2,RGN_TYPE_WINDOW=1,SPACE_VIEW3D=1,RGN_FLAG_HIDDEN=1,
@@ -711,6 +722,7 @@ def build_source(pan):
         'TOUCH_FORGET_KNIFE': function(recognizer, '- (void)forgetKnifePanContact').replace('- (void)forgetKnifePanContact', 'void forgetKnifePanContact()'),
         'TOUCH_RECOGNIZE_KNIFE': function(recognizer, '- (void)recognizeKnifePan').replace('- (void)recognizeKnifePan', 'void recognizeKnifePan()'),
         'TOUCH_OMIT_KNIFE': block(recognizer, '- (BOOL)omitKnifePairedPan').replace('- (BOOL)omitKnifePairedPan', 'bool omitKnifePairedPan()'),
+        'TOUCH_PENCIL_DOWN': block(recognizer, '- (BOOL)pencilContactDown').replace('- (BOOL)pencilContactDown', 'bool pencilContactDown()'),
         'QUEUE_ADMISSION': queue,
         'CURSOR_CONVERT': cursor,
         'BUTTON_CONVERT': button,
@@ -813,7 +825,8 @@ class PencilPanPaintProducerTests(unittest.TestCase):
             'source_inputs': {path: hashlib.sha256(text.encode()).hexdigest() for path, text in INPUTS.items()},
             'cache_directory': str(CACHE),
             'source_runtime': 'Every pinned input above explicitly acquired with preflight.get_source(pin,path,cache,False); patched files reconstructed by test_touch_extrude.changed_source against that cache.',
-            'correction': 'Actual current producer compiled unchanged; two predicates plus comments are the scope oracle. Repository untouched by this suite.',
+            'correction': 'Actual current producer compiled unchanged; existing precision predicates and the exact single Node source-classification assignment are the scope oracle. Repository untouched by this suite.',
+            'node_metadata_extension': {'assignment': PENCIL_PAN_METADATA, 'actual_assignment_count': PAN.count(PENCIL_PAN_METADATA), 'execution': 'Actual PAN body and actual generator execute; no source repair or simulated correction.'},
             'producer_variant': 'actual corrected current overlay; no simulated-correction fallback',
             'historical_producer_sha256': hashlib.sha256(HISTORICAL_PAN.encode()).hexdigest(),
             'historical_source_commit': 'c88c85de0f7c31081441157ac6b85a90b3963704',
