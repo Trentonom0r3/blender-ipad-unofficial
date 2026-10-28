@@ -1,6 +1,6 @@
 {
   "utc": "2026-10-27T16:22:25.818323+00:00",
-  "status": "PASS_COHERENT_SOURCE_HOST_AND_FINAL_REVIEW_NATIVE_BUILD_PENDING",
+  "status": "VALIDATED_EXACT_SOURCE_COMMITTED_NATIVE_BUILD_IN_PROGRESS",
   "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
   "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
   "previous_patch_sha256": "a9999f403440672182333be331cdcbc48123e1d76bc299ab2a422a6e9b4d61f1",
@@ -77,8 +77,8 @@
     "CI": "Exact Node discovery wired in preflight workflow.",
     "independent_reviews": "Source and bounded test/composition/literal UI reviews pass; pointer snapshot is selected fields plus source parity, not whole native ABI."
   },
-  "production_committed": false,
-  "native_build_started": false,
+  "production_committed": true,
+  "native_build_started": true,
   "device_acceptance": false,
   "whole_goal_complete": false,
   "checkpoint_utc": "2026-10-28T16:34:18.321704+00:00",
@@ -88,5 +88,7 @@
     "Resolve actual full-suite failures or changed inputs before any build. Do not claim pending passed.",
     "After full frozen/preflight/diff pass aggregate exact source/host evidence, explicitly stage coherent source/tests/CI/docs/bounded evidence only; commit/push and build exact revision once.",
     "Prepared .cache/watch-pencil-node-navigation-build.py RUN FULLSHA owns package and scopes; new compiled obligations plus fresh preserved HUD/Weight review remain required. Device acceptance stays separate."
-  ]
+  ],
+  "source_commit": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "native_build_run": 40728695044
 }

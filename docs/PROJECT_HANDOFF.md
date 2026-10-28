@@ -1,29 +1,24 @@
-## Pencil Node navigation source validated; native build next — 2026-10-28 UTC
+## Exact Pencil Node correction native build dispatched — 2026-10-28 UTC
 
-Coherent candidate patch5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32
-passes full835/835 in669.772s with235 frozen inputs unchanged,138-file pinned
-preflight/diff and independent bounded source/native/test/literal UI review.
-Raw Git reconstruction proves all138 materialized targets;131 prior targets/all7
-interaction Python remain exact. Final cold9/default discovery and standalone
-prerequisite repair are recorded honestly, with2 LF-only inputs reconciled and
-final full run covering canonical bytes. See pencil-node-input-audit/
-node-source-verification.json and node-frozen-validation.json.
+Validated source3d7b248aa298c3dcb7cf1c188d279702405e81a3 builds ONCE in
+run40728695044; exact head confirmed. Watcher unified28198, script
+.cache/watch-pencil-node-navigation-build.py and log
+.cache/node-navigation-build-watch-40728695044.log own SAME run, full downloaded
+IPA/package and actual new/preserved scope collection. Inspect actual process and
+node-build-checkpoint.json before replacement. No native/package/compiled/device
+success yet; never dispatch unchanged source or call pending checks passed.
 
-Only actual ordinary physical Pencil PAN in the selected canonical stock-value
-Node WINDOW route is refused after native poll and before operator allocation.
-Packets/order/coordinates/native advanced controls are retained. Mixed/custom/
-ambiguous routes fall back; no delivered press, owner, lease or general callback
-lifetime proof is claimed. Connected actual source families include14 producer
-through native dispatch scenarios/O0/O2,492 composite scenarios and precise old
-failures. Models/selection snapshots/private handler-slice limits are explicit.
-
-Commit/push this exact coherent source/tests/CI and build ONCE. Prepared watcher
-.cache/watch-pencil-node-navigation-build.py RUN FULLSHA checks whole IPA and
-collects new plus preserved actual compiled obligations; independent semantic
-review remains necessary. No new native/device success or ready claim yet.
-Earlier3438226/run40459756217 remains the fully verified package. Preserve every
-accepted ring/UI/input/history contract, all evidence and selection-collapsed.png.
-The full personal goal remains unfinished; continue without device waits.
+Source full835/835669.772s/235unchanged inputs,138-file preflight/diff and
+independent bounded source/native/test/literal reviews pass. Exact7 changes,
+131 prior runtime targets/all7 interaction Python are preserved. Ready source is
+committed/pushed; later checkpoint changes are evidence/docs only. On native
+success finish whole exact IPA and actual branch/argument/alias proof of physical
+classification, conservative queue, chosen stock dispatch and preallocation
+refusal, plus fresh preserved HUD/Weight obligations. Names/models alone are not
+compiled/device proof. Source profile/mixed/custom/native-context boundaries stay
+explicit. Earlier3438226/run40459756217 remains fully verified, device unconfirmed.
+Keep all accepted UI/input/history, all evidence and selection-collapsed.png.
+Full personal goal remains unfinished; continue independently without devicewait.
 
 ## Node navigation correction: connected plan, no implementation yet — 2026-10-27 UTC
 
