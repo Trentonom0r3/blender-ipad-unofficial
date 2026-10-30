@@ -1,3 +1,28 @@
+## Initial Knife native/package pass; actual reviews pending — 2026-10-30 UTC
+
+Exact sourcea2b7a81/run41034735566 PASSED hosted preflight/native iOS Release/full
+3368CRC/arm64/iPhoneOS5.0.0/whole exact UI/defaultbars/tools129/nineBase/MoreTools
+and whole7Python+3defaultbar/tool files. Artifact12970123663; IPA248691468bytes,
+SHA25634b92b357c745494796b993dbdc84ade72b2e2efbb9028bf8ee4d7640a0b9c57.
+UUID39FC56CA-D84B-3001-A8B8-6DE301E6B83F; binarySHA256
+82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23.
+
+Watcher17455 finished1 solely rawpreservedHUDgate; fullpackage and allscopes
+collected. Rawnegative unchanged; current savedarea restore0x10163dd44 precedes
+region0x10163dd50 but requires fresh actual stack/normalCFG certificate. Current
+327instruction owner/firstsize/factory/Weight review and selectedpolicy/newgrant/
+originalowner/nativeprofile/emulation review are being finalized. Preserved
+input/render234range reconciliation checkpoint has228 equivalents and6 bounded
+rawdifferences needing data/diagnostic/renamed-call resolution. Inspect actual
+reports under initial-pan-candidate/binary-41034735566 before repeating work.
+No ready/device claim until all new+preserved actual obligations close. No live
+verifier/unchanged rebuild/source expansion. Source/host/package/compiled/device
+proof stays separate. Read native-package-checkpoint.json. Fullgoal unfinished.
+
+Ordinary86percent fivehour/70weekly; reset1793369430=Oct30 14:10:30UTC/09:10:30
+Chicago, resume09:18.0credits; neverredeem. Preserve all source/evidence and
+selection-collapsed.png. New actual reviewers were asked to checkpoint before95.
+
 ## Exact initial Knife Ctrl-PAN build dispatched — 2026-10-30 UTC
 
 Validated sourcea2b7a81c9d40c1273ad2dc13a600810940b1e30d builds ONCE in
