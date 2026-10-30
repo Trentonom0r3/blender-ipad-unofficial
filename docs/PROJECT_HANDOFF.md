@@ -1,3 +1,61 @@
+## Initial Knife Ctrl-PAN source validated; exact native build next — 2026-10-30 UTC
+
+Patch ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a passes
+FINAL837/837812.516s with245 frozen inputs unchanged,140-file pinned preflight,
+diff and independent bounded source/native/literal/test review. Cold empty cache
+actual preflight plus both new families passes2/2 in26.338s. Connected67 scenarios
+at O0/O2 plus exact old expected17 allocation/zoom failures; native8 configurations
+x81 defined checks pass. Test-only undefined enum probes were corrected and old
+reports preserved; native poll-message cleanup callback scope remains explicit.
+
+The full frozen run precedes one13-line historical provenance JSON CRLF-to-LF
+canonicalization. Decoded JSON and the entire generated C++ are identical; final
+canonical focused1/1 6.450s passes all67/O0/O2 and exact-old failures. The other244
+frozen inputs are unchanged. Independent serialization addendum records this
+combined proof; no final-LF837 rerun is claimed. No algorithm/assertion changed.
+
+Five native targets only;135 prior/all7Python/all14GHOST remain exact previous
+production3d7b248. Raw Git reconstruction proves all140 current materialized files.
+Actual chosen stock Ctrl-PAN Zoom may be denied after genuine native poll before
+allocation only with fresh strict same-region Knife/current maps/native profiles/
+mode/emulation exclusions. No accepted press/contact lease is inferred; packets,
+UI geometry, advanced modal controls and native fallback stay. Read
+pencil-knife/initial-pan-candidate/source-verification.json and final review.
+
+Commit/push coherent source/tests/CI/bounded evidence, then build exactrevision
+ONCE. Prepared .cache/watch-pencil-initial-knife-pan-build.py RUN FULLSHA collects
+full IPA/default UI/bars/tools129/whole7Python and new/preserved actual scopes;
+NOT started. New/preserved actual compiled proof incl fresh HUD stack/CFG and
+Weight cleanup remains mandatory. No native/package/device success yet; no ready
+claim until those gates pass. Latest ready package remains3d7b248/run40728695044,
+no exact iPad acceptance; no unchanged rebuild. Full personal goal unfinished.
+
+## Initial Knife Ctrl-PAN candidate incomplete — 2026-10-30 UTC
+
+Uncommitted patch ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a
+connects actual selected stock Ctrl-PAN Zoom denial with fresh same-region native
+Knife, current default/effective modal compatibility, no-Python/native profile and
+real poll before allocation. Five targets change,140 total;135 prior sections/
+all7Python/all13GHOST unchanged. Existing emulation latch is relocated without
+changing original reads/stores and vetoes denial even after preference switches.
+Current-value map/history limits remain explicit. No accepted press/contact lease
+is inferred. Independent source review finds no blocker, not final validation.
+
+Authoritative source remains Temp/pencil-canvas-pan-next-01o74gir. Read
+pencil-knife/initial-pan-candidate/source-checkpoint.json, actual baseline and
+native-pan-boundary-audit/independent-connected-source-review.json.140preflight/
+diff pass. Retained Node invoke5/7.359s,dispatch1/5.166s,workflow1/6.480s pass after
+explicit no-Knife fixture adapters/type alias; original assertions/scenarios exact.
+First type compiler failures preserved. New connected Knife family INCOMPLETE;
+no new test files survived prior quota-rejected call. Agents resumed fresh window.
+Full current suite NOT RUN; no commit/build/device proof. Never build candidate.
+Prior final checkpoint/scheduler write was REJECTED due usage-review service,
+not an unsafe determination or missing authorization; fresh ordinary window now.
+
+Latest ready package remains3d7b248/run40728695044, no exact iPad acceptance.
+No unchanged rebuild. Full goal unfinished. Preserve every source/evidence and
+selection-collapsed.png. Current usage0percent/46weekly; reset1793344893.
+
 ## Pencil Node package fully verified for exact device check — 2026-10-28 UTC
 
 Production3d7b248aa298c3dcb7cf1c188d279702405e81a3/run40728695044 PASSED hosted

@@ -144,7 +144,7 @@ old_invoke = old_invoke.replace('wm_operator_invoke(', 'wm_operator_invoke_histo
 signature_adapter = '''
 static wmOperatorStatus wm_operator_invoke(bContext*C,wmOperatorType*ot,const wmEvent*event,
  PointerRNA*properties,ReportList*reports,const bool poll_only,bool use_last_properties,
- [[maybe_unused]] eIPadNodeView2DDispatch profile=eIPadNodeView2DDispatch::None){
+ [[maybe_unused]] eIPadNativePanDispatch profile=eIPadNativePanDispatch::None){
  return wm_operator_invoke_historical(C,ot,event,properties,reports,poll_only,use_last_properties);
 }
 '''

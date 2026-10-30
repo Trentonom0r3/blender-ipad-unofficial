@@ -118,19 +118,26 @@ def build_native_prefix(historical=False):
     code += '\n' + poll.replace('bool WM_operator_poll(', 'bool WM_operator_poll_actual(', 1)
     code += '\nstatic bool WM_operator_poll(bContext*C,wmOperatorType*ot){++counts.poll;context_trace.push_back("poll");return WM_operator_poll_actual(C,ot);}\n'
     code += '\n' + (FIXTURE / 'wm_boundaries.inc.cc').read_text(encoding='utf-8')
-    enum = re.search(r'enum class eIPadNodeView2DDispatch\s*(?::[^\{]+)?\{[^}]+\};', WM)
+    enum = re.search(r'enum class eIPadNativePanDispatch\s*(?::[^\{]+)?\{[^}]+\};', WM)
     if enum is None:
         if not historical:
             raise ValueError('Actual production Node dispatch enum is missing')
-        enum_text = 'enum class eIPadNodeView2DDispatch { None, StockPan, StockCtrlZoom };'
+        enum_text = 'enum class eIPadNativePanDispatch { None, StockPan, StockCtrlZoom };'
     else:
         enum_text = enum.group()
     code += '\n' + enum_text
+    # Keep retained scenario bytes/assertions exact after the private type rename.
+    code += '\nusing eIPadNodeView2DDispatch = eIPadNativePanDispatch;\n'
     if not historical:
         code += '\n' + function(wm_text, 'static bool wm_ipad_node_view2d_event_context(')
+        # Retained Node-only fixture: no Knife operator is registered. The new
+        # connected Knife family executes the real original-owner query.
+        code += '\nstatic bool wm_ipad_knife_precision_pan_event_context(bContext*,const wmEvent*){return false;}\n'
+        code += '\nstatic bool ED_view3d_native_zoom_type_is(const wmOperatorType*){assert(false&&"Node-only fixture entered Knife profile");return false;}\n'
+        code += '\n' + function(wm_text, 'static bool wm_ipad_native_pan_denial_profile(')
     code += '\n' + invoke
     call = 'wm_operator_invoke(C,ot,event,properties,nullptr,poll_only,true'
-    call += ')' if historical else ',static_cast<eIPadNodeView2DDispatch>(profile))'
+    call += ')' if historical else ',static_cast<eIPadNativePanDispatch>(profile))'
     return code + '\nstatic wmOperatorStatus native_invoke(bContext*C,wmOperatorType*ot,const wmEvent*event,int profile=0,PointerRNA*properties=nullptr,bool poll_only=false){return ' + call + ';}\n'
 
 

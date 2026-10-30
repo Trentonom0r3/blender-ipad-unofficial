@@ -1,0 +1,3608 @@
+{
+  "knife": [
+    "Knife Tool Modal Map",
+    {
+      "space_type": "EMPTY",
+      "region_type": "WINDOW",
+      "modal": true
+    },
+    {
+      "items": [
+        [
+          "CANCEL",
+          {
+            "type": "ESC",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "PANNING",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "ANY",
+            "any": true
+          },
+          null
+        ],
+        [
+          "ADD_CUT_CLOSED",
+          {
+            "type": "LEFTMOUSE",
+            "value": "DOUBLE_CLICK",
+            "any": true
+          },
+          null
+        ],
+        [
+          "ADD_CUT",
+          {
+            "type": "LEFTMOUSE",
+            "value": "ANY",
+            "any": true
+          },
+          null
+        ],
+        [
+          "UNDO",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "CONFIRM",
+          {
+            "type": "RET",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "CONFIRM",
+          {
+            "type": "NUMPAD_ENTER",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "CONFIRM",
+          {
+            "type": "SPACE",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "NEW_CUT",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "SNAP_MIDPOINTS_ON",
+          {
+            "type": "LEFT_SHIFT",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "SNAP_MIDPOINTS_OFF",
+          {
+            "type": "LEFT_SHIFT",
+            "value": "RELEASE",
+            "any": true
+          },
+          null
+        ],
+        [
+          "SNAP_MIDPOINTS_ON",
+          {
+            "type": "RIGHT_SHIFT",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "SNAP_MIDPOINTS_OFF",
+          {
+            "type": "RIGHT_SHIFT",
+            "value": "RELEASE",
+            "any": true
+          },
+          null
+        ],
+        [
+          "IGNORE_SNAP_ON",
+          {
+            "type": "LEFT_CTRL",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "IGNORE_SNAP_OFF",
+          {
+            "type": "LEFT_CTRL",
+            "value": "RELEASE",
+            "any": true
+          },
+          null
+        ],
+        [
+          "IGNORE_SNAP_ON",
+          {
+            "type": "RIGHT_CTRL",
+            "value": "PRESS",
+            "any": true
+          },
+          null
+        ],
+        [
+          "IGNORE_SNAP_OFF",
+          {
+            "type": "RIGHT_CTRL",
+            "value": "RELEASE",
+            "any": true
+          },
+          null
+        ],
+        [
+          "X_AXIS",
+          {
+            "type": "X",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "Y_AXIS",
+          {
+            "type": "Y",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "Z_AXIS",
+          {
+            "type": "Z",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "ANGLE_SNAP_TOGGLE",
+          {
+            "type": "A",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "CYCLE_ANGLE_SNAP_EDGE",
+          {
+            "type": "R",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "CUT_THROUGH_TOGGLE",
+          {
+            "type": "C",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "SHOW_DISTANCE_ANGLE_TOGGLE",
+          {
+            "type": "S",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "DEPTH_TEST_TOGGLE",
+          {
+            "type": "V",
+            "value": "PRESS"
+          },
+          null
+        ]
+      ]
+    }
+  ],
+  "tool": [
+    "3D View Tool: Edit Mesh, Knife",
+    {
+      "space_type": "VIEW_3D",
+      "region_type": "WINDOW"
+    },
+    {
+      "items": [
+        [
+          "mesh.knife_tool",
+          {
+            "type": "LEFTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "wait_for_input",
+                false
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "view3d_swap_False": [
+    "3D View",
+    {
+      "space_type": "VIEW_3D",
+      "region_type": "WINDOW"
+    },
+    {
+      "items": [
+        [
+          "view3d.cursor3d",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "NUMPAD_SLASH",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "SLASH",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "MOUSESMARTZOOM",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.localview_remove_from",
+          {
+            "type": "NUMPAD_SLASH",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.localview_remove_from",
+          {
+            "type": "SLASH",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "MOUSEROTATE",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.move",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.move",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "WHEELLEFTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "WHEELRIGHTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NUMPAD_PERIOD",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "use_all_regions",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NUMPAD_PERIOD",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.smoothview",
+          {
+            "type": "TIMER1",
+            "value": "ANY",
+            "any": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "TRACKPADZOOM",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "NUMPAD_PLUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "NUMPAD_MINUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "EQUAL",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "MINUS",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "WHEELINMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "WHEELOUTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "NUMPAD_PLUS",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "NUMPAD_MINUS",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "EQUAL",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "MINUS",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_center_camera",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_center_lock",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "center",
+                false
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "HOME",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "use_all_regions",
+                true
+              ],
+              [
+                "center",
+                false
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "C",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_view_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.navigate",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.view_camera",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_2",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITDOWN"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_persportho",
+          {
+            "type": "NUMPAD_5",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_8",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITUP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_2",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANDOWN"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_8",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANUP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_9",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                3.141592653589793
+              ],
+              [
+                "type",
+                "ORBITRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "NORTH",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "SOUTH",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "EAST",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "WEST",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_center_pick",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_orbit_zoom",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.ndof_orbit",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_pan",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_all",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "shift": true,
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NDOF_BUTTON_FIT",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NDOF_BUTTON_ROLL_CW",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                1.5707963267948966
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NDOF_BUTTON_ROLL_CCW",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                -1.5707963267948966
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_FRONT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_BACK",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_LEFT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_RIGHT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_TOP",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_BOTTOM",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_FRONT",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_RIGHT",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_TOP",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "deselect_all",
+                true
+              ],
+              [
+                "select_passthrough",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ],
+              [
+                "object",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "center",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "center",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "CLICK"
+          },
+          {
+            "properties": [
+              [
+                "deselect_all",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_box",
+          {
+            "type": "B",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.select_lasso",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK_DRAG",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "mode",
+                "ADD"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_lasso",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK_DRAG",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "mode",
+                "SUB"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_circle",
+          {
+            "type": "C",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.clip_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.render_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.clear_render_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.camera_to_view",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.object_as_camera",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.copybuffer",
+          {
+            "type": "C",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.pastebuffer",
+          {
+            "type": "V",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "TAB",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "tool_settings.use_snap"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_panel",
+          {
+            "type": "TAB",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_PT_snapping"
+              ],
+              [
+                "keep_open",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "S",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_snap_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "space_data.show_gizmo"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "PERIOD",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_pivot_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "COMMA",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_orientations_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "Z",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_shading_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.toggle_shading",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "WIREFRAME"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.toggle_xray",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "alt": true,
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "space_data.overlay.show_overlays"
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "view3d_swap_True": [
+    "3D View",
+    {
+      "space_type": "VIEW_3D",
+      "region_type": "WINDOW"
+    },
+    {
+      "items": [
+        [
+          "view3d.cursor3d",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "NUMPAD_SLASH",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "SLASH",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.localview",
+          {
+            "type": "MOUSESMARTZOOM",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.localview_remove_from",
+          {
+            "type": "NUMPAD_SLASH",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.localview_remove_from",
+          {
+            "type": "SLASH",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "MOUSEROTATE",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.move",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.rotate",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.move",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "WHEELLEFTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "WHEELRIGHTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NUMPAD_PERIOD",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "use_all_regions",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NUMPAD_PERIOD",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.smoothview",
+          {
+            "type": "TIMER1",
+            "value": "ANY",
+            "any": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "TRACKPADZOOM",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "TRACKPADPAN",
+            "value": "ANY",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "NUMPAD_PLUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "NUMPAD_MINUS",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "EQUAL",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "MINUS",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "WHEELINMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.zoom",
+          {
+            "type": "WHEELOUTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "NUMPAD_PLUS",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "NUMPAD_MINUS",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "EQUAL",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.dolly",
+          {
+            "type": "MINUS",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "delta",
+                -1
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_center_camera",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_center_lock",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "HOME",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "center",
+                false
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "HOME",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "use_all_regions",
+                true
+              ],
+              [
+                "center",
+                false
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_all",
+          {
+            "type": "C",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_view_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.navigate",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.view_camera",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_2",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITDOWN"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_persportho",
+          {
+            "type": "NUMPAD_5",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_8",
+            "value": "PRESS",
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "ORBITUP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_2",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANDOWN"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANLEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_pan",
+          {
+            "type": "NUMPAD_8",
+            "value": "PRESS",
+            "ctrl": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "PANUP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NUMPAD_4",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NUMPAD_6",
+            "value": "PRESS",
+            "shift": true,
+            "repeat": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_orbit",
+          {
+            "type": "NUMPAD_9",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                3.141592653589793
+              ],
+              [
+                "type",
+                "ORBITRIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_1",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_3",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NUMPAD_7",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "NORTH",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "SOUTH",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "EAST",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK_DRAG",
+            "direction": "WEST",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ],
+              [
+                "relative",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_center_pick",
+          {
+            "type": "MIDDLEMOUSE",
+            "value": "CLICK",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_orbit_zoom",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY"
+          },
+          null
+        ],
+        [
+          "view3d.ndof_orbit",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_pan",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.ndof_all",
+          {
+            "type": "NDOF_MOTION",
+            "value": "ANY",
+            "shift": true,
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.view_selected",
+          {
+            "type": "NDOF_BUTTON_FIT",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NDOF_BUTTON_ROLL_CW",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                1.5707963267948966
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_roll",
+          {
+            "type": "NDOF_BUTTON_ROLL_CCW",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "angle",
+                -1.5707963267948966
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_FRONT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_BACK",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BACK"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_LEFT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "LEFT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_RIGHT",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_TOP",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_BOTTOM",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "BOTTOM"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_FRONT",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "FRONT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_RIGHT",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "RIGHT"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.view_axis",
+          {
+            "type": "NDOF_BUTTON_TOP",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "TOP"
+              ],
+              [
+                "align_active",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "deselect_all",
+                true
+              ],
+              [
+                "select_passthrough",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ],
+              [
+                "object",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "center",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "center",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true,
+            "alt": true
+          },
+          {
+            "properties": [
+              [
+                "toggle",
+                true
+              ],
+              [
+                "center",
+                true
+              ],
+              [
+                "enumerate",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select",
+          {
+            "type": "RIGHTMOUSE",
+            "value": "CLICK"
+          },
+          {
+            "properties": [
+              [
+                "deselect_all",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_box",
+          {
+            "type": "B",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.select_lasso",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK_DRAG",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "mode",
+                "ADD"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_lasso",
+          {
+            "type": "LEFTMOUSE",
+            "value": "CLICK_DRAG",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "mode",
+                "SUB"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.select_circle",
+          {
+            "type": "C",
+            "value": "PRESS"
+          },
+          null
+        ],
+        [
+          "view3d.clip_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.zoom_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "shift": true
+          },
+          null
+        ],
+        [
+          "view3d.render_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.clear_render_border",
+          {
+            "type": "B",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.camera_to_view",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS",
+            "ctrl": true,
+            "alt": true
+          },
+          null
+        ],
+        [
+          "view3d.object_as_camera",
+          {
+            "type": "NUMPAD_0",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.copybuffer",
+          {
+            "type": "C",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "view3d.pastebuffer",
+          {
+            "type": "V",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          null
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "TAB",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "tool_settings.use_snap"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_panel",
+          {
+            "type": "TAB",
+            "value": "PRESS",
+            "shift": true,
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_PT_snapping"
+              ],
+              [
+                "keep_open",
+                true
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "S",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_snap_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "ACCENT_GRAVE",
+            "value": "PRESS",
+            "ctrl": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "space_data.show_gizmo"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "PERIOD",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_pivot_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "COMMA",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_orientations_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "wm.call_menu_pie",
+          {
+            "type": "Z",
+            "value": "PRESS"
+          },
+          {
+            "properties": [
+              [
+                "name",
+                "VIEW3D_MT_shading_pie"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.toggle_shading",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "type",
+                "WIREFRAME"
+              ]
+            ]
+          }
+        ],
+        [
+          "view3d.toggle_xray",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "alt": true
+          },
+          null
+        ],
+        [
+          "wm.context_toggle",
+          {
+            "type": "Z",
+            "value": "PRESS",
+            "alt": true,
+            "shift": true
+          },
+          {
+            "properties": [
+              [
+                "data_path",
+                "space_data.overlay.show_overlays"
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "view3d_pan_only": {
+    "view3d_swap_False": [
+      [
+        "view3d.rotate",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY"
+        },
+        null
+      ],
+      [
+        "view3d.move",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "shift": true
+        },
+        null
+      ],
+      [
+        "view3d.zoom",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "ctrl": true
+        },
+        null
+      ]
+    ],
+    "view3d_swap_True": [
+      [
+        "view3d.rotate",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "shift": true
+        },
+        null
+      ],
+      [
+        "view3d.move",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY"
+        },
+        null
+      ],
+      [
+        "view3d.zoom",
+        {
+          "type": "TRACKPADPAN",
+          "value": "ANY",
+          "ctrl": true
+        },
+        null
+      ]
+    ]
+  }
+}

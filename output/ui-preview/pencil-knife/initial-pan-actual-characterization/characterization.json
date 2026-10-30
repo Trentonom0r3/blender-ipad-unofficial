@@ -1,0 +1,72 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_CURRENT_NATIVE_CHARACTERIZATION",
+  "verified_production": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "verified_run": 40728695044,
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "latest_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\attempt-20261029T023829Z\\report.json",
+  "portable_driver": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\run_characterization.py",
+  "portable_models": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\knife-initial-models.inc.cc",
+  "source_inputs": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "source/blender/editors/space_view3d/view3d_navigate.cc": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/makesdna/DNA_userdef_types.h": "1b54a71a57c72724fe99d0f0922dd7c4f919e98dbc36b5a9eba28b2f7f2f36cb",
+    "fixed-pin:source/blender/makesdna/DNA_view3d_types.h": "8bcba6b0f1e9baf33ca4ef8bbc90079967932eadf5ca7a065919b7471c93135e"
+  },
+  "findings": [
+    "Entire current native Knife invoke and modal execute; initial unmodified DOWN matches actual generated tool map and inserts native handler before actual ADD_CUT modal call. Geometry setup/start-cut and owner-binding are instrumented boundaries; no accepted-DOWN/lease claim.",
+    "Actual default Knife keymap translator leaves PAN raw. Entire modal returns PASS_THROUGH; exact WM status tail returns CONTINUE and registered handler survives.",
+    "Both actual generated default View3D profiles choose Rotate/Move for unmodified/Shift PAN; current one-finger native wrappers finish before navigation allocation and view distance stays10. Exact Ctrl chooses Zoom; Ctrl+Shift/Alt have no stock PAN match.",
+    "Actual current full native Zoom using exact retained historical WM coordinates gives 10->10.19704342 at O0/O2. Other valid PAN coordinates show 10->9.890109062, independently confirming real source state change rather than a fixed historical literal.",
+    "Actual native active View3D getter, active-region check, zoom/location/rotation polls and fixed-pin RV3D_LOCK_FLAGS execute; regular and runtime zoom locks refuse. Wrong region/spacetype/null regiondata refuse.",
+    "Actual custom PAN->PANNING maps to native mode3 then passes. Custom keyboard->PANNING followed by rawPAN resets3->DRAGGING1 before PASS; a later mode-only check loses prior delegated intent.",
+    "Actual wm_eventemulation on iOS branch supports Alt/OSKey emulated MMB when USER_TWOBUTTONMOUSE enabled. Native Knife PANNING followed by rawPAN resets3->DRAGGING1; release still becomes MMB.",
+    "Actual current wm_event_add_trackpad merges deltas; pure physical flags retain precision512, mixed clears512. Both current consumer fallbacks still zoom identically. Direct unclassified/hardware and two/three-finger Zoom PAN retain actual state changes.",
+    "Direct native LEFTMOUSE/MIDDLEMOUSE Move/Rotate presses reach generic native modal invoke. Their advanced init/apply geometry is instrumented; reachability only is claimed."
+  ],
+  "attempts": [
+    {
+      "directory": "attempt-20261029T023238Z",
+      "status": "FAILED_BEFORE_COMPILE",
+      "reason": "Action table extraction expected one literal space; native multiline CYCLE_ANGLE_SNAP_EDGE entry caused KeyError. Extraction whitespace corrected only."
+    },
+    {
+      "directory": "attempt-20261029T023303Z",
+      "status": "COMPILE_FAILURE",
+      "reason": "Missing named wmTabletData adapter and mixed anonymous-enum/int initializer-list deduction. Native source and expectations unchanged."
+    },
+    {
+      "directory": "attempt-20261029T023328Z",
+      "status": "PASS_O0_O2_FIRST_BASELINE",
+      "limit": "Initial synthetic lock macro/flag values were explicit adapter boundaries; superseded by final actual lock/flag source."
+    },
+    {
+      "directory": "attempt-20261029T023630Z",
+      "status": "PASS_O0_O2_EXPANDED_CONTROLS"
+    },
+    {
+      "directory": "attempt-20261029T023829Z",
+      "status": "PASS_O0_O2_FINAL_PORTABLE_DRIVER"
+    }
+  ],
+  "boundaries": [
+    "Full current Knife invoke and full current modal execute unchanged. knifetool_init, cut geometry and BMesh/depsgraph setup are named adapters; their geometry/history/Undo/Cancel semantics are not proved. Unsupported helper paths assert rather than simulate success.",
+    "Actual WM modal handler allocation body/list insertion execute over simple modeled allocator/list storage. Native Knife binding callback is an instrumented boundary; no original owner, accepted DOWN, lease or UIKit same-batch timing proof.",
+    "Actual WM event matcher, modal keymap begin/end, eventemulation, full trackpad queue function and exact final handler-status tail execute. Whole wm_handler_operator_call, wm_operator_invoke, scheduling, keymap registration/copy and whole dispatch are not executed. Raw maps are executed original current pinned Python; event/keymap symbolic enum adapter is explicit. Actual current WM_EventFlag, actual fixed-pin RV3D lock enum+macro including runtime_viewlock and actual fixed-pin user emulation constants execute.",
+    "Actual native View3D context getter, ED active-region check, native lock polls, generic invoke/allocation, full zoom invoke/apply/scale/state math execute. ViewOpsData init_context is actual; init_navigation, context providers, scalar vector primitives, soft limits, allocator, redraw/autokey/camera helpers remain adapters. Unlocked perspective with cursor zoom off is the tested mathematical state.",
+    "Rotate/Move current one-finger guards and generic invoke execute. Their advanced geometry init/apply uses an instrumented callback, proving native path reachability only. Direct locked controls use actual poll and actual RV3D_LOCK_FLAGS source rather than mirrored lock arithmetic.",
+    "Actual queue mixed-source AND clearing executes over modeled event storage; physical Pencil flag injection starts at the WM-event boundary. No independent UIKit producer source-classification proof is claimed.",
+    "No production/test/CI edits, native iOS build, target compiled output, device acceptance, general lifetime/geometry/history proof or full goal completion."
+  ],
+  "production_test_ci_edits": false,
+  "candidate_guard_implemented": false,
+  "device_acceptance": false,
+  "whole_goal_complete": false
+}

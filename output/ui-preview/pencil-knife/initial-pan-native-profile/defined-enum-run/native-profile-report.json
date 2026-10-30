@@ -1,0 +1,272 @@
+{
+  "status": "PASS",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "source_sha256": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249",
+    "source/blender/editors/space_view3d/view3d_navigate.cc": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+    "source/blender/editors/include/ED_mesh.hh": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8",
+    "source/blender/editors/include/ED_view3d.hh": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/makesdna/DNA_windowmanager_types.h": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+    "source/blender/makesdna/DNA_listBase.h": "6d3197f83dc44b4ef6ae8b61991728eba3f5b99a55a8266297fd72c971e6a227",
+    "source/blender/blenlib/BLI_listbase.h": "c22f207ceb6392ad1a51ba39e41feb57731598135f995cf0a467c9adf1a17b14",
+    "source/blender/makesrna/RNA_types.hh": "fe5d6610904d49c5d04b1b53c86a3391d4fbfc3d86ba54f0468d40ed094803c8",
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "source/blender/blenkernel/BKE_context.hh": "6cf6c16a8dc393e6422c9e26dd157caabab44a128effcf57dfb1efd99e1c918c",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "source/blender/makesdna/DNA_windowmanager_enums.h": "cf8e488219978cf714e3d70496b545a6ffac969391754a3578858715d9b62cab",
+    "source/blender/makesdna/DNA_view3d_types.h": "8bcba6b0f1e9baf33ca4ef8bbc90079967932eadf5ca7a065919b7471c93135e",
+    "source/blender/blenlib/BLI_utildefines.h": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312",
+    "source/blender/editors/space_view3d/view3d_navigate.hh": "c956ab467b989ba9f6b6d8635b9c92b911576dfa0685fbb7c31df5addfc504d9",
+    "source/blender/windowmanager/intern/wm_operator_props.cc": "255980718d8e8ab1d027422804aad396536313ba4f566090920fd5ed23a9b030",
+    "source/blender/windowmanager/intern/wm_operator_type.cc": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+    "source/creator/CMakeLists.txt": "2290e37132cbf8718e724e9f493a8164d588631b74967adcc035200d134b7dd5",
+    "source/blender/windowmanager/CMakeLists.txt": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+    "source/blender/blenkernel/CMakeLists.txt": "5dba2fbadf37f4ab60bf4a05b8eb088d6c9961a726d0f3a5e3062a9c3f050c05",
+    "source/blender/makesrna/intern/CMakeLists.txt": "0cd096656d8db11aec11924b5728bb2a5c0607151161dc8bb64affc1a98ba813",
+    "source/blender/editors/space_api/CMakeLists.txt": "0690f53337da4b16429fa6f8db30f473d5fc8afe8ee9b4f2373f59a892574374",
+    "source/blender/editors/space_view3d/CMakeLists.txt": "9b7d3c263fef40a788fe379d47812c7f61e58c279d93b615376ff3d0a26a3f18",
+    "source/blender/editors/mesh/CMakeLists.txt": "2b02aba193db3d44cb059224cbe6d22b0fcb7fb9d3b235abfedda67a87382926",
+    "source/blender/editors/CMakeLists.txt": "be8a4618d0377584dbfaf9bf9239254a105eff0d51270ec32b74f98a77cfc644",
+    "build_files/cmake/macros.cmake": "2e3ac4fec4bcf8e2f6b16cc777d23dce2412ab37b41d9e756d5bfd175f133911"
+  },
+  "extracted_source_sha256": {
+    "public:origin::struct MeshKnifeModalOrigin {": "ab0141eff8bddc80f057856136071cba07d36914dd16d0bcee608f17332e24ad",
+    "public:declaration::ED_view3d_native_zoom_type_is": "c42672d45aedfbd03a24503a91ad178c59c53b50eddeb4f770d62596a7dfbc7c",
+    "public:declaration::ED_mesh_knife_modal_type": "0c2c2ee8ad4be213116add67900580d9685511e70ac221fcb18c208b426c996f",
+    "public:declaration::ED_mesh_knife_modal_origin": "961bf22042314a20d6f67e2b0f4c7d5453203ebb2b7a96705eacc682508e4c5e",
+    "public:declaration::ED_mesh_knife_modal_navigation_may_be_denied": "a41a71c9db54e487511b7b910fa1f2a8b2e128e2bf53f89d6c57248c2236f12c",
+    "decl:status::enum wmOperatorStatus {": "f43f0e8cb94e5a920bc8d3e1cfc667dd82c5693caaad84258798f474c1aa2ed3",
+    "decl:list::typedef struct ListBase {": "0af682bcf93faf5d0e783d7017c2a4bd6f05cd81a5caa3e70ea77e8515804b8d",
+    "decl:extension::struct ExtensionRNA {": "ab7e1203734c6317ece49975c5eef1301edeb9de3b26ab4fa8a0003bd63fb107",
+    "decl:iduse::enum class eWMOperatorIDUse": "489e3fd22c17a204af7e19cac38fe261259c521227547726e82f846fdf43c542",
+    "decl:operator_type::struct wmOperatorType {": "e47fb4d7b114266f3d061d549620d2bfebe88d63cd1f7a717b7de29338c9299c",
+    "decl:operator::typedef struct wmOperator {": "6a05a34ade7017a0bf26c68d25ffdf3261f38de5c287f38b9d60b0de5a171a78",
+    "decl:macro::typedef struct wmOperatorTypeMacro {": "a95b689ac42b89b2d80e3efc692d408467c1e69b248d1a66281bd84452fb93df",
+    "decl:view_context::struct ViewContext {": "1398ffa0194a5d7d3d2dc6d47fa86ebd2605f99455a9456ddad86d482cb66f90",
+    "decl:poll_message::struct bContextPollMsgDyn_Params {": "a88d7e2551b65a853a96b033f640eeebf86767d2bfe9b6c237345cc5a4f82717",
+    "decl:context::struct bContext {": "13d8c440e45fe478e344496fb4c3be68254667fa38fc39774becf9f8e6f9add9",
+    "decl:operator_flags::enum {": "a749130a3908d6dfa7d69027e41b10527642cd8f7f93c4584841b69501c74677",
+    "decl:knife_mode::enum KnifeMode": "9d72decb630a9519c9022d6cc375c50d69ed373f7b6d28c050a70c4288f77b01",
+    "decl:enum {\n  KNF_CONSTRAIN_ANGLE_MODE_NONE::enum {\n  KNF_CONSTRAIN_ANGLE_MODE_NONE": "53a662c742d821f2a920b7f965e80689712aa7384fe860b20dab7093d917acc4",
+    "decl:enum {\n  KNF_MEASUREMENT_NONE::enum {\n  KNF_MEASUREMENT_NONE": "f53ce0493a5a7c37c5c88150d395b7fa858210c717cd31e56e5b25e0a354e6e3",
+    "decl:enum eV3D_OpPropFlag::enum eV3D_OpPropFlag": "e05d80d649e5ab4c19d2888b186782e6fdedd95d993f7149d4dd4a4fabc7840b",
+    "decl:enum eV3D_OpEvent::enum eV3D_OpEvent": "8219388d7b99e6317de81b755e810e1d0fc4c883a5ee89a33cdbebd9898050cb",
+    "decl:enum eViewOpsFlag::enum eViewOpsFlag": "06fc1573b5250577577974de12afdb980142dfd2f6f6bebe331308dd10504d9b",
+    "decl:viewops::struct ViewOpsType {": "31e6ef1d2c54540116afbc76219789bddf0674f2d300bfdb9d6446f8ec6ecc33",
+    "decl:enumitem::struct EnumPropertyItem {": "f26fa1cc0f22b48cc89ef99ff4066c23101f8d5744a5784ebe320da28a51e777",
+    "decl:locks::enum {\n  /**\n   * Used to lock axis views": "eb0277d0ac05471efccf5b93207582979851ec34daff2c5f1f5fa2eb344b05e3",
+    "context::void *CTX_py_dict_get(": "e01c4e3096acd210ab6f2f5f555c8034b55c9c1cbdff0d3d54e083f0363a0c92",
+    "context::static void *ctx_wm_python_context_get(": "c87a45446d05c9e34c76540fc805799f08fe9747561956d9c3dd9cad71f53f79",
+    "context::ScrArea *CTX_wm_area(": "dbb7150f7e1111ecfc355a92c02e046abfe9d638d55d34cab5dbb339beb76954",
+    "context::ARegion *CTX_wm_region(": "b672ed5b682f7629746b53006f6079c9965dc9b4070765c98732332fcadf2fdd",
+    "context::RegionView3D *CTX_wm_region_view3d(": "794415ab74518d50d8c36205a84918840dceb3bd76a7c1d4144df52056e768ab",
+    "context::void CTX_wm_operator_poll_msg_clear(": "42f2881cf1a7f336784a49df2fce5cbbb4756991a486757216a4ce507cf58959",
+    "context::void CTX_wm_operator_poll_msg_set(": "f69a8ce98b0b5893780981b05468f28452538f0604bd68a9da9b3709ff780a1d",
+    "screen::bool ED_operator_region_view3d_active(": "b248f4a1c29c489790c060420e20635d2063067d240a460d8344e9691b185476",
+    "nav::static bool view3d_navigation_poll_impl(": "d8328530318d40bec2cb0c7fbff2967df0deb937e1bfad1b1243e2ea281e8f21",
+    "nav::bool view3d_zoom_or_dolly_poll(": "2318dcf652717ef8efe5f26c32a815110632863e843aaca664114ee799066f69",
+    "wm::bool WM_operator_poll(": "92eca090effbf47d437257119dcdac01b5d153067c5cb6cc2082435f5f0df3c0",
+    "listapi::BLI_INLINE bool BLI_listbase_is_empty(": "666d981f34d218eb24603eae75a5e27b20900e6c728aee22dafcf59ca081ce64",
+    "zoom::static wmOperatorStatus viewzoom_invoke(": "3b14c89a422a36157c18fa4411943bfe2611a1ecd81affc6bd735b21c76c28ba",
+    "props::void WM_operator_properties_use_cursor_init(": "c5aac3837064f08b9435878c24e88b1165c3c6e1898de5e55b9dc79cba1ed00e",
+    "nav::void view3d_operator_properties_common(": "30698951d4adb27a0ce0d9bd7628eff96ad05d7195a902d3ffae9fc2345a31c7",
+    "factory:zoom::void VIEW3D_OT_zoom(": "6c892cc88334186b35c476c9d3a2a8f16633d6fde3f9744ad3f18b173835a418",
+    "factory:knife::void MESH_OT_knife_tool(": "4107e5e36d4bb64f034958dfe0152f9b6ba6ebe9bc85b9e33821b7ba433b1ef5",
+    "zoom::bool ED_view3d_native_zoom_type_is(": "3fd2d8c1873c821372823ec11765173ebc7cdc3d334cd12bde2037bf47d25439",
+    "knife::bool ED_mesh_knife_modal_type(": "2988a1f787c808e4dcc35cd14407c3720a87bf2b35af146b9793598314d0c498",
+    "knife::bool ED_mesh_knife_modal_origin(": "c0c3c2a7e341f8149a5c69427b7c50eef64a3c8bc43aa932fb818625abe04314",
+    "knife::bool ED_mesh_knife_modal_navigation_may_be_denied(": "d2867f7b4dc6a67cf7eaadd6a1e625d69ed7239e236fc4a95783048324727c06",
+    "definition:viewops::const ViewOpsType ViewOpsType_zoom =": "c556fcba6753d086b8b9589056fbc2b487c568a824391a27bae3a27ec2b85246",
+    "factory:lifetime::static uint64_t wm_ipad_operator_lifetime_allocate(": "8ea7938d660bac949c6a1e27b5ee9d5f0ab7a7385fdfc88e38d422e601f0b694",
+    "factory::static wmOperatorType *wm_operatortype_append__begin(": "d63750f5aa3116ef014cfc280ee4b13f5ea01ab09289cff86266ad4cb4efb7c4",
+    "factory::void WM_operatortype_append(": "f557c3758c207ec260a579ab868dbf59a0a914fff987e765976329037cada028",
+    "factory:zoom:old::void VIEW3D_OT_zoom(": "6c892cc88334186b35c476c9d3a2a8f16633d6fde3f9744ad3f18b173835a418",
+    "factory:knife:old::void MESH_OT_knife_tool(": "4107e5e36d4bb64f034958dfe0152f9b6ba6ebe9bc85b9e33821b7ba433b1ef5"
+  },
+  "executions": [
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    }
+  ],
+  "historical_missing_seams": [
+    {
+      "stage": "old-public-declaration-compile",
+      "returncode": 1
+    },
+    {
+      "stage": "old-source-definition-link",
+      "returncode": 1
+    }
+  ],
+  "link_contract": {
+    "creator_to_view3d_route": [
+      "blender",
+      "bf::windowmanager",
+      "bf::blenkernel",
+      "bf_rna",
+      "bf_editor_space_api",
+      "bf_editor_space_view3d"
+    ],
+    "mesh_route": [
+      "bf_rna",
+      "bf_editor_mesh"
+    ],
+    "source_anchors": [
+      {
+        "path": "source/creator/CMakeLists.txt",
+        "line": 24,
+        "literal": "PRIVATE bf::windowmanager"
+      },
+      {
+        "path": "source/blender/windowmanager/CMakeLists.txt",
+        "line": 93,
+        "literal": "PRIVATE bf::blenkernel"
+      },
+      {
+        "path": "source/blender/blenkernel/CMakeLists.txt",
+        "line": 589,
+        "literal": "bf_rna"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 470,
+        "literal": "bf_editor_space_api"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 480,
+        "literal": "bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/space_api/CMakeLists.txt",
+        "line": 43,
+        "literal": "bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 58,
+        "literal": "view3d_navigate_view_zoom.cc"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 111,
+        "literal": "blender_add_lib(bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 30,
+        "literal": "editmesh_knife.cc"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 86,
+        "literal": "blender_add_lib(bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/CMakeLists.txt",
+        "line": 52,
+        "literal": "add_subdirectory(space_view3d)"
+      },
+      {
+        "path": "build_files/cmake/macros.cmake",
+        "line": 428,
+        "literal": "blender_link_libraries(${name} \"${library_deps}\")"
+      }
+    ],
+    "limit": "Actual source-backed dependency edges; no full CMake configure, native SDK or whole-link closure proof."
+  },
+  "limits": [
+    "Exact native wmOperatorType/ExtensionRNA/wmOperator/ViewContext/bContext and helper public declaration snippets compile in separate TUs; complete public header dependency trees and complete Blender translation units are not compiled.",
+    "Actual helpers, native type factories, WM append begin/append, context native getters, View3D/WM polling and poll-message clear/set execute; RNA descriptor allocation/schema access, registry append end, main-thread query, Python override bridge and non-poll navigation callbacks are explicit host boundaries.",
+    "KnifeTool_OpData and region/area backing are narrow storage adapters; owner lifetime, membership, event routing, modal-map/delegation and actual navigation/geometry are owned by the separate connected suite.",
+    "All four defined native KnifeMode states execute, including MODE_PANNING refusal. Out-of-range enum conversion/storage corruption is not a defined C++17 control and is not claimed.",
+    "Historical controls use exact fixed-pin old factories and absence of API declarations/definitions; they prove missing-seam detection only, not the original behavioural Ctrl-PAN navigation failure.",
+    "APPLE/PYTHON macro matrix is host C++17 evidence; target platform SDK, runtime layout/ABI, real RNA/allocator, complete CMake graph and device evidence remain separate."
+  ],
+  "generated_sha256": {
+    "public.hh": "2b7b93afd017958cf025287177e16f807f8e6b0a3ebd6bff6e4cdc75fdd761ca",
+    "native-types.hh": "d8fe82ee958bcd6fcec3b520d6aa1decd730599bcaf7347c121f115039e8cce0",
+    "definitions.cc": "ce03690741fe9f8bf85a98755fb2e086c838a645ae4c75998015fe16033b1aa0"
+  }
+}

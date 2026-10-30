@@ -80,7 +80,7 @@ def build(repo,source):
  helpers=f('eventsystem','struct wmIPadNodeView2DItem {')+';\n'
  a=sources['eventsystem'].index('static constexpr wmIPadNodeView2DItem wm_ipad_node_view2d_items[]');b=sources['eventsystem'].index('static bool wm_ipad_node_view2d_string_is(',a)
  helpers+=sources['eventsystem'][a:b]
- for sig in ['static bool wm_ipad_node_view2d_string_is(','static const wmKeyMap *wm_ipad_node_view2d_map_find(','static bool wm_ipad_node_view2d_map_is(','static eIPadNodeView2DDispatch wm_ipad_node_view2d_dispatch(']:helpers+=f('eventsystem',sig)+'\n'
+ for sig in ['static bool wm_ipad_node_view2d_string_is(','static const wmKeyMap *wm_ipad_node_view2d_map_find(','static bool wm_ipad_node_view2d_map_is(','static eIPadNativePanDispatch wm_ipad_node_view2d_dispatch(']:helpers+=f('eventsystem',sig)+'\n'
  header=(source/'source/blender/windowmanager/wm_event_system.hh').read_text()
  handlerdecl=base.body(header,'enum eWM_EventHandlerType {')+';\n'
  handlerdecl+='using EventHandlerPoll=bool(*)(const wmWindow*,const ScrArea*,const ARegion*,const wmEvent*);\nusing eWM_EventHandlerFlag=int;\n'
@@ -92,7 +92,10 @@ def build(repo,source):
  a=full.index('    wmOperatorType *ot = WM_operatortype_find(kmi_idname, false);')
  b=full.index('      /* Link gizmo if',a)
  mapping=full[full.index('  /* Finished and pass through flag as handled. */'):]
- bridge='static eHandlerActionFlag wm_handler_operator_call(bContext*C,ListBase*handlers,wmEventHandler*handler_base,wmEvent*event,PointerRNA*properties,const char*kmi_idname,bool use_cursor_region,eIPadNodeView2DDispatch ipad_node_view2d){wmOperatorStatus retval=OPERATOR_PASS_THROUGH;\n'+full[a:b]+'}\n'+mapping
+ bridge='static eHandlerActionFlag wm_handler_operator_call(bContext*C,ListBase*handlers,wmEventHandler*handler_base,wmEvent*event,PointerRNA*properties,const char*kmi_idname,bool use_cursor_region,eIPadNativePanDispatch ipad_node_view2d){wmOperatorStatus retval=OPERATOR_PASS_THROUGH;\n'+full[a:b]+'}\n'+mapping
+ # Retained Node-only context has no registered Knife. This boundary grants
+ # no denial and never models the new actual owner policy as passing.
+ helpers+='static eIPadNativePanDispatch wm_ipad_knife_pan_zoom_dispatch(bContext*,const wmEvent*,const ListBase*,const wmEventHandler_Keymap*,const wmKeyMap*,const wmKeyMapItem*){return eIPadNativePanDispatch::None;}\n'
  regular=f('eventsystem','static eHandlerActionFlag wm_handlers_do_keymap_with_keymap_handler(')
  action_enum=base.body(sources['eventsystem'],'enum eHandlerActionFlag {')+';\n'
  # Native bitmask operators are represented as int in the portable boundary.

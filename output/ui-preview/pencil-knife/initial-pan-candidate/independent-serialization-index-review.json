@@ -1,0 +1,103 @@
+{
+  "status": "PASS_ADDITIVE_FINAL_HOST_GATE_AND_SOLE_JSON_SERIALIZATION_INDEX_RECONCILIATION",
+  "utc": "2026-10-30T09:35:24.837040+00:00",
+  "prior_independent_review": {
+    "path": "output\\ui-preview\\pencil-knife\\initial-pan-candidate\\independent-final-source-native-literal-test-review.json",
+    "sha256": "bdf68d225873e6f72dd5614d8063680dea07f9eb562688e53a6878415d86bbe6",
+    "preserved": true,
+    "note": "Earlier chronological pending full/cold facts are superseded by this additive observation. Source/native/literal/test conclusions and limits remain unchanged."
+  },
+  "final_full_evidence": {
+    "path": "output\\ui-preview\\pencil-knife\\initial-pan-candidate\\frozen-validation.json",
+    "sha256": "14af08b56d5444d7971e0069e720ece841827ca1186c7b2f75dac9f883555eda",
+    "tests": 837,
+    "seconds": 812.516,
+    "frozen_inputs": 245,
+    "all_unchanged_during_that_run": true,
+    "preflight_exitcode": 0,
+    "diff_exitcode": 0,
+    "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a"
+  },
+  "cold_CI_evidence": {
+    "path": "output\\ui-preview\\pencil-knife\\initial-pan-candidate\\cold-portability\\report.json",
+    "sha256": "89b1a71545fe468ab4ced411a0f0900208b15cf1ee412bb933e701a5073e0166",
+    "copied_inputs": 245,
+    "cache_copied": false,
+    "pinned_preflight_sources": 140,
+    "preflight_exitcode": 0,
+    "new_families_exitcode": 0,
+    "root_reported_new_family_tests": "2/2 in26.338s",
+    "root_reported_total_seconds": 42.91
+  },
+  "sole_serialization_correction": {
+    "path": "build/tests/knife_initial_pan/historical-3d7b248-invoke.json",
+    "before_raw_bytes": 1008,
+    "before_CRLF": 13,
+    "before_raw_sha256": "afc40f8068e96d4315e76acfb7977b869161aec01e1e10fc9b8d8a68b7f70c05",
+    "before_bytes_independently_recovered_from": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-initial-cold-s23wck4h\\build\\tests\\knife_initial_pan\\historical-3d7b248-invoke.json",
+    "after_raw_bytes": 995,
+    "after_CRLF": 0,
+    "after_raw_sha256": "966d2db437541bdc132ace109060902a7c8c7a3597a0ef1894f3776a626cde30",
+    "staged_index_raw_sha256": "966d2db437541bdc132ace109060902a7c8c7a3597a0ef1894f3776a626cde30",
+    "exact_only_CRLF_to_LF": true,
+    "parsed_JSON_objects_identical": true,
+    "all245_current_frozen_input_mismatches": [
+      {
+        "path": "build/tests/knife_initial_pan/historical-3d7b248-invoke.json",
+        "frozen_raw_sha256": "afc40f8068e96d4315e76acfb7977b869161aec01e1e10fc9b8d8a68b7f70c05",
+        "current_raw_sha256": "966d2db437541bdc132ace109060902a7c8c7a3597a0ef1894f3776a626cde30"
+      }
+    ],
+    "scoped_attributes": "text=set eol=lf; canonical worktree equals staged index."
+  },
+  "consumer_audit": [
+    {
+      "anchor": "build/tests/knife_initial_pan/connected.py:133",
+      "finding": "json.loads(read_text()) parses provenance. No fixed assertion hashes this JSON. Adjacent fixture_sha256 assertion hashes separate historical .inc.cc raw bytes; body_sha256 hashes its C++ function text, both unchanged."
+    },
+    {
+      "anchor": "build/tests/knife_initial_pan/connected.py:145",
+      "finding": "Parsed oldmeta enters report metadata only. JSON line endings do not enter generated C++ or assertions."
+    },
+    {
+      "anchor": "build/tests/knife_initial_pan/connected.py:188-204",
+      "finding": "Current raw JSON SHA is recorded among fixture hashes. That evidence value correctly changes; it is not a pass condition requiring former AF hash."
+    },
+    {
+      "anchor": "build/test_pencil_knife_initial_pan.py:13-18",
+      "finding": "Wrapper checks driver identity, four outcomes, current67 scenarios and precise historical expected17 effects. No raw JSON hash assertion."
+    }
+  ],
+  "canonical_focused_evidence": {
+    "path": "output\\ui-preview\\pencil-knife\\initial-pan-candidate\\canonical-json-focused\\report.json",
+    "sha256": "6c9cb1a7f7c44ebdf28fc0df7291edff0aaf535b91fe76dcd00b44da462e2412",
+    "root_reported_unittest": "1/1 PASS in6.450s",
+    "source_mode": "authoritative patch plus fixed pin",
+    "current_scenarios_each_O0_O2": 67,
+    "historical_expected_exit_each_O0_O2": 17,
+    "historical_effect": "creates1/nav_allocations1/distance10.19704342",
+    "generated_CPP_raw_byte_equal_previous": true,
+    "generated_CPP_sha256": "9ce29190600060a7fa33bcc521c09ff71069f1709a5f15c84c9b52132e6d8517",
+    "materialized_source_hash_dicts_equal": true,
+    "invocation_runtime_source_hash_dicts_equal": true,
+    "metadata_except_disposable_source_origin_paths_equal": true,
+    "parsed_historical_provenance_equal": true,
+    "driver_hash_equal": true,
+    "runtime_fixture_hash_changes_only_JSON": [
+      "build/tests/knife_initial_pan/historical-3d7b248-invoke.json"
+    ]
+  },
+  "conclusion": "Combined final source-host validation is sufficient: preserved245-input frozen837 full/preflight/diff and cold140+2 gates, then sole data-only CRLF-to-LF JSON change with identical parsed data, actual generated C++ and all source/driver dependencies, followed by canonical focused O0/O2 current/historical passes. Another837 full is unnecessary for this serialization-only correction. Final CI should consume canonical966d2db4 JSON bytes, now identical in worktree and index.",
+  "honest_evidence_boundary": "Canonical JSON bytes did not have a new245-input frozen837 run. Full/cold raw AF hash and reports remain preserved and reconciled by this narrow addendum. Reviewer read and checked reports without executing tests.",
+  "remaining_gates": {
+    "native_SDK_build": "PENDING",
+    "full_downloaded_IPA": "PENDING",
+    "actual_compiled_new_and_preserved_branches": "PENDING",
+    "device_acceptance": false,
+    "whole_goal_complete": false
+  },
+  "reviewer_production_edits": false,
+  "reviewer_test_edits": false,
+  "reviewer_original_evidence_rewrites": false,
+  "findings": []
+}

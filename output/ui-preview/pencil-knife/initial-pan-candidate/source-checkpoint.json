@@ -1,0 +1,117 @@
+{
+  "status": "PASS_COHERENT_SOURCE_HOST_VALIDATION_NATIVE_BUILD_PENDING",
+  "prior_patch_sha256": "38364f6d14dccefa3ac0d89a59bd0fc32a2b8298dc9f1c4368184b75c4d3b6e7",
+  "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "changed_targets": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "primary_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "current_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b"
+    },
+    {
+      "path": "source/blender/editors/mesh/editmesh_knife.cc",
+      "primary_sha256": "9213a2d54060c1fb6f292548bcb8439c9ca7066281160a53c9c32ee91013a477",
+      "current_sha256": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20"
+    },
+    {
+      "path": "source/blender/editors/include/ED_mesh.hh",
+      "primary_sha256": "307817b827a2eaec266a043c780d7abb77fbe273868fb802a558f94e34e23d54",
+      "current_sha256": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8"
+    },
+    {
+      "path": "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc",
+      "primary_sha256": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+      "current_sha256": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249"
+    },
+    {
+      "path": "source/blender/editors/include/ED_view3d.hh",
+      "primary_sha256": "ba85a5900f21ae1b8a80559eb05efe43c447608cb97e066afff65d29b88906c6",
+      "current_sha256": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1"
+    }
+  ],
+  "target_count": 140,
+  "unchanged_prior_sections": 135,
+  "native_tests": "pending",
+  "full_suite": {
+    "tests": 837,
+    "seconds": 812.516,
+    "frozen_inputs": 245,
+    "inputs_unchanged": true
+  },
+  "device_acceptance": false,
+  "normalization": "Only new five unified sections blank context prefixes; runtime unchanged.",
+  "retained_tests": {
+    "invoke": "5/5 7.359s",
+    "dispatch": "1/1 5.166s",
+    "workflow": "1/1 6.480s"
+  },
+  "preflight": "140 source files PASS; diff PASS",
+  "new_connected_family": {
+    "scenarios_per_optimization": 67,
+    "optimizations": [
+      "O0",
+      "O2"
+    ],
+    "precise_old_expected_exit": 17,
+    "standalone_seconds": 6.85
+  },
+  "independent_review": "native-pan-boundary-audit/independent-connected-source-review.json bounded source PASS; tests pending",
+  "usage": "0percent fivehour/46weekly",
+  "reset_utc": "2026-10-30T07:21:33+00:00",
+  "utc": "2026-10-30T09:30:14.006272+00:00",
+  "new_native_family": {
+    "configurations": 8,
+    "checks_per_configuration": 81,
+    "standalone_seconds": 15.671
+  },
+  "preflight_files": 140,
+  "cold_portability": "PASS emptycache\u2192actualpreflight\u21922/2 newfamilies26.338s",
+  "prior_unchanged_sections": 135,
+  "python_sections_unchanged": 7,
+  "ghost_sections_unchanged": 14,
+  "independent_final_review": "PASS_BOUNDED_SOURCE_NATIVE_LITERAL_TEST_NO_FINDINGS",
+  "native_build": null,
+  "package": null,
+  "compiled": null,
+  "whole_goal_complete": false,
+  "report_digests": {
+    "frozen-validation.json": {
+      "sha256_raw": "14af08b56d5444d7971e0069e720ece841827ca1186c7b2f75dac9f883555eda",
+      "sha256_utf8_lf": "14af08b56d5444d7971e0069e720ece841827ca1186c7b2f75dac9f883555eda"
+    },
+    "cold-portability/report.json": {
+      "sha256_raw": "89b1a71545fe468ab4ced411a0f0900208b15cf1ee412bb933e701a5073e0166",
+      "sha256_utf8_lf": "89b1a71545fe468ab4ced411a0f0900208b15cf1ee412bb933e701a5073e0166"
+    },
+    "independent-final-source-native-literal-test-review.json": {
+      "sha256_raw": "bdf68d225873e6f72dd5614d8063680dea07f9eb562688e53a6878415d86bbe6",
+      "sha256_utf8_lf": "bdf68d225873e6f72dd5614d8063680dea07f9eb562688e53a6878415d86bbe6"
+    },
+    "raw-git-materialization.json": {
+      "sha256_raw": "da304d5a81a9c37ddf88a8bc15101096062cc3cd37f03663071a7a71c5e417c5",
+      "sha256_utf8_lf": "da304d5a81a9c37ddf88a8bc15101096062cc3cd37f03663071a7a71c5e417c5"
+    },
+    "compiled-obligations.json": {
+      "sha256_raw": "861b7b2258c73c2e60c74f4b67b76bc723b4482827ce9729b4306419c9bab2bb",
+      "sha256_utf8_lf": "861b7b2258c73c2e60c74f4b67b76bc723b4482827ce9729b4306419c9bab2bb"
+    }
+  },
+  "validation_scope": "Frozen837 full + sole historical provenance JSON parsed-LF identity + exact generated C++/canonical focused1/6.450s; no final canonicalJSON full rerun claimed",
+  "final_input_serialization": {
+    "status": "PASS_DATA_ONLY_LF_AND_CANONICAL_FOCUSED_RUN",
+    "path": "build/tests/knife_initial_pan/historical-3d7b248-invoke.json",
+    "raw_frozen_sha256": "afc40f8068e96d4315e76acfb7977b869161aec01e1e10fc9b8d8a68b7f70c05",
+    "canonical_git_lf_sha256": "966d2db437541bdc132ace109060902a7c8c7a3597a0ef1894f3776a626cde30",
+    "crlf_count": 13,
+    "parsed_json_identical": true,
+    "runtime_cpp_python_or_assertion_changes": false,
+    "full_frozen_report_preserved": true,
+    "final_canonical_full_rerun_claimed": false,
+    "focused_tests": 1,
+    "focused_seconds": 6.45,
+    "generated_cpp_identical": true,
+    "generated_cpp_sha256": "9ce29190600060a7fa33bcc521c09ff71069f1709a5f15c84c9b52132e6d8517",
+    "invocation_runtime_sources_identical": true,
+    "all_other_frozen_inputs_unchanged": true
+  }
+}

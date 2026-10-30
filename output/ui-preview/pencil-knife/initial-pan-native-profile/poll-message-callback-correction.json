@@ -1,0 +1,119 @@
+{
+  "utc": "2026-10-30T09:14:11.012719+00:00",
+  "status": "ADDITIVE_CORRECTION_ORIGINAL_BROAD_STATEMENT_WITHDRAWN_NATIVE_CONTROLS_PASS",
+  "original_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next-contract.json",
+  "original_report_sha256": "ac67aad45ba4cab223a654c4f7b85afd0feb21df19995ed41d0cbf73fb31ffbe",
+  "original_statement_preserved_and_withdrawn": "Current view3d_navigate.cc509-516/636-639 -> view3d_navigation_poll_impl -> ED_operator_region_view3d_active (screen_ops.cc270) -> CTX_wm_region_view3d (context.cc846) -> CTX_wm_area/region native getters. With CTX_py_dict_get null, these getters perform native WM reads without context-provider calls. Missing region sets a static poll-message string; no arbitrary provider/poll callback executes.",
+  "correction": "The valid native View3D region success corridor and native view-lock false corridor do not set a poll message. Missing View3D context/region/regiondata calls CTX_wm_operator_poll_msg_set, which first calls CTX_wm_operator_poll_msg_clear and can execute a previously installed dynamic params.free_fn before setting the static message. A static new message therefore does not make that failed-poll path callback-free.",
+  "scope": "Existing strict owner/context eligibility precheck requires the exact fresh valid native region before the real poll. With no Python override, native getters perform no generic provider calls and no callbacks can invalidate that context in the eligible pure poll corridor. Missing-region failures outside eligibility retain baseline cleanup/callback behavior. No new lifetime, arbitrary callback or global heap guarantee follows.",
+  "source_anchors": [
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\blenkernel\\intern\\context.cc",
+      "line": 1092,
+      "signature": "void CTX_wm_operator_poll_msg_clear(",
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\blenkernel\\intern\\context.cc",
+      "line": 1104,
+      "signature": "void CTX_wm_operator_poll_msg_set(",
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\screen\\screen_ops.cc",
+      "line": 270,
+      "signature": "bool ED_operator_region_view3d_active(",
+      "sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\view3d_navigate.cc",
+      "line": 509,
+      "signature": "static bool view3d_navigation_poll_impl(",
+      "sha256": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713"
+    }
+  ],
+  "native_execution_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-run\\native-profile-report.json",
+  "executions": [
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "0",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "2",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "0",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "2",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "0",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "2",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "0",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "2",
+      "assertions": 81,
+      "valid_region_and_native_lock_false_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "operator_callbacks_called": 0
+    }
+  ],
+  "model_boundaries": [
+    "Exact public bContext poll-message params and complete private bContext declaration execute with actual clear/set/native getter/region/View3D/WM poll bodies.",
+    "Dynamic free function is an instrumented host callback: it counts the actual native dispatch, not a Python/RNA/context provider model.",
+    "Python override bridge and thread predicate are instrumented boundaries; valid no-Python context makes no bridge call; non-null override under WITH_PYTHON directly exercises baseline bridge dispatch."
+  ],
+  "production_source_changed_for_correction": false,
+  "no_target_sdk_or_device_claim": true,
+  "previous_native_execution_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\final-run\\native-profile-report.json",
+  "defined_enum_correction": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-correction.json"
+}

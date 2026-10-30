@@ -1,0 +1,36 @@
+{
+  "status": "NATIVE_SEAMS_ONLY_FOR_CONNECTED_INCREMENT_NOT_IN_PATCH",
+  "paths": [
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\view3d_navigate_view_zoom.cc",
+      "before_sha256": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+      "after_sha256": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\include\\ED_view3d.hh",
+      "before_sha256": "ba85a5900f21ae1b8a80559eb05efe43c447608cb97e066afff65d29b88906c6",
+      "after_sha256": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\mesh\\editmesh_knife.cc",
+      "before_sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+      "after_sha256": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\include\\ED_mesh.hh",
+      "before_sha256": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+      "after_sha256": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8"
+    }
+  ],
+  "callback_or_provider_execution": false,
+  "production_patch_edited": false,
+  "tests_edited": false,
+  "ci_edited": false,
+  "standalone_milestone": false,
+  "notes": [
+    "Zoom helper compares raw exact native callbacks/flags and rejects Python/RNA/macro; caller owns fresh current registry/type and selected-dispatch proof.",
+    "Knife helper only reuses exact native origin/type checks and accepts known valid non-PANNING modes. Caller owns fresh registered owner, current-context and modalmap/delegation proof.",
+    "No native/source execution validation of these new seams is claimed by this write.",
+    "Reviewed exact four-file diffs: only public declarations/forward declaration, explicit ED_view3d include and two pure helpers. All native prior bodies unchanged."
+  ]
+}

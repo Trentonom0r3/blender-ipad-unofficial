@@ -1,0 +1,74 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_CURRENT_NATIVE_CHARACTERIZATION",
+  "utc": "2026-10-29T02:38:30.136180+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "verified_production": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "verified_run": 40728695044,
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "patch_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+  "inputs": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "source/blender/editors/space_view3d/view3d_navigate.cc": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c",
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "scripts/presets/keyconfig/keymap_data/blender_default.py": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/makesdna/DNA_userdef_types.h": "1b54a71a57c72724fe99d0f0922dd7c4f919e98dbc36b5a9eba28b2f7f2f36cb",
+    "fixed-pin:source/blender/makesdna/DNA_view3d_types.h": "8bcba6b0f1e9baf33ca4ef8bbc90079967932eadf5ca7a065919b7471c93135e"
+  },
+  "retained_adapter_sha256": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+  "source_sha256": "5337fbd79502882841e459c6e5d83a737bfb91905d92e278a7ca2fc83395b181",
+  "driver_sha256": "d014918dd5b4be21b14784795c2349bbe69ddf11aa03b84e3e29dc3266699000",
+  "models_sha256": "5f771cdb0fbb978f0bcd535e56ac026c03b7464212d7c14590e0c5619fd590b0",
+  "runs": [
+    {
+      "optimization": "-O0",
+      "compile_command": [
+        "C:\\Program Files\\LLVM\\bin\\clang++.exe",
+        "-std=c++17",
+        "-O0",
+        "-Wall",
+        "-Wextra",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\attempt-20261029T023829Z\\actual-current-native-characterization.cc",
+        "-o",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\attempt-20261029T023829Z\\probe-O0.exe"
+      ],
+      "compile_returncode": 0,
+      "run_returncode": 0,
+      "stdout": "initial_down,handler_insert_before_actual_native_add_cut,registered=1,mode=1\nstock_pan,swap=0,mod=0,chosen=view3d.rotate,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=1,chosen=view3d.move,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=2,chosen=view3d.zoom,knife_status=8,wm_continue=1,dist=10->9.890109062\nstock_pan,swap=0,mod=3,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=4,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=0,chosen=view3d.move,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=1,chosen=view3d.rotate,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=2,chosen=view3d.zoom,knife_status=8,wm_continue=1,dist=10->9.890109062\nstock_pan,swap=1,mod=3,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=4,chosen=none,knife_status=8,wm_continue=1,dist=10->10\ncustom_pan_panning,mapped=1,native_mode=3,wm_continue=1\ncustom_keyboard_panning_then_raw_pan,mode=3->1,wm_continue=1\nnative_emulated_mmb,modifier_pref=0,mode_panning_then_raw_pan=3->1,release=middle\nnative_emulated_mmb,modifier_pref=1,mode_panning_then_raw_pan=3->1,release=middle\nnative_raw_mode,0->0,wm_continue=1\nnative_raw_mode,1->1,wm_continue=1\nnative_raw_mode,2->2,wm_continue=1\nnative_raw_mode,3->2,wm_continue=1\nactual_native_poll,regular_zoom_lock_refuses=1,runtime_zoom_lock_refuses=1\ndirect_zoom_pan_historical_coordinates,flag=0,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=512,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=8,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=16,dist=10->10.19704342\nactual_queue_merge,mixed=0,source_flag=1,dist=10->10.19704342\nactual_queue_merge,mixed=1,source_flag=0,dist=10->10.19704342\ndirect_native_press,type=140,rotate=0,generic_modal=1\ndirect_native_press,type=140,rotate=1,generic_modal=1\ndirect_native_press,type=141,rotate=0,generic_modal=1\ndirect_native_press,type=141,rotate=1,generic_modal=1\nPASS actual-current-native-characterization\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "compile_command": [
+        "C:\\Program Files\\LLVM\\bin\\clang++.exe",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\attempt-20261029T023829Z\\actual-current-native-characterization.cc",
+        "-o",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-actual-characterization\\attempt-20261029T023829Z\\probe-O2.exe"
+      ],
+      "compile_returncode": 0,
+      "run_returncode": 0,
+      "stdout": "initial_down,handler_insert_before_actual_native_add_cut,registered=1,mode=1\nstock_pan,swap=0,mod=0,chosen=view3d.rotate,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=1,chosen=view3d.move,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=2,chosen=view3d.zoom,knife_status=8,wm_continue=1,dist=10->9.890109062\nstock_pan,swap=0,mod=3,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=0,mod=4,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=0,chosen=view3d.move,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=1,chosen=view3d.rotate,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=2,chosen=view3d.zoom,knife_status=8,wm_continue=1,dist=10->9.890109062\nstock_pan,swap=1,mod=3,chosen=none,knife_status=8,wm_continue=1,dist=10->10\nstock_pan,swap=1,mod=4,chosen=none,knife_status=8,wm_continue=1,dist=10->10\ncustom_pan_panning,mapped=1,native_mode=3,wm_continue=1\ncustom_keyboard_panning_then_raw_pan,mode=3->1,wm_continue=1\nnative_emulated_mmb,modifier_pref=0,mode_panning_then_raw_pan=3->1,release=middle\nnative_emulated_mmb,modifier_pref=1,mode_panning_then_raw_pan=3->1,release=middle\nnative_raw_mode,0->0,wm_continue=1\nnative_raw_mode,1->1,wm_continue=1\nnative_raw_mode,2->2,wm_continue=1\nnative_raw_mode,3->2,wm_continue=1\nactual_native_poll,regular_zoom_lock_refuses=1,runtime_zoom_lock_refuses=1\ndirect_zoom_pan_historical_coordinates,flag=0,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=512,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=8,dist=10->10.19704342\ndirect_zoom_pan_historical_coordinates,flag=16,dist=10->10.19704342\nactual_queue_merge,mixed=0,source_flag=1,dist=10->10.19704342\nactual_queue_merge,mixed=1,source_flag=0,dist=10->10.19704342\ndirect_native_press,type=140,rotate=0,generic_modal=1\ndirect_native_press,type=140,rotate=1,generic_modal=1\ndirect_native_press,type=141,rotate=0,generic_modal=1\ndirect_native_press,type=141,rotate=1,generic_modal=1\nPASS actual-current-native-characterization\n",
+      "stderr": ""
+    }
+  ],
+  "compiler": "C:\\Program Files\\LLVM\\bin\\clang++.exe",
+  "compiler_version": "clang version 22.1.5 (https://github.com/llvm/llvm-project 5ea218a153f4d2f815b8244eab3e4b4ba5e00e6c)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Program Files\\LLVM\\bin\n",
+  "boundaries": [
+    "Full current Knife invoke and full current modal execute unchanged. knifetool_init, cut geometry and BMesh/depsgraph setup are named adapters; their geometry/history/Undo/Cancel semantics are not proved. Unsupported helper paths assert rather than simulate success.",
+    "Actual WM modal handler allocation body/list insertion execute over simple modeled allocator/list storage. Native Knife binding callback is an instrumented boundary; no original owner, accepted DOWN, lease or UIKit same-batch timing proof.",
+    "Actual WM event matcher, modal keymap begin/end, eventemulation, full trackpad queue function and exact final handler-status tail execute. Whole wm_handler_operator_call, wm_operator_invoke, scheduling, keymap registration/copy and whole dispatch are not executed. Raw maps are executed original current pinned Python; event/keymap symbolic enum adapter is explicit. Actual current WM_EventFlag, actual fixed-pin RV3D lock enum+macro including runtime_viewlock and actual fixed-pin user emulation constants execute.",
+    "Actual native View3D context getter, ED active-region check, native lock polls, generic invoke/allocation, full zoom invoke/apply/scale/state math execute. ViewOpsData init_context is actual; init_navigation, context providers, scalar vector primitives, soft limits, allocator, redraw/autokey/camera helpers remain adapters. Unlocked perspective with cursor zoom off is the tested mathematical state.",
+    "Rotate/Move current one-finger guards and generic invoke execute. Their advanced geometry init/apply uses an instrumented callback, proving native path reachability only. Direct locked controls use actual poll and actual RV3D_LOCK_FLAGS source rather than mirrored lock arithmetic.",
+    "Actual queue mixed-source AND clearing executes over modeled event storage; physical Pencil flag injection starts at the WM-event boundary. No independent UIKit producer source-classification proof is claimed.",
+    "No production/test/CI edits, native iOS build, target compiled output, device acceptance, general lifetime/geometry/history proof or full goal completion."
+  ]
+}

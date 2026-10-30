@@ -1,0 +1,417 @@
+{
+  "status": "BOUNDED_RETENTION_LITERAL_SOURCE_REVIEW_NO_WEAKENING_FOUND_NEW_FAMILY_PENDING",
+  "utc": "2026-10-30T02:33:38.256Z",
+  "scope": "Independent read-only HEAD/blob, retained-generator/assertion/scenario, literal-UI, private-enum and native-emulation source audit. No new production/test edits or new family execution/review by this agent.",
+  "baseline": {
+    "HEAD": "260973518817410fb2b33eebbb2e9dea413c6589",
+    "patch_raw_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+    "verified_runtime_source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+    "verified_run": 40728695044,
+    "note": "Exact HEAD patch blob basis is recorded rather than reusing the prior-patch hash in the earlier source checkpoint."
+  },
+  "candidate": {
+    "patch_raw_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+    "materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+    "targets": 140,
+    "changed_targets": [
+      "source/blender/editors/include/ED_mesh.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source/blender/editors/mesh/editmesh_knife.cc",
+      "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc",
+      "source/blender/editors/include/ED_view3d.hh"
+    ],
+    "deleted_targets": [],
+    "unchanged_prior_sections": 135
+  },
+  "findings": [],
+  "retained_generator_review": {
+    "files": [
+      {
+        "path": "build/test_pencil_node_native_invoke.py",
+        "HEAD_raw_sha256": "c8304bfefc2478a9d32e427d0a0e5ddfb02977bd8983abb52f1f2d7d2131bdde",
+        "current_raw_sha256": "b155129d7252c42f84d9cb6af20e3e4ddd8e3f568f2aa32e22abb8c22e37b6e1",
+        "assertion_lines_equal": true,
+        "HEAD_assertion_lines": 10,
+        "current_assertion_lines": 10,
+        "NodeNativeInvokeTests_class_exact": true
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/connected.py",
+        "HEAD_raw_sha256": "b5f322e7e7f9bc15c97fdca7b59c35524226ab1aeba954c64bbd40b061491769",
+        "current_raw_sha256": "3fe142884eec476add652fa60a65d5bffefb2ed02f0407479d0670d0ea0d1030",
+        "assertion_lines_equal": true,
+        "HEAD_assertion_lines": 0,
+        "current_assertion_lines": 0
+      },
+      {
+        "path": "build/tests/node_connected_workflow/connected.py",
+        "HEAD_raw_sha256": "bec41824731c23df94a6aadf9a7f1de30a4d712afc974c77dda79532a97226c8",
+        "current_raw_sha256": "77832bd0345b4dd8d698b100068f572fa72c484f70e4d7d0e0b404f5c972dd6c",
+        "assertion_lines_equal": true,
+        "HEAD_assertion_lines": 7,
+        "current_assertion_lines": 7
+      }
+    ],
+    "assertion_AST_counts": [
+      {
+        "path": "build/test_pencil_node_native_invoke.py",
+        "HEAD": 10,
+        "current": 10,
+        "kind": "unittest assertion calls",
+        "AST_exact": true
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/connected.py",
+        "HEAD": 2,
+        "current": 2,
+        "kind": "bare assert statements, both inline",
+        "AST_exact": true
+      },
+      {
+        "path": "build/tests/node_connected_workflow/connected.py",
+        "HEAD": 7,
+        "current": 7,
+        "kind": "bare assert statements",
+        "AST_exact": true
+      }
+    ],
+    "assertion_AST_total": 19,
+    "companion_families": [
+      "node_precision_transport",
+      "node_keymap_baseline",
+      "node_native_invoke",
+      "node_keymap_dispatch",
+      "node_connected_workflow"
+    ],
+    "companion_files": [
+      {
+        "path": "build/tests/node_precision_transport/baseline.json",
+        "byte_exact": true,
+        "sha256": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd"
+      },
+      {
+        "path": "build/tests/node_precision_transport/host_models.inc.cc",
+        "byte_exact": true,
+        "sha256": "17cd1327982de82007dd2770d496b00f3fb6f51a1035fa1198ce74077d34d28d"
+      },
+      {
+        "path": "build/tests/node_precision_transport/queue_models.inc.cc",
+        "byte_exact": true,
+        "sha256": "82bbbab927d69e4d294d74ec65f02efbd794108d5b55815dbc157acc30b873b2"
+      },
+      {
+        "path": "build/tests/node_precision_transport/run_connected.py",
+        "byte_exact": true,
+        "sha256": "e8cf26003d29762cce563fd6413c78e82c1aac6572dac7f263161c7d6427d2f8"
+      },
+      {
+        "path": "build/tests/node_precision_transport/scenarios.inc.cc",
+        "byte_exact": true,
+        "sha256": "c69fce3c7217aa4a0e155b20e25e8449b0edbf8e928e33fc10ec520674b45f6e"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/baseline.py",
+        "byte_exact": true,
+        "sha256": "62285a44c6f493afae0f70a40c0ae19ccfc48741bf1db034efe1b565995c49f7"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/native_boundaries.inc.cc",
+        "byte_exact": true,
+        "sha256": "bbfc027731df33f869d4164387148d24192bd1fc324748935acaec3e87122bc6"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/native_cases.inc.cc",
+        "byte_exact": true,
+        "sha256": "1fab89eae8dc47df1320d27470ad8e4f351d325ad6216fc76be8e30ddaccfe38"
+      },
+      {
+        "path": "build/tests/node_native_invoke/cases.inc.cc",
+        "byte_exact": true,
+        "sha256": "28bb569493ef93031158e494502557070c18bcb842350d26f16de2a7f05f57d7"
+      },
+      {
+        "path": "build/tests/node_native_invoke/control_cases.inc.cc",
+        "byte_exact": true,
+        "sha256": "5864e5f2dc1a9003453ca3f519a4c3152755b0d028aef747ef67d05539095a3d"
+      },
+      {
+        "path": "build/tests/node_native_invoke/control_models.inc.cc",
+        "byte_exact": true,
+        "sha256": "9ec201903cdce3d1e3f7e6a66f7b2593999e64dd000df6c4f461ce54275b8ab1"
+      },
+      {
+        "path": "build/tests/node_native_invoke/models.inc.cc",
+        "byte_exact": true,
+        "sha256": "f04d743f61346a2865d6bc49672b3e07a45b61a7500baf8a006abb03c54ed444"
+      },
+      {
+        "path": "build/tests/node_native_invoke/wm_boundaries.inc.cc",
+        "byte_exact": true,
+        "sha256": "cbc2c14b3190d605387bef90835d5025f0aaccf345d44bc50616acc736d1f97d"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/cases.inc.cc",
+        "byte_exact": true,
+        "sha256": "ec8fa1886ca5b261a440acf208d1b2a91ffc67bc981195d3ef77d098417bed2e"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/connected.py",
+        "byte_exact": false,
+        "sha256": "3fe142884eec476add652fa60a65d5bffefb2ed02f0407479d0670d0ea0d1030"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/dependencies.inc.cc",
+        "byte_exact": true,
+        "sha256": "e890e7fe6ef6bb459bec997b4f783d67176dc091f14ff7bd8ccee2c46301c2e5"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/handler_boundaries.inc.cc",
+        "byte_exact": true,
+        "sha256": "5d04910db919e007cfdeabee15c4a1ce67f80177c510e972e2363f47d1cb1464"
+      },
+      {
+        "path": "build/tests/node_connected_workflow/cases.inc.cc",
+        "byte_exact": true,
+        "sha256": "d79ffee301597290d27b0a15cee482d329fddd649721c754ecfc251acc9aa9d0"
+      },
+      {
+        "path": "build/tests/node_connected_workflow/connected.py",
+        "byte_exact": false,
+        "sha256": "77832bd0345b4dd8d698b100068f572fa72c484f70e4d7d0e0b404f5c972dd6c"
+      }
+    ],
+    "unchanged_companions": 17,
+    "CXX_companion_literal_assert_calls": 173,
+    "immediate_nine_inc_cc_assert_calls": 136,
+    "notes": [
+      "Full original NodeNativeInvokeTests class suffix is byte-text exact after line-ending normalization; all original test methods, expectations, historical required-denial controls and loop scenarios remain.",
+      "All17 other companion files across the five retained Node families are raw-byte exact. The two changed connected.py files are the sole family exceptions; the third changed driver is build/test_pencil_node_native_invoke.py.",
+      "Assertion-count correction: line-only grep missed two inline keymap assertions. Actual Python AST comparison gives10+2+7=19 unchanged assertion nodes. This is an assertion-source count, not a count of runtime iterations or whole-suite tests."
+    ]
+  },
+  "explicit_no_Knife_boundary": {
+    "native_invoke": "wm_ipad_knife_precision_pan_event_context returns false. ED_view3d_native_zoom_type_is asserts if unexpectedly entered and returns false even without assertions. Actual shared native-denial profile is extracted; no Knife owner or navigation success is fabricated.",
+    "keymap_dispatch": "wm_ipad_knife_pan_zoom_dispatch returns eIPadNativePanDispatch::None unconditionally in this disclosed Node-only model. Complete actual regular dispatcher remains extracted.",
+    "grant_nothing": true,
+    "no_new_Knife_coverage_claim": true
+  },
+  "no_silent_autocorrection": {
+    "current_missing_enum": "Current production eIPadNativePanDispatch missing => ValueError. Fallback enum literal is historical-only.",
+    "production_bodies": "Complete actual current invoke/poll/profile/regular-dispatch and preserved View2D bodies continue to be extracted. New fixture additions are explicit no-Knife dependency boundaries, not edits to extracted policy or expected outcomes.",
+    "historical": "Historical immutable invoke still receives only the disclosed signature adapter; that adapter discards the new scalar. The sole workflow change is the private enum spelling.",
+    "existing_adapters": "Existing prefix replacements of model structs/dependencies, definition-name counter wrappers and bridge slices remain unchanged; this review makes no full WM/ABI/device assertion."
+  },
+  "literal_UI": {
+    "python_sections": [
+      {
+        "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+        "exact": true,
+        "sha256": "c6d1f37ca252cef50157411da77c45bf6dddbfd3eee73b7d03e85042b83d8e06"
+      },
+      {
+        "path": "scripts/startup/bl_ui/__init__.py",
+        "exact": true,
+        "sha256": "03367c62d072f1c3ac7b83afd7a1a6b0de390853d82a5b0fc453da0b23b37275"
+      },
+      {
+        "path": "scripts/startup/bl_ui/space_filebrowser.py",
+        "exact": true,
+        "sha256": "7709f10e68dc9b20d00091086c943ae8344b8399f7fe8c71c0e8216c8ad51662"
+      },
+      {
+        "path": "scripts/startup/bl_ui/space_properties.py",
+        "exact": true,
+        "sha256": "07c1ceda1fe5a07d36f45cfcbb611c0abc4230462471e2bd0bd78731deebb8c5"
+      },
+      {
+        "path": "scripts/startup/bl_ui/space_topbar.py",
+        "exact": true,
+        "sha256": "78468327b93cf33989d2ccd8177085bdfaf8b10f6386a1da6721d73831da7f48"
+      },
+      {
+        "path": "scripts/startup/bl_ui/space_view3d_toolbar.py",
+        "exact": true,
+        "sha256": "9aa6d0671a924dbe93ce8af3492c86855a8ac523cf570fe642149779c999a7b8"
+      },
+      {
+        "path": "scripts/startup/bl_ui/space_view3d_ipad.py",
+        "exact": true,
+        "sha256": "0efcd48c8acb40af5f7241185f53ebc2eae0952d159698e92fe5dedf84fd292c"
+      }
+    ],
+    "ghost_sections": [
+      {
+        "path": "intern/ghost/GHOST_Types.h",
+        "exact": true,
+        "sha256": "1965b96e4ac355c2b1552820c9f19e0486be7afbfb2662a04f77e3296de3b237"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_ContextIOS.mm",
+        "exact": true,
+        "sha256": "2232755ad90e15d22c39b0716fd5a36fe03ef375188da28c6b104e8ad2e7fa0e"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_EventButton.hh",
+        "exact": true,
+        "sha256": "6508fad94f4bacc6a67f9ab048711d5d0f385f38b8b46ea539cf3396fa5fc01b"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_EventCursor.hh",
+        "exact": true,
+        "sha256": "e420da848f7218298a45adc1acee467db47119c4dc54f6594395809df80145b0"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_SystemIOS.mm",
+        "exact": true,
+        "sha256": "1e1d5c34ccf9300387222271a27ecaa586103c922a580a52cd7e03835fa1cf7b"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+        "exact": true,
+        "sha256": "af49631d6e5be1a14505b2c15ac4fa58c61d143bc2b9db1a98a207ffc1bc2bde"
+      },
+      {
+        "path": "intern/ghost/GHOST_NavigationIOS.hh",
+        "exact": true,
+        "sha256": "db5dee038f8c1b42af499312e9c5ae396f985aa4983a5090fe24b9134c3b5573"
+      },
+      {
+        "path": "intern/ghost/GHOST_ProjectImport-api.hh",
+        "exact": true,
+        "sha256": "98b88f5d8466c88e9b94faf6a2f31360942893af9c996855e1444358e3316699"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_EventPencilRing.hh",
+        "exact": true,
+        "sha256": "6f95a774354818235976199167963a8869edec2d9d8a8a54d669b95e441064ba"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_ProjectExportIOS.hh",
+        "exact": true,
+        "sha256": "2c527af14715d0a9db0b67049007232d1b5962caa8344afa68c9210956646d45"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_ProjectImportIOS.hh",
+        "exact": true,
+        "sha256": "4cfcaeb974870e7429f7d2edc09f27d0914f926a1a94c473b0bd1611f6c6af41"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_ProjectRecentIOS.hh",
+        "exact": true,
+        "sha256": "a9302040acc076eecb6bf576446ff4a60008b0f7e0e3656c3f6c03d8fff6bd4a"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_ProjectSaveIOS.hh",
+        "exact": true,
+        "sha256": "2665d5422258020a0774449dcc3f8126eac2c672adadd914122806ab7e4cc203"
+      },
+      {
+        "path": "intern/ghost/intern/GHOST_EventTrackpad.hh",
+        "exact": true,
+        "sha256": "2b0d2d63bf7f214eb825cf885cef490261006bb99657dbffdf104e914f23df0e"
+      }
+    ],
+    "python_count": 7,
+    "ghost_count": 14,
+    "ghost_count_correction": "Actual HEAD/current patches each contain14 intern/ghost sections, including GHOST_EventTrackpad.hh. All14 are exact; older all13 wording is superseded.",
+    "changed_native_string_inventory": [
+      {
+        "path": "source/blender/editors/include/ED_mesh.hh",
+        "HEAD_materialized_sha256": "d583e5a2ff21f5c666be03d19ad64060e06c6c240c1fe2408542e3cef922886a",
+        "candidate_materialized_sha256": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8",
+        "string_deltas": []
+      },
+      {
+        "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+        "HEAD_materialized_sha256": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+        "candidate_materialized_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+        "string_deltas": [
+          {
+            "literal": "\"VIEW3D_OT_zoom\"",
+            "before": 0,
+            "after": 2
+          },
+          {
+            "literal": "\"3D View\"",
+            "before": 0,
+            "after": 2
+          },
+          {
+            "literal": "\"Knife Tool Modal Map\"",
+            "before": 0,
+            "after": 2
+          }
+        ]
+      },
+      {
+        "path": "source/blender/editors/mesh/editmesh_knife.cc",
+        "HEAD_materialized_sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc",
+        "candidate_materialized_sha256": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20",
+        "string_deltas": []
+      },
+      {
+        "path": "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc",
+        "HEAD_materialized_sha256": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+        "candidate_materialized_sha256": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249",
+        "string_deltas": [
+          {
+            "literal": "\"ED_view3d.hh\"",
+            "before": 0,
+            "after": 1
+          }
+        ]
+      },
+      {
+        "path": "source/blender/editors/include/ED_view3d.hh",
+        "HEAD_materialized_sha256": "ba85a5900f21ae1b8a80559eb05efe43c447608cb97e066afff65d29b88906c6",
+        "candidate_materialized_sha256": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1",
+        "string_deltas": []
+      }
+    ],
+    "conclusion": "No existing C++ literal is removed or changed. New strings are only lookup identifiers VIEW3D_OT_zoom / 3D View / Knife Tool Modal Map and ED_view3d.hh include. All7Python UI/keymap sections and native UI/render sections among135 prior sections remain exact. No UI redraw or device acceptance is inferred.",
+    "selection_reference": {
+      "path": "output/ui-preview/pencil-corner/selection-collapsed.png",
+      "bytes": 618194,
+      "sha256": "759fdbd0b211bc20a6d35ba8f38ced8fc1886f70ebc7b14ab3bdc8ffd1a6c4dc",
+      "HEAD_tracked": false,
+      "note": "Existing reference is present and was not modified. It is untracked/ignored, so no HEAD byte-equality claim is made."
+    }
+  },
+  "private_enum_and_ABI": {
+    "old": "eIPadNodeView2DDispatch { None, StockPan, StockCtrlZoom }",
+    "new": "eIPadNativePanDispatch { None, StockPan, StockCtrlZoom, StockKnifeCtrlZoom }",
+    "observation": "Only wm_event_system.cc private/static dispatch function parameters use the renamed enum in production. Original ordinal0/1/2 order remains; new Knife value is3. Test-only type alias preserves original scenario source. Existing WM_types/GHOST payload/handler layouts and public existing signatures are unchanged in the patch; added native predicates do not add a callback surface.",
+    "limitation": "Source-level private dispatch retention only; native SDK/link/compiled ABI remains a later gate."
+  },
+  "emulation_latch": {
+    "whole_function_equivalent_after_only_relocation_and_identifier_rename": true,
+    "normalized_sha256": "157a3a3f0cbbe2e3675b9b92ae8be6f4de5bef1980cb8e0ebd1c503150d61006",
+    "old_mentions": 4,
+    "new_function_mentions": 3,
+    "total_new_WM_mentions": 5,
+    "policy": "Old static scalar initializer EVENT_NONE moves to file scope; existing test_only reads/stores and preference scoping remain exactly. One new Knife-only read vetoes denial unless latch is EVENT_NONE, also after current preference is switched off. This is existing emulation state, not a physical held-button proof or new tracker.",
+    "conservative_limit": "Preference-off release may leave old latch set. Candidate then falls back to native behavior, preserving intent conservatively rather than clearing old state. Current-value modal-map restoration history remains explicitly outside universal history proof."
+  },
+  "CI_and_attributes": {
+    "observation": "Only a new test_pencil_knife_initial_pan*.py discovery step is inserted; retained Knife/Node steps are unchanged. Scoped LF patterns apply to new initial-Knife driver/family paths; all existing patterns remain.",
+    "new_family_status": "Agents still own unfinished new-family work. This audit does not certify their final test source, acceptance matrix or execution."
+  },
+  "observed_retained_logs": {
+    "invoke": "5/5 7.359s",
+    "keymap_dispatch": "1/1 5.166s",
+    "connected_workflow": "1/1 6.480s",
+    "basis": "Read existing root-run logs, not rerun by reviewer. Root full retained diagnostic is still in progress; no whole-suite PASS claim."
+  },
+  "claims": {
+    "production_edits": false,
+    "test_edits": false,
+    "new_test_execution_by_reviewer": false,
+    "full_suite_pass": false,
+    "new_family_final_review": false,
+    "new_build": false,
+    "source_validated": false,
+    "native_compiled_or_device_proof": false,
+    "ready": false,
+    "goal_complete": false
+  }
+}

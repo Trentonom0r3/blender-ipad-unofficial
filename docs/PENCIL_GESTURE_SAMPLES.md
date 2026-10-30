@@ -1,3 +1,32 @@
+## Initial Knife Ctrl-PAN: denial-only native dispatch — 2026-10-30
+
+The current candidate reuses the shipped ordinary physical Pencil PAN class at
+actual selected native dispatch. It does not change recognizers, packets, their
+order, coordinates, tablet values, modifiers or terminals. It does not infer a
+delivered press, contact identity or a new owner from that class.
+
+Only an actually selected static stock-value Ctrl-PAN View3D Zoom route may be
+denied, after its genuine native poll and before operator/navigation allocation.
+Fresh strict registration must prove the original live native Knife in the same
+actual WINDOW region. Exact native callback profiles, absent Python context,
+current default/effective ordinary and Knife modal maps, native non-PANNING mode
+and emulation exclusions are checked. Direct/delegated/gizmo/UI calls receive no
+grant. Custom, ambiguous, pending and mixed-source routes retain native fallback.
+The existing native emulation latch is read conservatively even if its preference
+was disabled before release; this is not a generic held-button receipt.
+
+Current map values cannot prove arbitrary customization history restored by a
+callback. The missing-region native poll-message path may call an existing dynamic
+cleanup callback; it remains baseline behavior outside the eligible fresh-region
+corridor. No new Cancel/free, synthetic release, generic rollback or global native
+lifetime claim follows. Existing already-live physical Knife omission still needs
+the same original owner at Begin and recognition; this separate semantic denial
+can cover a real initial DOWN that registered Knife before the queued PAN.
+
+See pencil-knife/initial-pan-candidate and both new regression families. Final
+source/full/target gates must be read from their actual reports; source and host
+models are separate from native compilation, package checks and iPad acceptance.
+
 # Recognizer-owned Pencil device and samples
 
 ## Recognizer-owned Pencil sample IPA verified - 2026-10-09

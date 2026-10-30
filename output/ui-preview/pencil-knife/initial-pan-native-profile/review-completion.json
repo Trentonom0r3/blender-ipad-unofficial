@@ -1,0 +1,174 @@
+{
+  "utc": "2026-10-30T09:14:11.012719+00:00",
+  "status": "PASS_BOUNDED_NATIVE_API_AND_PROFILE_REVIEW",
+  "checkpoint": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\checkpoint.json",
+  "source_execution_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-run\\native-profile-report.json",
+  "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "native_definitions_and_caller_are_separate_cpp17_translation_units": true,
+  "public_snippet_declarations_are_source_extracted": true,
+  "same_tu_native_factory_and_callback_profile": true,
+  "authentic_declarations": [
+    "wmOperatorType",
+    "ExtensionRNA",
+    "wmOperator",
+    "wmOperatorTypeMacro",
+    "bContext",
+    "bContextPollMsgDyn_Params",
+    "ViewContext",
+    "MeshKnifeModalOrigin"
+  ],
+  "zoom_disqualifying_field_controls": [
+    "poll",
+    "exec",
+    "invoke",
+    "modal",
+    "cancel",
+    "flag",
+    "pyop_poll",
+    "rna_ext.data",
+    "rna_ext.srna",
+    "rna_ext.call",
+    "rna_ext.free",
+    "macro.first",
+    "macro.last"
+  ],
+  "knife_modes": {
+    "MODE_IDLE": true,
+    "MODE_DRAGGING": true,
+    "MODE_CONNECT": true,
+    "MODE_PANNING": false
+  },
+  "knife_failure_controls": [
+    "null operator",
+    "null customdata",
+    "null operator type",
+    "parent macro opm",
+    "operator macro list",
+    "type macro list",
+    "type macro flag",
+    "foreign invoke/modal/cancel",
+    "six missing native origin fields"
+  ],
+  "pure_poll_corridor": "Fresh valid native View3D context with null Python dictionary passes or rejects zoom locks without calling dynamic free. Missing region baseline poll invokes installed dynamic free once. No claim that all native failed polls are callback-free.",
+  "historical_controls": [
+    {
+      "stage": "old-public-declaration-compile",
+      "returncode": 1
+    },
+    {
+      "stage": "old-source-definition-link",
+      "returncode": 1
+    }
+  ],
+  "link_contract": {
+    "creator_to_view3d_route": [
+      "blender",
+      "bf::windowmanager",
+      "bf::blenkernel",
+      "bf_rna",
+      "bf_editor_space_api",
+      "bf_editor_space_view3d"
+    ],
+    "mesh_route": [
+      "bf_rna",
+      "bf_editor_mesh"
+    ],
+    "source_anchors": [
+      {
+        "path": "source/creator/CMakeLists.txt",
+        "line": 24,
+        "literal": "PRIVATE bf::windowmanager"
+      },
+      {
+        "path": "source/blender/windowmanager/CMakeLists.txt",
+        "line": 93,
+        "literal": "PRIVATE bf::blenkernel"
+      },
+      {
+        "path": "source/blender/blenkernel/CMakeLists.txt",
+        "line": 589,
+        "literal": "bf_rna"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 470,
+        "literal": "bf_editor_space_api"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 480,
+        "literal": "bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/space_api/CMakeLists.txt",
+        "line": 43,
+        "literal": "bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 58,
+        "literal": "view3d_navigate_view_zoom.cc"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 111,
+        "literal": "blender_add_lib(bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 30,
+        "literal": "editmesh_knife.cc"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 86,
+        "literal": "blender_add_lib(bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/CMakeLists.txt",
+        "line": 52,
+        "literal": "add_subdirectory(space_view3d)"
+      },
+      {
+        "path": "build_files/cmake/macros.cmake",
+        "line": 428,
+        "literal": "blender_link_libraries(${name} \"${library_deps}\")"
+      }
+    ],
+    "limit": "Actual source-backed dependency edges; no full CMake configure, native SDK or whole-link closure proof."
+  },
+  "limits": [
+    "Exact native wmOperatorType/ExtensionRNA/wmOperator/ViewContext/bContext and helper public declaration snippets compile in separate TUs; complete public header dependency trees and complete Blender translation units are not compiled.",
+    "Actual helpers, native type factories, WM append begin/append, context native getters, View3D/WM polling and poll-message clear/set execute; RNA descriptor allocation/schema access, registry append end, main-thread query, Python override bridge and non-poll navigation callbacks are explicit host boundaries.",
+    "KnifeTool_OpData and region/area backing are narrow storage adapters; owner lifetime, membership, event routing, modal-map/delegation and actual navigation/geometry are owned by the separate connected suite.",
+    "All four defined native KnifeMode states execute, including MODE_PANNING refusal. Out-of-range enum conversion/storage corruption is not a defined C++17 control and is not claimed.",
+    "Historical controls use exact fixed-pin old factories and absence of API declarations/definitions; they prove missing-seam detection only, not the original behavioural Ctrl-PAN navigation failure.",
+    "APPLE/PYTHON macro matrix is host C++17 evidence; target platform SDK, runtime layout/ABI, real RNA/allocator, complete CMake graph and device evidence remain separate."
+  ],
+  "test_files": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\test_pencil_knife_initial_pan_native.py",
+      "bytes": 2517,
+      "sha256": "f027c2e352b94a7873aab966d3681a3977390549862cecd99c695693deec1646"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\cases.inc.cc",
+      "bytes": 6404,
+      "sha256": "d965c35d5427089cbd5a033642dc57dde6aa71f8df4706ca73fd42e51a226124"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\models.inc.hh",
+      "bytes": 4145,
+      "sha256": "d159c60f6c6ea09c6f9c0da7452c1a2130f42e2663d2a125ec96258c78e606a6"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\native.py",
+      "bytes": 17351,
+      "sha256": "921e39741e7c092b5c1160b93453662cba758b4d67a9902467398877c96711bf"
+    }
+  ],
+  "production_edits": false,
+  "ci_edits": false,
+  "sdk_or_device_validation": false
+}

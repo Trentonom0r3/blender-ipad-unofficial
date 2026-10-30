@@ -1,0 +1,61 @@
+{
+  "status": "READ_ONLY_MMB_AND_CUSTOM_PANNING_RESET_ADDENDUM_MODE_ONLY_INSUFFICIENT",
+  "source_commit": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "supersedes": "The initial source-contract's postmodal mode refinement proves preservation of same-event PAN->PANNING only. It is not by itself sufficient for prior customized PANNING events or native emulated-MMB navigation intent.",
+  "physical_GCMouse": {
+    "result": "No ordinary positive physical Pencil PAN after actual GCMouse MMB down is source-reachable through the normal current-window recognizer path.",
+    "anchors": [
+      "WindowIOS.mm:1295-1302 rejects new direct/Pencil touch admission while any local L/M/R hardware flag is set.",
+      "WindowIOS.mm:1561-1567 additionally suppresses the whole newly recognized stream if hardware became held before Began.",
+      "WindowIOS.mm:2630,2663,2694 calls cancelPointerCapture before setting hardware button flags and before enqueuing each L/R/M hardware down.",
+      "WindowIOS.mm:1517-1551 cancels owned pointer receipts and invalidates tap+pan TouchAdmission; handlePan:1555-1558 checks touchStreamAllowed before generating any ordinary PAN or cursor.",
+      "NavigationIOS.hh:42-48 interrupt sets interrupted for an active recognizer contact and allowed remains false until recognizer reset. Reset also clears GestureContact, so a hypothetical originless Changed cannot retain positive pencilContactDown.",
+      "WindowIOS.mm:1754-1851 handleIndirectPan emits only cursor or trackpad Scroll numFingers=2, default physical scalar false; it does not emit MMB button-down/up. Hardware button events are the GCMouse callbacks.",
+      "WindowIOS.mm:2730-2739 pre-recognition GCMouse movement likewise creates numFingers2 trackpad events with default physical scalar false."
+    ],
+    "packet_limit": "generateUserInputEvents:1084-1102 suppresses only pointer packets for paint-lease mismatch, not PAN. Therefore class alone never proves a delivered pointer packet. Hardware interruption differs: it returns from handlePan before PAN generation. There is no new generic generator-level hardware button veto.",
+    "assumptions": "This is normal current-window source ordering under the existing main-thread callback model, not a new UIKit/device execution proof or all-window hardware-state theorem. A button in another window does not by itself establish this Knife's MMB intent."
+  },
+  "native_poll_failure": {
+    "fact": "Native region navigation poll509-517 checks independent lock masks. MMB PANNING can PASS from Knife while ordinary rotate/location poll fails; no navigation operator is then created. A later raw PAN call resets MODE_PANNING at Knife4217-4219 before PASS4461. Zoom poll may independently pass. This is a real mode-history loss mechanism, even though the simple physical-GCMouse example is blocked by the producer guards.",
+    "native_emulation": "wm_eventemulation8584-8624 converts ordinary Pencil LEFTMOUSE PRESS with Alt/OSKey into MIDDLEMOUSE and sets private static emulating_event. It does not touch GHOST hardware flags or invalidate the Pencil recognizer. The emulation remains until LEFTMOUSE RELEASE even after modifier release; key transitions overwrite WM eventstate type/val8913-8924.",
+    "concrete_fallback_sequence": "An already-live Knife contact whose original producer receipt refused because Alt was still queued can later recognize after Alt ingestion, emit ordinary LEFTDOWN emulated to MMB, and enter native PANNING. With rotation locked and zoom unlocked, ordinary MMB rotate polling fails. Release Alt and press Ctrl while Pencil remains down, then a positive paired raw CtrlPAN can still be emitted; the postmodal mode is no longer PANNING and a mode-only B guard would deny the stock Zoom. This is a source-reachable sequence, not an executed device trace.",
+    "fresh_button_state": "No general fresh WM held-button set was found: eventstate type/val and prev_press_type are last-event state, overwritten by keyboard input. GHOST_SystemIOS::getButtons635-639 is a no-op returning success, so GHOST_GetButtons cannot supply held-button proof on iOS. The private emulating_event is actual native release-mapping state, but current code exposes no read-only query for it; it must not be renamed physical hardware state."
+  },
+  "bounded_current_value_policy": {
+    "recommendation": "Keep B, conservatively refuse new denial whenever USER_TWOBUTTONMOUSE is currently enabled, and require a small current Knife-modal compatibility policy in addition to postmodal mode. No new generic button tracker or historical owner/contact claim is warranted.",
+    "modal_membership": "Freshly require native Knife type's modalkeymap to be the unique registered default Knife Tool Modal Map (SPACE_EMPTY/WINDOW), matching the native registration/table, and resolve the actual effective same-ID map using WM_keymap_active's native userconf-first membership rule without update/callbacks. Require no owner_id, diff records, poll or poll_modal_item and matching native modal_items; unknown/duplicate/rebound maps fallback. Exact native table identity needs a source-backed native predicate, not a name comparison.",
+    "map_flags": "Default allowed: KEYMAP_MODAL | KEYMAP_UPDATE | KEYMAP_EXPANDED | KEYMAP_CHILDREN_EXPANDED, requiring MODAL. Effective allowed: KEYMAP_MODAL | KEYMAP_USER | KEYMAP_EXPANDED | KEYMAP_CHILDREN_EXPANDED, requiring MODAL|USER; reject USER_MODIFIED, UPDATE, DIFF, TOOL and unknown bits.",
+    "panning_inventory": "Native stock PANNING is ONE MIDDLEMOUSE value KM_ANY item, not a PRESS/RELEASE pair (blender_default.py6246). Require exactly that current/default propvalue15 item, matching positive default/effective IDs and native fields: all five modifiers KM_ANY, direction KM_ANY, keymodifier EVENT_NONE, maptype0, empty idname and propvalue_str, null ptr/properties. PANNING key/ANY-type/PAN/additional/inactive/modified/unconverted items refuse denial. Effective item flags allow KMI_REPEAT_IGNORE plus KMI_EXPANDED only, default additionally KMI_UPDATE. Validate linked membership and ID uniqueness.",
+    "why_small": "Other mapped native Knife actions cannot reach ordinary navigation: they finish/cancel or return RUNNING_MODAL, causing WM BREAK. Only PANNING requires a routing compatibility inventory; no full 24-item canonical modal table is needed for the current source.",
+    "same_event_custom_pan": "Retain the pure fresh MODE_PANNING veto as well. It preserves actual custom rawPAN->PANNING after mapping/restoration, including a map changed after that dispatch. The small inventory already refuses current custom PAN/keyboard delegation, and the mode veto remains conservative.",
+    "history_limit": "This is expressly a current-value policy. It does not prove an earlier custom keyboard PANNING binding was never used and restored before current PAN, or that USER_TWOBUTTONMOUSE was never enabled then disabled during a still-emulated held contact. Such arbitrary restoration/callback histories need either explicit policy-equivalence scope or a bounded existing-state veto; do not claim all historical custom/navigation intent is preserved. No current generic WM held-button query closes that history frontier."
+  },
+  "source_registration_proof": [
+    "io.py249-257 iterates each configured item and calls new_modal directly; no ANY->PRESS/RELEASE expansion.",
+    "rna_wm_api.cc378-428 creates one modal item, resolves enum propvalue or defers propvalue_str and sets KMI_REPEAT_IGNORE when repeat=false.",
+    "wm_keymap.cc975-1006 allocates one zero-initialized modal item; keymap_event_set521-538 installs exact type/value/modifiers; no operator-properties allocation for modal items.",
+    "wm_keymap.cc1045-1081 resolves delayed modal propvalue_str and clears it; WM_keymap_active2034-2051 chooses userconf matching identity before falling back to original map.",
+    "DNA_windowmanager_types.h413-433,478-491 defines the exact item/header flags; wm_keymap.cc1846-1859 clears UPDATE only on effective maps during native update."
+  ],
+  "source_sha256": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "intern/ghost/intern/GHOST_SystemIOS.mm": "b6ae830e97b0cb8aee878e67325f3f846f0c62819fa2d6a20996601555fb1d4b",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/windowmanager/intern/wm_keymap.cc": "97431d8c05931dc06ebf9f07eb58ab32ba7674035f3710f2d717da99a4c4cb0c",
+    "source/blender/makesdna/DNA_windowmanager_types.h": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+    "scripts/modules/bl_keymap_utils/io.py": "11df0e89811939749d46a4d8ea3443e6091d4f954234697b981daeb9f83b61fa",
+    "source/blender/makesrna/intern/rna_wm_api.cc": "f8f5b44c91631d3caa5899ee61ddc0b38c460bdb5489444fc88d266ca9fde105"
+  },
+  "claims": {
+    "production_edits": false,
+    "test_edits": false,
+    "ci_edits": false,
+    "new_native_or_host_execution": false,
+    "new_build": false,
+    "device_proof": false,
+    "implementation_ready": false
+  }
+}

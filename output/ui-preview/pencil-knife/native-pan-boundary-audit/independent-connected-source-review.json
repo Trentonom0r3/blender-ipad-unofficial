@@ -1,0 +1,76 @@
+{
+  "status": "BOUNDED_IMPLEMENTATION_SOURCE_REVIEW_NO_NEW_BLOCKER_FOUND_TESTS_PENDING",
+  "canonical_patch_sha256_reported_by_root": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "materialization": "C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir",
+  "scope": "Independent source review of new WM dispatch/owner/modal/keymap gates, native Knife mode and Zoom callback seams and relocated existing emulation latch. No production edits by reviewer, no native/host behavior execution or readiness conclusion.",
+  "findings": [],
+  "passed_source_observations": [
+    {
+      "anchor": "wm_event_system.cc:218,1656-1677,1879-1891",
+      "finding": "Private eIPadNativePanDispatch preserves None/StockPan/StockCtrlZoom numeric order and adds StockKnifeCtrlZoom. Existing Node gate rejects Knife enum; fallback branch remains Node-only. Knife event gate checks null C/event and null Python dict before WM context getters, exact positive ordinary physical PAN/value0/Ctrl-only/no keymodifier/direct/multifinger/cancel/pinch classes."
+    },
+    {
+      "anchor": "wm_event_system.cc:1907-1960,1963-2012,5977-5990",
+      "finding": "Knife dispatch grant is minted only after actual WM_keymap_poll/wm_eventmatch, for the actual matched current effective static 3D View region handler. Handler membership/type/flags/no dynamic/poll/post/tool, native/default active preset, unique default/effective map identities and matching map IDs are checked. Exactly one native Ctrl-PAN Zoom candidate with same positive current/default item ID, empty native properties and native type profile is accepted. No full unrelated View3D inventory is claimed."
+    },
+    {
+      "anchor": "wm_event_system.cc:3321-3392,3410-3445,3501-3571",
+      "finding": "Existing strict native23-value registered Knife capture remains actual source, including operator/type lifetimes and live Main/manager/window/screen/area/Scene/layer/Object/Mesh/original region relations. New owner context requires actual selected View3D WINDOW region equal that captured original region. It reacquires the matched live handler via current list before reading its native mode; no saved source pointer is invoked or retained."
+    },
+    {
+      "anchor": "wm_event_system.cc:1907-1923,3501-3523,3549-3570",
+      "finding": "Current modal compatibility enforces unique default/effective Knife map, native modal metadata agreement, original native type->modalkeymap==default map and exactly one PANNING15 raw MIDDLEMOUSE/ANY binding with all-any modifiers/default ID correspondence, null modal properties/ptr and native flags. Changed/pending/modifed/extra-PANNING/PAN/keyboard mappings fallback. Other mapped native actions break ordinary dispatch; arbitrary restored histories are expressly not proved."
+    },
+    {
+      "anchor": "editmesh_knife.cc:4657-4665; ED_mesh.hh:410-414",
+      "finding": "New helper uses actual native origin/type/customdata validation and allows only actual MODE_IDLE/DRAGGING/CONNECT; MODE_PANNING and unknown states refuse. Header explicitly says this pure mode check alone does not prove event origin, keymap compatibility or navigation intent. Same-event mapped PAN->PANNING remains fallback even if a callback restores map values before selected navigation."
+    },
+    {
+      "anchor": "view3d_navigate_view_zoom.cc:546-560; ED_view3d.hh:239",
+      "finding": "New native Zoom predicate requires exact native poll/exec/invoke/modal/cancel callbacks and flags, no pyop_poll, no macro and null RNA extension fields. It introduces no callback invocation, navigation allocation, changed native poll or runtime state."
+    },
+    {
+      "anchor": "wm_event_system.cc:2014-2025,2046-2061",
+      "finding": "Private profile is checked before actual WM_operator_poll and again only after successful genuine poll. Native Zoom poll under no-Python context is callback-free native region/view-lock inspection; chosen scalar therefore crosses no arbitrary callback. Denied attempt returns CANCELLED before wm_operator_create/ViewOpsData allocation. Failed poll and default None/direct/gizmo/programmatic routes retain ordinary behavior."
+    },
+    {
+      "anchor": "wm_event_system.cc:220-222,1885,8818-8855",
+      "finding": "Existing MMB-emulation latch is relocated to file-scope wm_eventemulation_mouse initialized EVENT_NONE; all three original function reads/stores remain, including test_only conditions and USER_TWOBUTTONMOUSE scoping. Exactly one new Knife-only read vetoes denial unless latch==EVENT_NONE, even if current preference was switched off. No new tracker, reset path, pointer ownership, terminal, cancellation or hardware-state claim is introduced."
+    }
+  ],
+  "emulation_equivalence": {
+    "reference": "Exact pinned wm_event_system.cc wm_eventemulation body from .cache/preflight/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "method": "Read-only text comparison: remove original function-local static declaration, rename original emulating_event identifier to wm_eventemulation_mouse, normalize whitespace; compare entire actual function.",
+    "equal": true,
+    "normalized_sha256": "157a3a3f0cbbe2e3675b9b92ae8be6f4de5bef1980cb8e0ebd1c503150d61006",
+    "old_mentions": 4,
+    "new_function_mentions": 3,
+    "new_entire_WM_mentions": 5,
+    "interpretation": "Three old function references plus declaration retained at file scope and one new refusal-only read. Same scalar storage/init and old tests/stores; no behavior execution is claimed.",
+    "limitation": "When preference is disabled before release, old code may leave latch set because release clearing is inside that preference branch. New policy conservatively keeps native fallback until old code clears it; this is expected denial ineligibility, not a new held-button fact."
+  },
+  "limits_and_required_validation": [
+    "Review finds no concrete new correctness blocker in these source boundaries; tests and target compile still pending. Root-reported preflight/diff pass is not independently rerun here.",
+    "Policy remains current-value compatibility. Prior arbitrary custom keyboard PANNING followed by map restoration may lose history in Knife; source comments explicitly disclaim a history receipt. No original physical contact owner or accepted initial DOWN is claimed.",
+    "Actual connected tests must execute native owner capture/modal map registration and matching, samebatch actual registration, custom PAN/keyboard delegation/refusal, emulation latch after preference changes, native polls/allocation, Node fallback and preserved pointer/modal controls.",
+    "KM_PRESS currently used for ctrl field is numerically KM_MOD_HELD==1; this is semantically correct at the pinned source. KM_MOD_HELD would be clearer style, not a blocker.",
+    "Header/table membership and malformed-list handling are current native runtime validation; no global hostile memory/CFG/heap or arbitrary C++ extension integrity claim."
+  ],
+  "source_sha256": {
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "source/blender/editors/mesh/editmesh_knife.cc": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249",
+    "source/blender/editors/include/ED_mesh.hh": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8",
+    "source/blender/editors/include/ED_view3d.hh": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1"
+  },
+  "claims": {
+    "reviewer_production_edits": false,
+    "reviewer_test_edits": false,
+    "tests_run_by_reviewer": false,
+    "new_native_build": false,
+    "source_validated": false,
+    "device_proof": false,
+    "ready": false,
+    "whole_goal_complete": false
+  }
+}

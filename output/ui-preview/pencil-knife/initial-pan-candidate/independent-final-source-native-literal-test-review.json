@@ -1,0 +1,300 @@
+{
+  "status": "PASS_BOUNDED_FINAL_SOURCE_NATIVE_LITERAL_TEST_REVIEW_FULL_AND_TARGET_GATES_PENDING",
+  "utc": "2026-10-30T09:17:50.951987+00:00",
+  "scope": "Independent final source, native/public API, retained/new test and literal accepted UI preservation review. No production/test edits and no reviewer runtime execution. Reports executed by the two separate test agents were read and frozen input identities independently checked.",
+  "baseline": {
+    "HEAD": "260973518817410fb2b33eebbb2e9dea413c6589",
+    "patch_raw_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+    "verified_runtime_commit": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+    "verified_run": 40728695044
+  },
+  "candidate": {
+    "patch_raw_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+    "materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+    "target_count": 140,
+    "changed_targets": [
+      "source/blender/editors/include/ED_mesh.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source/blender/editors/mesh/editmesh_knife.cc",
+      "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc",
+      "source/blender/editors/include/ED_view3d.hh"
+    ],
+    "unchanged_prior_sections": 135,
+    "unchanged_python": [
+      "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "scripts/startup/bl_ui/__init__.py",
+      "scripts/startup/bl_ui/space_filebrowser.py",
+      "scripts/startup/bl_ui/space_properties.py",
+      "scripts/startup/bl_ui/space_topbar.py",
+      "scripts/startup/bl_ui/space_view3d_toolbar.py",
+      "scripts/startup/bl_ui/space_view3d_ipad.py"
+    ],
+    "unchanged_GHOST_count": 14,
+    "source_sha256": {
+      "source/blender/editors/include/ED_mesh.hh": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+      "source/blender/editors/mesh/editmesh_knife.cc": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20",
+      "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249",
+      "source/blender/editors/include/ED_view3d.hh": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1"
+    }
+  },
+  "findings": [],
+  "source_observations": [
+    "Private enum preserves numeric None/StockPan/StockCtrlZoom and adds StockKnifeCtrlZoom. The Node-only event gate rejects Knife scalar; fallback from selected dispatch remains Node first then Knife.",
+    "Knife scalar is minted only inside actual regular-keymap WM_keymap_poll and wm_eventmatch success for the actually selected current native Ctrl-PAN Zoom item. Actual region runtime-handler membership/static handler/no dynamic/post/poll/tool/default active preset/current-default identity/unique map checks constrain it. No whole unrelated View3D item inventory or customization history is proved.",
+    "Event policy requires C/event, no Python dictionary before WM getters, positive ordinary precision PAN, value0, Ctrl-only/no keymodifier and no multi-finger/pinch/cancel/direct-tool/direct-finger. Both emulation preference and original existing emulation latch veto eligibility.",
+    "Fresh native23-value registered Knife capture validates live Main/manager/window/screen/area/Scene/layer/Object/Mesh, current handler/operator/type lifetimes and native original context; selected WINDOW must equal original captured region. It reacquires current live handler from list before reading native mode.",
+    "Native Knife current type/customdata helper allows only defined IDLE/DRAGGING/CONNECT, refuses PANNING. Current default/effective Knife modal map PANNING15 requires exactly one native MMB/ANY all-modifiers-any binding with same positive itemID, null modal properties/ptr and native metadata/flags; changed/extraPANNING/keyboard/PAN delegation falls back. This is current-value compatibility, not arbitrary prior modal history.",
+    "Native Zoom helper compares exact native poll/exec/invoke/modal/cancel pointers, flags, null pyop_poll, macro and RNA extension fields. Pure helpers have real public declarations and are available on both platform branches. Source-backed existing CMake routes include both mesh and View3D objects; no new link dependency is required by these bounded checks.",
+    "Shared invocation checks eligible native profile before genuine WM_operator_poll, and checks again only after successful poll; refusal returns CANCELLED before wm_operator_create or ViewOpsData allocation. Failed-poll/direct/programmatic/gizmo/custom/delegated/ambiguous paths receive no new scalar grant and preserve baseline execution.",
+    "Eligible exact native region/no-Python poll corridor and view-lock refusal do not set a poll message. Missing-region baseline can call an already-installed dynamic message free callback; prior blanket callback-free failure wording is corrected additively in poll-message-callback-correction.json. The strict precheck excludes that invalid context from denial eligibility."
+  ],
+  "emulation_equivalence": {
+    "entire_old_function_after_only_local_declaration_removal_and_identifier_rename_equals_current": true,
+    "normalized_sha256": "157a3a3f0cbbe2e3675b9b92ae8be6f4de5bef1980cb8e0ebd1c503150d61006",
+    "current_function_original_reads_stores": 3,
+    "current_entire_WM_mentions": 5,
+    "new_policy_read_is_refusal_only": true,
+    "limit": "Preference disabled before old release clearing can leave the old latch set; policy conservatively retains native fallback, without inferring held-button/contact ownership."
+  },
+  "retained_tests": {
+    "migrations": [
+      {
+        "path": "build/test_pencil_node_native_invoke.py",
+        "original_assertions": 10,
+        "AST_equal": true,
+        "current_sha256": "b155129d7252c42f84d9cb6af20e3e4ddd8e3f568f2aa32e22abb8c22e37b6e1"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/connected.py",
+        "original_assertions": 2,
+        "AST_equal": true,
+        "current_sha256": "3fe142884eec476add652fa60a65d5bffefb2ed02f0407479d0670d0ea0d1030"
+      },
+      {
+        "path": "build/tests/node_connected_workflow/connected.py",
+        "original_assertions": 7,
+        "AST_equal": true,
+        "current_sha256": "77832bd0345b4dd8d698b100068f572fa72c484f70e4d7d0e0b404f5c972dd6c"
+      }
+    ],
+    "unchanged_original_Python_assertions": 19,
+    "unchanged_companion_files": [
+      {
+        "path": "build/tests/node_precision_transport/baseline.json",
+        "raw_byte_equal": true,
+        "sha256": "4a03c517465a2eca09e77e8352b82f7699d1a1bc23b3f57d4e59a4a837c888cd"
+      },
+      {
+        "path": "build/tests/node_precision_transport/host_models.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "17cd1327982de82007dd2770d496b00f3fb6f51a1035fa1198ce74077d34d28d"
+      },
+      {
+        "path": "build/tests/node_precision_transport/queue_models.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "82bbbab927d69e4d294d74ec65f02efbd794108d5b55815dbc157acc30b873b2"
+      },
+      {
+        "path": "build/tests/node_precision_transport/run_connected.py",
+        "raw_byte_equal": true,
+        "sha256": "e8cf26003d29762cce563fd6413c78e82c1aac6572dac7f263161c7d6427d2f8"
+      },
+      {
+        "path": "build/tests/node_precision_transport/scenarios.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "c69fce3c7217aa4a0e155b20e25e8449b0edbf8e928e33fc10ec520674b45f6e"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/baseline.py",
+        "raw_byte_equal": true,
+        "sha256": "62285a44c6f493afae0f70a40c0ae19ccfc48741bf1db034efe1b565995c49f7"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/native_boundaries.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "bbfc027731df33f869d4164387148d24192bd1fc324748935acaec3e87122bc6"
+      },
+      {
+        "path": "build/tests/node_keymap_baseline/native_cases.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "1fab89eae8dc47df1320d27470ad8e4f351d325ad6216fc76be8e30ddaccfe38"
+      },
+      {
+        "path": "build/tests/node_native_invoke/cases.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "28bb569493ef93031158e494502557070c18bcb842350d26f16de2a7f05f57d7"
+      },
+      {
+        "path": "build/tests/node_native_invoke/control_cases.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "5864e5f2dc1a9003453ca3f519a4c3152755b0d028aef747ef67d05539095a3d"
+      },
+      {
+        "path": "build/tests/node_native_invoke/control_models.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "9ec201903cdce3d1e3f7e6a66f7b2593999e64dd000df6c4f461ce54275b8ab1"
+      },
+      {
+        "path": "build/tests/node_native_invoke/models.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "f04d743f61346a2865d6bc49672b3e07a45b61a7500baf8a006abb03c54ed444"
+      },
+      {
+        "path": "build/tests/node_native_invoke/wm_boundaries.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "cbc2c14b3190d605387bef90835d5025f0aaccf345d44bc50616acc736d1f97d"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/cases.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "ec8fa1886ca5b261a440acf208d1b2a91ffc67bc981195d3ef77d098417bed2e"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/dependencies.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "e890e7fe6ef6bb459bec997b4f783d67176dc091f14ff7bd8ccee2c46301c2e5"
+      },
+      {
+        "path": "build/tests/node_keymap_dispatch/handler_boundaries.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "5d04910db919e007cfdeabee15c4a1ce67f80177c510e972e2363f47d1cb1464"
+      },
+      {
+        "path": "build/tests/node_connected_workflow/cases.inc.cc",
+        "raw_byte_equal": true,
+        "sha256": "d79ffee301597290d27b0a15cee482d329fddd649721c754ecfc251acc9aa9d0"
+      }
+    ],
+    "unchanged_companion_count": 17,
+    "literal_CXX_assert_calls": 173,
+    "model_boundary": "Three generator migrations only rename private enum/plumbing and add explicit inactive no-Knife adapters. They grant no Knife denial; full new Knife policy runs in the new separate family."
+  },
+  "new_connected_review": {
+    "checkpoint": "output\\ui-preview\\pencil-knife\\initial-pan-connected-final\\checkpoint.json",
+    "checkpoint_sha256": "3b2261cee5d61b40ad1b64a60429583857470e62f0dcfe8a7673f3a30e0fe7de",
+    "report": "output\\ui-preview\\pencil-knife\\initial-pan-connected-final\\standalone\\report.json",
+    "report_sha256": "d725442901b1ebd9108de7777807c0ea6cbcb3f8a8fc56e0c2da3e78abf2f7e8",
+    "frozen_fixture_hashes_match_current": true,
+    "source_mode": "authoritative patch plus fixed pin",
+    "current_O0_O2_scenarios": 67,
+    "exact_old_invocation_O0_O2_expected_exit": 17,
+    "exact_old_actual_effect": "creates1/nav_allocations1/distance10.19704342",
+    "reviewed_coverage": "Actual initial Knife invocation/registration/bind, complete generated modal map raw native import/copy and Ctrl/raw PAN modal processing, fresh owner+mode+modal map/actually chosen regular dispatch/full invoke/genuine poll/preallocation refusal. Both View3D profiles positive, valid second WINDOW mismatch, current/stale emulation latch, mixed-source queue, custom keyboard/PAN modal delegation, selected custom operator, profile/owner/native locks and hardware/multi-finger controls.",
+    "resolved_review_finding": "Synthetic mode99 int-backing control replaced by valid macro-owner refusal. All executed Knife modes are declared native values; true enum family uses all four values.",
+    "limits": "Only three PAN bindings of each fully inventoried generated View3D map are instantiated. Integer status/flag/storage symbolic models are not authentic numeric/ABI proof (e.g modeled macro/region/camera constants differ). Explicit native registries/RNA scalar schema/allocator/context/initial edit-mesh poll/geometry/setup/navigation initialization boundaries remain; full modal scheduler, UIKit, advanced geometry/history/Undo/Cancel rollback are not claimed."
+  },
+  "new_native_review": {
+    "checkpoint": "output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\checkpoint.json",
+    "checkpoint_sha256": "1223fd663b7e569b4328fc025fb8926262f0e9a9ad00ed231c20325c60d3bed0",
+    "report": "output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-run\\native-profile-report.json",
+    "report_sha256": "2663cc41ea8898a3ebedcf42f524a9d03c6e08faaf05db2b2c178a454682aedf",
+    "frozen_fixture_hashes_match_current": true,
+    "CXX17_matrix_executions": 8,
+    "checks_each": 81,
+    "eligible_dynamic_free_calls_each": 0,
+    "missing_region_dynamic_free_calls_each": 1,
+    "native_callback_calls_each": 0,
+    "reviewed_coverage": "Authentic wmOperatorType/ExtensionRNA/wmOperator/ViewContext/bContext declarations and actual public helper signatures compiled in independent TUs; actual helpers/factories/WM append/context native getters/WM+View3D polls execute; source CMake routes and precise old-declaration compile/old-definition link failures retained.",
+    "limits": "No entire public-header trees or Blender TU/native SDK/link closure/ABI. RNA schema, registry end and descriptor/navigation boundaries explicit. Original out-of-range enum control and broad failed-poll purity claim are retained only as withdrawn earlier evidence."
+  },
+  "literal_UI_review": [
+    {
+      "contract": "Exactly nine Base choices clockwise from top: Layout/Mode, More Tools, Undo, Redo, Select, Move, Rotate, Scale, Cursor. No View/Selection category slots.",
+      "paths": [
+        "scripts/startup/bl_ui/space_view3d_ipad.py"
+      ],
+      "anchor": "VIEW3D_MT_ipad_base_ring.draw at211; four explicit menu/actions followed by exact five-ID ordered tuple.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    },
+    {
+      "contract": "More Tools excludes only exact five direct Base native IDs; variants, Transform, Add Cube, Measure, Annotate and mode-compatible native modeling/sculpt/paint inventories remain.",
+      "paths": [
+        "scripts/startup/bl_ui/space_view3d_ipad.py",
+        "scripts/startup/bl_ui/space_view3d_toolbar.py"
+      ],
+      "anchor": "IPAD_BASE_TOOL_IDS at24; ipad_native_tool_inventory and ipad_more_tool_inventory at164; registered native tool selection/receipt guards retained.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    },
+    {
+      "contract": "Native Tools ring size/style, dark blue presentation, proper native icons, full upright labels, empty center and selected cues remain.",
+      "paths": [
+        "source/blender/editors/interface/interface_ipad_tool_ring.hh",
+        "source/blender/editors/interface/regions/interface_region_menu_pie.cc",
+        "source/blender/editors/interface/interface_widgets.cc"
+      ],
+      "anchor": "Shared ring_page_layout/tool_ring_layout and actual ui_ipad_ring_create placement use ordinary button rects with UI_RADIAL_NONE. Complete geometry/drawing sections exact to verified baseline.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    },
+    {
+      "contract": "Accepted press/contact-circle browsing; Pencil barrel double-tap Home/reset; hover and barrel roll never browse.",
+      "paths": [
+        "source/blender/editors/interface/interface_ipad_ring_browse.hh",
+        "source/blender/editors/interface/regions/interface_region_menu_pie.cc",
+        "source/blender/editors/interface/interface_handlers.cc",
+        "intern/ghost/GHOST_Types.h",
+        "intern/ghost/intern/GHOST_ContextIOS.mm",
+        "intern/ghost/intern/GHOST_EventButton.hh",
+        "intern/ghost/intern/GHOST_EventCursor.hh",
+        "intern/ghost/intern/GHOST_SystemIOS.mm",
+        "intern/ghost/intern/GHOST_WindowIOS.mm",
+        "intern/ghost/GHOST_NavigationIOS.hh",
+        "intern/ghost/GHOST_ProjectImport-api.hh",
+        "intern/ghost/intern/GHOST_EventPencilRing.hh",
+        "intern/ghost/intern/GHOST_ProjectExportIOS.hh",
+        "intern/ghost/intern/GHOST_ProjectImportIOS.hh",
+        "intern/ghost/intern/GHOST_ProjectRecentIOS.hh",
+        "intern/ghost/intern/GHOST_ProjectSaveIOS.hh",
+        "intern/ghost/intern/GHOST_EventTrackpad.hh"
+      ],
+      "anchor": "ui_ipad_ring_roll_input at672 explicitly consumes queued roll without changing page/contact/buttons; admitted Begin/Motion/End at717; guarded Home at794. All14GHOST and input ring code exact.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    },
+    {
+      "contract": "Floating Selection/View/Move future controls remain collapsed close to left corner with small native margin when measured full stack clears higher UI; native Redo stays separate.",
+      "paths": [
+        "scripts/startup/bl_ui/space_view3d_ipad.py",
+        "source/blender/editors/interface/regions/interface_region_hud.cc",
+        "source/blender/editors/screen/screen_ipad_panels.cc"
+      ],
+      "anchor": "HUD measured prospective rectangle/native origin at731-772 and ED_ipad_hud_exposed_rect, full source exact; Python738 distinguishes future input from separate Redo.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    },
+    {
+      "contract": "Full native Blender bars, editor/split/Inspector, hardware/Files/Color/keyboard, native Cancel/one Undo/Extrude/Bevel/selection cues retained at source; no new device acceptance.",
+      "paths": [
+        "scripts/presets/keyconfig/keymap_data/blender_default.py",
+        "scripts/startup/bl_ui/__init__.py",
+        "scripts/startup/bl_ui/space_filebrowser.py",
+        "scripts/startup/bl_ui/space_properties.py",
+        "scripts/startup/bl_ui/space_topbar.py",
+        "scripts/startup/bl_ui/space_view3d_toolbar.py",
+        "scripts/startup/bl_ui/space_view3d_ipad.py",
+        "source/blender/editors/interface/interface_widgets.cc",
+        "source/blender/editors/screen/screen_ipad_panels.cc"
+      ],
+      "anchor": "All seven Python and all135 prior unchanged patch sections. Five changes introduce only denial-policy/helper seams and private enum plumbing plus equivalent emulation storage relocation.",
+      "proof": "Every listed entire patch section is byte-text exact after LF normalization to current Git HEAD verified-runtime baseline."
+    }
+  ],
+  "validation_remaining": {
+    "final_full_suite": "RUNNING elsewhere with245 frozen inputs; no PASS inferred here. Prior retained835 pass does not replace this final full gate.",
+    "cold_CI_portability": "Pending root exact empty-cache preflight and two-family selection.",
+    "source_preflight_and_diff": "Root reports140 preflight/raw-Git-materialization/diff PASS; no rerun by reviewer.",
+    "native_build": "NOT DONE for candidate",
+    "full_downloaded_IPA": "NOT DONE for candidate",
+    "actual_compiled_new_and_preserved_gates": "NOT DONE for candidate",
+    "device_acceptance": false,
+    "whole_goal_complete": false
+  },
+  "claims": {
+    "reviewer_production_edits": false,
+    "reviewer_test_edits": false,
+    "reviewer_tests_executed": false,
+    "literal_source_preservation": true,
+    "new_UI_runtime_geometry_proof": false,
+    "accepted_physical_DOWN_or_contact_lease": false,
+    "general_heap_CFG_reentrancy_GPU_history_or_rollback_proof": false,
+    "ready_for_device_check": false
+  }
+}

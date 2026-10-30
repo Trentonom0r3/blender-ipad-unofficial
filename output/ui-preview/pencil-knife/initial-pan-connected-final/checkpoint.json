@@ -1,0 +1,96 @@
+{
+  "status": "PASS_FINAL_STANDALONE_FROZEN",
+  "utc": "2026-10-30T09:14:35.972175+00:00",
+  "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "test_command": "python build/test_pencil_knife_initial_pan.py --output-dir output/ui-preview/pencil-knife/initial-pan-connected-final/standalone",
+  "unittest_result": "1/1 PASS in 6.850s",
+  "report": "output/ui-preview/pencil-knife/initial-pan-connected-final/standalone/report.json",
+  "report_sha256": "d725442901b1ebd9108de7777807c0ea6cbcb3f8a8fc56e0c2da3e78abf2f7e8",
+  "generated_cpp_sha256": "9ce29190600060a7fa33bcc521c09ff71069f1709a5f15c84c9b52132e6d8517",
+  "fixture_sha256": {
+    "build/test_pencil_knife_initial_pan.py": "7ed154e2f8cc0fa3e49243f59f15da34be06ae8e98e14d925e18c3c05f7bf9ee",
+    "build/tests/knife_initial_pan/cases.inc.cc": "7da80b1b03f0b55c9358885e7b2c1bbd988c1abe1eb65fa0b95e306c9851b42d",
+    "build/tests/knife_initial_pan/connected.py": "8b8cf8bd50b78b2e434b9d6f2b523061d4edcff92e2122b27acaf103bb30e6a1",
+    "build/tests/knife_initial_pan/historical-3d7b248-invoke.inc.cc": "0486a93e1d8a60501c77cbaeec44f3f06c113025c306940be9330ef216f2aa6d",
+    "build/tests/knife_initial_pan/historical-3d7b248-invoke.json": "afc40f8068e96d4315e76acfb7977b869161aec01e1e10fc9b8d8a68b7f70c05",
+    "build/tests/knife_initial_pan/native_models.inc.cc": "2fbb6a917adab79a9a9a59bb79d9f39e63e2ae3e18f1a133d168d0bf0c4851b0",
+    "build/tests/knife_initial_pan/README.md": "bde0d6948fd64923e0684ab24c5f67177f60bd2e4c7224a9b9b6a3150a8bfd84"
+  },
+  "run_dependency_count": 22,
+  "run_inputs_unchanged_after_execution": true,
+  "all17_explicit_sources_equal_authoritative_materialization_normalized_newlines": {
+    "source/blender/windowmanager/intern/wm_event_system.cc": true,
+    "source/blender/editors/mesh/editmesh_knife.cc": true,
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": true,
+    "source/blender/editors/space_view3d/view3d_navigate.cc": true,
+    "source/blender/editors/space_view3d/view3d_navigate_view_move.cc": true,
+    "source/blender/editors/space_view3d/view3d_navigate_view_rotate.cc": true,
+    "source/blender/windowmanager/WM_types.hh": true,
+    "source/blender/windowmanager/wm_event_system.hh": true,
+    "source/blender/windowmanager/WM_ipad_knife.hh": true,
+    "source/blender/editors/include/ED_mesh.hh": true,
+    "source/blender/editors/interface/view2d/view2d_ops.cc": true,
+    "source/blender/editors/include/UI_view2d.hh": true,
+    "source/blender/blenkernel/intern/context.cc": true,
+    "source/blender/editors/screen/screen_ops.cc": true,
+    "source/blender/makesdna/DNA_view3d_types.h": true,
+    "source/blender/makesdna/DNA_userdef_types.h": true,
+    "source/blender/editors/space_view3d/view3d_navigate.hh": true
+  },
+  "source_mode": "authoritative patch plus fixed pin",
+  "executions": [
+    {
+      "optimization": "-O0",
+      "case": "current",
+      "returncode": 0,
+      "scenarios": 67,
+      "historical_distance": null
+    },
+    {
+      "optimization": "-O0",
+      "case": "exact-old-required-denial",
+      "returncode": 17,
+      "scenarios": null,
+      "historical_distance": 10.19704342
+    },
+    {
+      "optimization": "-O2",
+      "case": "current",
+      "returncode": 0,
+      "scenarios": 67,
+      "historical_distance": null
+    },
+    {
+      "optimization": "-O2",
+      "case": "exact-old-required-denial",
+      "returncode": 17,
+      "scenarios": null,
+      "historical_distance": 10.19704342
+    }
+  ],
+  "historical_provenance": {
+    "commit": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+    "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+    "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+    "overlay_sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32",
+    "source_sha256": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+    "method": "Unchanged prior verified pinned patch source reconstruction; expected full raw Git equivalence recorded in Node verification",
+    "license": "Blender GPL upstream/overlay source; no private data",
+    "signature": "static wmOperatorStatus wm_operator_invoke(",
+    "body_sha256": "7717d05ab7e53702194f1a36577829b9c955b2961594d9deea408c2bff3655d1",
+    "fixture_sha256": "0486a93e1d8a60501c77cbaeec44f3f06c113025c306940be9330ef216f2aa6d",
+    "adaptation": "Only function definition name is changed during generation; signature-only current API wrapper discards new scalar and calls historical function with its original default None."
+  },
+  "historical_full_source_raw_sha256_verified": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6",
+  "historical_fixture_body_exactly_matches_full_source_extraction": true,
+  "frozen_no_further_test_input_edits": true,
+  "native_sdk_or_device_claim": false,
+  "production_edited_by_this_agent": false,
+  "limits": [
+    "Geometry, allocator/RNA scalar schema, host backing fields, context providers and initial edit-mesh acceptance remain explicit boundaries.",
+    "Same original Knife initial invocation/registration/bind then Ctrl and PAN processing is connected at source; full modal WM scheduler, UIKit production, geometry/history/Undo and Cancel rollback remain outside this family.",
+    "Knife backing mode is int but only declared native enum values are exercised; former synthetic99 negative was replaced by a legitimate macro-owner refusal.",
+    "No accepted physical press or general lease; positive WM source flag cannot establish either.",
+    "Current standalone execution used authoritative patch reconstruction without --source-root and matched all17 source inputs to original authoritative materialization."
+  ]
+}

@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "utc": "2026-10-29T02:35:58.916473+00:00",
+  "status": "BOUNDED_VIEW3D_CONTRACT_NATIVE_RAW_BASELINES_PASS_AUTHORIZED_SEAMS_WRITTEN_CONNECTED_VALIDATION_PENDING",
+  "repository": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial",
+  "verified_source": "3d7b248aa298c3dcb7cf1c188d279702405e81a3",
+  "verified_run": 40728695044,
+  "pinned_blender_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "authoritative_materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir",
+  "question": "Can an exact actually chosen stock-value Ctrl-PAN View3D zoom attempt be refused after successful native poll and before allocation when a fresh original registered Knife owner occupies the same native window/area/region?",
+  "answer": "The navigation-binding/native-profile portion is viable and characterized. Only current Ctrl-PAN zoom requires a new guard: current iOS native move and rotate already return FINISHED for ordinary one-finger PAN before their navigation initialization. A private scalar on the existing regular-keymap call chain can identify the exact chosen zoom binding without a full 114-item inventory. Implementation readiness remains conditional on preserving custom/delegated Knife panning, whose temporary MODE_PANNING is reset before a later raw PAN. A fresh postmodal !MODE_PANNING check alone is insufficient for that frontier.",
+  "native_profiles": {
+    "VIEW3D_OT_zoom": {
+      "registration": "fixed-pin view3d_ops.cc184 -> WM_operatortype_append(VIEW3D_OT_zoom); view3d_navigate_view_zoom.cc523",
+      "invoke": "viewzoom_invoke",
+      "exec": "viewzoom_exec",
+      "modal": "view3d_navigate_modal_fn",
+      "poll": "view3d_zoom_or_dolly_poll",
+      "cancel": "view3d_navigate_cancel_fn",
+      "flags": "OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY",
+      "schema": [
+        "mx",
+        "my",
+        "delta",
+        "use_cursor_init"
+      ],
+      "invoke_path": [
+        "viewzoom_invoke -> view3d_navigate_invoke_impl",
+        "new ViewOpsData; init_context -> view3d_navigation_invoke_generic",
+        "init_navigation -> ED_view3d_smooth_view_force_finish -> viewzoom_invoke_impl",
+        "MOUSEPAN chooses VIEW_CONFIRM, applies viewzoom_apply(USER_ZOOM_DOLLY), camera-lock autokey, returns FINISHED; native wrapper frees ViewOpsData"
+      ],
+      "source": "Unchanged exact pinned zoom source; current shared navigate source remains overlaid."
+    },
+    "VIEW3D_OT_move": {
+      "invoke": "viewmove_invoke",
+      "exec": null,
+      "modal": "view3d_navigate_modal_fn",
+      "poll": "view3d_location_poll",
+      "cancel": "view3d_navigate_cancel_fn",
+      "flags": "OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY",
+      "current_ios_behavior": "MOUSEPAN without TWO_FINGERS or THREE_FINGERS returns FINISHED before view3d_navigate_invoke_impl; direct pointer/keyboard/native gizmo routes remain native."
+    },
+    "VIEW3D_OT_rotate": {
+      "invoke": "viewrotate_invoke",
+      "exec": null,
+      "modal": "view3d_navigate_modal_fn",
+      "poll": "view3d_rotation_poll",
+      "cancel": "view3d_navigate_cancel_fn",
+      "flags": "OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY",
+      "current_ios_behavior": "MOUSEPAN without TWO_FINGERS returns FINISHED before view3d_navigate_invoke_impl; direct pointer/keyboard/native gizmo routes remain native."
+    }
+  },
+  "actual_bindings_and_order": {
+    "generator": "Exact fixed-pin km_view3d(Params(use_v3d_mmb_pan=False/True)) executed; both current defaults contain 114 items. This count and the observed positions are evidence, never policy constants.",
+    "ordinary_preference": {
+      "position10": "VIEW3D_OT_rotate MOUSEPAN ANY no modifiers",
+      "position11": "VIEW3D_OT_move MOUSEPAN ANY Shift only"
+    },
+    "mmb_pan_preference": "Positions10/11 exchange the Shift condition; Ctrl-PAN zoom is unaffected.",
+    "position19": "VIEW3D_OT_zoom TRACKPADZOOM ANY no modifiers, None properties",
+    "position20": "VIEW3D_OT_zoom TRACKPADPAN ANY Ctrl only, None properties",
+    "registration": "space_view3d.cc332-460 adds current default-conf static region handlers; 3D View Generic precedes 3D View, after mode-specific maps. Exact fixed-pin view3d_ops.cc255-260 only ensures both maps; it installs no map poll. WM_event_add_keymap_handler calloc sets KEYMAP type, appends, and records default-map pointer.",
+    "effective_resolution": "WM_keymap_active uses first current userconf map with same idname/spaceid/regionid else default. Proposed policy requires the actual chosen map to equal the current registered effective user map; absence falls back.",
+    "priority": "Actual WM_keymap_poll and wm_eventmatch run before scalar classification. Earlier modal/UI/mode/custom handlers retain native chance to consume the event. No new classifier may invoke map poll, dynamic getter or post callback."
+  },
+  "executed_raw_native_baseline": {
+    "report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\characterization.json",
+    "status": "PASS at O0 and O2, 18 assertions each",
+    "executed": "Exact native RNA keymap item registration, operator-property allocation/sanitize, IDProperty and PointerRNA creation/copy, keymap effective-copy branch, native event matcher, View3D zoom registration/common property schema.",
+    "map_flags": {
+      "default": 64,
+      "default_name": "KEYMAP_UPDATE persists after normal setup",
+      "effective": 2,
+      "effective_name": "KEYMAP_USER"
+    },
+    "item_flags": {
+      "default": 24,
+      "default_name": "KMI_UPDATE|KMI_REPEAT_IGNORE",
+      "effective": 16,
+      "effective_name": "KMI_REPEAT_IGNORE"
+    },
+    "raw_item": {
+      "idname": "VIEW3D_OT_zoom",
+      "type": 14,
+      "type_name": "MOUSEPAN",
+      "val": -1,
+      "val_name": "KM_ANY",
+      "direction": -1,
+      "direction_name": "KM_ANY",
+      "shift": 0,
+      "ctrl": 1,
+      "alt": 0,
+      "oskey": 0,
+      "hyper": 0,
+      "keymodifier": 0,
+      "maptype": 0,
+      "propvalue": 0,
+      "propvalue_str": ""
+    },
+    "actual_event": "MOUSEPAN14 / val0 KM_NOTHING / KM_CTRL matches; modifier0 and KM_CTRL|KM_SHIFT do not match.",
+    "properties": "Allocated raw-empty wmOpItemProp IDP_GROUP, type6/subtype0/flag0/len0/totallen0/no children/no ui_data; independent copied property and PointerRNA; ptr.data==properties, ptr.owner_id=null, ptr.type==registered VIEW3D_OT_zoom.srna.",
+    "bounds": "Only the selected actual generator entry is imported into a fresh native 3D View map. The complete 114-item native map is not built. Callbacks and ViewOpsType_zoom.idname use inert descriptor boundaries, so this does not execute zoom poll/invoke or prove full translation-unit/iOS/device behavior. Existing baseline allocation/RNA scalar/schema models remain explicit in characterization.json.",
+    "retained_harness_failures": [
+      "view3d-native-profile-next/initial-audit-harness-compile-failure.log: missing local CHECK declaration",
+      "view3d-native-profile-next/initial-audit-enum-boundary-compile-failure.log: missing enum bitwise host boundary; both repaired only in audit driver; actual native bodies unchanged"
+    ]
+  },
+  "small_chosen_binding_contract": [
+    "Add only KnifeCtrlZoom to the existing private regular-dispatch scalar, or an equally small private enum; default None everywhere else. It is stack-local denial policy, never wmEvent/context/window/operator metadata or a retained receipt.",
+    "Before new context reads require nonnull C/event, CTX_py_dict_get(C)==nullptr, positive WM_EVENT_IS_PENCIL_PRECISION_PAN, MOUSEPAN, KM_NOTHING, modifier exactly KM_CTRL, keymodifier EVENT_NONE, and no multitouch-two/three, pinch, pointer-cancel, direct-tool or direct-finger flags. Source class does not prove DOWN delivery, original physical contact ownership or intent.",
+    "Require current native SPACE_VIEW3D/RGN_TYPE_WINDOW context and actual region runtime handler list. Prove manager/window/screen/area/region membership through fresh native lists before dereferencing candidate addresses. Require matched static handler is a current member, KEYMAP type, flags0, head.poll null, dynamic keymap_fn/user_data null, post_fn/user_data null, keymap_tool null.",
+    "Require current registered defaultconf/userconf in current runtime keyconfigs, distinct pointers, and active current preset equal defaultconf. Read present names/lists only; no keyconfig update, callback or setter. Handler.keymap must be exact current default registered 3D View/SPACE_VIEW3D/WINDOW map; actual matched map must be exact current effective registered counterpart.",
+    "Map shape: empty owner_id, null poll/poll_modal_item/modal_items, empty diff_items, no MODAL/TOOL/DIFF/unknown behavioral bits. Default UPDATE is legitimate; effective UPDATE refuses. Conservative first contract also refuses map USER_MODIFIED; unrelated customizations therefore may leave native fallback. A future chosen-item-only policy may consciously allow map USER_MODIFIED with distinct tests and explicit tradeoff, without requiring a whole-map inventory.",
+    "Scan only for current selected-item membership, unique positive persistent selected ID and unique canonical CtrlPAN zoom candidate in each map. Require selected effective item and default canonical counterpart share ID, each ID within its own positive kmi_id. Do not assume item20, IDs20, map length114, neighboring values or unchanged unrelated inventory. Ambiguity/duplicates/noncanonical corresponding item fall back.",
+    "Require exact raw canonical item fields shown above in both maps. Allow presentation KMI_EXPANDED, default KMI_UPDATE; require KMI_REPEAT_IGNORE and reject inactive/user-modified/unknown bits or effective UPDATE. Require raw-empty existing IDP_GROUP and coherent ptr/data, null owner and ptr.type equal current registered zoom srna. No RNA value getters, equality, defaults assignment, sanitize or allocation.",
+    "Value-identical reconstruction/custom history is consciously inside this current-value policy when correspondence and flags pass. Current IDs/default correspondence are local matching facts, never provenance, historical birth or subjective navigation-intent proof.",
+    "Only after actual map poll and actual event match derive scalar, then pass along existing private handler->invoke chain. Do not copy original wmEvent or retain map/item/owner/context pointers across callbacks. All public/direct/delegated/gizmo/tool/dynamic/macro/modal/eventless calls get None.",
+    "At wm_operator_invoke before actual WM_operator_poll, require a pure same-TU zoom-profile query: exact current registry zoom identity, callbacks listed above, exact flags, no pyop_poll, empty macro list and null RNA extension data/srna/call/free. Static viewzoom_invoke/exec require query in view3d_navigate_view_zoom.cc, not name-based approximation.",
+    "Require a fresh strict registered Knife owner in this same current window/area/region, including original handler/op/type lifetimes and exact original scene/viewlayer/object/mesh/v3d/rv3d membership, plus a sound native delegation discriminator. Existing owner_capture and owner_present differ: present ignores unrelated modal owners, so presence alone is insufficient for strict eligibility. Never predict from active builtin.knife tool name.",
+    "Keep actual WM_operator_poll once, in original position. If failed or poll_only, preserve original behavior. On successful poll repeat no-Python check before fresh context reads, positive event domain, exact native zoom profile and fresh strict same-context Knife/delegation query. Do not use old raw map/item/owner/context pointers after any callback.",
+    "When all conditions hold, return OPERATOR_CANCELLED alone before undo/register snapshots and wm_operator_create. No operator exists: do not call native cancel/free/exit/reports/last-properties/undo/timer/cursor/modal cleanup. Native handler maps this to BREAK; preserve its normal tooltip/gesture bookkeeping. Earlier ingestion/shared xy/click state remains baseline."
+  ],
+  "poll_and_query_purity_proof": [
+    "WM_operator_poll first traverses macro children, then pyop_poll, else poll. Exact empty macro/pyop-null zoom profile reduces it to view3d_zoom_or_dolly_poll only.",
+    "Current view3d_navigate.cc509-516/636-639 -> view3d_navigation_poll_impl -> ED_operator_region_view3d_active (screen_ops.cc270) -> CTX_wm_region_view3d (context.cc846) -> CTX_wm_area/region native getters. With CTX_py_dict_get null, these getters perform native WM reads without context-provider calls. Missing region sets a static poll-message string; no arbitrary provider/poll callback executes.",
+    "Exact pinned DNA_view3d_types.h474 defines RV3D_LOCK_FLAGS as rv3d.viewlock | rv3d.runtime_viewlock; zoom poll tests RV3D_LOCK_ZOOM_AND_DOLLY bit16. No depsgraph, ViewLayer sync, RNA property getter or navigation initialization occurs in this poll.",
+    "Fresh Knife query must stay a native list/value/lifetime check. Reuse current registered-owner scan only after noPy and native membership proof; inspect actual live kcd mode/delegation through a narrow same-TU copied-result query after op lifetime/type validation. No CTX_data_main/scene/view_layer, providers, WM toolsystem mode sync, RNA/operator poll, draw/gizmo callbacks, native Cancel or event pumping.",
+    "Null Python override does not make CTX_data_* generic providers pure; those functions remain forbidden. Native main-thread/dispatcher/registry object validity assumptions remain bounded; this is no global heap/lifetime proof."
+  ],
+  "delegation_frontier_and_boundary_comparison": {
+    "blocker": "knifetool_modal4217 resets MODE_PANNING to prevmode at the start of every call, before raw MOUSEPAN4457 returns PASS_THROUGH. Thus a hardware/custom panning event followed by raw physical CtrlPAN can arrive at the chosen zoom boundary with mode no longer PANNING. A postmodal mode query alone may deny deliberate native navigation.",
+    "same_event_custom_map": "Knife modal map mapping PAN to PANNING can set MODE_PANNING at4438-4450 and PASS. Query should reject that current state, but this does not close prior-event/reset cases or poll-failure transitions.",
+    "required_resolution": "Boundary agent must source-execute actual modal mapping/reset/navigation-poll sequence and choose a minimal callback-safe event-local/delegation distinction or consciously narrower supported policy before implementation. Do not invent durable owner/contact/intent history from source class.",
+    "chosen_navigation_advantage": "Actual chosen boundary preserves prior modal/UI/mode handler order, explicit/delegated invocation and exact custom binding choice. Same-region owner check excludes Knife in another split/window and higherUI/native popup interception naturally runs first.",
+    "modal_consumption_tradeoff": "Consuming physical PAN inside Knife earlier has no knowledge of the eventual matched map and can bypass intentional custom/delegated navigation or higherUI/cross-pane routing. It needs its own actual routing and modal-map proof; it cannot inherit this chosen-item contract by analogy."
+  },
+  "concrete_counterexamples": [
+    "No handler or initial DOWN never invokes Knife: fresh-owner refusal must not deny later navigation by active-tool prediction.",
+    "Same-batch initial native Knife registration exists only after prior actual DOWN dispatch; then eligible later CtrlPAN may be denied if all current checks pass. A callback retiring/replacing handler before selected nav requires fresh refusal.",
+    "Knife in left split, PAN routed to right split; header/sidebar/HUD/popup/different window: no same-native-context denial.",
+    "Custom CtrlPAN zoom item with delta=0 explicitly assigned or use_cursor_init=True explicitly assigned: raw properties nonempty, fallback despite effective defaults.",
+    "Custom prior item consumes PAN; regular canonical item is not chosen, no scalar. New/copied canonical-looking item with no unique matching default ID falls back. Value-identical original correspondence remains within explicit policy tradeoff.",
+    "Delegated WM_operator_name_call or ED_view3d_navigation_do with same physical event: scalar None; native navigation remains available.",
+    "Native callbacks/flags/pyop/RNA extension/macro changed, non-default preset, dynamic getter/post callback or map poll changed: fallback before new policy calls any such callback.",
+    "Hardware/finger/mixed-source PAN, CtrlShift/Alt/keymodifier, TRACKPADZOOM pinch, wheel/NDOF, native gizmo/navigation controls and existing live nav modal: native fallback.",
+    "Custom Knife PANNING event then rawPAN with pre-existing temporary mode reset: unresolved blocker; cannot call postmodal !MODE_PANNING sufficient."
+  ],
+  "meaningful_connected_execution_plan": [
+    "Extend bounded audit-only baseline to actual full current region handler registration plus selected map/effective-copy setup, without freezing unrelated114 item literals. Exercise unique current correspondence, duplicate IDs/candidates, copy/reimport, custom properties, flags/polls, unrelated map changes and default UPDATE persistence.",
+    "Execute actual current source producer->transport/AND coalescing->WM matcher->regular handler->operator poll->prospective preallocation denial at O0/O2. Positive exact initial/same-batch registered Knife CtrlPAN must poll exactly once, return CANCELLED/BREAK, allocate/create/free zero operators/properties/reports/ViewOpsData, invoke zero nav/cancel/modal/lifecycle callbacks, and leave rv3d dist/ofs/quat/camera state unchanged.",
+    "Preserve old-source actual failure control: CtrlPAN reaches native zoom and changes dist; do not replace it with helper-only return tests. Exercise default plain/Shift rotate/move existing no-nav source controls and multiple PAN pairs.",
+    "Execute actual native zoom poll with missing context/regiondata, viewlock and runtime_viewlock zoom bit, then native success. Prove no Python or generic provider callback in eligible corridor; callback-capable Python override forces None before policy getters. Pollfalse/poll_only and locked-interface/region retain baseline dispatch.",
+    "Actual registered owner sequence: initial DOWN no handler, actual registration, samebatch later PAN, original current owner, replacement/retirement, duplicate/unrelated modal/UI owners, stale op/type lifetime, scene/object/mesh drift, split/window/region drift. Instrument callbacks to prove fresh no-pointer reuse.",
+    "Before accepting guard, execute actual knifetool_modal panning-reset and custom modal-map/native navigation poll paths: custom PAN->PANNING, hardware MMB followed by CtrlPAN, failed location/rotation/zoom polls, Ctrl changes and release transitions. State/return values must prove deliberate delegated navigation remains native.",
+    "Explicit/gizmo/custom/delegated calls with same positive event must receive scalar None. Exercise exact native Circle SIZE annulus selection and Transform proportional-size result, native explicit pan/zoom and controls, stock hardware/finger/mixed streams, Knife multi-cut/lift/Stop/Finish/Cancel history. Compare changed geometry/selected IDs/radii/camera state, not packet counts alone.",
+    "Only after connected correction/source validation and independent review: exact native iOS build once, full archive/package verification, actual compiled scalar/field/call-argument/preallocation/native-profile proof, unchanged accepted UI/render/HUD/Weight checks. Device acceptance remains separate."
+  ],
+  "source_hashes": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\patches\\blender-ipad.patch",
+      "sha256": "5b1d84bdf7cfc846ec6afee83014edfbfba63ba8fd78244c1286ea9316b3ed32"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\windowmanager\\intern\\wm_event_system.cc",
+      "sha256": "af3a5a865531d5b8badac8e93e2f5509a853164166e11be4594008629e4680e6"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\mesh\\editmesh_knife.cc",
+      "sha256": "c5df7dccd358d179a5ea437b51f27ed832e7803b9efec524853f4fc9ff326dcc"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\space_view3d.cc",
+      "sha256": "a2d13fe2accb36798b304bf7b3cf49946416d9d5d65c1d31d537874cb9ce5a62"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\view3d_navigate.cc",
+      "sha256": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\view3d_navigate_view_move.cc",
+      "sha256": "fa21648e3381fb63528fdd1bb5902e32eb1235dd23719f08d35ff7dc8ffe851c"
+    },
+    {
+      "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\space_view3d\\view3d_navigate_view_rotate.cc",
+      "sha256": "15c0f8c34fc3b0e270fde8b1fed6cc25087c675d86973cef53d6d5c7b8c105cc"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\editors\\space_view3d\\view3d_navigate_view_zoom.cc",
+      "sha256": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\blenkernel\\intern\\context.cc",
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\preflight\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\source\\blender\\windowmanager\\intern\\wm_keymap.cc",
+      "sha256": "97431d8c05931dc06ebf9f07eb58ab32ba7674035f3710f2d717da99a4c4cb0c"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\pinned-source\\d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e\\scripts\\presets\\keyconfig\\keymap_data\\blender_default.py",
+      "sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\characterization.json",
+      "sha256": "9ca5dd5b4abef168c8defe2790226e9b73ddd13b4bec9c122f6e05f5cb29de8c"
+    }
+  ],
+  "fixed_pin_extra_sources": {
+    "source/blender/editors/space_view3d/view3d_ops.cc": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\fixed-pin-source\\source\\blender\\editors\\space_view3d\\view3d_ops.cc",
+      "sha256": "2b0754547f72394143e9974e1bfc5a3a6c0a4f2ccf4a86f97e813a0a74479e6a"
+    },
+    "source/blender/makesdna/DNA_view3d_types.h": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\fixed-pin-source\\source\\blender\\makesdna\\DNA_view3d_types.h",
+      "sha256": "8bcba6b0f1e9baf33ca4ef8bbc90079967932eadf5ca7a065919b7471c93135e"
+    },
+    "source/blender/editors/space_view3d/view3d_navigate.hh": {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\fixed-pin-source\\source\\blender\\editors\\space_view3d\\view3d_navigate.hh",
+      "sha256": "c956ab467b989ba9f6b6d8635b9c92b911576dfa0685fbb7c31df5addfc504d9"
+    }
+  },
+  "claims": {
+    "production_edits": true,
+    "test_edits": false,
+    "ci_edits": false,
+    "audit_only_native_raw_registration_execution": true,
+    "native_zoom_poll_or_invoke_execution": false,
+    "full_iOS_build": false,
+    "device_acceptance": false,
+    "implementation_ready": false,
+    "whole_goal_complete": false,
+    "authoritative_materialization_native_seams_only": true,
+    "overlay_production_patch_edited": false,
+    "connected_increment_complete": false
+  },
+  "native_modal_panning_raw_baseline": {
+    "report": "output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\modal-panning-characterization.json",
+    "O0_O2": "PASS 15 assertions each",
+    "default_map_flags": 65,
+    "default_map_flags_name": "KEYMAP_MODAL|KEYMAP_UPDATE",
+    "effective_map_flags": 3,
+    "effective_map_flags_name": "KEYMAP_MODAL|KEYMAP_USER",
+    "default_item_flags": 24,
+    "effective_item_flags": 16,
+    "PANNING_propvalue": 15,
+    "type": 2,
+    "type_name": "MIDDLEMOUSE",
+    "value": -1,
+    "value_name": "KM_ANY",
+    "all_five_modifier_scalars": -1,
+    "keymodifier": 0,
+    "direction": -1,
+    "raw_maptype": 0,
+    "idname": "",
+    "propvalue_str": "",
+    "properties": null,
+    "ptr": null,
+    "actual_match": "MMB PRESS and RELEASE with Ctrl match; raw MOUSEPAN does not match.",
+    "limit": "Only actual PANNING generated entry/enum table ensure+import+copy+matcher, not full modal inventory/operator assignment or Knife modal execution."
+  },
+  "native_modal_compatibility_prospective": [
+    "Current owner.type.modalkeymap must be current registered default native Knife Tool Modal Map, and resolve actual current effective map by native WM_keymap_active rules, without callbacks/update. Require native registered memberships and MODAL/empty-owner/no poll/no poll_modal_item shape, resolved propvalue strings, effective UPDATE clear.",
+    "Conservative contract can veto USER_MODIFIED and require unique canonical MIDDLEMOUSE ANY allmodsANY PANNING item with same default/effective ID. Alternative exact current-value contract can allow unrelated modal changes but inspect every ACTIVE PANNING item and allow only MIDDLEMOUSE ANY/PRESS/RELEASE. Keyboard/LEFT/PAN PANNING routes must cause policy None, even if kcd.mode already reset.",
+    "Do not require modal item raw-empty property groups: native modal KMI has ptr/properties null. Exact stock native PANNING is one ANY item covering press/release; it is not two discrete items.",
+    "Physical hardware MMB stream interruption/emulated-MMB preference veto and actual source-executed current modal compatibility together must close the earlier-mode reset frontier. Neither current !MODE_PANNING nor source provenance alone closes it."
+  ],
+  "authorized_native_seams_checkpoint": "output\\ui-preview\\pencil-knife\\view3d-native-profile-next\\native-seams-checkpoint.json",
+  "source_hashes_are_pre_seam_baseline": true,
+  "source_hashes_note": "Original review hashes above describe the exact source audit/baseline before authorized four-file helper/header seams; current seam hashes and pristine copies are in native-seams-checkpoint.json. Root owns WM and overlay integration."
+}

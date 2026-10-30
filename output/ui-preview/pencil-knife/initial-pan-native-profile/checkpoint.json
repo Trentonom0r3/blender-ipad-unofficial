@@ -1,0 +1,289 @@
+{
+  "utc": "2026-10-30T09:14:11.012719+00:00",
+  "status": "PASS_INDEPENDENT_CPP17_PROFILE_DECLARATION_LINK_AND_POLL_REGRESSION",
+  "task_scope": [
+    "build/test_pencil_knife_initial_pan_native.py",
+    "build/tests/knife_initial_pan_native/*"
+  ],
+  "production_source_edits": false,
+  "tests_created": true,
+  "executions": [
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": false,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": false,
+      "python": true,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": false,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "0",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    },
+    {
+      "apple": true,
+      "python": true,
+      "optimization": "2",
+      "status": "PASS",
+      "assertions": 81,
+      "eligible_dynamic_free_calls": 0,
+      "missing_region_dynamic_free_calls": 1,
+      "native_callback_calls": 0
+    }
+  ],
+  "initial_findings": [
+    "Five candidate patch targets are present; public Zoom helper declaration and forward wmOperatorType are in ED_view3d.hh. Zoom TU explicitly includes ED_view3d.hh. WM explicitly includes ED_view3d.hh and uses helper only within Apple policy.",
+    "Pure helper definitions themselves are intentionally platform-independent. The retained connected model used C++17 before current task; new regression will use exact native wmOperatorType/ExtensionRNA/wmOperator declarations to check field/callback type compatibility.",
+    "Pinned WM CMake links editor screen/undo directly; View3D library linkage must be proven through actual final executable library inventory rather than assuming a direct WM edge."
+  ],
+  "limits": [
+    "Exact native wmOperatorType/ExtensionRNA/wmOperator/ViewContext/bContext and helper public declaration snippets compile in separate TUs; complete public header dependency trees and complete Blender translation units are not compiled.",
+    "Actual helpers, native type factories, WM append begin/append, context native getters, View3D/WM polling and poll-message clear/set execute; RNA descriptor allocation/schema access, registry append end, main-thread query, Python override bridge and non-poll navigation callbacks are explicit host boundaries.",
+    "KnifeTool_OpData and region/area backing are narrow storage adapters; owner lifetime, membership, event routing, modal-map/delegation and actual navigation/geometry are owned by the separate connected suite.",
+    "All four defined native KnifeMode states execute, including MODE_PANNING refusal. Out-of-range enum conversion/storage corruption is not a defined C++17 control and is not claimed.",
+    "Historical controls use exact fixed-pin old factories and absence of API declarations/definitions; they prove missing-seam detection only, not the original behavioural Ctrl-PAN navigation failure.",
+    "APPLE/PYTHON macro matrix is host C++17 evidence; target platform SDK, runtime layout/ABI, real RNA/allocator, complete CMake graph and device evidence remain separate."
+  ],
+  "test_files": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\test_pencil_knife_initial_pan_native.py",
+      "bytes": 2517,
+      "sha256": "f027c2e352b94a7873aab966d3681a3977390549862cecd99c695693deec1646"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\cases.inc.cc",
+      "bytes": 6404,
+      "sha256": "d965c35d5427089cbd5a033642dc57dde6aa71f8df4706ca73fd42e51a226124"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\models.inc.hh",
+      "bytes": 4145,
+      "sha256": "d159c60f6c6ea09c6f9c0da7452c1a2130f42e2663d2a125ec96258c78e606a6"
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\native.py",
+      "bytes": 17351,
+      "sha256": "921e39741e7c092b5c1160b93453662cba758b4d67a9902467398877c96711bf"
+    }
+  ],
+  "command": "python -B build/test_pencil_knife_initial_pan_native.py --source-root C:/Users/tjerf/AppData/Local/Temp/pencil-canvas-pan-next-01o74gir --output-dir output/ui-preview/pencil-knife/initial-pan-native-profile/defined-enum-run -v",
+  "unittest_result": "1/1 PASS in15.671s",
+  "source_execution_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-run\\native-profile-report.json",
+  "link_contract": {
+    "creator_to_view3d_route": [
+      "blender",
+      "bf::windowmanager",
+      "bf::blenkernel",
+      "bf_rna",
+      "bf_editor_space_api",
+      "bf_editor_space_view3d"
+    ],
+    "mesh_route": [
+      "bf_rna",
+      "bf_editor_mesh"
+    ],
+    "source_anchors": [
+      {
+        "path": "source/creator/CMakeLists.txt",
+        "line": 24,
+        "literal": "PRIVATE bf::windowmanager"
+      },
+      {
+        "path": "source/blender/windowmanager/CMakeLists.txt",
+        "line": 93,
+        "literal": "PRIVATE bf::blenkernel"
+      },
+      {
+        "path": "source/blender/blenkernel/CMakeLists.txt",
+        "line": 589,
+        "literal": "bf_rna"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 470,
+        "literal": "bf_editor_space_api"
+      },
+      {
+        "path": "source/blender/makesrna/intern/CMakeLists.txt",
+        "line": 480,
+        "literal": "bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/space_api/CMakeLists.txt",
+        "line": 43,
+        "literal": "bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 58,
+        "literal": "view3d_navigate_view_zoom.cc"
+      },
+      {
+        "path": "source/blender/editors/space_view3d/CMakeLists.txt",
+        "line": 111,
+        "literal": "blender_add_lib(bf_editor_space_view3d"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 30,
+        "literal": "editmesh_knife.cc"
+      },
+      {
+        "path": "source/blender/editors/mesh/CMakeLists.txt",
+        "line": 86,
+        "literal": "blender_add_lib(bf_editor_mesh"
+      },
+      {
+        "path": "source/blender/editors/CMakeLists.txt",
+        "line": 52,
+        "literal": "add_subdirectory(space_view3d)"
+      },
+      {
+        "path": "build_files/cmake/macros.cmake",
+        "line": 428,
+        "literal": "blender_link_libraries(${name} \"${library_deps}\")"
+      }
+    ],
+    "limit": "Actual source-backed dependency edges; no full CMake configure, native SDK or whole-link closure proof."
+  },
+  "additive_purity_correction": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\poll-message-callback-correction.json",
+  "historical_controls": [
+    {
+      "stage": "old-public-declaration-compile",
+      "returncode": 1
+    },
+    {
+      "stage": "old-source-definition-link",
+      "returncode": 1
+    }
+  ],
+  "source_sha256": {
+    "source/blender/editors/mesh/editmesh_knife.cc": "2a75520d3e58fc6ba9d3ce06933f689f384c3ffa6c05102981c95c10f6906f20",
+    "source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f392b4670a26cc0ce238b765aebb2918a559b963aeb516bc59b5daf680fab249",
+    "source/blender/editors/space_view3d/view3d_navigate.cc": "8e2ae7971765fd19b9822c7f3bf228edf2438d6b1897891b5342e93bf4aa6713",
+    "source/blender/editors/include/ED_mesh.hh": "02a85b86223d4fa3a92e6feb102451ca57213503f6c5e75b0632757448b6cbf8",
+    "source/blender/editors/include/ED_view3d.hh": "f608931962e8c7f4f58a6c2fb5d2f740870fd094b22bb66b980b7151523340f1",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/makesdna/DNA_windowmanager_types.h": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+    "source/blender/makesdna/DNA_listBase.h": "6d3197f83dc44b4ef6ae8b61991728eba3f5b99a55a8266297fd72c971e6a227",
+    "source/blender/blenlib/BLI_listbase.h": "c22f207ceb6392ad1a51ba39e41feb57731598135f995cf0a467c9adf1a17b14",
+    "source/blender/makesrna/RNA_types.hh": "fe5d6610904d49c5d04b1b53c86a3391d4fbfc3d86ba54f0468d40ed094803c8",
+    "source/blender/blenkernel/intern/context.cc": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+    "source/blender/blenkernel/BKE_context.hh": "6cf6c16a8dc393e6422c9e26dd157caabab44a128effcf57dfb1efd99e1c918c",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "source/blender/makesdna/DNA_windowmanager_enums.h": "cf8e488219978cf714e3d70496b545a6ffac969391754a3578858715d9b62cab",
+    "source/blender/makesdna/DNA_view3d_types.h": "8bcba6b0f1e9baf33ca4ef8bbc90079967932eadf5ca7a065919b7471c93135e",
+    "source/blender/blenlib/BLI_utildefines.h": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312",
+    "source/blender/editors/space_view3d/view3d_navigate.hh": "c956ab467b989ba9f6b6d8635b9c92b911576dfa0685fbb7c31df5addfc504d9",
+    "source/blender/windowmanager/intern/wm_operator_props.cc": "255980718d8e8ab1d027422804aad396536313ba4f566090920fd5ed23a9b030",
+    "source/blender/windowmanager/intern/wm_operator_type.cc": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+    "source/creator/CMakeLists.txt": "2290e37132cbf8718e724e9f493a8164d588631b74967adcc035200d134b7dd5",
+    "source/blender/windowmanager/CMakeLists.txt": "471d8ae843224adb5087aa53eb74072a2d667db67de6c1ebd74a1adb2b6d32b5",
+    "source/blender/blenkernel/CMakeLists.txt": "5dba2fbadf37f4ab60bf4a05b8eb088d6c9961a726d0f3a5e3062a9c3f050c05",
+    "source/blender/makesrna/intern/CMakeLists.txt": "0cd096656d8db11aec11924b5728bb2a5c0607151161dc8bb64affc1a98ba813",
+    "source/blender/editors/space_api/CMakeLists.txt": "0690f53337da4b16429fa6f8db30f473d5fc8afe8ee9b4f2373f59a892574374",
+    "source/blender/editors/space_view3d/CMakeLists.txt": "9b7d3c263fef40a788fe379d47812c7f61e58c279d93b615376ff3d0a26a3f18",
+    "source/blender/editors/mesh/CMakeLists.txt": "2b02aba193db3d44cb059224cbe6d22b0fcb7fb9d3b235abfedda67a87382926",
+    "source/blender/editors/CMakeLists.txt": "be8a4618d0377584dbfaf9bf9239254a105eff0d51270ec32b74f98a77cfc644",
+    "build_files/cmake/macros.cmake": "2e3ac4fec4bcf8e2f6b16cc777d23dce2412ab37b41d9e756d5bfd175f133911"
+  },
+  "preserved_initial_failures": [
+    {
+      "directory": "first-run",
+      "reason": "new driver used Windows default text encoding for UTF8 overlay; no native compile reached"
+    },
+    {
+      "directory": "second-run",
+      "reason": "new driver multiline ENUM_OPERATORS extraction truncated at first line; native declaration compile caught it"
+    },
+    {
+      "directory": "third-run",
+      "reason": "new driver metadata-key variable typo; no native compile reached"
+    },
+    {
+      "directory": "fourth-run",
+      "reason": "all8native runs/81checks passed; wrapper guessed threshold100 incorrectly; exact81metadata repaired without changing any C++ check"
+    }
+  ],
+  "new_test_LF_normalization": [
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\cases.inc.cc",
+      "before_sha256": "21682e0b14b462ee1f8fa506d7b46d00fa2599bf09ea434ecc7e8cb620e9b51d",
+      "after_sha256": "7b386b547e9c3b641f392375e94658aee05ba849f1044403892274671f8652d8",
+      "normalized_text_identical": true
+    },
+    {
+      "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_initial_pan_native\\models.inc.hh",
+      "before_sha256": "e293a35d982b761490338e4663729f3688eda225004888559ea71c43d309f0b2",
+      "after_sha256": "d159c60f6c6ea09c6f9c0da7452c1a2130f42e2663d2a125ec96258c78e606a6",
+      "normalized_text_identical": true
+    }
+  ],
+  "normalization_note": "Native generated source reads normalized Python text; pre/post normalization decoded text is exact, so final-run generated native/public source hashes remain applicable. No source/assertion change.",
+  "ci_edits": false,
+  "no_native_sdk_or_device_proof": true,
+  "patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "defined_enum_correction": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\defined-enum-correction.json",
+  "completed_audit": "Both public helper declarations compile against authentic native operator/RNA/context declarations in distinct caller/definition translation units. Zoom callback identity/profile uses real factory assignment bodies in the same definition TU; every13disqualifying profile field mutation is tested without operator callback dispatch. All four defined Knife modes execute. Dynamic poll-message cleanup callback distinction is executable and preserved.",
+  "previous_completed_run": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-native-profile\\final-run\\native-profile-report.json",
+  "final_audit_no_production_or_ci_edits": true
+}
