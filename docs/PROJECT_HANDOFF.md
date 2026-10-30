@@ -1,3 +1,20 @@
+## Exact initial Knife Ctrl-PAN build dispatched — 2026-10-30 UTC
+
+Validated sourcea2b7a81c9d40c1273ad2dc13a600810940b1e30d builds ONCE in
+run41034735566; exact head confirmed, currently healthy in_progress. Watcher17455
+.cache/watch-pencil-initial-knife-pan-build.py, log
+.cache/initial-knife-build-watch-41034735566.log owns SAME run/fullIPA/wholeUI+
+7Python/defaultbars/tools129/actualnew+preserved scopes. No native/package/
+compiled/device success yet. Read initial-pan-candidate/build-checkpoint.json.
+Never dispatch unchanged source or call ready before full package/actual reviews.
+
+Source final837/812.516s245frozeninputs/preflight140/diff and independentreview
+pass; combined soleJSON LF/data/C++equality/canonicalfocused1/6.450s addendum is
+explicit, no finalLFfullrerunclaim. Coldpreflight+new2/26.338s passes.5native targets,
+135prior/all7Python/all14GHOST exact. Native/input/history/UI guards preserved.
+Latest ready package remains3d7b248/run40728695044; no exact iPad acceptance.
+Full personal goal unfinished; preserve all evidence/selection-collapsed.png.
+
 ## Initial Knife Ctrl-PAN source validated; exact native build next — 2026-10-30 UTC
 
 Patch ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a passes
