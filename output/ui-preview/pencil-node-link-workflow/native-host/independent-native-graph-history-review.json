@@ -1,0 +1,624 @@
+{
+  "status": "PASS_INDEPENDENT_BOUNDED_STOCK_NATIVE_GRAPH_HISTORY_REVIEW",
+  "reviewer": "node_host_baseline_review",
+  "reviewed_utc": "2026-11-08T18:46:08.716355+00:00",
+  "review_type": "Independent read-only script, completed raw result, graph tuple, and original PNG review; no GUI rerun by reviewer.",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "binary": "D:\\Program Files\\blender.exe",
+    "background": false
+  },
+  "scope": "Installed stock Windows Blender 5.1.2/ec6e62d40fa9, actual Window.event_simulate native WM/socket/link operation, ten supplied expanded regular Shader-node cases, three actual native Undo/Redo pairs, and fresh empty-release popup dismissal.",
+  "production_claim": false,
+  "target_or_device_claim": false,
+  "evidence": {
+    "probe": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/probe.py",
+      "sha256": "f36bf27b270d809905fe3675b30b0c472a2bb6b2e004b38c49baf4e5d34270eb",
+      "bytes": 8074
+    },
+    "result": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/result.json",
+      "sha256": "a01c9ff855e0a38515019fa912bb85f67c7735d8f34334ff54a8041dd64c04c5",
+      "bytes": 155429
+    },
+    "stdout": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/stdout.txt",
+      "sha256": "ff5594d0ee3683ca7177b6a2f507db2738800c27ebdbf57e15b11d16f1d74a35",
+      "bytes": 151
+    },
+    "stderr": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/stderr.txt",
+      "sha256": "5968814f4462f12095f91df54a9c49cc70efdc459e6df7a94c10994cffea5399",
+      "bytes": 323
+    },
+    "all_attempt_image_hashes": [
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-redo.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_escape--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_escape--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_escape--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_escape--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_release_without_repick--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_release_without_repick--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_release_without_repick--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_release_without_repick--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_return_original--after-cleanup.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_return_original--after-terminal.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_return_original--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_return_original--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-cleanup.png",
+        "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+        "bytes": 200317
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-redo.png",
+        "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+        "bytes": 200317
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-terminal.png",
+        "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+        "bytes": 200317
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-undo.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rightmouse--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rightmouse--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rightmouse--baseline.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rightmouse--dragging-empty.png",
+        "sha256": "536440a0d8407840d722ab12edf99208cdd113843bb8aaa95dc238cc597d6a18",
+        "bytes": 204764
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-cleanup.png",
+        "sha256": "f2ec7b334992a485ad120215c5bdb30a24936769f18f0b7b83f87059555a437b",
+        "bytes": 198703
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-redo.png",
+        "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+        "bytes": 199126
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-terminal.png",
+        "sha256": "f2ec7b334992a485ad120215c5bdb30a24936769f18f0b7b83f87059555a437b",
+        "bytes": 198703
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-undo.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--baseline.png",
+        "sha256": "682fe570bbbed95e52e7a904737b8e3565677961bad37f498a6eb28336d7dbad",
+        "bytes": 191514
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--dragging-empty.png",
+        "sha256": "ec3418f6769534a7b9dcdce373be555965c3da77a877e2f3fc442c663672c61a",
+        "bytes": 204501
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-terminal.png",
+        "sha256": "69390376e25591d891fe3b61c00141640486d209cf39597c77a27e438071bffe",
+        "bytes": 219653
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--baseline.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--dragging-empty.png",
+        "sha256": "aa37038c5bfaddc7a2b1eedf5525070433e92b228a1eeb31e83e8bdd352f5942",
+        "bytes": 204891
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_escape--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_escape--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_escape--baseline.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_escape--dragging-empty.png",
+        "sha256": "aa37038c5bfaddc7a2b1eedf5525070433e92b228a1eeb31e83e8bdd352f5942",
+        "bytes": 204891
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_rightmouse--after-cleanup.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_rightmouse--after-terminal.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_rightmouse--baseline.png",
+        "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+        "bytes": 194747
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_rightmouse--dragging-empty.png",
+        "sha256": "aa37038c5bfaddc7a2b1eedf5525070433e92b228a1eeb31e83e8bdd352f5942",
+        "bytes": 204891
+      }
+    ]
+  },
+  "script_review": {
+    "context": "Undo/Redo run under a newly resolved window/Node Editor/WINDOW region override. Tree/node/link references are local to individual callbacks; state reacquires named material node tree after Undo/Redo.",
+    "history_baseline": "Each isolated direct-RNA setup receives an explicit native ed.undo_push before interactions. No direct graph edit occurs between this baseline, native terminal, Undo and Redo. This does not claim general undo-stack coverage.",
+    "real_native_observations": "Window.modal_operators supplies actual NODE_OT_link acquisition and terminal absence. RNA supplies native endpoint tuples and validity; bpy.ops.ed.undo/redo supplies actual native history changes. No model counters substitute for these observed effects.",
+    "no_lifetime_finding": "No retained-RNA-across-Undo or stale region-reference flaw found in this bounded script review. This is not a global lifetime proof.",
+    "popup_evidence": "Popup delivery and discard are supported by independent after-terminal/after-cleanup PNG inspection, not inferred merely from NODE_OT_link ending or sending Esc.",
+    "geometry_limit": "Coordinates use observed expanded-node screenshot approximations and native View2D/scaled node dimensions. Successful native acquisition and final destination tuples establish these specific hit samples only; no exact internal socket position, radius, occlusion, zoom or generalized geometry proof follows."
+  },
+  "case_count": 10,
+  "native_history_pair_count": 3,
+  "cases": [
+    {
+      "name": "fresh_confirm_history",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": {
+        "native_undo_result": [
+          "FINISHED"
+        ],
+        "native_redo_result": [
+          "FINISHED"
+        ],
+        "graph_after_undo": [],
+        "graph_after_redo": [
+          [
+            "SourceA",
+            "Value",
+            "SinkB",
+            "Value",
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "name": "fresh_empty_search_discard",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "fresh_escape",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "fresh_rightmouse",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "existing_empty_history",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": {
+        "native_undo_result": [
+          "FINISHED"
+        ],
+        "native_redo_result": [
+          "FINISHED"
+        ],
+        "graph_after_undo": [
+          [
+            "SourceA",
+            "Value",
+            "SinkB",
+            "Value",
+            true
+          ]
+        ],
+        "graph_after_redo": []
+      }
+    },
+    {
+      "name": "existing_escape",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "existing_rightmouse",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "existing_return_original",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "existing_release_without_repick",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": null
+    },
+    {
+      "name": "existing_rewire_history",
+      "status": "PASS_OBSERVED_BOUNDED_EXPECTATIONS",
+      "baseline_graph": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value",
+          true
+        ]
+      ],
+      "graph_at_acquisition": [],
+      "graph_after_terminal": [
+        [
+          "SourceA",
+          "Value",
+          "SinkB",
+          "Value_001",
+          true
+        ]
+      ],
+      "link_handler_acquired": true,
+      "link_handler_ended_after_terminal": true,
+      "history": {
+        "native_undo_result": [
+          "FINISHED"
+        ],
+        "native_redo_result": [
+          "FINISHED"
+        ],
+        "graph_after_undo": [
+          [
+            "SourceA",
+            "Value",
+            "SinkB",
+            "Value",
+            true
+          ]
+        ],
+        "graph_after_redo": [
+          [
+            "SourceA",
+            "Value",
+            "SinkB",
+            "Value_001",
+            true
+          ]
+        ]
+      }
+    }
+  ],
+  "independent_visual_review": [
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-terminal.png",
+      "sha256": "69390376e25591d891fe3b61c00141640486d209cf39597c77a27e438071bffe",
+      "bytes": 219653,
+      "finding": "Visibly contains native linked-node search popup with an empty search field and node/socket result list.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-cleanup.png",
+      "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+      "bytes": 194747,
+      "finding": "Search popup is visibly gone; two original nodes remain with no link.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-terminal.png",
+      "sha256": "f2ec7b334992a485ad120215c5bdb30a24936769f18f0b7b83f87059555a437b",
+      "bytes": 198703,
+      "finding": "Source A visibly connects to the upper Destination B input.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png",
+      "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+      "bytes": 199126,
+      "finding": "Native Undo-restored link visibly connects Source A to the upper Destination B input.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-redo.png",
+      "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+      "bytes": 200317,
+      "finding": "Native Redo visibly connects Source A to the lower Destination B input.",
+      "review_method": "Independently opened original PNG with view_image"
+    }
+  ],
+  "history_png_byte_identity_review": [
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-terminal.png",
+      "sha256": "f2ec7b334992a485ad120215c5bdb30a24936769f18f0b7b83f87059555a437b",
+      "bytes": 198703,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-terminal.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-undo.png",
+      "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+      "bytes": 194747,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-cleanup.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_confirm_history--after-redo.png",
+      "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+      "bytes": 199126,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-terminal.png",
+      "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+      "bytes": 194747,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-cleanup.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png",
+      "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+      "bytes": 199126,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-redo.png",
+      "sha256": "799ee96aaebcf65df189ad447fed3bd2ff64527fc9c07330ca38492fc8ff3bed",
+      "bytes": 194747,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/fresh_empty_search_discard--after-cleanup.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-terminal.png",
+      "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+      "bytes": 200317,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-redo.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-undo.png",
+      "sha256": "9f876b93abc0b9e2bc4eab4f0d5afed12ee2fb6972cf6507e9b347ff29f3ba6b",
+      "bytes": 199126,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_empty_history--after-undo.png"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-redo.png",
+      "sha256": "c1989ef35d15bc4dc930b08efedb79c823a32f352ff33a13a547665275c2a8cd",
+      "bytes": 200317,
+      "byte_identical_to_independently_viewed_image": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-2-native-graph-history/existing_rewire_history--after-redo.png"
+    }
+  ],
+  "findings": [
+    "All ten supplied cases visibly/native-observably acquire NODE_OT_link and end that handler after their terminal event.",
+    "Fresh Finish creates SourceA.Value to SinkB.Value; actual native Undo removes it and Redo restores the same valid endpoint tuple.",
+    "Fresh empty release opens the native linked-node search popup, then Esc discards it; graph endpoints remain empty.",
+    "Existing-input acquisition detaches its original link. Empty Finish removes it; native Undo restores and Redo removes it.",
+    "Existing-input Esc and RMB cancel end the native handler while leaving the detached link absent. This is observed native behavior and is not asserted to be a user-facing rollback defect.",
+    "Returning to the original input with a final MOUSEMOVE restores its valid endpoint tuple; merely releasing at that input after empty-space motion leaves it absent, supporting no release-position repick in this corridor.",
+    "Existing-input rewire creates SinkB.Value_001; native Undo restores Value and Redo reapplies Value_001."
+  ],
+  "diagnostics": "Result completed without recorded errors. stderr contains only Material.use_nodes deprecation warning; no target/native-application crash is asserted.",
+  "boundaries": [
+    "Stock Windows 5.1.2/ec6e62d40fa9 does not establish target Blender 5.0 overlays, UIKit/GHOST Pencil delivery, pressure, barrel-button state, iOS SDK/package behavior, or device acceptance.",
+    "Window.event_simulate uses native synthetic timed mouse events and resets tablet provenance; it is not physical-pointer or Pencil ingestion proof.",
+    "Single material, two expanded regular Shader nodes, default stock maps, one fixed view/scale, single links. Collapsed, hidden, multi-input, unavailable, occluded, adjacent-node and other zoom/socket configurations are untested.",
+    "Graph identity means ordered endpoint tuples and validity, not link pointer/RNA object identity. Two original nodes are retained in every recorded snapshot.",
+    "Three positive native Undo/Redo pairs were observed for Finish cases. Cancel-history, arbitrary undo stacks and allocation/global lifetime behavior are not characterized.",
+    "Popup opening and Esc discard are covered. Selecting a search item, real popup callback, placement, new-node graph effects and their Undo/Redo remain outside this review.",
+    "No new production source, registered acceptance tests, CI, native target build or corrective behavior is reviewed or asserted."
+  ]
+}

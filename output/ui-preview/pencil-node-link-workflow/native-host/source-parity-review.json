@@ -1,0 +1,722 @@
+{
+  "schema_version": 1,
+  "utc": "2026-11-08T18:43:47.683785+00:00",
+  "status": "READ_ONLY_PRIMARY_SOURCE_PARITY_AUDIT; HOST_GRAPH_HISTORY_EXECUTION_PENDING_SEPARATELY",
+  "target_commit": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "stock_commit": "ec6e62d40fa9",
+  "production_patch_raw_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "scope": "Exact selected native socket, drag graph mutation, terminal WM and Undo bodies. No GUI/process launch, compile, registered test run, production/test/CI edits, or target/device execution.",
+  "method": "Read cached primary target source and exact-revision GitHub raw primary sources. Reconstruct only patched source via existing changed_source function AST, with no test/module runner. Record full-file input hashes, selected exact definition-body hashes, lines and complete selected-body diffs. No function algorithms are imitated or executed.",
+  "prior_evidence": {
+    "output/ui-preview/pencil-node-link-workflow/next-audit.json": "e049ef9666000b429bf772ad4e55ba143c1408a9bb62724bd8a8868c44e9726a",
+    "output/ui-preview/pencil-node-link-workflow/characterization-report.json": "2486bd13ded61f854a943abda42c4ef3f9c1ad214ca20faea31a71cd55c6835c",
+    "output/ui-preview/pencil-node-input-audit/native-host/probe.py": "d4a2e313fcfd5777674870b8ce3fae2a6cb3b6b539bb7538acd1c38340d3bb5a",
+    "output/ui-preview/pencil-node-input-audit/native-host/assessment.json": "53a8dc38209a6b4b8531487be19410ae9d47c80771bd9b1344840e59b3df7bc6"
+  },
+  "source_records": [
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_relationships.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/space_node/node_relationships.cc",
+      "target_raw_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "stock_raw_sha256": "c7c85956153ca2ef7a5517df2eb05213507f8159785df8541b83312659b4dfd3",
+      "production_canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "create_drag_link",
+          "target_upstream_line": 71,
+          "stock_line": 79,
+          "production_line": 71,
+          "target_upstream_sha256": "9165451dcea94f4adb4be543428efa1cb07ba69dfff1b68269bbefd04d897a28",
+          "stock_sha256": "9165451dcea94f4adb4be543428efa1cb07ba69dfff1b68269bbefd04d897a28",
+          "production_sha256": "9165451dcea94f4adb4be543428efa1cb07ba69dfff1b68269bbefd04d897a28",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "dragged_links_are_detached",
+          "target_upstream_line": 950,
+          "stock_line": 1026,
+          "production_line": 950,
+          "target_upstream_sha256": "d1c33db12cacd48f02150da1a020ddccf56aa7321cbd0843266d161af3101052",
+          "stock_sha256": "d1c33db12cacd48f02150da1a020ddccf56aa7321cbd0843266d161af3101052",
+          "production_sha256": "d1c33db12cacd48f02150da1a020ddccf56aa7321cbd0843266d161af3101052",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "should_create_drag_link_search_menu",
+          "target_upstream_line": 969,
+          "stock_line": 1045,
+          "production_line": 969,
+          "target_upstream_sha256": "808eb34969b21610f6d4256e6d74d62a02eea960a096ac68ee3a5364e571f9bb",
+          "stock_sha256": "808eb34969b21610f6d4256e6d74d62a02eea960a096ac68ee3a5364e571f9bb",
+          "production_sha256": "808eb34969b21610f6d4256e6d74d62a02eea960a096ac68ee3a5364e571f9bb",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "node_remove_existing_links_if_needed",
+          "target_upstream_line": 1185,
+          "stock_line": 1261,
+          "production_line": 1185,
+          "target_upstream_sha256": "766761f4ca5e328f21e73bfb16b3d0a2d34685fe8685054d6e989b8dcd69383f",
+          "stock_sha256": "766761f4ca5e328f21e73bfb16b3d0a2d34685fe8685054d6e989b8dcd69383f",
+          "production_sha256": "766761f4ca5e328f21e73bfb16b3d0a2d34685fe8685054d6e989b8dcd69383f",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "add_dragged_links_to_tree",
+          "target_upstream_line": 1231,
+          "stock_line": 1307,
+          "production_line": 1231,
+          "target_upstream_sha256": "9bf434d6c9d520317750f601173f7f1dddcec74e77cca4aa3ee4b914fd20d9c5",
+          "stock_sha256": "fbc5942bd769fe19fe3a3afed12a3c35a9d655d065e4ae1e252decf83acc5470",
+          "production_sha256": "9bf434d6c9d520317750f601173f7f1dddcec74e77cca4aa3ee4b914fd20d9c5",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -32,10 +32,9 @@\n\n     /* Before actually adding the link let nodes perform special link insertion handling. */\n \n-    bNodeLink *new_link = MEM_mallocN<bNodeLink>(__func__);\n-    *new_link = link;\n+    bNodeLink *new_link = MEM_new<bNodeLink>(__func__, link);\n     if (link.fromnode->typeinfo->insert_link) {\n       bke::NodeInsertLinkParams params{ntree, *link.fromnode, *new_link, &C};\n       if (!link.fromnode->typeinfo->insert_link(params)) {\n-        MEM_freeN(new_link);\n+        MEM_delete(new_link);\n         continue;\n       }\n@@ -44,5 +43,5 @@\n\n       bke::NodeInsertLinkParams params{ntree, *link.tonode, *new_link, &C};\n       if (!link.tonode->typeinfo->insert_link(params)) {\n-        MEM_freeN(new_link);\n+        MEM_delete(new_link);\n         continue;\n       }"
+        },
+        {
+          "function": "node_link_cancel",
+          "target_upstream_line": 1297,
+          "stock_line": 1372,
+          "production_line": 1297,
+          "target_upstream_sha256": "f5a1338ef9fd4c7f689c69d9304e5007e4831f275433470cf20a3ccdbb4d26e2",
+          "stock_sha256": "1815893d6c6fa06d2ac300036ab67119b0edb16790eff169838d24340b55ab05",
+          "production_sha256": "f5a1338ef9fd4c7f689c69d9304e5007e4831f275433470cf20a3ccdbb4d26e2",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -2,7 +2,7 @@\n\n {\n   SpaceNode *snode = CTX_wm_space_node(C);\n-  bNodeLinkDrag *nldrag = (bNodeLinkDrag *)op->customdata;\n+  bNodeLinkDrag *nldrag = static_cast<bNodeLinkDrag *>(op->customdata);\n   draw_draglink_tooltip_deactivate(*CTX_wm_region(C), *nldrag);\n-  UI_view2d_edge_pan_cancel(C, &nldrag->pan_data);\n+  view2d_edge_pan_cancel(C, &nldrag->pan_data);\n   snode->runtime->linkdrag.reset();\n   clear_picking_highlight(&snode->edittree->links);"
+        },
+        {
+          "function": "node_link_find_socket",
+          "target_upstream_line": 1309,
+          "stock_line": 1384,
+          "production_line": 1309,
+          "target_upstream_sha256": "aa143e7163ed24eb56cec9a332495aa8a8be444904e96568bba004ba169b726e",
+          "stock_sha256": "f250cb52be642c75958104c1ec52c2788fa6d70ad8069e07e4c0bf158ad381b7",
+          "production_sha256": "aa143e7163ed24eb56cec9a332495aa8a8be444904e96568bba004ba169b726e",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -17,7 +17,7 @@\n\n         /* Skip if tsock is already linked with this output. */\n         bNodeLink *existing_link_connected_to_fromsock = nullptr;\n-        LISTBASE_FOREACH (bNodeLink *, existing_link, &snode.edittree->links) {\n-          if (existing_link->fromsock == link.fromsock && existing_link->tosock == tsock) {\n-            existing_link_connected_to_fromsock = existing_link;\n+        for (bNodeLink &existing_link : snode.edittree->links) {\n+          if (existing_link.fromsock == link.fromsock && existing_link.tosock == tsock) {\n+            existing_link_connected_to_fromsock = &existing_link;\n             break;\n           }"
+        },
+        {
+          "function": "node_link_modal",
+          "target_upstream_line": 1419,
+          "stock_line": 1494,
+          "production_line": 1419,
+          "target_upstream_sha256": "7e926274c3d99bf11a2975680269fd80588f47934c3a34eda290c8f7f7600f72",
+          "stock_sha256": "9c310ae93f190d818ce7d6459a6257f464109688c42c9a501aeee1c60623b2de",
+          "production_sha256": "7e926274c3d99bf11a2975680269fd80588f47934c3a34eda290c8f7f7600f72",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -5,8 +5,8 @@\n\n   ARegion *region = CTX_wm_region(C);\n \n-  UI_view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);\n+  view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);\n \n   float2 cursor;\n-  UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);\n+  ui::view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);\n   nldrag.cursor[0] = event->mval[0];\n   nldrag.cursor[1] = event->mval[1];"
+        },
+        {
+          "function": "remove_unavailable_links",
+          "target_upstream_line": 1485,
+          "stock_line": 1560,
+          "production_line": 1485,
+          "target_upstream_sha256": "2d7a33ce310525f1c08c75a9cf2659bf08b7a98637d6d12690e32e2599b72fa3",
+          "stock_sha256": "2d7a33ce310525f1c08c75a9cf2659bf08b7a98637d6d12690e32e2599b72fa3",
+          "production_sha256": "2d7a33ce310525f1c08c75a9cf2659bf08b7a98637d6d12690e32e2599b72fa3",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "node_link_init",
+          "target_upstream_line": 1496,
+          "stock_line": 1571,
+          "production_line": 1496,
+          "target_upstream_sha256": "78080c819adf93b6fe1473820e77348ceb6ea1555eb78ee5009cb665b5c8fe75",
+          "stock_sha256": "ac5bbab61c4aaa7e0537a98c9deeb50575cc3504e437f6d2f74f7fce758d8c82",
+          "production_sha256": "78080c819adf93b6fe1473820e77348ceb6ea1555eb78ee5009cb665b5c8fe75",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -18,12 +18,12 @@\n\n       nldrag->in_out = SOCK_IN;\n       /* Detach current links and store them in the operator data. */\n-      LISTBASE_FOREACH_MUTABLE (bNodeLink *, link, &snode.edittree->links) {\n-        if (link->fromsock == sock) {\n-          bNodeLink oplink = *link;\n+      for (bNodeLink &link : snode.edittree->links.items_mutable()) {\n+        if (link.fromsock == sock) {\n+          bNodeLink oplink = link;\n           oplink.next = oplink.prev = nullptr;\n           oplink.flag |= NODE_LINK_VALID;\n \n           nldrag->links.append(oplink);\n-          bke::node_remove_link(snode.edittree, *link);\n+          bke::node_remove_link(snode.edittree, link);\n         }\n       }\n@@ -52,7 +52,7 @@\n\n       /* Detach current links and store them in the operator data. */\n       bNodeLink *link_to_pick;\n-      LISTBASE_FOREACH_MUTABLE (bNodeLink *, link, &snode.edittree->links) {\n-        if (link->tosock == sock) {\n-          link_to_pick = link;\n+      for (bNodeLink &link : snode.edittree->links.items_mutable()) {\n+        if (link.tosock == sock) {\n+          link_to_pick = &link;\n         }\n       }"
+        },
+        {
+          "function": "node_link_invoke",
+          "target_upstream_line": 1578,
+          "stock_line": 1653,
+          "production_line": 1578,
+          "target_upstream_sha256": "0a86521e0c4738509532eed678862b9cfc8e0ebca2fff75c1f757e15b1344afb",
+          "stock_sha256": "95062e7ff9f62bf92f1ddc6bcb8434904a300b7dd8b569146726e343425d0106",
+          "production_sha256": "0a86521e0c4738509532eed678862b9cfc8e0ebca2fff75c1f757e15b1344afb",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -11,5 +11,5 @@\n\n \n   float2 cursor;\n-  UI_view2d_region_to_view(&region.v2d, mval[0], mval[1], &cursor[0], &cursor[1]);\n+  ui::view2d_region_to_view(&region.v2d, mval[0], mval[1], &cursor[0], &cursor[1]);\n   RNA_float_set_array(op->ptr, \"drag_start\", cursor);\n \n@@ -21,5 +21,5 @@\n\n   }\n \n-  UI_view2d_edge_pan_operator_init(C, &nldrag->pan_data, op);\n+  view2d_edge_pan_operator_init(C, &nldrag->pan_data, op);\n \n   /* Add icons at the cursor when the link is dragged in empty space. */"
+        },
+        {
+          "function": "NODE_OT_link",
+          "target_upstream_line": 1614,
+          "stock_line": 1689,
+          "production_line": 1614,
+          "target_upstream_sha256": "9e2b8bcb365f7b45ac74623b8920aaec27ae516255fe4b12175ce6a3727d9863",
+          "stock_sha256": "ced6ca3e2f3f6eb8ad17098ca31ee6b3801ac5786640d2e92386668cd6856311",
+          "production_sha256": "9e2b8bcb365f7b45ac74623b8920aaec27ae516255fe4b12175ce6a3727d9863",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -27,10 +27,10 @@\n\n                       UI_PRECISION_FLOAT_MAX);\n \n-  UI_view2d_edge_pan_operator_properties_ex(ot,\n-                                            NODE_EDGE_PAN_INSIDE_PAD,\n-                                            NODE_EDGE_PAN_OUTSIDE_PAD,\n-                                            NODE_EDGE_PAN_SPEED_RAMP,\n-                                            NODE_EDGE_PAN_MAX_SPEED,\n-                                            NODE_EDGE_PAN_DELAY,\n-                                            NODE_EDGE_PAN_ZOOM_INFLUENCE);\n+  ui::view2d_edge_pan_operator_properties_ex(ot,\n+                                             NODE_EDGE_PAN_INSIDE_PAD,\n+                                             NODE_EDGE_PAN_OUTSIDE_PAD,\n+                                             NODE_EDGE_PAN_SPEED_RAMP,\n+                                             NODE_EDGE_PAN_MAX_SPEED,\n+                                             NODE_EDGE_PAN_DELAY,\n+                                             NODE_EDGE_PAN_ZOOM_INFLUENCE);\n }"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/space_node/node_edit.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_edit.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/space_node/node_edit.cc",
+      "target_raw_sha256": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d",
+      "stock_raw_sha256": "282bfc730a4ecb9e23e035c0a5e6ef528b606c3070be8c9d723c85f1777a9cde",
+      "production_canonical_lf_sha256": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "socket_is_occluded",
+          "target_upstream_line": 882,
+          "stock_line": 643,
+          "production_line": 882,
+          "target_upstream_sha256": "a6b57716326b9ba895f63c9e32cce69352498146124876ffa54445af3ea26baf",
+          "stock_sha256": "a6b57716326b9ba895f63c9e32cce69352498146124876ffa54445af3ea26baf",
+          "production_sha256": "a6b57716326b9ba895f63c9e32cce69352498146124876ffa54445af3ea26baf",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "cursor_isect_multi_input_socket",
+          "target_upstream_line": 1224,
+          "stock_line": 1003,
+          "production_line": 1224,
+          "target_upstream_sha256": "4c8c92814e17916df313b647c30b1197dce56ac961335d73810a84454abe67f4",
+          "stock_sha256": "4c8c92814e17916df313b647c30b1197dce56ac961335d73810a84454abe67f4",
+          "production_sha256": "4c8c92814e17916df313b647c30b1197dce56ac961335d73810a84454abe67f4",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "node_find_indicated_socket",
+          "target_upstream_line": 1245,
+          "stock_line": 1024,
+          "production_line": 1245,
+          "target_upstream_sha256": "810d1eb18296cc1b475485b2ecdce37396fcb9c9c2866c927c7722b3352af6ac",
+          "stock_sha256": "ae4dd7106e7daa7382717e32e6dc092026283b54cceb51b8a29f676e480e2b16",
+          "production_sha256": "810d1eb18296cc1b475485b2ecdce37396fcb9c9c2866c927c7722b3352af6ac",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -4,5 +4,5 @@\n\n                                         const eNodeSocketInOut in_out)\n {\n-  const float view2d_scale = UI_view2d_scale_get_x(&region.v2d);\n+  const float view2d_scale = ui::view2d_scale_get_x(&region.v2d);\n   const float max_distance = NODE_SOCKSIZE + std::clamp(20.0f / view2d_scale, 5.0f, 30.0f);\n   const float padded_socket_size = NODE_SOCKSIZE + 4;\n@@ -52,4 +52,13 @@\n\n         }\n         if (distance < max_distance) {\n+          if (node_collapsed) {\n+            if ((cursor.x - location.x > NODE_SOCKSIZE) ||\n+                ((location.x < cursor.x) && (cursor.x - location.x <= padded_socket_size) &&\n+                 (abs(location.y - cursor.y) > NODE_SOCKSIZE)))\n+            {\n+              /* Needed to be able to resize collapsed nodes. */\n+              continue;\n+            }\n+          }\n           update_best_socket(sock, distance);\n         }\n@@ -65,5 +74,8 @@\n\n         if (distance < max_distance) {\n           if (node_collapsed) {\n-            if (location.x - cursor.x > padded_socket_size) {\n+            if ((location.x - cursor.x > NODE_SOCKSIZE) ||\n+                ((location.x > cursor.x) && (location.x - cursor.x <= padded_socket_size) &&\n+                 (abs(location.y - cursor.y) > NODE_SOCKSIZE)))\n+            {\n               /* Needed to be able to resize collapsed nodes. */\n               continue;"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/space_node/node_draw.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_draw.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/space_node/node_draw.cc",
+      "target_raw_sha256": "c9c71b32f27847ab91736d865d1cc3d759b31d16c870c3de2e0edbd232d33f23",
+      "stock_raw_sha256": "eacfd1cc4e61e5ca28673535f661eb96f4187b204beda9ffdcc93284a9c732b2",
+      "production_canonical_lf_sha256": "c9c71b32f27847ab91736d865d1cc3d759b31d16c870c3de2e0edbd232d33f23",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "tree_draw_order_calc_nodes_reversed",
+          "target_upstream_line": 350,
+          "stock_line": 286,
+          "production_line": 350,
+          "target_upstream_sha256": "55f033cdbf17f2e15dc585a224b40d3992de6c0e3158ba498c1e12bbcd95dd66",
+          "stock_sha256": "c99302b6bd3ea082400ab2ef18cb8756c3ca00a954e20c5bbb9e8d165dfef378",
+          "production_sha256": "55f033cdbf17f2e15dc585a224b40d3992de6c0e3158ba498c1e12bbcd95dd66",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -5,7 +5,6 @@\n\n     return {};\n   }\n-  std::sort(nodes.begin(), nodes.end(), [](const bNode *a, const bNode *b) {\n-    return a->ui_order > b->ui_order;\n-  });\n+  std::ranges::sort(nodes,\n+                    [](const bNode *a, const bNode *b) { return a->ui_order > b->ui_order; });\n   return nodes;\n }"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/space_node/link_drag_search.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/link_drag_search.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/space_node/link_drag_search.cc",
+      "target_raw_sha256": "1381d72b872a0b457e01f02dfd047533cc60e91a96046a7bdbec3e6c38ccca33",
+      "stock_raw_sha256": "f730a68bbd039797ac8bca662be9dce4ba21b44287ed926f8066a47f4d45529b",
+      "production_canonical_lf_sha256": "1381d72b872a0b457e01f02dfd047533cc60e91a96046a7bdbec3e6c38ccca33",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "link_drag_search_exec_fn",
+          "target_upstream_line": 366,
+          "stock_line": 376,
+          "production_line": 366,
+          "target_upstream_sha256": "4f448d91d21bda8bae839ca10dabe37017890a2989259faf8c12c6ae98e9deaa",
+          "stock_sha256": "d5d342bc2dedb9bf0b635dee70eda87732f2b67217c78b23e886cec73553d746",
+          "production_sha256": "4f448d91d21bda8bae839ca10dabe37017890a2989259faf8c12c6ae98e9deaa",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -49,6 +49,5 @@\n\n   wmOperatorType *ot = WM_operatortype_find(\"NODE_OT_translate_attach_remove_on_cancel\", true);\n   BLI_assert(ot);\n-  PointerRNA ptr;\n-  WM_operator_properties_create_ptr(&ptr, ot);\n+  PointerRNA ptr = WM_operator_properties_create_ptr(ot);\n   WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &ptr, nullptr);\n   WM_operator_properties_free(&ptr);"
+        },
+        {
+          "function": "invoke_node_link_drag_add_menu",
+          "target_upstream_line": 477,
+          "stock_line": 484,
+          "production_line": 477,
+          "target_upstream_sha256": "d71df328f1594d7c8352886b39aebc2a098cd48e504f3e6be8bd4c1fe44e1195",
+          "stock_sha256": "5539f0ed3a2108d2510f7c8439a8520a687f33af9d74f38bdba09b7b5f65b5ca",
+          "production_sha256": "d71df328f1594d7c8352886b39aebc2a098cd48e504f3e6be8bd4c1fe44e1195",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -6,4 +6,4 @@\n\n   LinkDragSearchStorage *storage = new LinkDragSearchStorage{node, socket, cursor};\n   /* Use the \"_ex\" variant with `can_refresh` false to avoid a double free when closing Blender. */\n-  UI_popup_block_invoke_ex(&C, create_search_popup_block, storage, nullptr, false);\n+  popup_block_invoke_ex(&C, create_search_popup_block, storage, nullptr, false);\n }"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/undo/ed_undo.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/undo/ed_undo.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/undo/ed_undo.cc",
+      "target_raw_sha256": "0a1074d1f8d4d7d7e227cc4ba4c9edf5764ab5da53b11f5669c04c8757506f03",
+      "stock_raw_sha256": "c8a344abfa0ccbcb81e1a82c518152c5a8033bf75dada58ba3e1115221d17f0c",
+      "production_canonical_lf_sha256": "163d6d7fbdb9cb5a3d8eda522d239e9abfd62c4b4daeb796d5a4eb4ae1e0f8f0",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "ED_undo_push",
+          "target_upstream_line": 98,
+          "stock_line": 97,
+          "production_line": 492,
+          "target_upstream_sha256": "743af108a00b50959c09a8955c502a80912c2d9627153c34fa27e1f1d7e3d6e6",
+          "stock_sha256": "743af108a00b50959c09a8955c502a80912c2d9627153c34fa27e1f1d7e3d6e6",
+          "production_sha256": "743af108a00b50959c09a8955c502a80912c2d9627153c34fa27e1f1d7e3d6e6",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "ED_undo_push_op",
+          "target_upstream_line": 359,
+          "stock_line": 358,
+          "production_line": 753,
+          "target_upstream_sha256": "9dfa0b73907bc8671b14b8b5bacc7bf342fd3a663d60e2c05c20143628f74fe5",
+          "stock_sha256": "9dfa0b73907bc8671b14b8b5bacc7bf342fd3a663d60e2c05c20143628f74fe5",
+          "production_sha256": "9dfa0b73907bc8671b14b8b5bacc7bf342fd3a663d60e2c05c20143628f74fe5",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "ed_undo_step_direction",
+          "target_upstream_line": 238,
+          "stock_line": 237,
+          "production_line": 632,
+          "target_upstream_sha256": "3dfb3f6ca60a592a8d67353e3d3675a6059fdd64dded6cd79de718ec5b3aaa2c",
+          "stock_sha256": "3dfb3f6ca60a592a8d67353e3d3675a6059fdd64dded6cd79de718ec5b3aaa2c",
+          "production_sha256": "3dfb3f6ca60a592a8d67353e3d3675a6059fdd64dded6cd79de718ec5b3aaa2c",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "ed_undo_step_pre",
+          "target_upstream_line": 157,
+          "stock_line": 156,
+          "production_line": 551,
+          "target_upstream_sha256": "9ece85560018e21789ba6ed8a5d28e8d9914792a30d8f03f12ab44ed62ccdcff",
+          "stock_sha256": "9ece85560018e21789ba6ed8a5d28e8d9914792a30d8f03f12ab44ed62ccdcff",
+          "production_sha256": "9ece85560018e21789ba6ed8a5d28e8d9914792a30d8f03f12ab44ed62ccdcff",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "ed_undo_step_post",
+          "target_upstream_line": 194,
+          "stock_line": 193,
+          "production_line": 588,
+          "target_upstream_sha256": "39073e9e32bf73626393a380ee11de6e3530122c3c60f391767070055961a74f",
+          "stock_sha256": "39073e9e32bf73626393a380ee11de6e3530122c3c60f391767070055961a74f",
+          "production_sha256": "39073e9e32bf73626393a380ee11de6e3530122c3c60f391767070055961a74f",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        }
+      ]
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/windowmanager/intern/wm_event_system.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/windowmanager/intern/wm_event_system.cc",
+      "target_raw_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "stock_raw_sha256": "4541e7a90f5e52715d4cd4fd3ce2a99aa1114b9ae3b7a6d2db71bc5b506a9820",
+      "production_canonical_lf_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "existing exact-revision primary cache",
+      "functions": [
+        {
+          "function": "wm_operator_finished",
+          "target_upstream_line": 1244,
+          "stock_line": 1270,
+          "production_line": 1294,
+          "target_upstream_sha256": "6a1217b41d574f78468e3b55368eac602d21c7c80959e38e7191778979bc6008",
+          "stock_sha256": "d757c53004751045566262485ab7b4986f38152bb72d6d45305692a6a8184007",
+          "production_sha256": "6a1217b41d574f78468e3b55368eac602d21c7c80959e38e7191778979bc6008",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -76,9 +76,9 @@\n\n       ScrArea *area = CTX_wm_area(C);\n       if (area && ((area->flag & AREA_FLAG_OFFSCREEN) == 0)) {\n-        ED_area_type_hud_ensure(C, area);\n+        ui::ED_area_type_hud_ensure(C, area);\n       }\n     }\n     else if (hud_status == CLEAR) {\n-      ED_area_type_hud_clear(wm, nullptr);\n+      ui::ED_area_type_hud_clear(wm, nullptr);\n     }\n     else {"
+        },
+        {
+          "function": "wm_handler_operator_call",
+          "target_upstream_line": 2596,
+          "stock_line": 2619,
+          "production_line": 3952,
+          "target_upstream_sha256": "8376682fb620eeba414672a79193bd09ee58a1d3d406408d612dec7d7a811d0b",
+          "stock_sha256": "5fb3099af81f852615abee5ecd33fa871fe1741e9d39c48b2cb5ca89c78c7059",
+          "production_sha256": "260f84ea730a7704eb4390b716a770bd3b621b85891b138735220b3cca77bc8e",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": false,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -1,4 +1,4 @@\n\n static eHandlerActionFlag wm_handler_operator_call(bContext *C,\n-                                                   ListBase *handlers,\n+                                                   ListBaseT<wmEventHandler> *handlers,\n                                                    wmEventHandler *handler_base,\n                                                    wmEvent *event,\n@@ -10,7 +10,7 @@\n\n   /* Derived, modal or blocking operator. */\n   if ((handler_base->type == WM_HANDLER_TYPE_OP) &&\n-      (((wmEventHandler_Op *)handler_base)->op != nullptr))\n+      ((reinterpret_cast<wmEventHandler_Op *>(handler_base))->op != nullptr))\n   {\n-    wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;\n+    wmEventHandler_Op *handler = reinterpret_cast<wmEventHandler_Op *>(handler_base);\n     wmOperator *op = handler->op;\n     wmOperatorType *ot = op->type;\n@@ -122,8 +122,9 @@\n\n       bToolRef *keymap_tool = nullptr;\n       if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {\n-        keymap_tool = ((wmEventHandler_Keymap *)handler_base)->keymap_tool;\n+        keymap_tool = (reinterpret_cast<wmEventHandler_Keymap *>(handler_base))->keymap_tool;\n       }\n       else if (handler_base->type == WM_HANDLER_TYPE_GIZMO) {\n-        wmGizmoMap *gizmo_map = ((wmEventHandler_Gizmo *)handler_base)->gizmo_map;\n+        wmGizmoMap *gizmo_map =\n+            (reinterpret_cast<wmEventHandler_Gizmo *>(handler_base))->gizmo_map;\n         wmGizmo *gz = wm_gizmomap_highlight_get(gizmo_map);\n         if (gz && (gz->flag & WM_GIZMO_OPERATOR_TOOL_INIT)) {",
+          "production_overlay_diff": "--- target_upstream\n\n+++ production_overlay\n\n@@ -4,7 +4,25 @@\n\n                                                    wmEvent *event,\n                                                    PointerRNA *properties,\n-                                                   const char *kmi_idname)\n+                                                   const char *kmi_idname,\n+                                                   bool ipad_pencil_owner_teardown = false,\n+                                                   eIPadNativePanDispatch ipad_node_view2d =\n+                                                       eIPadNativePanDispatch::None)\n {\n   wmOperatorStatus retval = OPERATOR_PASS_THROUGH;\n+  bool ipad_knife_action = false;\n+  ScrArea *ipad_knife_area = nullptr;\n+  ARegion *ipad_knife_region = nullptr;\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+  if (event && event->type == IPAD_KNIFE_ACTION) {\n+    wmEventHandler_Op *fresh_handler = nullptr;\n+    if (!wm_ipad_knife_request_resolve(C, CTX_wm_window(C), event, &fresh_handler,\n+                                       &ipad_knife_area, &ipad_knife_region) ||\n+        &fresh_handler->head != handler_base)\n+    {\n+      return WM_HANDLER_BREAK | WM_HANDLER_HANDLED;\n+    }\n+    ipad_knife_action = true;\n+  }\n+#endif\n \n   /* Derived, modal or blocking operator. */\n@@ -15,6 +33,18 @@\n\n     wmOperator *op = handler->op;\n     wmOperatorType *ot = op->type;\n-\n-    if (!wm_operator_check_locked_interface(C, ot)) {\n+    bool ipad_pencil_owner_teardown_admitted = false;\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+    if (ipad_pencil_owner_teardown && handler->ipad_pencil_paint_serial && event &&\n+        event->type == EVENT_NONE)\n+    {\n+      ipad_pencil_owner_teardown_admitted =\n+          wm_ipad_pencil_paint_modal_admit(\n+              C, CTX_wm_window(C), event, handler, true) == eIPadPencilPaintModalAdmission::Cancel;\n+    }\n+#else\n+    UNUSED_VARS(ipad_pencil_owner_teardown);\n+#endif\n+\n+    if (!wm_operator_check_locked_interface(C, ot) && !ipad_pencil_owner_teardown_admitted) {\n       /* Interface is locked and operator is not allowed to run,\n        * nothing to do in this case. */\n@@ -27,10 +57,38 @@\n\n       ARegion *region = CTX_wm_region(C);\n \n-      wm_handler_op_context(C, handler, event);\n-      wm_region_mouse_co(C, event);\n-\n+      if (ipad_knife_action) {\n+        CTX_wm_area_set(C, ipad_knife_area);\n+        CTX_wm_region_set(C, ipad_knife_region);\n+      }\n+      else if (!ipad_pencil_owner_teardown) {\n+        wm_handler_op_context(C, handler, event);\n+      }\n+      bool ipad_pencil_paint_interrupt = false;\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+      if (handler->ipad_pencil_paint_serial || ipad_pencil_owner_teardown) {\n+        const eIPadPencilPaintModalAdmission admission =\n+            ipad_pencil_owner_teardown ?\n+                (ipad_pencil_owner_teardown_admitted ?\n+                     eIPadPencilPaintModalAdmission::Cancel :\n+                     eIPadPencilPaintModalAdmission::Consume) :\n+                wm_ipad_pencil_paint_modal_admit(C, win, event, handler);\n+        if (admission == eIPadPencilPaintModalAdmission::Consume ||\n+            (ipad_pencil_owner_teardown && admission != eIPadPencilPaintModalAdmission::Cancel))\n+        {\n+          CTX_wm_area_set(C, area);\n+          CTX_wm_region_set(C, region);\n+          return WM_HANDLER_BREAK | WM_HANDLER_HANDLED;\n+        }\n+        /* Cancel while the frozen owner is still live, before this other input can\n+         * switch context or reach the old modal operation. The ordinary WM status\n+         * path removes and frees the operator/handler exactly once. */\n+        ipad_pencil_paint_interrupt =\n+            admission == eIPadPencilPaintModalAdmission::Cancel ||\n+            (admission == eIPadPencilPaintModalAdmission::Dispatch && event &&\n+             (event->flag & WM_EVENT_IS_POINTER_CANCEL));\n+      }\n+#endif\n       wmEvent_ModalMapStore event_backup;\n-      wm_event_modalkeymap_begin(C, op, event, &event_backup);\n-\n+      bool modalkeymap_started = false;\n       const intptr_t undo_id_prev = wm_operator_undo_active_id(wm);\n       const intptr_t register_id_prev = wm_operator_register_active_id(wm);\n@@ -39,7 +97,33 @@\n\n       }\n \n-      /* Warning, after this call all context data and 'event' may be freed. see check below. */\n-      retval = ot->modal(C, op, event);\n-      OPERATOR_RETVAL_CHECK(retval);\n+      if (ipad_pencil_paint_interrupt) {\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+        if (handler->ipad_pencil_paint_serial) {\n+          wm_ipad_pencil_paint_cancelled_contact_mark(win, handler);\n+        }\n+#endif\n+        ot->cancel(C, op);\n+        retval = OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;\n+      }\n+      else if (ipad_knife_action) {\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+        /* The helper constructs a clean native modal-map event. Do not run\n+         * modal-keymap translation on this private semantic request. */\n+        wm_region_mouse_co(C, event);\n+        const auto *request = static_cast<const wmIPadKnifeRequest *>(event->customdata);\n+        retval = ED_mesh_knife_modal_action(C, op, event,\n+                                            request->action == wmIPadKnifeAction::Confirm);\n+        OPERATOR_RETVAL_CHECK(retval);\n+#endif\n+      }\n+      else {\n+        wm_region_mouse_co(C, event);\n+        wm_event_modalkeymap_begin(C, op, event, &event_backup);\n+        modalkeymap_started = true;\n+\n+        /* Warning, after this call all context data and event may be freed. see check below. */\n+        retval = ot->modal(C, op, event);\n+        OPERATOR_RETVAL_CHECK(retval);\n+      }\n \n       if (ot->flag & OPTYPE_UNDO && CTX_wm_manager(C) == wm) {\n@@ -52,5 +136,7 @@\n\n       if (CTX_wm_window(C) == win) {\n \n-        wm_event_modalkeymap_end(event, &event_backup);\n+        if (modalkeymap_started) {\n+          wm_event_modalkeymap_end(event, &event_backup);\n+        }\n \n         if (retval & (OPERATOR_CANCELLED | OPERATOR_FINISHED)) {\n@@ -117,4 +203,23 @@\n\n \n     if (ot && wm_operator_check_locked_interface(C, ot)) {\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+      /* If Apple Pencil is touching while Annotate or Grease Pencil tool is active,\n+       * disable 3D selection (left click) so Apple Pencil draws strokes cleanly. */\n+      if (event->tablet.active == EVT_TABLET_STYLUS &&\n+          (BLI_strcasestr(ot->idname, \"select\") != nullptr))\n+      {\n+        bToolRef *tref = WM_toolsystem_ref_from_context(C);\n+        if (tref && (BLI_strcasestr(tref->idname, \"annotate\") != nullptr ||\n+                     BLI_strcasestr(tref->idname, \"gpencil\") != nullptr))\n+        {\n+          /* In Annotate mode, route Pencil taps to annotation stroke instead of selecting objects */\n+          wmOperatorType *annot_ot = WM_operatortype_find(\"GPENCIL_OT_annotate\", false);\n+          if (annot_ot) {\n+            WM_operator_name_call(C, \"GPENCIL_OT_annotate\", blender::wm::OpCallContext::InvokeDefault, nullptr, event);\n+          }\n+          return WM_HANDLER_BREAK;\n+        }\n+      }\n+#endif\n       bool use_last_properties = true;\n       PointerRNA tool_properties = {};\n@@ -138,9 +243,16 @@\n\n         WM_toolsystem_ref_properties_init_for_keymap(\n             keymap_tool, &tool_properties, properties, ot);\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+        /* Fine gain is deliberate tool state for canvas and gizmo drags.\n+         * Native gizmos still own their basis, including the view-facing rotation ring. */\n+        WM_toolsystem_ref_properties_for_transform(C, keymap_tool, &tool_properties, ot,\n+                                                  handler_base->type == WM_HANDLER_TYPE_KEYMAP);\n+#endif\n         properties = &tool_properties;\n         use_last_properties = false;\n       }\n \n-      retval = wm_operator_invoke(C, ot, event, properties, nullptr, false, use_last_properties);\n+      retval = wm_operator_invoke(\n+          C, ot, event, properties, nullptr, false, use_last_properties, ipad_node_view2d);\n \n       if (use_tool_properties) {"
+        },
+        {
+          "function": "WM_event_add_simulate",
+          "target_upstream_line": 197,
+          "stock_line": 196,
+          "production_line": 242,
+          "target_upstream_sha256": "e688c7a8d9e059cac516f16d94fa462a1cc82c09df6e087d99b622d3fdb1ab37",
+          "stock_sha256": "c0c3de99ff7fe5c7e5a6a9ac8d8ce82f715b5a773eb2631d18c46cb17e391766",
+          "production_sha256": "e688c7a8d9e059cac516f16d94fa462a1cc82c09df6e087d99b622d3fdb1ab37",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -9,9 +9,9 @@\n\n   /* Logic for setting previous value is documented on the #wmEvent struct,\n    * see #wm_event_add_ghostevent for the implementation of logic this follows. */\n-  copy_v2_v2_int(win->eventstate->xy, event->xy);\n+  copy_v2_v2_int(win->runtime->eventstate->xy, event->xy);\n \n   if (event->type == MOUSEMOVE) {\n-    copy_v2_v2_int(win->eventstate->prev_xy, win->eventstate->xy);\n-    copy_v2_v2_int(event->prev_xy, win->eventstate->xy);\n+    copy_v2_v2_int(win->runtime->eventstate->prev_xy, win->runtime->eventstate->xy);\n+    copy_v2_v2_int(event->prev_xy, win->runtime->eventstate->xy);\n   }\n   else if (ISKEYBOARD_OR_BUTTON(event->type)) {\n@@ -21,5 +21,5 @@\n\n     wm_event_state_update_and_click_set_ex(event,\n                                            event_time_ms,\n-                                           win->eventstate,\n+                                           win->runtime->eventstate,\n                                            &eventstate_prev_press_time_ms,\n                                            ISKEYBOARD(event->type),"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/blenkernel/intern/node.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/node.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/blenkernel/intern/node.cc",
+      "target_raw_sha256": "29ae8803a6616e7dc43968a2bdeb036ac40e4c47f361f432fdf73f919d8c561b",
+      "stock_raw_sha256": "9dd6b97dd19765f10c337d30ffc6cd0b466a89858cd0e906bf3a2f1991ef2bbb",
+      "production_canonical_lf_sha256": "29ae8803a6616e7dc43968a2bdeb036ac40e4c47f361f432fdf73f919d8c561b",
+      "target_origin": "fresh primary raw exact revision",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "node_remove_link",
+          "target_upstream_line": 3686,
+          "stock_line": 4182,
+          "production_line": 3686,
+          "target_upstream_sha256": "fc6f3a247101ffebf48305d210c44213a607ddcd32047dceff05c458cb9d9594",
+          "stock_sha256": "ab3b2d8840188046264895dc7be7ec4c3332d25251a8ed44b012ad4b330e5ec3",
+          "production_sha256": "fc6f3a247101ffebf48305d210c44213a607ddcd32047dceff05c458cb9d9594",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -9,5 +9,5 @@\n\n     link.tosock->link = nullptr;\n   }\n-  MEM_freeN(&link);\n+  MEM_delete(&link);\n \n   if (ntree) {"
+        },
+        {
+          "function": "node_add_link",
+          "target_upstream_line": 3649,
+          "stock_line": 4145,
+          "production_line": 3649,
+          "target_upstream_sha256": "d209ba6eabfa43b2cb36e9348dd906a4085bfe0b9161954829b50e31c14e8981",
+          "stock_sha256": "f5c1ed76ff3a32704edb8118ec2cf8320e3578ec4a2fe6da04d41dd3cb798762",
+          "production_sha256": "d209ba6eabfa43b2cb36e9348dd906a4085bfe0b9161954829b50e31c14e8981",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -8,5 +8,5 @@\n\n   if (eNodeSocketInOut(fromsock.in_out) == SOCK_OUT && eNodeSocketInOut(tosock.in_out) == SOCK_IN)\n   {\n-    link = MEM_callocN<bNodeLink>(__func__);\n+    link = MEM_new<bNodeLink>(__func__);\n     BLI_addtail(&ntree.links, link);\n     link->fromnode = &fromnode;\n@@ -19,5 +19,5 @@\n\n   {\n     /* OK but flip */\n-    link = MEM_callocN<bNodeLink>(__func__);\n+    link = MEM_new<bNodeLink>(__func__);\n     BLI_addtail(&ntree.links, link);\n     link->fromnode = &tonode;"
+        },
+        {
+          "function": "node_count_socket_links",
+          "target_upstream_line": 4510,
+          "stock_line": 4961,
+          "production_line": 4510,
+          "target_upstream_sha256": "3fff3d55b55a601e2bbeec7e33aa76f4bd828c3043d57dd27f518d08455148ed",
+          "stock_sha256": "f6467b076007bab43ac3409fba4ed390034fbf6fd6b51c6b2bd912eaaf939715",
+          "production_sha256": "3fff3d55b55a601e2bbeec7e33aa76f4bd828c3043d57dd27f518d08455148ed",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -2,6 +2,6 @@\n\n {\n   int tot = 0;\n-  LISTBASE_FOREACH (const bNodeLink *, link, &ntree.links) {\n-    if (link->fromsock == &sock || link->tosock == &sock) {\n+  for (const bNodeLink &link : ntree.links) {\n+    if (link.fromsock == &sock || link.tosock == &sock) {\n       tot++;\n     }"
+        },
+        {
+          "function": "node_socket_link_limit",
+          "target_upstream_line": 4589,
+          "stock_line": 5040,
+          "production_line": 4589,
+          "target_upstream_sha256": "85108cd7be4bbbf7c676cd66368749a727f87cb6ad9403623b4b777cdad80b5e",
+          "stock_sha256": "85108cd7be4bbbf7c676cd66368749a727f87cb6ad9403623b4b777cdad80b5e",
+          "production_sha256": "85108cd7be4bbbf7c676cd66368749a727f87cb6ad9403623b4b777cdad80b5e",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        }
+      ]
+    },
+    {
+      "path": "source/blender/blenkernel/intern/main_invariants.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/main_invariants.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/blenkernel/intern/main_invariants.cc",
+      "target_raw_sha256": "d691008a6685fce0a91de0392d1391cbb47e30c8a7647f1fee0d78d607131596",
+      "stock_raw_sha256": "b36dce813e70244137a0e37b0e665b428fa6605009986fe9c8e0bbbe46f58520",
+      "production_canonical_lf_sha256": "d691008a6685fce0a91de0392d1391cbb47e30c8a7647f1fee0d78d607131596",
+      "target_origin": "fresh primary raw exact revision",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "BKE_main_ensure_invariants",
+          "target_upstream_line": 67,
+          "stock_line": 74,
+          "production_line": 67,
+          "target_upstream_sha256": "c3bb43e48f8e3f913c26920830b6748fb84b66eeb10abf3093f9049a496e3824",
+          "stock_sha256": "63c63eb6a0bfcabbf773bbb7d047797c61af5d14438fd28b7361f0f38675596e",
+          "production_sha256": "c3bb43e48f8e3f913c26920830b6748fb84b66eeb10abf3093f9049a496e3824",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -1,3 +1,3 @@\n\n-void BKE_main_ensure_invariants(Main &bmain, const std::optional<blender::Span<ID *>> modified_ids)\n+void BKE_main_ensure_invariants(Main &bmain, const std::optional<Span<ID *>> modified_ids)\n {\n   propagate_node_tree_changes(bmain, modified_ids);"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/blenkernel/intern/undo_system.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/blenkernel/intern/undo_system.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/blenkernel/intern/undo_system.cc",
+      "target_raw_sha256": "11a45560f69e1f452c44f9ad74086a991de3555b6f44f1559fa30091198a29c1",
+      "stock_raw_sha256": "0df22581a6bea99ce0ea31941e7aeaba9ddd2687691f81d52077dea07845f0f0",
+      "production_canonical_lf_sha256": "fe1f89950d28f4c0b4a1cdcdeedc4b4830390fafed27153985b388fb83dd754d",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "BKE_undosys_step_push",
+          "target_upstream_line": 621,
+          "stock_line": 624,
+          "production_line": 673,
+          "target_upstream_sha256": "4460a0e6592d64cd4aa517f8fbbff37fb1739f625c63dae2c39a566a81761e1e",
+          "stock_sha256": "4460a0e6592d64cd4aa517f8fbbff37fb1739f625c63dae2c39a566a81761e1e",
+          "production_sha256": "4460a0e6592d64cd4aa517f8fbbff37fb1739f625c63dae2c39a566a81761e1e",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "BKE_undosys_step_undo",
+          "target_upstream_line": 869,
+          "stock_line": 872,
+          "production_line": 924,
+          "target_upstream_sha256": "db3c00dcc6ce4d54672b7e6f815ea1f8af9572affe5ad25c01fd50a1855d39aa",
+          "stock_sha256": "db3c00dcc6ce4d54672b7e6f815ea1f8af9572affe5ad25c01fd50a1855d39aa",
+          "production_sha256": "db3c00dcc6ce4d54672b7e6f815ea1f8af9572affe5ad25c01fd50a1855d39aa",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "BKE_undosys_step_redo",
+          "target_upstream_line": 896,
+          "stock_line": 899,
+          "production_line": 951,
+          "target_upstream_sha256": "0f0d42168f486ca7067ad7cb56de1159e3596ae42dd4d312be3c8d3293b0c478",
+          "stock_sha256": "0f0d42168f486ca7067ad7cb56de1159e3596ae42dd4d312be3c8d3293b0c478",
+          "production_sha256": "0f0d42168f486ca7067ad7cb56de1159e3596ae42dd4d312be3c8d3293b0c478",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "BKE_undosys_step_load_data_ex",
+          "target_upstream_line": 746,
+          "stock_line": 749,
+          "production_line": 798,
+          "target_upstream_sha256": "16f776fa6a47ee37e96850487c9903207c436639106c909ede5b4ec4f6b94359",
+          "stock_sha256": "16f776fa6a47ee37e96850487c9903207c436639106c909ede5b4ec4f6b94359",
+          "production_sha256": "84436e2dc6ff31818ef20c74e8812e7bd367cb75968f169ab7df919f20390d1b",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": false,
+          "target_to_stock_diff": "",
+          "production_overlay_diff": "--- target_upstream\n\n+++ production_overlay\n\n@@ -5,4 +5,7 @@\n\n                                    const bool use_skip)\n {\n+#ifdef WITH_APPLE_CROSSPLATFORM\n+  undosys_touch_mutation(ustack);\n+#endif\n   UNDO_NESTED_ASSERT(false);\n   if (us_target == nullptr) {"
+        },
+        {
+          "function": "undosys_step_decode",
+          "target_upstream_line": 187,
+          "stock_line": 189,
+          "production_line": 191,
+          "target_upstream_sha256": "c5562d86a5a3d2dc680e1b1289e9f83abfa9b1cd1f17baa04e8cc99428599646",
+          "stock_sha256": "c5562d86a5a3d2dc680e1b1289e9f83abfa9b1cd1f17baa04e8cc99428599646",
+          "production_sha256": "c5562d86a5a3d2dc680e1b1289e9f83abfa9b1cd1f17baa04e8cc99428599646",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        },
+        {
+          "function": "undosys_step_encode",
+          "target_upstream_line": 162,
+          "stock_line": 164,
+          "production_line": 166,
+          "target_upstream_sha256": "a6da19d8d5a203fcf0ef794ad4f07ac9bc7e269e60d54445557442f58f5ccc23",
+          "stock_sha256": "a6da19d8d5a203fcf0ef794ad4f07ac9bc7e269e60d54445557442f58f5ccc23",
+          "production_sha256": "a6da19d8d5a203fcf0ef794ad4f07ac9bc7e269e60d54445557442f58f5ccc23",
+          "target_upstream_equals_stock": true,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": ""
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/undo/memfile_undo.cc",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/undo/memfile_undo.cc",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/undo/memfile_undo.cc",
+      "target_raw_sha256": "07e024bdaf6db09cbde99cfe6bfef3a5300f79423b8cdf250ccc22fc0caf7fa4",
+      "stock_raw_sha256": "bed60c58780d73800fbfa4bbcd0773e12bcd2c11e401f4450224244349991a48",
+      "production_canonical_lf_sha256": "07e024bdaf6db09cbde99cfe6bfef3a5300f79423b8cdf250ccc22fc0caf7fa4",
+      "target_origin": "fresh primary raw exact revision",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [
+        {
+          "function": "memfile_undosys_step_encode",
+          "target_upstream_line": 70,
+          "stock_line": 73,
+          "production_line": 70,
+          "target_upstream_sha256": "58deff7dc3daf188c5938c9485c81d3a73e5ee3e8dc019d59cbb9a45681d88ee",
+          "stock_sha256": "e5548dba2ec7cfbd04c5bb5f68fc8902f4d98d118d3e6a05ee97b30be471d1bb",
+          "production_sha256": "58deff7dc3daf188c5938c9485c81d3a73e5ee3e8dc019d59cbb9a45681d88ee",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -1,5 +1,5 @@\n\n static bool memfile_undosys_step_encode(bContext * /*C*/, Main *bmain, UndoStep *us_p)\n {\n-  MemFileUndoStep *us = (MemFileUndoStep *)us_p;\n+  MemFileUndoStep *us = reinterpret_cast<MemFileUndoStep *>(us_p);\n \n   /* Important we only use 'main' from the context (see: BKE_undosys_stack_init_from_main). */\n@@ -11,6 +11,6 @@\n\n \n   /* can be null, use when set. */\n-  MemFileUndoStep *us_prev = (MemFileUndoStep *)BKE_undosys_step_find_by_type(\n-      ustack, BKE_UNDOSYS_TYPE_MEMFILE);\n+  MemFileUndoStep *us_prev = reinterpret_cast<MemFileUndoStep *>(\n+      BKE_undosys_step_find_by_type(ustack, BKE_UNDOSYS_TYPE_MEMFILE));\n   us->data = BKE_memfile_undo_encode(bmain, us_prev ? us_prev->data : nullptr);\n   us->step.data_size = us->data->undo_size;"
+        },
+        {
+          "function": "memfile_undosys_step_decode",
+          "target_upstream_line": 164,
+          "stock_line": 141,
+          "production_line": 164,
+          "target_upstream_sha256": "405a471c7462019e0e92bc933d83ca81644886a569f4445aba0ea68d68e0535a",
+          "stock_sha256": "8f018119c2238fd330616e9d438ab058dfd5f1b1960ff149ac629ab4a84b63a8",
+          "production_sha256": "405a471c7462019e0e92bc933d83ca81644886a569f4445aba0ea68d68e0535a",
+          "target_upstream_equals_stock": false,
+          "production_equals_target_upstream": true,
+          "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -6,5 +6,5 @@\n\n   bool use_old_bmain_data = true;\n \n-  if (USER_EXPERIMENTAL_TEST(&U, use_undo_legacy) || !(U.uiflag & USER_GLOBALUNDO)) {\n+  if (USER_DEVELOPER_TOOL_TEST(&U, use_undo_legacy) || !(U.uiflag & USER_GLOBALUNDO)) {\n     use_old_bmain_data = false;\n   }\n@@ -43,8 +43,8 @@\n\n   ED_editors_exit(bmain, false);\n   /* Ensure there's no preview job running. Unfinished previews will be scheduled for regeneration\n-   * via #memfile_undosys_unfinished_id_previews_restart(). */\n+   * via #PRV_TAG_RESTART_RENDERING in BKE_previewimg_blend_read. */\n   ED_preview_kill_jobs(CTX_wm_manager(C), bmain);\n \n-  MemFileUndoStep *us = (MemFileUndoStep *)us_p;\n+  MemFileUndoStep *us = reinterpret_cast<MemFileUndoStep *>(us_p);\n   BKE_memfile_undo_decode(us->data, undo_direction, use_old_bmain_data, C);\n \n@@ -81,10 +81,21 @@\n\n       if (GS(id->name) == ID_SCE) {\n         Scene *scene = reinterpret_cast<Scene *>(id);\n+        /* TODO: We should be able to restore these depsgraphs properly as part of\n+         * #BKE_scene_undo_depsgraphs_restore but this is currently only done for depsgraphs in the\n+         * scene.depsgraph_hash map. So the safest option is to just delete the following\n+         * depsgraphs for now. */\n         if (scene->compositing_node_group) {\n           /* Ensure undo calls from the UI update the interactive compositor preview depsgraph, see\n            * #compo_initjob. */\n-          blender::bke::CompositorRuntime &compositor_runtime = scene->runtime->compositor;\n+          bke::CompositorRuntime &compositor_runtime = scene->runtime->compositor;\n           DEG_graph_free(compositor_runtime.preview_depsgraph);\n           compositor_runtime.preview_depsgraph = nullptr;\n+        }\n+\n+        if (scene->runtime->sequencer.depsgraph) {\n+          /* Ensure that the depsgraph created in #get_depsgraph_for_scene_strip are updated. */\n+          bke::SequencerRuntime &seq_runtime = scene->runtime->sequencer;\n+          DEG_graph_free(seq_runtime.depsgraph);\n+          seq_runtime.depsgraph = nullptr;\n         }\n       }\n@@ -103,5 +114,5 @@\n\n       }\n \n-      bNodeTree *nodetree = blender::bke::node_tree_from_id(id);\n+      bNodeTree *nodetree = bke::node_tree_from_id(id);\n       if (nodetree != nullptr) {\n         recalc_flags = nodetree->id.recalc;\n@@ -114,5 +125,5 @@\n\n       }\n       if (GS(id->name) == ID_SCE) {\n-        Scene *scene = (Scene *)id;\n+        Scene *scene = id_cast<Scene *>(id);\n         if (scene->master_collection != nullptr) {\n           recalc_flags = scene->master_collection->id.recalc;\n@@ -125,7 +136,4 @@\n\n         }\n       }\n-\n-      /* Restart preview generation if the undo state was generating previews. */\n-      memfile_undosys_unfinished_id_previews_restart(id);\n     }\n     FOREACH_MAIN_ID_END;\n@@ -140,22 +148,30 @@\n\n        * loop because DEG_id_tag_update may set tags on other datablocks. */\n       id->recalc_after_undo_push = 0;\n-      bNodeTree *nodetree = blender::bke::node_tree_from_id(id);\n+      bNodeTree *nodetree = bke::node_tree_from_id(id);\n       if (nodetree != nullptr) {\n         nodetree->id.recalc_after_undo_push = 0;\n       }\n       if (GS(id->name) == ID_SCE) {\n-        Scene *scene = (Scene *)id;\n+        Scene *scene = id_cast<Scene *>(id);\n         if (scene->master_collection != nullptr) {\n           scene->master_collection->id.recalc_after_undo_push = 0;\n         }\n       }\n-    }\n-    FOREACH_MAIN_ID_END;\n-  }\n-  else {\n-    ID *id = nullptr;\n-    FOREACH_MAIN_ID_BEGIN (bmain, id) {\n-      /* Restart preview generation if the undo state was generating previews. */\n-      memfile_undosys_unfinished_id_previews_restart(id);\n+      else if (GS(id->name) == ID_OB) {\n+        /* In some cases when using memfile undo in sculpt mode, the object but not the\n+         * corresponding mesh will be tagged for an update, leading to invalid data and crashes.\n+         *\n+         * This is a band-aid mitigation for the 5.1 release, not a proper fix of the underlying\n+         * problem.\n+         *\n+         * See #152087 for more details. */\n+        Object *object = reinterpret_cast<Object *>(id);\n+        if (object->type == OB_MESH) {\n+          Mesh *mesh = id_cast<Mesh *>(object->data);\n+          if (object->mode == OB_MODE_SCULPT && mesh) {\n+            DEG_id_tag_update_ex(bmain, &mesh->id, ID_RECALC_GEOMETRY);\n+          }\n+        }\n+      }\n     }\n     FOREACH_MAIN_ID_END;"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/makesdna/DNA_node_types.h",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/makesdna/DNA_node_types.h",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/makesdna/DNA_node_types.h",
+      "target_raw_sha256": "e190d2477bff747be1341234797bc35b5332cc8dcdcd6bb4ac580da05fdf4311",
+      "stock_raw_sha256": "243e60c8d0268a49b5545a7f6c8c1c7132fd85b2e026232deeb9361ccbcce200",
+      "production_canonical_lf_sha256": "e190d2477bff747be1341234797bc35b5332cc8dcdcd6bb4ac580da05fdf4311",
+      "target_origin": "fresh primary raw exact revision",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [],
+      "target_bNodeLink_declaration_sha256": "240e907fb9f44a7ca0a992a0c050450f0064e90c1352332b0ad24f3aa9fb576c",
+      "stock_bNodeLink_declaration_sha256": "e443b845da2bfc62759064bafbdb67b25680bbf414c12ed379f708b9d575b97e"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_intern.hh",
+      "target_primary_url": "https://raw.githubusercontent.com/blender/blender/d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e/source/blender/editors/space_node/node_intern.hh",
+      "stock_primary_url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/space_node/node_intern.hh",
+      "target_raw_sha256": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8",
+      "stock_raw_sha256": "d12cb5ff814ee7243be6cb2020e952cd078865ed78ce4167b9f0903f54c9a0d8",
+      "production_canonical_lf_sha256": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8",
+      "target_origin": "cached pinned primary source",
+      "stock_origin": "fresh primary raw exact revision",
+      "functions": [],
+      "socket_geometry_constants": {
+        "target": {
+          "NODE_DYS": "#define NODE_DYS (U.widget_unit / 2)",
+          "NODE_DY": "#define NODE_DY U.widget_unit",
+          "NODE_SOCKSIZE": "#define NODE_SOCKSIZE (0.25f * U.widget_unit)",
+          "NODE_MULTI_INPUT_LINK_GAP": "#define NODE_MULTI_INPUT_LINK_GAP (0.25f * U.widget_unit)"
+        },
+        "stock": {
+          "NODE_DYS": "#define NODE_DYS (U.widget_unit / 2)",
+          "NODE_DY": "#define NODE_DY U.widget_unit",
+          "NODE_SOCKSIZE": "#define NODE_SOCKSIZE (0.25f * U.widget_unit)",
+          "NODE_MULTI_INPUT_LINK_GAP": "#define NODE_MULTI_INPUT_LINK_GAP (0.25f * U.widget_unit)"
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "topic": "Ordinary expanded sockets",
+      "finding": "Exact node_find_indicated_socket differs in UI namespace and collapsed-node exclusions; ordinary expanded single-input/output corridor retains max-distance, padded size, header exclusion, visibility, nearest distance and occlusion logic. This does not prove identical draw geometry, UI units, runtime locations, scaling or device acquisition."
+    },
+    {
+      "topic": "Collapsed socket divergence",
+      "finding": "Stock adds input-side collapsed resize exclusions. Stock output-side excludes inward x distance above NODE_SOCKSIZE and corner region with y beyond NODE_SOCKSIZE; target output-side only tests inward x above padded_socket_size. Host probes should keep expanded nodes and explicitly record hide/collapsed state."
+    },
+    {
+      "topic": "Graph detach and Cancel",
+      "finding": "Input init with existing link copies then removes original native tree link. Output init also detaches existing links when at socket capacity or detach=true. Native Cancel deactivates tooltip, restores edge-pan, destroys drag data, clears highlight, tags and updates invariants; it does not reinsert original links. This is source control-flow evidence, not an observed device defect or generic rollback claim."
+    },
+    {
+      "topic": "Confirm",
+      "finding": "Confirm consults stored dragged endpoints; no socket repick on release. It may create link-search popup, adds only complete links, resolves occupied socket links and updates invariants. Fresh empty drag and existing-input empty detach therefore require distinct native probes."
+    },
+    {
+      "topic": "Native WM history corridor",
+      "finding": "Production wm_operator_finished is exact target upstream; stock only changes HUD namespaces. NODE_OT_link retains REGISTER|UNDO|BLOCKING. FINISHED can push native Link Nodes undo at zero nesting depth and registers operator; CANCELLED follows direct free/cleanup rather than that finished push. Production handler has separate existing input policies, so only normal Node corridor is compared."
+    },
+    {
+      "topic": "Undo implementation parity and limits",
+      "finding": "Production ED_undo_push/push_op/step_pre/step_post/step_direction exact upstream and stock. Selected BKE push/undo/redo/load and encode/decode wrappers exact target-stock. Memfile decode differs: legacy setting moves experimental to developer tools; preview restart and sequencer/compositor depsgraph handling change; stock adds sculpt mesh update mitigation. Stock snapshot execution remains stock evidence, even for plain object-mode Shader graph."
+    },
+    {
+      "topic": "Allocation refactor",
+      "finding": "Stock graph add/remove uses MEM_new/MEM_delete versus target calloc/malloc/free. Stock bNodeLink defines nullptr/zero defaults for link fields. Typed list iteration and casts differ without a selected branch policy change."
+    },
+    {
+      "topic": "Draw order helper and constants",
+      "finding": "Socket NODE_DY/NODE_DYS/NODE_SOCKSIZE/multi-input gap macros match exactly. Reverse node draw helper retains descending ui_order comparator but uses std::ranges::sort instead of std::sort in stock. Dynamic full node layout and runtime location writes remain unaudited by this bounded report."
+    }
+  ],
+  "native_host_case_plan": [
+    {
+      "case": "fresh output to compatible input",
+      "sequence": "Native press/threshold motion acquire; separate native MOUSEMOVE to target; release; snapshot graph; real Undo; snapshot; real Redo; snapshot.",
+      "required_evidence": "Actual native events, modal NODE_OT_link ownership before terminal, recorded source/target socket identities and ordered graph endpoints, native return statuses. Established real undo baseline and reacquired RNA IDs after history."
+    },
+    {
+      "case": "fresh output empty drop",
+      "sequence": "Acquire; actual move to empty; release; observe native search popup; dismiss by Esc; record unchanged graph and nodes.",
+      "required_evidence": "Popup visual or native region evidence independent from modal_operators. No forced fake popup. Operator history is not asserted to be undo stack depth."
+    },
+    {
+      "case": "existing input detach empty",
+      "sequence": "Graph A->B; acquire at B input; observe original removed; move to empty; release; record disconnection and no search; actual Undo/Redo.",
+      "required_evidence": "Graph endpoints at all stages and native popup absence check. Do not infer acquisition from event counts."
+    },
+    {
+      "case": "existing input return",
+      "sequence": "Graph A->B; acquire B input; move empty; move original B input; release; compare semantic graph endpoints and order.",
+      "required_evidence": "Actual reacquisition, no pointer-identity restoration claim; retain full original graph snapshot."
+    },
+    {
+      "case": "existing input native Cancel",
+      "sequence": "Independently initialize A->B and real undo baseline; acquire B; separately deliver RMB press or Esc press; record graph, owner cleanup, history and subsequent Undo/Redo.",
+      "required_evidence": "Source predicts no original re-add. Distinguish cancel graph effect from Undo. A disclosed fixture marker stored in two native snapshots can distinguish preceding committed state without claiming a fake history counter."
+    },
+    {
+      "case": "native socket/coordinate baseline",
+      "sequence": "Use expanded separated regular sockets with no overlaps; record UI geometry/scale, drag_start and actual graph. Compare exact center and bounded recognized-point offsets only after positive acquisition.",
+      "required_evidence": "Source-backed coordinates; no hidden ctypes overwrite or model node_init admit stub. Public event simulator clears tablet data, so mouse threshold/input provenance remains explicit."
+    }
+  ],
+  "boundaries": [
+    "No rerun of prior fourteen O0/O2 supplied model scenarios.",
+    "No comprehensive transitive source parity or draw geometry proof. Ordinary expanded-host probes avoid known collapsed divergence.",
+    "Exact source conditions predict cases; no host graph outcome is asserted in this audit.",
+    "Stock host cannot execute iOS overlay, GHOST/UIKit producer, actual Pencil recognition/coalescing, iOS ABI or device experience.",
+    "Initial unprivileged network reads failed DNS; exact primary fetches succeeded under approved read access. No local authoritative file edits except this bounded JSON audit."
+  ],
+  "reviewer": "node_link_native_parity",
+  "report_path": "output/ui-preview/pencil-node-link-workflow/native-host/source-parity-review.json",
+  "completed_utc": "2026-11-08T18:44:22.426836+00:00"
+}

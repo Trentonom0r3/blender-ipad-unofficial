@@ -1,0 +1,61 @@
+{
+  "status": "failed",
+  "started_utc": "2026-11-08T18:45:23.649465+00:00",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "background": false
+  },
+  "scope": "Installed stock Windows GUI actual native WM/search/graph/placement/UndoRedo. No target5.0/iOS/UIKit/Pencil/device proof. Factory startup, isolated tree and actual event_simulate, native ed.undo_push baseline.",
+  "observations": [
+    {
+      "label": "baseline",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [],
+      "history": []
+    }
+  ],
+  "events": [],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-link-workflow\\native-host\\attempt-3-popup-node-history\\probe.py\", line 43, in tick\n    elif STEP==3:send('MOUSEMOVE','NOTHING',POINTS['source']);send('LEFTMOUSE','PRESS',POINTS['source'])\n                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-link-workflow\\native-host\\attempt-3-popup-node-history\\probe.py\", line 23, in send\n    w,_,_=ctx();p=p or POINTS['empty'];e=w.event_simulate(type=typ,value=val,x=p[0],y=p[1],unicode=text);D['events'].append({'type':typ,'value':val,'unicode':text,'xy':[e.mouse_x,e.mouse_y],'tablet':e.is_tablet})\n                                         ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Error: Value: must be 'PRESS' when unicode is set\n\n"
+  ],
+  "points": {
+    "source": [
+      370,
+      654
+    ],
+    "empty": [
+      645,
+      222
+    ],
+    "place": [
+      546,
+      574
+    ]
+  },
+  "baseline_push": [
+    "FINISHED"
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "status": "INDEPENDENT_BOUNDED_NATIVE_HOST_AREA_SWITCH_FAILURE_CONFIRMED",
+  "reviewer": "node_host_baseline_review",
+  "reviewed_utc": "2026-11-08T19:06:04.470985+00:00",
+  "review_type": "Independent read-only exact script, serialized native result, stdout/stderr, selected source, and local private native crash review; no rerun or process mutation by reviewer.",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "binary": "D:\\Program Files\\blender.exe",
+    "background": false
+  },
+  "scope": "One owned disposable stock Windows Blender5.1.2/ec6e62d40fa9 native Node-link drag followed by direct public RNA area.type change to VIEW_3D while synthetic LMB remains held.",
+  "production_claim": false,
+  "target_or_device_claim": false,
+  "recent_regression_claim": false,
+  "evidence": {
+    "probe": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/probe.py",
+      "sha256": "5b93910f87b5c337bd4ebdd0ea77439d1cc740a563ee4fd675f6a8234a607e7b",
+      "bytes": 7865
+    },
+    "result": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/result.json",
+      "sha256": "d24b27f0f27df0bec095343e402c368c919f108326f4b279d0ab4309711168c7",
+      "bytes": 4853
+    },
+    "stdout": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/stdout.txt",
+      "sha256": "2a11f934ca1ebafbe49e6c7087f7d50ece5472cc3df0e468f8db8be4f832f5d6",
+      "bytes": 95
+    },
+    "stderr": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/stderr.txt",
+      "sha256": "bbad7cce3c5d0f26676e6554e152f0f1bae328b0b631efe305a67385ea23e4a0",
+      "bytes": 431
+    },
+    "process_id": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/process-id.txt",
+      "sha256": "13b29b4e0c8fef1ac236e5eb7c56b887f770463c3ae814d0916e219db4d12189",
+      "bytes": 7
+    },
+    "baseline_png_artifact_hash_only": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle/active_link_area_switch--baseline.png",
+      "sha256": "682fe570bbbed95e52e7a904737b8e3565677961bad37f498a6eb28336d7dbad",
+      "bytes": 191514
+    },
+    "source_parity_review": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/source-parity-review.json",
+      "sha256": "c1984ef9729f54091d12d4801096ead582531d6fd684b9810b683a0b502f338b",
+      "bytes": 69193
+    },
+    "original_owner_source_contract": {
+      "path": "output/ui-preview/pencil-node-link-workflow/original-owner-source-contract.json",
+      "sha256": "b9bd4831b24dc76cd441f54ae61a66e3890de77a623a22823060bed5aa733b94",
+      "bytes": 37299
+    }
+  },
+  "private_raw_crash_evidence": {
+    "sha256": "6305b428a307223d44e3b634d23da75d19df8984b7eff54dabf4bc0555e6708d",
+    "raw_content_included": false,
+    "raw_file_copied_into_repository": false,
+    "note": "Only the private raw crash hash is serialized as private-file evidence. Minimal structured failure facts retain the public symbol chain and fault offset 0x20, while omitting absolute process addresses, full module/thread listings, Python stack and other private dump content."
+  },
+  "observed_native_facts": {
+    "actual_link_acquired": true,
+    "native_handler_before_switch": [
+      "NODE_OT_link"
+    ],
+    "editor_before_switch": "NODE_EDITOR",
+    "public_editor_switch_returned": true,
+    "immediate_editor_after_switch": "VIEW_3D",
+    "native_handler_immediately_after_switch": [
+      "NODE_OT_link"
+    ],
+    "last_serialized_checkpoint": "immediately_after_area_switch",
+    "serialized_status_left_at_last_checkpoint": "running",
+    "later_script_steps_not_observed": [
+      "settled_after_area_switch",
+      "after_release_in_new_editor",
+      "after_escape"
+    ],
+    "python_exception_records": [],
+    "native_exception_kind": "EXCEPTION_ACCESS_VIOLATION",
+    "native_exception_code": "0xc0000005",
+    "native_action": "read",
+    "native_read_address": "0x20",
+    "sanitized_native_call_chain": [
+      "blender::ui::view2d_region_to_view",
+      "blender::ed::space_node::node_link_modal",
+      "blender::wm_handler_operator_call",
+      "blender::wm_handlers_do_intern",
+      "blender::wm_handlers_do",
+      "blender::wm_event_do_handlers",
+      "blender::WM_main"
+    ],
+    "raw_crash_host_header_matches_result": true,
+    "native_host_failure_not_healthy_pending_runner": true,
+    "recorded_event_count_before_failure": 4,
+    "recorded_events_are_synthetic_mouse_with_tablet_false": true,
+    "no_script_release_or_escape_was_enqueued_before_failure": true
+  },
+  "script_and_adapter_assessment": [
+    "The setup/geometry/enqueue helper prefix is exactly identical to the reviewed successful attempt2 prefix. The inherited CASES list is unused by this new tick loop; only one area-switch sample ran.",
+    "The new ctx/state definitions replace the earlier helper definitions before timer registration and resolve the current active editor/region afresh. The immediate post-switch state reads the named material tree, current VIEW_3D type and actual Window.modal_operators.",
+    "STEP6 intentionally invokes the public native area.type setter while NODE_OT_link remains active. It then successfully writes its immediate post-switch observation. No direct native pointer manipulation, model counter, stubbed node modal, replacement graph algorithm or C++ adapter is used.",
+    "No stale Python region object is dereferenced after the setter in the reached step. The Python try/except does not record an API/helper exception; native diagnostics show the failure later in WM modal dispatch.",
+    "The synthetic direct-RNA editor switch is a deliberate lifecycle perturbation. An ordinary user UI route capable of this switch while the blocking drag is active has not been demonstrated.",
+    "This is an actual installed native host failure under the recorded trigger, distinct from the preserved earlier unicode-argument RuntimeError or the bounded C++ characterization adapter diagnostics."
+  ],
+  "source_consistency_review": {
+    "interpretation": "Null original modal region/context is a source-consistent mechanism, not register-level cause proof or generic use-after-free proof.",
+    "materialized_target_wm_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "cached_target_node_relationships_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+    "reviewed_target_spans": {
+      "wm_event_system.cc": [
+        [
+          2616,
+          2692
+        ],
+        [
+          3999,
+          4015
+        ],
+        [
+          4070,
+          4077
+        ],
+        [
+          7992,
+          8020
+        ]
+      ],
+      "node_relationships.cc": [
+        [
+          1419,
+          1432
+        ]
+      ]
+    },
+    "stock_node_modal_comparison_record": {
+      "function": "node_link_modal",
+      "target_upstream_line": 1419,
+      "stock_line": 1494,
+      "production_line": 1419,
+      "target_upstream_sha256": "7e926274c3d99bf11a2975680269fd80588f47934c3a34eda290c8f7f7600f72",
+      "stock_sha256": "9c310ae93f190d818ce7d6459a6257f464109688c42c9a501aeee1c60623b2de",
+      "production_sha256": "7e926274c3d99bf11a2975680269fd80588f47934c3a34eda290c8f7f7600f72",
+      "target_upstream_equals_stock": false,
+      "production_equals_target_upstream": true,
+      "target_to_stock_diff": "--- target5.0\n\n+++ stock5.1.2\n\n@@ -5,8 +5,8 @@\n\n   ARegion *region = CTX_wm_region(C);\n \n-  UI_view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);\n+  view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);\n \n   float2 cursor;\n-  UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);\n+  ui::view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);\n   nldrag.cursor[0] = event->mval[0];\n   nldrag.cursor[1] = event->mval[1];"
+    },
+    "independently_opened_stock_primary_sources": [
+      {
+        "url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/windowmanager/intern/wm_event_system.cc",
+        "findings": "The modal area/region replacement helpers change stored handler context. Context restoration can produce null area/region; ordinary modal dispatch then invokes its callback without a fresh editable poll or explicit null-region terminal branch."
+      },
+      {
+        "url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/screen/screen_edit.cc",
+        "findings": "ED_area_exit runs editor/region exit, removes area handlers, and replaces the stored modal handler area with null."
+      },
+      {
+        "url": "https://raw.githubusercontent.com/blender/blender/ec6e62d40fa9/source/blender/editors/screen/area.cc",
+        "findings": "ED_area_newspace runs native area exit during editor type changes."
+      }
+    ],
+    "target_and_stock_modal_entry": "Selected target node modal reads current region and performs view coordinate conversion before terminal event handling. The exact stock comparison changes API namespaces at that entry, preserving this control flow.",
+    "raw_stack_consistency": "A near-null read in native view2d_region_to_view called from node_link_modal after the area switch is consistent with a null modal region reaching that entry. The dump inspected does not independently record the event type or a register-level region value."
+  },
+  "process_scope": {
+    "recorded_probe_pid": 13392,
+    "reviewer_read_only_pid_check": "PID13392 was absent at review time.",
+    "root_reported_action": "Root reported independently verifying the exact owned probe command line and then stopping only the crashed probe. Reviewer did not witness or repeat that pre-stop command-line check or termination.",
+    "no_other_process_control_by_reviewer": true
+  },
+  "boundaries": [
+    "One exact installed stock GUI lifecycle failure is confirmed. No target5.0 patched build, iOS SDK/package, UIKit/Pencil producer, physical pointer or device failure is proved.",
+    "Read0x20 and the stack support source-consistent null-context reasoning; they do not by themselves establish precise event ordering, register values, freed-memory access or a complete root-cause proof.",
+    "The exact next native event that entered modal is not logged. No claim that the unreached scripted release/Escape caused the crash is made.",
+    "The active graph was fresh with two ordinary expanded Shader nodes and no links. Existing-input detach, popup ownership, other callbacks, screen/window deletion and arbitrary owner loss are outside this sample.",
+    "No production-source change caused this installed stock failure. No recent regression, normal user editor-switch route, corrective implementation, successful recovery, generic rollback or user-facing acceptance claim is made.",
+    "The existing result is preserved unchanged as its last serialized running checkpoint; this review supplies failure classification without rewriting the original evidence.",
+    "No production source, tests, CI, target native build or raw private crash file is changed or added by this review."
+  ]
+}

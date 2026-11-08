@@ -1,0 +1,551 @@
+{
+  "status": "completed",
+  "started_utc": "2026-11-08T18:46:10.183522+00:00",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "background": false
+  },
+  "scope": "Installed stock Windows GUI actual native WM/search/graph/placement/UndoRedo. No target5.0/iOS/UIKit/Pencil/device proof. Factory startup, isolated tree and actual event_simulate, native ed.undo_push baseline.",
+  "observations": [
+    {
+      "label": "baseline",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [],
+      "history": []
+    },
+    {
+      "label": "link_acquired",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [
+        "NODE_OT_link"
+      ],
+      "history": []
+    },
+    {
+      "label": "native_search_open",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [],
+      "history": [
+        "NODE_OT_link"
+      ]
+    },
+    {
+      "label": "native_search_filtered",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [],
+      "history": [
+        "NODE_OT_link"
+      ]
+    },
+    {
+      "label": "native_choice_callback",
+      "graph": {
+        "nodes": [
+          [
+            "Math",
+            "ShaderNodeMath"
+          ],
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": [
+          [
+            "SourceA",
+            "Value",
+            "Math",
+            "Value",
+            true
+          ]
+        ]
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ],
+        "Math": [
+          14.550707817077637,
+          -60.263282775878906
+        ]
+      },
+      "modal_operators": [
+        "NODE_OT_translate_attach_remove_on_cancel"
+      ],
+      "history": [
+        "NODE_OT_link"
+      ]
+    },
+    {
+      "label": "native_placement_before_confirm",
+      "graph": {
+        "nodes": [
+          [
+            "Math",
+            "ShaderNodeMath"
+          ],
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": [
+          [
+            "SourceA",
+            "Value",
+            "Math",
+            "Value",
+            true
+          ]
+        ]
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ],
+        "Math": [
+          -30.405874252319336,
+          99.634033203125
+        ]
+      },
+      "modal_operators": [
+        "NODE_OT_translate_attach_remove_on_cancel"
+      ],
+      "history": [
+        "NODE_OT_link"
+      ]
+    },
+    {
+      "label": "native_placement_finished",
+      "graph": {
+        "nodes": [
+          [
+            "Math",
+            "ShaderNodeMath"
+          ],
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": [
+          [
+            "SourceA",
+            "Value",
+            "Math",
+            "Value",
+            true
+          ]
+        ]
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ],
+        "Math": [
+          -30.405874252319336,
+          99.634033203125
+        ]
+      },
+      "modal_operators": [],
+      "history": [
+        "NODE_OT_link",
+        "NODE_OT_translate_attach_remove_on_cancel"
+      ]
+    },
+    {
+      "label": "after_native_undo",
+      "graph": {
+        "nodes": [
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": []
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ]
+      },
+      "modal_operators": [],
+      "history": []
+    },
+    {
+      "label": "after_native_redo",
+      "graph": {
+        "nodes": [
+          [
+            "Math",
+            "ShaderNodeMath"
+          ],
+          [
+            "SinkB",
+            "ShaderNodeMath"
+          ],
+          [
+            "SourceA",
+            "ShaderNodeValue"
+          ]
+        ],
+        "links": [
+          [
+            "SourceA",
+            "Value",
+            "Math",
+            "Value",
+            true
+          ]
+        ]
+      },
+      "locations": {
+        "SourceA": [
+          -250.0,
+          150.0
+        ],
+        "SinkB": [
+          150.0,
+          150.0
+        ],
+        "Math": [
+          -30.405874252319336,
+          99.634033203125
+        ]
+      },
+      "modal_operators": [],
+      "history": []
+    }
+  ],
+  "events": [
+    {
+      "type": "MOUSEMOVE",
+      "value": "NOTHING",
+      "unicode": "",
+      "xy": [
+        370,
+        654
+      ],
+      "tablet": false
+    },
+    {
+      "type": "LEFTMOUSE",
+      "value": "PRESS",
+      "unicode": "",
+      "xy": [
+        370,
+        654
+      ],
+      "tablet": false
+    },
+    {
+      "type": "MOUSEMOVE",
+      "value": "NOTHING",
+      "unicode": "",
+      "xy": [
+        382,
+        654
+      ],
+      "tablet": false
+    },
+    {
+      "type": "MOUSEMOVE",
+      "value": "NOTHING",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "LEFTMOUSE",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "M",
+      "value": "PRESS",
+      "unicode": "m",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "M",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "A",
+      "value": "PRESS",
+      "unicode": "a",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "A",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "T",
+      "value": "PRESS",
+      "unicode": "t",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "T",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "H",
+      "value": "PRESS",
+      "unicode": "h",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "H",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "RET",
+      "value": "PRESS",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "RET",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        645,
+        222
+      ],
+      "tablet": false
+    },
+    {
+      "type": "MOUSEMOVE",
+      "value": "NOTHING",
+      "unicode": "",
+      "xy": [
+        546,
+        574
+      ],
+      "tablet": false
+    },
+    {
+      "type": "LEFTMOUSE",
+      "value": "PRESS",
+      "unicode": "",
+      "xy": [
+        546,
+        574
+      ],
+      "tablet": false
+    },
+    {
+      "type": "LEFTMOUSE",
+      "value": "RELEASE",
+      "unicode": "",
+      "xy": [
+        546,
+        574
+      ],
+      "tablet": false
+    }
+  ],
+  "errors": [],
+  "points": {
+    "source": [
+      370,
+      654
+    ],
+    "empty": [
+      645,
+      222
+    ],
+    "place": [
+      546,
+      574
+    ]
+  },
+  "baseline_push": [
+    "FINISHED"
+  ],
+  "undo_result": [
+    "FINISHED"
+  ],
+  "redo_result": [
+    "FINISHED"
+  ]
+}

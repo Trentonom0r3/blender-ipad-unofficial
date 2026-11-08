@@ -1,3 +1,82 @@
+## Node editor lifecycle counterexample; bounded retirement next — 2026-11-08 UTC
+
+A new owned disposable stock5.1.2/ec6e62d40fa9 GUI probe acquired actual NODE_OT_link,
+then changed its editor through the public Area.type setter. The setter returned
+with that native modal still registered; before the next scripted release, stock
+Blender faulted reading0x20 in view2d_region_to_view -> node_link_modal -> native
+WM handler. The raw private crash remains local. This is actual stock-host failure,
+not target5.0/iOS/Pencil/device reproduction or a recent iPad regression claim.
+The source-consistent null-context mechanism is independently reviewed; exact
+fault registers/next native event type were not captured. No user process or file
+was affected. Root verified and closed only the owned crashed probe PID13392.
+
+Read pencil-node-link-workflow/native-host/area-switch-failure-assessment.json and
+independent-native-area-switch-review.json, plus original-owner-source-contract.json.
+Priority now is bounded original native Node-link retirement BEFORE editor/region/
+SpaceNode/runtime/tree context is lost. Native WM currently clears area/region but
+can still call Node modal; a late Pencil abort or bare null guard cannot dispose
+lost storage safely. Prove the actual registered root/native type/operator lifetime,
+original space+runtime+drag/tree+owner membership, ordinary native Cancel/WM cleanup,
+caller refusal/revalidation and concrete exit ordering as one connected correction.
+No new production/test/CI edits or build exist; do not build a partial helper.
+The ordinary Pencil interruption source contract is inherited and remains next,
+after lifecycle safety; no physical source class grants a positive press lease.
+
+The earlier ten native link cases/three history pairs and one native linked Math
+search/placement/history pair passed separate stock baselines with independent
+review. Keep those valid controls and original failures; Cancel is not rollback.
+Latest exact a2b7a81/run41034735566 IPA remains separately fully verified and already
+offered, with NO exact device acceptance or unchanged rebuild. Full goal unfinished.
+
+Actual Temp inventory supersedes old materialization wording: old
+pencil-canvas-pan-next-01o74gir now has only24 of140 patched targets (36 files total).
+It is preserved. Fresh COMPLETE raw-Git140 tree is
+C:/Users/tjerf/AppData/Local/Temp/pencil-node-link-lifecycle-iiitf445.
+Every new target matches verified a2b7 raw-Git SHA; existing24 old targets also match.
+Read current-source-materialization.json. Repository patch+pin remains source of
+truth; reconstruct fresh when needed, never infer a source deletion from missing
+Temp files. Preserve every local source/evidence file and selection-collapsed.png.
+
+## Node-link actual stock graph/history baseline — 2026-11-08 UTC
+
+The exact a2b7a81/run41034735566 initial Knife IPA remains fully verified and
+already offered for an iPad check. No device reply, runtime change, new IPA or
+unchanged rebuild is implied by this checkpoint. Full personal goal unfinished.
+
+Read pencil-node-link-workflow/native-host/assessment.json and its independent
+reviews. Owned factory-startup installed Blender5.1.2/ec6e62d40fa9 GUI processes
+executed ten actual expanded Shader socket/link cases, three native link-history
+Undo/Redo pairs, and a linked Math search/placement workflow with its own one-step
+Undo/Redo pair. Native socket acquisition, graph mutation, popup delivery/discard,
+search callback, placement and actual history execute here; no fake graph/Undo
+counters substitute. All owned processes exited. No user document was opened.
+
+Native semantics matter: lift confirms the previously chosen endpoint; release
+alone does not repick. Existing-input detach occurs during invoke; native Escape
+or RMB ends the drag without reinserting that link in the supplied cases. A final
+motion back restores it, while release-only relocation does not. Finished empty
+disconnection and rewire each Undo/Redo as observed. Fresh empty release opens
+search; Math > Add creates a valid connected Math node, placement completes, and
+one native Undo removes the node and link; Redo restores both and location.
+
+This is stock Windows native execution, not target5.0/iOS/Pencil/installed-IPA or
+all-socket/history proof. Twelve primary files/39 selected bodies were compared:
+expanded graph policy aligns, but collapsed hit exclusion and memfile restore
+have recorded version differences. Physical UIKit/GHOST ingestion, interruption,
+mixed contributors and arbitrary native/RNA callback lifetimes remain separate.
+Failed attempt3 is only an event API helper unicode-argument error, preserved;
+corrected attempt4 changes that helper alone and has independent review.
+
+Next inspect the actual ordinary untagged Pencil interruption frontier before
+coding. Delivered Cancelled/Failed may produce an ordinary release; explicit
+cancelPointerCapture may invalidate an ordinary press without its queued terminal.
+These are inherited conditional source paths, not a reported new device failure.
+Never mark every release Cancel or infer a positive Node owner from physical PAN.
+Establish actual admitted press/original registered handler/context/native cleanup
+and owner-loss obligations as one connected increment before any correction; no
+detached helper build or generic rollback. Read docs/PENCIL_NODE_LINK_NEXT.md.
+Preserve every accepted UI/input/history/lifetime guard and local evidence.
+
 ## Node-link read-only characterization checkpoint — 2026-11-08 UTC
 
 The exact a2b7a81/run41034735566 Knife package is fully verified and was offered

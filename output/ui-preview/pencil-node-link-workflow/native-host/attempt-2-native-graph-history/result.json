@@ -1,0 +1,6876 @@
+{
+  "status": "completed",
+  "started_utc": "2026-11-08T18:42:44.563872+00:00",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "binary": "D:\\Program Files\\blender.exe",
+    "background": false
+  },
+  "scope": "Actual installed stock Windows GUI5.1.2 native WM/socket/graph/popup/history baseline. No target5.0/iOS/UIKit/Pencil/pressure/device claim. Native event_simulate resets tablet provenance. Timed mouse samples, expanded nodes, no custom maps.",
+  "cases": [
+    {
+      "name": "fresh_confirm_history",
+      "existing_input": false,
+      "terminal": "input1",
+      "history_probe": true,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_undo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_redo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            382,
+            654
+          ],
+          "enqueued_xy": [
+            382,
+            654
+          ],
+          "prev_xy": [
+            382,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "undo_result": [
+        "FINISHED"
+      ],
+      "redo_result": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "fresh_empty_search_discard",
+      "existing_input": false,
+      "terminal": "empty",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            382,
+            654
+          ],
+          "enqueued_xy": [
+            382,
+            654
+          ],
+          "prev_xy": [
+            382,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "fresh_escape",
+      "existing_input": false,
+      "terminal": "escape",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            382,
+            654
+          ],
+          "enqueued_xy": [
+            382,
+            654
+          ],
+          "prev_xy": [
+            382,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "fresh_rightmouse",
+      "existing_input": false,
+      "terminal": "rightmouse",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            382,
+            654
+          ],
+          "enqueued_xy": [
+            382,
+            654
+          ],
+          "prev_xy": [
+            382,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "RIGHTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "RIGHTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_empty_history",
+      "existing_input": true,
+      "terminal": "empty",
+      "history_probe": true,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_undo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_redo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "undo_result": [
+        "FINISHED"
+      ],
+      "redo_result": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_escape",
+      "existing_input": true,
+      "terminal": "escape",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_rightmouse",
+      "existing_input": true,
+      "terminal": "rightmouse",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "RIGHTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "RIGHTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_return_original",
+      "existing_input": true,
+      "terminal": "input1",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_release_without_repick",
+      "existing_input": true,
+      "terminal": "release_only_input1",
+      "history_probe": false,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "final",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    },
+    {
+      "name": "existing_rewire_history",
+      "existing_input": true,
+      "terminal": "input2",
+      "history_probe": true,
+      "observations": [
+        {
+          "label": "baseline",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "pressed",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "acquired",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "moved_empty",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "before_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_terminal",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value_001",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_popup_or_tail_cleanup",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [
+            "NODE_OT_link",
+            "NODE_OT_link",
+            "NODE_OT_link"
+          ],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value_001",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_undo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        },
+        {
+          "label": "after_native_redo",
+          "region": [
+            2,
+            106,
+            1311,
+            921
+          ],
+          "view_origin": [
+            -346.8000183105469,
+            -166.19589233398438
+          ],
+          "view_max": [
+            397.3676452636719,
+            356.7637023925781
+          ],
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": [
+              [
+                "SourceA",
+                "Value",
+                "SinkB",
+                "Value_001",
+                true
+              ]
+            ]
+          },
+          "node_geometry": {
+            "SourceA": {
+              "location": [
+                -250.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                62.0
+              ],
+              "width": 140.0
+            },
+            "SinkB": {
+              "location": [
+                150.0,
+                150.0
+              ],
+              "dimensions": [
+                175.0,
+                186.0
+              ],
+              "width": 140.0
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            943,
+            491
+          ],
+          "enqueued_xy": [
+            943,
+            491
+          ],
+          "prev_xy": [
+            943,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            931,
+            491
+          ],
+          "enqueued_xy": [
+            931,
+            491
+          ],
+          "prev_xy": [
+            931,
+            491
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            943,
+            442
+          ],
+          "enqueued_xy": [
+            943,
+            442
+          ],
+          "prev_xy": [
+            943,
+            442
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "RELEASE",
+          "requested_xy": [
+            943,
+            442
+          ],
+          "enqueued_xy": [
+            943,
+            442
+          ],
+          "prev_xy": [
+            943,
+            442
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "PRESS",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            943,
+            442
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "ESC",
+          "value": "RELEASE",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ],
+      "undo_result": [
+        "FINISHED"
+      ],
+      "redo_result": [
+        "FINISHED"
+      ],
+      "status": "observed"
+    }
+  ],
+  "errors": [],
+  "updated_utc": "2026-11-08T18:43:45.064594+00:00"
+}

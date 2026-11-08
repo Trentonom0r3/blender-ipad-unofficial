@@ -1,0 +1,206 @@
+{
+  "status": "running",
+  "started_utc": "2026-11-08T18:57:47.958160+00:00",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "binary": "D:\\Program Files\\blender.exe",
+    "background": false
+  },
+  "scope": "Actual installed stock5.1.2 GUI Node-link area-switch lifecycle observation. No target5.0/iOS/Pencil or arbitrary callback/owner-loss proof. Disposable factory scene; no source correction.",
+  "cases": [
+    {
+      "name": "active_link_area_switch",
+      "observations": [
+        {
+          "label": "baseline",
+          "area_type": "NODE_EDITOR",
+          "modal_operators": [],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          }
+        },
+        {
+          "label": "native_link_acquired",
+          "area_type": "NODE_EDITOR",
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          }
+        },
+        {
+          "label": "before_area_switch",
+          "area_type": "NODE_EDITOR",
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          }
+        },
+        {
+          "label": "immediately_after_area_switch",
+          "area_type": "VIEW_3D",
+          "modal_operators": [
+            "NODE_OT_link"
+          ],
+          "history": [],
+          "graph": {
+            "nodes": [
+              [
+                "SinkB",
+                "ShaderNodeMath",
+                false
+              ],
+              [
+                "SourceA",
+                "ShaderNodeValue",
+                false
+              ]
+            ],
+            "links": []
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "LEFTMOUSE",
+          "value": "PRESS",
+          "requested_xy": [
+            370,
+            654
+          ],
+          "enqueued_xy": [
+            370,
+            654
+          ],
+          "prev_xy": [
+            370,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            382,
+            654
+          ],
+          "enqueued_xy": [
+            382,
+            654
+          ],
+          "prev_xy": [
+            382,
+            654
+          ],
+          "is_tablet": false
+        },
+        {
+          "type": "MOUSEMOVE",
+          "value": "NOTHING",
+          "requested_xy": [
+            645,
+            222
+          ],
+          "enqueued_xy": [
+            645,
+            222
+          ],
+          "prev_xy": [
+            645,
+            222
+          ],
+          "is_tablet": false
+        }
+      ],
+      "point_policy": {
+        "points_bottom_left_window": {
+          "source": [
+            370,
+            654
+          ],
+          "input1": [
+            943,
+            491
+          ],
+          "input2": [
+            943,
+            442
+          ],
+          "empty": [
+            645,
+            222
+          ]
+        },
+        "native_dpi_ratio": 1.25,
+        "expanded_only": true,
+        "geometry_claim": "Visible center approximations from actual attempt1 native screenshot, accepted only after actual modal acquisition/endpoints. No hit-radius/occlusion generalization."
+      },
+      "baseline_undo_push": [
+        "FINISHED"
+      ]
+    }
+  ],
+  "errors": [],
+  "updated_utc": "2026-11-08T18:57:53.860851+00:00"
+}

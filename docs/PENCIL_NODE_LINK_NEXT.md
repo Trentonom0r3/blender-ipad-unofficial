@@ -1,0 +1,81 @@
+# Pencil Node-link workflow: native baseline and next admission gate
+
+The full personal goal remains unfinished. The latest installable package is
+initial Knife a2b7a81/run41034735566, fully verified and already offered for a
+narrow iPad check. This document changes no production, test, CI or build input.
+
+## Observed native workflow
+
+Read output/ui-preview/pencil-node-link-workflow/native-host/assessment.json,
+source-parity-review.json and the two independent host reviews. Installed stock
+Windows Blender5.1.2/ec6e62d40fa9 runs actual native expanded Shader socket lookup,
+link invoke/modal, graph mutation, popup callbacks, placement and Undo/Redo through
+supported Window.event_simulate. Ten link scenarios and one linked-node creation
+workflow complete, including four native Undo/Redo pairs. No graph/history counter
+substitutes for Blender. Each history read reacquires its material/tree/node values.
+
+Lift confirms. Moving back to the original socket before lifting can restore a
+detached input link. Release coordinates alone do not repick an endpoint. Native
+Escape/RMB Cancel ends the current link drag but does not generically roll back
+input detach. Fresh empty release opens native compatible-node search; dismissal
+adds nothing. Choosing Math > Add adds a connected Math node, its native placement
+macro runs and finishes, and one Undo/Redo removes/restores the node and link in
+the measured baseline. Do not introduce an extra Finish control by assuming lift
+keeps Node link modal, or label native Cancel as restoration.
+
+The selected target5.0 and stock primary bodies align for expanded graph policy;
+collapsed socket exclusion and memfile restore differ. These host observations
+are not target5.0/iOS/Pencil/installed-package/device acceptance, all socket or
+history modes, real UIKit thresholds, GHOST ingestion or callback-lifetime proof.
+All original source-model cases and failed native-helper diagnostics remain.
+
+## Confirmed stock lifecycle counterexample and immediate priority
+
+The owned native-host/attempt-5-area-switch-lifecycle probe acquired NODE_OT_link
+and changed its area to VIEW_3D through the real public setter. The native handler
+remained registered after the setter returned; before the next scripted step,
+stock Blender read-faulted at0x20 in view2d_region_to_view / node_link_modal / WM.
+No exact target/iPad or recent-regression claim follows. Root verified and stopped
+only that owned crashed process; raw private crash stays local. Its last serialized
+running marker is a stale checkpoint from before the crash, not a healthy runner.
+
+Read original-owner-source-contract.json and independent native failure review.
+Resolve original native Node-link retirement before editor/region/runtime/tree
+invalidation. Native Cancel must still have its original live region/SpaceNode/
+drag/tree relation; a late abort candidate, replacement context or bare null check
+cannot safely stand in for disposal. Prove root-vs-macro identity, actual registered
+lifetime, embedded/standalone owner membership, native cleanup and ordinary WM
+status handling, refusal/revalidation, and real exit caller ordering before coding.
+No new production/test/CI or native build exists. Preserve all passing native graph,
+popup and history controls and the exact failing probe.
+
+Fresh full140 target reconstruction is Temp/pencil-node-link-lifecycle-iiitf445;
+old pencil-canvas-pan-next-01o74gir is now partial and preserved. See the hashed
+current-source-materialization.json; source of truth remains repository patch+pin.
+
+## Later connected ordinary Pencil interruption scope
+
+Investigate ordinary untagged Pencil interruption against actual current source.
+The physical source class used for navigation denial is not a delivered press,
+contact lease or positive semantic Node owner. Current paint and Knife receipts
+must retain their exact meaning. An ordinary Node correction needs proof from an
+actually enqueued/admitted press through native click-drag reconstruction and
+actual registered original handler/type/operator lifetime, then fresh original
+window/screen/area/region/SpaceNode/tree/graph membership before semantic dispatch.
+
+Separate delivered recognizer Cancelled/Failed from explicit invalidation that
+suppresses the recognizer callback. A terminal must come only from a proved queued
+press. Bind to the original handler, consume stale tails before shared pointer
+state and semantic dispatch, and never deliver them to a replacement. Native
+Node cleanup can read current region/tree and callback handles, so original-owner
+loss and safe retirement must be resolved before synthesizing any terminal or
+calling Cancel. Embedded trees and detached socket/node lifetimes need real
+source-backed membership, not an old pointer or a newly captured replacement.
+
+No source correction is validated by a model-only helper milestone. Complete one
+connected producer/queue/admission/registered owner/native action/cleanup/history
+increment with meaningful actual-source and historical failures, preserve native
+fallback/custom/hardware/UI behavior, and independently review ownership and
+literal UI scope. Then coherent exact source builds once and its full IPA/new and
+preserved compiled obligations are verified. No generic rollback or global heap,
+reentrancy, GPU, UIKit or device claim follows. Import/deep camera stays deferred.

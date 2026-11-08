@@ -1,0 +1,291 @@
+{
+  "status": "PASS_INDEPENDENT_BOUNDED_STOCK_NATIVE_POPUP_CALLBACK_PLACEMENT_HISTORY_REVIEW",
+  "reviewer": "node_host_baseline_review",
+  "reviewed_utc": "2026-11-08T18:48:17.038223+00:00",
+  "review_type": "Independent read-only exact probe/result/source-diff and original PNG review; reviewer did not launch or operate a GUI.",
+  "host": {
+    "version": "5.1.2",
+    "build_hash": "ec6e62d40fa9",
+    "background": false
+  },
+  "scope": "One installed stock Windows Blender 5.1.2/ec6e62d40fa9 fresh-output empty-release search, actual Math > Add search callback, native node placement confirmation, and one native Undo/Redo pair.",
+  "production_claim": false,
+  "target_or_device_claim": false,
+  "evidence": {
+    "probe": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/probe.py",
+      "sha256": "7c089854ac125483bf74f3e5926e1c69dd8e0be8f2a367c8a5d9a32f57a0d55a",
+      "bytes": 5060
+    },
+    "result": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/result.json",
+      "sha256": "3a81a2d4a834a3629b6b2aec49adb6c532b62490b8bbe7d4856065df2f0027dd",
+      "bytes": 9930
+    },
+    "stdout": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/stdout.txt",
+      "sha256": "8449b822e201e736278a0214127e5a7422d263983f69a4fb373ee76ff2f44840",
+      "bytes": 150
+    },
+    "stderr": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/stderr.txt",
+      "sha256": "c74c9711cafc1ce117df1f21c8798ee82a9c03c0f00c542f5f765b447b9339b1",
+      "bytes": 416
+    },
+    "all_attempt_image_hashes": [
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/after_native_redo.png",
+        "sha256": "543750517966ce868ddfb079f9bb2052a84d8004215da6dda38becaa8989402c",
+        "bytes": 212505
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/after_native_undo.png",
+        "sha256": "dd85f113ac9b4997ee3fb559b0a8c9f78e00da06a4f19c3422c0bf2703c645ba",
+        "bytes": 194276
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/baseline.png",
+        "sha256": "554430428cad026770e899f2b79d31b3951237f1ddc1f9f87225c208af4b8d78",
+        "bytes": 191082
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/link_acquired.png",
+        "sha256": "9a503abd7fc2c7c4f1172fa289697a75734900b697dfd46e8e62af0c8c14bde3",
+        "bytes": 195837
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_choice_callback.png",
+        "sha256": "84a2705c71265834c56c58d79c60653888a4883e43c1d2621aba59c0af5c4627",
+        "bytes": 208420
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_placement_before_confirm.png",
+        "sha256": "2db6e4b694cb4810420a93637810625666d870c4e9f369807f1b86be1f34b97e",
+        "bytes": 212104
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_placement_finished.png",
+        "sha256": "8a127237f8f4be321327ade4b5700e02b7550e8b67238950671a53b3d30d2958",
+        "bytes": 212131
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_search_filtered.png",
+        "sha256": "143b6356f39686c13716fa9d9217f6f475edada45569820bc7d3df61b8304b98",
+        "bytes": 209537
+      },
+      {
+        "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_search_open.png",
+        "sha256": "5955c1e7d1f0f2f245db08ef878c52aa86cb0d3016831ecc9838feb4b9624194",
+        "bytes": 218778
+      }
+    ]
+  },
+  "verified_observation_labels": [
+    "baseline",
+    "link_acquired",
+    "native_search_open",
+    "native_search_filtered",
+    "native_choice_callback",
+    "native_placement_before_confirm",
+    "native_placement_finished",
+    "after_native_undo",
+    "after_native_redo"
+  ],
+  "verified_native_sequence": {
+    "baseline_graph": {
+      "nodes": [
+        [
+          "SinkB",
+          "ShaderNodeMath"
+        ],
+        [
+          "SourceA",
+          "ShaderNodeValue"
+        ]
+      ],
+      "links": []
+    },
+    "link_acquisition_modal_operators": [
+      "NODE_OT_link"
+    ],
+    "search_popup_graph": {
+      "nodes": [
+        [
+          "SinkB",
+          "ShaderNodeMath"
+        ],
+        [
+          "SourceA",
+          "ShaderNodeValue"
+        ]
+      ],
+      "links": []
+    },
+    "actual_query": "math",
+    "selected_visible_result": "Math > Add",
+    "actual_added_node": [
+      "Math",
+      "ShaderNodeMath"
+    ],
+    "actual_added_valid_link": [
+      "SourceA",
+      "Value",
+      "Math",
+      "Value",
+      true
+    ],
+    "choice_callback_modal_operators": [
+      "NODE_OT_translate_attach_remove_on_cancel"
+    ],
+    "placement_before_confirm_modal_operators": [
+      "NODE_OT_translate_attach_remove_on_cancel"
+    ],
+    "location_after_choice": [
+      14.550707817077637,
+      -60.263282775878906
+    ],
+    "location_after_motion_and_confirm": [
+      -30.405874252319336,
+      99.634033203125
+    ],
+    "placement_finished_modal_operators": [],
+    "native_undo_result": [
+      "FINISHED"
+    ],
+    "graph_after_native_undo": {
+      "nodes": [
+        [
+          "SinkB",
+          "ShaderNodeMath"
+        ],
+        [
+          "SourceA",
+          "ShaderNodeValue"
+        ]
+      ],
+      "links": []
+    },
+    "native_redo_result": [
+      "FINISHED"
+    ],
+    "graph_after_native_redo": {
+      "nodes": [
+        [
+          "Math",
+          "ShaderNodeMath"
+        ],
+        [
+          "SinkB",
+          "ShaderNodeMath"
+        ],
+        [
+          "SourceA",
+          "ShaderNodeValue"
+        ]
+      ],
+      "links": [
+        [
+          "SourceA",
+          "Value",
+          "Math",
+          "Value",
+          true
+        ]
+      ]
+    },
+    "redo_restores_confirmed_locations": true,
+    "original_nodes_and_locations_preserved": true
+  },
+  "independent_visual_review": [
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_search_open.png",
+      "sha256": "5955c1e7d1f0f2f245db08ef878c52aa86cb0d3016831ecc9838feb4b9624194",
+      "bytes": 218778,
+      "finding": "Native linked-node search popup is visibly open after empty release.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_search_filtered.png",
+      "sha256": "143b6356f39686c13716fa9d9217f6f475edada45569820bc7d3df61b8304b98",
+      "bytes": 209537,
+      "finding": "Native search field visibly contains math; first highlighted result is Math > Add.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_choice_callback.png",
+      "sha256": "84a2705c71265834c56c58d79c60653888a4883e43c1d2621aba59c0af5c4627",
+      "bytes": 208420,
+      "finding": "Search popup is gone, a new Add/Math node visibly exists with a connecting noodle; placement controls remain visible in the status bar. Native result separately records ShaderNodeMath identity and NODE_OT_translate_attach_remove_on_cancel.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/native_placement_finished.png",
+      "sha256": "8a127237f8f4be321327ade4b5700e02b7550e8b67238950671a53b3d30d2958",
+      "bytes": 212131,
+      "finding": "New Add/Math node is placed between original nodes and visibly linked from Source A to its upper Value input; normal status bar replaces placement controls.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/after_native_undo.png",
+      "sha256": "dd85f113ac9b4997ee3fb559b0a8c9f78e00da06a4f19c3422c0bf2703c645ba",
+      "bytes": 194276,
+      "finding": "New node and connecting noodle are visibly absent; only the two original nodes remain.",
+      "review_method": "Independently opened original PNG with view_image"
+    },
+    {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-4-popup-node-history/after_native_redo.png",
+      "sha256": "543750517966ce868ddfb079f9bb2052a84d8004215da6dda38becaa8989402c",
+      "bytes": 212505,
+      "finding": "New Add/Math node and Source A connection visibly return at the confirmed placement.",
+      "review_method": "Independently opened original PNG with view_image"
+    }
+  ],
+  "script_context_and_lifetime_review": [
+    "All post-Undo/Redo graph observations reacquire the named material node tree. No persistent node/tree/link RNA references cross a history boundary.",
+    "Native Undo/Redo run with freshly resolved window, Node Editor and WINDOW region override. Baseline is an actual native ed.undo_push after direct-RNA disposable setup.",
+    "After the baseline, popup selection, node creation, linking, movement and placement confirmation flow through Window.event_simulate and native callbacks; script does not directly create the third node or link.",
+    "Native modal operator snapshots distinguish source-link interaction, search UI, callback-created placement modal, placement completion and history restoration. Generic operator history lists are not treated as undo-stack internals.",
+    "No context or retained-RNA lifetime flaw found in this bounded script review; no global lifetime proof follows."
+  ],
+  "retained_attempt3_diagnostic": {
+    "status": "PRESERVED_API_ARGUMENT_FAILURE; NOT_NATIVE_APPLICATION_CRASH",
+    "probe": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-3-popup-node-history/probe.py",
+      "sha256": "c271411d40fececc2a2022dd5ee46ad65687c69832e50df7ea55660e26b891a1",
+      "bytes": 5020
+    },
+    "result": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-3-popup-node-history/result.json",
+      "sha256": "40654c07690915251b64bec8b14e837a9495a96cd06a699bba8958d76a39872a",
+      "bytes": 2164
+    },
+    "stdout": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-3-popup-node-history/stdout.txt",
+      "sha256": "3a5d5649fe909f4cdb2f1c848c3b49e53824ab40ac94402f8c2da7ed7e3842c1",
+      "bytes": 150
+    },
+    "stderr": {
+      "path": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-3-popup-node-history/stderr.txt",
+      "sha256": "2c8e4761a79bbba257f8d44e5b6a13f47d724794ac8611a74db80b4137f19750",
+      "bytes": 416
+    },
+    "recorded_event_count": 0,
+    "recorded_observation_labels": [
+      "baseline"
+    ],
+    "error": "Traceback (most recent call last):\n  File \"D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-link-workflow\\native-host\\attempt-3-popup-node-history\\probe.py\", line 43, in tick\n    elif STEP==3:send('MOUSEMOVE','NOTHING',POINTS['source']);send('LEFTMOUSE','PRESS',POINTS['source'])\n                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-link-workflow\\native-host\\attempt-3-popup-node-history\\probe.py\", line 23, in send\n    w,_,_=ctx();p=p or POINTS['empty'];e=w.event_simulate(type=typ,value=val,x=p[0],y=p[1],unicode=text);D['events'].append({'type':typ,'value':val,'unicode':text,'xy':[e.mouse_x,e.mouse_y],'tablet':e.is_tablet})\n                                         ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Error: Value: must be 'PRESS' when unicode is set\n\n",
+    "correction": "The event helper now supplies unicode only when nonempty; native API requires PRESS whenever that argument is present, even if empty.",
+    "exact_probe_diff": "--- attempt-3/probe.py\n+++ attempt-4/probe.py\n@@ -20,7 +20,9 @@\n  with bpy.context.temp_override(window=w,area=a,region=r):bpy.ops.screen.screenshot(filepath=str(OUT/(label+'.png')))\n  return d\n def send(typ,val,p=None,text=''):\n- w,_,_=ctx();p=p or POINTS['empty'];e=w.event_simulate(type=typ,value=val,x=p[0],y=p[1],unicode=text);D['events'].append({'type':typ,'value':val,'unicode':text,'xy':[e.mouse_x,e.mouse_y],'tablet':e.is_tablet})\n+ w,_,_=ctx();p=p or POINTS['empty'];args={'type':typ,'value':val,'x':p[0],'y':p[1]}\n+ if text:args['unicode']=text\n+ e=w.event_simulate(**args);D['events'].append({'type':typ,'value':val,'unicode':text,'xy':[e.mouse_x,e.mouse_y],'tablet':e.is_tablet})\n def tick():\n  global STEP,POINTS\n  try:\n",
+    "only_helper_changed": true,
+    "graph_setup_scenarios_and_assertions_unchanged": true
+  },
+  "diagnostics": "Attempt4 completed with no recorded errors. Its stderr contains only Material.use_nodes deprecation warning.",
+  "boundaries": [
+    "The observed popup creation, Math > Add callback, native node/link creation, placement confirmation and one-step native Undo/Redo close those frontiers only for this supplied installed stock GUI sample.",
+    "Stock Windows 5.1.2/ec6e62d40fa9 does not establish target Blender 5.0 overlays, UIKit/Pencil/GHOST physical ingestion, pressure, barrel-button behavior, iOS SDK/package behavior or device acceptance.",
+    "Events are synthetic native mouse/keyboard samples with tablet false. One fixed native view, expanded ordinary Shader nodes, one output and a single Add/Math result are covered.",
+    "Alternative search results, placement cancellation/removal, repeated search interactions, custom keymaps, multi-input/collapsed/occluded sockets, arbitrary undo stacks and global allocation/lifetime behavior are untested.",
+    "Graph identity is node names/types plus valid ordered socket endpoint tuples; no link/node pointer identity or all hidden node property equality is claimed.",
+    "No new production source, registered acceptance tests, CI, target native build or corrective behavior is reviewed or asserted."
+  ]
+}
