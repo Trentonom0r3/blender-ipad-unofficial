@@ -1,0 +1,86 @@
+{
+  "status": "PASS_BOUNDED_NATIVE_PACKAGE_AND_ACTUAL_COMPILED_VERIFICATION",
+  "verified_utc": "2026-11-08T04:45:01.951222+00:00",
+  "source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "run": 41034735566,
+  "run_url": "https://github.com/Trentonom0r3/blender-ipad-unofficial/actions/runs/41034735566",
+  "artifact_id": 12970123663,
+  "artifact_rechecked_available": {
+    "date_utc": "2026-11-08",
+    "id": 12970123663,
+    "expired": false,
+    "expires_at": "2027-01-28T09:37:05Z",
+    "method": "GitHub connector fetch_workflow_run_artifacts with explicit Trentonom0r3/blender-ipad-unofficial"
+  },
+  "ipa": {
+    "path": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\ipa-41034735566\\Blender-iPad-Unofficial.ipa",
+    "bytes": 248691468,
+    "sha256": "34b92b357c745494796b993dbdc84ade72b2e2efbb9028bf8ee4d7640a0b9c57",
+    "zip_entries": 3368,
+    "bundle_id": "com.unofficial.blenderipad",
+    "version": "5.0.0",
+    "arm64_ios": true,
+    "full_crc": true
+  },
+  "binary_uuid": "39FC56CA-D84B-3001-A8B8-6DE301E6B83F",
+  "binary_sha256": "82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23",
+  "binary_bytes": 160458448,
+  "full_package_gates": {
+    "crc_entries": 3368,
+    "arm64_ios_5_0_0": true,
+    "exact_interaction_ui_toolbar_default_bars_tools": true,
+    "native_icons": 129,
+    "exact_nine_base_and_native_more_tools": true,
+    "whole_python_overlay": 7,
+    "preserved_default_bar_tool_files": 3
+  },
+  "independent_actual_reviews": {
+    "independent-compiled-initial-knife-policy-review.json": {
+      "status": "PASS_BOUNDED_ACTUAL_ARM64_INITIAL_KNIFE_POLICY",
+      "sha256_raw": "5a8a484a27f228acf4ec56acffe4de5166383acc5b71291930a7dc601865b4b4"
+    },
+    "independent-preserved-gates-review.json": {
+      "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+      "sha256_raw": "4d7ff7339fecc36cff01011d05121a066ca0ba89c8e5e2c0088980693229f244"
+    },
+    "independent-preserved-owner-stack-cfg-proof.json": {
+      "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_NORMAL_RETURN_CFG",
+      "sha256_raw": "c6e8a6b328c66dd183eaa888ca279c1435701b13e5432a2b91417c67a3d1f5eb"
+    },
+    "independent-compiled-preserved-input-render-review.json": {
+      "status": "PASS_BOUNDED_PRESERVED_INPUT_RENDER_CONDITIONAL_SHARED_POLICY_CALLEE",
+      "sha256_raw": "5e9b8fcfd07f9a0ee8dc37209aea43f88d4c1d2978e56fdb9e002ba8c907e206"
+    },
+    "cross-review-closure.json": {
+      "status": "PASS_BOUNDED_SHARED_POLICY_CROSS_REVIEW_CLOSED",
+      "sha256_raw": "417d84bcb2ea3d17a3d0adfd0756fd9540f1e555b63a8886e040d232eb22a901"
+    }
+  },
+  "conditional_preserved_policy_dependency": "Closed by cross-review-closure.json using actual current caller args, None rejection and selected enum3/retained1-2 proof; original conditional report remains untouched.",
+  "preserved_hud_raw_audit": {
+    "status": "failed unchanged",
+    "sha256": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0",
+    "resolved_bounded_obligation": "Fresh327/167 actual stack/normalreturn CFG proves saved-area restore0x10163dd44 before saved-region0x10163dd50 dominates normal return; native270/199 firstsize/init and Weight cleanup proven separately."
+  },
+  "host_source_evidence": {
+    "full": "837/837 812.516s 245 original frozen inputs unchanged",
+    "canonical_metadata_addendum": "Sole13CRLF historicalJSON normalized; parsed values/whole generated C++ identical; final canonical1/1 6.450s; no finalcanonical837rerun claimed",
+    "cold": "Emptycache140preflight +2newfamilies26.338s",
+    "source_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+    "changed_native_targets": 5,
+    "unchanged_prior_sections": 135,
+    "unchanged_python": 7,
+    "unchanged_GHOST": 14
+  },
+  "watcher_exitcode": 1,
+  "watcher_exit_disposition": "Full package/scopes collected; raw HUD checker limitation freshly resolved by bounded actual proof without changing checker/source.",
+  "new_build_dispatched": false,
+  "source_or_checker_changes_for_verification": false,
+  "ready_for_device_check": true,
+  "device_acceptance": false,
+  "whole_goal_complete": false,
+  "limits": [
+    "Bounded actual instruction/caller/argument/SDK-field/native-factory/normal-CFG evidence; no global heap/allocator/indirect-CFG/reentrancy/GPUcompletion/UIKit/runtime geometry/history/device proof.",
+    "Source/host/package/compiled evidence is separate from exact iPad acceptance. Current-value stock-compatible policy does not prove arbitrary customization history or accepted physical press/contact ownership."
+  ]
+}

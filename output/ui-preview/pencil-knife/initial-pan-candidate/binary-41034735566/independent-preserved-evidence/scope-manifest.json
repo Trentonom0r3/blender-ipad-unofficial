@@ -1,0 +1,299 @@
+{
+  "status": "EVIDENCE_CAPTURED_REVIEW_PENDING",
+  "run": 41034735566,
+  "source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "binary": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender",
+  "sha256": "82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23",
+  "uuid": "39FC56CA-D84B-3001-A8B8-6DE301E6B83F",
+  "fresh_utc": "2026-10-30T10:42:33.008107+00:00",
+  "scopes": {
+    "owner": {
+      "symbol": "__ZN12_GLOBAL__N_122ipad_hud_owner_captureEP8bContextP8wmWindowP7ScrAreaP7ARegionRNS_12IPadHUDOwnerE",
+      "start": "0x10163da3c",
+      "end_exclusive": "0x10163df58",
+      "instruction_count": 327,
+      "dump": "independent-preserved-evidence/owner.asm",
+      "dump_sha256": "bebf385d894a1b943ed6c3f11028d097443b546e98bff410ebe53bec455f79c2",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x10163da3c",
+        "--stop-address=0x10163df58",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "area_get": {
+      "symbol": "__Z11CTX_wm_areaPK8bContext",
+      "start": "0x1000b3ba0",
+      "end_exclusive": "0x1000b3bb8",
+      "instruction_count": 6,
+      "dump": "independent-preserved-evidence/area_get.asm",
+      "dump_sha256": "8b9c6de3024b9e95fb2b72124a95bab3a8c2aee4d23b56445f167a626dfee780",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1000b3ba0",
+        "--stop-address=0x1000b3bb8",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "region_get": {
+      "symbol": "__Z13CTX_wm_regionPK8bContext",
+      "start": "0x1000b3b88",
+      "end_exclusive": "0x1000b3ba0",
+      "instruction_count": 6,
+      "dump": "independent-preserved-evidence/region_get.asm",
+      "dump_sha256": "34b4ee66a01187b3ebdbfe12762cea3c316f2b164233588bd7298ad33492fe53",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1000b3b88",
+        "--stop-address=0x1000b3ba0",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "python_context_get": {
+      "symbol": "__ZL25ctx_wm_python_context_getPK8bContextPKcPK9StructRNAPv",
+      "start": "0x1000b4230",
+      "end_exclusive": "0x1000b43e0",
+      "instruction_count": 108,
+      "dump": "independent-preserved-evidence/python_context_get.asm",
+      "dump_sha256": "ab30e0fe84425a59a151e84f58eb62f69e2c4e9f318e96b2814e5d554e5cee4f",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1000b4230",
+        "--stop-address=0x1000b43e0",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "area_set": {
+      "symbol": "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+      "start": "0x1000b4aa8",
+      "end_exclusive": "0x1000b4b1c",
+      "instruction_count": 29,
+      "dump": "independent-preserved-evidence/area_set.asm",
+      "dump_sha256": "4a8c9118c212c4026cb93a3c8536a9e513764a9f583fd95f9c20feff56ebc970",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1000b4aa8",
+        "--stop-address=0x1000b4b1c",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "region_set": {
+      "symbol": "__Z17CTX_wm_region_setP8bContextP7ARegion",
+      "start": "0x1000b4b1c",
+      "end_exclusive": "0x1000b4b90",
+      "instruction_count": 29,
+      "dump": "independent-preserved-evidence/region_set.asm",
+      "dump_sha256": "190e9799d18f70e80472ba635e111d4f93c8913f21718558294a028c6e3835fa",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1000b4b1c",
+        "--stop-address=0x1000b4b90",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "refresh": {
+      "symbol": "__Z26UI_ipad_corner_hud_refreshP8bContextP7ScrArea",
+      "start": "0x101f92044",
+      "end_exclusive": "0x101f9247c",
+      "instruction_count": 270,
+      "dump": "independent-preserved-evidence/refresh.asm",
+      "dump_sha256": "8e00c366d800c061b9f6f1ffa9a40ed6becd5013fb0ca2133c8407330dd814e7",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101f92044",
+        "--stop-address=0x101f9247c",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "sizes": {
+      "symbol": "__Z27ED_area_update_region_sizesP15wmWindowManagerP8wmWindowP7ScrArea",
+      "start": "0x101623394",
+      "end_exclusive": "0x101623528",
+      "instruction_count": 101,
+      "dump": "independent-preserved-evidence/sizes.asm",
+      "dump_sha256": "7a0579ff183535a5e7365999754c76cd0527248faa44a42a7a2c4a9786773012",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101623394",
+        "--stop-address=0x101623528",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "tag_size": {
+      "symbol": "__Z30ED_area_tag_region_size_updateP7ScrAreaP7ARegion",
+      "start": "0x101622290",
+      "end_exclusive": "0x101622318",
+      "instruction_count": 34,
+      "dump": "independent-preserved-evidence/tag_size.asm",
+      "dump_sha256": "810172375f79e9bbd0cf7c58a0295dc304aae93eefe426dd88bfdea2c2683778",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101622290",
+        "--stop-address=0x101622318",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "factory": {
+      "symbol": "__Z16ED_area_type_hudi",
+      "start": "0x101f918d0",
+      "end_exclusive": "0x101f91ac0",
+      "instruction_count": 124,
+      "dump": "independent-preserved-evidence/factory.asm",
+      "dump_sha256": "6f0e3b45de660091b6ed35c60370ee248c1a1eea2568f7707c1bd7e75eb6f360",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101f918d0",
+        "--stop-address=0x101f91ac0",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "hud_layout": {
+      "symbol": "__ZL17hud_region_layoutPK8bContextP7ARegion",
+      "start": "0x101f91b28",
+      "end_exclusive": "0x101f91cd4",
+      "instruction_count": 107,
+      "dump": "independent-preserved-evidence/hud_layout.asm",
+      "dump_sha256": "fd3273eb32cd9013f8957d078072c747d88f37fa62398efe379eafdd7c778111",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101f91b28",
+        "--stop-address=0x101f91cd4",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "hud_init": {
+      "symbol": "__ZL15hud_region_initP15wmWindowManagerP7ARegion",
+      "start": "0x101f91d58",
+      "end_exclusive": "0x101f91d98",
+      "instruction_count": 16,
+      "dump": "independent-preserved-evidence/hud_init.asm",
+      "dump_sha256": "131908b1fae18aa17a1711a3082d27600226f8b99a09329f918b965287d1bd85",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101f91d58",
+        "--stop-address=0x101f91d98",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "panels_init": {
+      "symbol": "__Z21ED_region_panels_initP15wmWindowManagerP7ARegion",
+      "start": "0x101626a38",
+      "end_exclusive": "0x101626ac0",
+      "instruction_count": 34,
+      "dump": "independent-preserved-evidence/panels_init.asm",
+      "dump_sha256": "a61f06b884dc893fd9ff90812db779cd45c8a1d0745622fad200661758d4f646",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101626a38",
+        "--stop-address=0x101626ac0",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "floating_init": {
+      "symbol": "__Z23ED_region_floating_initP7ARegion",
+      "start": "0x1016241e8",
+      "end_exclusive": "0x101624294",
+      "instruction_count": 43,
+      "dump": "independent-preserved-evidence/floating_init.asm",
+      "dump_sha256": "22765931e56a2d4b19f553680f887dd19a77d83143fb372fb676b818a2c23d90",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x1016241e8",
+        "--stop-address=0x101624294",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "redraw": {
+      "symbol": "__Z20ED_region_tag_redrawP7ARegion",
+      "start": "0x101620de8",
+      "end_exclusive": "0x101620e20",
+      "instruction_count": 14,
+      "dump": "independent-preserved-evidence/redraw.asm",
+      "dump_sha256": "d83fd71a9eb2b4d92ba86a895716b1255b11844b491e10a4ecc956ec0013e580",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101620de8",
+        "--stop-address=0x101620e20",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "weight_cancel": {
+      "symbol": "__ZL13wpaint_cancelP8bContextP10wmOperator",
+      "start": "0x101dda028",
+      "end_exclusive": "0x101dda030",
+      "instruction_count": 2,
+      "dump": "independent-preserved-evidence/weight_cancel.asm",
+      "dump_sha256": "5c56784c222816b7afe19cd07dbcdd8dd511476aa69515bbe7aa63fd9281a937",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101dda028",
+        "--stop-address=0x101dda030",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "generic_paint_cancel": {
+      "symbol": "__ZN7blender2ed12sculpt_paint19paint_stroke_cancelEP8bContextP10wmOperatorPNS1_11PaintStrokeE",
+      "start": "0x101dc1df4",
+      "end_exclusive": "0x101dc1e98",
+      "instruction_count": 41,
+      "dump": "independent-preserved-evidence/generic_paint_cancel.asm",
+      "dump_sha256": "5404af6b9a63f124e8533964084a7e227f88ea5c74753db7b9d241aff6c16948",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101dc1df4",
+        "--stop-address=0x101dc1e98",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    },
+    "generic_paint_free": {
+      "symbol": "__ZN7blender2ed12sculpt_paint17paint_stroke_freeEP8bContextP10wmOperatorPNS1_11PaintStrokeE",
+      "start": "0x101dc0558",
+      "end_exclusive": "0x101dc0624",
+      "instruction_count": 51,
+      "dump": "independent-preserved-evidence/generic_paint_free.asm",
+      "dump_sha256": "59502d8b1c6dae3e6ba110996a19baa2671e2c345d008d8923809929138d168a",
+      "command": [
+        "C:\\Program Files\\LLVM\\bin\\llvm-objdump.exe",
+        "-d",
+        "--no-show-raw-insn",
+        "--start-address=0x101dc0558",
+        "--stop-address=0x101dc0624",
+        "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-knife\\initial-pan-candidate\\binary-41034735566\\Blender"
+      ]
+    }
+  }
+}

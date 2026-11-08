@@ -1,0 +1,122 @@
+{
+  "run": 41034735566,
+  "source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "uuid": "39FC56CA-D84B-3001-A8B8-6DE301E6B83F",
+  "sha256": "82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23",
+  "status": "PASS_BOUNDED_PRESERVED_HUD_AND_WEIGHT_GATES",
+  "fresh_binary_evidence": true,
+  "owner_restore": {
+    "status": "PASS_BOUNDED",
+    "proof": "independent-preserved-owner-stack-cfg-proof.json",
+    "flow": "Getter0x10163dcbc -> storeSP+8 at0x10163dcc0 -> reload0x10163dd40 -> area restore0x10163dd44, then saved x26 -> region restore0x10163dd50. Fresh327/167 instructions; ordered restores dominate only normal return0x10163db94."
+  },
+  "native_size_init": {
+    "status": "PASS_BOUNDED",
+    "allocation_call": "0x101f92168",
+    "created_region_alias": "x21 at0x101f9216c",
+    "native_size_call": "0x101f922c0",
+    "floating_init_call": "0x101f922c8",
+    "postcreation_layout_queries": [
+      "0x101f9224c",
+      "0x101f92360"
+    ],
+    "precreation_intent_query": "0x101f920a4 precedes allocation; no after-sizing claim.",
+    "cfg_instruction_count": 270,
+    "postcreation_reachable_count": 199,
+    "domination_checks": {
+      "0x101f922c8": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f9224c": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f92360": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      },
+      "0x101f9208c": {
+        "reachable": true,
+        "native_size_dominates": true,
+        "floating_init_dominates": true
+      }
+    },
+    "size_arguments": "x20=C,x19=area. Manager getter0x101f922a4 -> x22; window getter0x101f922b0 -> x1; x0=x22,x2=x19 at size. Floating gets actual new region x21.",
+    "size_bit": "Tag helper0x101622290 leaves/sets area+0x52 bit3 at0x10162229c/2a0. Intervening redraw0x101620de8 writes region runtime only. Size0x101623394/398 tests same bit.",
+    "native_type_init": "Fresh factory0x101f918d0..1ac0 has124instructions. ADRP/add0x101f91940/44 forms actual hud_init0x101f91d58 stored type+0x18 at0x101f91948; id8 stored+0x10 at0x101f91954. Refresh0x101f921c4 stores lookup type into new region.runtime+0x170. Size0x1016234d8/dc loads runtime+0x170 then type+0x18; nonnull call0x1016234ec gets manager x21,iterated region x23.",
+    "init_chain": "hud_init saves region x19 and calls native panels_init0x101626a38 at0x101f91d68 with original manager/region. Panels reinit0x101626a5c gets region+0x10,w1=4,signed dimensions+0xb8/+0xba in w2/w3, then native keymap handler tail0x101626abc on runtime+0x328. HUD init UI_region_handlers_add0x101f91d7c uses same runtime list.",
+    "floating_profile": "Fresh0x1016241e8..4294 computes visibility, dimensions+0xb8/+0xba from rect+0xa8/+0xb0 and region+0x50 rect.",
+    "layout_binding": "Factory0x101f91928/2c forms actual layout0x101f91b28, stored type+0x40 at0x101f91930. Actual layout calls native panels_layout0x10162670c at0x101f91b74. Registry/heap routing and no reentrant changes remain assumptions.",
+    "CFG_certificate": "independent-preserved-evidence/firstsize-cfg-certificate.json"
+  },
+  "weight_cleanup": {
+    "status": "PASS_BOUNDED",
+    "start": "0x101dda028",
+    "end_exclusive": "0x101dda030",
+    "instruction_count": 2,
+    "argument_flow": "C x0/op x1 unchanged; op.customdata+0x60 -> x2; tail0x101dda02c to actual generic cancel0x101dc1df4. No custom nulling, duplicate native done or separate deletion path.",
+    "generic_cancel": "Fresh41instruction0x101dc1df4..1e98 saves stroke x19,C x20; conditionally calls stroke+0x438/+0x440 with C/stroke and first callback cancel flag1. Frame restored before tail0x101dc1e94 to actual free0x101dc0558. x1 preservation across callbacks is not asserted; free does not consume x1.",
+    "native_free": "Fresh51instruction0x101dc0558..0624 resets native region/overlay flags, removes optional timer0x101dc05c8/cursor0x101dc05d4, clears stroke[0]0x101dc05dc before optional virtual deletion0x101dc05ec; final tail0x101dc0610 uses actual mem_guarded::internal::mem_freeN_ex global slot0x10665b710 (direct symbol inspection). Null stroke returns0x101dc0620. Dynamic target/callback/allocator runtime correctness is not proved."
+  },
+  "fresh_scope_manifest": "independent-preserved-evidence/scope-manifest.json",
+  "raw_automated_owner_status": "FAILED retained unchanged. Unsupported saved-areaSP+8 flow resolved solely by fresh bounded actual ABI/frame/normal-CFG evidence.",
+  "raw_owner_negative_retained": {
+    "status": "failed",
+    "issues": [
+      "Post-mutation exit has incomplete ordered restoration at 0x10163db94",
+      "Saved region restored before saved area at 0x10163dd50"
+    ],
+    "limitations": [
+      "Unproved area argument at 0x10163dd44"
+    ],
+    "instruction_states": 375,
+    "mutation_calls": [
+      "0x10163dcd8"
+    ],
+    "restoration_calls": [
+      "0x10163dd50"
+    ],
+    "post_mutation_return_sites": [
+      "0x10163db94"
+    ],
+    "setter_calls": [
+      [
+        "0x10163dcd8",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "A"
+      ],
+      [
+        "0x10163dd44",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "?"
+      ],
+      [
+        "0x10163dd50",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "SR"
+      ],
+      [
+        "0x10163dd70",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "?"
+      ]
+    ]
+  },
+  "raw_audit_sha256_unchanged": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0",
+  "raw_refresh_initialization_status": "passed",
+  "source_or_checker_changes": false,
+  "production_edits": false,
+  "build_dispatch": false,
+  "scope_limits": [
+    "AAPCS calls return normally and preserve callee-saved registers and valid local-frame storage; called code obeys passed buffer bounds.",
+    "Output x20/x23 is valid and disjoint from this local frame. Context/native heap objects and registry lookup routing are valid, without intervening reentrant changes.",
+    "Concrete intraprocedural normal CFG overapproximates conditional branches except freshly established created-path x22==0. Exceptions, nonlocal exits, arbitrary heap aliases and out-of-bounds writes are excluded.",
+    "No global heap/CFG/allocator/reentrancy, UIKit/GPU/runtime geometry, overall Undo/history, generic Weight completion correctness or device acceptance. Package/source/host/device evidence is separate."
+  ],
+  "device_acceptance": false,
+  "completed_utc": "2026-10-30T10:49:13.296713+00:00"
+}

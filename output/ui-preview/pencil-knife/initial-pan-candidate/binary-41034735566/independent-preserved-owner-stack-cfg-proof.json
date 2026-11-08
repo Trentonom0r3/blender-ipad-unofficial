@@ -1,0 +1,122 @@
+{
+  "run": 41034735566,
+  "source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "uuid": "39FC56CA-D84B-3001-A8B8-6DE301E6B83F",
+  "sha256": "82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23",
+  "status": "PASS_BOUNDED_ACTUAL_OWNER_STACK_AND_NORMAL_RETURN_CFG",
+  "scope_start": "0x10163da3c",
+  "scope_end_exclusive": "0x10163df58",
+  "owner_instruction_count": 327,
+  "post_mutation_entry": "0x10163dcdc",
+  "post_mutation_reachable_instruction_count": 167,
+  "all_post_mutation_normal_return_sites": [
+    "0x10163db94"
+  ],
+  "saved_area": {
+    "getter_call": "0x10163dcbc",
+    "store": "0x10163dcc0",
+    "slot": "SP+0x8",
+    "reload": "0x10163dd40",
+    "restoration_call": "0x10163dd44"
+  },
+  "saved_region": {
+    "getter_call": "0x10163dcc8",
+    "callee_saved_assignment": "0x10163dccc:x26",
+    "restoration_argument": "0x10163dd4c:x1=x26",
+    "restoration_call": "0x10163dd50"
+  },
+  "context": "Entry C -> callee-saved x19 at0x10163da6c; actual save/mutation/restore calls use x0=x19.",
+  "stack_frame": "Prologue saves0x60 then reserves0x1a0. SP fixed until ordered restoration. Complete function has exactly one SP+8 store and reload. Local buffers SP+0x10 and SP+0xd0 are disjoint from saved slot.",
+  "actual_getter_semantics": "Area/region getters load C+0x28/C+0x30 fallback x3 then tail resolver0x1000b4230. Resolver saves fallback x19; no usable override returns fallback on main thread or null at0x1000b4270. Typed Python override may return result+0x30 via0x1000b4334/4340. Saved getter results need not equal raw fields.",
+  "actual_setter_semantics": "Area0x1000b4ac8 advances C by0x88; stp0x1000b4acc writes C+0x28 and clears C+0x30. Region0x1000b4b3c advances C by0x88; stur0x1000b4b40 writes C+0x30. Native setters can clear Python context members; no Python dictionary restoration claim.",
+  "CFG_conclusion": "Fresh327 complete instructions;167 reachable after first mutation returns; only normal ret0x10163db94. Removing area restore disconnects region restore/all normal returns; removing region restore disconnects all normal returns.",
+  "unexpected_preserved_register_writes": [],
+  "direct_SP_accesses_before_restore": [
+    {
+      "address": "0x10163dd40",
+      "instruction": "ldr x1, [sp, #0x8]"
+    },
+    {
+      "address": "0x10163dd78",
+      "instruction": "ldp q0, q1, [sp, #0x150]"
+    },
+    {
+      "address": "0x10163dd84",
+      "instruction": "ldr q0, [sp, #0x170]"
+    },
+    {
+      "address": "0x10163dd8c",
+      "instruction": "ldp q0, q1, [sp, #0x110]"
+    },
+    {
+      "address": "0x10163dd98",
+      "instruction": "ldp q0, q1, [sp, #0x130]"
+    },
+    {
+      "address": "0x10163dda4",
+      "instruction": "ldp q0, q1, [sp, #0xd0]"
+    },
+    {
+      "address": "0x10163ddb0",
+      "instruction": "ldp q0, q1, [sp, #0xf0]"
+    },
+    {
+      "address": "0x10163ddc0",
+      "instruction": "ldr x9, [sp, #0x180]"
+    }
+  ],
+  "raw_owner_negative_retained": {
+    "status": "failed",
+    "issues": [
+      "Post-mutation exit has incomplete ordered restoration at 0x10163db94",
+      "Saved region restored before saved area at 0x10163dd50"
+    ],
+    "limitations": [
+      "Unproved area argument at 0x10163dd44"
+    ],
+    "instruction_states": 375,
+    "mutation_calls": [
+      "0x10163dcd8"
+    ],
+    "restoration_calls": [
+      "0x10163dd50"
+    ],
+    "post_mutation_return_sites": [
+      "0x10163db94"
+    ],
+    "setter_calls": [
+      [
+        "0x10163dcd8",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "A"
+      ],
+      [
+        "0x10163dd44",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "?"
+      ],
+      [
+        "0x10163dd50",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "SR"
+      ],
+      [
+        "0x10163dd70",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "?"
+      ]
+    ]
+  },
+  "raw_owner_audit_sha256_unchanged": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0",
+  "evidence_manifest": "independent-preserved-evidence/scope-manifest.json",
+  "CFG_certificate": "independent-preserved-evidence/owner-normal-return-cfg.json",
+  "assumptions": [
+    "AAPCS calls return normally and preserve callee-saved registers and valid local-frame storage; called code obeys passed buffer bounds.",
+    "Output x20/x23 is valid and disjoint from this local frame. Context/native heap objects and registry lookup routing are valid, without intervening reentrant changes.",
+    "Concrete intraprocedural normal CFG overapproximates conditional branches except freshly established created-path x22==0. Exceptions, nonlocal exits, arbitrary heap aliases and out-of-bounds writes are excluded.",
+    "No global heap/CFG/allocator/reentrancy, UIKit/GPU/runtime geometry, overall Undo/history, generic Weight completion correctness or device acceptance. Package/source/host/device evidence is separate."
+  ],
+  "production_or_checker_changes": false,
+  "device_acceptance": false,
+  "completed_utc": "2026-10-30T10:49:13.296713+00:00"
+}

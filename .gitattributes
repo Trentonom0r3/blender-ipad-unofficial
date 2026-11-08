@@ -21,3 +21,6 @@ build/tests/node_*/** text eol=lf
 # Keep the connected initial-Knife regression inputs stable across hosts.
 build/test_pencil_knife_initial_pan*.py text eol=lf
 build/tests/knife_initial_pan*/** text eol=lf
+
+# Preserve exact raw hashes of reviewed compiled evidence (metadata only).
+output/ui-preview/pencil-knife/initial-pan-candidate/binary-41034735566/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

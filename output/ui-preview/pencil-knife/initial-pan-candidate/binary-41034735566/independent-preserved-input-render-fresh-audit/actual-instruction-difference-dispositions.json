@@ -1,0 +1,236 @@
+[
+  {
+    "symbol": "__Z20wm_event_do_handlersP8bContext",
+    "old_instruction_count": 1976,
+    "new_instruction_count": 1976,
+    "changes": [
+      {
+        "old_pc": "0x100b55444",
+        "new_pc": "0x100b55444",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7029']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7262']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b55448",
+        "new_pc": "0x100b55448",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7029']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7262']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b55500",
+        "new_pc": "0x100b55500",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7023']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7256']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b55504",
+        "new_pc": "0x100b55504",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7023']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7256']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b558c8",
+        "new_pc": "0x100b558c8",
+        "old_instruction": "bl __ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb23eIPadNodeView2DDispatch",
+        "new_instruction": "bl __ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb22eIPadNativePanDispatch",
+        "disposition": "Actual renamed shared handler callee; same full preceding arguments including w7=0. Changed callee implementation is separately owned by initial-Knife policy reviewer",
+        "separate_policy_callee_obligation": true
+      },
+      {
+        "old_pc": "0x100b55940",
+        "new_pc": "0x100b55940",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7048']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7281']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b55944",
+        "new_pc": "0x100b55944",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7048']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:7281']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b55a38",
+        "new_pc": "0x100b55a38",
+        "old_instruction": "bl __ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb23eIPadNodeView2DDispatch",
+        "new_instruction": "bl __ZL24wm_handler_operator_callP8bContextP8ListBaseP14wmEventHandlerP7wmEventP10PointerRNAPKcb22eIPadNativePanDispatch",
+        "disposition": "Actual renamed shared handler callee; same full preceding arguments including w7=0. Changed callee implementation is separately owned by initial-Knife policy reviewer",
+        "separate_policy_callee_obligation": true
+      }
+    ]
+  },
+  {
+    "symbol": "__Z21WM_event_add_simulateP8wmWindowPK7wmEvent",
+    "old_instruction_count": 120,
+    "new_instruction_count": 120,
+    "changes": [
+      {
+        "old_pc": "0x100b4d8b0",
+        "new_pc": "0x100b4d8b0",
+        "old_instruction": "mov w1, #0xf1",
+        "new_instruction": "mov w1, #0xf5",
+        "disposition": "Diagnostic-only line-number argument to actual _BLI_assert_unreachable_print; adjacent path/function arguments and return edges exact"
+      }
+    ]
+  },
+  {
+    "symbol": "__Z23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvy",
+    "old_instruction_count": 1637,
+    "new_instruction_count": 1637,
+    "changes": [
+      {
+        "old_pc": "0x100b5b020",
+        "new_pc": "0x100b5b020",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9522']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9754']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b024",
+        "new_pc": "0x100b5b024",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9522']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9754']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b0b4",
+        "new_pc": "0x100b5b0b4",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9548']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9780']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b0b8",
+        "new_pc": "0x100b5b0b8",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9548']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9780']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b120",
+        "new_pc": "0x100b5b120",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9555']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9787']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b124",
+        "new_pc": "0x100b5b124",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9555']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9787']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b238",
+        "new_pc": "0x100b5b238",
+        "old_instruction": "mov w1, #0x2184",
+        "new_instruction": "mov w1, #0x226d",
+        "disposition": "Diagnostic-only line-number argument to actual _BLI_assert_unreachable_print; adjacent path/function arguments and return edges exact"
+      },
+      {
+        "old_pc": "0x100b5b748",
+        "new_pc": "0x100b5b748",
+        "old_instruction": "mov w1, #0x215d",
+        "new_instruction": "mov w1, #0x2246",
+        "disposition": "Diagnostic-only line-number argument to actual _BLI_assert_unreachable_print; adjacent path/function arguments and return edges exact"
+      },
+      {
+        "old_pc": "0x100b5b780",
+        "new_pc": "0x100b5b780",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8551']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8784']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5b784",
+        "new_pc": "0x100b5b784",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8551']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8784']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      }
+    ]
+  },
+  {
+    "symbol": "__Z23wm_event_add_ghosteventP15wmWindowManagerP8wmWindowiPKvy.cold.1",
+    "old_instruction_count": 10,
+    "new_instruction_count": 10,
+    "changes": [
+      {
+        "old_pc": "0x104a60180",
+        "new_pc": "0x104a60d40",
+        "old_instruction": "mov w1, #0x217e",
+        "new_instruction": "mov w1, #0x2267",
+        "disposition": "Diagnostic-only line-number argument to actual _BLI_assert_unreachable_print; adjacent path/function arguments and return edges exact"
+      }
+    ]
+  },
+  {
+    "symbol": "__ZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_",
+    "old_instruction_count": 186,
+    "new_instruction_count": 186,
+    "changes": [
+      {
+        "old_pc": "0x100b97628",
+        "new_pc": "0x100b9805c",
+        "old_instruction": "strb wzr, [x26, #0xe28]",
+        "new_instruction": "strb wzr, [x26, #0xe20]",
+        "disposition": "Actual EH cleanup writes same query_active global through preserved x26 page before same __Unwind_Resume binding; concrete relocated cell resolved, not ignored",
+        "old_cell": "0x107ef7e28",
+        "new_cell": "0x107ef7e20",
+        "identity": "__ZZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_E8querying",
+        "old_initial": "00",
+        "new_initial": "00"
+      },
+      {
+        "old_pc": "0x100b97630",
+        "new_pc": "0x100b98064",
+        "old_instruction": "strb wzr, [x26, #0xe28]",
+        "new_instruction": "strb wzr, [x26, #0xe20]",
+        "disposition": "Actual EH cleanup writes same query_active global through preserved x26 page before same __Unwind_Resume binding; concrete relocated cell resolved, not ignored",
+        "old_cell": "0x107ef7e28",
+        "new_cell": "0x107ef7e20",
+        "identity": "__ZZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_E8querying",
+        "old_initial": "00",
+        "new_initial": "00"
+      },
+      {
+        "old_pc": "0x100b97638",
+        "new_pc": "0x100b9806c",
+        "old_instruction": "strb wzr, [x26, #0xe28]",
+        "new_instruction": "strb wzr, [x26, #0xe20]",
+        "disposition": "Actual EH cleanup writes same query_active global through preserved x26 page before same __Unwind_Resume binding; concrete relocated cell resolved, not ignored",
+        "old_cell": "0x107ef7e28",
+        "new_cell": "0x107ef7e20",
+        "identity": "__ZZL23wm_ipad_knife_pan_probePKvbRKN5ghost3ios21PencilKnifePanContactERS3_E8querying",
+        "old_initial": "00",
+        "new_initial": "00"
+      }
+    ]
+  },
+  {
+    "symbol": "__ZL35wm_event_state_update_and_click_setP7wmEventyS0_Py16GHOST_TEventType",
+    "old_instruction_count": 108,
+    "new_instruction_count": 108,
+    "changes": [
+      {
+        "old_pc": "0x100b5c4cc",
+        "new_pc": "0x100b5c4cc",
+        "old_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8937']",
+        "new_instruction": "adrp x2, CFG_PAGE_CONSUMERS[1:STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9169']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      },
+      {
+        "old_pc": "0x100b5c4d0",
+        "new_pc": "0x100b5c4d0",
+        "old_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:8937']",
+        "new_instruction": "add x2, x2, REF[STRING:b'source/blender/windowmanager/intern/wm_event_system.cc:9169']",
+        "disposition": "CLOG source-position string line digits only; actual full strings retained"
+      }
+    ]
+  }
+]

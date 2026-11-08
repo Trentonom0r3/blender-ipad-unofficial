@@ -1,0 +1,126 @@
+{
+  "status": "PASS_BOUNDED_ACTUAL_TEXT_SITE_RECONCILIATION",
+  "scans": [
+    {
+      "label": "old",
+      "generate_stub": {
+        "symbol": "_objc_msgSend$generateUserInputEvents:",
+        "address": "0x104b78620"
+      },
+      "calls": [
+        "0x1010ad1cc",
+        "0x1010adb10",
+        "0x1010adccc",
+        "0x1010ae35c",
+        "0x1010ae480",
+        "0x1010ae9e0",
+        "0x1010aedb0",
+        "0x1010aee38",
+        "0x1010aefd0",
+        "0x1010af0e0",
+        "0x1010af254",
+        "0x1010af5c0",
+        "0x1010af838",
+        "0x1010afa38",
+        "0x1010afd60"
+      ],
+      "trackpad_vtable": {
+        "symbol": "__ZTV19GHOST_EventTrackpad",
+        "address": "0x1063ff438"
+      },
+      "vtable_address_producers": [
+        {
+          "adrp_pc": "0x1010abc1c",
+          "consumer_pc": "0x1010abc20",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010abc98",
+          "consumer_pc": "0x1010abc9c",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010ac0bc",
+          "consumer_pc": "0x1010ac0c0",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010ac320",
+          "consumer_pc": "0x1010ac324",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010aec14",
+          "consumer_pc": "0x1010aec18",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010b11b4",
+          "consumer_pc": "0x1010b11b8",
+          "target": "0x1063ff438"
+        }
+      ]
+    },
+    {
+      "label": "new",
+      "generate_stub": {
+        "symbol": "_objc_msgSend$generateUserInputEvents:",
+        "address": "0x104b791e0"
+      },
+      "calls": [
+        "0x1010adc0c",
+        "0x1010ae550",
+        "0x1010ae70c",
+        "0x1010aed9c",
+        "0x1010aeec0",
+        "0x1010af420",
+        "0x1010af7f0",
+        "0x1010af878",
+        "0x1010afa10",
+        "0x1010afb20",
+        "0x1010afc94",
+        "0x1010b0000",
+        "0x1010b0278",
+        "0x1010b0478",
+        "0x1010b07a0"
+      ],
+      "trackpad_vtable": {
+        "symbol": "__ZTV19GHOST_EventTrackpad",
+        "address": "0x1063ff438"
+      },
+      "vtable_address_producers": [
+        {
+          "adrp_pc": "0x1010ac65c",
+          "consumer_pc": "0x1010ac660",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010ac6d8",
+          "consumer_pc": "0x1010ac6dc",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010acafc",
+          "consumer_pc": "0x1010acb00",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010acd60",
+          "consumer_pc": "0x1010acd64",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010af654",
+          "consumer_pc": "0x1010af658",
+          "target": "0x1063ff438"
+        },
+        {
+          "adrp_pc": "0x1010b1bf4",
+          "consumer_pc": "0x1010b1bf8",
+          "target": "0x1063ff438"
+        }
+      ]
+    }
+  ],
+  "interpretation": "All15 native generate-message call sites and all6 actual Trackpad vtable ADRP/add construction producers are freshly enumerated. Exact containing complete bodies/relative offsets and full data/fixup references reconcile. Collector constructor matches were destructor aliases; actual constructions are these inlined producers."
+}

@@ -1,3 +1,33 @@
+## Initial Pencil Knife package verified for iPad check — 2026-11-08 UTC
+
+Production a2b7a81c9d40c1273ad2dc13a600810940b1e30d / run41034735566 passed hosted
+preflight, native iOS Release, full downloaded3368 CRC/arm64/iPhoneOS5.0.0, exact
+interaction UI/default bars/toolbar/pinned tools/all129 icons/nine Base/native-only
+More Tools and whole7Python+3defaultbar/tool files. Artifact12970123663 remains
+available. IPA248691468bytes/SHA25634b92b357c745494796b993dbdc84ade72b2e2efbb9028bf8ee4d7640a0b9c57.
+UUID39FC56CA-D84B-3001-A8B8-6DE301E6B83F; binarySHA256
+82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23.
+
+Three independent ACTUAL compiled reviews and fresh cross-review closure pass:
+selected native Knife/Zoom grant and original-owner/map/mode/emulation policy;
+preserved HUD/Weight; preserved input/Node/render/gizmo/higher UI234ranges. Actual
+callers, native factories/fields, real poll/preallocation, decoded data/Cstrings,
+opaque callback CFG and all conditional dependencies are resolved. Raw HUD checker
+negative is retained unchanged; fresh327/167 stack/normalreturn proof orders area
+restore0x10163dd44 before region0x10163dd50. Native270/199 firstsize/init and Weight
+cleanup pass. No checker or production source was changed for this verification.
+These bounded obligations do not prove global heap/CFG/GPU/UIKit/history/device behavior.
+
+Read initial-pan-candidate/native-package-verification.json and exact binary
+reviews/closure. Ready for an exact iPad check; NO device acceptance or full-goal
+completion. No live verifier or unchanged rebuild. Host837/812.516s245 frozen
+inputs plus explicit soleJSON LF/generated-C++/focused addendum, cold2/26.338s,
+preflight140 and independent source/literal/test review remain honestly scoped.
+Five native targets only;135 prior/all7Python/all14GHOST exact. Preserve all
+accepted ring, bars, controls, input/history and lifetime guards. Continue without
+waiting for device feedback. The next Node-link workflow audit is read-only; no
+next corrective source/test/CI exists. Never commit binaries/private crash/cache.
+
 ## Pencil Node package fully verified for exact device check — 2026-10-28 UTC
 
 Production3d7b248aa298c3dcb7cf1c188d279702405e81a3/run40728695044 PASSED hosted

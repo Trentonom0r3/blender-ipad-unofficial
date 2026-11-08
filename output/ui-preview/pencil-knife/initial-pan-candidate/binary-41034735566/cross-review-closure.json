@@ -1,0 +1,154 @@
+{
+  "status": "PASS_BOUNDED_SHARED_POLICY_CROSS_REVIEW_CLOSED",
+  "created_utc": "2026-11-08T04:43:21.900106+00:00",
+  "run": "41034735566",
+  "source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "binary_uuid": "39FC56CA-D84B-3001-A8B8-6DE301E6B83F",
+  "binary_sha256": "82c02e1ea9b44b04e4f0f2df5ad9ee2034fe30facdcea298f0b5fbeab6aefa23",
+  "baseline_run": "40728695044",
+  "baseline_binary_uuid": "304A549C-32F4-3519-9753-23020BC014CC",
+  "baseline_binary_sha256": "8ad43016e93de40e7f8a79ff823f1c967b2768b60a2534db0b38c786d1ea4275",
+  "scope": "Independent closure only of shared_renamed_handler_callee in the unchanged preserved input/render report, by joining its actual caller arguments with the separately reviewed current native policy/enum behavior and underlying saved machine evidence. No name/marker/count-only acceptance.",
+  "inputs": [
+    {
+      "file": "independent-compiled-initial-knife-policy-review.json",
+      "sha256": "5a8a484a27f228acf4ec56acffe4de5166383acc5b71291930a7dc601865b4b4"
+    },
+    {
+      "file": "independent-compiled-preserved-input-render-review.json",
+      "sha256": "5e9b8fcfd07f9a0ee8dc37209aea43f88d4c1d2978e56fdb9e002ba8c907e206"
+    },
+    {
+      "file": "independent-preserved-gates-review.json",
+      "sha256": "4d7ff7339fecc36cff01011d05121a066ca0ba89c8e5e2c0088980693229f244"
+    },
+    {
+      "file": "independent-preserved-owner-stack-cfg-proof.json",
+      "sha256": "c6e8a6b328c66dd183eaa888ca279c1435701b13e5432a2b91417c67a3d1f5eb"
+    },
+    {
+      "file": "independent-policy-machine-evidence.json",
+      "sha256": "39b94710e6e796dd56dbd8883759d84174ad1bc5c1429fb9d3016095a82fe253"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/evidence-sha256-manifest.json",
+      "sha256": "3ac94ed3bf1064263083a23b0544688a290600c48b41ae3a61e037e9a3480d73"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/semantically-reconciled-manifest.json",
+      "sha256": "bc1f24e53ca5a64328ad608d14e46009fd3085ccd57ec449e815577db4e37462"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/actual-reference-fixup-reconciliation.json",
+      "sha256": "2d6c883a8189e929816b47653f9b2dd52005b7fea82d9c285c52e1c74e55f01e"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/actual-string-and-data-dispositions.json",
+      "sha256": "9b47f3745bc977a0306191764e3c85d3fcc26fbb7c10de3fd253a319350fa4f1"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/actual-instruction-difference-dispositions.json",
+      "sha256": "d45a8bae34123177eb4effc85c58c10e504ceaf1977031c6977d213f6a1673eb"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/actual-native-field-bindings.json",
+      "sha256": "4ccf758ac97aa553f7fca9d5f5815a5fd69e41f9ca18628742092d7b9abe242b"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/fresh-per-group-preparation-constrained-cfg.json",
+      "sha256": "370cd7d94b073a5a0c3dd968d7c2388a2c6e464556f6cd28ba8d8347f6f8cc5f"
+    },
+    {
+      "file": "independent-preserved-input-render-fresh-audit/fresh-whole-text-construction-and-sender-scan.json",
+      "sha256": "07631fc113d98535cbf89c08a6127e0bdb66760214f5f98ac2a170144e528b78"
+    },
+    {
+      "file": "launch-audit/audit.json",
+      "sha256": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0"
+    }
+  ],
+  "integrity": {
+    "current_and_baseline_executable_sha_uuid_recomputed": true,
+    "preserved_saved_evidence_entries": 486,
+    "preserved_saved_evidence_hash_mismatches": [],
+    "policy_saved_assembly_entries": 179,
+    "policy_saved_assembly_hash_mismatches": [],
+    "report_embedded_range_entries": 194,
+    "report_range_fields_match_saved_manifest": true,
+    "actual_binary_spotchecks": "Current Mach-O words at five handler callers and three programmatic invoke callers are MOVZ w7,#0 (0x52800007); their actual B/BL immediates target 0x100b524d0 or 0x100b5d30c respectively. Actual 0x100b5f964 is MOVZ w8,#3 (0x52800068). Whole-text xref completeness remains the existing reviewed machine-evidence scan, not a new global CFG claim."
+  },
+  "dependency": {
+    "id": "shared_renamed_handler_callee",
+    "input_status": "AWAIT_SEPARATE_POLICY_REPORT",
+    "status": "CLOSED_BOUNDED_ACTUAL_CALLER_ARGUMENT_AND_ENUM_PROOF",
+    "conditional_sites": [
+      "0x100b558c8",
+      "0x100b55a38"
+    ],
+    "none_callers": [
+      "0x100b51d78",
+      "0x100b558c8",
+      "0x100b55a38",
+      "0x100b5efa8",
+      "0x100b610b4"
+    ],
+    "programmatic_none_invoke_callers": [
+      "0x100b4ed8c",
+      "0x100b4edf0",
+      "0x100b4ee44"
+    ],
+    "only_grant_capable_handler_site": "0x100b5f6a0",
+    "none_behavior": "Both conditional sites retain complete preceding arguments including w7=0. Invoke-capable handler path saves private x7 in x24 at0x100b524f0 and forwards it at0x100b5298c/990; the separate existing-op/modal branch may reuse x24 as op.type and does not enter that invocation path. Invoke saves scalar in x21 at0x100b5d348 and passes it to profile at0x100b5d368/36c. Profile cmpw3,3 at0x100b5d8ec branches to Node gate for0; Node gate cbzw2 at0x100b5df5c returns false before Python/context/type/profile work. Thus None cannot acquire a new denial; genuine native poll and normal fallback remain. Post-poll csel at0x100b5d388 repeats only None for this case.",
+    "knife3_behavior": "Saved actual selected ordinary-keymap corridor0x100b5f75c..0x100b5f96c is reached after native map poll/event match. It rechecks ordinary positive precision PAN/Ctrl-only/no-Python/emulation exclusions, fresh original same-region Knife owner/maps/mode, static registered handler/current keyconfigs and actually selected effective map. Default/effective raw native zoom-item checks at0x100b5f934/944 must return a nonnull default and the actual matched x26 with matching positive IDs; only then0x100b5f964/968 selects private w7=3 and returns to0x100b5f6a0. Shared enum3 profile repeats current owner/mode/event and authentic native Zoom checks both before/after genuine native poll. Eligible refusal returns CANCELLED2 at0x100b5d3a0 before allocation0x100b5d3f4. This is the separately reviewed bounded denial policy, not a new press/owner/contact grant.",
+    "node1_2_behavior": "Actual Node gate subtracts1 and unsigned-compares<=1 at0x100b5dfb4..bc, accepting only1/2; modifier0 selects1 and Ctrl-only2 selects2. Actual selected Node corridor0x100b5f2dc..66c keeps current static map/25-item/25-ID and chosen-index4/16 checks and forwards1/2 at0x100b5f668. Shared profile separately tests3, then existing Node gate and authentic View2D type at0x101fe5720 (zoom iff2). Node pre/post-profile/native-poll/preallocation behavior is retained within the policy report scope.",
+    "xref_limit": "Existing actual whole-__text immediate B/BL scan has six handler and four invoke sites; direct argument corridors were inspected. No arbitrary indirect entry/call or global control-flow completeness is asserted."
+  },
+  "preserved_reconciliation_disposition": {
+    "actual_complete_ranges": 234,
+    "strict_instruction_equivalent": 228,
+    "explicitly_reconciled_functions": 6,
+    "excluded_ranges": [],
+    "interpretation": "All six saved instruction-difference dispositions exactly match the report raw_changes array. Eight full Cstrings differ only in CLOG source line digits; four assert immediate changes are diagnostic line numbers; three EH guard stores relocate the same query_active cell; two handler BL changes are the dependency closed here. No remaining raw difference is silently discarded.",
+    "decoded_fixups_old_new": [
+      411563,
+      411563
+    ],
+    "references": {
+      "total": 1207,
+      "data": 1126,
+      "code": 81
+    },
+    "full_cstrings": 332,
+    "exact_full_cstrings": 324,
+    "diagnostic_line_cstrings": 8,
+    "raw32_data_mismatches": 3,
+    "raw32_disposition": "Two Knife Tool Modal Map references and VIEW2D_OT_zoom_border have identical complete bytes through NUL; only neighboring post-NUL bytes differ. Saved full-string evidence resolves all three. Native registration/calloc/free/probe cells use decoded actual initialized targets/bindings, not nearest symbol names.",
+    "semantic_data_mismatches": 0,
+    "opaque_CFG": "Saved actual74-node constrained per-group CFG and actual instructions agree: stores0x100b3fa14/+1 and0x100b3fa1c/+3 precede both polls0x100b3fa38/58, backwards ensure-init0x100b3f9d0 and draw_prepare BLR0x100b3fa94. Native current live-region and ordinary lifetime assumptions remain explicit; null script/region branches are not recast as unconditional dominance.",
+    "EH_guard": "Actual old0x100b97628/30/38 use x26-page+e28, current0x100b9805c/64/6c use x26-page+e20; both address the same zero-initialized querying identity, old0x107ef7e28/current0x107ef7e20, before the same __Unwind_Resume binding. This dispositions the relocation without claiming general exception safety."
+  },
+  "preserved_gates_dependency": {
+    "status": "SEPARATELY_CLOSED_BOUNDED_BY_PRESERVED_GATES_REPORT",
+    "raw_hud_status": "FAILED_RETAINED_UNCHANGED",
+    "raw_hud_sha256": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0",
+    "manual_owner_resolution": "Existing fresh327/167-instruction local-stack/normal-return proof restores saved SP+8 area at0x10163dd44 before saved region at0x10163dd50; native firstsize/init and Weight cleanup remain owned by the separate exact report. No checker/report weakening or overwrite."
+  },
+  "findings": [],
+  "remaining_within_closure_scope": [],
+  "limits": [
+    "Closure joins the exact existing bounded reports; it does not replace or rewrite their statuses, redo234-range disassembly/reconciliation, or independently certify the entire package.",
+    "Ordinary native ABI/dyld bindings/live objects and report-specific no-reentrant-mutation assumptions apply. No global heap/allocator/CFG, arbitrary indirect-call, GPU completion, UIKit, runtime geometry, Undo/history or device claim.",
+    "Current-value compatibility can include value-identical custom map history; no accepted DOWN, press/contact lease, general lifetime or prior callback-history proof follows.",
+    "Source/host/native/package/compiled/device evidence remains separate. Package aggregation and readiness decision belong to the root task; exact device acceptance and full personal-goal completion remain false."
+  ],
+  "production_edits": false,
+  "test_edits": false,
+  "checker_edits": false,
+  "existing_reports_overwritten": false,
+  "new_build": false,
+  "completed_checks_rerun": false,
+  "evidence_only": true,
+  "package_ready_claim": false,
+  "device_acceptance": false,
+  "whole_goal_complete": false
+}

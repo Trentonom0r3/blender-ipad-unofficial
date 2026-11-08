@@ -1,0 +1,45 @@
+{
+  "raw_audit_sha256": "ef92ea291ca79d99cb7473b62a3e41a7c9b1e70f86cf7ed7f793759c22a3bfd0",
+  "owner_restoration": {
+    "status": "failed",
+    "issues": [
+      "Post-mutation exit has incomplete ordered restoration at 0x10163db94",
+      "Saved region restored before saved area at 0x10163dd50"
+    ],
+    "limitations": [
+      "Unproved area argument at 0x10163dd44"
+    ],
+    "instruction_states": 375,
+    "mutation_calls": [
+      "0x10163dcd8"
+    ],
+    "restoration_calls": [
+      "0x10163dd50"
+    ],
+    "post_mutation_return_sites": [
+      "0x10163db94"
+    ],
+    "setter_calls": [
+      [
+        "0x10163dcd8",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "A"
+      ],
+      [
+        "0x10163dd44",
+        "__Z15CTX_wm_area_setP8bContextP7ScrArea",
+        "?"
+      ],
+      [
+        "0x10163dd50",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "SR"
+      ],
+      [
+        "0x10163dd70",
+        "__Z17CTX_wm_region_setP8bContextP7ARegion",
+        "?"
+      ]
+    ]
+  }
+}
