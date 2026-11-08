@@ -1,3 +1,30 @@
+## Node-link read-only characterization checkpoint — 2026-11-08 UTC
+
+The exact a2b7a81/run41034735566 Knife package is fully verified and was offered
+for an iPad check; no device reply or acceptance yet. Evidence-only dd09f04 closes
+its native/package/compiled gates. No unchanged build is needed. Full goal remains
+unfinished; continue without waiting for hardware feedback.
+
+Read pencil-node-link-workflow/next-audit.json and characterization-report.json.
+Four exact Python keymap branches and bounded source O0/O2 each14 supplied cases
+pass. Actual producer/WM temporary-coordinate wrapper/drag-start helper/native
+Node invoke/modal/terminal cleanup slices execute with named primitive boundaries.
+CLICK_DRAG retains currentxy while native drag-start selects prev_press_xy;
+RELEASE-to-CLICK separately rewrites/restoresxy. Confirm does not repick sockets on
+release; only prior motion changes endpoints. Native padding prefix executes at
+three supplied scales; this is not full socket acquisition/geometry proof.
+
+Held-tip barrel remains blocked; release confirms, native RMB/Escape cancels and
+status Cancel is a label. Fresh empty release/search and existing-input detach
+have different semantics. No generic rollback or user-facing defect is asserted.
+Full pointer ingestion, actual nearest-socket/init/BKE graph mutation/popup delivery
+and wm_operator_finished/Undo/Redo remain explicit unexecuted frontiers. Exact
+native graph/history characterization is the next step before any correction.
+No next production/test/CI edit or new native build exists. All original local
+source/audits/compiler diagnostics/executables are preserved; generated/binary
+probe artifacts are excluded from Git. Preserve every accepted UI/input/lifetime
+contract and selection-collapsed.png.
+
 ## Initial Pencil Knife package verified for iPad check — 2026-11-08 UTC
 
 Production a2b7a81c9d40c1273ad2dc13a600810940b1e30d / run41034735566 passed hosted

@@ -1,0 +1,198 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_CHARACTERIZATION; NOT END_TO_END_GRAPH_HISTORY_PROOF",
+  "utc": "2026-11-08T05:03:00.081758+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "driver_sha256": "95424f3ca3b9dd9e8ba9827b29daad2fea079c303167f835ed9857a394125612",
+  "adapter_sha256": "ad7d8030fb399d826a8c077a296f7f86f34122a7d75a4b7877c2f8c5cefb568e",
+  "generated_cpp_sha256": "6d5414a8266cddb726b1f6a71d89128b6fc99f065ec36dc93261f60d265b54e2",
+  "inputs": {
+    "intern/ghost/intern/GHOST_EventCursor.hh": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+    "intern/ghost/intern/GHOST_EventButton.hh": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "source/blender/windowmanager/intern/wm_event_query.cc": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a",
+    "source/blender/editors/space_node/node_relationships.cc": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+    "source/blender/editors/screen/screen_ops.cc": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "source/blender/editors/interface/view2d/view2d.cc": "12af3000d88961de66ef4db9e981210474b25273e97f9551b52be443e9eea55f",
+    "source/blender/editors/space_node/node_intern.hh": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8",
+    "source/blender/editors/space_node/node_edit.cc": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d",
+    "source/blender/windowmanager/wm_event_types.hh": "a97655ea6a76d90a667010236e5b2b3237d5b67df1150bfe925be6f9b07752ce"
+  },
+  "source_extracts": {
+    "class GHOST_EventCursor :": {
+      "sha256": "33681790e53183a0b8d8426f381db37e0495642ac9c8ee4de699c96a617cfe52",
+      "bytes": 1696
+    },
+    "class GHOST_EventButton :": {
+      "sha256": "76cbbd8b08220c7d159ee4da58e952c6b319a6e949b515d2dba5c3b2fdb89036",
+      "bytes": 1754
+    },
+    "static void wm_region_mouse_co(": {
+      "sha256": "86581df977d6e0b43c46ee86ecb1f23fd016fe4ebfbfeaa3a0d41fda2614f053",
+      "bytes": 430
+    },
+    "static void wm_event_prev_values_set(": {
+      "sha256": "d0d668c77c558edc575f0a3affca222b47ca62756d8744784c65c492ae4cbdcc",
+      "bytes": 205
+    },
+    "static void wm_event_prev_click_set(": {
+      "sha256": "920944128d2a7994ea12467ca1dbffbe8273ce066b51ab4ed65f4045bbdfa1e6",
+      "bytes": 540
+    },
+    "static void wm_event_state_update_and_click_set_ex(": {
+      "sha256": "54dab8801f85a33f6aa8d89e17fdd95e5ee1971c4de83d6b1b79218ae69c4d1d",
+      "bytes": 1816
+    },
+    "int WM_event_drag_threshold(": {
+      "sha256": "492980fd3c13b79c7718c19c991cf597d23fb8ee1700dab5abf67910e3fe74f9",
+      "bytes": 751
+    },
+    "bool WM_event_drag_test_with_delta(": {
+      "sha256": "125e5f207b83adbcdb97c1a1d2eb40b256c7862b369ca526de7b33b8199c1fb9",
+      "bytes": 231
+    },
+    "bool WM_event_drag_test(": {
+      "sha256": "dcba52a150d072419dc16708b05405e2a4739527381324df8a420e6fd29c4178",
+      "bytes": 202
+    },
+    "void WM_event_drag_start_mval(": {
+      "sha256": "be211cb5634a10f7393092395056354b4518b91d4ee921bd667d6ffc81c83c1b",
+      "bytes": 263
+    },
+    "static bool wm_event_is_double_click(": {
+      "sha256": "df7ae17be936d6a071bbc95d2cc8ba82efa080bcc74f7b57b1155072116620a3",
+      "bytes": 587
+    },
+    "exact native socket finder padding prefix": {
+      "sha256": "c8d1f8341942c42d9169c999761eb3f341b2837b9aa36d54879471fa5732b0f1",
+      "bytes": 212
+    },
+    "float UI_view2d_scale_get_x(": {
+      "sha256": "bc339b3fa387352da980e06246ad9134ad02cdb56f9dac2e7c2ee3116d6d03c9",
+      "bytes": 117
+    },
+    "bool ED_operator_node_editable(": {
+      "sha256": "3737b97fdffa9a1ef214ae03f65fd5fa2adb3ba8c4a5392eb65aebaed9ba259a",
+      "bytes": 225
+    },
+    "static bool dragged_links_are_detached(": {
+      "sha256": "d1c33db12cacd48f02150da1a020ddccf56aa7321cbd0843266d161af3101052",
+      "bytes": 392
+    },
+    "static bool should_create_drag_link_search_menu(": {
+      "sha256": "808eb34969b21610f6d4256e6d74d62a02eea960a096ac68ee3a5364e571f9bb",
+      "bytes": 1114
+    },
+    "static bool need_drag_link_tooltip(": {
+      "sha256": "f4a37b11a3a6ba6fa69a671854318dd09bb62af55b918bfc99e1b78743d53059",
+      "bytes": 181
+    },
+    "static void node_link_cancel(": {
+      "sha256": "f5a1338ef9fd4c7f689c69d9304e5007e4831f275433470cf20a3ccdbb4d26e2",
+      "bytes": 490
+    },
+    "enum class NodeLinkAction :": {
+      "sha256": "ec75937db9420ac8284270b6cbd1c24cdeb407e838236d6f4877524b513612ee",
+      "bytes": 89
+    },
+    "static wmOperatorStatus node_link_modal(": {
+      "sha256": "7e926274c3d99bf11a2975680269fd80588f47934c3a34eda290c8f7f7600f72",
+      "bytes": 2179
+    },
+    "static wmOperatorStatus node_link_invoke(": {
+      "sha256": "0a86521e0c4738509532eed678862b9cfc8e0ebca2fff75c1f757e15b1344afb",
+      "bytes": 1135
+    },
+    "static void wm_event_modalkeymap_begin(": {
+      "sha256": "414b51fead7298d3ff70f82bbce0f201d44a3db30953136cf1cd7dfd8e73da64",
+      "bytes": 1910
+    },
+    "static void wm_event_modalkeymap_end(": {
+      "sha256": "dd08ae165b1b2c299b33dd171d7ffd3bb0049ac373ca93a1a2e071d1a26f90ab",
+      "bytes": 384
+    },
+    "derived modal call through normal terminal cleanup slice": {
+      "sha256": "09e55d83e6e9b062a504a5d9f388b3a90eead84975271bcbe482bc73a939d4e6",
+      "bytes": 4178
+    },
+    "static eHandlerActionFlag wm_handlers_do(": {
+      "sha256": "a238b8f1240ad99a0d6a80f0a306d81588af6518b007aba4ae4a98eedb1c6dec",
+      "bytes": 6325
+    }
+  },
+  "producer_generation_input_hashes": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "intern/ghost/GHOST_Types.h": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+    "intern/ghost/intern/GHOST_EventTrackpad.hh": "fec0af440b26baed8ff57f2bc771a9cc51fc0c76966706137202d7e59ff5f23b",
+    "source/blender/windowmanager/intern/wm_event_system.cc": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+    "source/blender/windowmanager/WM_types.hh": "9d18a84359160a24575565eab401b6e22c763d4f83ed7ed7c52c17b961f2ae3a",
+    "upstream:source/blender/blenlib/BLI_utildefines.h": "710af7d11d698195e088b1eb6cbf4b92befb489527a0c58f33ce0b1fcae6b312"
+  },
+  "executions": [
+    {
+      "optimization": "-O0",
+      "returncode": 0,
+      "stdout": "{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":0.25,\"fixture_widget_unit\":20,\"max_distance_view_units\":35,\"padded_socket_size_view_units\":9}\n{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":2,\"fixture_widget_unit\":20,\"max_distance_view_units\":15,\"padded_socket_size_view_units\":9}\n{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":8,\"fixture_widget_unit\":20,\"max_distance_view_units\":10,\"padded_socket_size_view_units\":9}\n{\"case\":\"connected_begin_move_confirm\",\"recognized_press\":[110,900],\"motion_event_xy\":[118,900],\"invoke_mval_current\":[108,880],\"native_drag_start_view\":[50,440],\"physical_origin_x_supplied\":100,\"actual_init_boundary_calls\":1,\"finish_boundary_calls\":1}\n{\"case\":\"release_click_fallback_restores_xy\",\"click_calls\":1,\"temporary_click_xy_x\":110,\"retained_mval_x_before_invoke_boundary\":102,\"restored_release_xy_x\":112,\"node_init_calls\":0}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":0,\"move_selects_target_boundary\":0,\"search_boundary_calls\":1,\"complete_at_commit_boundary\":0,\"incomplete_at_commit_boundary\":1}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":0,\"move_selects_target_boundary\":1,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":1,\"incomplete_at_commit_boundary\":0}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":1,\"move_selects_target_boundary\":0,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":0,\"incomplete_at_commit_boundary\":1}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":1,\"move_selects_target_boundary\":1,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":1,\"incomplete_at_commit_boundary\":0}\n{\"case\":\"release_position_does_not_repick\",\"find_calls\":0,\"copied_endpoints_complete\":true}\n{\"case\":\"native_cancel\",\"event_type\":3,\"cancel_edge_boundary_calls\":1,\"finished_boundary_calls\":0,\"original_handler_freed\":true}\n{\"case\":\"native_cancel\",\"event_type\":218,\"cancel_edge_boundary_calls\":1,\"finished_boundary_calls\":0,\"original_handler_freed\":true}\n{\"case\":\"poll_or_socket_init_refusal\",\"failure\":0,\"modal_added\":false}\n{\"case\":\"poll_or_socket_init_refusal\",\"failure\":1,\"modal_added\":false}\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "returncode": 0,
+      "stdout": "{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":0.25,\"fixture_widget_unit\":20,\"max_distance_view_units\":35,\"padded_socket_size_view_units\":9}\n{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":2,\"fixture_widget_unit\":20,\"max_distance_view_units\":15,\"padded_socket_size_view_units\":9}\n{\"case\":\"actual_socket_padding_prefix\",\"fixture_view_scale\":8,\"fixture_widget_unit\":20,\"max_distance_view_units\":10,\"padded_socket_size_view_units\":9}\n{\"case\":\"connected_begin_move_confirm\",\"recognized_press\":[110,900],\"motion_event_xy\":[118,900],\"invoke_mval_current\":[108,880],\"native_drag_start_view\":[50,440],\"physical_origin_x_supplied\":100,\"actual_init_boundary_calls\":1,\"finish_boundary_calls\":1}\n{\"case\":\"release_click_fallback_restores_xy\",\"click_calls\":1,\"temporary_click_xy_x\":110,\"retained_mval_x_before_invoke_boundary\":102,\"restored_release_xy_x\":112,\"node_init_calls\":0}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":0,\"move_selects_target_boundary\":0,\"search_boundary_calls\":1,\"complete_at_commit_boundary\":0,\"incomplete_at_commit_boundary\":1}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":0,\"move_selects_target_boundary\":1,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":1,\"incomplete_at_commit_boundary\":0}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":1,\"move_selects_target_boundary\":0,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":0,\"incomplete_at_commit_boundary\":1}\n{\"case\":\"move_then_release\",\"existing_input_fixture\":1,\"move_selects_target_boundary\":1,\"search_boundary_calls\":0,\"complete_at_commit_boundary\":1,\"incomplete_at_commit_boundary\":0}\n{\"case\":\"release_position_does_not_repick\",\"find_calls\":0,\"copied_endpoints_complete\":true}\n{\"case\":\"native_cancel\",\"event_type\":3,\"cancel_edge_boundary_calls\":1,\"finished_boundary_calls\":0,\"original_handler_freed\":true}\n{\"case\":\"native_cancel\",\"event_type\":218,\"cancel_edge_boundary_calls\":1,\"finished_boundary_calls\":0,\"original_handler_freed\":true}\n{\"case\":\"poll_or_socket_init_refusal\",\"failure\":0,\"modal_added\":false}\n{\"case\":\"poll_or_socket_init_refusal\",\"failure\":1,\"modal_added\":false}\n",
+      "stderr": ""
+    }
+  ],
+  "boundaries": [
+    "Actual current ordinary handlePan producer, UserInputEvent, generator and current cursor/button/trackpad class bodies execute with message-syntax/SDK-object adapters. UIKit callbacks and real recognition thresholds do not execute.",
+    "Packet-to-WM bridge is explicitly modeled for single-window no-emulation untagged pointer scalars and top-left fixture conversion. It invokes actual WM press/click state function; it is NOT full wm_event_add_ghostevent execution or target coordinate/ABI proof.",
+    "Actual complete wm_handlers_do executes with its intern dispatcher replaced by a recorded exact-stock-binding corridor; actual editable poll condition, WM_event_drag_start_mval and native node_link_invoke execute. Operator allocation/registration, native keymap matching and native node_link_init/socket graph acquisition are explicit boundaries.",
+    "Actual node_link_modal, detached/search policy and node_link_cancel execute; native socket lookup, graph commit/search-popup creation, invariants and edge pan effects are explicit recorded boundaries. No BKE graph algorithm is imitated.",
+    "The exact native derived modal-call/normal terminal cleanup slice executes including actual modalmap begin/end with evaluated-binding matcher adapter, report/Finished-versus-free/unlink/handler branches. wm_operator_finished, graph mutation, registry, Undo/Redo and actual allocation/lifetimes are instrumented boundaries.",
+    "Native socket max-distance/padded-size prefix and actual UI_view2d_scale_get_x execute under supplied View2D/U.widget_unit fixtures. Full native nearest-socket/visibility/occlusion/header/multi-input selection does not execute.",
+    "The original first compiler diagnostic and first runtime diagnostic are retained. The runtime failure was the explicit context adapter failing to restore original modal region after native cleanup cleared C.region; only that adapter was repaired. It is not a target or native application crash.",
+    "No new registered acceptance tests, production/CI edits, target build, stock5.1.2 execution, iOS SDK execution or device acceptance.",
+    "No corrective proposal follows these supplied-sample branches. The exact native socket finder/real BKE/GUI/history baseline remains necessary before a user-facing gap is asserted.",
+    "Additional helper adapters are explicit: wm_action_not_handled is simplified to no HANDLED/BREAK bits, while actual native helper also accepts BREAK|MODAL; this fixture intern dispatcher produces only CONTINUE/BREAK, so the supplied scenarios are equivalent. Direction is supplied as constant1, return-value sanity checker is a no-op, and double-click detection is disabled for the connected fixture samples. Native BREAK|MODAL, HANDLED/pass-through, multi-direction drag, double-click and arbitrary handler families are not characterized."
+  ],
+  "scenario_count_per_optimization": 14,
+  "interpretation": {
+    "coordinates": "Actual CLICK_DRAG keeps current event.xy and current mval at the wrapper boundary; WM_event_drag_start_mval selects prev_press_xy. The actual native invoke received press-derived view coordinates [50,440] while supplied current motion xy was [118,900] and current mval [108,880]. This uses explicit fixture screen/View2D conversions and supplied recognition point, not UIKit delivery.",
+    "click_fallback": "The separate actual RELEASE-to-CLICK fallback temporarily exposed xy.x=110 while retained mval.x was102 at the intern-dispatch boundary, then restored release xy.x=112. No Node acquisition was called for this simple click.",
+    "modal": "Actual Node Confirm does not repick from release coordinates. Move->endpoint boundary feeds completion/search policy; copied existing-input endpoints remain complete without a preceding move. These fixture endpoint results are not native graph effects.",
+    "cleanup": "Actual normal terminal cleanup calls finished-boundary then unlinks/frees original handler for FINISHED; Cancel calls native node_link_cancel, then direct free-boundary and handler cleanup with zero finished call. The full wm_operator_finished/Undo implementation does not execute.",
+    "no_counterexample": "No native socket-miss or comfortable-use regression is reproduced. Supplied recognized-vs-physical point difference and padding-prefix outputs characterize source inputs only. Held-tip barrel guard and current packets/order remain unchanged."
+  },
+  "remaining_native_baseline_plan": [
+    "Use a real native editable Shader graph with two separated nodes and regular compatible sockets; record actual socket geometry, View2D mask/cur, UI unit and tablet threshold. Use real keymap/WM/native polling and the actual node_find_indicated_socket/node_link_init/BKE implementation.",
+    "Compare no-offset positive drag, physical-origin versus recognized-point offsets, adjacent sockets and zoom. Include actual MOUSEMOVE before target/empty release and observe the exact installed source socket/handler; do not infer acquisition from PAN class or supplied init-admit adapter.",
+    "Run real graph+history: target Finish and Undo/Redo; fresh empty drop and native popup dismissal; existing-input move-to-empty disconnect; return to original input; native RMB/Esc Cancel. Record graph endpoint/count/order rather than claiming link pointer identity.",
+    "Use source-backed queued GHOST ordering for the target5.0 corridor. A stock5.1.2 GUI run can establish only that version baseline; it cannot establish the target overlay/UIKit packet path. Actual target/device acceptance stays separate.",
+    "Implement no correction or new Finish/Cancel UI unless this baseline yields an actual reproducible ordinary workflow counterexample."
+  ],
+  "primitive_adapter_corrections_retained": [
+    "Initial generation expected struct class syntax but retained cursor/button fixtures use native class syntax; adapter marker corrected only.",
+    "First compiler diagnostic retained as O0-first-compile.log; host type aliases/service declarations corrected.",
+    "First runtime diagnostic retained as first-runtime-diagnostic.json; the host modal entry needed original-owner context restoration after exact native terminal/nonterminal cleanup clears C.region. No production source, assertion intent or source branch was changed."
+  ],
+  "source_authentication_report": {
+    "path": "characterization-source-authentication.json",
+    "sha256": "0dce0819edcef151746916c8c1af1bd21267cb039a01d29ebee408723b069175"
+  },
+  "final_integrity": {
+    "utc": "2026-11-08T05:04:10.365774+00:00",
+    "git_head": "dd09f0485115f8cd60a83d2e5e74d7f6154e3738",
+    "tracked_diff": [],
+    "patch_unchanged": true,
+    "prior_audit_preserved": true
+  },
+  "independent_scope_review": {
+    "reviewer": "native_link_exit_review",
+    "result": "PASS_BOUNDED_WITH_HELPER_ADAPTER_DISCLOSURE",
+    "review_type": "read-only source/report review; no rerun or new target proof",
+    "finding": "Graph/BKE/history/GUI/target limits are correctly explicit. Simplified helper action semantics are equivalent only for the supplied CONTINUE/BREAK corridor; the report now discloses this and direction/return-check adapters.",
+    "generation_prefix_note": "Static source/parity assertions execute during generation. No existing registered test runner or scenario suite is invoked by that prefix."
+  },
+  "final_comment_only_provenance_note": "After successful O0/O2 execution, one driver comment was clarified: generation-prefix static parity assertions do execute; no registered test runner/scenarios run there. Generated C++/adapters/scenarios/assertions/executions are unchanged; no repeat execution claimed."
+}

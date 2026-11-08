@@ -1,0 +1,1113 @@
+{
+  "status": "READ_ONLY_SOURCE_CONTRACT_COMPLETE; native/GHOST/WM workflow characterization required before a corrective increment",
+  "timestamp_utc": "2026-11-08T04:39:39.447274+00:00",
+  "blender_pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "scope": "Node socket link Begin / Move / normal Release / native Cancel and existing Pencil barrel right-click route; no production, test or CI edits, no build",
+  "boundaries": {
+    "source_inspection": "Exact pinned native and reconstructed current overlay source inspected; authenticated upstream bytes listed below. Native bodies were not executed.",
+    "python_keymap_source_execution": "PASS in four preference/configuration branches; exact source only, no Blender runtime",
+    "cpp_host_execution": false,
+    "stock_blender_host_execution": false,
+    "ios_sdk_execution": false,
+    "target_binary_review": "None new in this audit; prior package review is owned separately",
+    "device_acceptance": false,
+    "no_production_test_or_ci_edits": true,
+    "no_build_or_workflow_dispatch": true,
+    "no_private_crash_commit": true
+  },
+  "sources": [
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "bytes": 91708,
+      "sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "fresh_raw_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "bytes": 439100,
+      "sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577",
+      "fresh_raw_sha256": "b88d39da464f7b720df4cc04c3d0fc1345adfb9089c83a426cc2ab7fcc150577",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/space_node/node_ops.cc",
+      "bytes": 9079,
+      "sha256": "a291998f02a26c2eb479437a144ddb542049e49bdf312d9b87c82d9dbaef082f",
+      "fresh_raw_sha256": "a291998f02a26c2eb479437a144ddb542049e49bdf312d9b87c82d9dbaef082f",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "bytes": 231881,
+      "sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "fresh_raw_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "bytes": 66349,
+      "sha256": "6dfc24bc2c89cb206a04bd3e8e199aecfe3ee3aa066471716073ba72c169942c",
+      "fresh_raw_sha256": "6dfc24bc2c89cb206a04bd3e8e199aecfe3ee3aa066471716073ba72c169942c",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/space_node/node_edit.cc",
+      "bytes": 75331,
+      "sha256": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d",
+      "fresh_raw_sha256": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": [
+        {
+          "line": 882,
+          "text": "static bool socket_is_occluded(const float2 &location,"
+        },
+        {
+          "line": 1245,
+          "text": "bNodeSocket *node_find_indicated_socket(SpaceNode &snode,"
+        },
+        {
+          "line": 1266,
+          "text": "    if (socket_is_occluded(socket->runtime->location, socket->owner_node(), sorted_nodes)) {"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/space_node/node_intern.hh",
+      "bytes": 16549,
+      "sha256": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8",
+      "fresh_raw_sha256": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": [
+        {
+          "line": 203,
+          "text": "bool node_or_socket_isect_event(const bContext &C, const wmEvent &event);"
+        },
+        {
+          "line": 366,
+          "text": "bNodeSocket *node_find_indicated_socket(SpaceNode &snode,"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_query.cc",
+      "bytes": 18663,
+      "sha256": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a",
+      "fresh_raw_sha256": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": []
+    },
+    {
+      "path": "source/blender/editors/space_node/node_draw.cc",
+      "bytes": 168799,
+      "sha256": "c9c71b32f27847ab91736d865d1cc3d759b31d16c870c3de2e0edbd232d33f23",
+      "fresh_raw_sha256": "c9c71b32f27847ab91736d865d1cc3d759b31d16c870c3de2e0edbd232d33f23",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": [
+        {
+          "line": 3421,
+          "text": "  if (node_find_indicated_socket(snode, region, cursor, SOCK_IN | SOCK_OUT)) {"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/editors/space_node/node_select.cc",
+      "bytes": 41373,
+      "sha256": "4d4ad210cfa20c6d3c034c2d77da6ad168736208bef8b3289fe49a871a6d0391",
+      "fresh_raw_sha256": "4d4ad210cfa20c6d3c034c2d77da6ad168736208bef8b3289fe49a871a6d0391",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": [
+        {
+          "line": 108,
+          "text": "bool node_or_socket_isect_event(const bContext &C, const wmEvent &event)"
+        },
+        {
+          "line": 155,
+          "text": "  if (node_find_indicated_socket(snode, region, mouse, SOCK_IN | SOCK_OUT)) {"
+        },
+        {
+          "line": 545,
+          "text": "    sock = node_find_indicated_socket(snode, region, cursor, SOCK_IN);"
+        },
+        {
+          "line": 557,
+          "text": "      sock = node_find_indicated_socket(snode, region, cursor, SOCK_OUT);"
+        }
+      ]
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "bytes": 39196,
+      "sha256": "a5b8ea1db7defae5bc92a65470f75cec5a5d051891f91056bc9ce739e7940776",
+      "fresh_raw_sha256": "a5b8ea1db7defae5bc92a65470f75cec5a5d051891f91056bc9ce739e7940776",
+      "fresh_raw_matches_get_source": true,
+      "lookup_hits": []
+    },
+    {
+      "path": "scripts/startup/bl_ui/space_node.py",
+      "bytes": 40898,
+      "sha256": "6d2cdf072897d492c4a2b4abdbbd8d4309dea2e6a761a6019913e703c8bb8c64",
+      "fresh_raw_sha256": "6d2cdf072897d492c4a2b4abdbbd8d4309dea2e6a761a6019913e703c8bb8c64",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "scripts/startup/bl_ui/space_statusbar.py",
+      "bytes": 821,
+      "sha256": "ea1c173a075f9b0779dc05329cf99c8c0a5d5fc0888e161f13e42c57052453c8",
+      "fresh_raw_sha256": "ea1c173a075f9b0779dc05329cf99c8c0a5d5fc0888e161f13e42c57052453c8",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/screen/screen_ops.cc",
+      "bytes": 212564,
+      "sha256": "aca568499c61576c592c5f94d9d80f01f4cace68eba796afa811fecfee6463f1",
+      "fresh_raw_sha256": "aca568499c61576c592c5f94d9d80f01f4cace68eba796afa811fecfee6463f1",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d.cc",
+      "bytes": 68909,
+      "sha256": "12af3000d88961de66ef4db9e981210474b25273e97f9551b52be443e9eea55f",
+      "fresh_raw_sha256": "12af3000d88961de66ef4db9e981210474b25273e97f9551b52be443e9eea55f",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/space_statusbar/space_statusbar.cc",
+      "bytes": 4480,
+      "sha256": "53cb25efff536c72ce3388e1f07b61413c4ef4966cda8dd3384ac03913c33f93",
+      "fresh_raw_sha256": "53cb25efff536c72ce3388e1f07b61413c4ef4966cda8dd3384ac03913c33f93",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_status.cc",
+      "bytes": 19346,
+      "sha256": "960b1bc400356ec682a1780f6d82e7d00c57ea13df30076aae56ba5eb19c9a4a",
+      "fresh_raw_sha256": "960b1bc400356ec682a1780f6d82e7d00c57ea13df30076aae56ba5eb19c9a4a",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_event.cc",
+      "bytes": 6338,
+      "sha256": "2d6a76f82d30c373a3e00051d4fae3694e21a9c247f91b5785b74678344c60d6",
+      "fresh_raw_sha256": "2d6a76f82d30c373a3e00051d4fae3694e21a9c247f91b5785b74678344c60d6",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/space_node/link_drag_search.cc",
+      "bytes": 17836,
+      "sha256": "1381d72b872a0b457e01f02dfd047533cc60e91a96046a7bdbec3e6c38ccca33",
+      "fresh_raw_sha256": "1381d72b872a0b457e01f02dfd047533cc60e91a96046a7bdbec3e6c38ccca33",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_edge_pan.cc",
+      "bytes": 12133,
+      "sha256": "c9537a4d7a9d7b0289059384eb04618e7d22e894e58a3e1a6fb7e62ca1ba708a",
+      "fresh_raw_sha256": "c9537a4d7a9d7b0289059384eb04618e7d22e894e58a3e1a6fb7e62ca1ba708a",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventButton.hh",
+      "bytes": 1095,
+      "sha256": "8749b998a9e7d743c3bfd80631ab472462f2b8f38655f81e0adada4338512af4",
+      "fresh_raw_sha256": "8749b998a9e7d743c3bfd80631ab472462f2b8f38655f81e0adada4338512af4",
+      "fresh_raw_matches_get_source": true
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "bytes": 72860,
+      "sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc",
+      "fresh_raw_sha256": "79b40afa87d51ea511b5d579a39ab4d4faa68aee0ca6170934b01ba89de85ffc",
+      "fresh_raw_matches_get_source": true
+    }
+  ],
+  "preserved_constraints": [
+    "ordinary physical Pencil PAN stock-value View2D denial before allocation remains denial-only",
+    "no accepted DOWN/contact lease inferred",
+    "preserve packets/source position/order/mixed/custom native fallback",
+    "untagged UIKit interruption terminal gap is inherited; no unleased synthetic release or replacement Cancel proposed",
+    "No current Node denial change, event reorder, generic physical-origin relocation, ToolManipulation shortcut, broad owner/storage/keymap expansion or Finish/Cancel UI change is proposed.",
+    "Do not treat native Cancel as generic rollback; fresh link and existing-input detach require separate actual graph/history evidence."
+  ],
+  "current_source_reconstruction": [
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+      "bytes": 150910,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\intern\\GHOST_WindowIOS.mm",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "intern/ghost/GHOST_NavigationIOS.hh",
+      "canonical_lf_sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+      "bytes": 16880,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\GHOST_NavigationIOS.hh",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_EventButton.hh",
+      "canonical_lf_sha256": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+      "bytes": 2057,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\intern\\GHOST_EventButton.hh",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "intern/ghost/GHOST_Types.h",
+      "canonical_lf_sha256": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+      "bytes": 41392,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\intern\\ghost\\GHOST_Types.h",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "ce6e6379057c9a7fb89d7c6a697bf4216a9a43cb30dc9d648713271167090df7",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "canonical_lf_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+      "bytes": 385928,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\windowmanager\\intern\\wm_event_system.cc",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "source/blender/editors/screen/screen_ops.cc",
+      "canonical_lf_sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+      "bytes": 215887,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\screen\\screen_ops.cc",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a",
+      "materialized_bytes_equal_reconstruction": true
+    },
+    {
+      "path": "source/blender/editors/interface/view2d/view2d_ops.cc",
+      "canonical_lf_sha256": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+      "bytes": 73835,
+      "reconstructed_from": "exact current overlay plus pinned source; no C++ compiled or tests invoked",
+      "materialized_path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-canvas-pan-next-01o74gir\\source\\blender\\editors\\interface\\view2d\\view2d_ops.cc",
+      "materialized_exists": true,
+      "materialized_bytes_sha256": "e7304a817248de801925f13a146e588a2cfa6ba3ba4f72a44a93391512b74495",
+      "materialized_bytes_equal_reconstruction": true
+    }
+  ],
+  "keymap_source_evaluation": {
+    "status": "PASS",
+    "scope": "Executed exact authenticated pinned Python generator without Blender; verified all generated maps for both LEFT/RIGHT selection and legacy false/true. This does not execute native keymap registration, native polling, C++, UIKit or a Node operation.",
+    "results": [
+      {
+        "selection": "LEFT",
+        "legacy": false,
+        "map_count": 276,
+        "all_node_link_bindings": [
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG"
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    false
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG",
+                "ctrl": true
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    true
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ]
+      },
+      {
+        "selection": "LEFT",
+        "legacy": true,
+        "map_count": 276,
+        "all_node_link_bindings": [
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG"
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    false
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG",
+                "ctrl": true
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    true
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ]
+      },
+      {
+        "selection": "RIGHT",
+        "legacy": false,
+        "map_count": 276,
+        "all_node_link_bindings": [
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG"
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    false
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG",
+                "ctrl": true
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    true
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ]
+      },
+      {
+        "selection": "RIGHT",
+        "legacy": true,
+        "map_count": 276,
+        "all_node_link_bindings": [
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG"
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    false
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "map": "Node Editor",
+            "context": {
+              "space_type": "NODE_EDITOR",
+              "region_type": "WINDOW"
+            },
+            "binding": [
+              "node.link",
+              {
+                "type": "LEFTMOUSE",
+                "value": "CLICK_DRAG",
+                "ctrl": true
+              },
+              {
+                "properties": [
+                  [
+                    "detach",
+                    true
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "link_modal_bindings": [
+          [
+            "BEGIN",
+            {
+              "type": "LEFTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CONFIRM",
+            {
+              "type": "LEFTMOUSE",
+              "value": "RELEASE",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "RIGHTMOUSE",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "CANCEL",
+            {
+              "type": "ESC",
+              "value": "PRESS",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "LEFT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ],
+          [
+            "SWAP",
+            {
+              "type": "RIGHT_ALT",
+              "value": "ANY",
+              "any": true
+            },
+            null
+          ]
+        ]
+      }
+    ]
+  },
+  "source_fetch_attempts_absent": [
+    {
+      "path": "intern/ghost/intern/GHOST_Types.h",
+      "error": "Pinned source file does not exist: intern/ghost/intern/GHOST_Types.h"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_utils.cc",
+      "error": "Pinned source file does not exist: source/blender/editors/space_node/node_utils.cc"
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_statusbar.cc",
+      "error": "Pinned source file does not exist: source/blender/editors/interface/templates/interface_template_statusbar.cc"
+    }
+  ],
+  "sources_authenticated_count": 22,
+  "completed_utc": "2026-11-08T04:49:32.215844+00:00",
+  "git_head_at_finish": "dd09f0485115f8cd60a83d2e5e74d7f6154e3738",
+  "tracked_diff_at_finish": [],
+  "production_patch_unchanged_since_early_checkpoint": true,
+  "answer": "Normal Pencil release already has a native Finish route. The native link modal accepts right-button/Escape Cancel, but the current barrel callback explicitly refuses a physical Pencil contact that is still down. Empty-space release can provide a fresh-link abandonment path through the native add/search popup, while detaching an existing input has different native graph/history semantics. No newly reproduced iPad defect or justified production/UI correction follows from this source-only audit. The narrow next increment is actual native/GHOST/WM characterization of socket acquisition and normal completion versus abandonment/Cancel.",
+  "workflow_contract": [
+    {
+      "stage": "ordinary precision Begin",
+      "fact": "After ring/HUD/navigation/paint/hardware exclusions, getScaledTouchPoint supplies the recognized current point. Ordinary handlePan Began resets cached translation, queues CURSOR_MOVE then LEFT_BUTTON_DOWN at that point, not the physical origin. The physical source origin is currently read for ring/HUD/paint/Knife admission; it is not a generic accepted Node press."
+    },
+    {
+      "stage": "CLICK_DRAG acquisition",
+      "fact": "All evaluated stock node.link bindings require LEFTMOUSE CLICK_DRAG; Ctrl sets detach=true. Motion crosses the strict native tablet/mouse threshold, then WM reuses prev_press_xy for WM_event_drag_start_mval. node_link_invoke converts those press pixels with the current View2D and only adds the modal handler after native socket lookup succeeds. ED_operator_node_editable requires an editable current edittree. A native socket miss returns CANCELLED|PASS_THROUGH."
+    },
+    {
+      "stage": "native socket admission",
+      "fact": "node_find_indicated_socket uses NODE_SOCKSIZE = 0.25*U.widget_unit and max_distance = NODE_SOCKSIZE + clamp(20/view2d_scale,5,30), with strict distance < max_distance. It chooses the nearest visible, unoccluded socket; ordinary node header exclusion, collapsed-output and multi-input rectangle cases remain native. This target is larger than the drawn socket radius. Threshold displacement alone therefore does not establish a miss. Adjacent sockets/zoom/header constraints require actual characterization."
+    },
+    {
+      "stage": "Changed and live link",
+      "fact": "Ordinary nonzero physical Pencil Changed keeps the existing paired PAN before CURSOR order. Current canonical stock-value selected View2D denial remains after genuine native poll and before allocation, and proves neither accepted DOWN nor Node ownership. Once native link modal exists, it consumes unmatched MOUSEPAN with RUNNING_MODAL; edge-pan helper processes only MOUSEMOVE. MOUSEMOVE updates the hovered socket and preview through actual node_link_find_socket."
+    },
+    {
+      "stage": "normal release Finish",
+      "fact": "Ordinary handlePan Ended queues LEFT_BUTTON_UP. Native modal-map translation maps LEFTMOUSE RELEASE with any modifiers to CONFIRM; node_link_modal calls the existing add/search branch and add_dragged_links_to_tree, returns FINISHED, then ordinary WM finished/history/handler cleanup runs. There is no missing Finish button demonstrated by this workflow."
+    },
+    {
+      "stage": "native Cancel",
+      "fact": "Node Link Modal Map maps RIGHTMOUSE PRESS and ESC PRESS, any modifiers, to CANCEL. Actual native node_link_modal calls node_link_cancel then returns CANCELLED. That function deactivates tooltip, restores View2D edge-pan initial rectangle, resets linkdrag, clears highlight and tags/updates invariants; it does not itself re-add originals detached at invoke. WM CANCELLED frees the existing operator/handler rather than using the FINISHED/history path. Full graph/history outcomes need execution."
+    },
+    {
+      "stage": "barrel right-click admission",
+      "fact": "pencilInteractionDidTap returns before cancelPointerCapture or any packet when preferred tap is Ignore, current_pencil_touch exists, pan pencilContactDown is true, or hardware button state is pressed. GestureContact.down is true at physical Begin and ends on that identity after native touchesEnded/touchesCancelled superclass processing. With no down/hardware and no presented ring, admitted barrel queues native RMB Down then Up with NONE tablet data; a presented ring receives Home instead. Therefore native RMB Cancel exists, but one cannot claim barrel supplies Cancel during a normal held-tip link drag. After normal lift, queued LMB release normally finishes before a later barrel packet; no original-handler catch is guaranteed."
+    },
+    {
+      "stage": "tap-only possibility",
+      "fact": "handleTap on Ended emits CURSOR_MOVE, LEFT_BUTTON_DOWN, LEFT_BUTTON_UP without an intervening post-press motion. No evaluated generated stock map binds node.link to a simple press, release or click. Native socket labels are tooltip labels; node.select remains selection, not link acquisition. This does not rule out a user-customized binding or explicit scripting."
+    },
+    {
+      "stage": "existing Node status/header UI",
+      "fact": "Current stock space_node NODE_HT_header has no live NODE_OT_link Finish/Cancel action. Generic WM_window_modal_keymap_status_draw enumerates the actual modal map into uiTemplateStatusBarModalItem; its single-item path uiTemplateEventFromKeymapItem builds layout labels and separators for icons/text, not operator buttons or a Cancel callback. Native Cancel hint text is informational. This is a source observation, not a requirement to add UI."
+    }
+  ],
+  "native_empty_release_and_return": [
+    {
+      "case": "fresh regular output to empty space; no detached original",
+      "source_expected": "If the link endpoints remain detached and this is a supported non-custom tree/socket with no Swap, should_create_drag_link_search_menu is true. CONFIRM opens the native compatible-node search, then add_dragged_links_to_tree skips incomplete links and clears drag. Popup selection invokes creation; its execution callback immediately returns for a null item, and free only deletes search storage. Dismissing that popup is a supported candidate for abandoning a fresh proposed link without adding a new wire. It is FINISHED plus popup dismissal, not the native modal CANCEL status. Real popup dismissal and Undo/Redo have not run here."
+    },
+    {
+      "case": "fresh ordinary output returned to the source point",
+      "source_expected": "There is no dedicated back-to-origin Cancel branch. When the final motion clears the opposite endpoint and no other eligible socket is found, this is the same detached-link/search case. Socket nearest-hit/self-node/previous-hover details can affect the endpoint; source location alone is not a universal cancellation receipt. Characterize after never hovering a target and after hovering one."
+    },
+    {
+      "case": "existing single input link dragged from its input, then empty release",
+      "source_expected": "node_link_init copies and removes that original tree link. should_create_drag_link_search_menu explicitly returns false when start_socket is input and start_link_count > 0. Incomplete link is skipped on CONFIRM, so empty release can commit disconnection. It is not a safe generic abandon gesture for replacing an existing input."
+    },
+    {
+      "case": "existing input link returned to its original input, then release",
+      "source_expected": "If actual motion selects that same original compatible input again, node_link_find_socket can restore the missing target endpoint; native CONFIRM can re-add the original connection. This is ordinary native completion and may have history effects, not native CANCEL. Actual graph equality, link order/multi-input order and Undo need a native run."
+    },
+    {
+      "case": "native RMB/Esc while original link handler is live after detach",
+      "source_expected": "node_link_cancel clears drag and edge-pan state but does not restore detached original links itself. Do not assume native Cancel means application rollback of every detach; execute real baseline before proposing any correction or history policy."
+    }
+  ],
+  "positive_controls_supported_by_source": [
+    "Regular editable Node WINDOW; exact stock link binding; recognized press remains in native source-socket admission; actual post-press MOUSEMOVE exceeds the native threshold: Node link can acquire its native handler.",
+    "Live native link plus target MOUSEMOVE followed by native LMB release enters CONFIRM and uses existing native insertion/duplicate/link-limit/Swap/multi-input handling.",
+    "Live native link plus native RMB press or Escape press enters actual native CANCEL, with existing WM cleanup. This is external/native input support, not proof that held-tip barrel can generate it.",
+    "Admitted no-tip-down barrel with no ring preserves native RMB Down/Up context behavior; presented ring preserves Home. Hardware, Ignore and live-contact vetoes remain.",
+    "Fresh unlinked regular socket empty release enters the native search path; dismissing without an item can abandon creation without a new Finish/Cancel surface. This needs actual native UI/history characterization.",
+    "Mixed/custom keymaps and event provenance retain native fallback; native View2D denial is not Node hit/press proof. Native Alt Swap, Ctrl Detach and multi-input branches remain source controls to preserve."
+  ],
+  "source_frontiers_not_device_defects": [
+    {
+      "frontier": "recognized-current press origin versus socket acquisition",
+      "established": "The producer and WM drag-start/invoke chain use the recognized point. The source finder has bounded nearest-hit admission and larger padding than visual socket size.",
+      "not_established": "A natural UIKit pan recognition sample misses a socket at actual iPad scale, picks another socket, or causes a user-visible failure. No UIKit threshold, event schedule, pressure timing, native graph result or failure frequency has been measured.",
+      "decision": "Characterize exact source end-to-end first; no global origin relocation, source reordering or ToolManipulation classification shortcut."
+    },
+    {
+      "frontier": "held-tip barrel Cancel reachability",
+      "established": "Exact contact guard refuses the barrel callback during physical Pencil down; native RMB/Esc Cancel exists and status hints are labels.",
+      "not_established": "That a new button or removal of the guard is required. Fresh-link native empty release/search dismissal and existing-input return semantics must be run first; no documented target-device defect is reproduced here.",
+      "decision": "No blanket barrel-guard removal or new owner foundation. Compare existing supported native paths in the same workflow characterization."
+    },
+    {
+      "frontier": "untagged UIKit interruption terminal",
+      "established": "Known inherited boundary: ordinary Node Pencil is not a paint ticket. Ordinary Cancelled/Failed path tags is_cancelled only when a valid paint contact exists.",
+      "not_established": "Any new Node receipt, press lease, safe replacement cancellation target or rollback guarantee.",
+      "decision": "Retain the limitation; no unleased release, replacement Cancel or generic rollback in this audit."
+    }
+  ],
+  "recommended_next_coherent_work": {
+    "deliverable": "One connected characterization of actually beginning, completing, abandoning and cancelling a native Node socket link, with actual graph/handler/View2D/history observations; choose any correction only from the resulting reproducible gap.",
+    "sequence": [
+      "Freeze exact source and current patch hashes; reuse the authenticated native finder, poll, invoke/modal, generated maps and real GHOST/WM entry bodies. Maintain physical-origin versus recognized-point as distinct recorded inputs; no source edits yet.",
+      "Use an actual native editable regular Shader graph first: separate nodes, one ordinary unlinked output and one compatible input, no occlusion or edge pan. Record native socket locations, View2D cur/mask/scales, UI unit and drag threshold. Preserve a no-displacement positive control.",
+      "Run exact producer Begin/Changed/Ended through actual GHOST packets and actual WM click/drag/native polling/selected dispatch into node_link_invoke and modal. Record cursor/down/up order, recognized press, actual prev_press_xy, selected source socket and native handler installation. Compare physical source point within socket but recognized point outside/near neighbor using actual native finder, not a copied radius-only helper.",
+      "Verify normal target motion and LMB release add exactly the intended native link and remove the original handler. Check the actual graph with Undo/Redo. A successful ordinary release is the Finish control and must remain.",
+      "In that same fixture, compare fresh empty release and search dismissal, return to source before/after a target hover, native RMB/Esc Cancel, and barrel callback during down versus admitted no-down. Observe real popup selection/dismissal and queued LMB release order. Do not call mere status text a button.",
+      "Use a second case with one existing single input link: empty release, return to original input, native Cancel and history must be measured separately. Preserve native detach semantics; include adjacent/zoom/header and multi-input controls only after the ordinary fixture is grounded.",
+      "Retain existing physical-PAN denial positive/negative controls: canonical regular stock View2D versus mixed/custom/native fallback; no accepted press/lease is inferred. Include external pointer/keyboard and supported native advanced controls, then report source/host/target/device limits separately.",
+      "If no reproducible ordinary Node gap remains, select the next narrow source-supported daily interaction rather than creating a detached helper milestone. A concrete fallback candidate is ordinary node resize from its native border, whose invoke also uses WM_event_drag_start_mval; inspect its actual native geometry first. No production build is warranted by this audit alone."
+    ],
+    "host_boundary": "An exact-source connected C++ characterization can establish branch/packet/state behavior under supplied samples. A disposable stock Blender runtime can establish native graph/Undo baseline for its version. Neither establishes target UIKit delivery, target binary behavior or device comfort. A current target iOS build/device gate follows any separately validated coherent production correction, not this report."
+  },
+  "anchors": [
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 1384,
+      "token": "- (void)handleTap:(GHOSTUITapGestureRecognizer *)sender",
+      "excerpt": "\n- (void)handleTap:(GHOSTUITapGestureRecognizer *)sender\n{\n  /* Hardware ownership can begin after this touch was admitted. */\n  if (sender.state != UIGestureRecognizerStateEnded ||\n      ![sender touchStreamAllowed] ||\n      mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed) {\n    return;\n  }\n  CGPoint touch_point = [sender getScaledTouchPoint:window];",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 1554,
+      "token": "- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender",
+      "excerpt": "\n- (void)handlePan:(GHOSTUIPanGestureRecognizer *)sender\n{\n  if (![sender touchStreamAllowed]) {\n    return;\n  }\n  /* A hardware drag owns the shared pointer until its matched release.\n   * Suppress this entire newly started touch stream, even if it outlasts that release. */\n  if (sender.state == UIGestureRecognizerStateBegan &&\n      (mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)) {",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 1715,
+      "token": "/* Register initial click for click and drag support. */",
+      "excerpt": "  {\n    /* Register initial click for click and drag support. */\n    if (sender.state == UIGestureRecognizerStateBegan) {\n      /* Set inital translation */\n      [sender setCachedTranslation:translation];\n      event_info.add_event(UserInputEvent::EventTypes::CURSOR_MOVE);\n      event_info.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_DOWN);\n    }\n\n    /* Calculate translation change since last begin/change event */",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 1747,
+      "token": "event_info.cancelled = event_info.pencil_paint.valid() &&",
+      "excerpt": "  {\n    event_info.cancelled = event_info.pencil_paint.valid() &&\n                           sender.state != UIGestureRecognizerStateEnded;\n    event_info.add_event(UserInputEvent::EventTypes::LEFT_BUTTON_UP);\n  }\n  [self generateUserInputEvents:event_info];\n}\n\n- (void)handleIndirectPan:(GHOSTUIPanGestureRecognizer *)sender\n{",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 2089,
+      "token": "- (void)pencilInteractionDidTap:",
+      "excerpt": "\n- (void)pencilInteractionDidTap:(UIPencilInteraction *)interaction\n{\n  if ([UIPencilInteraction preferredTapAction] == UIPencilPreferredActionIgnore ||\n      current_pencil_touch || [pan_gesture_recognizer pencilContactDown] ||\n      mouse_left_pressed || mouse_middle_pressed || mouse_right_pressed)\n  {\n    return;\n  }\n  /* Finish a finger-owned stream before a popup can take its release. */",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/intern/GHOST_WindowIOS.mm",
+      "basis": "current reconstructed canonical LF",
+      "line": 1246,
+      "token": "case UserInputEvent::EventTypes::PENCIL_CONTEXT_MENU:",
+      "excerpt": "          break;\n        case UserInputEvent::EventTypes::PENCIL_CONTEXT_MENU:\n          /* Simulate clicking with the right mouse button. */\n          system->pushEvent(\n              new GHOST_EventButton(GHOST_GetMilliSeconds((GHOST_SystemHandle)system),\n                                    GHOST_kEventButtonDown,\n                                    window,\n                                    GHOST_kButtonMaskRight,\n                                    GHOST_TABLET_DATA_NONE));\n          system->pushEvent(",
+      "canonical_lf_sha256": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432"
+    },
+    {
+      "path": "intern/ghost/GHOST_NavigationIOS.hh",
+      "basis": "current reconstructed canonical LF",
+      "line": 121,
+      "token": "struct GestureContact {",
+      "excerpt": "\nstruct GestureContact {\n  TouchDevice device = TouchDevice::Unknown;\n  uintptr_t touch = 0;\n  uint64_t serial = 0;\n  bool down = false;\n  PencilSample latest{}, peak{};\n  bool begin(TouchDevice kind, uintptr_t identity, const PencilSample &sample)\n  {\n    if (touch || !identity || kind == TouchDevice::Unknown) return false;",
+      "canonical_lf_sha256": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "basis": "current reconstructed canonical LF",
+      "line": 1660,
+      "token": "static bool wm_ipad_node_view2d_event_context(",
+      "excerpt": " * not certify a node hit, delivered press, contact identity, or modal owner. */\nstatic bool wm_ipad_node_view2d_event_context(bContext *C,\n                                             const wmEvent *event,\n                                             const eIPadNativePanDispatch dispatch)\n{\n  if (!C || !event || dispatch == eIPadNativePanDispatch::None ||\n      CTX_py_dict_get(C) != nullptr ||\n      (event->flag & WM_EVENT_IS_PENCIL_PRECISION_PAN) == 0 ||\n      (event->flag & (WM_EVENT_MULTITOUCH_TWO_FINGERS | WM_EVENT_MULTITOUCH_THREE_FINGERS |\n                      WM_EVENT_IS_TOUCH_PINCH | WM_EVENT_IS_POINTER_CANCEL |",
+      "canonical_lf_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "basis": "current reconstructed canonical LF",
+      "line": 3188,
+      "token": "static void wm_event_modalkeymap_begin(",
+      "excerpt": " */\nstatic void wm_event_modalkeymap_begin(const bContext *C,\n                                       wmOperator *op,\n                                       wmEvent *event,\n                                       wmEvent_ModalMapStore *event_backup)\n{\n  BLI_assert(event->type != EVT_MODAL_MAP);\n\n  /* Support for modal key-map in macros. */\n  if (op->opm) {",
+      "canonical_lf_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "basis": "current reconstructed canonical LF",
+      "line": 10426,
+      "token": "bool WM_window_modal_keymap_status_draw(",
+      "excerpt": "\nbool WM_window_modal_keymap_status_draw(bContext *C, wmWindow *win, uiLayout *layout)\n{\n  wmWindowManager *wm = CTX_wm_manager(C);\n  wmKeyMap *keymap = nullptr;\n  wmOperator *op = nullptr;\n  LISTBASE_FOREACH (wmEventHandler *, handler_base, &win->modalhandlers) {\n    if (handler_base->type == WM_HANDLER_TYPE_OP) {\n      wmEventHandler_Op *handler = (wmEventHandler_Op *)handler_base;\n      if (handler->op != nullptr) {",
+      "canonical_lf_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_query.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 440,
+      "token": "void WM_event_drag_start_mval(",
+      "excerpt": "\nvoid WM_event_drag_start_mval(const wmEvent *event, const ARegion *region, int r_mval[2])\n{\n  const int *xy = (event->val == KM_PRESS_DRAG) ? event->prev_press_xy : event->xy;\n  r_mval[0] = xy[0] - region->winrct.xmin;\n  r_mval[1] = xy[1] - region->winrct.ymin;\n}\n\nvoid WM_event_drag_start_mval_fl(const wmEvent *event, const ARegion *region, float r_mval[2])\n{",
+      "canonical_lf_sha256": "53d50ffc4b32e0ae353597ff89a8000b280247d471565bef98a9a80c32fb2d0a"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_edit.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1245,
+      "token": "bNodeSocket *node_find_indicated_socket(",
+      "excerpt": "\nbNodeSocket *node_find_indicated_socket(SpaceNode &snode,\n                                        ARegion &region,\n                                        const float2 &cursor,\n                                        const eNodeSocketInOut in_out)\n{\n  const float view2d_scale = UI_view2d_scale_get_x(&region.v2d);\n  const float max_distance = NODE_SOCKSIZE + std::clamp(20.0f / view2d_scale, 5.0f, 30.0f);\n  const float padded_socket_size = NODE_SOCKSIZE + 4;\n",
+      "canonical_lf_sha256": "4dc32b2f4af60ce75744e6eb8c3ad996c95dde65b0a8ec8f281541087e22628d"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_intern.hh",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 147,
+      "token": "#define NODE_SOCKSIZE",
+      "excerpt": "#define NODE_MARGIN_X (1.2f * U.widget_unit)\n#define NODE_SOCKSIZE (0.25f * U.widget_unit)\n#define NODE_MULTI_INPUT_LINK_GAP (0.25f * U.widget_unit)\n#define NODE_RESIZE_MARGIN (0.20f * U.widget_unit)\n#define NODE_LINK_RESOL 12\n\n/* `space_node.cc` */\n\n/**\n * Transform between View2Ds in the tree path.",
+      "canonical_lf_sha256": "ce79f5af80e590c8e6e346428432bf095c882ce32983e9a30c5ad9d3f28b6fb8"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 969,
+      "token": "static bool should_create_drag_link_search_menu(",
+      "excerpt": "\nstatic bool should_create_drag_link_search_menu(const bNodeTree &node_tree,\n                                                const bNodeLinkDrag &nldrag)\n{\n  /* Custom node trees aren't supported yet. */\n  if (node_tree.type == NTREE_CUSTOM) {\n    return false;\n  }\n  /* Only create the search menu when the drag has not already connected the links to a socket. */\n  if (!dragged_links_are_detached(nldrag)) {",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1297,
+      "token": "static void node_link_cancel(",
+      "excerpt": "\nstatic void node_link_cancel(bContext *C, wmOperator *op)\n{\n  SpaceNode *snode = CTX_wm_space_node(C);\n  bNodeLinkDrag *nldrag = (bNodeLinkDrag *)op->customdata;\n  draw_draglink_tooltip_deactivate(*CTX_wm_region(C), *nldrag);\n  UI_view2d_edge_pan_cancel(C, &nldrag->pan_data);\n  snode->runtime->linkdrag.reset();\n  clear_picking_highlight(&snode->edittree->links);\n  BKE_ntree_update_tag_link_removed(snode->edittree);",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1309,
+      "token": "static void node_link_find_socket(",
+      "excerpt": "\nstatic void node_link_find_socket(bContext &C, wmOperator &op, const float2 &cursor)\n{\n  SpaceNode &snode = *CTX_wm_space_node(&C);\n  ARegion &region = *CTX_wm_region(&C);\n  bNodeLinkDrag &nldrag = *static_cast<bNodeLinkDrag *>(op.customdata);\n\n  if (nldrag.in_out == SOCK_OUT) {\n    if (bNodeSocket *tsock = node_find_indicated_socket(snode, region, cursor, SOCK_IN)) {\n      nldrag.hovered_socket = tsock;",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1395,
+      "token": "wmKeyMap *node_link_modal_keymap(",
+      "excerpt": "\nwmKeyMap *node_link_modal_keymap(wmKeyConfig *keyconf)\n{\n  static const EnumPropertyItem modal_items[] = {\n      {int(NodeLinkAction::Begin), \"BEGIN\", 0, \"Drag Node-link\", \"\"},\n      {int(NodeLinkAction::Confirm), \"CONFIRM\", 0, \"Confirm Link\", \"\"},\n      {int(NodeLinkAction::Cancel), \"CANCEL\", 0, \"Cancel\", \"\"},\n      {int(NodeLinkAction::Swap), \"SWAP\", 0, \"Swap Links\", \"\"},\n      {0, nullptr, 0, nullptr, nullptr},\n  };",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1419,
+      "token": "static wmOperatorStatus node_link_modal(",
+      "excerpt": "\nstatic wmOperatorStatus node_link_modal(bContext *C, wmOperator *op, const wmEvent *event)\n{\n  bNodeLinkDrag &nldrag = *static_cast<bNodeLinkDrag *>(op->customdata);\n  SpaceNode &snode = *CTX_wm_space_node(C);\n  ARegion *region = CTX_wm_region(C);\n\n  UI_view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);\n\n  float2 cursor;",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1496,
+      "token": "static std::unique_ptr<bNodeLinkDrag> node_link_init(",
+      "excerpt": "\nstatic std::unique_ptr<bNodeLinkDrag> node_link_init(ARegion &region,\n                                                     SpaceNode &snode,\n                                                     const float2 cursor,\n                                                     const bool detach)\n{\n  if (bNodeSocket *sock = node_find_indicated_socket(snode, region, cursor, SOCK_OUT)) {\n    remove_unavailable_links(*snode.edittree, *sock);\n    snode.edittree->ensure_topology_cache();\n    bNode &node = sock->owner_node();",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1578,
+      "token": "static wmOperatorStatus node_link_invoke(",
+      "excerpt": "\nstatic wmOperatorStatus node_link_invoke(bContext *C, wmOperator *op, const wmEvent *event)\n{\n  Main &bmain = *CTX_data_main(C);\n  SpaceNode &snode = *CTX_wm_space_node(C);\n  ARegion &region = *CTX_wm_region(C);\n\n  bool detach = RNA_boolean_get(op->ptr, \"detach\");\n\n  int2 mval;",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 1614,
+      "token": "void NODE_OT_link(wmOperatorType *ot)",
+      "excerpt": "\nvoid NODE_OT_link(wmOperatorType *ot)\n{\n  /* identifiers */\n  ot->name = \"Link Nodes\";\n  ot->idname = \"NODE_OT_link\";\n  ot->description = \"Use the mouse to create a link between two nodes\";\n\n  /* API callbacks. */\n  ot->invoke = node_link_invoke;",
+      "canonical_lf_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db"
+    },
+    {
+      "path": "source/blender/editors/space_node/link_drag_search.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 366,
+      "token": "static void link_drag_search_exec_fn(",
+      "excerpt": "\nstatic void link_drag_search_exec_fn(bContext *C, void *arg1, void *arg2)\n{\n  Main &bmain = *CTX_data_main(C);\n  SpaceNode &snode = *CTX_wm_space_node(C);\n  bNodeTree &node_tree = *snode.edittree;\n  LinkDragSearchStorage &storage = *static_cast<LinkDragSearchStorage *>(arg1);\n  SocketLinkOperation *item = static_cast<SocketLinkOperation *>(arg2);\n  if (item == nullptr) {\n    return;",
+      "canonical_lf_sha256": "1381d72b872a0b457e01f02dfd047533cc60e91a96046a7bdbec3e6c38ccca33"
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_event.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 43,
+      "token": "int uiTemplateStatusBarModalItem(",
+      "excerpt": "\nint uiTemplateStatusBarModalItem(uiLayout *layout,\n                                 const wmKeyMap *keymap,\n                                 const EnumPropertyItem *item)\n{\n  const wmKeyMapItem *kmi = keymap_item_from_enum_item(keymap, item);\n  if (kmi == nullptr) {\n    return 0;\n  }\n",
+      "canonical_lf_sha256": "2d6a76f82d30c373a3e00051d4fae3694e21a9c247f91b5785b74678344c60d6"
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_event.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 164,
+      "token": "bool uiTemplateEventFromKeymapItem(",
+      "excerpt": "\nbool uiTemplateEventFromKeymapItem(uiLayout *layout,\n                                   const StringRefNull text,\n                                   const wmKeyMapItem *kmi,\n                                   bool text_fallback)\n{\n  bool ok = false;\n\n  int icon_mod[KM_MOD_NUM];\n#ifdef WITH_HEADLESS",
+      "canonical_lf_sha256": "2d6a76f82d30c373a3e00051d4fae3694e21a9c247f91b5785b74678344c60d6"
+    },
+    {
+      "path": "source/blender/editors/interface/templates/interface_template_status.cc",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 260,
+      "token": "void uiTemplateInputStatus(",
+      "excerpt": "\nvoid uiTemplateInputStatus(uiLayout *layout, bContext *C)\n{\n  wmWindow *win = CTX_wm_window(C);\n  WorkSpace *workspace = CTX_wm_workspace(C);\n\n  /* Workspace status text has priority. */\n  if (!workspace->runtime->status.is_empty()) {\n    uiLayout *row = &layout->row(true);\n    for (const blender::bke::WorkSpaceStatusItem &item : workspace->runtime->status) {",
+      "canonical_lf_sha256": "960b1bc400356ec682a1780f6d82e7d00c57ea13df30076aae56ba5eb19c9a4a"
+    },
+    {
+      "path": "source/blender/editors/screen/screen_ops.cc",
+      "basis": "current reconstructed canonical LF",
+      "line": 385,
+      "token": "bool ED_operator_node_editable(",
+      "excerpt": "\nbool ED_operator_node_editable(bContext *C)\n{\n  SpaceNode *snode = CTX_wm_space_node(C);\n\n  if (snode && snode->edittree && BKE_id_is_editable(CTX_data_main(C), &snode->edittree->id)) {\n    return true;\n  }\n\n  return false;",
+      "canonical_lf_sha256": "c160ecc510b23256695a148f335192663dc8fd55eebcee65b98dc2e703049d9a"
+    },
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "basis": "current reconstructed canonical LF",
+      "line": 2163,
+      "token": "def km_node_editor(",
+      "excerpt": "\ndef km_node_editor(params):\n    items = []\n    keymap = (\n        \"Node Editor\",\n        {\"space_type\": 'NODE_EDITOR', \"region_type\": 'WINDOW'},\n        {\"items\": items},\n    )\n\n    if not params.legacy:",
+      "canonical_lf_sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb"
+    },
+    {
+      "path": "scripts/presets/keyconfig/keymap_data/blender_default.py",
+      "basis": "current reconstructed canonical LF",
+      "line": 6609,
+      "token": "def km_node_link_modal_map(",
+      "excerpt": "\ndef km_node_link_modal_map(_params):\n    items = []\n    keymap = (\n        \"Node Link Modal Map\",\n        {\"space_type\": 'EMPTY', \"region_type\": 'WINDOW', \"modal\": True},\n        {\"items\": items},\n    )\n\n    items.extend([",
+      "canonical_lf_sha256": "c1a4d232487771db5be4c686693f3648dfbc5923aca2e74c808f2ea8a9fbabcb"
+    },
+    {
+      "path": "scripts/startup/bl_ui/space_node.py",
+      "basis": "pinned canonical LF unchanged by overlay",
+      "line": 40,
+      "token": "class NODE_HT_header(",
+      "excerpt": "\nclass NODE_HT_header(Header):\n    bl_space_type = 'NODE_EDITOR'\n\n    def draw(self, context):\n        layout = self.layout\n\n        scene = context.scene\n        snode = context.space_data\n        overlay = snode.overlay",
+      "canonical_lf_sha256": "6d2cdf072897d492c4a2b4abdbbd8d4309dea2e6a761a6019913e703c8bb8c64"
+    }
+  ],
+  "production_source_identity": {
+    "commit": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+    "canonical_committed_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+    "equals_current_patch_canonical_lf": true,
+    "compiled_run_owned_by_parent": "41034735566",
+    "audit_does_not_assert_package_or_device_status": true
+  },
+  "final_integrity": {
+    "checked_utc": "2026-11-08T04:50:18.204882+00:00",
+    "tracked_diff": [],
+    "all_fresh_raw_sources_match_get_source": true,
+    "production_patch_bytes_unchanged": true,
+    "json_round_trip": true
+  }
+}
