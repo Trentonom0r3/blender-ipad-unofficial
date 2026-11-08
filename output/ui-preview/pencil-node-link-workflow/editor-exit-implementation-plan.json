@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "status": "PLAN_ONLY_SOURCE_BACKED; NEXT_INCREMENT_ORIGINAL_NODE_LINK_EDITOR_EXIT_RETIREMENT; NO_IMPLEMENTATION_STARTED",
+  "reviewer": "node_original_owner_contract",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_patch_raw_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "authoritative_patched_tree": "C:/Users/tjerf/AppData/Local/Temp/pencil-node-link-lifecycle-iiitf445",
+  "tree_scope": "Root reports fresh COMPLETE140 tree matches verified a2b7 raw Git reconstruction. Read here: patched WM/screen/area/RNA/header/lifetime bodies. Native Node files remain exact cached pinned upstream until this proposed increment adds their overlay sections.",
+  "problem": "Confirmed stock native NODE_OT_link handler survives public area.type switch and subsequently runs node_link_modal with null region. Root owns native experiment and private crash review; source matches the path. Fix original native Node owner retirement BEFORE editor/region exit, before adding ordinary Pencil terminal ownership.",
+  "deliverable": "One connected Apple-only original native Node-link editor-exit correction: actual native invoke origin snapshot -> actual modal registration binding -> fresh exact typed owner resolution -> pre-exit nativeCancel -> ordinary WM CANCELLED cleanup -> safe checked caller continuation/refusal. No standalone helper milestone.",
+  "scope_decision": {
+    "coherent_bounded_fix": true,
+    "claim": "Original registered native Node-link editor/region exit is safe within explicitly admitted live context/tree/callback scope; no inferred physical Pencil contact lease.",
+    "first_supported_storage": "Name exact families before coding. Source supports ordinary Shader Material embedded trees and standalone Main.nodetrees by distinct membership rules. Recommended smallest first corridor: root==edit ordinary Shader Material embedded tree, exactly the confirmed baseline. A standalone/root or nested-group corridor is included only if implemented and independently tested in the SAME increment; otherwise explicitly refused during active Node teardown.",
+    "unsupported": "A matching native Node owner with unsupported family, custom/unproven callbacks, macro wrapper, missing/zero IDs, malformed origin, changed lifetime or stale membership causes exit refusal while original native context remains live. Do not cancel replacements or silently report owner absent.",
+    "non_apple": "Leave nonApple production behavior unchanged under WITH_APPLE_CROSSPLATFORM. The Windows stock failure is baseline evidence, not a patched-Windows success claim.",
+    "deferred": [
+      "ordinary Pencil DOWN/UP/CURSOR transport, aborted contact serial/tail policy and NodeAbortCandidate",
+      "NodeTree/embedded owner deletion/remap outside the protected editor-exit route",
+      "Node/socket mutation, dynamic socket rebuild and stale tooltip/motion outside protected exit",
+      "snode_set_context/treepath start/push/pop and second Node-link runtime replacement outside exit",
+      "Main/history/file/window lifetime routes not proven to flow through this exit; no global lifecycle closure",
+      "macro root/suboperator cancellation semantics and custom/Python Node/NodeTree callbacks not admitted by exact proof"
+    ]
+  },
+  "source_anchors": [
+    {
+      "path": "source/blender/makesrna/intern/rna_screen.cc",
+      "lines": [
+        150,
+        191
+      ],
+      "facts": "Public a.type update resolves owner window, sets area with region null, calls ED_area_newspace(...,true); false branch and later code restore/use saved pointers."
+    },
+    {
+      "path": "source/blender/editors/screen/area.cc",
+      "lines": [
+        2859,
+        2940
+      ],
+      "facts": "skip_region_exit temporarily nulls area.type.exit; ED_area_exit still runs before area.spacetype/type change and region swap."
+    },
+    {
+      "path": "source/blender/editors/screen/screen_edit.cc",
+      "lines": [
+        1060,
+        1171
+      ],
+      "facts": "Apple paint-only guards occur first; native callbacks and modal context replacement occur later. New originalNode guard belongs before those destructive actions."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "lines": [
+        2616,
+        2692,
+        3980,
+        4142,
+        7910,
+        7960,
+        7992,
+        8020
+      ],
+      "facts": "Null original handler context resolves null area/region; ordinary dispatch has no null-context terminal branch. Registration inserts real handler; macros store root. Existing native CANCELLED branch owns reports/operator free/cursor release/handler free."
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm.cc",
+      "lines": [
+        263,
+        292
+      ],
+      "facts": "Operator identity token allocation is callback-free; matches is find-only; free erases token before Python destructors."
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "lines": [
+        1297,
+        1306,
+        1578,
+        1628
+      ],
+      "facts": "Exact native invoke stores unique_ptr drag in SpaceNode runtime then op.customdata equality then installs modal handler. Exact nativeCancel needs region/space/tree, does not reinsert detached links."
+    },
+    {
+      "path": "source/blender/editors/space_node/node_intern.hh",
+      "lines": [
+        43,
+        99
+      ],
+      "facts": "Drag currently stores pointer fields and edge pan; SpaceNode runtime owns unique_ptr. New origin fields must be inert value-only and cannot survive as borrowed pointer authority."
+    },
+    {
+      "path": "source/blender/blenkernel/intern/node.cc",
+      "lines": [
+        3887,
+        3942,
+        4379,
+        4407,
+        5284,
+        5342
+      ],
+      "facts": "Embedded tree NO_MAIN/owner relation; standalone Main.nodetrees and exact native owner iterator. First scope must not silently expand to all enumerated families."
+    }
+  ],
+  "implementation_sequence": [
+    {
+      "step": 1,
+      "name": "Native origin capture",
+      "targets": [
+        "source/blender/editors/space_node/node_intern.hh",
+        "source/blender/editors/space_node/node_relationships.cc",
+        "source/blender/editors/include/ED_node.hh"
+      ],
+      "work": [
+        "Add an Apple-only value snapshot inside actual bNodeLinkDrag for original Main/manager/window/screen/area/region/active SpaceNode/runtime/tree relation, tree and embedded-owner nonzero session UIDs, plus a native drag-generation or equivalent value identity that cannot accept allocator address reuse.",
+        "Capture from the real native Node invoke after successful native initialization and pan-data setup while its original context is live, before modal registration. No contact, stylus class, keymap or physical-PAN bit is consulted.",
+        "Export only narrow native profile/origin/semantic Cancel helpers. Profile compares actual invoke/modal/poll/cancel callback addresses and required flags; helper reads customdata only after supplied fresh active SpaceNode runtime.linkdrag.get equality. Never dereference saved origin addresses.",
+        "ID0/no Main/unsupported family/profile capture leaves no cancellation grant; native invoke itself keeps existing behavior. Teardown later detects affected unadmitted native owner for refusal."
+      ]
+    },
+    {
+      "step": 2,
+      "name": "Actual handler binding",
+      "targets": [
+        "source/blender/windowmanager/wm_event_system.hh",
+        "source/blender/windowmanager/intern/wm_event_system.cc"
+      ],
+      "work": [
+        "Add a default-zero value snapshot to actual wmEventHandler_Op; bind after wm_handler_operator_insert in WM_event_add_modal_handler_ex.",
+        "Require handler.op==the actual passed Node op, op.opm==null, registered exact native type with nonzero lifetime, same native origin/current window/area/region, same runtime/drag generation and successful lifetime token assignment.",
+        "Store original handler/op/type values and lifetimes; after binding use find-only WM_operator_touch_lifetime_matches. Actual registration is owner evidence; class/idname scanning alone is never a cancellation grant.",
+        "Macro root with active Node child is not treated as root Node op. If macro is relevant to exiting context, refuse teardown; do not cancel child or root under this contract."
+      ]
+    },
+    {
+      "step": 3,
+      "name": "Pure fresh resolver and semantic cleanup",
+      "targets": [
+        "source/blender/windowmanager/intern/wm_event_system.cc",
+        "source/blender/windowmanager/wm_event_system.hh",
+        "source/blender/editors/space_node/node_relationships.cc"
+      ],
+      "work": [
+        "Add a narrow teardown API for area/region values that scans actual original window ownership and registered modal handler lists. Resolve Main -> manager UID -> window id -> screen UID -> area -> region -> active Node space/runtime before any saved-value dereference.",
+        "Freshly resolve the named tree family. Embedded: live Main.materials owner address/UID first, then owner.nodetree and tree UID/embedded/owner_id relation. Standalone only if separately admitted: live Main.nodetrees then UID. No broad ID-family inference.",
+        "Validate original handler/op/type/lifetime/drag-generation/runtime equality and original root/edit tree/path. Validate edge-pan screen/area/region/v2d against fresh originals (or null uninitialized v2d case). No native poll/context-provider callback during pure admission.",
+        "Build a short-lived fresh owner context with Python overrides cleared, target original window/area/region. Add an internal typed Node teardown reason to wm_handler_operator_call; do not reuse Paint serial semantics or generate mouse/key events.",
+        "For admitted Node teardown call the exact native Node cancel helper once and use CANCELLED|PASS_THROUGH through ordinary WM terminal cleanup. Preserve UNDO-depth/status/reports/operator free/grab disable/handler unlink/free; avoid modal map, FINISHED/search/push.",
+        "After callback reacquire live Main/manager/window/handler/operator lifetime before using saved pointers. If callback already disposed/replaced owner, never free or cancel replacement. Return refusal on ambiguous ownership/context change."
+      ]
+    },
+    {
+      "step": 4,
+      "name": "Pre-exit consumers and checked continuation",
+      "targets": [
+        "source/blender/editors/screen/screen_edit.cc",
+        "source/blender/editors/screen/area.cc",
+        "source/blender/makesrna/intern/rna_screen.cc"
+      ],
+      "work": [
+        "At beginning of ED_area_exit, resolve the actual original owning window from live screen membership, perform originalNode teardown before area type exit or any region iteration. At beginning of ED_region_exit, resolve actual containing area/window by membership and retire before region type exit, handler removal or region context nulling.",
+        "Run existing Paint and new Node obligations sequentially; reacquire and revalidate the originally requested area/region after EACH callback-capable operation before subsequent checks or native exit body. Any refusal aborts before changing type, swapping regions, clearing modal context, drawing teardown or freeing resources.",
+        "Use an enum/result or helper contract that distinguishes absent, retired, refused/context changed. A no-owner return must not imply saved caller pointers are still valid.",
+        "Preserve ED_area_newspace and ED_area_swapspace checked false behavior; revalidate original Main/window/area/region/type before restoring temporary area.type.exit or continuing to mutate area. Do not restore through an old pointer after callback-driven replacement.",
+        "Audit actual public RNA a.type wrapper: it currently restores saved window/area/region and resets area.butspacetype on false. Add bounded fresh-membership restoration/reacquisition if new cancel callback can invalidate those owners, or keep such callback profiles outside admission with an explicit source-backed proof. This is a required preimplementation frontier, not optional polish."
+      ]
+    }
+  ],
+  "actual_caller_consumer_audit": [
+    {
+      "caller": "rna_Area_type_update -> ED_area_newspace(...,true) -> ED_area_exit",
+      "proof": "RNA150-191; AREA2859-2940",
+      "obligation": "Confirmed public API route. Must stop before type mutation on refusal; safe callback revalidation at both newspace and RNA wrapper."
+    },
+    {
+      "caller": "ED_area_swapspace -> ED_area_exit(sa1/sa2)",
+      "proof": "AREA2812-2836",
+      "obligation": "Both original areas must remain valid through callbacks; no half-applied data swap. Preflight both or refuse/revalidate before allocation/copy."
+    },
+    {
+      "caller": "ED_region_remove -> ED_region_exit -> BKE_area_region_free/freelink",
+      "proof": "SCREEN1048-1055",
+      "obligation": "False forbids free; success requires fresh original area/region membership before free."
+    },
+    {
+      "caller": "screen_delarea -> ED_area_exit -> BKE_screen_area_free/remlink/free",
+      "proof": "SCREEN168-178",
+      "obligation": "False forbids deletion; success requires fresh original screen/area relation."
+    },
+    {
+      "caller": "ED_screen_exit -> each region/area exit",
+      "proof": "SCREEN1227-1251",
+      "obligation": "Existing false return propagates; snapshot iteration/reacquire must not carry invalid next pointers across new native cancel callbacks."
+    },
+    {
+      "caller": "WM_event_remove_handlers file-select area exit",
+      "proof": "WM2951-2969",
+      "obligation": "Existing revalidation retained; new Node callback does not bypass file-selector lifecycle."
+    },
+    {
+      "caller": "Normal Node native Finish/Cancel",
+      "proof": "NODE1419-1482;WM4093-4142",
+      "obligation": "New hook does not change these native routes or infer a new contact owner."
+    }
+  ],
+  "required_tests_same_increment": [
+    "New connected actual-source host fixture (O0 and O2): real native Node origin code + actual modal install/bind + fresh resolver + protected ED_area_newspace/ED_area_exit/ED_region_exit call bodies + exact semantic nativeCancel + actual WM terminal status fragments. Intrusive-list/context/BKE primitive model boundaries named, no copied algorithms.",
+    "Positive root native Material-embedded Shader case: Node invoke acquired, actual handler bound, switch requested; Cancel before any type/region exit callback; draw handle removed before drag destruction; edge-pan rect restored; same original tree cleanup; handler/op/grab cleaned once; area mutation then proceeds; no null-region modal call.",
+    "Normal no owner exit, normal Node LMB Finish, native Esc/RMB Cancel, socket/poll acquisition refusal and no installed handler stay native. Existing input detach remains absent after Cancel, not restored as rollback.",
+    "Refusals: unsupported tree family; embedded owner absent/replaced/UID0; standalone missing unless explicitly supported; stale tree UID; original root/edit mismatch; replaced runtime/drag or ABA generation; op/type address reuse and lifetime mismatch; DO_FREE; file selector; macro active Node; malformed origin/context; multiple ambiguous affected owner windows.",
+    "Original-window tests: caller is another window; area/region belongs to old original live window; wrong window id/reused address; current unrelated Node owner remains untouched.",
+    "Callbacks/reentrancy: Cancel causes Main/window/screen/area/region/operator/handler/type replacement or nested teardown. Assert caller refuses safely and never restores/dereferences/frees replacement. If arbitrary callbacks are explicitly excluded, test exact exclusion and separately validate normal WM cleanup boundaries.",
+    "Actual consumer false/success call-order fixtures include RNA a.type wrapper, newspace skip=true, swapspace, region remove, screen deletion and screen exit iteration. Assertions must demonstrate real mutation/free prevented, not merely string marker ordering.",
+    "Compile native ED helper dependencies with exact pinned declarations and Apple/nonApple preprocessing profiles; new required upstream files added to canonical preflight pin list/CI as needed. Existing Paint/Knife owner, Node native dispatch, UI/render/gizmo/history tests remain passing.",
+    "After source/host/full preflight and independent review pass, one exact target native build plus full package/compiled selected new and preserved scopes. No unchanged build. Stock public-area-switch baseline remains failure evidence; patched target actual/device gate stays separate."
+  ],
+  "admission_before_coding": [
+    "Resolve callback/outer-RNA continuation design explicitly: nativeCancel calls BKE invariants with node/tree callbacks; ordinary WM checks are bounded. Choose exact source-backed callback profile plus full affected caller revalidation, or declare this still blocked. Do not assume custom callbacks safe.",
+    "Freeze exact first graphstorage scope and unsupported refusal behavior. Do not label all Node editors protected if only Material root Shader is admitted.",
+    "Choose concrete drag identity strategy preventing native runtime replacement/allocator ABA; no raw-pointer-equality-only guarantee.",
+    "Deliver origin/bind/resolver/consumer/refusal/normal-cleanup/tests as one coherent source increment. No partial helper commit or ordinary Pencil lease yet."
+  ],
+  "limitations": "Editor-exit-only repair is coherent and independently useful for the confirmed route. It deliberately does not close Node tree/storage/mutation/history/runtime loss in general and does not authorize a new ordinary Pencil ownership foundation. Deferred paths remain explicit inherited frontiers, not silently accepted safety claims.",
+  "evidence": {
+    "original_contract": "output/ui-preview/pencil-node-link-workflow/original-owner-source-contract.json",
+    "actual_failure": "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle",
+    "root_failure_review": "Root owns bounded crash facts/independent review; raw private crash must not be committed.",
+    "new_execution": "No new compiler/runtime/UI/source tests performed for this plan.",
+    "production_changes": "None."
+  }
+}

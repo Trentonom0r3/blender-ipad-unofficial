@@ -29,7 +29,27 @@ are not target5.0/iOS/Pencil/installed-package/device acceptance, all socket or
 history modes, real UIKit thresholds, GHOST ingestion or callback-lifetime proof.
 All original source-model cases and failed native-helper diagnostics remain.
 
-## Confirmed stock lifecycle counterexample and immediate priority
+## Preferred first correction: absence-only editor-switch refusal
+
+Read editor-exit-absence-refusal-plan.json before the earlier retirement plan.
+A callback-free presence query can refuse the confirmed editor-type change while
+its actual registered native Node-link modal remains active. It reads no drag,
+tree or customdata, captures no new origin/owner/contact lease, allocates nothing,
+and calls no provider/poll/Cancel. The original operation stays live; Finish or
+native Cancel and retry. This avoids the unresolved borrowed-caller cancellation
+frontier for this refused corridor. Existing checked newspace/RNA false paths
+restore transient butspacetype, temporary type.exit and the saved context.
+
+Connect query and actual consumers with full no-op/native fallback tests; do not
+deliver a helper-only milestone. A late false from generic area exit does not make
+join/swap/screen-exit atomic: each claimed multi-target caller needs first checks
+before all geometry/state/callback writes, or must be expressly deferred. Prefer
+the exact confirmed newspace/public RNA corridor first. No implementation exists.
+The fuller original-owner cancellation/retirement plan below is a later alternative
+with its own unresolved callback and outer-frame gates, not a prerequisite forcing
+a broad storage/lifetime rewrite for the bounded refusal fix.
+
+## Confirmed stock lifecycle counterexample and later retirement
 
 The owned native-host/attempt-5-area-switch-lifecycle probe acquired NODE_OT_link
 and changed its area to VIEW_3D through the real public setter. The native handler

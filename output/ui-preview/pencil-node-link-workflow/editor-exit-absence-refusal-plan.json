@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "status": "PREFERRED_NEXT_FIX_PLAN_ONLY; CALLBACK_FREE_NATIVE_NODE_LINK_PRESENCE_REFUSAL; NO_PRODUCTION_EDIT",
+  "reviewer": "node_original_owner_contract",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_patch_raw_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "source_tree": "C:/Users/tjerf/AppData/Local/Temp/pencil-node-link-lifecycle-iiitf445",
+  "decision": "Prefer an absence-only callback-free exit preflight for the confirmed editor-switch failure before implementing nativeCancel ownership/retirement. The earlier full retirement plan remains chronological alternative/follow-up evidence, not the preferred next increment.",
+  "why_coherent": [
+    "Actual public area.type switch reaches checked ED_area_newspace -> ED_area_exit while original Node-link handler context still targets that live area/region.",
+    "Refuse before Paint teardown/native exit callbacks/context mutation if an affected actual registered native Node-link modal is present. Original operation stays live and receives native motion/Finish/Esc normally.",
+    "The new refusal runs no callbacks; the existing borrowed RNA/area continuation pointers cannot be invalidated by this query. No new global callback lifetime proof is required for this refused corridor.",
+    "No NodeTree/embedded owner/Node/socket/customdata read is required, so graphstorage family coverage is not inferred or expanded. This is a refusal policy, not a positive Node or physical-contact lease."
+  ],
+  "hard_non_goals": [
+    "No nativeCancel, synthetic release/Esc, event reordering, contact serial/tail policy, receipt, positive owner, operator lifetime allocation, drag UID, bNodeLinkDrag field, tree resolver or new ordinary Pencil lease.",
+    "No automatic completion/cancellation, rollback or generic Node lifetime closure.",
+    "No bare null-region modal guard; keep original region/context alive by preventing the destructive action.",
+    "No detached helper/source-build milestone. Deliver actual query + early consumers + connected behavior checks together."
+  ],
+  "query_contract": {
+    "illustrative_api": "WM_event_ipad_node_link_editor_exit_allowed(C, requested_area_value, requested_region_value) (final naming may change)",
+    "execution": "Read-only nonallocating current-state scan with no context setters, Python context/provider calls, poll/modal/cancel/UI callback, report dispatch or lifetime-token allocation. Native type helper does only pointer/flag comparisons.",
+    "membership": "Resolve current G_MAIN/manager/window lists before reading their members; find requested actual area/region through live active-screen membership. Scan the actual owning windows' modalhandlers, not a previously saved handler/window pointer. Context area/region values are compared to live target addresses only. A foreign current C.window must not hide the original owning window. No saved pointer is dereferenced and no replacement ownership is captured.",
+    "native_profile": "Use current WM_operatortype_find('NODE_OT_link', true) and a pure same-translation-unit native profile helper comparing actual Node invoke/modal/poll/cancel callbacks and required flags. WM_operatortype_find is registry lookup only (wm_operator_type.cc92-113); no native poll. Presence never authorizes invocation of those callbacks.",
+    "root": "For an actual listed OP handler with root handler.op==native registered NODE_OT_link and original context targeting requested area/region, return false. No customdata/tree/node reads. DO_FREE/pending-removal matching native handler is conservatively still present until actual list cleanup; retry later.",
+    "macro": "Actual WM registration stores macro root, active child is root.opm (WM7924-7928; wm_operator_type482-508). Support refusal for an active native Node child only after actual live root.macro membership proves which child may be inspected. Never cancel child or root. Malformed/ambiguous active macro relevant to the target is conservative refusal; unrelated known nonNode macro behavior stays unchanged. Exact implementation must define/test ambiguity handling, rather than treating unknown as native or granting success without proof.",
+    "unknown": "A target-relevant actual handler with missing/mismatched current type/profile or malformed root/active-child relation cannot provide a cancellation grant. Query returns conservative unknown/refusal where Node cannot be safely ruled out. This is not proof of arbitrary corrupted-pointer safety. Exact native well-formed root case closes the confirmed corridor.",
+    "null_ids": "No ID/session UID/lifetime token is needed for this instantaneous callback-free presence refusal. Current live list membership plus actual type/profile is enough to deny exit; zero tree/owner/type-lifetime IDs cannot accidentally grant cancellation. No tree ID is even read. Missing Main/manager/window/target-membership needed to establish absence is query-unknown and must be explicitly refused or excluded for that consumer; do not silently prove absence.",
+    "region_rule": "Whole-area exit matches native handler.context.area to target area. A region-only request matches its original registered region; do not block an unrelated header merely because the operation uses another WINDOW region. Missing/ambiguous original region in an otherwise relevant native Node handler is refusal, not permission to proceed.",
+    "non_apple": "Apple-only implementation/consumers; preserve nonApple source behavior. No patched-Windows/device claim from stock baseline."
+  },
+  "confirmed_noop_corridor": [
+    {
+      "source": "rna_screen.cc124-148",
+      "fact": "Setter stores requested butspacetype; getter reports requested type only while that transient field is nonempty."
+    },
+    {
+      "source": "rna_screen.cc150-178",
+      "fact": "Public update resolves owning screen window, sets C window/area and region=null, calls ED_area_newspace(...,true). On false it clears butspacetype=SPACE_EMPTY, restores prior window/area/region and returns."
+    },
+    {
+      "source": "area.cc2859-2897",
+      "fact": "Newspace computes native type and prior header alignment, temporarily clears area.type.exit for skip=true, then calls checked ED_area_exit. On false it restores area.type.exit and returns before spacetype/type/region swap."
+    },
+    {
+      "source": "screen_edit.cc1126-1164",
+      "fact": "New presence check must be first, before existing Paint guard and area.type.exit, region loop, area handler removal or modal context replacement."
+    },
+    {
+      "source": "screen_edit.cc1060-1087",
+      "fact": "New region presence check must be first, before Paint guard, region.type.exit, local handler removal or modal region replacement."
+    },
+    {
+      "result": "Refused public area.type assignment leaves real spacetype/type, region lists, Node runtime/drag/handler, graph, View2D and original context ownership unchanged. Transient butspacetype and temporary type.exit are restored. After native Finish/Esc/RMB ends the handler, retry reaches normal exit. No new report currently exists in the RNA false branch."
+    }
+  ],
+  "multi_target_caveat": "Existing bool signatures do not make every caller atomic. Early callback-free preflight must cover ALL affected targets before any Paint/native callback or geometric/state mutation in each admitted caller. A late ED_area_exit false is insufficient for callers that already mutated layout. Consumers without this proof stay explicitly deferred.",
+  "caller_requirements": [
+    {
+      "caller": "ED_area_newspace -> ED_area_exit and rna_Area_type_update",
+      "status": "Preferred exact first supported corridor",
+      "required": "First query in exit gives a callback-free false before Paint/native callbacks; optionally preflight newspace before temporary type.exit change for simpler no-op proof. Verify false restores type.exit and RNA clears butspacetype/context. No new callback path."
+    },
+    {
+      "caller": "ED_region_remove -> ED_region_exit",
+      "source": "screen_edit1048-1055",
+      "required": "First query before any callback; false prevents BKE_area_region_free and unlink. Actual caller must not mutate region first."
+    },
+    {
+      "caller": "screen_delarea -> ED_area_exit",
+      "source": "screen_edit168-178",
+      "required": "Direct false prevents area free, but higher join callers below need their own early preflight."
+    },
+    {
+      "caller": "ED_area_swapspace",
+      "source": "area2812-2836",
+      "required": "Preflight BOTH areas before existing Paint teardown and before either ED_area_exit; avoid first exit/callback followed by second refusal."
+    },
+    {
+      "caller": "screen_area_join_aligned and screen_area_join",
+      "source": "screen_edit578-619,660-688",
+      "required": "Preflight all relevant original areas before existing Paint helper, screen_areas_align, geometry edge writes, trim/split. Their current early Paint-only preflight sites demonstrate placement; do not wait for screen_delarea."
+    },
+    {
+      "caller": "ED_screen_exit",
+      "source": "screen_edit1206-1248",
+      "required": "If claimed, preflight all relevant regions/areas before Paint guard, animtimer/sound/scrubbing/active-region writes and before loops. Otherwise explicitly defer global screen-exit atomicity."
+    },
+    {
+      "caller": "offscreen exit and other direct region/context replacement",
+      "source": "area2357-2384",
+      "required": "Distinct path bypasses ED_area_exit; defer unless exact actual relevance/caller behavior is inspected and integrated. No global teardown claim."
+    }
+  ],
+  "implementation_surface": "Pure native Node callback-profile helper/header plus WM read-only actual-handler/target absence query and early Apple exit/caller consumers. No origin/binding/drag/tree ownership fields. First implementation must name exactly the admitted consumers and demonstrate no-op refusal end to end.",
+  "same_increment_validation": [
+    "Connected exact-source O0/O2 query -> actual checked newspace/area/region/RNA false bodies, not a helper-only assertion. Model boundaries for live intrusive lists/registries/context setters explicit.",
+    "Actual registered root Node handler: affected area switch refused before all Paint/Node/area/region callbacks; callbacks/cancel/poll/alloc/free counters remain zero; op/handler/drag are untouched; no region context is cleared.",
+    "Exact public RNA false outcome: area.type remains NODE_EDITOR; butspacetype becomes SPACE_EMPTY; old area.type.exit restored for skip=true; previous context restored in proper area-before-region order; no unrequested report or pending mutation leak.",
+    "No owner and native Finish/Esc/RMB -> handler removed -> retry succeeds; ordinary source linking and native existing-input detach semantics unchanged.",
+    "Wrong area/region/window, foreign C.window, multiple windows, DO_FREE pending, zero IDs, missing Main/manager/target, replaced/unregistered type profile, macro active nativeNode/list mismatch, unrelated native modal controls. No tree/customdata/Node/socket read under any case.",
+    "Multi-area/region/screen consumers only if all-target early preflight proves zero prior mutation/callback on refusal; retain explicit unprotected path list.",
+    "Apple/nonApple compile profiles, affected existing Paint/Knife/Node/UI tests, full host/preflight and independent review before one exact native target build/package/compiled gate. No build/test is run by this plan.",
+    "Target/device check later confirms Finish/Cancel then retry remains usable. Stock Windows attempt5 stays native baseline failure evidence."
+  ],
+  "ux_tradeoff": "Editor switching/removal pauses during a live affected Node link. The user finishes or uses existing native Esc/RMB Cancel, then retries. This preserves graph/native cancellation semantics and removes the confirmed destructive transition. The current RNA false branch is a silent no-op; clear user feedback could be a separate concrete product choice, but this addendum does not invent a new Cancel button or promise a report.",
+  "evidence_boundaries": "Exact target/source current overlay and root-observed stock5.1.2 failure. No new production/test/CI change, compiler execution, runtime probe, target build or device acceptance.",
+  "related": [
+    "output/ui-preview/pencil-node-link-workflow/editor-exit-implementation-plan.json (earlier native retirement alternative; not deleted)",
+    "output/ui-preview/pencil-node-link-workflow/original-owner-source-contract.json",
+    "output/ui-preview/pencil-node-link-workflow/native-host/attempt-5-area-switch-lifecycle"
+  ]
+}

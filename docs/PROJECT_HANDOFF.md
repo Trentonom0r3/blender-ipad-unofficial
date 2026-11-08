@@ -1,3 +1,23 @@
+## Preferred next Node fix: callback-free editor-switch refusal — 2026-11-08 UTC
+
+Read editor-exit-absence-refusal-plan.json first. Prefer a smaller bounded fix for
+the confirmed stock area.type crash: before any Paint/native exit callbacks, refuse
+the editor change while its actual registered native Node-link modal is present.
+Keep the original operation/context alive; Finish or native Cancel, then retry.
+This instantaneous absence-only query reads no drag/tree/customdata, allocates no
+lifetime token or positive owner/contact lease, and calls no poll/Cancel/provider.
+The checked newspace/RNA corridor already restores type.exit, butspacetype and saved
+context on false. Prove that exact full consumer no-op behavior, not a helper only.
+
+Existing bool exit APIs do NOT establish atomic layout refusal for every caller.
+Join/swap/screen-exit consumers require early preflight of ALL affected targets
+before geometry/state/callback writes; otherwise scope them out explicitly. First
+confirmed editor-type route is preferred. No new production/test/CI edit or build
+exists. The earlier nativeCancel/original-owner retirement plan stays a later
+alternative; its callback/borrowed-frame lifetime gates are not silently waived.
+Ordinary Pencil terminals still follow lifecycle safety, without unleased release.
+Latest a2b7 IPA/device status and all accepted UI/input remain unchanged.
+
 ## Node editor lifecycle counterexample; bounded retirement next — 2026-11-08 UTC
 
 A new owned disposable stock5.1.2/ec6e62d40fa9 GUI probe acquired actual NODE_OT_link,
