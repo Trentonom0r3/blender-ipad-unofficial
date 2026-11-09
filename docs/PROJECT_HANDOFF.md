@@ -1,3 +1,26 @@
+## Exact Node editor-switch build dispatched once — 2026-11-09 UTC
+
+Host-validated source6807e557133fc232352cb36d1823f132c3b09177 builds once in
+run42538564455. Exact head confirmed; hosted preflight in progress without
+observed failure. Watcher54716 .cache/watch-pencil-node-editor-switch-build.py,
+log .cache/node-editor-switch-build-watch-42538564455.log owns SAME run/full
+IPA/whole UI+Python/default bars/tools129/new and preserved actual scopes.
+Read editor-switch-candidate/build-checkpoint.json and source-verification.json.
+No native/package/actual compiled/device success yet; no ready claim or unchanged
+redispatch. Preserve native raw HUD negative if unsupported and independently
+prove fresh actual area-before-region/native first-size/init/Weight cleanup.
+
+Full839/705.396s passed255 unchanged frozen inputs plus actual historical .mm
+consumption addendum,142 pinned preflight/diff, currentApple74/O0O2 and exact old
+failure/nonApple controls, cold142+2, and independent source/literal/test/cold
+reviews. Runtime only five native targets;137 prior/all7Python/all14GHOST exact.
+Source correction is callback-free old-Node/different-editor refusal only; no
+Cancel/drag/tree/lease/input/UI change, generic exit or rollback claim.
+Latest ready remains a2b7a81/run41034735566, already offered; no device acceptance.
+Full goal unfinished. Preserve all evidence and wait for actual build gates before
+further production expansion. Ordinary reset Nov9 04:40:35UTC/Nov8 22:40:35CST.
+Two available reset credits untouched; never redeem without explicit new request.
+
 ## Native Node editor-switch correction host validated — 2026-11-09 UTC
 
 Canonical patch9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53:
