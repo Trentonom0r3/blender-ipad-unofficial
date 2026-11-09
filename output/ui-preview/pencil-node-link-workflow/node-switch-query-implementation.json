@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "status": "MATERIALIZED_CANDIDATE_COMPONENT_COMPLETE; CONNECTED_TESTS_AND_PATCH_REGENERATION_OWNED_BY_ROOT_AND_TEST_AGENT; NO_BUILD",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "prior_production_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "source_tree": "C:/Users/tjerf/AppData/Local/Temp/pencil-node-link-lifecycle-iiitf445",
+  "apis": {
+    "query": "bool WM_event_ipad_node_link_editor_switch_allowed(const bContext *C, const ScrArea *area)",
+    "native_profile": "bool blender::ed::space_node::node_link_modal_type(const wmOperatorType *type)",
+    "guard": "WITH_APPLE_CROSSPLATFORM",
+    "static_dependencies": [
+      "wm_ipad_node_link_registered_type",
+      "wm_ipad_node_link_type_switch_allowed",
+      "wm_ipad_node_link_operator_switch_allowed"
+    ]
+  },
+  "consumer_scope": "Root-owned first statement in ED_area_newspace, old SPACE_NODE and requested type differs; before CTX_wm_window, spacetype lookup, Paint/native exit callbacks or temporary type.exit writes. No generic ED_area_exit/ED_region_exit guard and no global layout/screen-exit claim.",
+  "approved_default_policy": {
+    "missing_roots": "!C, !area, !G_MAIN, missing/foreign raw CTX_wm_manager relative to G_MAIN->wm => false. No provider-sensitive context getter is called.",
+    "membership": "After current manager membership, scan every manager/window modalhandlers list from current G_MAIN. Compare actual OP handler context.area to opaque target address; never dereference target or saved context area/window/region. Foreign C.window does not censor any actual window.",
+    "inactive_no_owner": "No relevant OP => true, including inactive/non-active-screen target and current manager with no windows. Active-screen membership is not required for proving global absence.",
+    "registered_native_node": "Actual currently registered NODE_OT_link type identity => false, including mismatched current profile; another registered type with the exact native callback profile also refuses conservatively.",
+    "known_other_types": "Registered other type may pass only under this bounded identity/profile policy. This does not prove arbitrary custom callbacks cannot invoke Node semantics.",
+    "unknown": "Relevant null op/type, unregistered type, inconsistent nonmacro runtime fields or malformed/unknown active macro => false.",
+    "macro": "Registered macro root must have opm and nonempty first/last runtime list. Walk actual macro list with prev-link and final-last consistency, compare child addresses before inspecting active child. Matched active child must differ from root, point opm back to root, have no runtime macro, and have current registered nonmacro type. Actual Node/profile clone refuses; known unrelated child passes.",
+    "pending_removal": "DO_FREE does not establish absence: still-listed relevant handler is inspected normally and blocks until actual removal.",
+    "ids": "No ID/session UID/type-lifetime/operator-lifetime or positive owner/contact/drag ID is read or allocated. Zero values do not alter this instantaneous query.",
+    "no_side_effects": "No poll, invoke, modal, Cancel, provider, UI/report callback, context setter, graph/tree/customdata read, handler mutation, token/lifetime allocation, free or event synthesis.",
+    "non_apple": "All additions and root consumer are guarded; native nonApple source behavior remains."
+  },
+  "native_profile_fields": [
+    "invoke=node_link_invoke",
+    "modal=node_link_modal",
+    "poll=ED_operator_node_editable",
+    "cancel=node_link_cancel",
+    "exec=null",
+    "pyop_poll=null",
+    "flags exactly REGISTER|UNDO|BLOCKING",
+    "type macro first=null,last=null"
+  ],
+  "registry_boundary": {
+    "claim": "Nonallocating in supported ordinary initialized UI operator-registry corridor. Registry access is delayed until relevant nonnull OP with nonnull type. No relevant OP does not touch registry.",
+    "source": "wm_operator_type.cc get_operators_map54-68 lazily reserve(2048); WM_operatortypes_registered_get70-73; WM_operatortype_find78-101 uses local char buffer and quiet lookup; wm_operatortype_append__end121-145 adds registered types via same map. Actual registered native Node modal necessarily follows this registration.",
+    "excluded": "No global guarantee for malformed externally fabricated pre-registry modalhandlers or arbitrary first-ever map initialization. Registry and intrusive lists retain ordinary native UI-thread validity assumptions; arbitrary corrupted-pointer/cyclic-list safety is not claimed."
+  },
+  "source_anchors": {
+    "raw_manager": "blenkernel/intern/context.cc764 direct C->wm.manager",
+    "macro_flattening": "wm_event_system.cc1557-1605 flattens children into motherop->macro and assigns child->opm=motherop",
+    "modal_registration": "wm_event_system.cc original7924-7928 stores mother root in handler and active child in root->opm; original7934-7937 records area/region values",
+    "native_factory": "node_relationships.cc original1614-1628 exact callback/flag factory unchanged",
+    "native_helper": "node_relationships.cc1615",
+    "query": "wm_event_system.cc4377",
+    "declarations": [
+      "ED_node.hh46",
+      "WM_api.hh711"
+    ]
+  },
+  "materialization": {
+    "new_unpatched_targets": [
+      "source/blender/editors/space_node/node_relationships.cc",
+      "source/blender/editors/include/ED_node.hh"
+    ],
+    "node_relationships_original": "Read fixed-pin preflight cache; copied original plus helper into materialized tree.",
+    "node_header_original": "GitHub blender/blender fixed pin blob abe390b79e9099576da7c125f4ceea903e4eab05; stored original unchanged in fixed-pin preflight cache before materialized edit.",
+    "files_sha256": {
+      "source/blender/editors/space_node/node_relationships.cc": "3d786493bc5549cd8f6bc5caa0072bde16d58db3dbe70d2c6e9a3df24eccf780",
+      "source/blender/editors/include/ED_node.hh": "87fc3f730581095795f3d6dc171ba33994a179807138719e11789831e45558a8",
+      "source/blender/windowmanager/intern/wm_event_system.cc": "91fa6b1b2a5ea250d1a4da5ee7cc5714fb3a84bc3bd356691b9aab858af74e8a",
+      "source/blender/windowmanager/WM_api.hh": "3d7ef90b57594efb4bb17ec319b9fb7a3f70f428028e7729c2a93e15d92a4364"
+    }
+  },
+  "review": "Independent semantics agent reviewed materialized helper/query and reported no actionable finding against approved bounded policy. Connected executable tests are separately owned and not claimed by this component note.",
+  "work_limits": "Component agent made no production patch edit, commit, push, native build, target runtime or device claim. Parent owns consumer/patch and connected integration; other agent owns tests."
+}

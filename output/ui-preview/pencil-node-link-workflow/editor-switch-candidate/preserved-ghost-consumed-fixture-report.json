@@ -1,0 +1,175 @@
+{
+  "driver_sha256": "85f5e45c1ca1012e9f2e2214f8013a3443f638abedc19a102db4a639b1b90845",
+  "status": "PASS_BOUNDED_GHOST_COMPONENT",
+  "utc": "2026-11-08T23:57:58.881369+00:00",
+  "source_root": "current authoritative overlay reconstructed by retained exact-hunk helper",
+  "producer_sha256": "1ab2a22d1658b567d9d787c22e4052d621352d070d0e5cd4680532c0adfd6b35",
+  "baseline_producer_sha256": "6237464b57ee2e69f2f4cd5ea4916ce1edc36c5ba91c1649577084c21bb6025a",
+  "generator_unchanged": true,
+  "producer_scope_oracle": "Actual baseline exact after removing recognized-Begin/frozen bool read, !omit predicate, and the single separately counted Node classification assignment. Actual candidate compiled unchanged; no simulated-correction fallback.",
+  "inputs": {
+    "intern/ghost/intern/GHOST_WindowIOS.mm": "0879390be93816efeef888dd65670fe17158874f0ee4192db487e2bd7a69b432",
+    "intern/ghost/GHOST_NavigationIOS.hh": "71e6816588433a81b3687c6aaac54df9c3d0c342d3ca36ddfaf27896cedc08a8",
+    "intern/ghost/intern/GHOST_EventCursor.hh": "330a4818ec8e49355706a9fb2b6b7743f5d9370e23c999bfc75faf08752f27dc",
+    "intern/ghost/intern/GHOST_EventButton.hh": "9c22e0e716df0957e5fd4b16d736b371e34b980f1c0b0a623222c8bdac708ad2",
+    "upstream:intern/ghost/intern/GHOST_EventManager.cc": "7e30dde27bc20cb20fb7e7b59c861d3ae0b8e65dc64c898f3d4b18fc76e93736",
+    "upstream:source/blender/editors/space_view3d/view3d_navigate_view_zoom.cc": "f2765d53d5e869052aabaa8610096a8eb581fdb0115ca8e92f460cd30ee3c1b3",
+    "upstream:source/blender/windowmanager/intern/wm_gesture_ops.cc": "73576f004d32a7b76ca4bbd1615b7868ea2be14d8b5a6e67f58f12ed43c8bfcf",
+    "upstream:source/blender/editors/transform/transform.cc": "2f3ee60a00d0875ebd9ef90606d2300c3ba3a3705f76fd4605ac61dd6d61bf02",
+    "upstream:source/blender/editors/transform/transform.hh": "66db02ac0fcfad7341616de4348ca043fcaca66d708587fa4e2b5bc6be7fd928",
+    "upstream:source/blender/windowmanager/wm_event_types.hh": "af50f513498701f4e34dcbc675da4418174ba0fef6a4a2c7c2d6c7e874717477"
+  },
+  "fixture_inputs": {
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_pan_ghost\\baseline-GHOST_NavigationIOS.hh": "90b5003a3e2f2c51c774729d6dd13b17648541532fc06218ff119611c93ab83d",
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_pan_ghost\\baseline-GHOST_WindowIOS.mm": "ae73fe0aa8c2ba5c518ac134bd57b31827209ce1e7a0be71022644a1bbd5e3ef",
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_pan_ghost\\retained-connected-models.inc.cc": "d84915f3be68f3a58fbb41e332c7a7229c5e1f0a652e65ac334eb5b0a8d38541",
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_pan_ghost\\native-parity-models.inc.cc": "3ca2ee3d6315870ba4dac0b36a107e6c0f5f120067b7229e93ca16b2c615b0fe",
+    "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\build\\tests\\knife_pan_ghost\\scenarios.inc.cc": "63ffe2699f05e7538f8f402e6e85777a7e855e2b4237566e20a8966b4b5c4c21"
+  },
+  "generated_source": {
+    "path": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-pan-ghost-ydr6i2ad\\actual-ghost-connected.cc",
+    "sha256": "07bc6739c5be4b894d5a8b2fe5968a717db45e62122d2d89814e7a7f5bffeb4e"
+  },
+  "native_zoom_actual_functions": [
+    "static void view_zoom_to_window_xy_3d(",
+    "static float viewzoom_scale_value(",
+    "static float viewzoom_scale_value_offset(",
+    "static void viewzoom_apply_3d(",
+    "static void viewzoom_apply(",
+    "static wmOperatorStatus viewzoom_invoke_impl(",
+    "static wmOperatorStatus viewzoom_invoke("
+  ],
+  "circle_transform_source": {
+    "circle": "73576f004d32a7b76ca4bbd1615b7868ea2be14d8b5a6e67f58f12ed43c8bfcf",
+    "transform": "2f3ee60a00d0875ebd9ef90606d2300c3ba3a3705f76fd4605ac61dd6d61bf02"
+  },
+  "runs": [
+    {
+      "optimization": "-O0",
+      "case": "packets",
+      "returncode": 0,
+      "stdout": "PASS exact packet values/order/tablet/terminal/cached translation; admitted PAN deletion only\nPASS packets\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "gates",
+      "returncode": 0,
+      "stdout": "PASS pending Down/Up before capture/recognition, absent callback/manager, initial modifiers, scope/content/owner/variant equality, original Live owner and initial Tool fallback\nPASS gates\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "physical",
+      "returncode": 0,
+      "stdout": "PASS physical actor/origin/finite/view/ring/HUD, pre-super capture, extra-contact frozen decision, Changed no-query, reset/invalidate/fresh serial\nPASS physical\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "priority",
+      "returncode": 0,
+      "stdout": "PASS retained paint/native terminal/Finger/hardware/ring/HUD/tool/resize/navigation/trackpad/pinch routes\nPASS priority\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "native-controls",
+      "returncode": 0,
+      "stdout": "PASS native Circle 25->31; Transform 2->2.2 from retained actual producer dy20 PAN\nPASS native Circle 25->31; Transform 2->2.2 from retained actual producer dy20 PAN\nPASS native-controls\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-ctrl",
+      "returncode": 0,
+      "stdout": "OLD_CTRL_KNIFE_PAN_ZOOM 10 -> 10.197\nPASS old-ctrl\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "new-ctrl",
+      "returncode": 0,
+      "stdout": "PASS admitted Ctrl Knife PAN absent; native zoom reachability removed\nPASS new-ctrl\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O0",
+      "case": "old-must-fail",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: pans==0, file C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-pan-ghost-ydr6i2ad\\actual-ghost-connected.cc, line 3189\n"
+    },
+    {
+      "optimization": "-O2",
+      "case": "packets",
+      "returncode": 0,
+      "stdout": "PASS exact packet values/order/tablet/terminal/cached translation; admitted PAN deletion only\nPASS packets\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "gates",
+      "returncode": 0,
+      "stdout": "PASS pending Down/Up before capture/recognition, absent callback/manager, initial modifiers, scope/content/owner/variant equality, original Live owner and initial Tool fallback\nPASS gates\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "physical",
+      "returncode": 0,
+      "stdout": "PASS physical actor/origin/finite/view/ring/HUD, pre-super capture, extra-contact frozen decision, Changed no-query, reset/invalidate/fresh serial\nPASS physical\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "priority",
+      "returncode": 0,
+      "stdout": "PASS retained paint/native terminal/Finger/hardware/ring/HUD/tool/resize/navigation/trackpad/pinch routes\nPASS priority\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "native-controls",
+      "returncode": 0,
+      "stdout": "PASS native Circle 25->31; Transform 2->2.2 from retained actual producer dy20 PAN\nPASS native Circle 25->31; Transform 2->2.2 from retained actual producer dy20 PAN\nPASS native-controls\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-ctrl",
+      "returncode": 0,
+      "stdout": "OLD_CTRL_KNIFE_PAN_ZOOM 10 -> 10.197\nPASS old-ctrl\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "new-ctrl",
+      "returncode": 0,
+      "stdout": "PASS admitted Ctrl Knife PAN absent; native zoom reachability removed\nPASS new-ctrl\n",
+      "stderr": ""
+    },
+    {
+      "optimization": "-O2",
+      "case": "old-must-fail",
+      "returncode": 3221226505,
+      "stdout": "",
+      "stderr": "Assertion failed: pans==0, file C:\\Users\\tjerf\\AppData\\Local\\Temp\\knife-pan-ghost-ydr6i2ad\\actual-ghost-connected.cc, line 3189\n"
+    }
+  ],
+  "boundaries": [
+    "UIKit objects/messages/super scheduling are explicit C++ adapters; actual physical recognizer method bodies execute. No UIKit/device timing proof.",
+    "Native scope/content/intent probe is instrumented; actual fresh native bridge/frame queries require separate integrated acceptance.",
+    "Queue getNumEvents(type) and pushEvent are actual pinned functions; System lookup/queue clearing/WM scheduling remain adapters.",
+    "Preserved producer/generator and native paint/zoom slices execute with retained WM/BKE/context adapters. Initial brush setup/coordinate/tablet transform/native registration are instrumentation.",
+    "No native iOS build/compiled target/device/geometry/history/Undo/universal rollback claim. No production patch/test/build edits."
+  ],
+  "generator_unchanged_scope": "Legacy generator is exact after removing only the separately counted new default-false source-classification argument. The actual current generator including that argument executes unchanged.",
+  "node_metadata_extension": {
+    "assignment": "      event_info.physical_pencil_precision_pan =\n          sender.state == UIGestureRecognizerStateChanged && [sender pencilContactDown];\n",
+    "actual_assignment_count": 1,
+    "generator_argument": "                                      1,\n                                      event_info.physical_pencil_precision_pan));",
+    "actual_generator_argument_count": 1,
+    "execution": "Actual PAN and generator compiled unchanged; only read-only scope-oracle views normalize declared metadata."
+  }
+}

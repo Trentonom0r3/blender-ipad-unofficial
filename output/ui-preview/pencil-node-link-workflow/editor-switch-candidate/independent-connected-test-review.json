@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "status": "PASS_INDEPENDENT_BOUNDED_CONNECTED_TEST_REVIEW",
+  "reviewer": "audit_node_switch_semantics",
+  "utc": "2026-11-09T00:02:50.871478+00:00",
+  "candidate_patch_raw_sha256": "9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53",
+  "reviewed_report": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\.cache\\node-editor-switch-focused\\editor-switch-report.json",
+  "reviewed_report_sha256": "89a76bff5678c49e56fd19e988ad6485cd3b1deb492049738e1b40d2670af68e",
+  "reviewed_test": "build/test_pencil_node_editor_switch.py",
+  "reviewed_test_sha256": "d27756c3526a5b3eed86fc719d50ca168fc1f66b2201be8853d128d199bfca09",
+  "actual_input_hashes_verified": {
+    "source/blender/windowmanager/intern/wm_event_system.cc": {
+      "sha256": "91fa6b1b2a5ea250d1a4da5ee7cc5714fb3a84bc3bd356691b9aab858af74e8a",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/editors/screen/area.cc": {
+      "sha256": "2824e820641e40ea036b96c640ddea636e0e870500c83a37be7a36af7a6ff464",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/editors/screen/screen_edit.cc": {
+      "sha256": "2fc67eca41f7514c27a6ad616524d06ecb089a8c6723bab60392edf33c2a8e64",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/makesrna/intern/rna_screen.cc": {
+      "sha256": "9645011cce38dada04c81e9da1102072f77e8ddf8eb280430c3db6c9ce3ea157",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/editors/space_node/node_relationships.cc": {
+      "sha256": "3d786493bc5549cd8f6bc5caa0072bde16d58db3dbe70d2c6e9a3df24eccf780",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/blenlib/intern/listbase.cc": {
+      "sha256": "6d4528b8244fcba3302e9d306acb49ee5a03ebefddf590f3a189fa633630ad9a",
+      "origin": "unchanged-pinned-primary"
+    },
+    "source/blender/editors/include/ED_node.hh": {
+      "sha256": "87fc3f730581095795f3d6dc171ba33994a179807138719e11789831e45558a8",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/windowmanager/WM_api.hh": {
+      "sha256": "3d7ef90b57594efb4bb17ec319b9fb7a3f70f428028e7729c2a93e15d92a4364",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/windowmanager/wm_event_system.hh": {
+      "sha256": "4519ee76ff6be0f58a9aa27eadda02ea60390d8e67369a3053253903783fa4c5",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/makesdna/DNA_windowmanager_types.h": {
+      "sha256": "6da9f33e661da5275bf868713c4935df422327d2ab4f3844fba0f581fafb8af9",
+      "origin": "unchanged-pinned-primary"
+    },
+    "source/blender/windowmanager/intern/wm_operator_type.cc": {
+      "sha256": "aca28e13dd1904418202ef58e183d1bbef27459291a78f1a3ab71ef0f158e8fc",
+      "origin": "whole-pin-plus-current-patch"
+    },
+    "source/blender/blenkernel/intern/context.cc": {
+      "sha256": "aae26fc2f4956ee32f07722b27b9e932accaa56b792b557c45aed0c2804b2cb0",
+      "origin": "unchanged-pinned-primary"
+    }
+  },
+  "fixture_hashes_verified": {
+    "cases.inc.cc": "c44d962a86c1d8ea019184c38b7b9a3215f59d70bf147fe63095828b3971223d",
+    "connected.py": "23083b6eb3f4588fb1f1562421f296658315f3af8cbc0534d17dc2066e9a2cc7",
+    "historical_area.inc.cc": "9b373b1c9ac52210961cf72b64f649d061a043a1515ba220780394b25590aafd",
+    "historical_node_registration.inc.cc": "8577efe00645191c8ce0d81673c842b765c5e898c5cd936d133dbba967c31bc9",
+    "historical_rna_screen.inc.cc": "8f2ae29315a6ba5733b994a8784da4f5a08f2a83cff67d98de8ef90ddf54e3b1",
+    "historical_screen_edit.inc.cc": "2f758d9ac45635592456a9a989dacd776b46b550fa411e4d321e9cb99d91cf5f",
+    "historical_sources.json": "d40ded5eac4bf08c69e9e9a1e69cab50082ba028f6abc93d38cf6f7687e6ca58",
+    "historical_wm_event_system.inc.cc": "e8f0b93fbc50cee0cd5a401899e7ba2672fdba361c8339d12c32a02a897bcb4f",
+    "models.inc.cc": "210623a418e1827fcf17b6d951ac300a8cac3b3a698a79fb9af68a46ae260755"
+  },
+  "generated_cpp_hashes_verified": {
+    "current-apple": "dde8d058f860aea2223b67082c5e6339992ff0e71aa3e071a877bc403a6e63a7",
+    "historical-apple": "313867796ac30c1edb1ad0c23b76494cc3ff18eb83810bb558f69e49203f964e",
+    "current-nonapple": "dde8d058f860aea2223b67082c5e6339992ff0e71aa3e071a877bc403a6e63a7"
+  },
+  "executions_reviewed": [
+    {
+      "case": "current-apple",
+      "optimization": "-O0",
+      "returncode": 0,
+      "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+      "stderr": ""
+    },
+    {
+      "case": "current-apple",
+      "optimization": "-O2",
+      "returncode": 0,
+      "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+      "stderr": ""
+    },
+    {
+      "case": "historical-apple",
+      "optimization": "-O0",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+    },
+    {
+      "case": "historical-apple",
+      "optimization": "-O2",
+      "returncode": 17,
+      "stdout": "",
+      "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+    },
+    {
+      "case": "current-nonapple",
+      "optimization": "-O0",
+      "returncode": 0,
+      "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+      "stderr": ""
+    },
+    {
+      "case": "current-nonapple",
+      "optimization": "-O2",
+      "returncode": 0,
+      "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+      "stderr": ""
+    }
+  ],
+  "findings": [],
+  "review_result": [
+    "Wrapper, extraction driver, models, cases and frozen provenance were independently read. Complete current query/native profile/newspace and unchanged RNA/area-exit/replacement/native-registration functions execute at O0/O2 with actual BLI intrusive-list algorithms.",
+    "All12 input hashes match current materialized/pinned bytes; all9 fixture hashes, driver and3 retained generated C++ hashes match. Frozen historical source provenance matches the verified a2b7 baseline where it was a prior patched target.",
+    "Current Apple passes74 scenarios at each optimization. The earlier71 estimate is corrected to the executed74; this review adds no rerun. Historical Apple returns expected17 with switched=1/listed=1/area_null=1/region_null=1/cancel=0 at both optimizations. NonApple native fallback passes1 case at each optimization.",
+    "Coverage includes valid native root and active macro child, exact native callback clone, inactive/no-owner fallback, foreign current window, all-manager scanning, pending removal, unknown/unregistered type, malformed macro relations, full direct refusal before window lookup and public Area.type transient/restore behavior.",
+    "The earlier malformed-backpointer-only Node macro gap is resolved by a well-formed child.opm==root case. No source or test file was changed by this reviewer."
+  ],
+  "explicit_boundaries": [
+    "Host structs are named-field/list models, not target ABI/layout. Registry and native callback address adapters are explicit; native poll/invoke/modal/Cancel are not dispatched.",
+    "Paint, region exit, local-handler cleanup, header alignment, editor factories, redraw/notifier/DEG/title and RNA property definitions are instrumented boundaries. The actual area-exit and context-replacement algorithms execute across them.",
+    "Real context setters also mutate scene/workspace/screen/Python state; fixture assertions restore saved window/area/region only. Only the new query/direct refused entry avoids provider-sensitive getters.",
+    "Finish/Escape removal is an external native-terminal boundary represented by actual BLI_remlink, followed by a fresh query/retry. This is not native terminal/Cancel/Undo/crash execution proof.",
+    "Generic exit/join/swap/screen/region/fullscreen/temp-window atomicity, ui_type outer refresh, arbitrary corrupted lists/custom callback lifetimes and target/device behavior remain separate."
+  ],
+  "not_a_claim": "No new rerun, full-suite completion, native ABI/iOS compilation, package/compiled verification or device acceptance is inferred."
+}

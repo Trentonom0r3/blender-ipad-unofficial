@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "status": "PASS_INDEPENDENT_BOUNDED_COLD_CHECKOUT_REVIEW",
+  "reviewer": "audit_node_switch_semantics",
+  "utc": "2026-11-09T00:02:50.955785+00:00",
+  "candidate_patch_raw_sha256": "9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53",
+  "proof": "D:\\dev\\Projects\\Repos\\blendpad\\blender-ipad-unofficial\\output\\ui-preview\\pencil-node-link-workflow\\editor-switch-candidate\\cold-checkout-proof.json",
+  "proof_sha256": "2a9c0e6eba38e4331005c7cd99823f5f2ac9d11c1f5dd6af4a3d365df5d93008",
+  "manifest_sha256": "f28d2cfeed73299229c36e7a5394a7b0cbc13e05ea83ae858c496508c27f3cea",
+  "cold_report_sha256": "f60a438e9b4accc9242116be15d5e98e8b5572e1d100903c1d78abf85e8ca029",
+  "focused_report_sha256": "89a76bff5678c49e56fd19e988ad6485cd3b1deb492049738e1b40d2670af68e",
+  "findings": [],
+  "verified": {
+    "copied_manifest_files_checked_against_current_and_retained_cold_checkout": 257,
+    "bounded_evidence_file_hashes_checked": 12,
+    "retained_runtime_generated_cpp_hashes_checked": 3,
+    "shared_full_suite_frozen_inputs_checked": 255,
+    "shared_full_suite_frozen_input_hash_changes": [],
+    "additional_portable_manifest_files": [
+      "build/tests/knife_initial_pan/README.md",
+      "build/tests/knife_pan_ghost/baseline-GHOST_WindowIOS.mm"
+    ],
+    "current_cache_file_count_matches_proof": 169,
+    "semantic_fields_identical_to_reviewed_focused_report": [
+      "pin",
+      "patch_sha256",
+      "driver_sha256",
+      "inputs",
+      "fixture_sha256",
+      "historical_provenance",
+      "generated_cpp_sha256",
+      "function_sha256",
+      "executions",
+      "native_abi_or_device_claim",
+      "boundaries"
+    ],
+    "executions": [
+      {
+        "name": "preflight",
+        "command": [
+          "C:\\Users\\tjerf\\anaconda3\\python.exe",
+          "-X",
+          "utf8",
+          "build/preflight.py",
+          "--cache-dir",
+          "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-switch-cold-portable-mdif094k\\coldcache"
+        ],
+        "cwd": "C:/Users/tjerf/AppData/Local/Temp/pencil-node-switch-cold-portable-mdif094k/checkout",
+        "returncode": 0,
+        "elapsed_seconds": 12.025,
+        "log": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-link-workflow/editor-switch-candidate/cold-portable-mdif094k/preflight.log",
+        "log_sha256": "1bb2b2625b1e4dda1dcf905fbb5336f9cee71e9204de27069c3b8b9ed0e902e9"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "C:\\Users\\tjerf\\anaconda3\\python.exe",
+          "-X",
+          "utf8",
+          "build/test_pencil_node_editor_switch.py",
+          "--cache-dir",
+          "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-switch-cold-portable-mdif094k\\coldcache",
+          "--output-dir",
+          "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-switch-cold-portable-mdif094k\\runtime-report",
+          "-v"
+        ],
+        "cwd": "C:/Users/tjerf/AppData/Local/Temp/pencil-node-switch-cold-portable-mdif094k/checkout",
+        "returncode": 0,
+        "elapsed_seconds": 5.352,
+        "log": "D:/dev/Projects/Repos/blendpad/blender-ipad-unofficial/output/ui-preview/pencil-node-link-workflow/editor-switch-candidate/cold-portable-mdif094k/tests.log",
+        "log_sha256": "98f68fb4e1b0b488bcf21dd384bbce038db0d4ebbbccc93d2de8c0b105491269"
+      }
+    ],
+    "six_bounded_outcomes": [
+      {
+        "case": "current-apple",
+        "optimization": "-O0",
+        "returncode": 0,
+        "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+        "stderr": ""
+      },
+      {
+        "case": "current-apple",
+        "optimization": "-O2",
+        "returncode": 0,
+        "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+        "stderr": ""
+      },
+      {
+        "case": "historical-apple",
+        "optimization": "-O0",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+      },
+      {
+        "case": "historical-apple",
+        "optimization": "-O2",
+        "returncode": 17,
+        "stdout": "",
+        "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+      },
+      {
+        "case": "current-nonapple",
+        "optimization": "-O0",
+        "returncode": 0,
+        "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+        "stderr": ""
+      },
+      {
+        "case": "current-nonapple",
+        "optimization": "-O2",
+        "returncode": 0,
+        "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "cold_proof_review": [
+    "Producer records a newly created portable checkout, empty cache before preflight, no copied repository cache and no explicit source root. The recorded commands run from the cold checkout, pass only its cold cache, and omit --source-root.",
+    "The copied manifest excludes cache/generated bytecode/binaries. All257 recorded input files still match both current repository and retained cold-checkout bytes; all12 bounded evidence files/log hashes and3 retained generated C++ hashes match.",
+    "Preflight reports successful application to142 pinned targets in12.025 seconds process elapsed. Focused family reports2/2 pass in5.352 seconds process elapsed (unittest internal duration5.205 seconds). No native compile/device inference follows.",
+    "Reviewed preflight.get_source reads only the supplied cache or raw pinned upstream URL; connected driver explicitly overrides touch.PIN_ROOT and fetches prerequisites in PATHS before patched reconstruction. No hidden source-root fallback was found.",
+    "The currently retained169 cache files have creation times consistent with this run; initial emptiness remains the producer-recorded pre-execution fact, not a state independently observed before execution by this reviewer.",
+    "Cold report actual12 inputs,9 fixtures,3 generated C++ hashes, function hashes, historical provenance, all6 execution outcomes and boundaries are identical to the previously reviewed focused report.",
+    "Full frozen-validation records255 inputs; the portable manifest records257. All shared255 match, and its two extras also match current/cold bytes. The sets are intentionally reported separately, with no equal-set claim."
+  ],
+  "full_suite_status_at_review": "RUNNING_FULL_FROZEN_SUITE",
+  "limits": "Read-only independent evidence review; no rerun, source/code/test edit or driver correction. Full host-suite result remains separate and was pending at review; no native target build, compiled/package gate or iPad acceptance is established."
+}

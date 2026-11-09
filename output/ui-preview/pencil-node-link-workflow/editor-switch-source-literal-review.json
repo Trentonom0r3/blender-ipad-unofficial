@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_SOURCE_AND_LITERAL_REVIEW_ONLY; CONNECTED_TEST_FULL_HOST_NATIVE_GATES_SEPARATE",
+  "reviewer": "audit_node_switch_semantics",
+  "utc": "2026-11-08T23:52:27.968188+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "candidate_patch_raw_sha256": "9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53",
+  "candidate_total_targets": 142,
+  "reviewed_materialization": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-link-lifecycle-iiitf445",
+  "reviewed_five_sources": [
+    {
+      "path": "source/blender/editors/screen/area.cc",
+      "sha256": "2824e820641e40ea036b96c640ddea636e0e870500c83a37be7a36af7a6ff464"
+    },
+    {
+      "path": "source/blender/editors/include/ED_node.hh",
+      "sha256": "87fc3f730581095795f3d6dc171ba33994a179807138719e11789831e45558a8"
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "sha256": "3d786493bc5549cd8f6bc5caa0072bde16d58db3dbe70d2c6e9a3df24eccf780"
+    },
+    {
+      "path": "source/blender/windowmanager/WM_api.hh",
+      "sha256": "3d7ef90b57594efb4bb17ec319b9fb7a3f70f428028e7729c2a93e15d92a4364"
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "sha256": "91fa6b1b2a5ea250d1a4da5ee7cc5714fb3a84bc3bd356691b9aab858af74e8a"
+    }
+  ],
+  "scope": "Independent read-only review of the first bounded callback-free native Node-link editor-type switch refusal. The sole new production consumer is Apple ED_area_newspace when the existing editor is SPACE_NODE and the requested type differs. Exact public Area.type false behavior is reviewed; no generic editor-lifecycle closure is claimed.",
+  "findings": [],
+  "source_result": {
+    "consumer": "area.cc2861-2870 guard is first, before Python-sensitive CTX_wm_window(C), BKE_spacetype_from_id, previous-space/header inspection, temporary type.exit writes, Paint teardown and native area/region exit callbacks. Same-type Node requests and changes from other editor types bypass the new query.",
+    "native_profile": "ED_node.hh46 declares an Apple-only helper defined beside the real static native callbacks at node_relationships.cc1615. It compares invoke/modal/poll/cancel identities, exec=null, pyop_poll=null, exact REGISTER|UNDO|BLOCKING flags and empty type macro endpoints. It invokes no callback and reads no running operator, drag, tree or socket. Native NODE_OT_link registration/invoke/modal/cancel bodies are unchanged against the pinned primary source.",
+    "raw_context": "CTX_wm_manager is the raw C->wm.manager accessor (context.cc764). CTX_wm_window/area/region/screen may read Python context overrides; CTX_data_main may call generic context providers. The query uses only the raw manager accessor and avoids those provider-sensitive getters and every context setter.",
+    "query_roots": "Null C, target, G_MAIN or missing/foreign raw context manager refuses. Raw manager must be a member of G_MAIN->wm before use. Once these roots are established, the query scans every manager/window modal list in current G_MAIN. C.window, active screen, target active-screen membership and target region are not used. The target is only compared as an opaque area address.",
+    "absence_default": "No area-relevant OP handler permits native fallback even for inactive/no-active-screen areas or a manager with no windows. Non-OP handlers and handlers for other areas are ignored before operator/type access. This preserves valid no-owner editor switches and prevents a foreign C.window from hiding an original registered handler.",
+    "types": "A listed operator type pointer is compared against WM_operatortypes_registered_get before its fields are read. Missing/unregistered types refuse. Current registered NODE_OT_link identity refuses even if its profile was replaced. A distinct registered type satisfying the exact native profile also refuses. Other well-formed registered nonmacro operators retain native fallback under this bounded identity/profile policy.",
+    "macros": "Actual registration stores the mother macro as handler.op and the active child in root.opm (WM_event_add_modal_handler_ex). Macro traversal validates previous links and final endpoint, compares root.opm to actual root.macro members before dereferencing that active-child value, then checks active!=root, active.opm==root, empty active macro endpoints, registered child type and nonmacro child type. Actual Node child/profile refuses; a valid unrelated active child permits native fallback. Missing/inconsistent root/child relations refuse. No child or root callback is invoked.",
+    "pending_removal": "WM_HANDLER_DO_FREE is not skipped. A matching actual native Node handler remains present until actual intrusive-list cleanup, then a fresh query can permit retry.",
+    "no_grant": "No customdata, SpaceNode/runtime, NodeTree, owner ID, session UID, node/socket, physical input/contact, lifetime token, receipt, allocation, poll, invoke, modal, Cancel, provider or report dispatch is added by the query. Its Boolean result is bounded exit refusal/absence policy, never a positive ownership, cancellation or dispatch grant.",
+    "registry_initialization_assumption": "WM_operatortype_find uses a local fixed char buffer, StringRef and quiet registry lookup; WM_operatortypes_registered_get returns a view. Their backing get_operators_map has a lazy first-ever reserve(2048). Query registry access is delayed until an actual relevant listed modal operator, whose ordinary creation follows registry initialization. Allocation-free therefore applies to the ordinary valid editor/UI corridor, not an arbitrary fabricated pre-initialization handler or first-ever registry call.",
+    "rna_observed_snapshot": "The exact existing rna_Area_type_set stores transient butspacetype. rna_Area_type_update saves window/area/region, switches to owning screen context, calls checked ED_area_newspace and on false clears butspacetype, restores window then area then region and immediately returns. Real spacetype/type, type.exit, spacedata/region lists and original registered modal area/region remain untouched by the new refusal. The false path precedes redraw, DEG/snode updates and gizmo notifier. Existing butspacetype_subtype is not reset on false.",
+    "context_limit": "The observed/restored snapshot is saved window/area/region only. CTX_wm_window_set also changes scene/workspace/screen, and setters may clear Python override members. If the saved window is null, its previous data.scene is not restored by window_set(null). This review does not assert byte-identical bContext/Python-dict restoration or zero Python-context work across the entire outer RNA setter corridor. The new query and refused ED_area_newspace entry run no such getter/setter; zero Paint/native exit/cancel/poll work is the relevant claim.",
+    "native_fallback": "Existing no-owner exit/space creation/reuse/header/subtype/title/redraw/notifier behavior remains below the guard. Actual native Finish/Esc/RMB completion followed by real handler removal allows a fresh retry. This source review does not execute those terminal callbacks or claim generic graph rollback."
+  },
+  "literal_preservation": {
+    "verified_baseline": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+    "prior_targets_checked": 140,
+    "prior_targets_equal": 137,
+    "prior_targets_changed": [
+      "source/blender/editors/screen/area.cc",
+      "source/blender/windowmanager/WM_api.hh",
+      "source/blender/windowmanager/intern/wm_event_system.cc"
+    ],
+    "python_targets_equal": 7,
+    "ghost_targets_equal": 14,
+    "result": "Independent raw SHA256 comparisons match all seven prior Python targets and all fourteen prior GHOST targets, with no mismatches. The only changed prior targets are area.cc, WM_api.hh and wm_event_system.cc; ED_node.hh and node_relationships.cc are newly patched pinned-source targets.",
+    "acceptance_contract": [
+      "No new report, banner, label, button, Finish/Cancel control, layout or UI text is introduced. Area.type refusal remains the existing silent false path.",
+      "During a refused switch, finish by ordinary native lift or use existing native Esc/RMB Cancel, then retry. Native Cancel is not promised to restore an input link detached during invoke.",
+      "Preserve exact nine Base actions: Layout / Mode, More Tools, Undo, Redo, Select, Move, Rotate, Scale, Cursor; preserve current ring order, geometry, empty center and contextual controls.",
+      "Preserve compact corner Ring/context/Undo/Redo/Expand, native-only More Tools inventory and all129 native icons, full default Blender bars/menus/headers/toolbars/status and advanced native editor controls.",
+      "Preserve accepted Inspector, native editors/splits, workspace rails/global lock, Canvas expansion/restoration, Close View and fullscreen Back controls.",
+      "Preserve all GHOST producer/event/queue/coalescing/physical classification behavior, Pencil squeeze/doubletap/barrel Home, stationary hover/pressure/tilt and external keyboard/mouse/native navigation and history semantics."
+    ]
+  },
+  "deferred_and_limits": [
+    "Generic ED_area_exit/ED_region_exit, region removal, join/swap/screen exit/offscreen replacement and other direct region/context replacement receive no new consumer guard. Multi-target atomicity requires early preflight before all writes/callbacks and is not inferred.",
+    "Same-editor subtype changes, tree/owner deletion or replacement, ordinary Pencil interruption/terminal synthesis, positive owner/contact leases, native cancellation/retirement and arbitrary custom callback lifetimes remain separate.",
+    "rna_Area_ui_type_update unconditionally tags refresh after delegating to type update. Strict no-write/no-refresh outer no-op proof is limited to public Area.type, not broad ui_type.",
+    "ED_area_prevspace restores saved subtype on false and stacked-temp flags are written after success, but full fullscreen/temp-window outer atomicity is not claimed. ED_screen_full_newspace writes WAS_ACTIVE before calling newspace and clears it on false without saving a preexisting bit; WM_window_open_temp does broader setup before its checked call and cleanup. These preexisting outer behaviors are explicitly deferred.",
+    "The query assumes ordinary synchronous UI-thread current live intrusive lists and ordinary listed modal-operator validity. It does not prove arbitrary corrupted pointers, cycles, concurrent list mutation, global heap/reentrancy/CFG/GPU/UIKit/history correctness or all callback clones with altered profile fields."
+  ],
+  "validation_boundaries": {
+    "this_report": "Exact source review and literal/hash preservation only. No production source or test edit was made by this reviewer.",
+    "pending": "Connected actual-source fixture completion and final independent test review, full host suite, exact canonical preflight/frozen-input evidence, native target build, complete IPA and new/preserved actual compiled obligations remain separate gates. This source PASS alone does not validate the candidate for build or device handoff.",
+    "stock_host": "The earlier stock Windows5.1.2 public Area.type crash remains separate actual-host failure evidence, not target5.0/iOS/Pencil/device reproduction or recent regression proof.",
+    "device": "No new installed-IPA or exact iPad acceptance is established. The latest a2b7/run41034735566 package and its prior compiled/package status are unchanged."
+  }
+}

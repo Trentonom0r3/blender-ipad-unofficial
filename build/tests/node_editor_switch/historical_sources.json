@@ -1,0 +1,51 @@
+{
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "production_source": "a2b7a81c9d40c1273ad2dc13a600810940b1e30d",
+  "production_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "files": {
+    "historical_area.inc.cc": {
+      "source_path": "source/blender/editors/screen/area.cc",
+      "source_sha256": "d0c66d997e085d02c94160df69f1cffcd3c3baf561bb71834cd1e67b329c738d",
+      "sha256": "9b373b1c9ac52210961cf72b64f649d061a043a1515ba220780394b25590aafd",
+      "signatures": [
+        "bool ED_area_newspace("
+      ]
+    },
+    "historical_screen_edit.inc.cc": {
+      "source_path": "source/blender/editors/screen/screen_edit.cc",
+      "source_sha256": "2fc67eca41f7514c27a6ad616524d06ecb089a8c6723bab60392edf33c2a8e64",
+      "sha256": "2f758d9ac45635592456a9a989dacd776b46b550fa411e4d321e9cb99d91cf5f",
+      "signatures": [
+        "bool ED_area_exit("
+      ]
+    },
+    "historical_rna_screen.inc.cc": {
+      "source_path": "source/blender/makesrna/intern/rna_screen.cc",
+      "source_sha256": "9645011cce38dada04c81e9da1102072f77e8ddf8eb280430c3db6c9ce3ea157",
+      "sha256": "8f2ae29315a6ba5733b994a8784da4f5a08f2a83cff67d98de8ef90ddf54e3b1",
+      "signatures": [
+        "static int rna_Area_type_get(",
+        "static void rna_Area_type_set(",
+        "static void rna_Area_type_update("
+      ]
+    },
+    "historical_wm_event_system.inc.cc": {
+      "source_path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "source_sha256": "cf7c34b5bdf3b3cb22d8cbd86eecf0e7e9d3be6c96dffbcdd42a4f73e36f704b",
+      "sha256": "e8f0b93fbc50cee0cd5a401899e7ba2672fdba361c8339d12c32a02a897bcb4f",
+      "signatures": [
+        "void WM_event_modal_handler_area_replace(",
+        "void WM_event_modal_handler_region_replace("
+      ]
+    },
+    "historical_node_registration.inc.cc": {
+      "source_path": "source/blender/editors/space_node/node_relationships.cc",
+      "source_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "sha256": "8577efe00645191c8ce0d81673c842b765c5e898c5cd936d133dbba967c31bc9",
+      "signatures": [
+        "void NODE_OT_link("
+      ],
+      "note": "Unchanged primary NODE_OT_link registration from pinned source, a2b7 overlay did not touch this file."
+    }
+  }
+}

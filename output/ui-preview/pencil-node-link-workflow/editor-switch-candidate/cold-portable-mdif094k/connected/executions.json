@@ -1,0 +1,44 @@
+[
+  {
+    "case": "current-apple",
+    "optimization": "-O0",
+    "returncode": 0,
+    "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+    "stderr": ""
+  },
+  {
+    "case": "current-apple",
+    "optimization": "-O2",
+    "returncode": 0,
+    "stdout": "bounded actual editor-switch scenarios passed: 74\n",
+    "stderr": ""
+  },
+  {
+    "case": "historical-apple",
+    "optimization": "-O0",
+    "returncode": 17,
+    "stdout": "",
+    "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+  },
+  {
+    "case": "historical-apple",
+    "optimization": "-O2",
+    "returncode": 17,
+    "stdout": "",
+    "stderr": "EDITOR_SWITCH_REQUIRED_REFUSAL_FAILED: switched=1 listed=1 area_null=1 region_null=1 cancel=0\n"
+  },
+  {
+    "case": "current-nonapple",
+    "optimization": "-O0",
+    "returncode": 0,
+    "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+    "stderr": ""
+  },
+  {
+    "case": "current-nonapple",
+    "optimization": "-O2",
+    "returncode": 0,
+    "stdout": "bounded actual editor-switch scenarios passed: 1\n",
+    "stderr": ""
+  }
+]

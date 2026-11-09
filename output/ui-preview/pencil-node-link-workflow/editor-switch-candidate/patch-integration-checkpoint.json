@@ -1,0 +1,48 @@
+{
+  "status": "UNCOMMITTED_UNVALIDATED_NO_BUILD",
+  "prior_patch_sha256": "ec83b6f7d42e624979a1496680dfb14476f3cb7b2a1c0e1d70f99acb0c28ab0a",
+  "patch_sha256": "9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "source_root": "C:\\Users\\tjerf\\AppData\\Local\\Temp\\pencil-node-link-lifecycle-iiitf445",
+  "changed_targets": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_event_system.cc",
+      "primary_sha256": "c144c40996c815e0fe6c38f5de9ac1d56d6ec45c244e1ce42c0a18198e056137",
+      "current_sha256": "91fa6b1b2a5ea250d1a4da5ee7cc5714fb3a84bc3bd356691b9aab858af74e8a",
+      "previously_patched": true
+    },
+    {
+      "path": "source/blender/windowmanager/WM_api.hh",
+      "primary_sha256": "ab3039564d8cee642990423a8f360b5ea08e1b3c61e507d16a74537855877ca2",
+      "current_sha256": "3d7ef90b57594efb4bb17ec319b9fb7a3f70f428028e7729c2a93e15d92a4364",
+      "previously_patched": true
+    },
+    {
+      "path": "source/blender/editors/screen/area.cc",
+      "primary_sha256": "bc5bff326c24c5011aced75a94a0a2b7d5b425ae6d5258b8da4441e36d459af1",
+      "current_sha256": "2824e820641e40ea036b96c640ddea636e0e870500c83a37be7a36af7a6ff464",
+      "previously_patched": true
+    },
+    {
+      "path": "source/blender/editors/space_node/node_relationships.cc",
+      "primary_sha256": "9c559085285d6425ca02917c772a3bdbddc695af7f7c46eddd8a1fa1c80d35db",
+      "current_sha256": "3d786493bc5549cd8f6bc5caa0072bde16d58db3dbe70d2c6e9a3df24eccf780",
+      "previously_patched": false
+    },
+    {
+      "path": "source/blender/editors/include/ED_node.hh",
+      "primary_sha256": "7aa42cf6223d69d4496d980f07312503e21cafb4c90c56797d5d300e5a73a124",
+      "current_sha256": "87fc3f730581095795f3d6dc171ba33994a179807138719e11789831e45558a8",
+      "previously_patched": false
+    }
+  ],
+  "target_count": 142,
+  "unchanged_prior_sections": 137,
+  "python_sections_exact": 7,
+  "ghost_sections_exact": 14,
+  "scope": "Callback-free absence-only refusal before CTX_wm_window in ED_area_newspace, only old SPACE_NODE with different requested editor. No generic area/region exit, nativeCancel, new ownership/contact/drag/tree fields or join/swap/screen-exit atomicity claim.",
+  "normalization": "Only five regenerated sections normalize empty unified context prefixes; 137 prior sections stay exact. Runtime bytes retained exact LF.",
+  "source_tests": "pending",
+  "full_suite": "not run",
+  "device_acceptance": false
+}

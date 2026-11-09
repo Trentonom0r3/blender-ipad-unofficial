@@ -1,0 +1,89 @@
+{
+  "status": "BOUNDED_SOURCE_REGISTRY_STARTUP_PRECONDITION_SUPPORTED",
+  "utc": "2026-11-09T00:05:09.736905+00:00",
+  "pin": "d9b6fe34ddce527d93b97c0bf42ad92cebac4e4e",
+  "ordinary_ui_sequence": "WM_init registers window operator types before editor/UI setup; registration appends into get_operators_map, whose first-ever initializer reserves2048. Actual normal WM_main event dispatch follows initialization. A current registered Node modal implies that initialized registry. The new absence scan delays registry Span/find until a relevant nonnull OP. Current normal lookup/Span reads do not invoke operator callbacks or allocate owner/drag data.",
+  "boundary": "No global first-ever or malformed pre-registry caller allocation claim. Model registry initialized explicitly. Native compiled branches and actual app runtime remain separate gates.",
+  "inputs": [
+    {
+      "path": "source/blender/windowmanager/intern/wm_init_exit.cc",
+      "sha256": "694f4e30cd75bd6ca23b9d06eefaa8e224136eebb1953dc2b4ea4c4e7f50c0b2",
+      "anchors": [
+        {
+          "line": 203,
+          "text": "void WM_init(bContext *C, int argc, const char **argv)"
+        },
+        {
+          "line": 215,
+          "text": "wm_operatortypes_register();"
+        },
+        {
+          "line": 232,
+          "text": "ED_spacetypes_init();"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_operators.cc",
+      "sha256": "79afac970b6ccf05f962bd1c291529cf882ac8020536a8805757bd9565a23290",
+      "anchors": [
+        {
+          "line": 4198,
+          "text": "void wm_operatortypes_register()"
+        },
+        {
+          "line": 4201,
+          "text": "WM_operatortype_append(WM_OT_window_new);"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm_operator_type.cc",
+      "sha256": "cc227a37bcfe40c958f6cdc352966726d67b8c5343199a9c2de7b4e2c52f6707",
+      "anchors": [
+        {
+          "line": 53,
+          "text": "static auto &get_operators_map()"
+        },
+        {
+          "line": 64,
+          "text": "map.reserve(2048);"
+        },
+        {
+          "line": 70,
+          "text": "blender::Span<wmOperatorType *> WM_operatortypes_registered_get()"
+        },
+        {
+          "line": 72,
+          "text": "return get_operators_map();"
+        },
+        {
+          "line": 137,
+          "text": "get_operators_map().add_new(ot);"
+        },
+        {
+          "line": 526,
+          "text": "get_operators_map().add_new(ot);"
+        },
+        {
+          "line": 559,
+          "text": "get_operators_map().add_new(ot);"
+        }
+      ]
+    },
+    {
+      "path": "source/blender/windowmanager/intern/wm.cc",
+      "sha256": "486152ba156f110abe99eb3aaa2a39b1c3cc671d5a4ff287ec2940b21bb7a03e",
+      "anchors": [
+        {
+          "line": 598,
+          "text": "wm_event_do_handlers(C);"
+        },
+        {
+          "line": 607,
+          "text": "void WM_main(bContext *C)"
+        }
+      ]
+    }
+  ]
+}

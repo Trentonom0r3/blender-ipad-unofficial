@@ -1,3 +1,35 @@
+## Native Node editor-switch correction host validated — 2026-11-09 UTC
+
+Canonical patch9474bfdb8b88fb22e95a97ac750649e4a5cfc962d7dff4ba1396fc16897f2c53:
+old Node editor / different requested type refuses before Python-sensitive window
+lookup, Paint/native exit callbacks or context/geometry mutation if a matching
+actual registered native Node-link modal is present or the relevant current state
+cannot be proved. The link remains live: lift/Finish or native Cancel, then retry.
+No Cancel call, lifetime lease, drag/tree read, input event, extra report or UI
+change. No relevant handler/known unrelated/native default/same-type/nonApple
+fallbacks preserved within the exact tested scopes. Query uses raw currentMain
+manager membership and all registered windows, never the current C.window as
+owner. Initialized registry and valid native intrusive list assumptions explicit.
+
+Full839/839 in705.396s, 255 frozen inputs unchanged + separately verified actual
+consumed historical GHOST .mm SHA,142 pinned preflight/diff, new2/2 (74 Apple cases
+each O0/O2, exact historical expected17 and nonApple controls), and cold online
+142 +2/2 from257 unchanged copied inputs. All142 raw Git targets match materialized
+Temp/pencil-node-link-lifecycle-iiitf445; five native targets change,137 prior
+including all7 Python/all14 GHOST exact. Independent source/literal/fixture/cold
+reviews pass. Existing CI Node glob includes new tests; no workflow or old
+assertion changed. Read editor-switch-candidate/source-verification.json.
+
+Exact Area.type no-op/restore covers saved window/area/region and transient type,
+not whole bContext/Python dictionary, ui_type refresh, same-type subtype changes,
+other full-screen/temp-window effects or generic join/swap/screen/region exits.
+No generic retirement/rollback or ordinary Pencil terminal claim. Stock crash and
+native graph/history baselines remain separately preserved, not device proof.
+Build this exact coherent revision ONCE, then full downloaded IPA and independent
+actual compiled new+preserved gates before offering. Prepared watcher not yet
+started. Latest ready remains a2b7a81/run41034735566, already offered Nov8, no exact
+iPad acceptance. No unchanged rebuild. Full goal unfinished.
+
 # Pencil Node-link workflow: native baseline and next admission gate
 
 The full personal goal remains unfinished. The latest installable package is
